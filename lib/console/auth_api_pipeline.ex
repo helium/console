@@ -3,5 +3,5 @@ defmodule Console.AuthApiPipeline do
 
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
   plug Guardian.Plug.EnsureAuthenticated
-  # plug Guardian.Plug.LoadResource
+  plug Guardian.Plug.LoadResource
 end

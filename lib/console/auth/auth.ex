@@ -8,6 +8,10 @@ defmodule Console.Auth do
 
   alias Console.Auth.User
 
+  def get_user_by_id!(id) do
+    Repo.get!(User, id)
+  end
+
   @doc """
   Creates a user.
 
