@@ -20,7 +20,9 @@ defmodule ConsoleWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ConsoleWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ConsoleWeb do
+    pipe_through :api
+
+    post "/users", UserController, :create
+  end
 end

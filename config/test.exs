@@ -17,3 +17,6 @@ config :console, Console.Repo,
   database: "console_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :comeonin, :bcrypt_log_rounds, 4
+config :comeonin, :pbkdf2_rounds, 1
