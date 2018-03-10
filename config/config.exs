@@ -26,6 +26,10 @@ config :console, Console.Guardian,
        issuer: "console",
        secret_key: "SIc3vGaukN3p6I+o/r2SEmguIhCuSRVCR3RX4w+yLDDpDpJinc7m4SsahlgmsmwK"
 
+config :console, Console.AuthApiPipeline,
+  module: Console.Guardian,
+  error_handler: Console.AuthErrorHandler
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
