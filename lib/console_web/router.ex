@@ -13,18 +13,6 @@ defmodule ConsoleWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :authenticated_api do
-    plug :accepts, ["json"]
-    plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
-    plug Guardian.Plug.EnsureAuthenticated
-  end
-
-  scope "/", ConsoleWeb do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
-  end
-
   # Other scopes may use custom stacks.
   scope "/api", ConsoleWeb do
     pipe_through :api
@@ -38,4 +26,11 @@ defmodule ConsoleWeb.Router do
 
     get "/secret", PageController, :secret
   end
+
+  scope "/", ConsoleWeb do
+    pipe_through :browser # Use the default browser stack
+
+    get "/*path", PageController, :index
+  end
+
 end
