@@ -10,7 +10,8 @@ class Register extends Component {
 
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      passwordConfirm: ""
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -23,9 +24,13 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password } = this.state;
+    const { email, password, passwordConfirm } = this.state;
 
-    this.props.register(email, password);
+    if (password === passwordConfirm) {
+      this.props.register(email, password, passwordConfirm);
+    } else {
+      window.alert("passwords do not match, please try again")
+    }
   }
 
   render() {
@@ -37,6 +42,8 @@ class Register extends Component {
           <input type="email" name="email" value={this.state.email} onChange={this.handleInputUpdate} />
           <label>Password</label>
           <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
+          <label>Confirm Password</label>
+          <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
           <button type="submit">Register</button>
         </form>
         <Link to="/secret">Secret!</Link>

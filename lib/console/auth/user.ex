@@ -26,6 +26,7 @@ defmodule Console.Auth.User do
     |> changeset(attrs)
     |> cast(attrs, ~w(password))
     |> validate_length(:password, min: 6)
+    |> validate_confirmation(:password, message: "passwords do not match")
     |> put_password_hash
   end
 

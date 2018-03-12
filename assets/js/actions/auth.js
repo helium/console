@@ -25,12 +25,13 @@ export const logOut = () => {
   }
 }
 
-export const register = (email, password) => {
+export const register = (email, password, passwordConfirm) => {
   return (dispatch) => {
     rest.post('/api/users', {
         user: {
           email,
-          password
+          password,
+          password_confirmation: passwordConfirm
         }
       })
       .then(response => response.json())
