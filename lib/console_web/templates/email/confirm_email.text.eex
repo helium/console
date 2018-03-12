@@ -1,0 +1,2 @@
+Welcome to Helium Dashboard.
+Visit <%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %> to confirm your email.

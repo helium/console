@@ -13,7 +13,6 @@ defmodule ConsoleWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # Other scopes may use custom stacks.
   scope "/api", ConsoleWeb do
     pipe_through :api
 
@@ -27,10 +26,15 @@ defmodule ConsoleWeb.Router do
     get "/secret", PageController, :secret
   end
 
+  if Mix.env == :dev do
+    forward "/sent_emails", Bamboo.SentEmailViewerPlug
+  end
+
   scope "/", ConsoleWeb do
     pipe_through :browser # Use the default browser stack
 
+    get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
+
     get "/*path", PageController, :index
   end
-
 end

@@ -30,13 +30,36 @@ defmodule Console.Auth do
     |> Repo.insert()
   end
 
-  def authenticate(%{"email" => e, "password" => p}) do
-    case Repo.get_by(User, email: e) do
+  def authenticate(%{"email" => email, "password" => password}) do
+    case get_user_for_authentication(email) do
       nil -> :error
+      {:error, :email_not_confirmed} -> :error
       user ->
-        case verify_password(p, user.password_hash) do
+        case verify_password(password, user.password_hash) do
           true -> {:ok, user, sign_token(user)}
           _ -> :error
+        end
+    end
+  end
+
+  def confirm_email(token) do
+    case Repo.get_by(User, confirmation_token: token) do
+      nil -> :error
+      user ->
+        case mark_email_confirmed(user) do
+          {:ok, _struct} -> :ok
+          _ -> :error
+        end
+    end
+  end
+
+  defp get_user_for_authentication(email) do
+    case Repo.get_by(User, email: email) do
+      nil -> nil
+      user ->
+        case user.confirmed_at do
+          nil -> {:error, :email_not_confirmed}
+          _datetime -> user
         end
     end
   end
@@ -48,5 +71,11 @@ defmodule Console.Auth do
   defp sign_token(user) do
     {:ok, token, _claims} = Console.Guardian.encode_and_sign(user)
     token
+  end
+
+  defp mark_email_confirmed(user) do
+    user
+    |> User.confirm_email_changeset()
+    |> Repo.update()
   end
 end

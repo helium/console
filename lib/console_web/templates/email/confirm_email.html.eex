@@ -1,0 +1,6 @@
+<p>
+  Welcome to Helium Dashboard.
+  <a href="<%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %>">
+    Click here to confirm your account
+  </a>.
+</p>
