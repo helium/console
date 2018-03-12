@@ -56,3 +56,6 @@ config :console, Console.Repo,
   database: "console_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :console, Console.Mailer,
+  adapter: Bamboo.LocalAdapter
