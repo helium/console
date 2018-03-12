@@ -33,6 +33,8 @@ defmodule ConsoleWeb.Router do
   scope "/", ConsoleWeb do
     pipe_through :browser # Use the default browser stack
 
+    get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
+
     get "/*path", PageController, :index
   end
 end

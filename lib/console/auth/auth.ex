@@ -41,6 +41,17 @@ defmodule Console.Auth do
     end
   end
 
+  def confirm_email(token) do
+    case Repo.get_by(User, confirmation_token: token) do
+      nil -> :error
+      user ->
+        case mark_email_confirmed(user) do
+          {:ok, _struct} -> :ok
+          _ -> :error
+        end
+    end
+  end
+
   defp verify_password(password, pw_hash) do
     Comeonin.Bcrypt.checkpw(password, pw_hash)
   end
@@ -48,5 +59,11 @@ defmodule Console.Auth do
   defp sign_token(user) do
     {:ok, token, _claims} = Console.Guardian.encode_and_sign(user)
     token
+  end
+
+  defp mark_email_confirmed(user) do
+    user
+    |> User.confirm_email_changeset()
+    |> Repo.update()
   end
 end

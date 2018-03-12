@@ -1,11 +1,13 @@
 defmodule Console.Email do
   use Bamboo.Phoenix, view: ConsoleWeb.EmailView
 
-  def welcome_email(address) do
+  alias Console.Auth.User
+
+  def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()
-    |> to(address)
+    |> to(email)
     |> subject("Your Sign In Link")
-    |> assign(:address, address)
+    |> assign(:token, token)
     |> render(:confirm_email)
   end
 
