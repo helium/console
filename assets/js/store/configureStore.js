@@ -13,7 +13,7 @@ export const history = createHistory();
 
 // Build the middleware for intercepting and dispatching navigation actions
 // TODO: if ENV is dev, use logger, else do not use
-const middleware = [logger, routerMiddleware(history), thunk];
+const middleware = [routerMiddleware(history), thunk, logger];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const composedEnhancers = composeEnhancers(applyMiddleware(...middleware));
 
@@ -25,6 +25,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: storage,
+  blacklist: ['errors']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -34,4 +35,3 @@ export const persistor = persistStore(store);
 // export default () => {
 //   return { store, persistor, history };
 // }
-
