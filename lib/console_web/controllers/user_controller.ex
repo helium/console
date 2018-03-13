@@ -25,6 +25,11 @@ defmodule ConsoleWeb.UserController do
       |> put_flash(:info, "Email confirmed, you may now log in")
       |> redirect(to: "/login")
       |> halt()
+    else :error ->
+      conn
+      |> put_flash(:info, "Email verification link is not valid, please check your email or request a new verification link")
+      |> redirect(to: "/login")
+      |> halt()
     end
   end
 end

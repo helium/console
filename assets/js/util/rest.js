@@ -41,5 +41,5 @@ const headers = () => {
     })
   }
 
-  return new Headers(headerParams);
+  return headerParams;
 }
