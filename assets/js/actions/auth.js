@@ -35,9 +35,17 @@ export const register = (email, password, passwordConfirm) => {
         }
       })
       .then(response => response.json())
-      .then(json => dispatch(registered(json)))
+      .then(json => {
+        if (json.errors) {
+          const e = new Error()
+          e.name = "Error Handled"
+          e.message = json.errors[Object.keys(json.errors)[0]][0]
+          throw e
+        }
+        return dispatch(registered(json))
+      })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(error => console.log('An error occured.', error))
+      .catch(error => console.log(error.name, error.message))
   }
 }
 

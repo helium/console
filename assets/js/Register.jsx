@@ -26,18 +26,14 @@ class Register extends Component {
     e.preventDefault();
     const { email, password, passwordConfirm } = this.state;
 
-    if (password === passwordConfirm) {
-      this.props.register(email, password, passwordConfirm);
-    } else {
-      window.alert("passwords do not match, please try again")
-    }
+    this.props.register(email, password, passwordConfirm);
   }
 
   render() {
     return(
       <div>
         <h2>Register</h2>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} noValidate>
           <label>Email</label>
           <input type="email" name="email" value={this.state.email} onChange={this.handleInputUpdate} />
           <label>Password</label>
