@@ -14,7 +14,10 @@ export const logIn = (email, password) => {
         }
       })
       .then(response => response.json())
-      .then(json => dispatch(loggedIn(json)))
+      .then(json => {
+        console.log(json)
+        return dispatch(loggedIn(json))
+      })
       .catch(error => console.log('An error occured.', error))
   }
 }
