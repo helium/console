@@ -25,6 +25,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: storage,
+  blacklist: ['errors']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -34,4 +35,3 @@ export const persistor = persistStore(store);
 // export default () => {
 //   return { store, persistor, history };
 // }
-
