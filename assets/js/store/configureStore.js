@@ -13,7 +13,7 @@ export const history = createHistory();
 
 // Build the middleware for intercepting and dispatching navigation actions
 // TODO: if ENV is dev, use logger, else do not use
-const middleware = [routerMiddleware(history), thunk, logger];
+const middleware = [logger, routerMiddleware(history), thunk];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const composedEnhancers = composeEnhancers(applyMiddleware(...middleware));
 

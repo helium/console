@@ -1,4 +1,4 @@
-import { REGISTRATION_ERROR } from '../actions/errors.js';
+import { REGISTRATION_ERROR, CLEAR_ERROR } from '../actions/errors.js';
 
 const initialState = {
   registration: null
@@ -7,7 +7,9 @@ const initialState = {
 const errors = (state = initialState, action) => {
   switch(action.type) {
     case REGISTRATION_ERROR:
-      return Object.assign(state, { registration: action.message });
+      return { registration: action.message };
+    case CLEAR_ERROR:
+      return { registration: null };
     default:
       return state;
   }
