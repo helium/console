@@ -13,7 +13,11 @@ defmodule ConsoleWeb.ErrorView do
   def render("error.json", %{error: error}) do
     # When encoded, the changeset returns its errors
     # as a JSON object. So we just pass it forward.
-    %{errors: [error]}
+    %{"errors" =>
+      %{
+        "error" => [error]
+      }
+    }
   end
 
   def template_not_found(template, _assigns) do

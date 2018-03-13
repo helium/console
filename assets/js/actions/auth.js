@@ -13,12 +13,12 @@ export const logIn = (email, password) => {
           password
         }
       })
-      .then(response => response.json())
-      .then(json => {
-        console.log(json)
-        return dispatch(loggedIn(json))
+      .then(response => {
+        return dispatch(loggedIn(response.data.jwt))
       })
-      .catch(error => console.log('An error occured.', error))
+      .catch(error => {
+        console.log('An error occured.', error.response.data.errors)
+      })
   }
 }
 
@@ -37,20 +37,18 @@ export const register = (email, password, passwordConfirm) => {
           password_confirmation: passwordConfirm
         }
       })
-      .then(response => response.json())
-      .then(json => {
-        console.log(json)
-        return dispatch(loggedIn(json))
+      .then(() => {
+        return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(error => console.log('An error occured.', error))
+      .catch(error => console.log('An error occured.', error.response.data.errors))
   }
 }
 
-const loggedIn = (json) => {
+const loggedIn = (jwt) => {
   return {
     type: LOGGED_IN,
-    apikey: json.jwt
+    apikey: jwt
   }
 }
 
@@ -60,7 +58,7 @@ const loggedOut = () => {
   }
 }
 
-const registered = (json) => {
+const registered = () => {
   return {
     type: REGISTERED
   }

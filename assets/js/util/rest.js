@@ -1,16 +1,20 @@
 import { store } from '../store/configureStore';
+import axios from 'axios'
 
 export const get = (path) => (
-  fetch(path, {
+  axios({
+    url: path,
+    method: 'get',
     headers: headers()
   })
 )
 
-export const post = (path, body) => (
-  fetch(path, {
-    method: 'POST',
+export const post = (path, data) => (
+  axios({
+    url: path,
+    method: 'post',
     headers: headers(),
-    body: JSON.stringify(body)
+    data
   })
 )
 
@@ -39,4 +43,3 @@ const headers = () => {
 
   return new Headers(headerParams);
 }
-
