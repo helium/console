@@ -1,5 +1,6 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
+import { registrationError } from './errors.js'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -35,9 +36,23 @@ export const register = (email, password, passwordConfirm) => {
         }
       })
       .then(response => response.json())
-      .then(json => dispatch(registered(json)))
+      .then(json => {
+        if (json.errors) {
+          const e = new Error()
+          e.name = "Error Handled"
+          e.message = json.errors[Object.keys(json.errors)[0]][0]
+          throw e
+        }
+        return dispatch(registered(json))
+      })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(error => console.log('An error occured.', error))
+      .catch(error => {
+        if (error.name === 'Error Handled') {
+          dispatch(registrationError(error.message))
+        } else {
+          dispatch(registrationError('An unexpected error has occurred, please try again'))
+        }
+      })
   }
 }
 
