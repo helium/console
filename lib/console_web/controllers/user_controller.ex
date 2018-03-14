@@ -27,7 +27,7 @@ defmodule ConsoleWeb.UserController do
       |> halt()
     else :error ->
       conn
-      |> put_flash(:info, "Email verification link is not valid, please check your email or request a new verification link")
+      |> put_flash(:error, "Email verification link is not valid, please check your email or request a new verification link")
       |> redirect(to: "/login")
       |> halt()
     end

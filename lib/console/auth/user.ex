@@ -39,6 +39,7 @@ defmodule Console.Auth.User do
     user
     |> changeset()
     |> put_change(:confirmed_at, DateTime.utc_now)
+    |> put_change(:confirmation_token, "Verified")
   end
 
   defp put_password_hash(changeset) do
