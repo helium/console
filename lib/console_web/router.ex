@@ -25,6 +25,7 @@ defmodule ConsoleWeb.Router do
 
     resources "/devices", DeviceController, except: [:new, :edit]
     resources "/gateways", GatewayController, except: [:new, :edit]
+    resources "/channels", ChannelController, except: [:new, :edit]
 
     get "/secret", PageController, :secret
   end
