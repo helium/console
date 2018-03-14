@@ -18,5 +18,8 @@ config :console, Console.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :console, Console.Mailer,
+  adapter: Bamboo.TestAdapter
+
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1

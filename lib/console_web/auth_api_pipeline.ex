@@ -1,4 +1,4 @@
-defmodule Console.AuthApiPipeline do
+defmodule ConsoleWeb.AuthApiPipeline do
   use Guardian.Plug.Pipeline, otp_app: :console
 
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}

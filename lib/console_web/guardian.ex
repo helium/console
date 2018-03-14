@@ -1,4 +1,4 @@
-defmodule Console.Guardian do
+defmodule ConsoleWeb.Guardian do
   use Guardian, otp_app: :console
 
   alias Console.Auth

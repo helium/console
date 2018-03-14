@@ -21,7 +21,11 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api", ConsoleWeb do
-    pipe_through Console.AuthApiPipeline
+    pipe_through ConsoleWeb.AuthApiPipeline
+
+    resources "/devices", DeviceController, except: [:new, :edit]
+    resources "/gateways", GatewayController, except: [:new, :edit]
+    resources "/channels", ChannelController, except: [:new, :edit]
 
     get "/secret", PageController, :secret
   end

@@ -69,7 +69,7 @@ defmodule Console.Auth do
   end
 
   defp sign_token(user) do
-    {:ok, token, _claims} = Console.Guardian.encode_and_sign(user)
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
     token
   end
 

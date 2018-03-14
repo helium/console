@@ -8,7 +8,7 @@ defmodule ConsoleWeb.PageController do
   end
 
   def secret(conn, _params) do
-    user = Console.Guardian.Plug.current_resource(conn)
+    user = ConsoleWeb.Guardian.Plug.current_resource(conn)
     conn
       |> render("secret.json", user: user)
   end
