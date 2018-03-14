@@ -18,17 +18,19 @@ defmodule Console.Auth.User do
   def changeset(user, attrs \\ %{}) do
     user
     |> cast(attrs, [:email])
-    |> validate_length(:email, min: 1, max: 255)
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
+    |> validate_required(:email, message: "Email needs to not be blank")
+    |> validate_length(:email, min: 1, max: 255, message: "Email needs to be between 1 and 255 characters long")
+    |> validate_format(:email, ~r/@/, message: "Email needs to have an @ sign to be valid")
+    |> unique_constraint(:email, message: "Email has already been taken, please log in instead")
   end
 
   def registration_changeset(user, attrs \\ :empty) do
     user
     |> changeset(attrs)
     |> cast(attrs, ~w(password))
-    |> validate_length(:password, min: 6)
-    |> validate_confirmation(:password, message: "passwords do not match")
+    |> validate_required(:password, message: "Password needs to not be blank")
+    |> validate_length(:password, min: 6, message: "Password needs to be 6 characters minimum")
+    |> validate_confirmation(:password, message: "Password and password confirmation do not match")
     |> put_password_hash
     |> put_confirmation_token
   end

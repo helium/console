@@ -6,6 +6,7 @@
     "watch": "brunch watch --stdin"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "history": "^4.7.2",
     "npm": "^5.7.1",
     "phoenix": "file:../deps/phoenix",

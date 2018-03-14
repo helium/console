@@ -32,12 +32,12 @@ defmodule Console.Auth do
 
   def authenticate(%{"email" => email, "password" => password}) do
     case get_user_for_authentication(email) do
-      nil -> :error
-      {:error, :email_not_confirmed} -> :error
+      nil -> {:error, :unauthorized, "The email address or password you entered is not valid"}
+      {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
       user ->
         case verify_password(password, user.password_hash) do
           true -> {:ok, user, sign_token(user)}
-          _ -> :error
+          _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end
   end
