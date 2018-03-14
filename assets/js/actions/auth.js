@@ -16,9 +16,6 @@ export const logIn = (email, password) => {
       .then(response => {
         return dispatch(loggedIn(response.data.jwt))
       })
-      .catch(error => {
-        console.log('An error occured.', error.response.data.errors)
-      })
   }
 }
 
@@ -41,7 +38,6 @@ export const register = (email, password, passwordConfirm) => {
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(error => console.log('An error occured.', error.response.data.errors))
   }
 }
 
