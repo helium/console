@@ -1,4 +1,5 @@
 import React from "react"
+import Noty from 'noty';
 
 import { store, persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -15,7 +16,20 @@ import Secret from './Secret.jsx';
 import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
 
 class ReactApp extends React.Component {
+  displayFlash(type, text) {
+    const config = {
+      theme: 'relax',
+      type,
+      text,
+      timeout: 5000
+    }
+    new Noty(config).show()
+  }
+
   render() {
+    if (window.flashInfo !== '') this.displayFlash('success', window.flashInfo)
+    if (window.flashError !== '') this.displayFlash('error', window.flashError)
+
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
@@ -36,4 +50,3 @@ class ReactApp extends React.Component {
 }
 
 export default ReactApp
-
