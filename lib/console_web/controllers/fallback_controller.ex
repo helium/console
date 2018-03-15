@@ -29,4 +29,10 @@ defmodule ConsoleWeb.FallbackController do
     |> put_status(:unauthorized)
     |> render(ConsoleWeb.ErrorView, "error.json", error: error)
   end
+
+  def call(conn, {:error, :not_found, error}) do
+    conn
+    |> put_status(:not_found)
+    |> render(ConsoleWeb.ErrorView, "error.json", error: error)
+  end
 end

@@ -32,4 +32,14 @@ defmodule ConsoleWeb.UserController do
       |> halt()
     end
   end
+
+  def resend_verification(conn, %{"email" => email}) do
+    with {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
+      Email.confirm_email(user) |> Mailer.deliver_later()
+
+      conn
+      |> put_status(:accepted)
+      |> render("show.json", user: user)
+    end
+  end
 end

@@ -63,9 +63,7 @@ export const forgotPassword = (email) => {
 export const resendVerification = (email) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
-        user: {
-          email
-        }
+        email
       })
       .then(response => {
         console.log(response)

@@ -17,6 +17,7 @@ defmodule ConsoleWeb.Router do
     pipe_through :api
 
     post "/users", UserController, :create
+    post "/users/resend_verification", UserController, :resend_verification
     post "/sessions", SessionController, :create
   end
 
