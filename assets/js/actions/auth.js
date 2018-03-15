@@ -16,6 +16,7 @@ export const logIn = (email, password) => {
       .then(response => {
         return dispatch(loggedIn(response.data.jwt))
       })
+      .catch(() => {})
   }
 }
 
@@ -38,6 +39,7 @@ export const register = (email, password, passwordConfirm) => {
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
+      .catch(() => {})
   }
 }
 
