@@ -8,6 +8,7 @@ export const fetchUser = () => {
       .then(response => {
         dispatch(receiveUser(response.data.your_email))
       })
+      .catch(() => {})
   };
 }
 
