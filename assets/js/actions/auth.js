@@ -4,6 +4,8 @@ import * as rest from '../util/rest';
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
 export const REGISTERED = 'REGISTERED';
+export const SENT_PASSWORD = 'SENT_PASSWORD';
+export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 
 export const logIn = (email, password) => {
   return (dispatch) => {
@@ -43,6 +45,36 @@ export const register = (email, password, passwordConfirm) => {
   }
 }
 
+export const forgotPassword = (email) => {
+  return (dispatch) => {
+    rest.post('/api/users/forgot_password', {
+        user: {
+          email
+        }
+      })
+      .then(response => {
+        console.log(response)
+        return dispatch(sentPassword())
+      })
+      .catch(() => {})
+  }
+}
+
+export const resendVerification = (email) => {
+  return (dispatch) => {
+    rest.post('/api/users/resend_verification', {
+        user: {
+          email
+        }
+      })
+      .then(response => {
+        console.log(response)
+        return dispatch(sentVerification())
+      })
+      .catch(() => {})
+  }
+}
+
 const loggedIn = (jwt) => {
   return {
     type: LOGGED_IN,
@@ -59,5 +91,17 @@ const loggedOut = () => {
 const registered = () => {
   return {
     type: REGISTERED
+  }
+}
+
+const sentPassword = () => {
+  return {
+    type: SENT_PASSWORD
+  }
+}
+
+const sentVerification = () => {
+  return {
+    type: SENT_VERIFICATION
   }
 }

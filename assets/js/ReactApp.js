@@ -11,6 +11,8 @@ import { Route, Redirect } from 'react-router';
 import PrivateRoute from './PrivateRoute.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
+import ResendVerification from './ResendVerification.jsx';
+import ForgotPassword from './ForgotPassword.jsx';
 import Home from './Home.jsx';
 import Secret from './Secret.jsx';
 import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
@@ -38,6 +40,8 @@ class ReactApp extends React.Component {
             <div>
               <Route exact path="/" component={Home}/>
               <Route path="/login" component={Login}/>
+              <Route path="/resend_verification" component={ResendVerification}/>
+              <Route path="/forgot_password" component={ForgotPassword}/>
               <Route path="/register" component={Register}/>
               <Route path="/confirm_email" component={ConfirmEmailPrompt}/>
               <PrivateRoute path="/secret" component={Secret}/>

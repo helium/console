@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn } from './actions/auth.js';
+import { forgotPassword } from './actions/auth.js';
 
-class Login extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      email: "",
-      password: ""
+      email: ""
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -23,25 +22,20 @@ class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password } = this.state;
+    const { email } = this.state;
 
-    this.props.logIn(email, password);
+    this.props.forgotPassword(email);
   }
   render() {
     return(
       <div>
-        <h2>Sign in</h2>
+        <h2>Enter your email</h2>
         <form onSubmit={this.handleSubmit}>
           <label>Email</label>
           <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          <label>Password</label>
-          <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          <button type="submit">Sign In</button>
+          <button type="submit">Send Email</button>
         </form>
-        <Link to="/secret"><p>Secret Page</p></Link>
-        <Link to="/register"><p>Register Page</p></Link>
-        <Link to="/forgot_password"><p>Forgot Password</p></Link>
-        <Link to="/resend_verification"><p>Resend Verification</p></Link>
+        <Link to="/login"><p>Login Page</p></Link>
       </div>
     );
   }
@@ -54,7 +48,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn }, dispatch);
+  return bindActionCreators({ forgotPassword }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);
