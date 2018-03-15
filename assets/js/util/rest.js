@@ -1,5 +1,5 @@
 import { store } from '../store/configureStore';
-import axios from 'axios'
+import axios from '../config/axios.js'
 
 export const get = (path) => (
   axios({
