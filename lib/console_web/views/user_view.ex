@@ -9,4 +9,8 @@ defmodule ConsoleWeb.UserView do
   def render("user.json", %{user: user}) do
     %{email: user.email}
   end
+
+  def render("user_status.json", %{user: user}) do
+    %{email: user.email, status: "success"}
+  end
 end

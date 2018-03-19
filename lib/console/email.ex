@@ -11,6 +11,14 @@ defmodule Console.Email do
     |> render(:confirm_email)
   end
 
+  def password_reset_email(%User{email: email}, token) do
+    base_email()
+    |> to(email)
+    |> subject("Your Password Reset Link")
+    |> assign(:token, token)
+    |> render(:reset_password)
+  end
+
   defp base_email do
     new_email()
     |> from("Helium <dashboard@helium.com>")

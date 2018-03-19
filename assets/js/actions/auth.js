@@ -18,7 +18,6 @@ export const logIn = (email, password) => {
       .then(response => {
         return dispatch(loggedIn(response.data.jwt))
       })
-      .catch(() => {})
   }
 }
 
@@ -41,22 +40,17 @@ export const register = (email, password, passwordConfirm) => {
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(() => {})
   }
 }
 
 export const forgotPassword = (email) => {
   return (dispatch) => {
     rest.post('/api/users/forgot_password', {
-        user: {
-          email
-        }
+        email
       })
       .then(response => {
-        console.log(response)
         return dispatch(sentPassword())
       })
-      .catch(() => {})
   }
 }
 
@@ -66,10 +60,8 @@ export const resendVerification = (email) => {
         email
       })
       .then(response => {
-        console.log(response)
         return dispatch(sentVerification())
       })
-      .catch(() => {})
   }
 }
 

@@ -42,9 +42,7 @@ class ForgotPassword extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    auth: state.auth
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {

@@ -64,6 +64,13 @@ defmodule Console.Auth do
     end
   end
 
+  def get_user_for_password_reset(email) do
+    case Repo.get_by(User, email: email) do
+      nil -> {:error, :not_found, "The email address you have entered is not valid"}
+      user -> {:ok, user}
+    end
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil -> nil
