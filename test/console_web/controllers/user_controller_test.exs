@@ -19,7 +19,7 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), user: @create_attrs
-      assert %{"id" => _id} = json_response(conn, 201)["data"]
+      assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
