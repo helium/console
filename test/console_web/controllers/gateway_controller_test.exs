@@ -4,8 +4,7 @@ defmodule ConsoleWeb.GatewayControllerTest do
   alias Console.Gateways
   alias Console.Gateways.Gateway
 
-  import ConsoleWeb.Guardian
-  import Console.Factory
+  import Console.AuthHelper
 
   @create_attrs %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key"}
   @update_attrs %{latitude: "456.7", longitude: "456.7", mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
@@ -29,7 +28,6 @@ defmodule ConsoleWeb.GatewayControllerTest do
     setup [:authenticate_user]
 
     test "renders gateway when data is valid", %{conn: conn} do
-
       conn = post conn, gateway_path(conn, :create), gateway: @create_attrs
       %{"id" => id} = json_response(conn, 201)["data"]
       assert json_response(conn, 201)["data"] == %{
@@ -74,15 +72,6 @@ defmodule ConsoleWeb.GatewayControllerTest do
       conn = delete conn, gateway_path(conn, :delete, gateway)
       assert response(conn, 204)
     end
-  end
-
-  defp authenticate_user(%{conn: conn}) do
-    user = insert(:user)
-    {:ok, token, _} = encode_and_sign(user, %{}, token_type: :access)
-    conn = conn
-           |> put_req_header("accept", "application/json")
-           |> put_req_header("authorization", "bearer: " <> token)
-    {:ok, conn: conn}
   end
 
   defp create_gateway(_) do
