@@ -1,5 +1,7 @@
 # Console
 
+[![Build Status](https://travis-ci.com/helium/console.svg?token=xtWAyYdyp7b1J2ZaarWy&branch=master)](https://travis-ci.com/helium/console)
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
