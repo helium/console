@@ -45,7 +45,8 @@ defmodule Console.Mixfile do
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.0"},
       {:bamboo, github: "thoughtbot/bamboo"},
-      {:ex_machina, "~> 2.2", only: :test}
+      {:ex_machina, "~> 2.2", only: :test},
+      {:cloak, "~> 0.6.1"}
     ]
   end
 
