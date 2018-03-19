@@ -17,6 +17,8 @@ defmodule ConsoleWeb.Router do
     pipe_through :api
 
     post "/users", UserController, :create
+    post "/users/resend_verification", UserController, :resend_verification
+    post "/users/forgot_password", UserController, :forgot_password
     post "/sessions", SessionController, :create
   end
 
@@ -38,6 +40,7 @@ defmodule ConsoleWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
+    get "/users/reset_password/:token", UserController, :reset_password, as: "reset_password"
 
     get "/*path", PageController, :index
   end

@@ -46,7 +46,7 @@ class Register extends Component {
           <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
           <button type="submit">Register</button>
         </form>
-        <Link to="/secret">Secret!</Link>
+        <Link to="/login"><p>Login Page</p></Link>
       </div>
     );
   }

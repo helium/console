@@ -32,4 +32,25 @@ defmodule ConsoleWeb.UserController do
       |> halt()
     end
   end
+
+  def resend_verification(conn, %{"email" => email}) do
+    with {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
+      Email.confirm_email(user) |> Mailer.deliver_later()
+
+      conn
+      |> put_status(:accepted)
+      |> render("user_status.json", user: user)
+    end
+  end
+
+  def forgot_password(conn, %{"email" => email}) do
+    with {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
+      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
+      Email.password_reset_email(user, token) |> Mailer.deliver_later()
+
+      conn
+      |> put_status(:accepted)
+      |> render("user_status.json", user: user)
+    end
+  end
 end
