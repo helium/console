@@ -6,8 +6,10 @@ defmodule Console.ChannelsTest do
   describe "channels" do
     alias Console.Channels.Channel
 
-    @valid_attrs %{active: true, credentials: "some credentials", name: "some name", type: "some type"}
-    @update_attrs %{active: false, credentials: "some updated credentials", name: "some updated name", type: "some updated type"}
+    @valid_creds %{"a field" => "a value"}
+    @updated_creds %{"a field" => "a value", "another field" => "another value"}
+    @valid_attrs %{active: true, credentials: @valid_creds, name: "some name", type: "some type"}
+    @update_attrs %{active: false, credentials: @updated_creds, name: "some updated name", type: "some updated type"}
     @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
     def channel_fixture(attrs \\ %{}) do
@@ -32,7 +34,7 @@ defmodule Console.ChannelsTest do
     test "create_channel/1 with valid data creates a channel" do
       assert {:ok, %Channel{} = channel} = Channels.create_channel(@valid_attrs)
       assert channel.active == true
-      assert channel.credentials == "some credentials"
+      assert channel.credentials == @valid_creds
       assert channel.name == "some name"
       assert channel.type == "some type"
     end
@@ -46,7 +48,7 @@ defmodule Console.ChannelsTest do
       assert {:ok, channel} = Channels.update_channel(channel, @update_attrs)
       assert %Channel{} = channel
       assert channel.active == false
-      assert channel.credentials == "some updated credentials"
+      assert channel.credentials == @updated_creds
       assert channel.name == "some updated name"
       assert channel.type == "some updated type"
     end

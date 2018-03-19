@@ -7,14 +7,9 @@ defmodule ConsoleWeb.ChannelControllerTest do
   import ConsoleWeb.Guardian
   import Console.Factory
 
-  @create_attrs %{active: true, credentials: "some credentials", name: "some name", type: "some type"}
-  @update_attrs %{active: false, credentials: "some updated credentials", name: "some updated name", type: "some updated type"}
+  @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "some type"}
+  @update_attrs %{active: false, credentials: %{"a" => "c"}, name: "some updated name", type: "some updated type"}
   @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
-
-  def fixture(:channel) do
-    {:ok, channel} = Channels.create_channel(@create_attrs)
-    channel
-  end
 
   describe "index" do
     setup [:authenticate_user]
@@ -34,7 +29,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(conn, 201)["data"] == %{
         "id" => id,
         "active" => true,
-        "credentials" => "some credentials",
+        "credentials" => %{"a" => "b"},
         "name" => "some name",
         "type" => "some type"}
     end
@@ -53,7 +48,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
         "active" => false,
-        "credentials" => "some updated credentials",
+        "credentials" => %{"a" => "c"},
         "name" => "some updated name",
         "type" => "some updated type"}
     end
@@ -83,7 +78,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
   end
 
   defp create_channel(_) do
-    channel = fixture(:channel)
+    channel = insert(:channel)
     {:ok, channel: channel}
   end
 end
