@@ -1,5 +1,5 @@
 %{
-  "bamboo": {:hex, :bamboo, "1.0.0-rc.2", "633ff63faf2a6ad17871a7dca2c75390761c33c7f811d0d09a1827aaa21ce164", [:mix], [{:hackney, "~> 1.7", [hex: :hackney, repo: "hexpm", optional: false]}, {:plug, "~> 1.0", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, ">= 1.5.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm"},
+  "bamboo": {:git, "https://github.com/thoughtbot/bamboo.git", "a238ce017bdf92d6865d907cd7030533d86fd09e", []},
   "base64url": {:hex, :base64url, "0.0.1", "36a90125f5948e3afd7be97662a1504b934dd5dac78451ca6e9abf85a10286be", [:rebar], [], "hexpm"},
   "bcrypt_elixir": {:hex, :bcrypt_elixir, "1.0.6", "58a865939b3106d5ad4841f660955b958be6db955dda034fbbc1069dbacb97fa", [:make, :mix], [{:elixir_make, "~> 0.4", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm"},
   "certifi": {:hex, :certifi, "2.0.0", "a0c0e475107135f76b8c1d5bc7efb33cd3815cb3cf3dea7aefdd174dabead064", [:rebar3], [], "hexpm"},

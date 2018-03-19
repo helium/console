@@ -44,7 +44,7 @@ defmodule Console.Mixfile do
       {:comeonin, "~> 4.0"},
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.0"},
-      {:bamboo, "~> 1.0.0-rc.2"},
+      {:bamboo, github: "thoughtbot/bamboo"},
       {:ex_machina, "~> 2.2", only: :test}
     ]
   end
