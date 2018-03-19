@@ -19,6 +19,7 @@ defmodule ConsoleWeb.Router do
     post "/users", UserController, :create
     post "/users/resend_verification", UserController, :resend_verification
     post "/users/forgot_password", UserController, :forgot_password
+    post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
   end
 

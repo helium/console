@@ -13,6 +13,7 @@ import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ResendVerification from './ResendVerification.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
+import ResetPassword from './ResetPassword.jsx';
 import Home from './Home.jsx';
 import Secret from './Secret.jsx';
 import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
@@ -42,6 +43,7 @@ class ReactApp extends React.Component {
               <Route path="/login" component={Login}/>
               <Route path="/resend_verification" component={ResendVerification}/>
               <Route path="/forgot_password" component={ForgotPassword}/>
+              <Route path="/reset_password/:token" component={ResetPassword}/>
               <Route path="/register" component={Register}/>
               <Route path="/confirm_email" component={ConfirmEmailPrompt}/>
               <PrivateRoute path="/secret" component={Secret}/>
