@@ -6,7 +6,7 @@ defmodule Console.Factory do
   def user_factory do
     %User{
       email: sequence(:email, &"email-#{&1}@example.com"),
-      password: "pa$$word",
+      password_hash: "pa$$word ha$h",
       confirmed_at: DateTime.utc_now()
     }
   end
