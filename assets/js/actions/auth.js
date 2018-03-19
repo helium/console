@@ -5,6 +5,7 @@ export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
 export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
+export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 
 export const logIn = (email, password) => {
@@ -54,6 +55,22 @@ export const forgotPassword = (email) => {
   }
 }
 
+export const changePassword = (password, passwordConfirm, token) => {
+  return (dispatch) => {
+    rest.post('/api/users/change_password', {
+        user: {
+          token,
+          password,
+          password_confirmation: passwordConfirm
+        }
+      })
+      .then(response => {
+        return dispatch(resetPassword())
+      })
+      .then(() => dispatch(push('/login')))
+  }
+}
+
 export const resendVerification = (email) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
@@ -87,6 +104,12 @@ const registered = () => {
 const sentPassword = () => {
   return {
     type: SENT_PASSWORD
+  }
+}
+
+const resetPassword = () => {
+  return {
+    type: RESET_PASSWORD
   }
 }
 
