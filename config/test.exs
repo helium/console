@@ -21,5 +21,12 @@ config :console, Console.Repo,
 config :console, Console.Mailer,
   adapter: Bamboo.TestAdapter
 
+config :cloak, Cloak.AES.CTR,
+  tag: "AES",
+  default: true,
+  keys: [
+    %{tag: <<1>>, key: :base64.decode("/QCxhn/9t2SM8GiLXVDR1jFO/vENLGCnXADGAhGPM30="), default: true}
+  ]
+
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1

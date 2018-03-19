@@ -26,13 +26,6 @@ config :console, ConsoleWeb.Guardian,
        issuer: "console",
        secret_key: "SIc3vGaukN3p6I+o/r2SEmguIhCuSRVCR3RX4w+yLDDpDpJinc7m4SsahlgmsmwK"
 
-config :cloak, Cloak.AES.CTR,
-  tag: "AES",
-  default: true,
-  keys: [
-    %{tag: <<1>>, key: :base64.decode("/QCxhn/9t2SM8GiLXVDR1jFO/vENLGCnXADGAhGPM30="), default: true}
-  ]
-
 config :console, ConsoleWeb.AuthApiPipeline,
   module: ConsoleWeb.Guardian,
   error_handler: ConsoleWeb.AuthErrorHandler
