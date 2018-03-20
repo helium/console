@@ -5,6 +5,7 @@ defmodule ConsoleWeb.EventControllerTest do
   alias Console.Events.Event
 
   import Console.AuthHelper
+  import Console.Factory
 
   @create_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
   @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: ~N[2011-05-18 15:01:01.000000], rssi: 456.7, signal_strength: 43, status: "some updated status"}
@@ -28,13 +29,18 @@ defmodule ConsoleWeb.EventControllerTest do
     setup [:authenticate_user]
 
     test "renders event when data is valid", %{conn: conn} do
-      conn = post conn, event_path(conn, :create), event: @create_attrs
+      device = insert(:device)
+      attrs = params_for(:event, device_id: device.id)
+      conn = post conn, event_path(conn, :create), event: attrs
       %{"id" => id} = json_response(conn, 201)["data"]
 
       assert json_response(conn, 201)["data"] == %{
         "id" => id,
-        "description" => "some description",
-        "direction" => "inbound",
+        "channel_id" => nil,
+        "description" => "I am an event",
+        "device_id" => device.id,
+        "direction" => attrs.direction,
+        "gateway_id" => nil,
         "payload" => "some payload",
         "payload_size" => 42,
         "reported_at" => "2010-04-17T14:00:00.000000",
@@ -56,8 +62,11 @@ defmodule ConsoleWeb.EventControllerTest do
       conn = put conn, event_path(conn, :update, event), event: @update_attrs
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
+        "channel_id" => nil,
         "description" => "some updated description",
+        "device_id" => nil,
         "direction" => "outbound",
+        "gateway_id" => nil,
         "payload" => "some updated payload",
         "payload_size" => 43,
         "reported_at" => "2011-05-18T15:01:01.000000",

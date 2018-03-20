@@ -12,8 +12,11 @@ defmodule ConsoleWeb.EventView do
 
   def render("event.json", %{event: event}) do
     %{id: event.id,
+      channel_id: event.channel_id,
       description: event.description,
+      device_id: event.device_id,
       direction: event.direction,
+      gateway_id: event.gateway_id,
       payload: event.payload,
       payload_size: event.payload_size,
       reported_at: event.reported_at,
