@@ -1,10 +1,9 @@
 defmodule ConsoleWeb.ChannelControllerTest do
   use ConsoleWeb.ConnCase
 
-  alias Console.Channels
   alias Console.Channels.Channel
 
-  import ConsoleWeb.Guardian
+  import Console.AuthHelper
   import Console.Factory
 
   @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "some type"}
@@ -66,15 +65,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
       conn = delete conn, channel_path(conn, :delete, channel)
       assert response(conn, 204)
     end
-  end
-
-  defp authenticate_user(%{conn: conn}) do
-    user = insert(:user)
-    {:ok, token, _} = encode_and_sign(user, %{}, token_type: :access)
-    conn = conn
-           |> put_req_header("accept", "application/json")
-           |> put_req_header("authorization", "bearer: " <> token)
-    {:ok, conn: conn}
   end
 
   defp create_channel(_) do
