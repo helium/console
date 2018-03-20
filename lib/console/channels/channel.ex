@@ -2,6 +2,7 @@ defmodule Console.Channels.Channel do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Events.Event
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -11,6 +12,8 @@ defmodule Console.Channels.Channel do
     field :encryption_version, :binary
     field :name, :string
     field :type, :string
+
+    has_many :events, Event
 
     timestamps()
   end

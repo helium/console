@@ -4,8 +4,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
   alias Console.Devices
   alias Console.Devices.Device
 
-  import ConsoleWeb.Guardian
-  import Console.Factory
+  import Console.AuthHelper
 
   @create_attrs %{mac: "some mac", name: "some name", public_key: "some public_key"}
   @update_attrs %{mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
@@ -84,15 +83,6 @@ defmodule ConsoleWeb.DeviceControllerTest do
       conn = delete conn, device_path(conn, :delete, device)
       assert response(conn, 204)
     end
-  end
-
-  defp authenticate_user(%{conn: conn}) do
-    user = insert(:user)
-    {:ok, token, _} = encode_and_sign(user, %{}, token_type: :access)
-    conn = conn
-           |> put_req_header("accept", "application/json")
-           |> put_req_header("authorization", "bearer: " <> token)
-    {:ok, conn: conn}
   end
 
   defp create_device(_) do
