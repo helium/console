@@ -7,7 +7,6 @@ defmodule Console.Events do
   alias Console.Repo
 
   alias Console.Events.Event
-  alias Console.Devices.Device
 
   @doc """
   Returns the list of events.
@@ -43,7 +42,7 @@ defmodule Console.Events do
   end
 
   def fetch_assoc(%Event{} = event) do
-    Repo.preload(event, :device)
+    Repo.preload(event, [:device, :gateway])
   end
 
   @doc """

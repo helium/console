@@ -43,12 +43,14 @@ defmodule Console.EventsTest do
       assert event.status == "some status"
     end
 
-    test "create_event/1 with device to associate" do
+    test "create_event/1 with device and gateway to associate" do
       device = insert(:device)
-      attrs = params_for(:event, device: device)
+      gateway = insert(:gateway)
+      attrs = params_for(:event, device: device, gateway: gateway)
       {:ok, event} = Events.create_event(attrs)
       event = Events.fetch_assoc(event)
       assert event.device.id == device.id
+      assert event.gateway.id == gateway.id
     end
 
     test "create_event/1 with invalid data returns error changeset" do
