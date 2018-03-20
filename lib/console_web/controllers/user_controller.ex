@@ -45,7 +45,7 @@ defmodule ConsoleWeb.UserController do
 
   def forgot_password(conn, %{"email" => email}) do
     with {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
-      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :minute})
+      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
       Email.password_reset_email(user, token) |> Mailer.deliver_later()
 
       conn

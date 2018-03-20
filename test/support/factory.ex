@@ -12,6 +12,14 @@ defmodule Console.Factory do
     }
   end
 
+  def unconfirmedUser_factory do
+    %User{
+      email: sequence(:email, &"email-#{&1}@example.com"),
+      password_hash: "pa$$word ha$h",
+      confirmation_token: "CoNfIrMaTiOnToKeN"
+    }
+  end
+
   def channel_factory do
     %Channel{
       active: true,
