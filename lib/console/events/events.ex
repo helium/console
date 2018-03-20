@@ -42,7 +42,7 @@ defmodule Console.Events do
   end
 
   def fetch_assoc(%Event{} = event) do
-    Repo.preload(event, [:device, :gateway])
+    Repo.preload(event, [:device, :gateway, :channel])
   end
 
   @doc """

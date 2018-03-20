@@ -4,6 +4,7 @@ defmodule Console.Events.Event do
 
   alias Console.Devices.Device
   alias Console.Gateways.Gateway
+  alias Console.Channels.Channel
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -18,7 +19,7 @@ defmodule Console.Events.Event do
     field(:status, :string)
     belongs_to(:device, Device)
     belongs_to(:gateway, Gateway)
-    field(:channel_id, :binary_id)
+    belongs_to(:channel, Channel)
 
     timestamps()
   end
@@ -36,7 +37,8 @@ defmodule Console.Events.Event do
       :signal_strength,
       :status,
       :device_id,
-      :gateway_id
+      :gateway_id,
+      :channel_id
     ])
   end
 end
