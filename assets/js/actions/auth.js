@@ -8,9 +8,10 @@ export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 
-export const logIn = (email, password) => {
+export const logIn = (email, password, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
+        recaptcha,
         session: {
           email,
           password
@@ -28,9 +29,10 @@ export const logOut = () => {
   }
 }
 
-export const register = (email, password, passwordConfirm) => {
+export const register = (email, password, passwordConfirm, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users', {
+        recaptcha,
         user: {
           email,
           password,
@@ -44,9 +46,10 @@ export const register = (email, password, passwordConfirm) => {
   }
 }
 
-export const forgotPassword = (email) => {
+export const forgotPassword = (email, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users/forgot_password', {
+        recaptcha,
         email
       })
       .then(response => {
@@ -71,9 +74,10 @@ export const changePassword = (password, passwordConfirm, token) => {
   }
 }
 
-export const resendVerification = (email) => {
+export const resendVerification = (email, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
+        recaptcha,
         email
       })
       .then(response => {
