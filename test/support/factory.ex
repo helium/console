@@ -52,7 +52,8 @@ defmodule Console.Factory do
 
   def event_factory do
     %Event{
-      description: "an event"
+      description: "an event",
+      direction: sequence(:direction, ~w(inbound outbound))
     }
   end
 end

@@ -8,9 +8,9 @@ defmodule Console.EventsTest do
   describe "events" do
     alias Console.Events.Event
 
-    @valid_attrs %{description: "some description", direction: "some direction", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
-    @update_attrs %{description: "some updated description", direction: "some updated direction", payload: "some updated payload", payload_size: 43, reported_at: ~N[2011-05-18 15:01:01.000000], rssi: 456.7, signal_strength: 43, status: "some updated status"}
-    @invalid_attrs %{description: nil, direction: nil, payload: nil, payload_size: nil, reported_at: nil, rssi: nil, signal_strength: nil, status: nil}
+    @valid_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
+    @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: ~N[2011-05-18 15:01:01.000000], rssi: 456.7, signal_strength: 43, status: "some updated status"}
+    @invalid_attrs %{description: nil, direction: "invalid direction", payload: nil, payload_size: nil, reported_at: nil, rssi: nil, signal_strength: nil, status: nil}
 
     def event_fixture(attrs \\ %{}) do
       {:ok, event} =
@@ -34,7 +34,7 @@ defmodule Console.EventsTest do
     test "create_event/1 with valid data creates a event" do
       assert {:ok, %Event{} = event} = Events.create_event(@valid_attrs)
       assert event.description == "some description"
-      assert event.direction == "some direction"
+      assert event.direction == "inbound"
       assert event.payload == "some payload"
       assert event.payload_size == 42
       assert event.reported_at == ~N[2010-04-17 14:00:00.000000]
@@ -64,7 +64,7 @@ defmodule Console.EventsTest do
       assert {:ok, event} = Events.update_event(event, @update_attrs)
       assert %Event{} = event
       assert event.description == "some updated description"
-      assert event.direction == "some updated direction"
+      assert event.direction == "outbound"
       assert event.payload == "some updated payload"
       assert event.payload_size == 43
       assert event.reported_at == ~N[2011-05-18 15:01:01.000000]

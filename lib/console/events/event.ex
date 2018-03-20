@@ -40,5 +40,7 @@ defmodule Console.Events.Event do
       :gateway_id,
       :channel_id
     ])
+    |> validate_required([:direction])
+    |> validate_inclusion(:direction, ~w(inbound outbound))
   end
 end
