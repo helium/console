@@ -2,6 +2,7 @@ defmodule Console.Events.Event do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Devices.Device
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -14,7 +15,7 @@ defmodule Console.Events.Event do
     field :rssi, :float
     field :signal_strength, :integer
     field :status, :string
-    field :device_id, :binary_id
+    belongs_to :device, Device
     field :gateway_id, :binary_id
     field :channel_id, :binary_id
 
@@ -24,7 +25,8 @@ defmodule Console.Events.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:description, :direction, :payload, :payload_size, :reported_at, :rssi, :signal_strength, :status])
-    |> validate_required([:description, :direction, :payload, :payload_size, :reported_at, :rssi, :signal_strength, :status])
+    |> cast(attrs, [:description, :direction, :payload, :payload_size,
+                    :reported_at, :rssi, :signal_strength, :status, :device_id])
+  # |> validate_required([:description, :direction, :payload, :payload_size, :reported_at, :rssi, :signal_strength, :status])
   end
 end

@@ -2,6 +2,8 @@ defmodule Console.Devices.Device do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Events.Event
+
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -9,6 +11,8 @@ defmodule Console.Devices.Device do
     field :mac, :string
     field :name, :string
     field :public_key, :binary
+
+    has_many :events, Event
 
     timestamps()
   end

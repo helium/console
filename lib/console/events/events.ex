@@ -7,6 +7,7 @@ defmodule Console.Events do
   alias Console.Repo
 
   alias Console.Events.Event
+  alias Console.Devices.Device
 
   @doc """
   Returns the list of events.
@@ -36,6 +37,14 @@ defmodule Console.Events do
 
   """
   def get_event!(id), do: Repo.get!(Event, id)
+
+  def last do
+    from(e in Event, order_by: [desc: e.inserted_at]) |> Repo.one()
+  end
+
+  def fetch_assoc(%Event{} = event) do
+    Repo.preload(event, :device)
+  end
 
   @doc """
   Creates a event.

@@ -3,6 +3,8 @@ defmodule Console.EventsTest do
 
   alias Console.Events
 
+  import Console.Factory
+
   describe "events" do
     alias Console.Events.Event
 
@@ -39,6 +41,14 @@ defmodule Console.EventsTest do
       assert event.rssi == 120.5
       assert event.signal_strength == 42
       assert event.status == "some status"
+    end
+
+    test "create_event/1 with device to associate" do
+      device = insert(:device)
+      attrs = params_for(:event, device: device)
+      {:ok, event} = Events.create_event(attrs)
+      event = Events.fetch_assoc(event)
+      assert event.device.id == device.id
     end
 
     test "create_event/1 with invalid data returns error changeset" do
