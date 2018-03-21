@@ -1,35 +1,31 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import Event from './Event'
 import socket from './socket'
+import { fetchEvents, receivedEvent } from './actions/event'
 
 class Events extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      events: []
-    }
   }
 
   componentDidMount() {
+    const { fetchEvents, receivedEvent } = this.props
+
     let channel = socket.channel("event:all", {})
     channel.join()
       .receive("ok", resp => { console.log("Joined successfully", resp) })
       .receive("error", resp => { console.log("Unable to join", resp) })
 
-    channel.on("new", event => {
-      const { events } = this.state
-      this.setState({
-        events: events.concat(event)
-      })
-    })
+    channel.on("new", event => receivedEvent(event))
 
-    // TODO fetch events
+    fetchEvents()
   }
 
   render() {
-    const { events } = this.state
+    const { events } = this.props
 
     return(
       <div>
@@ -43,4 +39,14 @@ class Events extends Component {
   }
 }
 
-export default Events
+function mapStateToProps(state) {
+  return {
+    events: state.event.events
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ fetchEvents, receivedEvent }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Events);
