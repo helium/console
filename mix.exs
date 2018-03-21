@@ -46,7 +46,8 @@ defmodule Console.Mixfile do
       {:guardian, "~> 1.0"},
       {:bamboo, github: "thoughtbot/bamboo"},
       {:ex_machina, "~> 2.2", only: :test},
-      {:cloak, "~> 0.6.1"}
+      {:cloak, "~> 0.6.1"},
+      {:httpoison, "~> 1.0"}
     ]
   end
 

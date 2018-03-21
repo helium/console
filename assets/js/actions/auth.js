@@ -7,10 +7,13 @@ export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
+export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
+export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 
-export const logIn = (email, password) => {
+export const logIn = (email, password, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
+        recaptcha,
         session: {
           email,
           password
@@ -19,6 +22,8 @@ export const logIn = (email, password) => {
       .then(response => {
         return dispatch(loggedIn(response.data.jwt))
       })
+      .then(() => dispatch(push('/secret')))
+      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -28,9 +33,10 @@ export const logOut = () => {
   }
 }
 
-export const register = (email, password, passwordConfirm) => {
+export const register = (email, password, passwordConfirm, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users', {
+        recaptcha,
         user: {
           email,
           password,
@@ -41,17 +47,21 @@ export const register = (email, password, passwordConfirm) => {
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
+      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
-export const forgotPassword = (email) => {
+export const forgotPassword = (email, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users/forgot_password', {
+        recaptcha,
         email
       })
       .then(response => {
         return dispatch(sentPassword())
       })
+      .then(() => dispatch(push('/')))
+      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -71,14 +81,29 @@ export const changePassword = (password, passwordConfirm, token) => {
   }
 }
 
-export const resendVerification = (email) => {
+export const resendVerification = (email, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
+        recaptcha,
         email
       })
       .then(response => {
         return dispatch(sentVerification())
       })
+      .then(() => dispatch(push('/')))
+      .catch(() => dispatch(shouldResetCaptcha()))
+  }
+}
+
+export const hasResetCaptcha = () => {
+  return {
+    type: HAS_RESET_CAPTCHA
+  }
+}
+
+export const shouldResetCaptcha = () => {
+  return {
+    type: SHOULD_RESET_CAPTCHA
   }
 }
 

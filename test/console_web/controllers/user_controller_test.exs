@@ -19,12 +19,12 @@ defmodule ConsoleWeb.UserControllerTest do
 
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), user: @create_attrs
+      conn = post conn, user_path(conn, :create), user: @create_attrs, recaptcha: "recaptcha"
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), user: @invalid_attrs
+      conn = post conn, user_path(conn, :create), user: @invalid_attrs, recaptcha: "recaptcha"
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -32,16 +32,16 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "resend verification email" do
     test "renders accepted when user has not been confirmed", %{conn: conn} do
       user = insert(:unconfirmedUser)
-      conn = post conn, user_path(conn, :resend_verification), email: user.email
+      conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
       assert "success" =  json_response(conn, 202)["status"]
     end
 
     test "renders error when user does not exist or is already confirmed", %{conn: conn} do
       user = insert(:user)
-      conn = post conn, user_path(conn, :resend_verification), email: user.email
+      conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
 
-      conn = post conn, user_path(conn, :resend_verification), email: @create_attrs.email
+      conn = post conn, user_path(conn, :resend_verification), email: @create_attrs.email, recaptcha: "recaptcha"
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
     end
   end
@@ -49,13 +49,13 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "forgot password email generation" do
     test "renders accepted when valid email is supplied", %{conn: conn} do
       user = insert(:user)
-      conn = post conn, user_path(conn, :forgot_password), email: user.email
+      conn = post conn, user_path(conn, :forgot_password), email: user.email, recaptcha: "recaptcha"
 
       assert "success" =  json_response(conn, 202)["status"]
     end
 
     test "renders error when user does not exist", %{conn: conn} do
-      conn = post conn, user_path(conn, :forgot_password), email: @create_attrs.email
+      conn = post conn, user_path(conn, :forgot_password), email: @create_attrs.email, recaptcha: "recaptcha"
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
     end
   end

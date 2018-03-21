@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { register } from './actions/auth.js';
+import { register, hasResetCaptcha } from './actions/auth.js';
+import config from './config/common.js';
+import Recaptcha from 'react-recaptcha';
 
 class Register extends Component {
   constructor(props) {
@@ -11,11 +13,20 @@ class Register extends Component {
     this.state = {
       email: "",
       password: "",
-      passwordConfirm: ""
+      passwordConfirm: "",
+      recaptcha: ""
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.shouldResetCaptcha) {
+      this.recaptchaInstance.reset()
+      this.props.hasResetCaptcha()
+    }
   }
 
   handleInputUpdate(e) {
@@ -24,13 +35,17 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password, passwordConfirm } = this.state;
+    const { email, password, passwordConfirm, recaptcha} = this.state;
 
     // if (password === passwordConfirm) {
-      this.props.register(email, password, passwordConfirm);
+      this.props.register(email, password, passwordConfirm, recaptcha);
     // } else {
       // window.alert("passwords do not match, please try again")
     // }
+  }
+
+  verifyRecaptcha(recaptcha) {
+    this.setState({ recaptcha })
   }
 
   render() {
@@ -44,6 +59,7 @@ class Register extends Component {
           <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
           <label>Confirm Password</label>
           <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
+          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
           <button type="submit">Register</button>
         </form>
         <Link to="/login"><p>Login Page</p></Link>
@@ -59,7 +75,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ register }, dispatch);
+  return bindActionCreators({ register, hasResetCaptcha }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);
