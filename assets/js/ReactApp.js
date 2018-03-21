@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
 import { Route, Redirect } from 'react-router';
 import PrivateRoute from './PrivateRoute.jsx';
+import PublicRoute from './PublicRoute.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
 import ResendVerification from './ResendVerification.jsx';
@@ -40,12 +41,12 @@ class ReactApp extends React.Component {
           <ConnectedRouter history={history}>
             <div>
               <Route exact path="/" component={Home}/>
-              <Route path="/login" component={Login}/>
-              <Route path="/resend_verification" component={ResendVerification}/>
-              <Route path="/forgot_password" component={ForgotPassword}/>
-              <Route path="/reset_password/:token" component={ResetPassword}/>
-              <Route path="/register" component={Register}/>
-              <Route path="/confirm_email" component={ConfirmEmailPrompt}/>
+              <PublicRoute path="/login" component={Login}/>
+              <PublicRoute path="/resend_verification" component={ResendVerification}/>
+              <PublicRoute path="/forgot_password" component={ForgotPassword}/>
+              <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
+              <PublicRoute path="/register" component={Register}/>
+              <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
               <PrivateRoute path="/secret" component={Secret}/>
             </div>
           </ConnectedRouter>

@@ -1,14 +1,45 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-const Home = () => {
-  return(
-    <div>
-      <h1>Home!</h1>
-      <Link to="/login">Log in</Link>
-      <Link to="/register">Register</Link>
-    </div>
-  )
+class Home extends Component {
+  constructor(props) {
+    super(props);
+
+    this.renderLinks = this.renderLinks.bind(this)
+  }
+
+  renderLinks() {
+    if (this.props.auth.isLoggedIn) {
+      return (
+        <div>
+          <Link to="/secret">Secret</Link>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Link to="/login">Log in</Link>
+          <Link to="/register">Register</Link>
+        </div>
+      )
+    }
+  }
+
+  render() {
+    return(
+      <div>
+        <h1>Home!</h1>
+        {this.renderLinks()}
+      </div>
+    )
+  }
 };
 
-export default Home;
+function mapStateToProps(state) {
+  return {
+    auth: state.auth
+  }
+}
+
+export default connect(mapStateToProps, {})(Home);
