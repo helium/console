@@ -60,7 +60,7 @@ export const forgotPassword = (email, recaptcha) => {
       .then(response => {
         return dispatch(sentPassword())
       })
-      .then(() => dispatch(push('/')))
+      .then(() => dispatch(push('/login')))
       .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
@@ -90,7 +90,7 @@ export const resendVerification = (email, recaptcha) => {
       .then(response => {
         return dispatch(sentVerification())
       })
-      .then(() => dispatch(push('/')))
+      .then(() => dispatch(push('/login')))
       .catch(() => dispatch(shouldResetCaptcha()))
   }
 }

@@ -41,7 +41,7 @@ defmodule ConsoleWeb.UserController do
 
         conn
         |> put_status(:accepted)
-        |> render("user_status.json", user: user)
+        |> render("user_status.json", action: "resend_verification", email: user.email)
     end
   end
 
@@ -53,7 +53,7 @@ defmodule ConsoleWeb.UserController do
 
         conn
         |> put_status(:accepted)
-        |> render("user_status.json", user: user)
+        |> render("user_status.json", action: "forgot_password", email: user.email)
     end
   end
 
@@ -75,7 +75,7 @@ defmodule ConsoleWeb.UserController do
     with {:ok, %User{} = user} <- Auth.change_password(user_params) do
       conn
       |> put_status(:accepted)
-      |> render("user_status.json", user: user)
+      |> render("user_status.json", action: "change_password", email: user.email)
     end
   end
 end
