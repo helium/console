@@ -27,7 +27,7 @@ class Secret extends Component {
       <div>
         <h2>Secret!</h2>
         <p>Your email is: {email}</p>
-        <Link to="/login">Back</Link>
+        <Link to="/">Home</Link>
         <button onClick={this.handleLogout}>Log Out</button>
       </div>
     );
