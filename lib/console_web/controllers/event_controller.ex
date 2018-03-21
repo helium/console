@@ -4,7 +4,7 @@ defmodule ConsoleWeb.EventController do
   alias Console.Events
   alias Console.Events.Event
 
-  action_fallback ConsoleWeb.FallbackController
+  action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, _params) do
     events = Events.list_events()
@@ -13,6 +13,8 @@ defmodule ConsoleWeb.EventController do
 
   def create(conn, %{"event" => event_params}) do
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
+      broadcast_event(event)
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", event_path(conn, :show, event))
@@ -35,8 +37,16 @@ defmodule ConsoleWeb.EventController do
 
   def delete(conn, %{"id" => id}) do
     event = Events.get_event!(id)
+
     with {:ok, %Event{}} <- Events.delete_event(event) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp broadcast_event(event) do
+    ConsoleWeb.Endpoint.broadcast("event:all", "new", %{
+      id: event.id,
+      description: event.description
+    })
   end
 end

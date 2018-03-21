@@ -2,7 +2,7 @@ defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", ConsoleWeb.RoomChannel
+  channel "event:*", ConsoleWeb.EventChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
