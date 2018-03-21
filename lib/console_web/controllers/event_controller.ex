@@ -44,9 +44,7 @@ defmodule ConsoleWeb.EventController do
   end
 
   defp broadcast_event(event) do
-    ConsoleWeb.Endpoint.broadcast("event:all", "new", %{
-      id: event.id,
-      description: event.description
-    })
+    body = ConsoleWeb.EventView.render("show.json", event: event)
+    ConsoleWeb.Endpoint.broadcast("event:all", "new", body)
   end
 end

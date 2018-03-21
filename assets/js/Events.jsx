@@ -19,7 +19,7 @@ class Events extends Component {
       .receive("ok", resp => { console.log("Joined successfully", resp) })
       .receive("error", resp => { console.log("Unable to join", resp) })
 
-    channel.on("new", event => receivedEvent(event))
+    channel.on("new", res => receivedEvent(res.data))
 
     fetchEvents()
   }
