@@ -10,12 +10,13 @@ defmodule ConsoleWeb.UserController do
   action_fallback ConsoleWeb.FallbackController
 
   def create(conn, %{"user" => user_params, "recaptcha" => recaptcha}) do
-    with {:ok, %User{} = user} <- Auth.create_user(user_params) do
-      Email.confirm_email(user) |> Mailer.deliver_later()
+    with true <- Auth.verify_captcha(recaptcha),
+      {:ok, %User{} = user} <- Auth.create_user(user_params) do
+        Email.confirm_email(user) |> Mailer.deliver_later()
 
-      conn
-      |> put_status(:created)
-      |> render("show.json", user: user)
+        conn
+        |> put_status(:created)
+        |> render("show.json", user: user)
     end
   end
 
@@ -34,23 +35,25 @@ defmodule ConsoleWeb.UserController do
   end
 
   def resend_verification(conn, %{"email" => email, "recaptcha" => recaptcha}) do
-    with {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
-      Email.confirm_email(user) |> Mailer.deliver_later()
+    with true <- Auth.verify_captcha(recaptcha),
+      {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
+        Email.confirm_email(user) |> Mailer.deliver_later()
 
-      conn
-      |> put_status(:accepted)
-      |> render("user_status.json", user: user)
+        conn
+        |> put_status(:accepted)
+        |> render("user_status.json", user: user)
     end
   end
 
   def forgot_password(conn, %{"email" => email, "recaptcha" => recaptcha}) do
-    with {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
-      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
-      Email.password_reset_email(user, token) |> Mailer.deliver_later()
+    with true <- Auth.verify_captcha(recaptcha),
+      {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
+        {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
+        Email.password_reset_email(user, token) |> Mailer.deliver_later()
 
-      conn
-      |> put_status(:accepted)
-      |> render("user_status.json", user: user)
+        conn
+        |> put_status(:accepted)
+        |> render("user_status.json", user: user)
     end
   end
 
