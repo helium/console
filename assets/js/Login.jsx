@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, clearCaptchaStatus } from './actions/auth.js';
+import { logIn, hasResetCaptcha } from './actions/auth.js';
+import config from './config/common.js';
 import Recaptcha from 'react-recaptcha';
 
 class Login extends Component {
@@ -21,9 +22,9 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.resetCaptcha) {
+    if (nextProps.auth.shouldResetCaptcha) {
       this.recaptchaInstance.reset()
-      this.props.clearCaptchaStatus()
+      this.props.hasResetCaptcha()
     }
   }
 
@@ -51,7 +52,7 @@ class Login extends Component {
           <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
           <label>Password</label>
           <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey="6Lew200UAAAAACN3_-tS_UvTcnhF2mlZCzzQ4Na5" verifyCallback={this.verifyRecaptcha}/>
+          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
           <button type="submit">Sign In</button>
         </form>
         <Link to="/secret"><p>Secret Page</p></Link>
@@ -70,7 +71,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, clearCaptchaStatus }, dispatch);
+  return bindActionCreators({ logIn, hasResetCaptcha }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

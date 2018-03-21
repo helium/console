@@ -83,19 +83,23 @@ defmodule Console.Auth do
   end
 
   def verify_captcha(recaptcha) do
-    body = {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
-    case HTTPoison.post "https://www.google.com/recaptcha/api/siteverify", body do
-      {:ok, response} ->
-        case response.status_code do
-          200 ->
-            responseBody = Poison.decode!(response.body)
-            case responseBody["success"] do
-              true -> true
-              _ -> {:error, :unauthorized, "Your Captcha code is invalid, please try again"} #if recaptcha does not process correctly or is a robot
-            end
-          _ -> {:error, :unauthorized, "An unexpected error has occurred, please try again"} #if google fails to respond correctly
-        end
-      _ -> {:error, :unauthorized, "An unexpected error has occured, please try again"} #if poison fails to send the request
+    if Application.get_env(:console, :env) === :test do
+      true
+    else
+      body = {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
+      case HTTPoison.post "https://www.google.com/recaptcha/api/siteverify", body do
+        {:ok, response} ->
+          case response.status_code do
+            200 ->
+              responseBody = Poison.decode!(response.body)
+              case responseBody["success"] do
+                true -> true
+                _ -> {:error, :unauthorized, "Your Captcha code is invalid, please try again"} #if recaptcha does not process correctly or is a robot
+              end
+            _ -> {:error, :unauthorized, "An unexpected error has occurred, please try again"} #if google fails to respond correctly
+          end
+        _ -> {:error, :unauthorized, "An unexpected error has occured, please try again"} #if poison fails to send the request
+      end
     end
   end
 
