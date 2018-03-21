@@ -7,6 +7,8 @@ export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
+export const RESET_CAPTCHA = "RESET_CAPTCHA";
+export const CLEAR_CAPTCHA_STATUS = "CLEAR_CAPTCHA_STATUS";
 
 export const logIn = (email, password, recaptcha) => {
   return (dispatch) => {
@@ -20,6 +22,8 @@ export const logIn = (email, password, recaptcha) => {
       .then(response => {
         return dispatch(loggedIn(response.data.jwt))
       })
+      .then(() => dispatch(push('/secret')))
+      .catch(() => dispatch(resetCaptcha()))
   }
 }
 
@@ -43,6 +47,7 @@ export const register = (email, password, passwordConfirm, recaptcha) => {
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
+      .catch(() => dispatch(resetCaptcha()))
   }
 }
 
@@ -55,6 +60,8 @@ export const forgotPassword = (email, recaptcha) => {
       .then(response => {
         return dispatch(sentPassword())
       })
+      .then(() => dispatch(push('/')))
+      .catch(() => dispatch(resetCaptcha()))
   }
 }
 
@@ -83,6 +90,20 @@ export const resendVerification = (email, recaptcha) => {
       .then(response => {
         return dispatch(sentVerification())
       })
+      .then(() => dispatch(push('/')))
+      .catch(() => dispatch(resetCaptcha()))
+  }
+}
+
+export const clearCaptchaStatus = () => {
+  return {
+    type: CLEAR_CAPTCHA_STATUS
+  }
+}
+
+export const resetCaptcha = () => {
+  return {
+    type: RESET_CAPTCHA
   }
 }
 

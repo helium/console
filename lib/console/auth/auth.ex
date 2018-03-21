@@ -83,7 +83,7 @@ defmodule Console.Auth do
   end
 
   def verify_captcha(recaptcha) do
-    body = {:form, [secret: "6Lew200UAAAAAA-Z2uxdyuC2RrdCjCpuncsXzCh3", response: recaptcha]}
+    body = {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
     case HTTPoison.post "https://www.google.com/recaptcha/api/siteverify", body do
       {:ok, response} ->
         case response.status_code do
