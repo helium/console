@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Event from './Event'
-import socket from './socket'
+import { Socket } from 'phoenix'
 import { fetchEvents, receivedEvent } from './actions/event'
 
 class Events extends Component {
@@ -12,7 +11,10 @@ class Events extends Component {
   }
 
   componentDidMount() {
-    const { fetchEvents, receivedEvent } = this.props
+    const { fetchEvents, receivedEvent, apikey } = this.props
+
+    let socket = new Socket("/socket", {params: {token: apikey}})
+    socket.connect()
 
     let channel = socket.channel("event:all", {})
     channel.join()
@@ -41,7 +43,8 @@ class Events extends Component {
 
 function mapStateToProps(state) {
   return {
-    events: state.event.events
+    events: state.event.events,
+    apikey: state.auth.apikey
   }
 }
 

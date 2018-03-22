@@ -2,6 +2,7 @@ defmodule ConsoleWeb.EventChannel do
   use Phoenix.Channel
 
   def join("event:all", _message, socket) do
+    # current_user = Guardian.Phoenix.Socket.current_resource(socket)
     {:ok, socket}
   end
 

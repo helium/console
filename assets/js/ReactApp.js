@@ -17,7 +17,7 @@ import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Home from './Home.jsx';
 import Secret from './Secret.jsx';
-import Events from './Events.jsx';
+import Events from './Events';
 import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
 
 class ReactApp extends React.Component {
