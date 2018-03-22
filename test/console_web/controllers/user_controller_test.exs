@@ -33,7 +33,7 @@ defmodule ConsoleWeb.UserControllerTest do
     test "renders accepted when user has not been confirmed", %{conn: conn} do
       user = insert(:unconfirmedUser)
       conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
-      assert "success" =  json_response(conn, 202)["status"]
+      assert json_response(conn, 202)
     end
 
     test "renders error when user does not exist or is already confirmed", %{conn: conn} do
@@ -51,7 +51,7 @@ defmodule ConsoleWeb.UserControllerTest do
       user = insert(:user)
       conn = post conn, user_path(conn, :forgot_password), email: user.email, recaptcha: "recaptcha"
 
-      assert "success" =  json_response(conn, 202)["status"]
+      assert json_response(conn, 202)
     end
 
     test "renders error when user does not exist", %{conn: conn} do

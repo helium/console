@@ -13,7 +13,8 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
-    if (response.data && response.data.status === "success") displayInfo(response.data.action)
+    if (response.status >= 200 && response.status < 300 &&
+      response.data && response.data.success_message !== undefined) displayInfo(response.data.success_message)
     return response
   },
   error => {
@@ -29,17 +30,11 @@ axios.interceptors.response.use(
 )
 
 const displayInfo = (msg) => {
-  let text = ""
-
-  if (msg === "resend_verification") text = "Your verification email has been resent, please check your email"
-  else if (msg === "forgot_password") text = "Your password reset email has been sent, please check your email"
-  else if (msg === "change_password") text = "Your password has been changed successfully, please login with your new credentials"
-
-  if (text.length > 0) {
+  if (msg) {
     const config = {
       theme: 'relax',
       type: 'success',
-      text,
+      text: msg,
       timeout: 5000
     }
 
