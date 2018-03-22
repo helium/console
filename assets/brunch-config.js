@@ -66,7 +66,8 @@ exports.config = {
     enabled: true,
     whitelist: ["phoenix", "phoenix_html", "react", "react-dom"],
     styles: {
-      noty: ["lib/noty.css", "lib/themes/relax.css"]
+      noty: ["lib/noty.css", "lib/themes/relax.css"],
+      "react-table": ["react-table.css"]
     }
   }
 };
