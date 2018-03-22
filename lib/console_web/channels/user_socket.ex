@@ -2,10 +2,10 @@ defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", ConsoleWeb.RoomChannel
+  channel("event:*", ConsoleWeb.EventChannel)
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
@@ -19,8 +19,18 @@ defmodule ConsoleWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
+  def connect(%{"token" => token}, socket) do
+    case Guardian.Phoenix.Socket.authenticate(socket, ConsoleWeb.Guardian, token) do
+      {:ok, authed_socket} ->
+        {:ok, authed_socket}
+
+      {:error, _} ->
+        :error
+    end
+  end
+
   def connect(_params, socket) do
-    {:ok, socket}
+    :error
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

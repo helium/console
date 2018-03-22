@@ -17,6 +17,7 @@ import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Home from './Home.jsx';
 import Secret from './Secret.jsx';
+import Events from './Events';
 import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
 
 class ReactApp extends React.Component {
@@ -48,6 +49,7 @@ class ReactApp extends React.Component {
               <PublicRoute path="/register" component={Register}/>
               <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
               <PrivateRoute path="/secret" component={Secret}/>
+              <PrivateRoute path="/events" component={Events}/>
             </div>
           </ConnectedRouter>
         </PersistGate>
