@@ -51,6 +51,12 @@ defmodule Console.Auth.User do
     |> put_password_hash
   end
 
+  def generate_new_confirmation_changeset(user) do
+    user
+    |> changeset()
+    |> put_confirmation_token()
+  end
+
   defp put_password_hash(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->

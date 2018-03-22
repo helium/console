@@ -58,7 +58,7 @@ defmodule Console.Auth do
       nil -> {:error, :not_found, "The email address you have entered is not valid"}
       user ->
         case user.confirmed_at do
-          nil -> {:ok, user}
+           nil -> generate_new_confirmation_token(user)
           _ -> {:error, :not_found, "The email address you have entered is not valid"}
         end
     end
@@ -132,6 +132,12 @@ defmodule Console.Auth do
   defp confirm_password_change(user, attrs) do
     user
     |> User.change_password_changeset(attrs)
+    |> Repo.update()
+  end
+
+  defp generate_new_confirmation_token(user) do
+    user
+    |> User.generate_new_confirmation_changeset()
     |> Repo.update()
   end
 end

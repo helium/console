@@ -13,6 +13,8 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
+    if (response.status >= 200 && response.status < 300 &&
+      response.data && response.data.success_message !== undefined) displayInfo(response.data.success_message)
     return response
   },
   error => {
@@ -26,6 +28,19 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 )
+
+const displayInfo = (msg) => {
+  if (msg) {
+    const config = {
+      theme: 'relax',
+      type: 'success',
+      text: msg,
+      timeout: 5000
+    }
+
+    new Noty(config).show()
+  }
+}
 
 const displayError = (errorMsg) => {
   const config = {
