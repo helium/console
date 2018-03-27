@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, hasResetCaptcha } from './actions/auth.js';
-import config from './config/common.js';
+import { forgotPassword, hasResetCaptcha } from '../../actions/auth.js';
+import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
 
-class Login extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       email: "",
-      password: "",
       recaptcha: ""
     };
 
@@ -34,9 +33,9 @@ class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password, recaptcha } = this.state;
+    const { email, recaptcha } = this.state;
 
-    this.props.logIn(email, password, recaptcha);
+    this.props.forgotPassword(email, recaptcha);
   }
 
   verifyRecaptcha(recaptcha) {
@@ -46,19 +45,14 @@ class Login extends Component {
   render() {
     return(
       <div>
-        <h2>Sign in</h2>
+        <h2>Enter your email</h2>
         <form onSubmit={this.handleSubmit}>
           <label>Email</label>
           <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          <label>Password</label>
-          <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
           <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
-          <button type="submit">Sign In</button>
+          <button type="submit">Send Email</button>
         </form>
-        <Link to="/secret"><p>Secret Page</p></Link>
-        <Link to="/register"><p>Register Page</p></Link>
-        <Link to="/forgot_password"><p>Forgot Password</p></Link>
-        <Link to="/resend_verification"><p>Resend Verification</p></Link>
+        <Link to="/login"><p>Login Page</p></Link>
       </div>
     );
   }
@@ -71,7 +65,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, hasResetCaptcha }, dispatch);
+  return bindActionCreators({ forgotPassword, hasResetCaptcha }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);

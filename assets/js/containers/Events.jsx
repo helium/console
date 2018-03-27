@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
-import { fetchEvents, receivedEvent } from './actions/event'
+import { fetchEvents, receivedEvent } from '../actions/event'
 
 class Events extends Component {
   constructor(props) {

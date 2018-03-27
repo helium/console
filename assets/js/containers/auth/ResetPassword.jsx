@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { changePassword } from './actions/auth.js';
+import { changePassword } from '../../actions/auth.js';
 
 class ResetPassword extends Component {
   constructor(props) {

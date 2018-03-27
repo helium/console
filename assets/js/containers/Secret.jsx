@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchUser } from './actions/user.js';
-import { logOut } from './actions/auth.js';
+import { fetchUser } from '../actions/user.js';
+import { logOut } from '../actions/auth.js';
 import QRCode from 'qrcode.react';
 
 class Secret extends Component {
