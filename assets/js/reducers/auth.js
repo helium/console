@@ -9,13 +9,13 @@ const initialState = {
 const auth = (state = initialState, action) => {
   switch(action.type) {
     case LOGGED_IN:
-      return { isLoggedIn: true, apikey: action.apikey, shouldResetCaptcha: state.shouldResetCaptcha };
+      return { ...state, isLoggedIn: true, apikey: action.apikey };
     case LOGGED_OUT:
-      return { isLoggedIn: false, apikey: null, shouldResetCaptcha: state.shouldResetCaptcha };
+      return { ...state, isLoggedIn: false, apikey: null };
     case HAS_RESET_CAPTCHA:
-      return { isLoggedIn: state.isLoggedIn, apikey: state.apikey, shouldResetCaptcha: false };
+      return { ...state, shouldResetCaptcha: false };
     case SHOULD_RESET_CAPTCHA:
-      return { isLoggedIn: state.isLoggedIn, apikey: state.apikey, shouldResetCaptcha: true };
+      return { ...state, shouldResetCaptcha: true };
     default:
       return state;
   }

@@ -13,12 +13,15 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      recaptcha: ""
+      recaptcha: "",
+      twoFactorCode: ""
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
+    this.renderForm = this.renderForm.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,14 +42,29 @@ class Login extends Component {
     this.props.logIn(email, password, recaptcha);
   }
 
+  handleTwoFactorSubmit(e) {
+    e.preventDefault();
+    const { twoFactorCode } = this.state;
+
+    // this.props.checkCredentials(email, password, recaptcha);
+    console.log(twoFactorCode)
+  }
+
   verifyRecaptcha(recaptcha) {
     this.setState({ recaptcha })
   }
 
-  render() {
-    return(
-      <div>
-        <h2>Sign in</h2>
+  renderForm() {
+    // if (this.props.auth.validCredentials) {
+    //   return (
+    //     <form onSubmit={this.handleTwoFactorSubmit}>
+    //       <label>2FA Code</label>
+    //       <input type="twoFactorCode" name ="twoFactorCode" value={this.state.twoFactorCode} onChange={this.handleInputUpdate} />
+    //       <button type="submit">Submit</button>
+    //     </form>
+    //   )
+    // } else {
+      return (
         <form onSubmit={this.handleSubmit}>
           <label>Email</label>
           <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
@@ -55,6 +73,15 @@ class Login extends Component {
           <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
           <button type="submit">Sign In</button>
         </form>
+      )
+    // }
+  }
+
+  render() {
+    return(
+      <div>
+        <h2>Sign in</h2>
+        {this.renderForm()}
         <Link to="/secret"><p>Secret Page</p></Link>
         <Link to="/register"><p>Register Page</p></Link>
         <Link to="/forgot_password"><p>Forgot Password</p></Link>

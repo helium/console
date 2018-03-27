@@ -8,16 +8,16 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
 import { Route, Redirect } from 'react-router';
-import PrivateRoute from './containers/routes/PrivateRoute.jsx';
-import PublicRoute from './containers/routes/PublicRoute.jsx';
-import Login from './containers/auth/Login.jsx';
-import Register from './containers/auth/Register.jsx';
-import ResendVerification from './containers/auth/ResendVerification.jsx';
-import ForgotPassword from './containers/auth/ForgotPassword.jsx';
-import ResetPassword from './containers/auth/ResetPassword.jsx';
-import Home from './containers/Home.jsx';
-import Secret from './containers/Secret.jsx';
-import Events from './containers/Events';
+import PrivateRoute from './components/routes/PrivateRoute.jsx';
+import PublicRoute from './components/routes/PublicRoute.jsx';
+import Login from './components/auth/Login.jsx';
+import Register from './components/auth/Register.jsx';
+import ResendVerification from './components/auth/ResendVerification.jsx';
+import ForgotPassword from './components/auth/ForgotPassword.jsx';
+import ResetPassword from './components/auth/ResetPassword.jsx';
+import Home from './components/Home.jsx';
+import Secret from './components/Secret.jsx';
+import Events from './components/Events';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 
 class Router extends React.Component {
