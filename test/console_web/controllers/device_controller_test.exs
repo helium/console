@@ -4,7 +4,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
   alias Console.Devices
   alias Console.Devices.Device
 
-  import Console.AuthHelper
+  import Console.FactoryHelper
 
   @create_attrs %{mac: "some mac", name: "some name", public_key: "some public_key"}
   @update_attrs %{mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
@@ -33,9 +33,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert json_response(conn, 201)["data"] == %{
         "id" => id,
         "mac" => "some mac",
-        "name" => "some name",
-        "public_key" => "some public_key"}
-
+        "name" => "some name" }
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -52,9 +50,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
         "mac" => "some mac",
-        "name" => "some name",
-        "public_key" => "some public_key"}
-
+        "name" => "some name" }
     end
   end
 
@@ -66,8 +62,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
         "mac" => "some updated mac",
-        "name" => "some updated name",
-        "public_key" => "some updated public_key"}
+        "name" => "some updated name" }
     end
 
     test "renders errors when data is invalid", %{conn: conn, device: device} do

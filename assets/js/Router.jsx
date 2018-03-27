@@ -7,7 +7,8 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 // Routes
 import { Provider } from 'react-redux';
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
-import { Route, Redirect } from 'react-router';
+import { Redirect } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './components/routes/PrivateRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import Login from './components/auth/Login.jsx';
@@ -19,6 +20,8 @@ import Home from './components/Home.jsx';
 import Secret from './components/Secret.jsx';
 import Events from './components/Events';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
+import Devices from './Devices';
+import Device from './Device';
 
 class Router extends React.Component {
   displayFlash(type, text) {
@@ -40,7 +43,7 @@ class Router extends React.Component {
         <PersistGate loading={null} persistor={persistor}>
           { /* ConnectedRouter will use the store from Provider automatically */ }
           <ConnectedRouter history={history}>
-            <div>
+            <Switch>
               <Route exact path="/" component={Home}/>
               <PublicRoute path="/login" component={Login}/>
               <PublicRoute path="/resend_verification" component={ResendVerification}/>
@@ -50,7 +53,9 @@ class Router extends React.Component {
               <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
               <PrivateRoute path="/secret" component={Secret}/>
               <PrivateRoute path="/events" component={Events}/>
-            </div>
+              <PrivateRoute exact path="/devices" component={Devices} />
+              <PrivateRoute path="/devices/:id" component={Device}/>
+            </Switch>
           </ConnectedRouter>
         </PersistGate>
       </Provider>

@@ -11,9 +11,6 @@ defmodule ConsoleWeb.DeviceView do
   end
 
   def render("device.json", %{device: device}) do
-    %{id: device.id,
-      name: device.name,
-      mac: device.mac,
-      public_key: device.public_key}
+    %{id: device.id, name: device.name, mac: device.mac}
   end
 end

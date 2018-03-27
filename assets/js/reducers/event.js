@@ -1,15 +1,15 @@
 import { RECEIVED_EVENTS, RECEIVED_EVENT } from '../actions/event.js';
 
 const initialState = {
-  events: []
+  current: []
 }
 
 const event = (state = initialState, action) => {
   switch(action.type) {
     case RECEIVED_EVENTS:
-      return { events: action.events };
+      return { current: action.events };
     case RECEIVED_EVENT:
-      return { events: [...state.events, action.event] };
+      return { current: [...state.current, action.event] };
     default:
       return state;
   }

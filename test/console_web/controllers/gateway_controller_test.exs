@@ -4,7 +4,7 @@ defmodule ConsoleWeb.GatewayControllerTest do
   alias Console.Gateways
   alias Console.Gateways.Gateway
 
-  import Console.AuthHelper
+  import Console.FactoryHelper
 
   @create_attrs %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key"}
   @update_attrs %{latitude: "456.7", longitude: "456.7", mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}

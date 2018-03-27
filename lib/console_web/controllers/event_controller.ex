@@ -6,8 +6,8 @@ defmodule ConsoleWeb.EventController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    events = Events.list_events()
+  def index(conn, params) do
+    events = Events.list_events(params)
     render(conn, "index.json", events: events)
   end
 
@@ -45,6 +45,11 @@ defmodule ConsoleWeb.EventController do
 
   defp broadcast_event(event) do
     body = ConsoleWeb.EventView.render("show.json", event: event)
+
     ConsoleWeb.Endpoint.broadcast("event:all", "new", body)
+
+    if event.device_id do
+      ConsoleWeb.Endpoint.broadcast("event:device:#{event.device_id}", "new", body)
+    end
   end
 end

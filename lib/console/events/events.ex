@@ -7,6 +7,7 @@ defmodule Console.Events do
   alias Console.Repo
 
   alias Console.Events.Event
+  alias Console.Devices.Device
 
   @doc """
   Returns the list of events.
@@ -20,6 +21,13 @@ defmodule Console.Events do
   def list_events do
     Repo.all(Event)
   end
+
+  def list_events(%{"device_id" => device_id}) do
+    query = from e in Event, where: e.device_id == ^device_id
+    Repo.all(query)
+  end
+
+  def list_events(_), do: list_events()
 
   @doc """
   Gets a single event.

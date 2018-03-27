@@ -1,11 +1,12 @@
 import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
 
-export const get = (path) => (
+export const get = (path, params = {}) => (
   axios({
     url: path,
     method: 'get',
-    headers: headers()
+    headers: headers(),
+    params
   })
 )
 

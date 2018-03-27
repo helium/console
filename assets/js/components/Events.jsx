@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
@@ -9,22 +8,40 @@ import ReactTable from 'react-table'
 class Events extends Component {
   constructor(props) {
     super(props)
+    console.log("fetchEvents props", props)
+
+    this.subscribeToUpdates = this.subscribeToUpdates.bind(this)
   }
 
   componentDidMount() {
-    const { fetchEvents, receivedEvent, apikey } = this.props
+    console.log("events mounted")
+    const { scope, id } = this.props
+    console.log("fetchEvents id", id)
 
-    let socket = new Socket("/socket", {params: {token: apikey}})
-    socket.connect()
+    this.subscribeToUpdates()
 
-    let channel = socket.channel("event:all", {})
+    const { fetchEvents } = this.props
+    fetchEvents(scope, id)
+  }
+
+  subscribeToUpdates() {
+    const { receivedEvent, apikey, scope, id } = this.props
+
+    this.socket = new Socket("/socket", {params: {token: apikey}})
+    this.socket.connect()
+
+    const channelName = (scope == "all") ? "event:all" : `event:${scope}:${id}`
+    let channel = this.socket.channel(channelName, {})
     channel.join()
       .receive("ok", resp => { console.log("Joined successfully", resp) })
       .receive("error", resp => { console.log("Unable to join", resp) })
 
     channel.on("new", res => receivedEvent(res.data))
+  }
 
-    fetchEvents()
+  componentWillUnmount() {
+    console.log("events will unmount")
+    this.socket.disconnect()
   }
 
   render() {
@@ -69,9 +86,9 @@ class Events extends Component {
 
     return(
       <div>
-        <h2>Events</h2>
+        <h3>Event Log</h3>
+        <p>id: {this.props.id}</p>
         {tableContent}
-        <Link to="/secret">Secret</Link>
       </div>
     )
   }
@@ -79,7 +96,7 @@ class Events extends Component {
 
 function mapStateToProps(state) {
   return {
-    events: state.event.events,
+    events: state.event.current,
     apikey: state.auth.apikey
   }
 }

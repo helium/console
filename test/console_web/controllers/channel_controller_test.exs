@@ -3,7 +3,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
   alias Console.Channels.Channel
 
-  import Console.AuthHelper
+  import Console.FactoryHelper
   import Console.Factory
 
   @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "some type"}

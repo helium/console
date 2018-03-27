@@ -4,9 +4,13 @@ export const FETCH_EVENTS = 'FETCH_EVENTS'
 export const RECEIVED_EVENTS = 'RECEIVED_EVENTS'
 export const RECEIVED_EVENT = 'RECEIVED_EVENT'
 
-export const fetchEvents = () => {
+export const fetchEvents = (scope = "all", id = null) => {
+  console.log('fetchEvents', scope, id)
   return (dispatch) => {
-    rest.get('/api/events')
+    const params = {}
+    if (scope !== "all") params[`${scope}_id`] = id
+
+    rest.get('/api/events', params)
       .then(response => {
         return dispatch(receivedEvents(response.data.data)) // TODO why data 2x?
       })
