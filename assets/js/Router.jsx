@@ -20,8 +20,8 @@ import Home from './components/Home.jsx';
 import Secret from './components/Secret.jsx';
 import Events from './components/Events';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
-import Devices from './Devices';
-import Device from './Device';
+import Devices from './components/Devices';
+import Device from './components/Device';
 
 class Router extends React.Component {
   displayFlash(type, text) {

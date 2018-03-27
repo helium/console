@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchCurrentDevice } from './actions/device'
+import { fetchCurrentDevice } from '../actions/device'
 import Events from './Events'
 
 class Device extends Component {
