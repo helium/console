@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { forgotPassword, hasResetCaptcha } from './actions/auth.js';
-import config from './config/common.js';
+import { resendVerification, hasResetCaptcha } from '../../actions/auth.js';
+import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
 
-class ForgotPassword extends Component {
+class ResendVerification extends Component {
   constructor(props) {
     super(props);
 
@@ -35,7 +35,7 @@ class ForgotPassword extends Component {
     e.preventDefault();
     const { email, recaptcha } = this.state;
 
-    this.props.forgotPassword(email, recaptcha);
+    this.props.resendVerification(email, recaptcha);
   }
 
   verifyRecaptcha(recaptcha) {
@@ -45,7 +45,7 @@ class ForgotPassword extends Component {
   render() {
     return(
       <div>
-        <h2>Enter your email</h2>
+        <h2>Resend My Verification Email</h2>
         <form onSubmit={this.handleSubmit}>
           <label>Email</label>
           <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
@@ -65,7 +65,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ forgotPassword, hasResetCaptcha }, dispatch);
+  return bindActionCreators({ resendVerification, hasResetCaptcha }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);
+export default connect(mapStateToProps, mapDispatchToProps)(ResendVerification);

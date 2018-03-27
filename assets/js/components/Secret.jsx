@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchUser } from './actions/user.js';
-import { logOut } from './actions/auth.js';
+import { fetchUser } from '../actions/user.js';
+import { logOut } from '../actions/auth.js';
+import QRCode from 'qrcode.react';
 
 class Secret extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class Secret extends Component {
         <Link to="/">Home</Link>
         <Link to="/events">Events</Link>
         <button onClick={this.handleLogout}>Log Out</button>
+        <QRCode value="otpauth://totp/BEAMCoin?secret=GDJWVBSGXAC36OBQ&issuer=Helium%20Inc" />
       </div>
     );
   }

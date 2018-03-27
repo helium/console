@@ -8,19 +8,19 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
 import { Route, Redirect } from 'react-router';
-import PrivateRoute from './PrivateRoute.jsx';
-import PublicRoute from './PublicRoute.jsx';
-import Login from './Login.jsx';
-import Register from './Register.jsx';
-import ResendVerification from './ResendVerification.jsx';
-import ForgotPassword from './ForgotPassword.jsx';
-import ResetPassword from './ResetPassword.jsx';
-import Home from './Home.jsx';
-import Secret from './Secret.jsx';
-import Events from './Events';
-import ConfirmEmailPrompt from './ConfirmEmailPrompt.jsx';
+import PrivateRoute from './components/routes/PrivateRoute.jsx';
+import PublicRoute from './components/routes/PublicRoute.jsx';
+import Login from './components/auth/Login.jsx';
+import Register from './components/auth/Register.jsx';
+import ResendVerification from './components/auth/ResendVerification.jsx';
+import ForgotPassword from './components/auth/ForgotPassword.jsx';
+import ResetPassword from './components/auth/ResetPassword.jsx';
+import Home from './components/Home.jsx';
+import Secret from './components/Secret.jsx';
+import Events from './components/Events';
+import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 
-class ReactApp extends React.Component {
+class Router extends React.Component {
   displayFlash(type, text) {
     const config = {
       theme: 'relax',
@@ -58,4 +58,4 @@ class ReactApp extends React.Component {
   }
 }
 
-export default ReactApp
+export default Router

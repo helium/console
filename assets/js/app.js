@@ -22,9 +22,9 @@ import "phoenix_html"
 
 import React from "react"
 import ReactDOM from "react-dom"
-import ReactApp from "./ReactApp"
+import Router from "./Router.jsx"
 
 ReactDOM.render(
-  <ReactApp/>,
+  <Router/>,
   document.getElementById("react-root")
 )
