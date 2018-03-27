@@ -3,6 +3,7 @@ import * as rest from '../util/rest';
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
+export const IS_VALID_USER = 'IS_VALID_USER';
 export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
@@ -10,7 +11,7 @@ export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
 export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 
-export const logIn = (email, password, recaptcha) => {
+export const checkCredentials = (email, password, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
         recaptcha,
@@ -20,10 +21,16 @@ export const logIn = (email, password, recaptcha) => {
         }
       })
       .then(response => {
-        return dispatch(loggedIn(response.data.jwt))
+        return dispatch(isValidUser(response.data.user, response.data.jwt))
       })
-      .then(() => dispatch(push('/secret')))
       .catch(() => dispatch(shouldResetCaptcha()))
+  }
+}
+
+export const logIn = (apikey) => {
+  return (dispatch) => {
+    dispatch(loggedIn(apikey))
+    dispatch(push('/secret'))
   }
 }
 
@@ -98,6 +105,14 @@ export const resendVerification = (email, recaptcha) => {
   }
 }
 
+export const isValidUser = (user, jwt = null) => {
+  return {
+    type: IS_VALID_USER,
+    user,
+    apikey: jwt
+  }
+}
+
 export const hasResetCaptcha = () => {
   return {
     type: HAS_RESET_CAPTCHA
@@ -110,10 +125,10 @@ export const shouldResetCaptcha = () => {
   }
 }
 
-const loggedIn = (jwt) => {
+const loggedIn = (apikey) => {
   return {
     type: LOGGED_IN,
-    apikey: jwt
+    apikey
   }
 }
 

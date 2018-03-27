@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, hasResetCaptcha } from '../../actions/auth.js';
+import { logIn, checkCredentials, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
+import TwoFactorForm from './TwoFactorForm.jsx'
 
 class Login extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class Login extends Component {
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
+    this.skipTwoFactor = this.skipTwoFactor.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
     this.renderForm = this.renderForm.bind(this);
   }
@@ -39,31 +41,29 @@ class Login extends Component {
     e.preventDefault();
     const { email, password, recaptcha } = this.state;
 
-    this.props.logIn(email, password, recaptcha);
-  }
-
-  handleTwoFactorSubmit(e) {
-    e.preventDefault();
-    const { twoFactorCode } = this.state;
-
-    // this.props.checkCredentials(email, password, recaptcha);
-    console.log(twoFactorCode)
+    this.props.checkCredentials(email, password, recaptcha);
   }
 
   verifyRecaptcha(recaptcha) {
     this.setState({ recaptcha })
   }
 
+  handleTwoFactorSubmit(string) {
+    console.log("HEREEEEE", string)
+  }
+
+  skipTwoFactor() {
+    this.props.logIn(this.props.auth.apikey);
+  }
+
   renderForm() {
-    // if (this.props.auth.validCredentials) {
-    //   return (
-    //     <form onSubmit={this.handleTwoFactorSubmit}>
-    //       <label>2FA Code</label>
-    //       <input type="twoFactorCode" name ="twoFactorCode" value={this.state.twoFactorCode} onChange={this.handleInputUpdate} />
-    //       <button type="submit">Submit</button>
-    //     </form>
-    //   )
-    // } else {
+    const { user } = this.props.auth
+    if (user) {
+      const secret2FA = user.secret2FA ? "otpauth://totp/BEAMCoin?secret=" + user.secret2FA + "&issuer=Helium%20Inc" : null
+      return (
+        <TwoFactorForm twoFactorEnabled={user.twoFactorEnabled} secret2FA={secret2FA} onSubmit={this.handleTwoFactorSubmit} onSkip={this.skipTwoFactor}/>
+      )
+    } else {
       return (
         <form onSubmit={this.handleSubmit}>
           <label>Email</label>
@@ -74,7 +74,7 @@ class Login extends Component {
           <button type="submit">Sign In</button>
         </form>
       )
-    // }
+    }
   }
 
   render() {
@@ -98,7 +98,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, hasResetCaptcha }, dispatch);
+  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
