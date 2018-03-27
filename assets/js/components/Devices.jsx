@@ -17,7 +17,7 @@ class Devices extends Component {
       <div>
         <h2>Devices</h2>
         <ul>
-          {devices.map(device => <li key={device.id}>
+          {Object.values(devices).map(device => <li key={device.id}>
             <Link to={`/devices/${device.id}`}>{device.name}</Link>
           </li>)}
         </ul>
@@ -28,7 +28,7 @@ class Devices extends Component {
 
 function mapStateToProps(state) {
   return {
-    devices: state.device.index
+    devices: state.entities.devices
   }
 }
 

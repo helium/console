@@ -2,21 +2,21 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import pick from 'lodash/pick'
 import { fetchCurrentDevice } from '../actions/device'
-import Events from './Events'
+import EventsTable from './EventsTable'
 
 class Device extends Component {
   componentDidMount() {
-    console.log(this.props)
     const { id } = this.props.match.params
     const { fetchCurrentDevice } = this.props
     fetchCurrentDevice(id)
   }
 
   render() {
-    const { device } = this.props
+    const { device, events } = this.props
 
-    if (device === null) return (<div>loading...</div>)
+    // if (device === null) return (<div>loading...</div>)
 
     return(
       <div>
@@ -25,16 +25,18 @@ class Device extends Component {
         <p>Name: {device.name}</p>
         <p>MAC: {device.mac}</p>
 
-        <Events scope="device" id={device.id} />
+        <EventsTable events={events} />
         <Link to="/devices">Devices</Link>
       </div>
     )
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const device = state.entities.devices[ownProps.match.params.id]
   return {
-    device: state.device.current
+    device,
+    events: Object.values(pick(state.entities.events, device.events))
   }
 }
 

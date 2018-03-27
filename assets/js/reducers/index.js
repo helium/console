@@ -1,13 +1,20 @@
+import merge from 'lodash/merge'
 import auth from './auth.js';
 import user from './user.js';
-import event from './event.js';
-import device from './device.js';
+
+// Updates an entity cache in response to any action with entities.
+const entities = (state = { devices: {}, events: {} }, action) => {
+  if (action.entities) {
+    return merge({}, state, action.entities)
+  }
+
+  return state
+}
 
 const reducers = {
+  entities,
   auth,
   user,
-  event,
-  device
 };
 
 export default reducers;
