@@ -99,12 +99,6 @@ defmodule Console.Auth do
     end
   end
 
-  def enable_2fa(user, secret2FA) do
-    user
-    |> User.enable_2fa_changeset(secret2FA)
-    |> Repo.update()
-  end
-
   def verify_captcha(recaptcha) do
     if Application.get_env(:console, :env) === :test do
       true
@@ -126,7 +120,7 @@ defmodule Console.Auth do
     end
   end
 
-  def generate_session_token(user) do
+  defp generate_session_token(user) do
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
     token
   end

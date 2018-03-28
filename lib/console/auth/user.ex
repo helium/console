@@ -11,10 +11,6 @@ defmodule Console.Auth.User do
     field :password, :string, virtual: true
     field :confirmation_token, :string
     field :confirmed_at, :naive_datetime
-    field :two_factor_enabled, :boolean
-    field :two_factor_secret, :string
-    field :two_factor_last_confirmed, :naive_datetime
-    field :two_factor_last_skipped, :naive_datetime
 
     has_many :memberships, Console.Teams.Membership
     many_to_many :teams, Console.Teams.Team, join_through: "memberships"
@@ -62,13 +58,6 @@ defmodule Console.Auth.User do
     user
     |> changeset()
     |> put_confirmation_token()
-  end
-
-  def enable_2fa_changeset(user, secret2FA) do
-    user
-    |> changeset()
-    |> put_change(:two_factor_enabled, true)
-    |> put_change(:two_factor_secret, secret2FA)
   end
 
   defp put_password_hash(changeset) do
