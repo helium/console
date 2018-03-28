@@ -43,7 +43,7 @@ defmodule Console.Events do
       ** (Ecto.NoResultsError)
 
   """
-  def get_event!(id), do: Repo.get!(Event, id)
+  def get_event!(id), do: Repo.get!(Event, id) |> Repo.preload(:device)
 
   def last do
     from(e in Event, order_by: [desc: e.inserted_at]) |> Repo.one()

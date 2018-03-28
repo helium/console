@@ -1,20 +1,21 @@
 defmodule ConsoleWeb.EventView do
   use ConsoleWeb, :view
   alias ConsoleWeb.EventView
+  alias ConsoleWeb.DeviceView
 
   def render("index.json", %{events: events}) do
-    %{data: render_many(events, EventView, "event.json")}
+    render_many(events, EventView, "event.json")
   end
 
   def render("show.json", %{event: event}) do
-    %{data: render_one(event, EventView, "event.json")}
+    render_one(event, EventView, "event.json")
   end
 
   def render("event.json", %{event: event}) do
-    %{id: event.id,
+    IO.puts("in render event.json")
+    json = %{id: event.id,
       channel_id: event.channel_id,
       description: event.description,
-      device_id: event.device_id,
       direction: event.direction,
       gateway_id: event.gateway_id,
       payload: event.payload,
@@ -23,5 +24,12 @@ defmodule ConsoleWeb.EventView do
       rssi: event.rssi,
       signal_strength: event.signal_strength,
       status: event.status}
+
+    if Ecto.assoc_loaded?(event.device) do
+      device = render_one(event.device, DeviceView, "device.json")
+      json = Map.put(json, :device, device)
+    end
+
+    json
   end
 end

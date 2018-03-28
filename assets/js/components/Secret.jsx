@@ -29,7 +29,7 @@ class Secret extends Component {
         <h2>Secret!</h2>
         <p>Your email is: {email}</p>
         <Link to="/">Home</Link>
-        <Link to="/events">Events</Link>
+        <Link to="/devices">Devices</Link>
         <button onClick={this.handleLogout}>Log Out</button>
         <QRCode value="otpauth://totp/BEAMCoin?secret=GDJWVBSGXAC36OBQ&issuer=Helium%20Inc" />
       </div>

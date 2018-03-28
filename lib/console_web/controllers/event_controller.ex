@@ -13,6 +13,7 @@ defmodule ConsoleWeb.EventController do
 
   def create(conn, %{"event" => event_params}) do
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
+      event = Events.fetch_assoc(event)
       broadcast_event(event)
 
       conn
@@ -47,9 +48,9 @@ defmodule ConsoleWeb.EventController do
     body = ConsoleWeb.EventView.render("show.json", event: event)
 
     ConsoleWeb.Endpoint.broadcast("event:all", "new", body)
-
-    if event.device_id do
-      ConsoleWeb.Endpoint.broadcast("event:device:#{event.device_id}", "new", body)
-    end
+    #
+    # if event.device_id do
+    #   ConsoleWeb.Endpoint.broadcast("event:device:#{event.device_id}", "new", body)
+    # end
   end
 end
