@@ -27,6 +27,20 @@ export const checkCredentials = (email, password, recaptcha) => {
   }
 }
 
+export const verify2fa = (code, userId) => {
+  return (dispatch) => {
+    rest.post('/api/sessions/verify_2fa', {
+        session: {
+          code,
+          userId
+        }
+      })
+      .then(response => {
+        dispatch(logIn(response.data.jwt))
+      })
+  }
+}
+
 export const logIn = (apikey) => {
   return (dispatch) => {
     dispatch(loggedIn(apikey))

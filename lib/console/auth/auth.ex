@@ -53,7 +53,7 @@ defmodule Console.Auth do
       {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
       user ->
         case verify_password(password, user.password_hash) do
-          true -> {:ok, user, sign_token(user)}
+          true -> {:ok, user, generate_session_token(user)}
           _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end
@@ -120,6 +120,11 @@ defmodule Console.Auth do
     end
   end
 
+  def generate_session_token(user) do
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
+    token
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil -> nil
@@ -133,11 +138,6 @@ defmodule Console.Auth do
 
   defp verify_password(password, pw_hash) do
     Comeonin.Bcrypt.checkpw(password, pw_hash)
-  end
-
-  defp sign_token(user) do
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
-    token
   end
 
   defp mark_email_confirmed(user) do

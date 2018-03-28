@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, checkCredentials, hasResetCaptcha } from '../../actions/auth.js';
+import { logIn, checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
 import TwoFactorForm from './TwoFactorForm.jsx'
@@ -48,8 +48,8 @@ class Login extends Component {
     this.setState({ recaptcha })
   }
 
-  handleTwoFactorSubmit(string) {
-    console.log("HEREEEEE", string)
+  handleTwoFactorSubmit(code) {
+    this.props.verify2fa(code, this.props.auth.user.id)
   }
 
   skipTwoFactor() {
@@ -98,7 +98,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn }, dispatch);
+  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn, verify2fa }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

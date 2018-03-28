@@ -12,16 +12,29 @@ defmodule ConsoleWeb.SessionController do
         case user.two_factor_enabled do
           false ->
             secret = :crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)
-            # test = :pot.valid_totp("954220", "GDJWVBSGXAC36OBQ")
+
             conn
             |> put_status(:created)
             |> render("show.json", user: user, jwt: jwt, secret: secret)
           true ->
-            # test = :pot.valid_totp("954220", "GDJWVBSGXAC36OBQ")
             conn
             |> put_status(:created)
             |> render("show.json", user: user)
         end
+    end
+  end
+
+  def verify_2fa(conn, %{"session" => %{"code" => code, "userId" => userId}}) do
+    with %User{} = user <-  Auth.get_user_by_id!(userId) do
+      case :pot.valid_totp(code, user.two_factor_secret) do
+        true ->
+          with jwt <- Auth.generate_session_token(user) do
+            conn
+            |> put_status(:created)
+            |> render("show.json", user: user, jwt: jwt)
+          end
+        false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
+      end
     end
   end
 end
