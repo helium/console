@@ -1,5 +1,5 @@
-import { schema, normalize } from 'normalizr'
 import * as rest from '../util/rest';
+import { normalizeEvent } from '../schemas/event'
 
 export const FETCH_EVENTS = 'FETCH_EVENTS'
 export const RECEIVED_EVENTS = 'RECEIVED_EVENTS'
@@ -26,26 +26,7 @@ export const receivedEvents = (events) => {
 }
 
 export const receivedEvent = (event) => {
-  const deviceProcessStrategy = (value, parent, key) => {
-    console.log(value)
-    console.log(parent)
-    console.log(key)
-    return {...value, events: [parent.id]}
-  }
-  const deviceEntity = new schema.Entity(
-    'devices',
-    {},
-    {
-      processStrategy: deviceProcessStrategy
-    }
-  )
-  const eventEntity = new schema.Entity('events', {
-    device: deviceEntity
-  })
-  const eventSchema = eventEntity
-  const normalizedData = normalize(event, eventSchema)
-  console.log(normalizedData)
-  const entities = normalizedData.entities
+  const entities = normalizeEvent(event)
 
   return {
     type: RECEIVED_EVENT,
