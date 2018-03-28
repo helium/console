@@ -37,6 +37,10 @@ defmodule Console.Devices do
   """
   def get_device!(id), do: Repo.get!(Device, id)
 
+  def fetch_assoc(%Device{} = device) do
+    Repo.preload(device, [:events])
+  end
+
   @doc """
   Creates a device.
 

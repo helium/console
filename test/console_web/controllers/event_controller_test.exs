@@ -4,7 +4,7 @@ defmodule ConsoleWeb.EventControllerTest do
   alias Console.Events
   alias Console.Events.Event
 
-  import Console.AuthHelper
+  import Console.FactoryHelper
   import Console.Factory
 
   @create_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
@@ -20,8 +20,27 @@ defmodule ConsoleWeb.EventControllerTest do
     setup [:authenticate_user]
 
     test "lists all events", %{conn: conn} do
+      {_, device_a_events} = create_device_with_events(5)
+      {_, device_b_events} = create_device_with_events(5)
+      device_a_event_ids = Enum.map(device_a_events, fn e -> e.id end)
+      device_b_event_ids = Enum.map(device_b_events, fn e -> e.id end)
+
       conn = get conn, event_path(conn, :index)
-      assert json_response(conn, 200)["data"] == []
+      event_ids = Enum.map(json_response(conn, 200), fn e -> e["id"] end)
+      assert Enum.all?(device_a_event_ids, fn e -> e in event_ids end)
+      assert Enum.all?(device_b_event_ids, fn e -> e in event_ids end)
+    end
+
+    test "lists events for a single device", %{conn: conn} do
+      {device_a, device_a_events} = create_device_with_events(5)
+      {_device_b, device_b_events} = create_device_with_events(5)
+      device_a_event_ids = Enum.map(device_a_events, fn e -> e.id end)
+      device_b_event_ids = Enum.map(device_b_events, fn e -> e.id end)
+
+      conn = get conn, event_path(conn, :index, device_id: device_a.id)
+      event_ids = Enum.map(json_response(conn, 200), fn e -> e["id"] end)
+      assert Enum.all?(device_a_event_ids, fn e -> e in event_ids end)
+      refute Enum.all?(device_b_event_ids, fn e -> e in event_ids end)
     end
   end
 
@@ -32,13 +51,17 @@ defmodule ConsoleWeb.EventControllerTest do
       device = insert(:device)
       attrs = params_for(:event, device_id: device.id)
       conn = post conn, event_path(conn, :create), event: attrs
-      %{"id" => id} = json_response(conn, 201)["data"]
+      %{"id" => id} = json_response(conn, 201)
 
-      assert json_response(conn, 201)["data"] == %{
+      assert json_response(conn, 201) == %{
         "id" => id,
         "channel_id" => nil,
         "description" => "I am an event",
-        "device_id" => device.id,
+        "device" => %{
+          "id" => device.id,
+          "mac" => device.mac,
+          "name" => device.name
+        },
         "direction" => attrs.direction,
         "gateway_id" => nil,
         "payload" => "some payload",
@@ -60,11 +83,11 @@ defmodule ConsoleWeb.EventControllerTest do
 
     test "renders event when data is valid", %{conn: conn, event: %Event{id: id} = event} do
       conn = put conn, event_path(conn, :update, event), event: @update_attrs
-      assert json_response(conn, 200)["data"] == %{
+      assert json_response(conn, 200) == %{
         "id" => id,
         "channel_id" => nil,
         "description" => "some updated description",
-        "device_id" => nil,
+        "device" => nil,
         "direction" => "outbound",
         "gateway_id" => nil,
         "payload" => "some updated payload",

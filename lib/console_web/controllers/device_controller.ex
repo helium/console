@@ -21,7 +21,7 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id)
+    device = Devices.get_device!(id) |> Devices.fetch_assoc()
     render(conn, "show.json", device: device)
   end
 

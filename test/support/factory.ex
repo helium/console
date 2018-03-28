@@ -35,7 +35,7 @@ defmodule Console.Factory do
   def device_factory do
     %Device{
       name: "My Device",
-      mac: "mac address",
+      mac: sequence(:mac, &"mac address #{&1}"),
       public_key: "my public key"
     }
   end

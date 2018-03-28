@@ -6,13 +6,14 @@ defmodule ConsoleWeb.EventController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    events = Events.list_events()
+  def index(conn, params) do
+    events = Events.list_events(params)
     render(conn, "index.json", events: events)
   end
 
   def create(conn, %{"event" => event_params}) do
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
+      event = Events.fetch_assoc(event)
       broadcast_event(event)
 
       conn

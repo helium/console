@@ -13,7 +13,7 @@ defmodule Console.Events.Event do
     field(:direction, :string)
     field(:payload, :string)
     field(:payload_size, :integer)
-    field(:reported_at, :naive_datetime)
+    field(:reported_at, :naive_datetime, default: DateTime.utc_now())
     field(:rssi, :float)
     field(:signal_strength, :integer)
     field(:status, :string)
