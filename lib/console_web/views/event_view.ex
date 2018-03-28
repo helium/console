@@ -12,8 +12,8 @@ defmodule ConsoleWeb.EventView do
   end
 
   def render("event.json", %{event: event}) do
-    IO.puts("in render event.json")
-    json = %{id: event.id,
+    %{
+      id: event.id,
       channel_id: event.channel_id,
       description: event.description,
       direction: event.direction,
@@ -23,13 +23,19 @@ defmodule ConsoleWeb.EventView do
       reported_at: event.reported_at,
       rssi: event.rssi,
       signal_strength: event.signal_strength,
-      status: event.status}
+      status: event.status
+    }
+    |> append_device(event.device)
+  end
 
-    if Ecto.assoc_loaded?(event.device) do
-      device = render_one(event.device, DeviceView, "device.json")
-      json = Map.put(json, :device, device)
+  defp append_device(json, device) do
+    case Ecto.assoc_loaded?(device) do
+      true ->
+        device_json = render_one(device, DeviceView, "device.json")
+        Map.put(json, :device, device_json)
+
+      false ->
+        json
     end
-
-    json
   end
 end

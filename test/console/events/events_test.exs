@@ -27,8 +27,8 @@ defmodule Console.EventsTest do
     end
 
     test "get_event!/1 returns the event with given id" do
-      event = event_fixture()
-      assert Events.get_event!(event.id) == event
+      event = insert(:event)
+      assert Events.get_event!(event.id).id == event.id
     end
 
     test "create_event/1 with valid data creates a event" do
@@ -76,7 +76,7 @@ defmodule Console.EventsTest do
     test "update_event/2 with invalid data returns error changeset" do
       event = event_fixture()
       assert {:error, %Ecto.Changeset{}} = Events.update_event(event, @invalid_attrs)
-      assert event == Events.get_event!(event.id)
+      assert event.id == Events.get_event!(event.id).id
     end
 
     test "delete_event/1 deletes the event" do

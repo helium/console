@@ -20,7 +20,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "lists all devices", %{conn: conn} do
       conn = get conn, device_path(conn, :index)
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
@@ -29,8 +29,8 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "renders device when data is valid", %{conn: conn} do
       conn = post conn, device_path(conn, :create), device: @create_attrs
-      %{"id" => id} = json_response(conn, 201)["data"]
-      assert json_response(conn, 201)["data"] == %{
+      %{"id" => id} = json_response(conn, 201)
+      assert json_response(conn, 201) == %{
         "id" => id,
         "mac" => "some mac",
         "name" => "some name" }
@@ -47,10 +47,11 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "renders device", %{conn: conn, device: %Device{id: id}} do
       conn = get conn, device_path(conn, :show, id)
-      assert json_response(conn, 200)["data"] == %{
+      assert json_response(conn, 200) == %{
         "id" => id,
         "mac" => "some mac",
-        "name" => "some name" }
+        "name" => "some name",
+        "events" => []}
     end
   end
 
@@ -59,10 +60,10 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "renders device when data is valid", %{conn: conn, device: %Device{id: id} = device} do
       conn = put conn, device_path(conn, :update, device), device: @update_attrs
-      assert json_response(conn, 200)["data"] == %{
+      assert json_response(conn, 200) == %{
         "id" => id,
         "mac" => "some updated mac",
-        "name" => "some updated name" }
+        "name" => "some updated name"}
     end
 
     test "renders errors when data is invalid", %{conn: conn, device: device} do

@@ -35,7 +35,11 @@ defmodule Console.Devices do
       ** (Ecto.NoResultsError)
 
   """
-  def get_device!(id), do: Repo.get!(Device, id) |> Repo.preload(:events)
+  def get_device!(id), do: Repo.get!(Device, id)
+
+  def fetch_assoc(%Device{} = device) do
+    Repo.preload(device, [:events])
+  end
 
   @doc """
   Creates a device.
