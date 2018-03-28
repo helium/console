@@ -46,11 +46,6 @@ defmodule ConsoleWeb.EventController do
 
   defp broadcast_event(event) do
     body = ConsoleWeb.EventView.render("show.json", event: event)
-
     ConsoleWeb.Endpoint.broadcast("event:all", "new", body)
-    #
-    # if event.device_id do
-    #   ConsoleWeb.Endpoint.broadcast("event:device:#{event.device_id}", "new", body)
-    # end
   end
 end

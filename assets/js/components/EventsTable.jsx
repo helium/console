@@ -6,10 +6,6 @@ import { fetchEvents, receivedEvent } from '../actions/event'
 import ReactTable from 'react-table'
 
 class EventsTable extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     const { events } = this.props
 
