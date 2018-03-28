@@ -78,4 +78,19 @@ defmodule ConsoleWeb.UserController do
       |> render("user_status.json", message: "Your password has been changed successfully, please login with your new credentials", email: user.email)
     end
   end
+
+  def enable_2fa(conn, %{"user" => %{"code" => code, "userId" => userId, "secret2FA" => secret2FA}}) do
+    with %User{} = user <-  Auth.get_user_by_id!(userId) do
+      case :pot.valid_totp(code, secret2FA) do
+        true ->
+          with {:ok, stuff} <- Auth.enable_2fa(user, secret2FA) do
+            # Generate backup codes and send back here
+            conn
+            |> put_status(:accepted)
+            |> render("user_status.json", message: "Your account now has 2FA", email: user.email)
+          end
+        false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
+      end
+    end
+  end
 end

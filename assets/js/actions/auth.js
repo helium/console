@@ -41,6 +41,21 @@ export const verify2fa = (code, userId) => {
   }
 }
 
+export const enable2fa = (code, userId, secret2FA) => {
+  return (dispatch, getState) => {
+    rest.post('/api/users/enable_2fa', {
+        user: {
+          code,
+          userId,
+          secret2FA
+        }
+      })
+      .then(response => {
+        dispatch(logIn(getState().auth.apikey))
+      })
+  }
+}
+
 export const logIn = (apikey) => {
   return (dispatch) => {
     dispatch(loggedIn(apikey))

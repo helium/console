@@ -64,6 +64,13 @@ defmodule Console.Auth.User do
     |> put_confirmation_token()
   end
 
+  def enable_2fa_changeset(user, secret2FA) do
+    user
+    |> changeset()
+    |> put_change(:two_factor_enabled, true)
+    |> put_change(:two_factor_secret, secret2FA)
+  end
+
   defp put_password_hash(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
