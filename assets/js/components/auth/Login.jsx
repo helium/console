@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, checkCredentials, hasResetCaptcha, verify2fa, enable2fa } from '../../actions/auth.js';
+import { logIn, checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
 import TwoFactorForm from './TwoFactorForm.jsx'
@@ -15,14 +15,12 @@ class Login extends Component {
       email: "",
       password: "",
       recaptcha: "",
-      twoFactorCode: "",
       loginPage: "login"
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
-    this.skipTwoFactor = this.skipTwoFactor.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
     this.renderForm = this.renderForm.bind(this);
   }
@@ -55,19 +53,13 @@ class Login extends Component {
 
   handleTwoFactorSubmit(code) {
     const { user } = this.props.auth
-    user.twoFactorEnabled ? this.props.verify2fa(code, user.id) : this.props.enable2fa(code, user.id, user.secret2fa)
-  }
-
-  skipTwoFactor() {
-    this.props.logIn(this.props.auth.apikey);
+    this.props.verify2fa(code, user.id)
   }
 
   renderForm() {
-    const { user } = this.props.auth
     if (this.state.loginPage === "2fa") {
-      const secret2fa = user.secret2fa ? "otpauth://totp/BEAMCoin?secret=" + user.secret2fa + "&issuer=Helium%20Inc" : null
       return (
-        <TwoFactorForm twoFactorEnabled={user.twoFactorEnabled} secret2fa={secret2fa} onSubmit={this.handleTwoFactorSubmit} onSkip={this.skipTwoFactor}/>
+        <TwoFactorForm onSubmit={this.handleTwoFactorSubmit}/>
       )
     } else {
       return (
@@ -104,7 +96,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn, verify2fa, enable2fa }, dispatch);
+  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn, verify2fa }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
