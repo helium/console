@@ -63,7 +63,7 @@ defmodule ConsoleWeb.EventControllerTest do
           "name" => device.name
         },
         "direction" => attrs.direction,
-        "gateway_id" => nil,
+        "gateway" => nil,
         "payload" => "some payload",
         "payload_size" => 42,
         "reported_at" => "2010-04-17T14:00:00.000000",
@@ -89,7 +89,6 @@ defmodule ConsoleWeb.EventControllerTest do
         "description" => "some updated description",
         "device" => nil,
         "direction" => "outbound",
-        "gateway_id" => nil,
         "payload" => "some updated payload",
         "payload_size" => 43,
         "reported_at" => "2011-05-18T15:01:01.000000",

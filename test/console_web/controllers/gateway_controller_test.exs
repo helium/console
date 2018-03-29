@@ -20,7 +20,7 @@ defmodule ConsoleWeb.GatewayControllerTest do
 
     test "lists all gateways", %{conn: conn} do
       conn = get conn, gateway_path(conn, :index)
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
@@ -29,14 +29,13 @@ defmodule ConsoleWeb.GatewayControllerTest do
 
     test "renders gateway when data is valid", %{conn: conn} do
       conn = post conn, gateway_path(conn, :create), gateway: @create_attrs
-      %{"id" => id} = json_response(conn, 201)["data"]
-      assert json_response(conn, 201)["data"] == %{
+      %{"id" => id} = json_response(conn, 201)
+      assert json_response(conn, 201) == %{
         "id" => id,
         "latitude" => "120.5",
         "longitude" => "120.5",
         "mac" => "some mac",
-        "name" => "some name",
-        "public_key" => "some public_key"}
+        "name" => "some name"}
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -50,13 +49,12 @@ defmodule ConsoleWeb.GatewayControllerTest do
 
     test "renders gateway when data is valid", %{conn: conn, gateway: %Gateway{id: id} = gateway} do
       conn = put conn, gateway_path(conn, :update, gateway), gateway: @update_attrs
-      assert json_response(conn, 200)["data"] == %{
+      assert json_response(conn, 200) == %{
         "id" => id,
         "latitude" => "456.7",
         "longitude" => "456.7",
         "mac" => "some updated mac",
-        "name" => "some updated name",
-        "public_key" => "some updated public_key"}
+        "name" => "some updated name"}
     end
 
     test "renders errors when data is invalid", %{conn: conn, gateway: gateway} do
