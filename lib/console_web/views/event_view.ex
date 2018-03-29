@@ -3,6 +3,7 @@ defmodule ConsoleWeb.EventView do
   alias ConsoleWeb.EventView
   alias ConsoleWeb.DeviceView
   alias ConsoleWeb.GatewayView
+  alias ConsoleWeb.ChannelView
 
   def render("index.json", %{events: events}) do
     render_many(events, EventView, "event.json")
@@ -27,6 +28,7 @@ defmodule ConsoleWeb.EventView do
     }
     |> append_device(event.device)
     |> append_gateway(event.gateway)
+    |> append_channel(event.channel)
   end
 
   defp append_device(json, device) do
@@ -42,6 +44,15 @@ defmodule ConsoleWeb.EventView do
     if Ecto.assoc_loaded?(gateway) do
       gateway_json = render_one(gateway, GatewayView, "gateway.json")
       Map.put(json, :gateway, gateway_json)
+    else
+      json
+    end
+  end
+
+  defp append_channel(json, channel) do
+    if Ecto.assoc_loaded?(channel) do
+      channel_json = render_one(channel, ChannelView, "channel.json")
+      Map.put(json, :channel, channel_json)
     else
       json
     end

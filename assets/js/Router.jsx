@@ -23,6 +23,8 @@ import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
 import GatewayIndex from './components/gateways/GatewayIndex'
 import GatewayShow from './components/gateways/GatewayShow'
+import ChannelIndex from './components/channels/ChannelIndex'
+import ChannelShow from './components/channels/ChannelShow'
 
 class Router extends React.Component {
   render() {
@@ -45,6 +47,8 @@ class Router extends React.Component {
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                   <PrivateRoute exact path="/gateways" component={GatewayIndex} />
                   <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
+                  <PrivateRoute exact path="/channels" component={ChannelIndex} />
+                  <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

@@ -4,7 +4,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchGateway } from '../../actions/gateway'
-import EventsTable from '../../EventsTable'
+import EventsTable from '../events/EventsTable'
+import DashboardLayout from '../DashboardLayout'
 
 class GatewayShow extends Component {
   componentDidMount() {
@@ -18,8 +19,7 @@ class GatewayShow extends Component {
     if (gateway === undefined) return (<div>loading...</div>)
 
     return(
-      <div>
-        <h2>Gateway</h2>
+      <DashboardLayout title="Gateway" current="gateways">
         <p>ID: {gateway.id}</p>
         <p>Name: {gateway.name}</p>
         <p>MAC: {gateway.mac}</p>
@@ -27,8 +27,7 @@ class GatewayShow extends Component {
         <p>Lng: {gateway.longitude}</p>
 
         <EventsTable events={events} />
-        <Link to="/gateways">Gateways</Link>
-      </div>
+      </DashboardLayout>
     )
   }
 }

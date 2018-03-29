@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchDevices } from '../../actions/device'
+import DashboardLayout from '../DashboardLayout'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -14,14 +15,13 @@ class DeviceIndex extends Component {
     const { devices } = this.props
 
     return(
-      <div>
-        <h2>Devices</h2>
+      <DashboardLayout title="Devices" current="devices">
         <ul>
           {Object.values(devices).map(device => <li key={device.id}>
             <Link to={`/devices/${device.id}`}>{device.name}</Link>
           </li>)}
         </ul>
-      </div>
+      </DashboardLayout>
     )
   }
 }

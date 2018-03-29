@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
+import DashboardLayout from '../DashboardLayout'
 
 class DeviceShow extends Component {
   componentDidMount() {
@@ -18,15 +19,13 @@ class DeviceShow extends Component {
     if (device === undefined) return (<div>loading...</div>)
 
     return(
-      <div>
-        <h2>Device</h2>
+      <DashboardLayout title="Device" current="devices">
         <p>ID: {device.id}</p>
         <p>Name: {device.name}</p>
         <p>MAC: {device.mac}</p>
 
         <EventsTable events={events} />
-        <Link to="/devices">Devices</Link>
-      </div>
+      </DashboardLayout>
     )
   }
 }

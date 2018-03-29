@@ -20,9 +20,18 @@ const gateway = new schema.Entity(
   }
 )
 
+const channel = new schema.Entity(
+  'channels',
+  {},
+  {
+    processStrategy: parentProcessStrategy
+  }
+)
+
 const event = new schema.Entity('events', {
   device,
-  gateway
+  gateway,
+  channel,
 })
 
 export const eventSchema = event

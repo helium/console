@@ -18,7 +18,9 @@ class App extends Component {
     if (window.flashError !== '') this.displayFlash('error', window.flashError)
 
     return (
-      <Router />
+      <div>
+        <Router />
+      </div>
     )
   }
 }
