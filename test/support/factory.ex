@@ -6,6 +6,7 @@ defmodule Console.Factory do
   alias Console.Devices.Device
   alias Console.Gateways.Gateway
   alias Console.Events.Event
+  alias Console.Teams.Team
 
   def user_factory do
     %User{
@@ -60,6 +61,12 @@ defmodule Console.Factory do
       rssi: 120.5,
       signal_strength: 42,
       status: "some status"
+    }
+  end
+
+  def team_factory do
+    %Team{
+      name: sequence(:name, &"Team #{&1}")
     }
   end
 end

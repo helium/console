@@ -9,6 +9,10 @@ use Mix.Config
 config :console,
   ecto_repos: [Console.Repo]
 
+config :console,
+  Console.Repo,
+  migration_primary_key: [id: :uuid, type: :binary_id]
+
 # Configures the endpoint
 config :console, ConsoleWeb.Endpoint,
   url: [host: "localhost"],
