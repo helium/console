@@ -12,4 +12,13 @@ defmodule ConsoleWeb.SessionView do
       }
     }
   end
+
+  def render("show.json", %{user: user}) do
+    %{
+      user: %{
+        id: user.id,
+        twoFactorEnabled: true
+       }
+     }
+  end
 end

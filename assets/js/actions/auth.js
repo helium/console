@@ -29,7 +29,7 @@ export const checkCredentials = (email, password, recaptcha) => {
 
 export const verify2fa = (code, userId) => {
   return (dispatch) => {
-    rest.post('/api/sessions/verify_2fa', {
+    rest.post('/api/2fa/verify', {
         session: {
           code,
           userId
