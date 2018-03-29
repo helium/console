@@ -16,7 +16,6 @@ defmodule ConsoleWeb.EventView do
   def render("event.json", %{event: event}) do
     %{
       id: event.id,
-      channel_id: event.channel_id,
       description: event.description,
       direction: event.direction,
       payload: event.payload,
