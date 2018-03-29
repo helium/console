@@ -37,6 +37,10 @@ defmodule Console.Gateways do
   """
   def get_gateway!(id), do: Repo.get!(Gateway, id)
 
+  def fetch_assoc(%Gateway{} = gateway) do
+    Repo.preload(gateway, [:events])
+  end
+
   @doc """
   Creates a gateway.
 

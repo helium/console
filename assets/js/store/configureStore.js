@@ -24,14 +24,11 @@ const rootReducer = combineReducers({
 
 const persistConfig = {
   key: 'root',
-  storage: storage,
+  storage,
+  whitelist: ['auth'] // only persist auth for now
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = createStore(persistedReducer, composedEnhancers);
 export const persistor = persistStore(store);
-
-// export default () => {
-//   return { store, persistor, history };
-// }
 

@@ -21,6 +21,8 @@ import Secret from './components/Secret.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import Devices from './components/Devices';
 import Device from './components/Device';
+import GatewayIndex from './components/gateways/GatewayIndex'
+import GatewayShow from './components/gateways/GatewayShow'
 
 class Router extends React.Component {
   render() {
@@ -41,6 +43,8 @@ class Router extends React.Component {
                   <PrivateRoute path="/secret" component={Secret}/>
                   <PrivateRoute exact path="/devices" component={Devices} />
                   <PrivateRoute path="/devices/:id" component={Device}/>
+                  <PrivateRoute exact path="/gateways" component={GatewayIndex} />
+                  <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

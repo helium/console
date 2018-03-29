@@ -21,7 +21,7 @@ defmodule ConsoleWeb.GatewayController do
   end
 
   def show(conn, %{"id" => id}) do
-    gateway = Gateways.get_gateway!(id)
+    gateway = Gateways.get_gateway!(id) |> Gateways.fetch_assoc()
     render(conn, "show.json", gateway: gateway)
   end
 

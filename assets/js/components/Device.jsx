@@ -16,7 +16,7 @@ class Device extends Component {
   render() {
     const { device, events } = this.props
 
-    // if (device === null) return (<div>loading...</div>)
+    if (device === undefined) return (<div>loading...</div>)
 
     return(
       <div>
@@ -34,6 +34,7 @@ class Device extends Component {
 
 function mapStateToProps(state, ownProps) {
   const device = state.entities.devices[ownProps.match.params.id]
+  if (device === undefined) return {}
   return {
     device,
     events: Object.values(pick(state.entities.events, device.events))
