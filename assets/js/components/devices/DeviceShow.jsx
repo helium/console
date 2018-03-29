@@ -3,37 +3,36 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchCurrentDevice } from '../actions/device'
-import EventsTable from './EventsTable'
+import { fetchDevice } from '../../actions/device'
+import EventsTable from '../events/EventsTable'
+import DashboardLayout from '../DashboardLayout'
 
-class Device extends Component {
+class DeviceShow extends Component {
   componentDidMount() {
     const { id } = this.props.match.params
-    const { fetchCurrentDevice } = this.props
-    fetchCurrentDevice(id)
+    this.props.fetchDevice(id)
   }
 
   render() {
     const { device, events } = this.props
 
-    // if (device === null) return (<div>loading...</div>)
+    if (device === undefined) return (<div>loading...</div>)
 
     return(
-      <div>
-        <h2>Device</h2>
+      <DashboardLayout title="Device" current="devices">
         <p>ID: {device.id}</p>
         <p>Name: {device.name}</p>
         <p>MAC: {device.mac}</p>
 
         <EventsTable events={events} />
-        <Link to="/devices">Devices</Link>
-      </div>
+      </DashboardLayout>
     )
   }
 }
 
 function mapStateToProps(state, ownProps) {
   const device = state.entities.devices[ownProps.match.params.id]
+  if (device === undefined) return {}
   return {
     device,
     events: Object.values(pick(state.entities.events, device.events))
@@ -41,7 +40,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchCurrentDevice }, dispatch);
+  return bindActionCreators({ fetchDevice }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Device);
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);

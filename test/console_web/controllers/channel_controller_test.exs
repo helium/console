@@ -15,7 +15,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
     test "lists all channels", %{conn: conn} do
       conn = get conn, channel_path(conn, :index)
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200) == []
     end
   end
 
@@ -24,11 +24,10 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
     test "renders channel when data is valid", %{conn: conn} do
       conn = post conn, channel_path(conn, :create), channel: @create_attrs
-      %{"id" => id} = json_response(conn, 201)["data"]
-      assert json_response(conn, 201)["data"] == %{
+      %{"id" => id} = json_response(conn, 201)
+      assert json_response(conn, 201) == %{
         "id" => id,
         "active" => true,
-        "credentials" => %{"a" => "b"},
         "name" => "some name",
         "type" => "some type"}
     end
@@ -44,10 +43,9 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
     test "renders channel when data is valid", %{conn: conn, channel: %Channel{id: id} = channel} do
       conn = put conn, channel_path(conn, :update, channel), channel: @update_attrs
-      assert json_response(conn, 200)["data"] == %{
+      assert json_response(conn, 200) == %{
         "id" => id,
         "active" => false,
-        "credentials" => %{"a" => "c"},
         "name" => "some updated name",
         "type" => "some updated type"}
     end

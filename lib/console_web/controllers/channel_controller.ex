@@ -21,7 +21,7 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def show(conn, %{"id" => id}) do
-    channel = Channels.get_channel!(id)
+    channel = Channels.get_channel!(id) |> Channels.fetch_assoc()
     render(conn, "show.json", channel: channel)
   end
 

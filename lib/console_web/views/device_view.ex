@@ -12,11 +12,18 @@ defmodule ConsoleWeb.DeviceView do
   end
 
   def render("device.json", %{device: device}) do
-    if Ecto.assoc_loaded?(device.events) do
-      events = render_many(device.events, EventView, "event.json")
-      %{id: device.id, name: device.name, mac: device.mac, events: events}
+    %{
+      id: device.id, name: device.name, mac: device.mac
+    }
+    |> append_events(device.events)
+  end
+
+  defp append_events(json, events) do
+    if Ecto.assoc_loaded?(events) do
+      events_json = render_many(events, EventView, "event.json")
+      Map.put(json, :events, events_json)
     else
-      %{id: device.id, name: device.name, mac: device.mac}
+      json
     end
   end
 end

@@ -14,12 +14,23 @@
 defmodule Console.DatabaseSeeder do
   alias Console.Repo
   alias Console.Devices.Device
+  alias Console.Gateways.Gateway
 
   def insert_device(index) do
     Repo.insert! %Device{
       name: "Device #{index}",
       mac: random_mac(),
       public_key: :crypto.strong_rand_bytes(64)
+    }
+  end
+
+  def insert_gateway(index) do
+    Repo.insert! %Gateway{
+      name: "Gateway #{index}",
+      mac: random_mac(),
+      public_key: :crypto.strong_rand_bytes(64),
+      latitude: 37.770918,
+      longitude: -122.419487
     }
   end
 
@@ -32,4 +43,5 @@ defmodule Console.DatabaseSeeder do
   end
 end
 
-(1..10) |> Enum.each(fn i -> Console.DatabaseSeeder.insert_device(i) end)
+# (1..10) |> Enum.each(fn i -> Console.DatabaseSeeder.insert_device(i) end)
+(1..10) |> Enum.each(fn i -> Console.DatabaseSeeder.insert_gateway(i) end)

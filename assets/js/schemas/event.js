@@ -1,6 +1,6 @@
 import { schema, normalize } from 'normalizr'
 
-const deviceProcessStrategy = (value, parent, key) => {
+const parentProcessStrategy = (value, parent, key) => {
   return {...value, events: [parent.id]}
 }
 
@@ -8,12 +8,30 @@ const device = new schema.Entity(
   'devices',
   {},
   {
-    processStrategy: deviceProcessStrategy
+    processStrategy: parentProcessStrategy
+  }
+)
+
+const gateway = new schema.Entity(
+  'gateways',
+  {},
+  {
+    processStrategy: parentProcessStrategy
+  }
+)
+
+const channel = new schema.Entity(
+  'channels',
+  {},
+  {
+    processStrategy: parentProcessStrategy
   }
 )
 
 const event = new schema.Entity('events', {
-  device
+  device,
+  gateway,
+  channel,
 })
 
 export const eventSchema = event

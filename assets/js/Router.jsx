@@ -19,8 +19,12 @@ import ResetPassword from './components/auth/ResetPassword.jsx';
 import Home from './components/Home.jsx';
 import Secret from './components/Secret.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
-import Devices from './components/Devices';
-import Device from './components/Device';
+import DeviceIndex from './components/devices/DeviceIndex';
+import DeviceShow from './components/devices/DeviceShow';
+import GatewayIndex from './components/gateways/GatewayIndex'
+import GatewayShow from './components/gateways/GatewayShow'
+import ChannelIndex from './components/channels/ChannelIndex'
+import ChannelShow from './components/channels/ChannelShow'
 
 class Router extends React.Component {
   render() {
@@ -39,8 +43,12 @@ class Router extends React.Component {
                   <PublicRoute path="/register" component={Register}/>
                   <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
                   <PrivateRoute path="/secret" component={Secret}/>
-                  <PrivateRoute exact path="/devices" component={Devices} />
-                  <PrivateRoute path="/devices/:id" component={Device}/>
+                  <PrivateRoute exact path="/devices" component={DeviceIndex} />
+                  <PrivateRoute path="/devices/:id" component={DeviceShow}/>
+                  <PrivateRoute exact path="/gateways" component={GatewayIndex} />
+                  <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
+                  <PrivateRoute exact path="/channels" component={ChannelIndex} />
+                  <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

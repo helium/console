@@ -1,21 +1,33 @@
 defmodule ConsoleWeb.GatewayView do
   use ConsoleWeb, :view
   alias ConsoleWeb.GatewayView
+  alias ConsoleWeb.EventView
 
   def render("index.json", %{gateways: gateways}) do
-    %{data: render_many(gateways, GatewayView, "gateway.json")}
+    render_many(gateways, GatewayView, "gateway.json")
   end
 
   def render("show.json", %{gateway: gateway}) do
-    %{data: render_one(gateway, GatewayView, "gateway.json")}
+    render_one(gateway, GatewayView, "gateway.json")
   end
 
   def render("gateway.json", %{gateway: gateway}) do
-    %{id: gateway.id,
+    %{
+      id: gateway.id,
       name: gateway.name,
       mac: gateway.mac,
-      public_key: gateway.public_key,
       latitude: gateway.latitude,
-      longitude: gateway.longitude}
+      longitude: gateway.longitude
+    }
+    |> append_events(gateway.events)
+  end
+
+  defp append_events(json, events) do
+    if Ecto.assoc_loaded?(events) do
+      events_json = render_many(events, EventView, "event.json")
+      Map.put(json, :events, events_json)
+    else
+      json
+    end
   end
 end

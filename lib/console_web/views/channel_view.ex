@@ -1,20 +1,33 @@
 defmodule ConsoleWeb.ChannelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.ChannelView
+  alias ConsoleWeb.EventView
 
   def render("index.json", %{channels: channels}) do
-    %{data: render_many(channels, ChannelView, "channel.json")}
+    render_many(channels, ChannelView, "channel.json")
   end
 
   def render("show.json", %{channel: channel}) do
-    %{data: render_one(channel, ChannelView, "channel.json")}
+    render_one(channel, ChannelView, "channel.json")
   end
 
   def render("channel.json", %{channel: channel}) do
-    %{id: channel.id,
+    %{
+      id: channel.id,
       name: channel.name,
       type: channel.type,
-      active: channel.active,
-      credentials: channel.credentials}
+      active: channel.active
+    }
+    |> append_events(channel.events)
+  end
+
+  # TODO: could I import this from events view? used across 3 views
+  defp append_events(json, events) do
+    if Ecto.assoc_loaded?(events) do
+      events_json = render_many(events, EventView, "event.json")
+      Map.put(json, :events, events_json)
+    else
+      json
+    end
   end
 end

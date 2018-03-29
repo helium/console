@@ -3,8 +3,8 @@ import { normalizeDevice, normalizeDevices } from '../schemas/device'
 
 export const FETCH_DEVICES = 'FETCH_DEVICES'
 export const RECEIVED_DEVICES = 'RECEIVED_DEVICES'
-export const FETCH_CURRENT_DEVICE = 'FETCH_CURRENT_DEVICE'
-export const RECEIVED_CURRENT_DEVICE = 'RECEIVED_CURRENT_DEVICE'
+export const FETCH_DEVICE = 'FETCH_CURRENT_DEVICE'
+export const RECEIVED_DEVICE = 'RECEIVED_CURRENT_DEVICE'
 
 
 export const fetchDevices = () => {
@@ -25,20 +25,20 @@ export const receivedDevices = (devices) => {
   }
 }
 
-export const fetchCurrentDevice = (id) => {
+export const fetchDevice = (id) => {
   return (dispatch) => {
     rest.get(`/api/devices/${id}`)
       .then(response => {
-        return dispatch(receivedCurrentDevice(response.data))
+        return dispatch(receivedDevice(response.data))
       })
   }
 }
 
-export const receivedCurrentDevice = (device) => {
+export const receivedDevice = (device) => {
   const entities = normalizeDevice(device)
 
   return {
-    type: RECEIVED_CURRENT_DEVICE,
+    type: RECEIVED_DEVICE,
     entities
   }
 }

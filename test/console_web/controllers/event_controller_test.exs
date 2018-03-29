@@ -55,7 +55,6 @@ defmodule ConsoleWeb.EventControllerTest do
 
       assert json_response(conn, 201) == %{
         "id" => id,
-        "channel_id" => nil,
         "description" => "I am an event",
         "device" => %{
           "id" => device.id,
@@ -63,7 +62,8 @@ defmodule ConsoleWeb.EventControllerTest do
           "name" => device.name
         },
         "direction" => attrs.direction,
-        "gateway_id" => nil,
+        "gateway" => nil,
+        "channel" => nil,
         "payload" => "some payload",
         "payload_size" => 42,
         "reported_at" => "2010-04-17T14:00:00.000000",
@@ -85,11 +85,9 @@ defmodule ConsoleWeb.EventControllerTest do
       conn = put conn, event_path(conn, :update, event), event: @update_attrs
       assert json_response(conn, 200) == %{
         "id" => id,
-        "channel_id" => nil,
         "description" => "some updated description",
         "device" => nil,
         "direction" => "outbound",
-        "gateway_id" => nil,
         "payload" => "some updated payload",
         "payload_size" => 43,
         "reported_at" => "2011-05-18T15:01:01.000000",

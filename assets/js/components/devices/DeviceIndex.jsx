@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchDevices } from '../actions/device'
+import { fetchDevices } from '../../actions/device'
+import DashboardLayout from '../DashboardLayout'
 
-class Devices extends Component {
+class DeviceIndex extends Component {
   componentDidMount() {
     const { fetchDevices } = this.props
     fetchDevices()
@@ -14,14 +15,13 @@ class Devices extends Component {
     const { devices } = this.props
 
     return(
-      <div>
-        <h2>Devices</h2>
+      <DashboardLayout title="Devices" current="devices">
         <ul>
           {Object.values(devices).map(device => <li key={device.id}>
             <Link to={`/devices/${device.id}`}>{device.name}</Link>
           </li>)}
         </ul>
-      </div>
+      </DashboardLayout>
     )
   }
 }
@@ -36,4 +36,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchDevices }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Devices);
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceIndex);
