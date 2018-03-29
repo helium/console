@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchDevices } from '../actions/device'
+import { fetchDevices } from '../../actions/device'
 
-class Devices extends Component {
+class DeviceIndex extends Component {
   componentDidMount() {
     const { fetchDevices } = this.props
     fetchDevices()
@@ -36,4 +36,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchDevices }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Devices);
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceIndex);

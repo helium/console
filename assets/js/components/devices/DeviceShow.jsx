@@ -3,14 +3,13 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchCurrentDevice } from '../actions/device'
-import EventsTable from './EventsTable'
+import { fetchDevice } from '../../actions/device'
+import EventsTable from '../events/EventsTable'
 
-class Device extends Component {
+class DeviceShow extends Component {
   componentDidMount() {
     const { id } = this.props.match.params
-    const { fetchCurrentDevice } = this.props
-    fetchCurrentDevice(id)
+    this.props.fetchDevice(id)
   }
 
   render() {
@@ -42,7 +41,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchCurrentDevice }, dispatch);
+  return bindActionCreators({ fetchDevice }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Device);
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);

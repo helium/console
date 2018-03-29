@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchGateway } from '../../actions/gateway'
-import EventsTable from '../EventsTable'
+import EventsTable from '../../EventsTable'
 
 class GatewayShow extends Component {
   componentDidMount() {
