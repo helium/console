@@ -53,7 +53,7 @@ defmodule Console.Auth do
       {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
       user ->
         case verify_password(password, user.password_hash) do
-          true -> {:ok, user, generate_session_token(user)}
+          true -> {:ok, Repo.preload(user, [:twofactors]), generate_session_token(user)}
           _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end

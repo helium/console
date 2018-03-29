@@ -43,7 +43,7 @@ class TwoFactorForm extends Component {
       return(
         <div>
           <p>Set up multi-factor authentication by scanning the QR code below, we highly recommend it.</p>
-          <QRCode value={this.props.secret2FA} />
+          <QRCode value={this.props.secret2fa} />
           <form onSubmit={this.handleSubmit}>
             <label>2FA Code</label>
             <input name ="twoFactorCode" value={this.state.twoFactorCode} onChange={this.handleInputUpdate} />

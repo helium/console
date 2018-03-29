@@ -41,13 +41,13 @@ export const verify2fa = (code, userId) => {
   }
 }
 
-export const enable2fa = (code, userId, secret2FA) => {
+export const enable2fa = (code, userId, secret2fa) => {
   return (dispatch, getState) => {
     rest.post('/api/users/enable_2fa', {
         user: {
           code,
           userId,
-          secret2FA
+          secret2fa
         }
       })
       .then(response => {

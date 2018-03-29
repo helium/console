@@ -55,7 +55,7 @@ class Login extends Component {
 
   handleTwoFactorSubmit(code) {
     const { user } = this.props.auth
-    user.twoFactorEnabled ? this.props.verify2fa(code, user.id) : this.props.enable2fa(code, user.id, user.secret2FA)
+    user.twoFactorEnabled ? this.props.verify2fa(code, user.id) : this.props.enable2fa(code, user.id, user.secret2fa)
   }
 
   skipTwoFactor() {
@@ -65,9 +65,9 @@ class Login extends Component {
   renderForm() {
     const { user } = this.props.auth
     if (this.state.loginPage === "2fa") {
-      const secret2FA = user.secret2FA ? "otpauth://totp/BEAMCoin?secret=" + user.secret2FA + "&issuer=Helium%20Inc" : null
+      const secret2fa = user.secret2fa ? "otpauth://totp/BEAMCoin?secret=" + user.secret2fa + "&issuer=Helium%20Inc" : null
       return (
-        <TwoFactorForm twoFactorEnabled={user.twoFactorEnabled} secret2FA={secret2FA} onSubmit={this.handleTwoFactorSubmit} onSkip={this.skipTwoFactor}/>
+        <TwoFactorForm twoFactorEnabled={user.twoFactorEnabled} secret2fa={secret2fa} onSubmit={this.handleTwoFactorSubmit} onSkip={this.skipTwoFactor}/>
       )
     } else {
       return (

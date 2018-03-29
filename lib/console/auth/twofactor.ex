@@ -10,8 +10,6 @@ defmodule Console.Auth.Twofactor do
     field :secret, :string
     field :last_verified, :naive_datetime
     field :last_skipped, :naive_datetime
-    belongs_to(:user, Users)
-
-    timestamps()
+    belongs_to(:user, User)
   end
 end
