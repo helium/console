@@ -2,7 +2,7 @@ defmodule Console.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Auth.Twofactor
+  alias Console.Auth.TwoFactor
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

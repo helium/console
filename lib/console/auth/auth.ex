@@ -7,6 +7,7 @@ defmodule Console.Auth do
   alias Console.Repo
 
   alias Console.Auth.User
+  alias Console.Auth.TwoFactor
 
   def get_user_by_id!(id) do
     Repo.get!(User, id)
@@ -53,7 +54,7 @@ defmodule Console.Auth do
       {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
       user ->
         case verify_password(password, user.password_hash) do
-          true -> {:ok, Repo.preload(user, [:twofactors]), generate_session_token(user)}
+          true -> {:ok, Repo.preload(user, [:twofactor]), generate_session_token(user)}
           _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end
@@ -117,6 +118,16 @@ defmodule Console.Auth do
           end
         _ -> {:error, :unauthorized, "An unexpected error has occured, please try again"} #if poison fails to send the request
       end
+    end
+  end
+
+  def enable_2fa(user, secret2fa) do
+    loadedUser = Repo.preload(user, [:twofactor])
+    
+    with nil = loadedUser.twofactor do
+      %TwoFactor{}
+      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa})
+      |> Repo.insert()
     end
   end
 

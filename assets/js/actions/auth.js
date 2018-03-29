@@ -43,7 +43,7 @@ export const verify2fa = (code, userId) => {
 
 export const enable2fa = (code, userId, secret2fa) => {
   return (dispatch, getState) => {
-    rest.post('/api/users/enable_2fa', {
+    rest.post('/api/2fa', {
         user: {
           code,
           userId,
