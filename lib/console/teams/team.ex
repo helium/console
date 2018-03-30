@@ -17,6 +17,7 @@ defmodule Console.Teams.Team do
     team
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> validate_length(:name, min: 6, message: "Team Name must be at least 6 letters")
   end
 
   @doc false

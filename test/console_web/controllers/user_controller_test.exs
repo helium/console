@@ -19,12 +19,14 @@ defmodule ConsoleWeb.UserControllerTest do
 
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), user: @create_attrs, recaptcha: "recaptcha"
+      team_attrs = %{name: "Test Team"}
+      conn = post conn, user_path(conn, :create), user: @create_attrs, team: team_attrs, recaptcha: "recaptcha"
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), user: @invalid_attrs, recaptcha: "recaptcha"
+      team_attrs = %{name: "Test"}
+      conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs, recaptcha: "recaptcha"
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

@@ -14,17 +14,22 @@ defmodule Console.Teams do
       %Team{}
       |> Team.changeset(attrs)
 
-    {:ok, %{team: team}} =
+    membership_fn = fn %{team: team} ->
+      %Membership{}
+      |> Membership.join_changeset(user, team)
+      |> Repo.insert()
+    end
+
+    result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:team, team_changeset)
-      |> Ecto.Multi.run(:membership, fn %{team: team} ->
-        %Membership{}
-        |> Membership.join_changeset(user, team)
-        |> Repo.insert()
-      end)
+      |> Ecto.Multi.run(:membership, membership_fn)
       |> Repo.transaction()
 
-    {:ok, team}
+    case result do
+      {:ok, %{team: team}} -> {:ok, team}
+      {:error, :team, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
   end
 
   def fetch_assoc(team) do

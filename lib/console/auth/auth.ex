@@ -24,10 +24,27 @@ defmodule Console.Auth do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+  def create_user(user_attrs \\ %{}, team_attrs \\ %{}) do
+    user_changeset =
+      %User{}
+      |> User.registration_changeset(user_attrs)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, user_changeset)
+      |> Ecto.Multi.run(:team, fn %{user: user} ->
+        Console.Teams.create_team(user, team_attrs)
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} -> {:ok, user}
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
+  def fetch_assoc(%User{} = user) do
+    Repo.preload(user, [:teams])
   end
 
   def authenticate(%{"email" => email, "password" => password}) do

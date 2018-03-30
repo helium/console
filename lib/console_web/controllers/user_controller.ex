@@ -9,9 +9,9 @@ defmodule ConsoleWeb.UserController do
 
   action_fallback ConsoleWeb.FallbackController
 
-  def create(conn, %{"user" => user_params, "recaptcha" => recaptcha}) do
+  def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user} <- Auth.create_user(user_params) do
+      {:ok, %User{} = user} <- Auth.create_user(user_params, team_params) do
         Email.confirm_email(user) |> Mailer.deliver_later()
 
         conn
