@@ -14,7 +14,7 @@ defmodule ConsoleWeb.TwoFactorController do
             # Generate backup codes and send back here
             conn
             |> put_status(:accepted)
-            |> render("2fa_status.json", message: "Your account now has 2FA", email: user.email)
+            |> render("2fa_status.json", message: "Your account now has 2FA", user: user)
           end
         false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
       end

@@ -21,12 +21,10 @@ export const checkCredentials = (email, password, recaptcha) => {
         }
       })
       .then(response => {
-        console.log(response)
+        dispatch(isValidUser(response.data.user))
         if (response.data.user.twoFactorEnabled === false) {
           dispatch(loggedIn(response.data.jwt))
           dispatch(push("/2fa_prompt"))
-        } else {
-          dispatch(isValidUser(response.data.user, response.data.jwt))
         }
       })
       .catch(() => dispatch(shouldResetCaptcha()))
@@ -57,7 +55,8 @@ export const enable2fa = (code, userId, secret2fa) => {
         }
       })
       .then(response => {
-        dispatch(logIn(getState().auth.apikey))
+        dispatch(push('/secret'))
+        dispatch(isValidUser(response.data.user))
       })
   }
 }

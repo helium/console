@@ -18,6 +18,7 @@ import ForgotPassword from './components/auth/ForgotPassword.jsx';
 import ResetPassword from './components/auth/ResetPassword.jsx';
 import Home from './components/Home.jsx';
 import Secret from './components/Secret.jsx';
+import TwoFactorPrompt from './components/auth/TwoFactorPrompt.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
@@ -42,6 +43,7 @@ class Router extends React.Component {
                   <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
                   <PublicRoute path="/register" component={Register}/>
                   <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
+                  <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
                   <PrivateRoute path="/secret" component={Secret}/>
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>

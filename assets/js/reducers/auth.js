@@ -10,10 +10,9 @@ const initialState = {
 const auth = (state = initialState, action) => {
   switch(action.type) {
     case IS_VALID_USER:
-      return { ...state, apikey: action.apikey, user: action.user };
+      return { ...state, user: action.user };
     case LOGGED_IN:
-      const user = { id: state.user.id, twoFactorEnabled: state.user.twoFactorEnabled };
-      return { ...state, isLoggedIn: true, apikey: action.apikey, user };
+      return { ...state, isLoggedIn: true, apikey: action.apikey };
     case LOGGED_OUT:
       return { ...state, isLoggedIn: false, apikey: null, user: null };
     case HAS_RESET_CAPTCHA:

@@ -31,7 +31,7 @@ class Login extends Component {
       this.props.hasResetCaptcha()
     }
 
-    if (this.props.auth.user !== nextProps.auth.user) {
+    if (this.props.auth.user !== nextProps.auth.user && nextProps.auth.user.twoFactorEnabled) {
       this.setState({ loginPage: "2fa" })
     }
   }
