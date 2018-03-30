@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { logIn, enable2fa } from '../../actions/auth.js';
+import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 
 class TwoFactorPrompt extends Component {
@@ -17,6 +18,11 @@ class TwoFactorPrompt extends Component {
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
   }
 
+  componentDidMount() {
+    const { user } = this.props.auth
+    if (user.twoFactorEnabled) this.props.history.replace("/secret")
+  }
+
   handleSubmit(e) {
     e.preventDefault()
     const { user } = this.props.auth
@@ -25,7 +31,7 @@ class TwoFactorPrompt extends Component {
   }
 
   handleSkip() {
-    
+    this.props.history.replace("/secret")
   }
 
   handleInputUpdate(e) {
@@ -57,7 +63,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, enable2fa, dispatch }, dispatch);
+  return bindActionCreators({ logIn, enable2fa }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TwoFactorPrompt);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TwoFactorPrompt));

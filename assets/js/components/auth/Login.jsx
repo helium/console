@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
+import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from 'react-recaptcha';
 import TwoFactorForm from './TwoFactorForm.jsx'
@@ -25,13 +25,13 @@ class Login extends Component {
     this.renderForm = this.renderForm.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.shouldResetCaptcha) {
+  componentDidUpdate(prevProps) {
+    if (this.props.auth.shouldResetCaptcha) {
       this.recaptchaInstance.reset()
       this.props.hasResetCaptcha()
     }
 
-    if (this.props.auth.user !== nextProps.auth.user && nextProps.auth.user.twoFactorEnabled) {
+    if (this.props.auth.user !== prevProps.auth.user && this.props.auth.user.twoFactorEnabled) {
       this.setState({ loginPage: "2fa" })
     }
   }
@@ -96,7 +96,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ checkCredentials, hasResetCaptcha, logIn, verify2fa }, dispatch);
+  return bindActionCreators({ checkCredentials, hasResetCaptcha, verify2fa }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
