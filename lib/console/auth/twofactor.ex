@@ -7,7 +7,8 @@ defmodule Console.Auth.TwoFactor do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "twofactors" do
-    field :secret, :string
+    field :secret, Cloak.EncryptedBinaryField
+    field :encryption_version, :binary
     field :last_verified, :naive_datetime
     field :last_skipped, :naive_datetime
     belongs_to(:user, User)
@@ -17,5 +18,6 @@ defmodule Console.Auth.TwoFactor do
     twoFactor
     |> cast(attrs, [:secret, :user_id])
     |> validate_required([:secret, :user_id])
+    |> put_change(:encryption_version, Cloak.version)
   end
 end
