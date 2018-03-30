@@ -21,8 +21,11 @@ defmodule Console.AuthTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Auth.create_user(@valid_attrs)
+      team_attrs = %{name: "Test Team"}
+      assert {:ok, %User{} = user} = Auth.create_user(@valid_attrs, team_attrs)
       assert user.email == "test@hello.com"
+      user = Auth.fetch_assoc(user)
+      assert List.first(user.teams).name == team_attrs.name
     end
 
     test "create_user/1 with invalid data returns error changeset" do
