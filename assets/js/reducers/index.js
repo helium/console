@@ -7,7 +7,8 @@ const defaultEntityState = {
   devices: {},
   events: {},
   gateways: {},
-  channels: {}
+  channels: {},
+  teams: {},
 }
 
 // Updates an entity cache in response to any action with entities.

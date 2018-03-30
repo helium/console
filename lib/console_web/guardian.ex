@@ -3,6 +3,10 @@ defmodule ConsoleWeb.Guardian do
 
   alias Console.Auth
 
+  def current_user(conn) do
+    ConsoleWeb.Guardian.Plug.current_resource(conn)
+  end
+
   def subject_for_token(resource, _claims) do
     # You can use any value for the subject of your token but
     # it should be useful in retrieving the resource later, see
