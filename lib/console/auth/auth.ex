@@ -4,6 +4,7 @@ defmodule Console.Auth do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Type
   alias Console.Repo
 
   alias Console.Auth.User
@@ -120,8 +121,10 @@ defmodule Console.Auth do
 
   def enable_2fa(user, secret2fa) do
     with nil <- fetch_assoc(user).twofactor do
+      codes = generate_backup_codes()
+      
       %TwoFactor{}
-      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa})
+      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa, codes: codes})
       |> Repo.insert()
     end
   end
@@ -166,5 +169,9 @@ defmodule Console.Auth do
     user
     |> User.generate_new_confirmation_changeset()
     |> Repo.update()
+  end
+
+  defp generate_backup_codes() do
+    Enum.reduce(1..10, [], fn(i, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
   end
 end
