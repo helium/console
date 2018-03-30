@@ -2,8 +2,6 @@ defmodule Console.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Auth.TwoFactor
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -13,7 +11,7 @@ defmodule Console.Auth.User do
     field :confirmation_token, :string
     field :confirmed_at, :naive_datetime
 
-    has_one :twofactors, Twofactor
+    has_one :twofactor, Console.Auth.TwoFactor
     has_many :memberships, Console.Teams.Membership
     many_to_many :teams, Console.Teams.Team, join_through: "memberships"
 

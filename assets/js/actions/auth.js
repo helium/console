@@ -10,6 +10,7 @@ export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
 export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
+export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
 
 export const checkCredentials = (email, password, recaptcha) => {
   return (dispatch) => {
@@ -41,6 +42,15 @@ export const verify2fa = (code, userId) => {
       })
       .then(response => {
         dispatch(logIn(response.data.jwt))
+      })
+  }
+}
+
+export const getNew2fa = () => {
+  return (dispatch, getState) => {
+    rest.get('/api/2fa')
+      .then(response => {
+        dispatch(new2faSecret(response.data.secret2fa))
       })
   }
 }
@@ -144,6 +154,13 @@ export const isValidUser = (user, jwt = null) => {
     type: IS_VALID_USER,
     user,
     apikey: jwt
+  }
+}
+
+export const new2faSecret = (secret) => {
+  return {
+    type: NEW_2FA_SECRET,
+    secret2fa: secret
   }
 }
 

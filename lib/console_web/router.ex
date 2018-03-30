@@ -32,6 +32,7 @@ defmodule ConsoleWeb.Router do
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
 
+    get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
     get "/secret", PageController, :secret
   end

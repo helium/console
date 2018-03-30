@@ -45,10 +45,6 @@ defmodule Console.Auth do
     end
   end
 
-  def fetch_assoc(%User{} = user) do
-    Repo.preload(user, [:teams])
-  end
-
   def authenticate(%{"email" => email, "password" => password}) do
     case get_user_for_authentication(email) do
       nil -> {:error, :unauthorized, "The email address or password you entered is not valid"}
@@ -131,7 +127,7 @@ defmodule Console.Auth do
   end
 
   def fetch_assoc(%User{} = user) do
-    Repo.preload(user, [:twofactor])
+    Repo.preload(user, [:twofactor, :teams])
   end
 
   def generate_session_token(user) do

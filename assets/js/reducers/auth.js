@@ -1,4 +1,4 @@
-import { LOGGED_IN, LOGGED_OUT, HAS_RESET_CAPTCHA, SHOULD_RESET_CAPTCHA, IS_VALID_USER } from '../actions/auth.js';
+import { LOGGED_IN, LOGGED_OUT, HAS_RESET_CAPTCHA, SHOULD_RESET_CAPTCHA, IS_VALID_USER, NEW_2FA_SECRET } from '../actions/auth.js';
 
 const initialState = {
   isLoggedIn: false,
@@ -11,6 +11,9 @@ const auth = (state = initialState, action) => {
   switch(action.type) {
     case IS_VALID_USER:
       return { ...state, user: action.user };
+    case NEW_2FA_SECRET:
+      const newUser = { ...state.user, secret2fa: action.secret2fa }
+      return { ...state, user: newUser };
     case LOGGED_IN:
       return { ...state, isLoggedIn: true, apikey: action.apikey };
     case LOGGED_OUT:

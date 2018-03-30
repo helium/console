@@ -6,6 +6,13 @@ defmodule ConsoleWeb.TwoFactorController do
 
   action_fallback ConsoleWeb.FallbackController
 
+  def new(conn, _params) do
+    secret = :crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)
+    conn
+    |> put_status(:ok)
+    |> render("2fa_new.json", secret: secret)
+  end
+
   def create(conn, %{"user" => %{"code" => code, "userId" => userId, "secret2fa" => secret2fa}}) do
     with %User{} = user <- Auth.get_user_by_id!(userId) do
       case :pot.valid_totp(code, secret2fa) do

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, enable2fa } from '../../actions/auth.js';
+import { logIn, enable2fa, getNew2fa } from '../../actions/auth.js';
 import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 
@@ -16,11 +16,14 @@ class TwoFactorPrompt extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleSkip = this.handleSkip.bind(this)
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
+    this.renderQRCode = this.renderQRCode.bind(this)
   }
 
   componentDidMount() {
     const { user } = this.props.auth
-    if (user.twoFactorEnabled) this.props.history.replace("/secret")
+    if (user.twoFactorEnabled) return this.props.history.replace("/secret")
+
+    this.props.getNew2fa()
   }
 
   handleSubmit(e) {
@@ -38,13 +41,19 @@ class TwoFactorPrompt extends Component {
     this.setState({ twoFactorCode: e.target.value})
   }
 
-  render() {
+  renderQRCode() {
     const { user } = this.props.auth
-    const secret2fa = "otpauth://totp/BEAMCoin?secret=" + user.secret2fa + "&issuer=Helium%20Inc"
+    if (user.secret2fa) {
+      const secret2fa = "otpauth://totp/BEAMCoin?secret=" + user.secret2fa + "&issuer=Helium%20Inc"
+      return <QRCode value={secret2fa} />
+    }
+  }
+
+  render() {
     return(
       <div>
         <p>Set up multi-factor authentication by scanning the QR code below, we highly recommend it.</p>
-        <QRCode value={secret2fa} />
+        {this.renderQRCode()}
         <form onSubmit={this.handleSubmit}>
           <label>2FA Code</label>
           <input name ="twoFactorCode" value={this.state.twoFactorCode} onChange={this.handleInputUpdate} />
@@ -63,7 +72,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, enable2fa }, dispatch);
+  return bindActionCreators({ logIn, enable2fa, getNew2fa }, dispatch);
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TwoFactorPrompt));

@@ -12,10 +12,9 @@ defmodule ConsoleWeb.SessionController do
       {:ok, %User{} = user, jwt} <- Auth.authenticate(session_params) do
         case user.twofactor do
           nil ->
-            secret = :crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)
             conn
             |> put_status(:created)
-            |> render("show.json", user: user, jwt: jwt, secret: secret)
+            |> render("show.json", user: user, jwt: jwt)
           %TwoFactor{} ->
             conn
             |> put_status(:created)
