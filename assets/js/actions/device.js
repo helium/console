@@ -3,8 +3,8 @@ import { normalizeDevice, normalizeDevices } from '../schemas/device'
 
 export const FETCH_DEVICES = 'FETCH_DEVICES'
 export const RECEIVED_DEVICES = 'RECEIVED_DEVICES'
-export const FETCH_DEVICE = 'FETCH_CURRENT_DEVICE'
-export const RECEIVED_DEVICE = 'RECEIVED_CURRENT_DEVICE'
+export const FETCH_DEVICE = 'FETCH_DEVICE'
+export const RECEIVED_DEVICE = 'RECEIVED_DEVICE'
 
 
 export const fetchDevices = () => {

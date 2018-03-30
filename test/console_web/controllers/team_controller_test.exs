@@ -9,6 +9,19 @@ defmodule ConsoleWeb.TeamControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  describe "index" do
+    setup [:authenticate_user]
+
+    test "lists all teams for a user", %{conn: conn, user: user_a} do
+      user_b = insert(:user)
+      team_a = Console.Teams.create_team(user_a, %{name: "User A Team"})
+      team_b = Console.Teams.create_team(user_b, %{name: "User B Team"})
+      conn = get conn, team_path(conn, :index)
+      assert length(json_response(conn, 200)) == 1
+      assert List.first(json_response(conn, 200))["name"] == "User A Team"
+    end
+  end
+
   describe "create team" do
     setup [:authenticate_user]
 

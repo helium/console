@@ -9,7 +9,7 @@ defmodule Console.FactoryHelper do
     conn = conn
            |> put_req_header("accept", "application/json")
            |> put_req_header("authorization", "bearer: " <> token)
-    {:ok, conn: conn}
+    {:ok, conn: conn, user: user}
   end
 
   def authenticated_conn() do

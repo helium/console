@@ -6,6 +6,12 @@ defmodule ConsoleWeb.TeamController do
 
   action_fallback ConsoleWeb.FallbackController
 
+  def index(conn, _params) do
+    current_user = ConsoleWeb.Guardian.current_user(conn)
+    current_user = Console.Auth.fetch_assoc(current_user)
+    render(conn, "index.json", teams: current_user.teams)
+  end
+
   def create(conn, %{"team" => team_attrs}) do
     current_user = ConsoleWeb.Guardian.current_user(conn)
     with {:ok, %Team{} = team} <- Teams.create_team(current_user, team_attrs) do
