@@ -29,7 +29,6 @@ class Secret extends Component {
       <DashboardLayout title="Profile">
         <p>Your email is: {email}</p>
         <button onClick={this.handleLogout}>Log Out</button>
-        <QRCode value="otpauth://totp/BEAMCoin?secret=GDJWVBSGXAC36OBQ&issuer=Helium%20Inc" />
       </DashboardLayout>
     );
   }

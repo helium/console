@@ -21,6 +21,7 @@ defmodule ConsoleWeb.Router do
     post "/users/forgot_password", UserController, :forgot_password
     post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
+    post "/2fa/verify", TwoFactorController, :verify
   end
 
   scope "/api", ConsoleWeb do
@@ -31,6 +32,8 @@ defmodule ConsoleWeb.Router do
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
 
+    get "/2fa", TwoFactorController, :new
+    post "/2fa", TwoFactorController, :create
     get "/secret", PageController, :secret
   end
 

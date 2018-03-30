@@ -1,14 +1,22 @@
 defmodule ConsoleWeb.SessionView do
   use ConsoleWeb, :view
-  alias ConsoleWeb.SessionView
 
   def render("show.json", %{user: user, jwt: jwt}) do
     %{
       jwt: jwt,
       user: %{
         id: user.id,
-        email: user.email
+        twoFactorEnabled: false
       }
     }
+  end
+
+  def render("show.json", %{user: user}) do
+    %{
+      user: %{
+        id: user.id,
+        twoFactorEnabled: true
+       }
+     }
   end
 end

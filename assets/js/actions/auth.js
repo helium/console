@@ -3,14 +3,16 @@ import * as rest from '../util/rest';
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
+export const IS_VALID_USER = 'IS_VALID_USER';
 export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
 export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
+export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
 
-export const logIn = (email, password, recaptcha) => {
+export const checkCredentials = (email, password, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
         recaptcha,
@@ -20,10 +22,59 @@ export const logIn = (email, password, recaptcha) => {
         }
       })
       .then(response => {
-        return dispatch(loggedIn(response.data.jwt))
+        dispatch(isValidUser(response.data.user))
+        if (response.data.user.twoFactorEnabled === false) {
+          dispatch(loggedIn(response.data.jwt))
+          dispatch(push("/2fa_prompt"))
+        }
       })
-      .then(() => dispatch(push('/secret')))
       .catch(() => dispatch(shouldResetCaptcha()))
+  }
+}
+
+export const verify2fa = (code, userId) => {
+  return (dispatch) => {
+    rest.post('/api/2fa/verify', {
+        session: {
+          code,
+          userId
+        }
+      })
+      .then(response => {
+        dispatch(logIn(response.data.jwt))
+      })
+  }
+}
+
+export const getNew2fa = () => {
+  return (dispatch, getState) => {
+    rest.get('/api/2fa')
+      .then(response => {
+        dispatch(new2faSecret(response.data.secret2fa))
+      })
+  }
+}
+
+export const enable2fa = (code, userId, secret2fa) => {
+  return (dispatch, getState) => {
+    rest.post('/api/2fa', {
+        user: {
+          code,
+          userId,
+          secret2fa
+        }
+      })
+      .then(response => {
+        dispatch(push('/secret'))
+        dispatch(isValidUser(response.data.user))
+      })
+  }
+}
+
+export const logIn = (apikey) => {
+  return (dispatch) => {
+    dispatch(loggedIn(apikey))
+    dispatch(push('/secret'))
   }
 }
 
@@ -98,6 +149,21 @@ export const resendVerification = (email, recaptcha) => {
   }
 }
 
+export const isValidUser = (user, jwt = null) => {
+  return {
+    type: IS_VALID_USER,
+    user,
+    apikey: jwt
+  }
+}
+
+export const new2faSecret = (secret) => {
+  return {
+    type: NEW_2FA_SECRET,
+    secret2fa: secret
+  }
+}
+
 export const hasResetCaptcha = () => {
   return {
     type: HAS_RESET_CAPTCHA
@@ -110,10 +176,10 @@ export const shouldResetCaptcha = () => {
   }
 }
 
-const loggedIn = (jwt) => {
+const loggedIn = (apikey) => {
   return {
     type: LOGGED_IN,
-    apikey: jwt
+    apikey
   }
 }
 

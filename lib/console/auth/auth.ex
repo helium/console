@@ -7,9 +7,11 @@ defmodule Console.Auth do
   alias Console.Repo
 
   alias Console.Auth.User
+  alias Console.Auth.TwoFactor
 
   def get_user_by_id!(id) do
     Repo.get!(User, id)
+
   end
 
   @doc """
@@ -43,17 +45,13 @@ defmodule Console.Auth do
     end
   end
 
-  def fetch_assoc(%User{} = user) do
-    Repo.preload(user, [:teams])
-  end
-
   def authenticate(%{"email" => email, "password" => password}) do
     case get_user_for_authentication(email) do
       nil -> {:error, :unauthorized, "The email address or password you entered is not valid"}
       {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
       user ->
         case verify_password(password, user.password_hash) do
-          true -> {:ok, user, sign_token(user)}
+          true -> {:ok, fetch_assoc(user), generate_session_token(user)}
           _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end
@@ -120,6 +118,23 @@ defmodule Console.Auth do
     end
   end
 
+  def enable_2fa(user, secret2fa) do
+    with nil <- fetch_assoc(user).twofactor do
+      %TwoFactor{}
+      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa})
+      |> Repo.insert()
+    end
+  end
+
+  def fetch_assoc(%User{} = user) do
+    Repo.preload(user, [:twofactor, :teams])
+  end
+
+  def generate_session_token(user) do
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
+    token
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil -> nil
@@ -133,11 +148,6 @@ defmodule Console.Auth do
 
   defp verify_password(password, pw_hash) do
     Comeonin.Bcrypt.checkpw(password, pw_hash)
-  end
-
-  defp sign_token(user) do
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
-    token
   end
 
   defp mark_email_confirmed(user) do
