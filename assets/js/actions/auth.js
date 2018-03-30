@@ -65,6 +65,7 @@ export const enable2fa = (code, userId, secret2fa) => {
         }
       })
       .then(response => {
+        console.log(response)
         dispatch(push('/secret'))
         dispatch(isValidUser(response.data.user))
       })

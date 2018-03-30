@@ -4,7 +4,6 @@ defmodule Console.Auth do
   """
 
   import Ecto.Query, warn: false
-  import Ecto.Type
   alias Console.Repo
 
   alias Console.Auth.User
@@ -122,10 +121,19 @@ defmodule Console.Auth do
   def enable_2fa(user, secret2fa) do
     with nil <- fetch_assoc(user).twofactor do
       codes = generate_backup_codes()
-      
+
       %TwoFactor{}
       |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa, codes: codes})
       |> Repo.insert()
+    end
+  end
+
+  def remove_used_backup_code(%TwoFactor{} = twoFactor, code) do
+    newBackupCodes = twoFactor.backup_codes -- [code]
+
+    case twoFactor |> TwoFactor.remove_used_backup_code_changeset(newBackupCodes) |> Repo.update() do
+      {:ok, _} -> true
+      {:error, _} -> false
     end
   end
 
@@ -172,6 +180,6 @@ defmodule Console.Auth do
   end
 
   defp generate_backup_codes() do
-    Enum.reduce(1..10, [], fn(i, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
+    Enum.reduce(1..10, [], fn(_, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
   end
 end

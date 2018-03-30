@@ -9,13 +9,14 @@ defmodule ConsoleWeb.TwoFactorView do
     %{jwt: jwt, email: email}
   end
 
-  def render("2fa_status.json", %{message: message, user: user}) do
+  def render("2fa_status.json", %{message: message, user: user, backup_codes: codes}) do
     %{
       success_message: message,
       user: %{
         id: user.id,
         twoFactorEnabled: true
-      }
+      },
+      backup_codes: codes
     }
   end
 end
