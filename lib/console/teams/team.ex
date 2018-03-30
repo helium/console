@@ -16,7 +16,7 @@ defmodule Console.Teams.Team do
   def changeset(team, attrs) do
     team
     |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> validate_required(:name, message: "Team Name is required")
     |> validate_length(:name, min: 6, message: "Team Name must be at least 6 letters")
   end
 
