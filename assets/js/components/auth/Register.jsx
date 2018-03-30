@@ -11,6 +11,7 @@ class Register extends Component {
     super(props);
 
     this.state = {
+      teamName: "",
       email: "",
       password: "",
       passwordConfirm: "",
@@ -35,10 +36,10 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password, passwordConfirm, recaptcha} = this.state;
+    const { teamName, email, password, passwordConfirm, recaptcha} = this.state;
 
     // if (password === passwordConfirm) {
-      this.props.register(email, password, passwordConfirm, recaptcha);
+      this.props.register(teamName, email, password, passwordConfirm, recaptcha);
     // } else {
       // window.alert("passwords do not match, please try again")
     // }
@@ -53,12 +54,22 @@ class Register extends Component {
       <div>
         <h2>Register</h2>
         <form onSubmit={this.handleSubmit} noValidate>
-          <label>Email</label>
-          <input type="email" name="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          <label>Password</label>
-          <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          <label>Confirm Password</label>
-          <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
+          <div>
+            <label>Team Name</label>
+            <input type="text" name="teamName" value={this.state.teamName} onChange={this.handleInputUpdate} />
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" name="email" value={this.state.email} onChange={this.handleInputUpdate} />
+          </div>
+          <div>
+            <label>Password</label>
+            <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
+          </div>
+          <div>
+            <label>Confirm Password</label>
+            <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
+          </div>
           <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
           <button type="submit">Register</button>
         </form>

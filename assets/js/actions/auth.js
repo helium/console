@@ -33,7 +33,7 @@ export const logOut = () => {
   }
 }
 
-export const register = (email, password, passwordConfirm, recaptcha) => {
+export const register = (teamName, email, password, passwordConfirm, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users', {
         recaptcha,
@@ -41,6 +41,9 @@ export const register = (email, password, passwordConfirm, recaptcha) => {
           email,
           password,
           password_confirmation: passwordConfirm
+        },
+        team: {
+          name: teamName
         }
       })
       .then(() => {
