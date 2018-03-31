@@ -3,6 +3,7 @@ defmodule ConsoleWeb.TeamController do
 
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Auth
 
   action_fallback ConsoleWeb.FallbackController
 
@@ -25,5 +26,13 @@ defmodule ConsoleWeb.TeamController do
       |> put_status(:created)
       |> render("show.json", team: team)
     end
+  end
+
+  def switch(conn, %{"team_id" => team_id}) do
+    current_user = ConsoleWeb.Guardian.current_user(conn)
+    team = Teams.get_team!(current_user, team_id)
+    jwt = Auth.generate_session_token(current_user, team)
+
+    render(conn, "switch.json", jwt: jwt)
   end
 end

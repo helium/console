@@ -10,6 +10,12 @@ defmodule ConsoleWeb.TeamView do
     render_one(team, TeamView, "team.json")
   end
 
+  def render("switch.json", %{jwt: jwt}) do
+    %{
+      jwt: jwt
+    }
+  end
+
   def render("team.json", %{team: team}) do
     %{
       id: team.id,

@@ -1,10 +1,12 @@
 import * as rest from '../util/rest';
+import { getTeamId } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'
 
 export const FETCH_TEAMS = 'FETCH_TEAMS'
 export const RECEIVED_TEAMS = 'RECEIVED_TEAMS'
 export const FETCH_TEAM = 'FETCH_TEAM'
 export const RECEIVED_TEAM = 'RECEIVED_TEAM'
+export const SWITCHED_TEAM = 'SWITCHED_TEAM'
 
 export const fetchTeams = () => {
   return (dispatch) => {
@@ -33,6 +35,16 @@ export const fetchTeam = (id) => {
   }
 }
 
+export const receivedTeam = (team) => {
+  const entities = normalizeTeam(team)
+
+  return {
+    type: RECEIVED_TEAM,
+    entities
+  }
+}
+
+
 export const createTeam = (name) => {
   return (dispatch) => {
     rest.post('/api/teams', {
@@ -46,11 +58,19 @@ export const createTeam = (name) => {
   }
 }
 
-export const receivedTeam = (team) => {
-  const entities = normalizeTeam(team)
+export const switchTeam = (id) => {
+  return (dispatch) => {
+    rest.post(`/api/teams/${id}/switch`)
+      .then(response => {
+        return dispatch(switchedTeam(response.data.jwt))
+      })
+  }
+}
 
+export const switchedTeam = (apikey) => {
   return {
-    type: RECEIVED_TEAM,
-    entities
+    type: SWITCHED_TEAM,
+    apikey,
+    currentTeamId: getTeamId(apikey)
   }
 }

@@ -1,4 +1,14 @@
-import { LOGGED_IN, LOGGED_OUT, HAS_RESET_CAPTCHA, SHOULD_RESET_CAPTCHA, IS_VALID_USER, NEW_2FA_SECRET, CLEAR_TWO_FACTOR_BACKUP_CODES } from '../actions/auth.js';
+import {
+  LOGGED_IN,
+  LOGGED_OUT,
+  HAS_RESET_CAPTCHA,
+  SHOULD_RESET_CAPTCHA,
+  IS_VALID_USER,
+  NEW_2FA_SECRET,
+  CLEAR_TWO_FACTOR_BACKUP_CODES
+} from '../actions/auth.js';
+
+import { SWITCHED_TEAM } from '../actions/team.js';
 
 const initialState = {
   isLoggedIn: false,
@@ -26,6 +36,8 @@ const auth = (state = initialState, action) => {
       return { ...state, shouldResetCaptcha: false };
     case SHOULD_RESET_CAPTCHA:
       return { ...state, shouldResetCaptcha: true };
+    case SWITCHED_TEAM:
+      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId };
     default:
       return state;
   }

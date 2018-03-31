@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchTeams } from '../../actions/team'
+import { fetchTeams, switchTeam } from '../../actions/team'
 import DashboardLayout from '../DashboardLayout'
 
 const CurrentTeam = (props) => {
@@ -22,8 +22,17 @@ const CurrentTeam = (props) => {
 }
 
 class TeamIndex extends Component {
+  constructor(props) {
+    super(props)
+    this.handleSwitchTeam = this.handleSwitchTeam.bind(this)
+  }
+
   componentDidMount() {
     this.props.fetchTeams()
+  }
+
+  handleSwitchTeam(id) {
+    this.props.switchTeam(id)
   }
 
   render() {
@@ -36,6 +45,7 @@ class TeamIndex extends Component {
           <ul>
             {teams.map(team => <li key={team.id}>
               <Link to={`/teams/${team.id}`}>{team.name}</Link>
+              (<a onClick={() => this.handleSwitchTeam(team.id)}>switch</a>)
             </li>)}
           </ul>
         ) : (
@@ -54,7 +64,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchTeams }, dispatch);
+  return bindActionCreators({ fetchTeams, switchTeam }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamIndex);

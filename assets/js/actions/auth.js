@@ -1,5 +1,6 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
+import { getTeamId } from '../util/jwt'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -183,12 +184,10 @@ export const shouldResetCaptcha = () => {
 }
 
 const loggedIn = (apikey) => {
-  const jwtContent = parseJwt(apikey)
-  const currentTeamId = jwtContent.team
   return {
     type: LOGGED_IN,
     apikey,
-    currentTeamId
+    currentTeamId: getTeamId(apikey)
   }
 }
 
@@ -221,9 +220,3 @@ const sentVerification = () => {
     type: SENT_VERIFICATION
   }
 }
-
-const parseJwt = (token) => {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace('-', '+').replace('_', '/');
-  return JSON.parse(window.atob(base64));
-};
