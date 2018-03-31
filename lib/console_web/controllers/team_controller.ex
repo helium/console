@@ -8,7 +8,7 @@ defmodule ConsoleWeb.TeamController do
 
   def index(conn, _params) do
     current_user = ConsoleWeb.Guardian.current_user(conn)
-    current_user = Console.Auth.fetch_assoc(current_user)
+                   |> Console.Auth.fetch_assoc()
     render(conn, "index.json", teams: current_user.teams)
   end
 

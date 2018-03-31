@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.TeamControllerTest do
   use ConsoleWeb.ConnCase
 
-  alias Console.Teams
   import Console.FactoryHelper
   import Console.Factory
 
@@ -14,8 +13,8 @@ defmodule ConsoleWeb.TeamControllerTest do
 
     test "lists all teams for a user", %{conn: conn, user: user_a} do
       user_b = insert(:user)
-      team_a = Console.Teams.create_team(user_a, %{name: "User A Team"})
-      team_b = Console.Teams.create_team(user_b, %{name: "User B Team"})
+      Console.Teams.create_team(user_a, %{name: "User A Team"})
+      Console.Teams.create_team(user_b, %{name: "User B Team"})
       conn = get conn, team_path(conn, :index)
       assert length(json_response(conn, 200)) == 1
       assert List.first(json_response(conn, 200))["name"] == "User A Team"
