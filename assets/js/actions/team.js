@@ -63,6 +63,7 @@ export const switchTeam = (id) => {
     rest.post(`/api/teams/${id}/switch`)
       .then(response => {
         return dispatch(switchedTeam(response.data.jwt))
+        // dispatch(fetchTeams())
       })
   }
 }

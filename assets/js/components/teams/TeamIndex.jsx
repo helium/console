@@ -39,7 +39,7 @@ class TeamIndex extends Component {
     const { teams, currentTeam } = this.props
 
     return(
-      <DashboardLayout title="Teams">
+      <DashboardLayout current="teams" title="Teams">
         <CurrentTeam team={currentTeam} />
         {teams.length > 0 ? (
           <ul>
