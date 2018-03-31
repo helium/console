@@ -12,6 +12,12 @@ defmodule ConsoleWeb.TeamController do
     render(conn, "index.json", teams: current_user.teams)
   end
 
+  def show(conn, %{"id" => id}) do
+    current_user = ConsoleWeb.Guardian.current_user(conn)
+    team = Teams.get_team!(current_user, id)
+    render(conn, "show.json", team: team)
+  end
+
   def create(conn, %{"team" => team_attrs}) do
     current_user = ConsoleWeb.Guardian.current_user(conn)
     with {:ok, %Team{} = team} <- Teams.create_team(current_user, team_attrs) do

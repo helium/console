@@ -24,6 +24,15 @@ export const receivedTeams = (teams) => {
   }
 }
 
+export const fetchTeam = (id) => {
+  return (dispatch) => {
+    rest.get(`/api/teams/${id}`)
+      .then(response => {
+        return dispatch(receivedTeam(response.data))
+      })
+  }
+}
+
 export const createTeam = (name) => {
   return (dispatch) => {
     rest.post('/api/teams', {

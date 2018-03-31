@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, enable2fa, getNew2fa, clear2faBackupCodes } from '../../actions/auth.js';
+import { enable2fa, getNew2fa, clear2faBackupCodes } from '../../actions/auth.js';
 import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 
@@ -99,7 +99,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, enable2fa, getNew2fa, clear2faBackupCodes }, dispatch);
+  return bindActionCreators({ enable2fa, getNew2fa, clear2faBackupCodes }, dispatch);
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TwoFactorPrompt));

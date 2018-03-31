@@ -183,9 +183,12 @@ export const shouldResetCaptcha = () => {
 }
 
 const loggedIn = (apikey) => {
+  const jwtContent = parseJwt(apikey)
+  const currentTeamId = jwtContent.team
   return {
     type: LOGGED_IN,
-    apikey
+    apikey,
+    currentTeamId
   }
 }
 
@@ -218,3 +221,9 @@ const sentVerification = () => {
     type: SENT_VERIFICATION
   }
 }
+
+const parseJwt = (token) => {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace('-', '+').replace('_', '/');
+  return JSON.parse(window.atob(base64));
+};

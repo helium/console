@@ -11,7 +11,6 @@ defmodule Console.Auth do
 
   def get_user_by_id!(id) do
     Repo.get!(User, id)
-
   end
 
   @doc """
@@ -47,11 +46,15 @@ defmodule Console.Auth do
 
   def authenticate(%{"email" => email, "password" => password}) do
     case get_user_for_authentication(email) do
-      nil -> {:error, :unauthorized, "The email address or password you entered is not valid"}
-      {:error, :email_not_confirmed} -> {:error, :forbidden, "The email address you entered has not yet been confirmed"}
+      nil ->
+        {:error, :unauthorized, "The email address or password you entered is not valid"}
+
+      {:error, :email_not_confirmed} ->
+        {:error, :forbidden, "The email address you entered has not yet been confirmed"}
+
       user ->
         case verify_password(password, user.password_hash) do
-          true -> {:ok, fetch_assoc(user), generate_session_token(user)}
+          true -> {:ok, fetch_assoc(user)}
           _ -> {:error, :unauthorized, "The email address or password you entered is not valid"}
         end
     end
@@ -59,7 +62,9 @@ defmodule Console.Auth do
 
   def confirm_email(token) do
     case Repo.get_by(User, confirmation_token: token) do
-      nil -> :error
+      nil ->
+        :error
+
       user ->
         case mark_email_confirmed(user) do
           {:ok, _struct} -> :ok
@@ -70,10 +75,12 @@ defmodule Console.Auth do
 
   def get_user_for_resend_verification(email) do
     case Repo.get_by(User, email: email) do
-      nil -> {:error, :not_found, "The email address you have entered is not valid"}
+      nil ->
+        {:error, :not_found, "The email address you have entered is not valid"}
+
       user ->
         case user.confirmed_at do
-           nil -> generate_new_confirmation_token(user)
+          nil -> generate_new_confirmation_token(user)
           _ -> {:error, :not_found, "The email address you have entered is not valid"}
         end
     end
@@ -90,10 +97,17 @@ defmodule Console.Auth do
     case ConsoleWeb.Guardian.decode_and_verify(attrs["token"]) do
       {:ok, jwt} ->
         case Repo.get_by(User, id: jwt["sub"]) do
-          nil -> {:error, :unauthorized, "Password reset link may have expired, please check your email or request a new password reset link"}
-          user -> confirm_password_change(user, attrs)
+          nil ->
+            {:error, :unauthorized,
+             "Password reset link may have expired, please check your email or request a new password reset link"}
+
+          user ->
+            confirm_password_change(user, attrs)
         end
-      {:error, _} -> {:error, :unauthorized, "Password reset link may have expired, please check your email or request a new password reset link"}
+
+      {:error, _} ->
+        {:error, :unauthorized,
+         "Password reset link may have expired, please check your email or request a new password reset link"}
     end
   end
 
@@ -101,19 +115,32 @@ defmodule Console.Auth do
     if Application.get_env(:console, :env) === :test do
       true
     else
-      body = {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
-      case HTTPoison.post "https://www.google.com/recaptcha/api/siteverify", body do
+      body =
+        {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
+
+      case HTTPoison.post("https://www.google.com/recaptcha/api/siteverify", body) do
         {:ok, response} ->
           case response.status_code do
             200 ->
               responseBody = Poison.decode!(response.body)
+
               case responseBody["success"] do
-                true -> true
-                _ -> {:error, :unauthorized, "Your Captcha code is invalid, please try again"} #if recaptcha does not process correctly or is a robot
+                true ->
+                  true
+
+                # if recaptcha does not process correctly or is a robot
+                _ ->
+                  {:error, :unauthorized, "Your Captcha code is invalid, please try again"}
               end
-            _ -> {:error, :unauthorized, "An unexpected error has occurred, please try again"} #if google fails to respond correctly
+
+            # if google fails to respond correctly
+            _ ->
+              {:error, :unauthorized, "An unexpected error has occurred, please try again"}
           end
-        _ -> {:error, :unauthorized, "An unexpected error has occured, please try again"} #if poison fails to send the request
+
+        # if poison fails to send the request
+        _ ->
+          {:error, :unauthorized, "An unexpected error has occured, please try again"}
       end
     end
   end
@@ -150,13 +177,21 @@ defmodule Console.Auth do
   end
 
   def generate_session_token(user) do
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user)
+    current_team = List.last(fetch_assoc(user).teams)
+    generate_session_token(user, current_team)
+  end
+
+  def generate_session_token(user, current_team) do
+    claims = %{team: current_team.id}
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims)
     token
   end
 
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
-      nil -> nil
+      nil ->
+        nil
+
       user ->
         case user.confirmed_at do
           nil -> {:error, :email_not_confirmed}

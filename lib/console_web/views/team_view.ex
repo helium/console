@@ -16,4 +16,8 @@ defmodule ConsoleWeb.TeamView do
       name: team.name
     }
   end
+
+  def append_team(json, team) do
+    Map.put(json, :team, render_one(team, TeamView, "team.json"))
+  end
 end
