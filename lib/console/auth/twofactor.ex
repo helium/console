@@ -11,7 +11,7 @@ defmodule Console.Auth.TwoFactor do
     field :encryption_version, :binary
     field :last_verified, :naive_datetime
     field :last_skipped, :naive_datetime
-    field :backup_codes, Cloak.EncryptedStringListField
+    field :backup_codes, {:array, :string}
     belongs_to(:user, User)
   end
 

@@ -118,22 +118,25 @@ defmodule Console.Auth do
     end
   end
 
-  def enable_2fa(user, secret2fa) do
-    with nil <- fetch_assoc(user).twofactor do
-      codes = generate_backup_codes()
+  def generate_backup_codes() do
+    Enum.reduce(1..10, [], fn(_, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
+  end
 
+  def enable_2fa(user, secret2fa, codes) do
+    hashedCodes = hash_backup_codes(codes)
+    with nil <- fetch_assoc(user).twofactor do
       %TwoFactor{}
-      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa, codes: codes})
+      |> TwoFactor.enable_changeset(%{user_id: user.id, secret: secret2fa, codes: hashedCodes})
       |> Repo.insert()
     end
   end
 
   def verify_2fa_and_backup_codes(code, userTwoFactor) do
     validAuthCode = verify_2fa_code(code, userTwoFactor.secret)
-    validBackupCode = Enum.member?(userTwoFactor.backup_codes, code)
+    {validBackupCode, matchingCode} = verify_backup_code(code, userTwoFactor.backup_codes)
 
     cond do
-      (validAuthCode or (validBackupCode and remove_used_backup_code(userTwoFactor, code))) == true -> true
+      (validAuthCode or (validBackupCode and remove_used_backup_code(userTwoFactor, matchingCode))) == true -> true
       (validAuthCode or validBackupCode) == false -> false
     end
   end
@@ -184,8 +187,18 @@ defmodule Console.Auth do
     |> Repo.update()
   end
 
-  defp generate_backup_codes() do
-    Enum.reduce(1..10, [], fn(_, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
+  defp hash_backup_codes(codes) do
+    Enum.map(codes, fn(code) -> Comeonin.Bcrypt.hashpwsalt(code) end)
+  end
+
+  defp verify_backup_code(code, backupCodes) do
+    Enum.reduce(backupCodes, {false, "not found"}, fn(hash, acc) ->
+      if Comeonin.Bcrypt.checkpw(code, hash) do
+        {true, hash}
+      else
+        acc
+      end
+    end)
   end
 
   defp remove_used_backup_code(%TwoFactor{} = twoFactor, code) do

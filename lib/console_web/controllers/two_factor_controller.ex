@@ -18,10 +18,11 @@ defmodule ConsoleWeb.TwoFactorController do
     with %User{} = user <- Auth.get_user_by_id!(userId) do
       case Auth.verify_2fa_code(code, secret2fa) do
         true ->
-          with {:ok, %TwoFactor{} = userTwoFactor} <- Auth.enable_2fa(user, secret2fa) do
+          codes = Auth.generate_backup_codes()
+          with {:ok, %TwoFactor{} = userTwoFactor} <- Auth.enable_2fa(user, secret2fa, codes) do
             conn
             |> put_status(:accepted)
-            |> render("2fa_status.json", message: "Your account now has 2FA", user: user, backup_codes: userTwoFactor.backup_codes)
+            |> render("2fa_status.json", message: "Your account now has 2FA", user: user, backup_codes: codes)
           end
         false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
       end
