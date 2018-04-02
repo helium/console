@@ -39,15 +39,15 @@ defmodule ConsoleWeb.TwoFactorController do
       loadedUser = Auth.fetch_assoc(user)
       userTwoFactor = loadedUser.twofactor
 
-      case Auth.verify_2fa_and_backup_codes(code, userTwoFactor) do
-        true ->
-          with current_team <- Teams.current_team_for(user),
-                        jwt <- Auth.generate_session_token(user, current_team) do
-            conn
-            |> put_status(:created)
-            |> render("2fa_show.json", jwt: jwt, email: user.email)
-          end
-        false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
+      if Auth.verify_2fa_and_backup_codes(code, userTwoFactor) do
+        with current_team <- Teams.current_team_for(user),
+                      jwt <- Auth.generate_session_token(user, current_team) do
+          conn
+          |> put_status(:created)
+          |> render("2fa_show.json", jwt: jwt, email: user.email)
+        end
+      else
+        {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
       end
     end
   end
