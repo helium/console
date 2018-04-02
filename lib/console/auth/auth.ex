@@ -128,13 +128,18 @@ defmodule Console.Auth do
     end
   end
 
-  def remove_used_backup_code(%TwoFactor{} = twoFactor, code) do
-    newBackupCodes = twoFactor.backup_codes -- [code]
+  def verify_2fa_and_backup_codes(code, userTwoFactor) do
+    validAuthCode = verify_2fa_code(code, userTwoFactor.secret)
+    validBackupCode = Enum.member?(userTwoFactor.backup_codes, code)
 
-    case twoFactor |> TwoFactor.remove_used_backup_code_changeset(newBackupCodes) |> Repo.update() do
-      {:ok, _} -> true
-      {:error, _} -> false
+    cond do
+      (validAuthCode or (validBackupCode and remove_used_backup_code(userTwoFactor, code))) == true -> true
+      (validAuthCode or validBackupCode) == false -> false
     end
+  end
+
+  def verify_2fa_code(code, secret2fa) do
+    :pot.valid_totp(code, secret2fa)
   end
 
   def fetch_assoc(%User{} = user) do
@@ -181,5 +186,14 @@ defmodule Console.Auth do
 
   defp generate_backup_codes() do
     Enum.reduce(1..10, [], fn(_, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)
+  end
+
+  defp remove_used_backup_code(%TwoFactor{} = twoFactor, code) do
+    newBackupCodes = twoFactor.backup_codes -- [code]
+
+    case twoFactor |> TwoFactor.remove_used_backup_code_changeset(newBackupCodes) |> Repo.update() do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
   end
 end

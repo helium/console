@@ -16,7 +16,7 @@ defmodule ConsoleWeb.TwoFactorController do
 
   def create(conn, %{"user" => %{"code" => code, "userId" => userId, "secret2fa" => secret2fa}}) do
     with %User{} = user <- Auth.get_user_by_id!(userId) do
-      case :pot.valid_totp(code, secret2fa) do
+      case Auth.verify_2fa_code(code, secret2fa) do
         true ->
           with {:ok, %TwoFactor{} = userTwoFactor} <- Auth.enable_2fa(user, secret2fa) do
             conn
@@ -33,17 +33,14 @@ defmodule ConsoleWeb.TwoFactorController do
       loadedUser = Auth.fetch_assoc(user)
       userTwoFactor = loadedUser.twofactor
 
-      validAuthCode = :pot.valid_totp(code, userTwoFactor.secret)
-      validBackupCode = Enum.member?(userTwoFactor.backup_codes, code)
-
-      cond do
-        (validAuthCode or (validBackupCode and Auth.remove_used_backup_code(userTwoFactor, code))) == true ->
+      case Auth.verify_2fa_and_backup_codes(code, userTwoFactor) do
+        true ->
           with jwt <- Auth.generate_session_token(user) do
             conn
             |> put_status(:created)
             |> render("2fa_show.json", jwt: jwt, email: user.email)
           end
-        (validAuthCode or validBackupCode) == false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
+        false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
       end
     end
   end
