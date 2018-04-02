@@ -28,9 +28,16 @@ defmodule Console.FactoryHelper do
   end
 
   def create_device_for_team(team, attrs \\ %{}) do
-    attrs = attrs |> Enum.into(%{team_id: team.id})
+    attrs = Map.merge(attrs, %{team_id: team.id})
     attrs = params_for(:device, attrs)
     {:ok, device} = Console.Devices.create_device(attrs)
     device
+  end
+
+  def create_gateway_for_team(team, attrs \\ %{}) do
+    attrs = Map.merge(attrs, %{team_id: team.id})
+    attrs = params_for(:gateway, attrs)
+    {:ok, gateway} = Console.Gateways.create_gateway(attrs)
+    gateway
   end
 end

@@ -2,6 +2,7 @@ defmodule Console.Gateways.Gateway do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Teams.Team
   alias Console.Events.Event
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -13,6 +14,7 @@ defmodule Console.Gateways.Gateway do
     field :name, :string
     field :public_key, :binary
 
+    belongs_to :team, Team
     has_many :events, Event
 
     timestamps()
@@ -21,8 +23,8 @@ defmodule Console.Gateways.Gateway do
   @doc false
   def changeset(gateway, attrs) do
     gateway
-    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude])
-    |> validate_required([:name, :mac, :public_key, :latitude, :longitude])
+    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id])
+    |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id])
     |> unique_constraint(:mac)
   end
 end

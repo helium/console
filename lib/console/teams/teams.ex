@@ -38,8 +38,9 @@ defmodule Console.Teams do
     end
   end
 
+  # TODO might want to make this a bit more specific to avoid unnecesary fetches
   def fetch_assoc(team) do
-    Repo.preload(team, [:users, :devices])
+    Repo.preload(team, [:users, :devices, :gateways])
   end
 
   def current_team_for(%User{} = user) do

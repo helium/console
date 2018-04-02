@@ -7,11 +7,13 @@ defmodule ConsoleWeb.GatewayController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    gateways = Gateways.list_gateways()
-    render(conn, "index.json", gateways: gateways)
+    current_team = Console.Teams.fetch_assoc(conn.assigns.current_team)
+    render(conn, "index.json", gateways: current_team.gateways)
   end
 
   def create(conn, %{"gateway" => gateway_params}) do
+    current_team = conn.assigns.current_team
+    gateway_params = Map.merge(gateway_params, %{"team_id" => current_team.id})
     with {:ok, %Gateway{} = gateway} <- Gateways.create_gateway(gateway_params) do
       conn
       |> put_status(:created)

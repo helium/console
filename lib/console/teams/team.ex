@@ -10,6 +10,7 @@ defmodule Console.Teams.Team do
     many_to_many :users, Console.Auth.User, join_through: "memberships"
 
     has_many :devices, Console.Devices.Device
+    has_many :gateways, Console.Gateways.Gateway
 
     timestamps()
   end
