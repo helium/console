@@ -16,11 +16,15 @@ class DeviceIndex extends Component {
 
     return(
       <DashboardLayout title="Devices" current="devices">
-        <ul>
-          {Object.values(devices).map(device => <li key={device.id}>
-            <Link to={`/devices/${device.id}`}>{device.name}</Link>
-          </li>)}
-        </ul>
+        {devices.length > 0 ? (
+          <ul>
+            {Object.values(devices).map(device => <li key={device.id}>
+              <Link to={`/devices/${device.id}`}>{device.name}</Link>
+            </li>)}
+          </ul>
+        ) : (
+          <p>No devices</p>
+        )}
       </DashboardLayout>
     )
   }
