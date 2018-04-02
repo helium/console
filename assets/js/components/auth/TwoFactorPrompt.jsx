@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { logIn, enable2fa, getNew2fa } from '../../actions/auth.js';
+import { logIn, enable2fa, getNew2fa, clear2faBackupCodes } from '../../actions/auth.js';
 import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 
@@ -15,8 +15,11 @@ class TwoFactorPrompt extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleSkip = this.handleSkip.bind(this)
+    this.handleContinue = this.handleContinue.bind(this)
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
     this.renderQRCode = this.renderQRCode.bind(this)
+    this.renderForm = this.renderForm.bind(this)
+    this.renderBackupCodes = this.renderBackupCodes.bind(this)
   }
 
   componentDidMount() {
@@ -24,6 +27,11 @@ class TwoFactorPrompt extends Component {
     if (user.twoFactorEnabled) return this.props.history.replace("/secret")
 
     this.props.getNew2fa()
+  }
+
+  componentWillUnmount() {
+    const { user } = this.props.auth
+    if (user.backup_codes) this.props.clear2faBackupCodes()
   }
 
   handleSubmit(e) {
@@ -35,6 +43,11 @@ class TwoFactorPrompt extends Component {
 
   handleSkip() {
     this.props.history.replace("/secret")
+  }
+
+  handleContinue() {
+    this.props.history.replace("/secret")
+    this.props.clear2faBackupCodes()
   }
 
   handleInputUpdate(e) {
@@ -49,7 +62,7 @@ class TwoFactorPrompt extends Component {
     }
   }
 
-  render() {
+  renderForm() {
     return(
       <div>
         <p>Set up multi-factor authentication by scanning the QR code below, we highly recommend it.</p>
@@ -63,6 +76,21 @@ class TwoFactorPrompt extends Component {
       </div>
     )
   }
+
+  renderBackupCodes() {
+    const { user } = this.props.auth
+    return(
+      <div>
+        { user.backup_codes.map(code => <p key={code}>{code}</p> )}
+        <button onClick={this.handleContinue}>Continue</button>
+      </div>
+    )
+  }
+
+  render() {
+    const { user } = this.props.auth
+    return user.backup_codes ? this.renderBackupCodes() : this.renderForm()
+  }
 }
 
 function mapStateToProps(state) {
@@ -72,7 +100,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logIn, enable2fa, getNew2fa }, dispatch);
+  return bindActionCreators({ logIn, enable2fa, getNew2fa, clear2faBackupCodes }, dispatch);
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TwoFactorPrompt));

@@ -14,9 +14,9 @@ defmodule ConsoleWeb.TwoFactorView do
       success_message: message,
       user: %{
         id: user.id,
-        twoFactorEnabled: true
-      },
-      backup_codes: codes
+        twoFactorEnabled: true,
+        backup_codes: codes
+      }
     }
   end
 end

@@ -47,7 +47,7 @@ export const verify2fa = (code, userId) => {
 }
 
 export const getNew2fa = () => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     rest.get('/api/2fa')
       .then(response => {
         dispatch(new2faSecret(response.data.secret2fa))
@@ -56,7 +56,7 @@ export const getNew2fa = () => {
 }
 
 export const enable2fa = (code, userId, secret2fa) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     rest.post('/api/2fa', {
         user: {
           code,
@@ -65,10 +65,16 @@ export const enable2fa = (code, userId, secret2fa) => {
         }
       })
       .then(response => {
-        console.log(response)
-        dispatch(push('/secret'))
         dispatch(isValidUser(response.data.user))
       })
+  }
+}
+
+export const clear2faBackupCodes = () => {
+  return (dispatch, getState) => {
+    const { id, twoFactorEnabled } = getState().auth.user
+    const updatedUser = { id, twoFactorEnabled }
+    dispatch(isValidUser(updatedUser))
   }
 }
 

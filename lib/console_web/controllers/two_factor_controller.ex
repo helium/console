@@ -43,7 +43,7 @@ defmodule ConsoleWeb.TwoFactorController do
             |> put_status(:created)
             |> render("2fa_show.json", jwt: jwt, email: user.email)
           end
-        (validBackupCode or validBackupCode) == false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
+        (validAuthCode or validBackupCode) == false -> {:error, :unauthorized, "The verification code you have entered is invalid, please try again"}
       end
     end
   end
