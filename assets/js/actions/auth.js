@@ -11,6 +11,7 @@ export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
 export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
+export const CLEAR_TWO_FACTOR_BACKUP_CODES = "CLEAR_TWO_FACTOR_BACKUP_CODES";
 
 export const checkCredentials = (email, password, recaptcha) => {
   return (dispatch) => {
@@ -67,14 +68,6 @@ export const enable2fa = (code, userId, secret2fa) => {
       .then(response => {
         dispatch(isValidUser(response.data.user))
       })
-  }
-}
-
-export const clear2faBackupCodes = () => {
-  return (dispatch, getState) => {
-    const { id, twoFactorEnabled } = getState().auth.user
-    const updatedUser = { id, twoFactorEnabled }
-    dispatch(isValidUser(updatedUser))
   }
 }
 
@@ -161,6 +154,12 @@ export const isValidUser = (user, jwt = null) => {
     type: IS_VALID_USER,
     user,
     apikey: jwt
+  }
+}
+
+export const clear2faBackupCodes = () => {
+  return {
+    type: CLEAR_TWO_FACTOR_BACKUP_CODES
   }
 }
 

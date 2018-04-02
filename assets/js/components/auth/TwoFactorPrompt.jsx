@@ -47,7 +47,6 @@ class TwoFactorPrompt extends Component {
 
   handleContinue() {
     this.props.history.replace("/secret")
-    this.props.clear2faBackupCodes()
   }
 
   handleInputUpdate(e) {
