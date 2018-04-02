@@ -2,6 +2,7 @@ defmodule Console.Devices.Device do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Teams.Team
   alias Console.Events.Event
 
 
@@ -12,6 +13,7 @@ defmodule Console.Devices.Device do
     field :name, :string
     field :public_key, :binary
 
+    belongs_to :team, Team
     has_many :events, Event
 
     timestamps()
@@ -20,8 +22,8 @@ defmodule Console.Devices.Device do
   @doc false
   def changeset(device, attrs) do
     device
-    |> cast(attrs, [:name, :mac, :public_key])
-    |> validate_required([:name, :mac, :public_key])
+    |> cast(attrs, [:name, :mac, :public_key, :team_id])
+    |> validate_required([:name, :mac, :public_key, :team_id])
     |> unique_constraint(:mac)
   end
 end

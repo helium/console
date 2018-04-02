@@ -8,6 +8,12 @@ defmodule Console.Teams do
 
   alias Console.Teams.Team
   alias Console.Teams.Membership
+  alias Console.Auth
+  alias Console.Auth.User
+
+  def get_team!(%User{} = current_user, id) do
+    Ecto.assoc(current_user, :teams) |> Repo.get!(id)
+  end
 
   def create_team(user, attrs \\ %{}) do
     team_changeset =
@@ -32,7 +38,12 @@ defmodule Console.Teams do
     end
   end
 
-  def fetch_assoc(team) do
-    Repo.preload(team, [:users])
+  def fetch_assoc(team, assoc \\ [:users, :devices, :gateways, :channels]) do
+    Repo.preload(team, assoc)
+  end
+
+  def current_team_for(%User{} = user) do
+    # TODO: use a timestamp on membership to track the last-viewed team
+    List.last(Auth.fetch_assoc(user).teams)
   end
 end

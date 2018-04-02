@@ -7,11 +7,14 @@ defmodule ConsoleWeb.DeviceController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    devices = Devices.list_devices()
-    render(conn, "index.json", devices: devices)
+    current_team = conn.assigns.current_team
+                   |> Console.Teams.fetch_assoc([:devices])
+    render(conn, "index.json", devices: current_team.devices)
   end
 
   def create(conn, %{"device" => device_params}) do
+    current_team = conn.assigns.current_team
+    device_params = Map.merge(device_params, %{"team_id" => current_team.id})
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
       conn
       |> put_status(:created)

@@ -1,8 +1,6 @@
 defmodule ConsoleWeb.ChannelControllerTest do
   use ConsoleWeb.ConnCase
 
-  alias Console.Channels.Channel
-
   import Console.FactoryHelper
   import Console.Factory
 
@@ -13,23 +11,29 @@ defmodule ConsoleWeb.ChannelControllerTest do
   describe "index" do
     setup [:authenticate_user]
 
-    test "lists all channels", %{conn: conn} do
+    test "lists all channels", %{conn: conn, team: team} do
+      channel = create_channel_for_team(team)
+      another_team = insert(:team)
+      create_channel_for_team(another_team)
       conn = get conn, channel_path(conn, :index)
-      assert json_response(conn, 200) == []
+      ids = for d <- json_response(conn, 200), do: d["id"]
+      assert ids == [channel.id]
     end
   end
 
   describe "create channel" do
     setup [:authenticate_user]
 
-    test "renders channel when data is valid", %{conn: conn} do
+    test "renders channel when data is valid", %{conn: conn, team: team} do
       conn = post conn, channel_path(conn, :create), channel: @create_attrs
       %{"id" => id} = json_response(conn, 201)
       assert json_response(conn, 201) == %{
         "id" => id,
         "active" => true,
         "name" => "some name",
-        "type" => "some type"}
+        "type" => "some type",
+        "team_id" => team.id
+      }
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -39,34 +43,34 @@ defmodule ConsoleWeb.ChannelControllerTest do
   end
 
   describe "update channel" do
-    setup [:authenticate_user, :create_channel]
+    setup [:authenticate_user]
 
-    test "renders channel when data is valid", %{conn: conn, channel: %Channel{id: id} = channel} do
+    test "renders channel when data is valid", %{conn: conn, team: team} do
+      channel = create_channel_for_team(team)
       conn = put conn, channel_path(conn, :update, channel), channel: @update_attrs
       assert json_response(conn, 200) == %{
-        "id" => id,
+        "id" => channel.id,
         "active" => false,
         "name" => "some updated name",
-        "type" => "some updated type"}
+        "type" => "some updated type",
+        "team_id" => team.id
+      }
     end
 
-    test "renders errors when data is invalid", %{conn: conn, channel: channel} do
+    test "renders errors when data is invalid", %{conn: conn, team: team} do
+      channel = create_channel_for_team(team)
       conn = put conn, channel_path(conn, :update, channel), channel: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "delete channel" do
-    setup [:authenticate_user, :create_channel]
+    setup [:authenticate_user]
 
-    test "deletes chosen channel", %{conn: conn, channel: channel} do
+    test "deletes chosen channel", %{conn: conn, team: team} do
+      channel = create_channel_for_team(team)
       conn = delete conn, channel_path(conn, :delete, channel)
       assert response(conn, 204)
     end
-  end
-
-  defp create_channel(_) do
-    channel = insert(:channel)
-    {:ok, channel: channel}
   end
 end

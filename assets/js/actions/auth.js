@@ -1,5 +1,6 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
+import { getTeamId } from '../util/jwt'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -185,7 +186,8 @@ export const shouldResetCaptcha = () => {
 const loggedIn = (apikey) => {
   return {
     type: LOGGED_IN,
-    apikey
+    apikey,
+    currentTeamId: getTeamId(apikey)
   }
 }
 

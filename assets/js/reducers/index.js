@@ -2,20 +2,27 @@ import merge from 'lodash/mergeWith'
 import isArray from 'lodash/isArray'
 import auth from './auth.js';
 import user from './user.js';
+import { SWITCHED_TEAM } from '../actions/team'
 
 const defaultEntityState = {
   devices: {},
   events: {},
   gateways: {},
-  channels: {}
+  channels: {},
+  teams: {},
 }
 
-// Updates an entity cache in response to any action with entities.
 const entities = (state = defaultEntityState, action) => {
+  // Updates an entity cache in response to any action with entities.
   if (action.entities) {
     return merge({}, state, action.entities, (objValue, srcValue) => {
       if (isArray(objValue)) return objValue.concat(srcValue) // merge arrays
     })
+  }
+
+  // Clears entity cache upon switching teams
+  if (action.type === SWITCHED_TEAM) {
+    return merge({}, defaultEntityState, {teams: state.teams})
   }
 
   return state

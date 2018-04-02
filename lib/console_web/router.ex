@@ -31,6 +31,9 @@ defmodule ConsoleWeb.Router do
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
+    resources "/teams", TeamController, except: [:new, :edit] do
+      post "/switch", TeamController, :switch, as: :switch
+    end
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create

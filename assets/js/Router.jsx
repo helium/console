@@ -26,6 +26,8 @@ import GatewayIndex from './components/gateways/GatewayIndex'
 import GatewayShow from './components/gateways/GatewayShow'
 import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
+import TeamIndex from './components/teams/TeamIndex'
+import TeamNew from './components/teams/TeamNew'
 
 class Router extends React.Component {
   render() {
@@ -51,6 +53,8 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
+                  <PrivateRoute exact path="/teams" component={TeamIndex} />
+                  <PrivateRoute exact path="/teams/new" component={TeamNew} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

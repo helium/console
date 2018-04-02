@@ -16,7 +16,7 @@ defmodule ConsoleWeb.SessionView do
       user: %{
         id: user.id,
         twoFactorEnabled: true
-       }
-     }
+      }
+    }
   end
 end

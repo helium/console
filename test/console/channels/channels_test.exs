@@ -3,6 +3,8 @@ defmodule Console.ChannelsTest do
 
   alias Console.Channels
 
+  import Console.Factory
+
   describe "channels" do
     alias Console.Channels.Channel
 
@@ -13,9 +15,11 @@ defmodule Console.ChannelsTest do
     @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
     def channel_fixture(attrs \\ %{}) do
+      team = insert(:team)
       {:ok, channel} =
         attrs
         |> Enum.into(@valid_attrs)
+        |> Enum.into(%{team_id: team.id})
         |> Channels.create_channel()
 
       channel
@@ -32,7 +36,9 @@ defmodule Console.ChannelsTest do
     end
 
     test "create_channel/1 with valid data creates a channel" do
-      assert {:ok, %Channel{} = channel} = Channels.create_channel(@valid_attrs)
+      team = insert(:team)
+      attrs = @valid_attrs |> Enum.into(%{team_id: team.id})
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
       assert channel.active == true
       assert channel.credentials == @valid_creds
       assert channel.name == "some name"

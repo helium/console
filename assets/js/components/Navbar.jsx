@@ -30,6 +30,9 @@ class Navbar extends Component {
               <li className={current === "channels" ? "active" : ""}>
                 <Link to="/channels">Channels</Link>
               </li>
+              <li className={current === "teams" ? "active" : ""}>
+                <Link to="/teams">Teams</Link>
+              </li>
             </ul>
 
             <ul className="nav navbar-nav navbar-right">

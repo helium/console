@@ -32,6 +32,14 @@ defmodule Console.AuthTest do
       assert {:error, %Ecto.Changeset{}} = Auth.create_user(@invalid_attrs)
     end
 
+    test "generate_session_token/1 encodes the current team in the token" do
+      user = insert(:user)
+      {:ok, team} = Console.Teams.create_team(user, %{name: "Test Team"})
+      token = Console.Auth.generate_session_token(user)
+      {:ok, claims} = ConsoleWeb.Guardian.decode_and_verify(token)
+      assert claims["team"] == team.id
+    end
+
     test "get_user_for_resend_verification/1 returns the proper data depending on user email" do
       user = insert(:user)
       assert {:error, :not_found, _} = Auth.get_user_for_resend_verification(user.email)

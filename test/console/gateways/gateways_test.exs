@@ -3,6 +3,8 @@ defmodule Console.GatewaysTest do
 
   alias Console.Gateways
 
+  import Console.Factory
+
   describe "gateways" do
     alias Console.Gateways.Gateway
 
@@ -11,9 +13,11 @@ defmodule Console.GatewaysTest do
     @invalid_attrs %{latitude: nil, longitude: nil, mac: nil, name: nil, public_key: nil}
 
     def gateway_fixture(attrs \\ %{}) do
+      team = insert(:team)
       {:ok, gateway} =
         attrs
         |> Enum.into(@valid_attrs)
+        |> Enum.into(%{team_id: team.id})
         |> Gateways.create_gateway()
 
       gateway
@@ -30,7 +34,9 @@ defmodule Console.GatewaysTest do
     end
 
     test "create_gateway/1 with valid data creates a gateway" do
-      assert {:ok, %Gateway{} = gateway} = Gateways.create_gateway(@valid_attrs)
+      team = insert(:team)
+      attrs = @valid_attrs |> Enum.into(%{team_id: team.id})
+      assert {:ok, %Gateway{} = gateway} = Gateways.create_gateway(attrs)
       assert gateway.latitude == Decimal.new("120.5")
       assert gateway.longitude == Decimal.new("120.5")
       assert gateway.mac == "some mac"

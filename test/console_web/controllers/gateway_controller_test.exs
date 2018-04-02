@@ -1,33 +1,30 @@
 defmodule ConsoleWeb.GatewayControllerTest do
   use ConsoleWeb.ConnCase
 
-  alias Console.Gateways
-  alias Console.Gateways.Gateway
-
+  import Console.Factory
   import Console.FactoryHelper
 
   @create_attrs %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key"}
   @update_attrs %{latitude: "456.7", longitude: "456.7", mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
   @invalid_attrs %{latitude: nil, longitude: nil, mac: nil, name: nil, public_key: nil}
 
-  def fixture(:gateway) do
-    {:ok, gateway} = Gateways.create_gateway(@create_attrs)
-    gateway
-  end
-
   describe "index" do
     setup [:authenticate_user]
 
-    test "lists all gateways", %{conn: conn} do
+    test "lists all gateways", %{conn: conn, team: team} do
+      gateway = create_gateway_for_team(team)
+      another_team = insert(:team)
+      create_gateway_for_team(another_team)
       conn = get conn, gateway_path(conn, :index)
-      assert json_response(conn, 200) == []
+      ids = for d <- json_response(conn, 200), do: d["id"]
+      assert ids == [gateway.id]
     end
   end
 
   describe "create gateway" do
     setup [:authenticate_user]
 
-    test "renders gateway when data is valid", %{conn: conn} do
+    test "renders gateway when data is valid", %{conn: conn, team: team} do
       conn = post conn, gateway_path(conn, :create), gateway: @create_attrs
       %{"id" => id} = json_response(conn, 201)
       assert json_response(conn, 201) == %{
@@ -35,7 +32,9 @@ defmodule ConsoleWeb.GatewayControllerTest do
         "latitude" => "120.5",
         "longitude" => "120.5",
         "mac" => "some mac",
-        "name" => "some name"}
+        "name" => "some name",
+        "team_id" => team.id
+      }
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -45,35 +44,35 @@ defmodule ConsoleWeb.GatewayControllerTest do
   end
 
   describe "update gateway" do
-    setup [:authenticate_user, :create_gateway]
+    setup [:authenticate_user]
 
-    test "renders gateway when data is valid", %{conn: conn, gateway: %Gateway{id: id} = gateway} do
+    test "renders gateway when data is valid", %{conn: conn, team: team} do
+      gateway = create_gateway_for_team(team)
       conn = put conn, gateway_path(conn, :update, gateway), gateway: @update_attrs
       assert json_response(conn, 200) == %{
-        "id" => id,
+        "id" => gateway.id,
         "latitude" => "456.7",
         "longitude" => "456.7",
         "mac" => "some updated mac",
-        "name" => "some updated name"}
+        "name" => "some updated name",
+        "team_id" => team.id
+      }
     end
 
-    test "renders errors when data is invalid", %{conn: conn, gateway: gateway} do
+    test "renders errors when data is invalid", %{conn: conn, team: team} do
+      gateway = create_gateway_for_team(team)
       conn = put conn, gateway_path(conn, :update, gateway), gateway: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "delete gateway" do
-    setup [:authenticate_user, :create_gateway]
+    setup [:authenticate_user]
 
-    test "deletes chosen gateway", %{conn: conn, gateway: gateway} do
+    test "deletes chosen gateway", %{conn: conn, team: team} do
+      gateway = create_gateway_for_team(team)
       conn = delete conn, gateway_path(conn, :delete, gateway)
       assert response(conn, 204)
     end
-  end
-
-  defp create_gateway(_) do
-    gateway = fixture(:gateway)
-    {:ok, gateway: gateway}
   end
 end

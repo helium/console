@@ -47,8 +47,8 @@ defmodule ConsoleWeb.EventControllerTest do
   describe "create event" do
     setup [:authenticate_user]
 
-    test "renders event when data is valid", %{conn: conn} do
-      device = insert(:device)
+    test "renders event when data is valid", %{conn: conn, team: team} do
+      device = create_device_for_team(team)
       attrs = params_for(:event, device_id: device.id)
       conn = post conn, event_path(conn, :create), event: attrs
       %{"id" => id} = json_response(conn, 201)
@@ -59,7 +59,8 @@ defmodule ConsoleWeb.EventControllerTest do
         "device" => %{
           "id" => device.id,
           "mac" => device.mac,
-          "name" => device.name
+          "name" => device.name,
+          "team_id" => team.id
         },
         "direction" => attrs.direction,
         "gateway" => nil,
