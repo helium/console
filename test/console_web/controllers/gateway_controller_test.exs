@@ -48,7 +48,7 @@ defmodule ConsoleWeb.GatewayControllerTest do
 
     test "renders gateway when data is valid", %{conn: conn, team: team} do
       gateway = create_gateway_for_team(team)
-      conn = put conn, gateway_path(conn, :update, gateway.id), gateway: @update_attrs
+      conn = put conn, gateway_path(conn, :update, gateway), gateway: @update_attrs
       assert json_response(conn, 200) == %{
         "id" => gateway.id,
         "latitude" => "456.7",

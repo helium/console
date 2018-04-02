@@ -7,11 +7,14 @@ defmodule ConsoleWeb.ChannelController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    channels = Channels.list_channels()
-    render(conn, "index.json", channels: channels)
+    current_team = conn.assigns.current_team
+                   |> Console.Teams.fetch_assoc([:channels])
+    render(conn, "index.json", channels: current_team.channels)
   end
 
   def create(conn, %{"channel" => channel_params}) do
+    current_team = conn.assigns.current_team
+    channel_params = Map.merge(channel_params, %{"team_id" => current_team.id})
     with {:ok, %Channel{} = channel} <- Channels.create_channel(channel_params) do
       conn
       |> put_status(:created)

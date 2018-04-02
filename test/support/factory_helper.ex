@@ -40,4 +40,11 @@ defmodule Console.FactoryHelper do
     {:ok, gateway} = Console.Gateways.create_gateway(attrs)
     gateway
   end
+
+  def create_channel_for_team(team, attrs \\ %{}) do
+    attrs = Map.merge(attrs, %{team_id: team.id})
+    attrs = params_for(:channel, attrs)
+    {:ok, channel} = Console.Channels.create_channel(attrs)
+    channel
+  end
 end

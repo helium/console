@@ -2,6 +2,7 @@ defmodule Console.Channels.Channel do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Console.Teams.Team
   alias Console.Events.Event
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -13,6 +14,7 @@ defmodule Console.Channels.Channel do
     field :name, :string
     field :type, :string
 
+    belongs_to :team, Team
     has_many :events, Event
 
     timestamps()
@@ -21,8 +23,8 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs) do
     channel
-    |> cast(attrs, ~w(name type active credentials))
-    |> validate_required([:name, :type, :active, :credentials])
+    |> cast(attrs, ~w(name type active credentials team_id))
+    |> validate_required([:name, :type, :active, :credentials, :team_id])
     |> put_change(:encryption_version, Cloak.version)
   end
 end

@@ -16,7 +16,8 @@ defmodule ConsoleWeb.ChannelView do
       id: channel.id,
       name: channel.name,
       type: channel.type,
-      active: channel.active
+      active: channel.active,
+      team_id: channel.team_id
     }
     |> append_events(channel.events)
   end

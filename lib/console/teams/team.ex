@@ -11,6 +11,7 @@ defmodule Console.Teams.Team do
 
     has_many :devices, Console.Devices.Device
     has_many :gateways, Console.Gateways.Gateway
+    has_many :channels, Console.Channels.Channel
 
     timestamps()
   end
