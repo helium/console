@@ -11,6 +11,7 @@ export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
 export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
+export const CLEAR_TWO_FACTOR_BACKUP_CODES = "CLEAR_TWO_FACTOR_BACKUP_CODES";
 
 export const checkCredentials = (email, password, recaptcha) => {
   return (dispatch) => {
@@ -47,7 +48,7 @@ export const verify2fa = (code, userId) => {
 }
 
 export const getNew2fa = () => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     rest.get('/api/2fa')
       .then(response => {
         dispatch(new2faSecret(response.data.secret2fa))
@@ -56,7 +57,7 @@ export const getNew2fa = () => {
 }
 
 export const enable2fa = (code, userId, secret2fa) => {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     rest.post('/api/2fa', {
         user: {
           code,
@@ -65,7 +66,6 @@ export const enable2fa = (code, userId, secret2fa) => {
         }
       })
       .then(response => {
-        dispatch(push('/secret'))
         dispatch(isValidUser(response.data.user))
       })
   }
@@ -154,6 +154,12 @@ export const isValidUser = (user, jwt = null) => {
     type: IS_VALID_USER,
     user,
     apikey: jwt
+  }
+}
+
+export const clear2faBackupCodes = () => {
+  return {
+    type: CLEAR_TWO_FACTOR_BACKUP_CODES
   }
 }
 
