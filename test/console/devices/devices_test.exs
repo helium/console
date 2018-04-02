@@ -3,6 +3,8 @@ defmodule Console.DevicesTest do
 
   alias Console.Devices
 
+  import Console.Factory
+
   describe "devices" do
     alias Console.Devices.Device
 
@@ -11,9 +13,11 @@ defmodule Console.DevicesTest do
     @invalid_attrs %{mac: nil, name: nil, public_key: nil}
 
     def device_fixture(attrs \\ %{}) do
+      team = insert(:team)
       {:ok, device} =
         attrs
         |> Enum.into(@valid_attrs)
+        |> Enum.into(%{team_id: team.id})
         |> Devices.create_device()
 
       device
@@ -30,7 +34,9 @@ defmodule Console.DevicesTest do
     end
 
     test "create_device/1 with valid data creates a device" do
-      assert {:ok, %Device{} = device} = Devices.create_device(@valid_attrs)
+      team = insert(:team)
+      attrs = @valid_attrs |> Enum.into(%{team_id: team.id})
+      assert {:ok, %Device{} = device} = Devices.create_device(attrs)
       assert device.mac == "some mac"
       assert device.name == "some name"
       assert device.public_key == "some public_key"

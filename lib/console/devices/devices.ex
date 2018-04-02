@@ -7,6 +7,7 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
+  alias Console.Teams.Team
 
   @doc """
   Returns the list of devices.

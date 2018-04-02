@@ -4,5 +4,7 @@ defmodule ConsoleWeb.AuthApiPipeline do
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
   plug Guardian.Plug.EnsureAuthenticated
   plug Guardian.Plug.LoadResource
+  plug ConsoleWeb.Plug.PutCurrentUser
+  plug ConsoleWeb.Plug.PutCurrentTeam
   # plug ConsoleWeb.Plug.ConnInterceptor # good for debugging
 end

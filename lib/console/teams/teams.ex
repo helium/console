@@ -39,7 +39,7 @@ defmodule Console.Teams do
   end
 
   def fetch_assoc(team) do
-    Repo.preload(team, [:users])
+    Repo.preload(team, [:users, :devices])
   end
 
   def current_team_for(%User{} = user) do

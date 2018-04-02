@@ -13,7 +13,10 @@ defmodule ConsoleWeb.DeviceView do
 
   def render("device.json", %{device: device}) do
     %{
-      id: device.id, name: device.name, mac: device.mac
+      id: device.id,
+      name: device.name,
+      mac: device.mac,
+      team_id: device.team_id
     }
     |> append_events(device.events)
   end
