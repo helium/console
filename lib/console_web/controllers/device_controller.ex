@@ -7,7 +7,8 @@ defmodule ConsoleWeb.DeviceController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    current_team = Console.Teams.fetch_assoc(conn.assigns.current_team)
+    current_team = conn.assigns.current_team
+                   |> Console.Teams.fetch_assoc([:devices])
     render(conn, "index.json", devices: current_team.devices)
   end
 

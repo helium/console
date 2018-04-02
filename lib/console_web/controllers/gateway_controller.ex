@@ -7,7 +7,8 @@ defmodule ConsoleWeb.GatewayController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    current_team = Console.Teams.fetch_assoc(conn.assigns.current_team)
+    current_team = conn.assigns.current_team
+                   |> Console.Teams.fetch_assoc([:gateways])
     render(conn, "index.json", gateways: current_team.gateways)
   end
 
