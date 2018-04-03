@@ -1,4 +1,4 @@
-NODE_ENV=production brunch build
+REACT_ENV=production brunch build
 
 cd $phoenix_dir
 

@@ -1,11 +1,5 @@
 const setConfig = (env) => {
   switch(env) {
-    case "development":
-      return {
-        recaptcha: {
-          sitekey: "6Lew200UAAAAACN3_-tS_UvTcnhF2mlZCzzQ4Na5"
-        }
-      }
     case "production":
       return {
         recaptcha: {
@@ -13,10 +7,14 @@ const setConfig = (env) => {
         }
       }
     default:
-      return {}
+      return {
+        recaptcha: {
+          sitekey: "6Lew200UAAAAACN3_-tS_UvTcnhF2mlZCzzQ4Na5"
+        }
+      }
   }
 }
 
-const config = setConfig(process.env.NODE_ENV)
+const config = setConfig(process.env.REACT_ENV)
 
 export default config
