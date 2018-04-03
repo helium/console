@@ -49,4 +49,13 @@ defmodule ConsoleWeb.TwoFactorController do
       end
     end
   end
+
+  def skip(conn, %{"userId" => userId}) do
+    with %User{} = user <- Auth.get_user_by_id!(userId),
+      {:ok, _} = Auth.update_2fa_last_skipped(user) do
+      conn
+      |> put_status(:accepted)
+      |> render("2fa_status.json", message: "You have skipped 2fa for 24 hours")
+    end
+  end
 end

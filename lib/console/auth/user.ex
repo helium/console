@@ -10,6 +10,7 @@ defmodule Console.Auth.User do
     field :password, :string, virtual: true
     field :confirmation_token, :string
     field :confirmed_at, :naive_datetime
+    field :last_2fa_skipped_at, :naive_datetime
 
     has_one :twofactor, Console.Auth.TwoFactor
     has_many :memberships, Console.Teams.Membership
@@ -58,6 +59,12 @@ defmodule Console.Auth.User do
     user
     |> changeset()
     |> put_confirmation_token()
+  end
+
+  def update_2fa_last_skipped_changeset(user) do
+    user
+    |> changeset()
+    |> put_change(:last_2fa_skipped_at, DateTime.utc_now)
   end
 
   defp put_password_hash(changeset) do

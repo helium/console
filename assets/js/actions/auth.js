@@ -25,7 +25,7 @@ export const checkCredentials = (email, password, recaptcha) => {
       })
       .then(response => {
         if (response.data.user.twoFactorEnabled) {
-          if (response.data.jwt) {
+          if (response.data.jwt) { // Was verfied under 24h ago
             dispatch(logIn(response.data.jwt))
           }
           dispatch(isValidUser(response.data.user))
@@ -74,6 +74,15 @@ export const enable2fa = (code, userId, secret2fa) => {
       .then(response => {
         dispatch(isValidUser(response.data.user))
       })
+  }
+}
+
+export const skip2fa = (userId) => {
+  return (dispatch) => {
+    rest.post('/api/2fa/skip', {
+        userId
+      })
+      .then(() => {})
   }
 }
 

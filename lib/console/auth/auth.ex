@@ -197,6 +197,12 @@ defmodule Console.Auth do
     |> Repo.update()
   end
 
+  def update_2fa_last_skipped(user) do
+    user
+    |> User.update_2fa_last_skipped_changeset()
+    |> Repo.update()
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil ->
