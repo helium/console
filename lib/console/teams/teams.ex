@@ -11,6 +11,10 @@ defmodule Console.Teams do
   alias Console.Auth
   alias Console.Auth.User
 
+  def list_teams do
+    Repo.all(Team)
+  end
+
   def get_team!(%User{} = current_user, id) do
     Ecto.assoc(current_user, :teams) |> Repo.get!(id)
   end

@@ -18,7 +18,7 @@ class DeviceIndex extends Component {
       <DashboardLayout title="Devices" current="devices">
         {devices.length > 0 ? (
           <ul>
-            {Object.values(devices).map(device => <li key={device.id}>
+            {devices.map(device => <li key={device.id}>
               <Link to={`/devices/${device.id}`}>{device.name}</Link>
             </li>)}
           </ul>
@@ -32,7 +32,7 @@ class DeviceIndex extends Component {
 
 function mapStateToProps(state) {
   return {
-    devices: state.entities.devices
+    devices: Object.values(state.entities.devices)
   }
 }
 
