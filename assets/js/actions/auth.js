@@ -24,8 +24,13 @@ export const checkCredentials = (email, password, recaptcha) => {
         }
       })
       .then(response => {
-        dispatch(isValidUser(response.data.user))
-        if (response.data.user.twoFactorEnabled === false) {
+        if (response.data.user.twoFactorEnabled) {
+          if (response.data.jwt) {
+            dispatch(logIn(response.data.jwt))
+          }
+          dispatch(isValidUser(response.data.user))
+        } else {
+          dispatch(isValidUser(response.data.user))
           dispatch(loggedIn(response.data.jwt))
           dispatch(push("/2fa_prompt"))
         }

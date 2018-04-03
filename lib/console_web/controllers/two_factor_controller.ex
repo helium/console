@@ -38,7 +38,8 @@ defmodule ConsoleWeb.TwoFactorController do
 
       if Auth.verify_2fa_and_backup_codes(code, userTwoFactor) do
         with current_team <- Teams.current_team_for(user),
-                      jwt <- Auth.generate_session_token(user, current_team) do
+                      jwt <- Auth.generate_session_token(user, current_team),
+                      {:ok, _} <- Auth.update_2fa_last_verification(userTwoFactor) do
           conn
           |> put_status(:created)
           |> render("2fa_show.json", jwt: jwt, email: user.email)

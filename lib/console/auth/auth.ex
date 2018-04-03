@@ -187,6 +187,16 @@ defmodule Console.Auth do
     token
   end
 
+  def verified_2fa_24h_ago(twofactor) do
+    DateTime.diff(DateTime.utc_now(), DateTime.from_naive!(twofactor.last_verified, "Etc/UTC")) > 24 * 60 * 60
+  end
+
+  def update_2fa_last_verification(twoFactor) do
+    twoFactor
+    |> TwoFactor.update_last_verification_changeset()
+    |> Repo.update()
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil ->

@@ -6,7 +6,7 @@ defmodule ConsoleWeb.SessionView do
       jwt: jwt,
       user: %{
         id: user.id,
-        twoFactorEnabled: false
+        twoFactorEnabled: user.twofactor !== nil
       }
     }
   end

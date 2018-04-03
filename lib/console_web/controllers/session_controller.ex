@@ -12,7 +12,8 @@ defmodule ConsoleWeb.SessionController do
          {:ok, %User{} = user} <- Auth.authenticate(session_params),
          current_team <- Teams.current_team_for(user),
          jwt <- Auth.generate_session_token(user, current_team) do
-      if user.twofactor do
+
+      if user.twofactor !== nil and Auth.verified_2fa_24h_ago(user.twofactor) do
         conn
         |> put_status(:created)
         |> render("show.json", user: user)
