@@ -7,7 +7,7 @@ defmodule ConsoleWeb.SessionView do
       skip2fa: skip,
       user: %{
         id: user.id,
-        twoFactorEnabled: user.twofactor !== nil
+        twoFactorEnabled: false
       }
     }
   end

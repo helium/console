@@ -8,6 +8,7 @@ defmodule Console.Auth do
 
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
+  alias Console.Helpers
 
   def get_user_by_id!(id) do
     Repo.get!(User, id)
@@ -187,9 +188,9 @@ defmodule Console.Auth do
     token
   end
 
-  def datetime_over_24h_ago?(datetime) do
+  def should_skip_2fa_prompt?(datetime) do
     if datetime do
-      DateTime.diff(DateTime.utc_now(), DateTime.from_naive!(datetime, "Etc/UTC")) > 24 * 60 * 60
+      Helpers.time_difference_in_seconds(DateTime.utc_now(), DateTime.from_naive!(datetime, "Etc/UTC")) > Helpers.time_in_seconds(1, "Day")
     else
       true
     end

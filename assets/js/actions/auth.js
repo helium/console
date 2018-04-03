@@ -24,17 +24,10 @@ export const checkCredentials = (email, password, recaptcha) => {
         }
       })
       .then(response => {
-        if (response.data.user.twoFactorEnabled) {
-          if (response.data.jwt) { // Was verfied under 24h ago
-            dispatch(logIn(response.data.jwt))
-          }
-          dispatch(isValidUser(response.data.user))
-        } else {
-          dispatch(isValidUser(response.data.user))
-          if (response.data.skip2fa) {
-            dispatch(logIn(response.data.jwt))
-          } else {
-            dispatch(logIn(response.data.jwt))
+        dispatch(isValidUser(response.data.user))
+        if (!response.data.user.twoFactorEnabled) {
+          dispatch(logIn(response.data.jwt))
+          if (!response.data.skip2fa) {
             dispatch(push("/2fa_prompt"))
           }
         }
