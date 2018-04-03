@@ -1,4 +1,4 @@
-brunch build
+NODE_ENV=production brunch build
 
 cd $phoenix_dir
 
