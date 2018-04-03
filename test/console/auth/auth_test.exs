@@ -2,6 +2,7 @@ defmodule Console.AuthTest do
   use Console.DataCase
 
   alias Console.Auth
+  alias Console.Auth.TwoFactor
 
   import Console.Factory
   describe "users" do
@@ -55,6 +56,22 @@ defmodule Console.AuthTest do
       user = insert(:user)
       {:ok, returnedUser} = Auth.get_user_for_password_reset(user.email)
       assert returnedUser.id == user.id
+    end
+
+    test "update_2fa_last_skipped/1 changes the field on user object" do
+      user = insert(:user)
+      {:ok, _} = Console.Teams.create_team(user, %{name: "Test Team"})
+      assert user.last_2fa_skipped_at === nil
+      assert {:ok, %User{last_2fa_skipped_at: datetime}} = Auth.update_2fa_last_skipped(user)
+      assert datetime !== nil
+    end
+
+    test "enable_2fa/3 returns the proper twofactor object" do
+      user = insert(:user)
+      {:ok, _} = Console.Teams.create_team(user, %{name: "Test Team"})
+      assert Auth.fetch_assoc(user).twofactor === nil
+      assert {:ok, %TwoFactor{}} = Auth.enable_2fa(user, "SECRETKEY", ["1234567890"])
+      assert Auth.fetch_assoc(user).twofactor !== nil
     end
   end
 end
