@@ -3,24 +3,12 @@ defmodule ConsoleWeb.SessionControllerTest do
 
   alias Console.Auth
   # alias Console.Auth.User
-  import Console.Factory
+  import Console.FactoryHelper
 
-  @create_attrs %{email: "test@hello.com", password: "some password"}
-  # @invalid_attrs %{email: "notanemail", password: "pass"}
+  describe "Login with no two factor" do
+    setup [:unauthenticated_user]
 
-  def fixture(:user) do
-    {:ok, user} = Auth.create_user(@create_attrs)
-    user
-  end
-
-  setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
-  end
-
-  describe "Login" do
-    test "User with no two factor gets correct response", %{conn: conn} do
-      user = insert(:user)
-      Console.Teams.create_team(user, %{name: "UserTeam"})
+    test "User with no two factor gets correct response", %{conn: conn, user: user} do
       session_params = %{email: user.email, password: "pa$$word ha$h"}
       conn = post conn, session_path(conn, :create), session: session_params, recaptcha: "recaptcha"
 
@@ -35,10 +23,12 @@ defmodule ConsoleWeb.SessionControllerTest do
       assert json_response(conn, 201)["skip2fa"] === true
       assert json_response(conn, 201)["user"]["twoFactorEnabled"] === false
     end
+  end
 
-    test "User with enabled two factor gets correct response", %{conn: conn} do
-      user = insert(:user)
-      Console.Teams.create_team(user, %{name: "UserTeam"})
+  describe "Login with two factor" do
+    setup [:authenticate_user]
+
+    test "User with enabled two factor gets correct response", %{conn: conn, user: user} do
       Auth.enable_2fa(user, "1234567890", [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)])
 
       session_params = %{email: user.email, password: "pa$$word ha$h"}
@@ -48,5 +38,4 @@ defmodule ConsoleWeb.SessionControllerTest do
       assert json_response(conn, 201)["user"]["twoFactorEnabled"] === true
     end
   end
-
 end
