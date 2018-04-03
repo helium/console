@@ -56,6 +56,13 @@ exports.config = {
     }
   },
 
+  overrides: {
+    production: {
+      optimize: false,
+      sourceMaps: true
+    }
+  },
+
   modules: {
     autoRequire: {
       "js/app.js": ["js/app"]
