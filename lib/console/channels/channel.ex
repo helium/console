@@ -15,7 +15,7 @@ defmodule Console.Channels.Channel do
     field :type, :string
 
     belongs_to :team, Team
-    has_many :events, Event
+    has_many :events, Event, on_delete: :delete_all
 
     timestamps()
   end
