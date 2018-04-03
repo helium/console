@@ -13,14 +13,14 @@ defmodule ConsoleWeb.SessionController do
          current_team <- Teams.current_team_for(user),
          jwt <- Auth.generate_session_token(user, current_team) do
 
-      if user.twofactor !== nil and Auth.verified_2fa_24h_ago(user.twofactor) do
+      if user.twofactor !== nil and Auth.datetime_over_24h_ago?(user.twofactor.last_verified) do
         conn
         |> put_status(:created)
         |> render("show.json", user: user)
       else
         conn
         |> put_status(:created)
-        |> render("show.json", user: user, jwt: jwt)
+        |> render("show.json", user: user, jwt: jwt, skip2fa: !Auth.datetime_over_24h_ago?(user.last_2fa_skipped_at))
         # TODO: why jwt if twofactor?
       end
     end

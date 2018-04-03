@@ -187,8 +187,12 @@ defmodule Console.Auth do
     token
   end
 
-  def verified_2fa_24h_ago(twofactor) do
-    DateTime.diff(DateTime.utc_now(), DateTime.from_naive!(twofactor.last_verified, "Etc/UTC")) > 24 * 60 * 60
+  def datetime_over_24h_ago?(datetime) do
+    if datetime do
+      DateTime.diff(DateTime.utc_now(), DateTime.from_naive!(datetime, "Etc/UTC")) > 24 * 60 * 60
+    else
+      true
+    end
   end
 
   def update_2fa_last_verification(twoFactor) do

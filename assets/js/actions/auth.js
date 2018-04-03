@@ -31,8 +31,12 @@ export const checkCredentials = (email, password, recaptcha) => {
           dispatch(isValidUser(response.data.user))
         } else {
           dispatch(isValidUser(response.data.user))
-          dispatch(loggedIn(response.data.jwt))
-          dispatch(push("/2fa_prompt"))
+          if (response.data.skip2fa) {
+            dispatch(logIn(response.data.jwt))
+          } else {
+            dispatch(logIn(response.data.jwt))
+            dispatch(push("/2fa_prompt"))
+          }
         }
       })
       .catch(() => dispatch(shouldResetCaptcha()))
@@ -89,7 +93,6 @@ export const skip2fa = (userId) => {
 export const logIn = (apikey) => {
   return (dispatch) => {
     dispatch(loggedIn(apikey))
-    dispatch(push('/secret'))
   }
 }
 
