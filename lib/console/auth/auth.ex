@@ -188,9 +188,9 @@ defmodule Console.Auth do
     token
   end
 
-  def should_skip_2fa_prompt?(datetime) do
-    if datetime do
-      Helpers.time_difference_in_seconds(DateTime.utc_now(), DateTime.from_naive!(datetime, "Etc/UTC")) > Helpers.time_in_seconds(1, "Day")
+  def should_skip_2fa_prompt?(lastSkippedTime) do
+    if lastSkippedTime do
+      Helpers.time_ago_more_than?(lastSkippedTime, 1, "Day")
     else
       true
     end
