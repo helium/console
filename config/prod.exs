@@ -29,6 +29,13 @@ config :console, Console.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
+config :console, recaptcha_secret: System.get_env("RECAPTCHA_SECRET")
+
+config :console, Console.Mailer,
+  adapter: Bamboo.MailgunAdapter,
+  api_key: System.get_env("MAILGUN_API_KEY"),
+  domain: "mg2.helium.com"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
