@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchChannels } from '../../actions/channel'
 import DashboardLayout from '../DashboardLayout'
+import RandomChannelButton from './RandomChannelButton'
 
 class ChannelIndex extends Component {
   componentDidMount() {
@@ -24,6 +25,7 @@ class ChannelIndex extends Component {
         ) : (
           <p>No channels</p>
         )}
+        <RandomChannelButton />
       </DashboardLayout>
     )
   }

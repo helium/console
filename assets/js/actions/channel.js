@@ -1,5 +1,8 @@
+import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeChannel, normalizeChannels } from '../schemas/channel'
+import { DELETED_ENTITY } from './main'
+import { displayInfo } from '../util/messages'
 
 export const FETCH_CHANNELS = 'FETCH_CHANNELS'
 export const RECEIVED_CHANNELS = 'RECEIVED_CHANNELS'
@@ -40,5 +43,35 @@ export const receivedChannel = (channel) => {
   return {
     type: RECEIVED_CHANNEL,
     entities
+  }
+}
+
+export const createChannel = (params) => {
+  return (dispatch) => {
+    rest.post('/api/channels', {
+        channel: params
+      })
+      .then(response => {
+        return dispatch(receivedChannel(response.data))
+      })
+  }
+}
+
+export const deleteChannel = (channel) => {
+  return (dispatch) => {
+    rest.destroy(`/api/channels/${channel.id}`)
+      .then(response => {
+        dispatch(deletedChannel(channel))
+        dispatch(push('/channels'))
+        displayInfo(`${channel.name} deleted`)
+      })
+  }
+}
+
+export const deletedChannel = (channel) => {
+  return {
+    type: DELETED_ENTITY,
+    entity: 'channels',
+    id: channel.id
   }
 }

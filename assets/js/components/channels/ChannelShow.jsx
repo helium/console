@@ -6,6 +6,8 @@ import pick from 'lodash/pick'
 import { fetchChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
+import RandomEventButton from '../events/RandomEventButton'
+import DeleteChannelButton from './DeleteChannelButton'
 
 class ChannelShow extends Component {
   componentDidMount() {
@@ -25,6 +27,8 @@ class ChannelShow extends Component {
         <p>Type: {channel.type}</p>
         <p>Active: {channel.active ? "Yes" : "No"}</p>
 
+        <RandomEventButton channel_id={channel.id} />
+        <DeleteChannelButton channel={channel} />
         <EventsTable events={events} />
       </DashboardLayout>
     )
