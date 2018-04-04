@@ -4,6 +4,7 @@ import { getTeamId } from '../util/jwt'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
+export const REFRESHED_TOKEN = 'REFRESHED_TOKEN';
 export const IS_VALID_USER = 'IS_VALID_USER';
 export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
@@ -92,6 +93,12 @@ export const logIn = (apikey) => {
 export const logOut = () => {
   return (dispatch) => {
     dispatch(loggedOut())
+  }
+}
+
+export const refreshToken = (apikey) => {
+  return (dispatch) => {
+    dispatch(refreshedToken(apikey))
   }
 }
 
@@ -204,6 +211,14 @@ const loggedIn = (apikey) => {
 const loggedOut = () => {
   return {
     type: LOGGED_OUT
+  }
+}
+
+const refreshedToken = (apikey) => {
+  return {
+    type: REFRESHED_TOKEN,
+    apikey,
+    currentTeamId: getTeamId(apikey)
   }
 }
 

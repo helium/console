@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { receivedEvent } from '../actions/event'
+import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
 class SocketHandler extends Component {
@@ -38,15 +39,17 @@ class SocketHandler extends Component {
 
     if (this.socket !== undefined) { this.disconnect() }
 
-    this.socket = new Socket("/socket", {params: {token: apikey}})
-    this.socket.connect()
+    this.socket = new Socket("/socket", {params: {token: apikey }})
+    if (!isJwtExpired(apikey)) {
+      this.socket.connect()
 
-    let channel = this.socket.channel("event:all", {})
-    channel.join()
-      .receive("ok", resp => { console.log("Joined successfully", resp) })
-      .receive("error", resp => { console.log("Unable to join", resp) })
+      let channel = this.socket.channel("event:all", {})
+      channel.join()
+        .receive("ok", resp => { console.log("Joined successfully", resp) })
+        .receive("error", resp => { console.log("Unable to join", resp) })
 
-    channel.on("new", res => receivedEvent(res))
+      channel.on("new", res => receivedEvent(res))
+    }
   }
 
   disconnect() {
@@ -75,4 +78,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SocketHandler);
-

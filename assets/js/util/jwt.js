@@ -1,5 +1,9 @@
-export const getExpiration = (apikey) => {
-  return parseJwt(apikey).exp
+export const getTimeToExpiration = (apikey) => {
+  return parseJwt(apikey).exp - Math.floor(Date.now()/1000)
+}
+
+export const isJwtExpired = (apikey) => {
+  return getTimeToExpiration(apikey) <= 0
 }
 
 export const getTeamId = (apikey) => {
