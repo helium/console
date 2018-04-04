@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Noty from 'noty'
+import { displayInfo, displayError } from '../util/messages'
 
 axios.interceptors.request.use(
   config => {
@@ -28,29 +28,5 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 )
-
-const displayInfo = (msg) => {
-  if (msg) {
-    const config = {
-      theme: 'relax',
-      type: 'success',
-      text: msg,
-      timeout: 5000
-    }
-
-    new Noty(config).show()
-  }
-}
-
-const displayError = (errorMsg) => {
-  const config = {
-    theme: 'relax',
-    type: 'error',
-    text: errorMsg || "An unexpected error has occurred, please try again",
-    timeout: 5000
-  }
-
-  new Noty(config).show()
-}
 
 export default axios

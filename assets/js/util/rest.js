@@ -19,6 +19,14 @@ export const post = (path, data) => (
   })
 )
 
+export const destroy = (path) => (
+  axios({
+    url: path,
+    method: 'delete',
+    headers: headers()
+  })
+)
+
 const auth = () => (
   store.getState().auth
 )

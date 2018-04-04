@@ -3,6 +3,7 @@ import isArray from 'lodash/isArray'
 import auth from './auth.js';
 import user from './user.js';
 import { SWITCHED_TEAM } from '../actions/team'
+import { DELETED_ENTITY } from '../actions/main'
 
 const defaultEntityState = {
   devices: {},
@@ -23,6 +24,13 @@ const entities = (state = defaultEntityState, action) => {
   // Clears entity cache upon switching teams
   if (action.type === SWITCHED_TEAM) {
     return merge({}, defaultEntityState, {teams: state.teams})
+  }
+
+  // Handles deleting an entity
+  if (action.type === DELETED_ENTITY) {
+    let stateCopy = Object.assign({}, state)
+    delete stateCopy[action.entity][action.id]
+    return stateCopy
   }
 
   return state

@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchDevices } from '../../actions/device'
 import DashboardLayout from '../DashboardLayout'
+import RandomDeviceButton from './RandomDeviceButton'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -25,6 +26,7 @@ class DeviceIndex extends Component {
         ) : (
           <p>No devices</p>
         )}
+        <RandomDeviceButton />
       </DashboardLayout>
     )
   }

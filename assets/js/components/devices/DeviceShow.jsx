@@ -6,6 +6,8 @@ import pick from 'lodash/pick'
 import { fetchDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
+import RandomEventButton from '../events/RandomEventButton'
+import DeleteDeviceButton from './DeleteDeviceButton'
 
 class DeviceShow extends Component {
   componentDidMount() {
@@ -24,6 +26,8 @@ class DeviceShow extends Component {
         <p>Name: {device.name}</p>
         <p>MAC: {device.mac}</p>
 
+        <RandomEventButton device_id={device.id} />
+        <DeleteDeviceButton device={device} />
         <EventsTable events={events} />
       </DashboardLayout>
     )
