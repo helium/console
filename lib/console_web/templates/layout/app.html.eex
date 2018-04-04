@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Console!</title>
+    <title>Helium:Console</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>

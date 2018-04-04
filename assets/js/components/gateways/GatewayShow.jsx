@@ -6,6 +6,8 @@ import pick from 'lodash/pick'
 import { fetchGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
+import RandomEventButton from '../events/RandomEventButton'
+import DeleteGatewayButton from './DeleteGatewayButton'
 
 class GatewayShow extends Component {
   componentDidMount() {
@@ -26,6 +28,8 @@ class GatewayShow extends Component {
         <p>Lat: {gateway.latitude}</p>
         <p>Lng: {gateway.longitude}</p>
 
+        <RandomEventButton gateway_id={gateway.id} />
+        <DeleteGatewayButton gateway={gateway} />
         <EventsTable events={events} />
       </DashboardLayout>
     )

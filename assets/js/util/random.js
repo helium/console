@@ -19,3 +19,15 @@ const toTitleCase = (str) => {
 export const randomName = () => {
   return toTitleCase(generate().spaced)
 }
+
+const getRandomFloat = (min, max) => {
+  return Math.random() * (max - min) + min
+}
+
+export const randomLatitude = () => {
+  return getRandomFloat(24.7433195, 49.3457868)
+}
+
+export const randomLongitude = () => {
+  return getRandomFloat(-124.7844079, -66.9513812)
+}

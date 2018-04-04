@@ -9,12 +9,14 @@ class RandomEventButton extends Component {
   handleClick(e) {
     e.preventDefault()
 
-    const { device_id } = this.props
+    const { device_id, gateway_id, channel_id } = this.props
 
     this.props.createEvent({
       description: "New event",
       direction: "inbound",
-      device_id
+      device_id,
+      gateway_id,
+      channel_id
     })
   }
 

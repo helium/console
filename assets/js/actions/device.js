@@ -46,14 +46,10 @@ export const receivedDevice = (device) => {
   }
 }
 
-export const createDevice = (name, mac) => {
+export const createDevice = (params) => {
   return (dispatch) => {
     rest.post('/api/devices', {
-        device: {
-          name,
-          mac,
-          public_key: "some public key"
-        }
+        device: params
       })
       .then(response => {
         return dispatch(receivedDevice(response.data))

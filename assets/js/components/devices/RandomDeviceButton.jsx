@@ -7,7 +7,11 @@ import { randomName, randomMac } from '../../util/random'
 class RandomDeviceButton extends Component {
   handleClick(e) {
     e.preventDefault()
-    this.props.createDevice(randomName(), randomMac())
+    this.props.createDevice({
+      name: randomName(),
+      mac: randomMac(),
+      public_key: "some public key"
+    })
   }
 
   render() {
