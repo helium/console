@@ -184,7 +184,7 @@ defmodule Console.Auth do
 
   def generate_session_token(user, current_team) do
     claims = %{team: current_team.id}
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims)
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :hour })
     token
   end
 

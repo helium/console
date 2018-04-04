@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { displayInfo, displayError } from '../util/messages'
+import { logOut } from '../actions/auth'
+import { store } from '../store/configureStore'
 
 axios.interceptors.request.use(
   config => {
@@ -18,7 +20,10 @@ axios.interceptors.response.use(
     return response
   },
   error => {
-    if (error.response.status !== 500 && error.response.data.errors) {
+    if (error.response.status === 401 && error.response.data.message === "invalid_token") {
+      displayError("Your token has expired, please log in again to access your account")
+      store.dispatch(logOut())
+    } else if (error.response.status !== 500 && error.response.data.errors) {
       Object.keys(error.response.data.errors).forEach(key => {
         displayError(error.response.data.errors[key])
       })

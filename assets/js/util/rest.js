@@ -31,22 +31,15 @@ const auth = () => (
   store.getState().auth
 )
 
-const isLoggedIn = () => (
-  auth().isLoggedIn
-)
-
-const apikey = () => (
-  auth().apikey
-)
-
 const headers = () => {
   let headerParams = {
     'Content-Type': 'application/json'
   };
+  const {isLoggedIn, apikey} = auth()
 
-  if (isLoggedIn()) {
+  if (isLoggedIn) {
     Object.assign(headerParams, {
-      'Authorization': `Bearer ${apikey()}`
+      'Authorization': `Bearer ${apikey}`
     })
   }
 

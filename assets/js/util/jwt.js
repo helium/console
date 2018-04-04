@@ -1,3 +1,6 @@
+export const getExpiration = (apikey) => {
+  return parseJwt(apikey).exp
+}
 
 export const getTeamId = (apikey) => {
   return parseJwt(apikey).team
@@ -8,4 +11,3 @@ export const parseJwt = (token) => {
   var base64 = base64Url.replace('-', '+').replace('_', '/')
   return JSON.parse(window.atob(base64))
 }
-

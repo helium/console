@@ -20,4 +20,10 @@ defmodule ConsoleWeb.SessionView do
       }
     }
   end
+
+  def render("refresh.json", %{jwt: jwt}) do
+    %{
+      jwt: jwt
+    }
+  end
 end
