@@ -25,9 +25,11 @@ export const checkCredentials = (email, password, recaptcha) => {
       })
       .then(response => {
         dispatch(isValidUser(response.data.user))
-        if (response.data.user.twoFactorEnabled === false) {
-          dispatch(loggedIn(response.data.jwt))
-          dispatch(push("/2fa_prompt"))
+        if (!response.data.user.twoFactorEnabled) {
+          dispatch(logIn(response.data.jwt))
+          if (!response.data.skip2fa) {
+            dispatch(push("/2fa_prompt"))
+          }
         }
       })
       .catch(() => dispatch(shouldResetCaptcha()))
@@ -72,10 +74,18 @@ export const enable2fa = (code, userId, secret2fa) => {
   }
 }
 
+export const skip2fa = (userId) => {
+  return (dispatch) => {
+    rest.post('/api/2fa/skip', {
+        userId
+      })
+      .then(() => {})
+  }
+}
+
 export const logIn = (apikey) => {
   return (dispatch) => {
     dispatch(loggedIn(apikey))
-    dispatch(push('/secret'))
   }
 }
 

@@ -37,6 +37,7 @@ defmodule ConsoleWeb.Router do
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
+    post "/2fa/skip", TwoFactorController, :skip
     get "/secret", PageController, :secret
   end
 

@@ -13,6 +13,12 @@ defmodule Console.FactoryHelper do
     {:ok, conn: conn, user: user, team: team}
   end
 
+  def unauthenticated_user(%{conn: conn}) do
+    user = insert(:user)
+    {:ok, _} = Console.Teams.create_team(user, %{name: "Test Team"})
+    {:ok, conn: conn, user: user}
+  end
+
   def authenticated_conn() do
     user = insert(:user)
     {:ok, token, _} = encode_and_sign(user, %{}, token_type: :access)

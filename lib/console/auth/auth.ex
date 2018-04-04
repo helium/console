@@ -8,6 +8,7 @@ defmodule Console.Auth do
 
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
+  alias Console.Helpers
 
   def get_user_by_id!(id) do
     Repo.get!(User, id)
@@ -185,6 +186,26 @@ defmodule Console.Auth do
     claims = %{team: current_team.id}
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims)
     token
+  end
+
+  def should_skip_2fa_prompt?(lastSkippedTime) do
+    if lastSkippedTime do
+      Helpers.time_ago_more_than?(lastSkippedTime, 1, "Day")
+    else
+      true
+    end
+  end
+
+  def update_2fa_last_verification(twoFactor) do
+    twoFactor
+    |> TwoFactor.update_last_verification_changeset()
+    |> Repo.update()
+  end
+
+  def update_2fa_last_skipped(user) do
+    user
+    |> User.update_2fa_last_skipped_changeset()
+    |> Repo.update()
   end
 
   defp get_user_for_authentication(email) do

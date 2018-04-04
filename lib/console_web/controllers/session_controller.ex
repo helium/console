@@ -12,6 +12,7 @@ defmodule ConsoleWeb.SessionController do
          {:ok, %User{} = user} <- Auth.authenticate(session_params),
          current_team <- Teams.current_team_for(user),
          jwt <- Auth.generate_session_token(user, current_team) do
+
       if user.twofactor do
         conn
         |> put_status(:created)
@@ -19,7 +20,7 @@ defmodule ConsoleWeb.SessionController do
       else
         conn
         |> put_status(:created)
-        |> render("show.json", user: user, jwt: jwt)
+        |> render("show.json", user: user, jwt: jwt, skip2fa: !Auth.should_skip_2fa_prompt?(user.last_2fa_skipped_at))
         # TODO: why jwt if twofactor?
       end
     end

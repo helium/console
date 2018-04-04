@@ -19,4 +19,10 @@ defmodule ConsoleWeb.TwoFactorView do
       }
     }
   end
+
+  def render("2fa_status.json", %{message: message}) do
+    %{
+      success_message: message
+    }
+  end
 end
