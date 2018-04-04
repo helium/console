@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchGateway } from '../../actions/gateway'
+import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
-import DeleteGatewayButton from './DeleteGatewayButton'
+import Button from '../common/Button'
 
 class GatewayShow extends Component {
   componentDidMount() {
@@ -16,7 +16,7 @@ class GatewayShow extends Component {
   }
 
   render() {
-    const { gateway, events } = this.props
+    const { gateway, events, deleteGateway } = this.props
 
     if (gateway === undefined) return (<div>loading...</div>)
 
@@ -29,7 +29,11 @@ class GatewayShow extends Component {
         <p>Lng: {gateway.longitude}</p>
 
         <RandomEventButton gateway_id={gateway.id} />
-        <DeleteGatewayButton gateway={gateway} />
+        <Button
+          type="danger"
+          text="Delete Gateway"
+          onClick={() => deleteGateway(gateway)}
+        />
         <EventsTable events={events} />
       </DashboardLayout>
     )
@@ -46,7 +50,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchGateway }, dispatch);
+  return bindActionCreators({ fetchGateway, deleteGateway }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GatewayShow);

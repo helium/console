@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import sample from 'lodash/sample'
 import { createEvent } from '../../actions/event'
-// import { randomName, randomMac } from '../../util/random'
+import { randomInt, randomFloat } from '../../util/random'
 
 class RandomEventButton extends Component {
 
@@ -13,7 +14,10 @@ class RandomEventButton extends Component {
 
     this.props.createEvent({
       description: "New event",
-      direction: "inbound",
+      direction: sample(["inbound", "outbound"]),
+      payload: "some payload",
+      payload_size: randomInt(1, 100),
+      rssi: randomFloat(1, 100).toFixed(2),
       device_id,
       gateway_id,
       channel_id
