@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { register, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
-import Recaptcha from 'react-recaptcha';
+import Recaptcha from './Recaptcha.jsx';
 
 class Register extends Component {
   constructor(props) {
