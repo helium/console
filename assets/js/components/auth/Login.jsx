@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
 import config from '../../config/common.js';
-import Recaptcha from 'react-recaptcha';
+import Recaptcha from './Recaptcha.jsx';
 import TwoFactorForm from './TwoFactorForm.jsx'
 
 class Login extends Component {

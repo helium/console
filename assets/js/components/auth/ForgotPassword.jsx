@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { forgotPassword, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
-import Recaptcha from 'react-recaptcha';
+import Recaptcha from './Recaptcha.jsx';
 
 class ForgotPassword extends Component {
   constructor(props) {
