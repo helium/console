@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchGateways } from '../../actions/gateway'
 import DashboardLayout from '../DashboardLayout'
+import RandomGatewayButton from './RandomGatewayButton'
 
 class GatewayIndex extends Component {
   componentDidMount() {
@@ -24,6 +25,7 @@ class GatewayIndex extends Component {
         ) : (
           <p>No gateways</p>
         )}
+        <RandomGatewayButton />
       </DashboardLayout>
     )
   }

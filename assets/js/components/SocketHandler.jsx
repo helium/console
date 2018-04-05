@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { receivedEvent } from '../actions/event'
+import { fetchIndices } from '../actions/main'
 
 class SocketHandler extends Component {
   constructor(props) {
@@ -12,6 +13,10 @@ class SocketHandler extends Component {
     this.disconnect = this.disconnect.bind(this)
 
     if (props.isLoggedIn) { this.subscribeToUpdates() }
+  }
+
+  componentDidMount() {
+    this.props.fetchIndices()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -64,7 +69,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ receivedEvent }, dispatch);
+  return bindActionCreators({ fetchIndices, receivedEvent }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SocketHandler);

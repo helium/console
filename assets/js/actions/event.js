@@ -12,3 +12,14 @@ export const receivedEvent = (event) => {
     entities
   }
 }
+
+export const createEvent = (eventParams) => {
+  return (dispatch) => {
+    rest.post('/api/events', {
+        event: eventParams
+      })
+      .then(response => {
+        return dispatch(receivedEvent(response.data))
+      })
+  }
+}

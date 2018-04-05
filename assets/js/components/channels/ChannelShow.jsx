@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchChannel } from '../../actions/channel'
+import { fetchChannel, deleteChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
+import RandomEventButton from '../events/RandomEventButton'
+import Button from '../common/Button'
 
 class ChannelShow extends Component {
   componentDidMount() {
@@ -14,7 +16,7 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { channel, events } = this.props
+    const { channel, events, deleteChannel } = this.props
 
     if (channel === undefined) return (<div>loading...</div>)
 
@@ -25,6 +27,12 @@ class ChannelShow extends Component {
         <p>Type: {channel.type}</p>
         <p>Active: {channel.active ? "Yes" : "No"}</p>
 
+        <RandomEventButton channel_id={channel.id} />
+        <Button
+          type="danger"
+          text="Delete Channel"
+          onClick={() => deleteChannel(channel)}
+        />
         <EventsTable events={events} />
       </DashboardLayout>
     )
@@ -41,7 +49,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchChannel }, dispatch);
+  return bindActionCreators({ fetchChannel, deleteChannel }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChannelShow);

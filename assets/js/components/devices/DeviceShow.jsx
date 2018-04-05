@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchDevice } from '../../actions/device'
+import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../DashboardLayout'
+import RandomEventButton from '../events/RandomEventButton'
+import Button from '../common/Button'
 
 class DeviceShow extends Component {
   componentDidMount() {
@@ -14,7 +16,7 @@ class DeviceShow extends Component {
   }
 
   render() {
-    const { device, events } = this.props
+    const { device, events, deleteDevice } = this.props
 
     if (device === undefined) return (<div>loading...</div>)
 
@@ -24,6 +26,12 @@ class DeviceShow extends Component {
         <p>Name: {device.name}</p>
         <p>MAC: {device.mac}</p>
 
+        <RandomEventButton device_id={device.id} />
+        <Button
+          type="danger"
+          text="Delete Device"
+          onClick={() => deleteDevice(device)}
+        />
         <EventsTable events={events} />
       </DashboardLayout>
     )
@@ -40,7 +48,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevice }, dispatch);
+  return bindActionCreators({ fetchDevice, deleteDevice }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);

@@ -1,5 +1,8 @@
+import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeGateway, normalizeGateways } from '../schemas/gateway'
+import { DELETED_ENTITY } from './main'
+import { displayInfo } from '../util/messages'
 
 export const FETCH_GATEWAYS = 'FETCH_GATEWAYS'
 export const RECEIVED_GATEWAYS = 'RECEIVED_GATEWAYS'
@@ -40,5 +43,35 @@ export const receivedGateway = (gateway) => {
   return {
     type: RECEIVED_GATEWAY,
     entities
+  }
+}
+
+export const createGateway = (params) => {
+  return (dispatch) => {
+    rest.post('/api/gateways', {
+        gateway: params
+      })
+      .then(response => {
+        return dispatch(receivedGateway(response.data))
+      })
+  }
+}
+
+export const deleteGateway = (gateway) => {
+  return (dispatch) => {
+    rest.destroy(`/api/gateways/${gateway.id}`)
+      .then(response => {
+        dispatch(deletedGateway(gateway))
+        dispatch(push('/gateways'))
+        displayInfo(`${gateway.name} deleted`)
+      })
+  }
+}
+
+export const deletedGateway = (gateway) => {
+  return {
+    type: DELETED_ENTITY,
+    entity: 'gateways',
+    id: gateway.id
   }
 }
