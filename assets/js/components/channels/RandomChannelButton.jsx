@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import sample from 'lodash/sample'
 import { createChannel } from '../../actions/channel'
 import { randomName, randomMac } from '../../util/random'
 
@@ -9,7 +10,7 @@ class RandomChannelButton extends Component {
     e.preventDefault()
     this.props.createChannel({
       name: randomName(),
-      type: 'google',
+      type: sample(['google', 'aws', 'azure', 'http', 'mqtt']),
       credentials: {
         some_api_key: "Secret!!"
       }
