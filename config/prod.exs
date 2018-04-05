@@ -36,6 +36,13 @@ config :console, Console.Mailer,
   api_key: System.get_env("MAILGUN_API_KEY"),
   domain: "mg2.helium.com"
 
+config :cloak, Cloak.AES.CTR,
+  tag: "AES",
+  default: true,
+  keys: [
+    %{tag: <<1>>, key: :base64.decode(System.get_env("CLOAK_SECRET_KEY")), default: true}
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
