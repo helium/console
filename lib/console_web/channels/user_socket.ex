@@ -3,6 +3,7 @@ defmodule ConsoleWeb.UserSocket do
 
   ## Channels
   channel("event:*", ConsoleWeb.EventChannel)
+  channel("device:*", ConsoleWeb.DeviceChannel)
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket,

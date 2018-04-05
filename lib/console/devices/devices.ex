@@ -37,8 +37,8 @@ defmodule Console.Devices do
   """
   def get_device!(id), do: Repo.get!(Device, id)
 
-  def fetch_assoc(%Device{} = device) do
-    Repo.preload(device, [:events])
+  def fetch_assoc(%Device{} = device, assoc \\ [:events, :team]) do
+    Repo.preload(device, assoc)
   end
 
   @doc """
