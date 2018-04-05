@@ -11,18 +11,20 @@ class SocketHandler extends Component {
 
     this.subscribeToUpdates = this.subscribeToUpdates.bind(this)
     this.disconnect = this.disconnect.bind(this)
-
-    if (props.isLoggedIn) { this.subscribeToUpdates() }
   }
 
   componentDidMount() {
-    this.props.fetchIndices()
+    if (this.props.isLoggedIn) {
+      this.props.fetchIndices()
+      this.subscribeToUpdates()
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
     // if the user has just logged in...
     if (!prevProps.isLoggedIn && this.props.isLoggedIn) {
       this.subscribeToUpdates()
+      this.props.fetchIndices()
     }
 
     // if the user has just signed out...
