@@ -45,7 +45,7 @@ export default class Recaptcha extends Component {
 
     reset() {
       if (this.state.widget !== null) {
-        grecaptcha.reset(widget);
+        grecaptcha.reset(this.state.widget);
       }
     }
 

@@ -4,6 +4,7 @@ import { getTeamId } from '../util/jwt'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
+export const REFRESHED_TOKEN = 'REFRESHED_TOKEN';
 export const IS_VALID_USER = 'IS_VALID_USER';
 export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
@@ -157,6 +158,14 @@ export const resendVerification = (email, recaptcha) => {
       })
       .then(() => dispatch(push('/login')))
       .catch(() => dispatch(shouldResetCaptcha()))
+  }
+}
+
+export const refreshedToken = (apikey) => {
+  return {
+    type: REFRESHED_TOKEN,
+    apikey,
+    currentTeamId: getTeamId(apikey)
   }
 }
 

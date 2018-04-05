@@ -39,6 +39,7 @@ defmodule ConsoleWeb.Router do
     post "/2fa", TwoFactorController, :create
     post "/2fa/skip", TwoFactorController, :skip
     get "/secret", PageController, :secret
+    post "/sessions/refresh", SessionController, :refresh
   end
 
   if Mix.env == :dev do
