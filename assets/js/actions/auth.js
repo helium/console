@@ -96,12 +96,6 @@ export const logOut = () => {
   }
 }
 
-export const refreshToken = (apikey) => {
-  return (dispatch) => {
-    dispatch(refreshedToken(apikey))
-  }
-}
-
 export const register = (teamName, email, password, passwordConfirm, recaptcha) => {
   return (dispatch) => {
     rest.post('/api/users', {
@@ -167,6 +161,14 @@ export const resendVerification = (email, recaptcha) => {
   }
 }
 
+export const refreshedToken = (apikey) => {
+  return {
+    type: REFRESHED_TOKEN,
+    apikey,
+    currentTeamId: getTeamId(apikey)
+  }
+}
+
 export const isValidUser = (user, jwt = null) => {
   return {
     type: IS_VALID_USER,
@@ -211,14 +213,6 @@ const loggedIn = (apikey) => {
 const loggedOut = () => {
   return {
     type: LOGGED_OUT
-  }
-}
-
-const refreshedToken = (apikey) => {
-  return {
-    type: REFRESHED_TOKEN,
-    apikey,
-    currentTeamId: getTeamId(apikey)
   }
 }
 

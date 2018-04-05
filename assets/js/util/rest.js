@@ -1,11 +1,10 @@
 import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
-import { getTimeToExpiration } from './jwt.js'
-import { refreshToken } from '../actions/auth.js'
+import { percentOfTimeLeft } from './jwt.js'
+import { refreshedToken } from '../actions/auth.js'
 import { logOut } from '../actions/auth'
 
 export const get = (path, params = {}) => {
-  const { apikey } = auth()
   const originalApiCall = axios({
     url: path,
     method: 'get',
@@ -13,21 +12,32 @@ export const get = (path, params = {}) => {
     params
   })
 
-  if (shouldRefreshToken(apikey)) {
-    return refreshTokenBeforeApiCall(apikey, originalApiCall)
-  } else {
-    return originalApiCall
-  }
+  return checkTokenBeforeApiCall(originalApiCall)
 }
 
 export const post = (path, data) => {
-  const { apikey } = auth()
   const originalApiCall = axios({
     url: path,
     method: 'post',
     headers: headers(),
     data
   })
+
+  return checkTokenBeforeApiCall(originalApiCall)
+}
+
+export const destroy = (path) => {
+  const originalApiCall = axios({
+    url: path,
+    method: 'delete',
+    headers: headers()
+  })
+
+  return checkTokenBeforeApiCall(originalApiCall)
+}
+
+const checkTokenBeforeApiCall = (originalApiCall) => {
+  const { apikey } = auth()
 
   if (shouldRefreshToken(apikey)) {
     return refreshTokenBeforeApiCall(apikey, originalApiCall)
@@ -49,16 +59,8 @@ const refreshTokenBeforeApiCall = (apikey, originalApiCall) => (
     }
   })
   .then(response => {
-    store.dispatch(refreshToken(response.data.jwt))
+    store.dispatch(refreshedToken(response.data.jwt))
     return originalApiCall
-  })
-)
-
-export const destroy = (path) => (
-  axios({
-    url: path,
-    method: 'delete',
-    headers: headers()
   })
 )
 
@@ -83,8 +85,8 @@ const headers = () => {
 
 const shouldRefreshToken = (apikey) => {
   if (apikey !== null) {
-    const timeToExpiration = getTimeToExpiration(apikey)
-    return (timeToExpiration < 3600 && timeToExpiration > 0) // How long before refreshing token, currently at 1 hour
+    const percent = percentOfTimeLeft(apikey)
+    return percent > 0 && percent < 0.1
   }
   return false
 }
