@@ -4,6 +4,11 @@ class MQTTForm extends Component {
   constructor(props) {
     super(props);
 
+    this.handleInputUpdate = this.handleInputUpdate.bind(this)
+    this.state = {
+      endpoint: "",
+      topic: ""
+    }
   }
 
   handleInputUpdate(e) {
@@ -16,11 +21,11 @@ class MQTTForm extends Component {
         <p>Enter your MQTT Connection Details</p>
         <div>
           <label>Endpoint</label>
-          <input type="text" name=""/>
+          <input type="text" name="endpoint" value={this.state.endpoint} onChange={this.handleInputUpdate}/>
         </div>
         <div>
           <label>Topic</label>
-          <input type="text" name=""/>
+          <input type="text" name="topic" value={this.state.topic} onChange={this.handleInputUpdate}/>
         </div>
       </div>
     );
