@@ -21,7 +21,7 @@ defmodule Console.TeamsTest do
     test "create_user/2 with invalid data returns error changeset" do
       user = insert(:user)
       assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{})
-      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{name: "short"})
+      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{name: "s"})
     end
   end
 end

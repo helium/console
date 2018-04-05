@@ -32,7 +32,7 @@ defmodule ConsoleWeb.TeamControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post conn, team_path(conn, :create), team: %{name: "short"}
+      conn = post conn, team_path(conn, :create), team: %{name: "s"}
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
