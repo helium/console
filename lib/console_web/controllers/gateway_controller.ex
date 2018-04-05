@@ -16,6 +16,7 @@ defmodule ConsoleWeb.GatewayController do
     current_team = conn.assigns.current_team
     gateway_params = Map.merge(gateway_params, %{"team_id" => current_team.id})
     with {:ok, %Gateway{} = gateway} <- Gateways.create_gateway(gateway_params) do
+      broadcast(gateway, "new")
       conn
       |> put_status(:created)
       |> put_resp_header("location", gateway_path(conn, :show, gateway))
@@ -39,7 +40,14 @@ defmodule ConsoleWeb.GatewayController do
   def delete(conn, %{"id" => id}) do
     gateway = Gateways.get_gateway!(id)
     with {:ok, %Gateway{}} <- Gateways.delete_gateway(gateway) do
+      broadcast(gateway, "delete")
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp broadcast(%Gateway{} = gateway, action) do
+    gateway = Gateways.fetch_assoc(gateway, [:team])
+    body = ConsoleWeb.GatewayView.render("show.json", gateway: gateway)
+    ConsoleWeb.Endpoint.broadcast("gateway:#{gateway.team.id}", action, body)
   end
 end

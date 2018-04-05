@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { receivedEvent, deletedEvent } from '../actions/event'
 import { receivedDevice, deletedDevice } from '../actions/device'
+import { receivedGateway, deletedGateway } from '../actions/gateway'
+import { receivedChannel, deletedChannel } from '../actions/channel'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -49,6 +51,10 @@ class SocketHandler extends Component {
       deletedEvent,
       receivedDevice,
       deletedDevice,
+      receivedGateway,
+      deletedGateway,
+      receivedChannel,
+      deletedChannel,
       apikey,
       currentTeamId
     } = this.props
@@ -61,6 +67,8 @@ class SocketHandler extends Component {
 
       this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
       this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
+      this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
+      this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
     }
   }
 
@@ -103,7 +111,11 @@ function mapDispatchToProps(dispatch) {
     receivedEvent,
     deletedEvent,
     receivedDevice,
-    deletedDevice
+    deletedDevice,
+    receivedGateway,
+    deletedGateway,
+    receivedChannel,
+    deletedChannel
   }, dispatch);
 }
 
