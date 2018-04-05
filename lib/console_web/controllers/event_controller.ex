@@ -24,12 +24,12 @@ defmodule ConsoleWeb.EventController do
   end
 
   def show(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
+    event = Events.get_event!(id) |> Events.fetch_assoc()
     render(conn, "show.json", event: event)
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
-    event = Events.get_event!(id)
+    event = Events.get_event!(id) |> Events.fetch_assoc()
 
     with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
       render(conn, "show.json", event: event)
