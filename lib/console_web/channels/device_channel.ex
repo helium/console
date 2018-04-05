@@ -1,14 +1,14 @@
-defmodule ConsoleWeb.EventChannel do
+defmodule ConsoleWeb.DeviceChannel do
   use Phoenix.Channel
 
   alias Console.Teams
 
-  def join("event:all", _message, socket) do
+  def join("device:all", _message, socket) do
     # current_user = Guardian.Phoenix.Socket.current_resource(socket)
     {:ok, socket}
   end
 
-  def join("event:" <> team_id, _params, socket) do
+  def join("device:" <> team_id, _params, socket) do
     current_user = Guardian.Phoenix.Socket.current_resource(socket)
     team = Teams.get_team!(team_id)
 

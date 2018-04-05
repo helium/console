@@ -19,6 +19,18 @@ defmodule Console.Teams do
     Ecto.assoc(current_user, :teams) |> Repo.get!(id)
   end
 
+  def get_team!(id) do
+    Repo.get!(Team, id)
+  end
+
+  def user_has_access?(%User{} = user, %Team{} = team) do
+    query = from m in "memberships",
+            select: count(m.id),
+            where: m.user_id == type(^user.id, :binary_id) and m.team_id == type(^team.id, :binary_id)
+    count = Repo.one(query)
+    count > 0
+  end
+
   def create_team(user, attrs \\ %{}) do
     team_changeset =
       %Team{}

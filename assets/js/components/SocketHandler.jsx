@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
-import { receivedEvent } from '../actions/event'
+import { receivedEvent, deletedEvent } from '../actions/event'
+import { receivedDevice, deletedDevice } from '../actions/device'
+import { receivedGateway, deletedGateway } from '../actions/gateway'
+import { receivedChannel, deletedChannel } from '../actions/channel'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -12,6 +15,7 @@ class SocketHandler extends Component {
 
     this.subscribeToUpdates = this.subscribeToUpdates.bind(this)
     this.disconnect = this.disconnect.bind(this)
+    this.join = this.join.bind(this)
   }
 
   componentDidMount() {
@@ -32,10 +36,28 @@ class SocketHandler extends Component {
     if (prevProps.isLoggedIn && !this.props.isLoggedIn) {
       this.disconnect()
     }
+
+    // if the user has switched teams or refreshed their api key...
+    if (prevProps.apikey !== this.props.apikey) {
+      this.disconnect()
+      this.subscribeToUpdates()
+      this.props.fetchIndices()
+    }
   }
 
   subscribeToUpdates() {
-    const { receivedEvent, apikey } = this.props
+    const {
+      receivedEvent,
+      deletedEvent,
+      receivedDevice,
+      deletedDevice,
+      receivedGateway,
+      deletedGateway,
+      receivedChannel,
+      deletedChannel,
+      apikey,
+      currentTeamId
+    } = this.props
 
     if (this.socket !== undefined) { this.disconnect() }
 
@@ -43,13 +65,22 @@ class SocketHandler extends Component {
     if (!isJwtExpired(apikey)) {
       this.socket.connect()
 
-      let channel = this.socket.channel("event:all", {})
-      channel.join()
-        .receive("ok", resp => { console.log("Joined successfully", resp) })
-        .receive("error", resp => { console.log("Unable to join", resp) })
-
-      channel.on("new", res => receivedEvent(res))
+      this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
+      this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
+      this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
+      this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
     }
+  }
+
+  join(channelName, newHandler, deleteHandler) {
+    let channel = this.socket.channel(channelName, {})
+
+    channel.join()
+      .receive("ok", resp => { console.log(`Joined ${channelName} successfully`, resp) })
+      .receive("error", resp => { console.log(`Unable to join ${channelName}`, resp) })
+
+    channel.on("new", res => newHandler(res))
+    channel.on("delete", res => deleteHandler(res))
   }
 
   disconnect() {
@@ -69,12 +100,23 @@ class SocketHandler extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     isLoggedIn: state.auth.isLoggedIn,
-    apikey: state.auth.apikey
+    apikey: state.auth.apikey,
+    currentTeamId: state.auth.currentTeamId
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchIndices, receivedEvent }, dispatch);
+  return bindActionCreators({
+    fetchIndices,
+    receivedEvent,
+    deletedEvent,
+    receivedDevice,
+    deletedDevice,
+    receivedGateway,
+    deletedGateway,
+    receivedChannel,
+    deletedChannel
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SocketHandler);

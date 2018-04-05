@@ -14,7 +14,7 @@ defmodule ConsoleWeb.EventController do
   def create(conn, %{"event" => event_params}) do
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       event = Events.fetch_assoc(event)
-      broadcast_event(event)
+      broadcast(event, "new")
 
       conn
       |> put_status(:created)
@@ -24,12 +24,12 @@ defmodule ConsoleWeb.EventController do
   end
 
   def show(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
+    event = Events.get_event!(id) |> Events.fetch_assoc()
     render(conn, "show.json", event: event)
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do
-    event = Events.get_event!(id)
+    event = Events.get_event!(id) |> Events.fetch_assoc()
 
     with {:ok, %Event{} = event} <- Events.update_event(event, event_params) do
       render(conn, "show.json", event: event)
@@ -40,12 +40,27 @@ defmodule ConsoleWeb.EventController do
     event = Events.get_event!(id)
 
     with {:ok, %Event{}} <- Events.delete_event(event) do
+      broadcast(event, "delete")
       send_resp(conn, :no_content, "")
     end
   end
 
-  defp broadcast_event(event) do
+  defp broadcast(%Event{} = event, action) do
+    event = Events.fetch_assoc(event)
+
+    device_team_id = if event.device, do: event.device.team_id
+    gateway_team_id = if event.gateway, do: event.gateway.team_id
+    channel_team_id = if event.channel, do: event.channel.team_id
+
+    team_ids =
+      [device_team_id, gateway_team_id, channel_team_id]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.uniq()
+
     body = ConsoleWeb.EventView.render("show.json", event: event)
-    ConsoleWeb.Endpoint.broadcast("event:all", "new", body)
+
+    Enum.each(team_ids, fn team_id ->
+      ConsoleWeb.Endpoint.broadcast("event:#{team_id}", action, body)
+    end)
   end
 end
