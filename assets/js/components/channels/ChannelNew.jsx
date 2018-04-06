@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../DashboardLayout'
-import AzureForm from './forms/AzureForm'
-import AWSForm from './forms/AWSForm'
-import GoogleForm from './forms/GoogleForm'
-import MQTTForm from './forms/MQTTForm'
-import HTTPForm from './forms/HTTPForm'
+import AzureForm from './forms/AzureForm.jsx'
+import AWSForm from './forms/AWSForm.jsx'
+import GoogleForm from './forms/GoogleForm.jsx'
+import MQTTForm from './forms/MQTTForm.jsx'
+import HTTPForm from './forms/HTTPForm.jsx'
 
-class ChannelShow extends Component {
+class ChannelNew extends Component {
   constructor(props) {
     super(props)
     const searchParams = new URLSearchParams(this.props.location.search)
@@ -57,4 +57,4 @@ class ChannelShow extends Component {
   }
 }
 
-export default ChannelShow;
+export default ChannelNew;
