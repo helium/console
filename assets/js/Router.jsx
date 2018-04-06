@@ -53,7 +53,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/gateways" component={GatewayIndex} />
                   <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
-                  <PrivateRoute exact path="/channels/new" component={ChannelNew} />
+                  <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
                   <PrivateRoute exact path="/teams" component={TeamIndex} />
                   <PrivateRoute exact path="/teams/new" component={TeamNew} />

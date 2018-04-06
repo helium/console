@@ -9,12 +9,11 @@ import HTTPForm from './forms/HTTPForm.jsx'
 class ChannelNew extends Component {
   constructor(props) {
     super(props)
-    const searchParams = new URLSearchParams(this.props.location.search)
 
     this.handleClick = this.handleClick.bind(this)
     this.renderForm = this.renderForm.bind(this)
     this.state = {
-      kind: searchParams.get('kind')
+      kind: this.props.match.params.id
     }
   }
 

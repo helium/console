@@ -17,11 +17,11 @@ class ChannelIndex extends Component {
     return(
       <DashboardLayout title="Channels" current="channels">
         <h4>Create New Channel</h4>
-        <div><Link to={'/channels/new?kind=azure'}>Azure IoT Hub</Link></div>
-        <div><Link to={'/channels/new?kind=aws'}>AWS IoT</Link></div>
-        <div><Link to={'/channels/new?kind=google'}>Google Cloud IoT Core</Link></div>
-        <div><Link to={'/channels/new?kind=mqtt'}>MQTT</Link></div>
-        <div><Link to={'/channels/new?kind=http'}>HTTP</Link></div>
+        <div><Link to={'/channels/new/azure'}>Azure IoT Hub</Link></div>
+        <div><Link to={'/channels/new/aws'}>AWS IoT</Link></div>
+        <div><Link to={'/channels/new/google'}>Google Cloud IoT Core</Link></div>
+        <div><Link to={'/channels/new/mqtt'}>MQTT</Link></div>
+        <div><Link to={'/channels/new/http'}>HTTP</Link></div>
 
         <h4>All Channels</h4>
         {channels.length > 0 ? (
