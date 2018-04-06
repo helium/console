@@ -18,9 +18,9 @@ class ChannelNew extends Component {
     }
   }
 
-  handleClick(e) {
-    if (this.state.kind !== e.target.id) {
-      this.setState({kind: e.target.id})
+  handleClick(kind) {
+    if (this.state.kind !== kind) {
+      this.setState({kind})
     }
   }
 
@@ -44,11 +44,11 @@ class ChannelNew extends Component {
       <DashboardLayout title="Channel" current="channels">
         <h3>Step 1</h3>
         <p>Select a channel</p>
-        <div id="azure" onClick={this.handleClick}>Azure IoT Hub</div>
-        <div id="aws" onClick={this.handleClick}>AWS IoT</div>
-        <div id="google" onClick={this.handleClick}>Google Cloud IoT Core</div>
-        <div id="mqtt" onClick={this.handleClick}>MQTT</div>
-        <div id="http" onClick={this.handleClick}>HTTP</div>
+        <div onClick={() => this.handleClick("azure")}>Azure IoT Hub</div>
+        <div onClick={() => this.handleClick("aws")}>AWS IoT</div>
+        <div onClick={() => this.handleClick("google")}>Google Cloud IoT Core</div>
+        <div onClick={() => this.handleClick("mqtt")}>MQTT</div>
+        <div onClick={() => this.handleClick("http")}>HTTP</div>
 
         <h3>Step 2</h3>
         {this.renderForm()}

@@ -26,8 +26,7 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray })
   }
 
-  removeHeaderRow(e) {
-    const index = parseInt(e.target.id)
+  removeHeaderRow(index) {
     const newHeadersArray = this.state.headers.slice(0, index).concat(this.state.headers.slice(index + 1))
     this.setState({ headers: newHeadersArray })
   }
@@ -40,9 +39,9 @@ class HTTPForm extends Component {
     let index, input
     [index, input] = e.target.name.split('-')
 
-    let newHeadersArray = this.state.headers
-    newHeadersArray[index] = Object.assign({}, newHeadersArray[index], { [input]: e.target.value })
-
+    const updatedEntry = Object.assign({}, this.state.headers[index], { [input]: e.target.value })
+    const newHeadersArray = this.state.headers.slice(0, index).concat(updatedEntry, this.state.headers.slice(index + 1))
+    
     this.setState({ headers: newHeadersArray })
   }
 
@@ -72,7 +71,7 @@ class HTTPForm extends Component {
               <label>HTTP Headers</label>
               <input type="text" name={`${i}-header`} value={obj.header} onChange={this.handleHttpHeaderUpdate}/>
               <input type="text" name={`${i}-value`} value={obj.value} onChange={this.handleHttpHeaderUpdate}/>
-              {i > 1 && <span id={i} onClick={this.removeHeaderRow}> x</span>}
+              {i > 1 && <span onClick={() => this.removeHeaderRow(i)}> x</span>}
             </div>
           ))
         }
