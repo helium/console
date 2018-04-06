@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchChannels } from '../../actions/channel'
-import DashboardLayout from '../DashboardLayout'
+import DashboardLayout from '../common/DashboardLayout'
 import RandomChannelButton from './RandomChannelButton'
 
 class ChannelIndex extends Component {

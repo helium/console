@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
-import DashboardLayout from '../DashboardLayout'
+import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
 import Button from '../common/Button'
 

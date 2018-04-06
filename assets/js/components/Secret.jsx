@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth.js';
 import QRCode from 'qrcode.react';
-import DashboardLayout from './DashboardLayout'
+import DashboardLayout from './common/DashboardLayout'
 
 class Secret extends Component {
   constructor(props) {

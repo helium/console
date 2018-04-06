@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import DashboardLayout from '../DashboardLayout'
+import DashboardLayout from '../common/DashboardLayout'
 import { createTeam } from '../../actions/team'
 
 class TeamNew extends Component {

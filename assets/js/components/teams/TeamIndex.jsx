@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchTeams, switchTeam } from '../../actions/team'
-import DashboardLayout from '../DashboardLayout'
+import DashboardLayout from '../common/DashboardLayout'
 
 const CurrentTeam = (props) => {
   if (props.team !== undefined) {

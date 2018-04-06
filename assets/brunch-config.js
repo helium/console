@@ -73,6 +73,7 @@ exports.config = {
     enabled: true,
     whitelist: ["phoenix", "phoenix_html", "react", "react-dom"],
     styles: {
+      // "normalize.css": ["normalize.css"],
       noty: ["lib/noty.css", "lib/themes/relax.css"],
       "react-table": ["react-table.css"]
     }

@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchDevices } from '../../actions/device'
-import DashboardLayout from '../DashboardLayout'
+import DashboardLayout from '../common/DashboardLayout'
 import RandomDeviceButton from './RandomDeviceButton'
+import Button from 'material-ui/Button'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -27,6 +28,9 @@ class DeviceIndex extends Component {
           <p>No devices</p>
         )}
         <RandomDeviceButton />
+        <Button variant="raised" color="primary">
+          Hello World
+        </Button>
       </DashboardLayout>
     )
   }

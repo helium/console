@@ -1,0 +1,60 @@
+import React, { Component } from 'react'
+
+import { withStyles } from 'material-ui/styles';
+import withRoot from './withRoot.jsx'
+
+import TopBar from './TopBar'
+import NavDrawer from './NavDrawer'
+
+const drawerWidth = 240;
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    height: '100vh',
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+    width: '100%',
+  },
+  appBar: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+  },
+  logo: {
+    display: 'block',
+    width: '100%'
+  },
+  drawerPaper: {
+    position: 'relative',
+    width: drawerWidth,
+  },
+  toolbar: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit * 3,
+    marginTop: 64,
+    overflowY: 'scroll'
+  },
+});
+
+class DashboardLayout extends Component {
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <TopBar classes={{appBar: classes.appBar}} title={this.props.title} />
+        <NavDrawer classes={{drawerPaper: classes.drawerPaper, logo: classes.logo}} />
+
+        <main className={classes.content}>
+          {this.props.children}
+        </main>
+      </div>
+    )
+  }
+}
+
+export default withRoot(withStyles(styles)(DashboardLayout))
