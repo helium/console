@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import DashboardLayout from '../DashboardLayout'
 import AzureForm from './forms/AzureForm'
 import AWSForm from './forms/AWSForm'
 import GoogleForm from './forms/GoogleForm'
 import MQTTForm from './forms/MQTTForm'
 import HTTPForm from './forms/HTTPForm'
-import Button from '../common/Button'
 
 class ChannelShow extends Component {
   constructor(props) {
@@ -61,8 +57,4 @@ class ChannelShow extends Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch);
-}
-
-export default connect(null, mapDispatchToProps)(ChannelShow);
+export default ChannelShow;
