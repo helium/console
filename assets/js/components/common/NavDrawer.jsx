@@ -120,7 +120,7 @@ class NavDrawer extends Component {
         >
           <Toolbar style={{minHeight: 48}}>
             <Link to="/" className={classes.logo}>
-              <img src="/images/logo-horizontalwhite.svg" style={{width: "50%"}} />
+              <img src="/images/logo-horizontalwhite.svg" style={{width: "45%"}} />
             </Link>
           </Toolbar>
           <Divider />

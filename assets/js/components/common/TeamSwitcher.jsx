@@ -50,7 +50,7 @@ class TeamSwitcher extends Component {
       <div>
         <Button onClick={this.openTeamMenu} color="inherit" size="small">
           {currentTeam && currentTeam.name}
-          <ArrowIcon />
+          <ArrowIcon style={{marginLeft: 6}} />
         </Button>
 
         <Menu

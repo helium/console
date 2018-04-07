@@ -1,28 +1,33 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
+import debounce from 'lodash/debounce'
 
 import TeamSwitcher from './TeamSwitcher'
 
-import { logOut } from '../../actions/auth';
+import { logOut } from '../../actions/auth'
 
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Menu, { MenuItem } from 'material-ui/Menu';
 
-import { withStyles } from 'material-ui/styles';
 
-import AccountCircle from 'material-ui-icons/AccountCircle';
-import IconButton from 'material-ui/IconButton';
-
-import List, { ListItem, ListItemText } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
-import ImageIcon from 'material-ui-icons/Image';
-import NotificationsIcon from 'material-ui-icons/Notifications';
-import Badge from 'material-ui/Badge';
+// MUI
+import List, { ListItem, ListItemText } from 'material-ui/List'
+import Avatar from 'material-ui/Avatar'
+import Badge from 'material-ui/Badge'
 import Button from 'material-ui/Button'
+import AppBar from 'material-ui/AppBar'
+import Toolbar from 'material-ui/Toolbar'
+import Typography from 'material-ui/Typography'
+import Menu, { MenuItem } from 'material-ui/Menu'
+import { withStyles } from 'material-ui/styles'
+import SmallBadge from './SmallBadge'
+
+// Icons
+import AccountCircle from 'material-ui-icons/AccountCircle'
+import NotificationsIcon from 'material-ui-icons/Notifications'
+import ImageIcon from 'material-ui-icons/Image'
+import IconButton from 'material-ui/IconButton'
+
 
 class TopBar extends Component {
   constructor(props) {
@@ -30,11 +35,24 @@ class TopBar extends Component {
 
     this.state = {
       anchorEl: null,
-      accountMenuOpen: false
+      accountMenuOpen: false,
+      scrollPosition: 0, // pixels from top of page
+      atTop: true
     }
 
     this.openAccountMenu = this.openAccountMenu.bind(this)
     this.closeAccountMenu = this.closeAccountMenu.bind(this)
+    this.updateScrollPosition = debounce(
+      this.updateScrollPosition.bind(this),
+      50,
+      {
+        leading: true
+      }
+    )
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.updateScrollPosition, true)
   }
 
   openAccountMenu(event) {
@@ -45,12 +63,19 @@ class TopBar extends Component {
     this.setState({ anchorEl: null, accountMenuOpen: false });
   };
 
+  updateScrollPosition(event) {
+    this.setState({
+      scrollPosition: event.target.scrollTop,
+      atTop: event.target.scrollTop === 0
+    })
+  }
+
   render() {
     const { classes, email, title, logOut } = this.props
-    const { anchorEl, teamMenuOpen, accountMenuOpen } = this.state
+    const { anchorEl, teamMenuOpen, accountMenuOpen, atTop } = this.state
 
     return (
-      <AppBar position="absolute" className={classes.appBar} elevation={0}>
+      <AppBar position="absolute" className={classes.appBar} elevation={atTop ? 0 : 2}>
         <Toolbar style={{minHeight: 48}}>
           <div style={{flex: 1}}>
             <TeamSwitcher />
@@ -58,9 +83,9 @@ class TopBar extends Component {
 
 
           <IconButton onClick={() => alert('oh hai')} color="inherit">
-            <Badge badgeContent={3} color="secondary">
+            <SmallBadge badgeContent={3} color="secondary">
               <NotificationsIcon />
-            </Badge>
+            </SmallBadge>
           </IconButton>
 
           <div>

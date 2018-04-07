@@ -1,4 +1,8 @@
 /* This file is for your main application css. */
+body {
+  overscroll-behavior: none;
+}
+
 :focus
 {
   outline: none;
