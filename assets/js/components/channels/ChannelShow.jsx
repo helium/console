@@ -6,7 +6,7 @@ import pick from 'lodash/pick'
 import { fetchChannel, deleteChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
-import ContentLayout from '../common/ContentLayout'
+import DashboardLayout from '../common/DashboardLayout'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -25,7 +25,7 @@ class ChannelShow extends Component {
     if (channel === undefined) return (<div>loading...</div>)
 
     return(
-      <ContentLayout title={channel.name}>
+      <DashboardLayout title={channel.name}>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -65,7 +65,7 @@ class ChannelShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </ContentLayout>
+      </DashboardLayout>
     )
   }
 }

@@ -3,12 +3,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
 import debounce from 'lodash/debounce'
-
 import TeamSwitcher from './TeamSwitcher'
-
 import { logOut } from '../../actions/auth'
-
-
 
 // MUI
 import List, { ListItem, ListItemText } from 'material-ui/List'
@@ -21,6 +17,7 @@ import Typography from 'material-ui/Typography'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import { withStyles } from 'material-ui/styles'
 import SmallBadge from './SmallBadge'
+import Slide from 'material-ui/transitions/Slide'
 
 // Icons
 import AccountCircle from 'material-ui-icons/AccountCircle'
@@ -44,7 +41,7 @@ class TopBar extends Component {
     this.closeAccountMenu = this.closeAccountMenu.bind(this)
     this.updateScrollPosition = debounce(
       this.updateScrollPosition.bind(this),
-      50,
+      10,
       {
         leading: true
       }
@@ -53,6 +50,10 @@ class TopBar extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.updateScrollPosition, true)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.updateScrollPosition, true)
   }
 
   openAccountMenu(event) {
@@ -64,23 +65,31 @@ class TopBar extends Component {
   };
 
   updateScrollPosition(event) {
+    console.log('updating scroll pos')
     this.setState({
       scrollPosition: event.target.scrollTop,
-      atTop: event.target.scrollTop === 0
+      atTop: event.target.scrollTop <= 4
     })
   }
 
   render() {
     const { classes, email, title, logOut } = this.props
-    const { anchorEl, teamMenuOpen, accountMenuOpen, atTop } = this.state
+    const { anchorEl, teamMenuOpen, accountMenuOpen, atTop, scrollPosition } = this.state
 
     return (
       <AppBar position="absolute" className={classes.appBar} elevation={atTop ? 0 : 2}>
         <Toolbar style={{minHeight: 48}}>
-          <div style={{flex: 1}}>
+          <div>
             <TeamSwitcher />
           </div>
 
+          <Slide direction="up" in={!atTop}>
+            <Typography variant="subheading" color="inherit" style={{marginLeft: 16}}>
+              {title}
+            </Typography>
+          </Slide>
+
+          <div style={{flex: 1}} />
 
           <IconButton onClick={() => alert('oh hai')} color="inherit">
             <SmallBadge badgeContent={3} color="secondary">
@@ -125,7 +134,7 @@ class TopBar extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    email: state.user.email
+    email: state.user.email,
   }
 }
 

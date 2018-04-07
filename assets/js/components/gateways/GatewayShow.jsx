@@ -6,7 +6,7 @@ import pick from 'lodash/pick'
 import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
-import ContentLayout from '../common/ContentLayout'
+import DashboardLayout from '../common/DashboardLayout'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -25,7 +25,7 @@ class GatewayShow extends Component {
     if (gateway === undefined) return (<div>loading...</div>)
 
     return(
-      <ContentLayout title={gateway.name}>
+      <DashboardLayout title={gateway.name}>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -68,7 +68,7 @@ class GatewayShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </ContentLayout>
+      </DashboardLayout>
     )
   }
 }

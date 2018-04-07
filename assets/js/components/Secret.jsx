@@ -3,32 +3,49 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
-import { logOut } from '../actions/auth.js';
-import QRCode from 'qrcode.react';
+import { logOut } from '../actions/auth';
+import DashboardLayout from './common/DashboardLayout'
+
+// MUI
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class Secret extends Component {
   constructor(props) {
     super(props);
-
-    this.handleLogout = this.handleLogout.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchUser();
   }
 
-  handleLogout() {
-    this.props.logOut()
-  }
-
   render() {
     const { email } = this.props.user;
+    const { logOut } = this.props
 
     return(
-      <div>
-        <p>Your email is: {email}</p>
-        <button onClick={this.handleLogout}>Log Out</button>
-      </div>
+      <DashboardLayout title="Profile">
+        <Card>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Profile Details
+            </Typography>
+            <Typography component="p">
+              Your email is: {email}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              size="small"
+              color="secondary"
+              onClick={() => logOut()}
+            >
+              Log Out
+            </Button>
+          </CardActions>
+        </Card>
+      </DashboardLayout>
     );
   }
 }
@@ -40,7 +57,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, fetchUser }, dispatch)
+  return bindActionCreators({ fetchUser, logOut }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Secret);

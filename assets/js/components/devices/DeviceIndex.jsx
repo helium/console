@@ -8,7 +8,7 @@ import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import DevicesTable from './DevicesTable'
-import ContentLayout from '../common/ContentLayout'
+import DashboardLayout from '../common/DashboardLayout'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -20,20 +20,20 @@ class DeviceIndex extends Component {
     const { devices, deleteDevice } = this.props
 
     return(
-      <ContentLayout title="All Devices">
+      <DashboardLayout title={"All Devices"}>
         <Paper>
           <DevicesTable devices={devices} deleteDevice={deleteDevice} />
         </Paper>
 
         <RandomDeviceButton />
-      </ContentLayout>
+      </DashboardLayout>
     )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    devices: Object.values(state.entities.devices)
+    devices: Object.values(state.entities.devices),
   }
 }
 

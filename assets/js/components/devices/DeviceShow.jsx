@@ -6,7 +6,7 @@ import pick from 'lodash/pick'
 import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
-import ContentLayout from '../common/ContentLayout'
+import DashboardLayout from '../common/DashboardLayout'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -15,8 +15,9 @@ import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class DeviceShow extends Component {
   componentDidMount() {
+    const { fetchDevice } = this.props
     const { id } = this.props.match.params
-    this.props.fetchDevice(id)
+    fetchDevice(id)
   }
 
   render() {
@@ -24,8 +25,9 @@ class DeviceShow extends Component {
 
     if (device === undefined) return (<div>loading...</div>)
 
+
     return(
-      <ContentLayout title={device.name}>
+      <DashboardLayout title={device.name}>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -62,7 +64,7 @@ class DeviceShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </ContentLayout>
+      </DashboardLayout>
     )
   }
 }

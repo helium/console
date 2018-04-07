@@ -1,7 +1,7 @@
 import merge from 'lodash/mergeWith'
 import isArray from 'lodash/isArray'
-import auth from './auth.js';
-import user from './user.js';
+import auth from './auth';
+import user from './user';
 import { SWITCHED_TEAM } from '../actions/team'
 import { DELETED_ENTITY } from '../actions/main'
 

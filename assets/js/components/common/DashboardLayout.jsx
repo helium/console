@@ -5,6 +5,7 @@ import withRoot from './withRoot.jsx'
 
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
+import ContentLayout from './ContentLayout'
 
 const drawerWidth = 240;
 
@@ -21,6 +22,7 @@ const styles = theme => ({
   appBar: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
+    overflow: 'hidden',
   },
   toolbar: theme.mixins.toolbar,
   main: {
@@ -34,16 +36,18 @@ const styles = theme => ({
 
 class DashboardLayout extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, title } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar classes={{appBar: classes.appBar}} title={this.props.title} />
+        <TopBar classes={{appBar: classes.appBar}} title={title} />
 
         <NavDrawer />
 
         <main className={classes.main}>
-          {this.props.children}
+          <ContentLayout title={title}>
+            {this.props.children}
+          </ContentLayout>
         </main>
       </div>
     )
