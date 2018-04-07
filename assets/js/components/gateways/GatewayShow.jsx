@@ -7,7 +7,11 @@ import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
-import Button from '../common/Button'
+
+// MUI
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class GatewayShow extends Component {
   componentDidMount() {
@@ -22,19 +26,48 @@ class GatewayShow extends Component {
 
     return(
       <DashboardLayout title="Gateway" current="gateways">
-        <p>ID: {gateway.id}</p>
-        <p>Name: {gateway.name}</p>
-        <p>MAC: {gateway.mac}</p>
-        <p>Lat: {gateway.latitude}</p>
-        <p>Lng: {gateway.longitude}</p>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Gateway Details
+            </Typography>
+            <Typography component="p">
+              ID: {gateway.id}
+            </Typography>
+            <Typography component="p">
+              Name: {gateway.name}
+            </Typography>
+            <Typography component="p">
+              MAC: {gateway.mac}
+            </Typography>
+            <Typography component="p">
+              Lat: {gateway.latitude}
+            </Typography>
+            <Typography component="p">
+              Lng: {gateway.longitude}
+            </Typography>
+          </CardContent>
 
-        <RandomEventButton gateway_id={gateway.id} />
-        <Button
-          type="danger"
-          text="Delete Gateway"
-          onClick={() => deleteGateway(gateway)}
-        />
-        <EventsTable events={events} />
+          <CardActions>
+            <RandomEventButton gateway_id={gateway.id} />
+            <Button
+              size="small"
+              color="secondary"
+              onClick={() => deleteGateway(gateway)}
+            >
+              Delete Gateway
+            </Button>
+          </CardActions>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Event Log
+            </Typography>
+            <EventsTable events={events} />
+          </CardContent>
+        </Card>
       </DashboardLayout>
     )
   }

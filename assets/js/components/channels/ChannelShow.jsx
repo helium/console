@@ -7,7 +7,11 @@ import { fetchChannel, deleteChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
-import Button from '../common/Button'
+
+// MUI
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class ChannelShow extends Component {
   componentDidMount() {
@@ -22,18 +26,45 @@ class ChannelShow extends Component {
 
     return(
       <DashboardLayout title="Channel" current="channels">
-        <p>ID: {channel.id}</p>
-        <p>Name: {channel.name}</p>
-        <p>Type: {channel.type}</p>
-        <p>Active: {channel.active ? "Yes" : "No"}</p>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Channel Details
+            </Typography>
+            <Typography component="p">
+              ID: {channel.id}
+            </Typography>
+            <Typography component="p">
+              Name: {channel.name}
+            </Typography>
+            <Typography component="p">
+              Type: {channel.type}
+            </Typography>
+            <Typography component="p">
+              Active: {channel.active ? "Yes" : "No"}
+            </Typography>
+          </CardContent>
 
-        <RandomEventButton channel_id={channel.id} />
-        <Button
-          type="danger"
-          text="Delete Channel"
-          onClick={() => deleteChannel(channel)}
-        />
-        <EventsTable events={events} />
+          <CardActions>
+            <RandomEventButton channel_id={channel.id} />
+            <Button
+              size="small"
+              color="secondary"
+              onClick={() => deleteChannel(channel)}
+            >
+              Delete Channel
+            </Button>
+          </CardActions>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Event Log
+            </Typography>
+            <EventsTable events={events} />
+          </CardContent>
+        </Card>
       </DashboardLayout>
     )
   }

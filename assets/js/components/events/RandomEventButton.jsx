@@ -5,6 +5,9 @@ import sample from 'lodash/sample'
 import { createEvent } from '../../actions/event'
 import { randomInt, randomFloat } from '../../util/random'
 
+// MUI
+import Button from 'material-ui/Button';
+
 const descriptions = [
   "Received a packet",
   "Sent a packet",
@@ -34,9 +37,13 @@ class RandomEventButton extends Component {
 
   render() {
     return (
-      <a onClick={this.handleClick.bind(this)} className="btn btn-primary">
+      <Button
+        size="small"
+        color="primary"
+        onClick={this.handleClick.bind(this)}
+      >
         Random Event
-      </a>
+      </Button>
     )
   }
 }

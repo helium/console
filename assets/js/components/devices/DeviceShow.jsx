@@ -7,7 +7,11 @@ import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
-import Button from '../common/Button'
+
+// MUI
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class DeviceShow extends Component {
   componentDidMount() {
@@ -22,17 +26,42 @@ class DeviceShow extends Component {
 
     return(
       <DashboardLayout title="Device" current="devices">
-        <p>ID: {device.id}</p>
-        <p>Name: {device.name}</p>
-        <p>MAC: {device.mac}</p>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Device Details
+            </Typography>
+            <Typography component="p">
+              ID: {device.id}
+            </Typography>
+            <Typography component="p">
+              Name: {device.name}
+            </Typography>
+            <Typography component="p">
+              MAC: {device.mac}
+            </Typography>
+          </CardContent>
 
-        <RandomEventButton device_id={device.id} />
-        <Button
-          type="danger"
-          text="Delete Device"
-          onClick={() => deleteDevice(device)}
-        />
-        <EventsTable events={events} />
+          <CardActions>
+            <RandomEventButton device_id={device.id} />
+            <Button
+              size="small"
+              color="secondary"
+              onClick={() => deleteDevice(device)}
+            >
+              Delete Device
+            </Button>
+          </CardActions>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Event Log
+            </Typography>
+            <EventsTable events={events} />
+          </CardContent>
+        </Card>
       </DashboardLayout>
     )
   }

@@ -44,7 +44,6 @@ class EventsTable extends Component {
 
     return(
       <div>
-        <h3>Event Log</h3>
         {tableContent}
       </div>
     )
