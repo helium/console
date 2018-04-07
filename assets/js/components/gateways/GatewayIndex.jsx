@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Paper from 'material-ui/Paper';
 import { fetchGateways, deleteGateway } from '../../actions/gateway'
-import DashboardLayout from '../common/DashboardLayout'
 import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
 
@@ -17,12 +16,12 @@ class GatewayIndex extends Component {
     const { gateways, deleteGateway } = this.props
 
     return(
-      <DashboardLayout title="Gateways" current="gateways">
+      <div>
         <Paper>
           <GatewaysTable gateways={gateways} deleteGateway={deleteGateway} />
         </Paper>
         <RandomGatewayButton />
-      </DashboardLayout>
+      </div>
     )
   }
 }

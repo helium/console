@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import DashboardLayout from '../common/DashboardLayout'
 import { createTeam } from '../../actions/team'
 
 class TeamNew extends Component {
@@ -31,13 +30,13 @@ class TeamNew extends Component {
 
   render() {
     return(
-      <DashboardLayout title="New Team">
+      <div>
         <form onSubmit={this.handleSubmit}>
           <label>Team Name</label>
           <input type="text" name ="name" value={this.state.name} onChange={this.handleInputUpdate} />
           <button type="submit">Create Team</button>
         </form>
-      </DashboardLayout>
+      </div>
     );
   }
 }

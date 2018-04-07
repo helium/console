@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchChannels, deleteChannel } from '../../actions/channel'
-import DashboardLayout from '../common/DashboardLayout'
 import RandomChannelButton from './RandomChannelButton'
 import ChannelsTable from './ChannelsTable'
+
+//MUU
 import Paper from 'material-ui/Paper';
 
 class ChannelIndex extends Component {

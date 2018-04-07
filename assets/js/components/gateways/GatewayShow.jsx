@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
-import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
 
 // MUI
@@ -25,7 +24,7 @@ class GatewayShow extends Component {
     if (gateway === undefined) return (<div>loading...</div>)
 
     return(
-      <DashboardLayout title="Gateway" current="gateways">
+      <div>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -68,7 +67,7 @@ class GatewayShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </DashboardLayout>
+      </div>
     )
   }
 }

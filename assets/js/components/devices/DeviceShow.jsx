@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
-import DashboardLayout from '../common/DashboardLayout'
 import RandomEventButton from '../events/RandomEventButton'
 
 // MUI
@@ -25,7 +24,7 @@ class DeviceShow extends Component {
     if (device === undefined) return (<div>loading...</div>)
 
     return(
-      <DashboardLayout title="Device" current="devices">
+      <div>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -62,7 +61,7 @@ class DeviceShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </DashboardLayout>
+      </div>
     )
   }
 }

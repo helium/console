@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth.js';
 import QRCode from 'qrcode.react';
-import DashboardLayout from './common/DashboardLayout'
 
 class Secret extends Component {
   constructor(props) {
@@ -26,10 +25,10 @@ class Secret extends Component {
     const { email } = this.props.user;
 
     return(
-      <DashboardLayout title="Profile">
+      <div>
         <p>Your email is: {email}</p>
         <button onClick={this.handleLogout}>Log Out</button>
-      </DashboardLayout>
+      </div>
     );
   }
 }
