@@ -2,10 +2,13 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchDevices } from '../../actions/device'
+import { fetchDevices, deleteDevice } from '../../actions/device'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomDeviceButton from './RandomDeviceButton'
 import Button from 'material-ui/Button'
+import Paper from 'material-ui/Paper';
+import Typography from 'material-ui/Typography';
+import DevicesTable from './DevicesTable'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -14,23 +17,16 @@ class DeviceIndex extends Component {
   }
 
   render() {
-    const { devices } = this.props
+    const { devices, deleteDevice } = this.props
 
     return(
       <DashboardLayout title="Devices" current="devices">
-        {devices.length > 0 ? (
-          <ul>
-            {devices.map(device => <li key={device.id}>
-              <Link to={`/devices/${device.id}`}>{device.name}</Link>
-            </li>)}
-          </ul>
-        ) : (
-          <p>No devices</p>
-        )}
+
+        <Paper>
+          <DevicesTable devices={devices} deleteDevice={deleteDevice} />
+        </Paper>
+
         <RandomDeviceButton />
-        <Button variant="raised" color="primary">
-          Hello World
-        </Button>
       </DashboardLayout>
     )
   }
@@ -43,7 +39,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevices }, dispatch);
+  return bindActionCreators({ fetchDevices, deleteDevice }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceIndex);

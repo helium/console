@@ -22,14 +22,6 @@ const styles = theme => ({
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
   },
-  logo: {
-    display: 'block',
-    width: '100%'
-  },
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth,
-  },
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
@@ -47,7 +39,7 @@ class DashboardLayout extends Component {
     return (
       <div className={classes.root}>
         <TopBar classes={{appBar: classes.appBar}} title={this.props.title} />
-        <NavDrawer classes={{drawerPaper: classes.drawerPaper, logo: classes.logo}} />
+        <NavDrawer />
 
         <main className={classes.content}>
           {this.props.children}

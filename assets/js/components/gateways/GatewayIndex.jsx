@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchGateways } from '../../actions/gateway'
+import Paper from 'material-ui/Paper';
+import { fetchGateways, deleteGateway } from '../../actions/gateway'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomGatewayButton from './RandomGatewayButton'
+import GatewaysTable from './GatewaysTable'
 
 class GatewayIndex extends Component {
   componentDidMount() {
@@ -12,19 +14,13 @@ class GatewayIndex extends Component {
   }
 
   render() {
-    const { gateways } = this.props
+    const { gateways, deleteGateway } = this.props
 
     return(
       <DashboardLayout title="Gateways" current="gateways">
-        {gateways.length > 0 ? (
-          <ul>
-            {gateways.map(gateway => <li key={gateway.id}>
-              <Link to={`/gateways/${gateway.id}`}>{gateway.name}</Link>
-            </li>)}
-          </ul>
-        ) : (
-          <p>No gateways</p>
-        )}
+        <Paper>
+          <GatewaysTable gateways={gateways} deleteGateway={deleteGateway} />
+        </Paper>
         <RandomGatewayButton />
       </DashboardLayout>
     )
@@ -38,7 +34,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchGateways }, dispatch);
+  return bindActionCreators({ fetchGateways, deleteGateway }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GatewayIndex);

@@ -1,4 +1,11 @@
 /* This file is for your main application css. */
-:focus {
+:focus
+{
   outline: none;
+}
+
+a
+{
+  text-decoration: none;
+  color: #2C98F0;
 }

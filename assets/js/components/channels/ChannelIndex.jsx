@@ -2,9 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchChannels } from '../../actions/channel'
+import { fetchChannels, deleteChannel } from '../../actions/channel'
 import DashboardLayout from '../common/DashboardLayout'
 import RandomChannelButton from './RandomChannelButton'
+import ChannelsTable from './ChannelsTable'
+import Paper from 'material-ui/Paper';
 
 class ChannelIndex extends Component {
   componentDidMount() {
@@ -12,7 +14,7 @@ class ChannelIndex extends Component {
   }
 
   render() {
-    const { channels } = this.props
+    const { channels, deleteChannel } = this.props
 
     return(
       <DashboardLayout title="Channels" current="channels">
@@ -23,16 +25,9 @@ class ChannelIndex extends Component {
         <div><Link to={'/channels/new/mqtt'}>MQTT</Link></div>
         <div><Link to={'/channels/new/http'}>HTTP</Link></div>
 
-        <h4>All Channels</h4>
-        {channels.length > 0 ? (
-          <ul>
-            {channels.map(channel => <li key={channel.id}>
-              <Link to={`/channels/${channel.id}`}>{channel.name}</Link>
-            </li>)}
-          </ul>
-        ) : (
-          <p>No channels</p>
-        )}
+        <Paper>
+          <ChannelsTable channels={channels} deleteChannel={deleteChannel} />
+        </Paper>
         <RandomChannelButton />
       </DashboardLayout>
     )
@@ -46,7 +41,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchChannels }, dispatch);
+  return bindActionCreators({ fetchChannels, deleteChannel }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChannelIndex);

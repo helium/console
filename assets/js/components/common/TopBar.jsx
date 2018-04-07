@@ -47,12 +47,12 @@ class TopBar extends Component {
     return (
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="title" style={{flex: 1}}>
+          <Typography variant="title" style={{flex: 1}} color="inherit">
             {title}
           </Typography>
 
           <div>
-            <IconButton onClick={this.handleMenu}>
+            <IconButton onClick={this.handleMenu} color="inherit">
               <AccountCircle />
             </IconButton>
 
