@@ -118,9 +118,9 @@ class NavDrawer extends Component {
           variant="permanent"
           classes={{ paper: classes.drawerPaper }}
         >
-          <Toolbar>
+          <Toolbar style={{minHeight: 48}}>
             <Link to="/" className={classes.logo}>
-              <img src="/images/logo-horizontalwhite.svg" style={{width: "50%", marginTop: 6}} />
+              <img src="/images/logo-horizontalwhite.svg" style={{width: "50%"}} />
             </Link>
           </Toolbar>
           <Divider />

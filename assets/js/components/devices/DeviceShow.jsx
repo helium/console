@@ -6,6 +6,7 @@ import pick from 'lodash/pick'
 import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
+import ContentLayout from '../common/ContentLayout'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -24,7 +25,7 @@ class DeviceShow extends Component {
     if (device === undefined) return (<div>loading...</div>)
 
     return(
-      <div>
+      <ContentLayout title={device.name}>
         <Card>
           <CardContent>
             <Typography variant="headline" component="h3">
@@ -61,7 +62,7 @@ class DeviceShow extends Component {
             <EventsTable events={events} />
           </CardContent>
         </Card>
-      </div>
+      </ContentLayout>
     )
   }
 }

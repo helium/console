@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { fetchChannels, deleteChannel } from '../../actions/channel'
 import RandomChannelButton from './RandomChannelButton'
 import ChannelsTable from './ChannelsTable'
+import ContentLayout from '../common/ContentLayout'
 
 //MUU
 import Paper from 'material-ui/Paper';
@@ -18,7 +19,7 @@ class ChannelIndex extends Component {
     const { channels, deleteChannel } = this.props
 
     return(
-      <DashboardLayout title="Channels" current="channels">
+      <DashboardLayout title="Channels">
         <h4>Create New Channel</h4>
         <div><Link to={'/channels/new/azure'}>Azure IoT Hub</Link></div>
         <div><Link to={'/channels/new/aws'}>AWS IoT</Link></div>

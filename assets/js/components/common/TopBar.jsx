@@ -51,7 +51,7 @@ class TopBar extends Component {
 
     return (
       <AppBar position="absolute" className={classes.appBar} elevation={0}>
-        <Toolbar>
+        <Toolbar style={{minHeight: 48}}>
           <div style={{flex: 1}}>
             <TeamSwitcher />
           </div>

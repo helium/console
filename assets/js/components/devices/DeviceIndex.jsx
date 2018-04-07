@@ -8,6 +8,7 @@ import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import DevicesTable from './DevicesTable'
+import ContentLayout from '../common/ContentLayout'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -19,13 +20,13 @@ class DeviceIndex extends Component {
     const { devices, deleteDevice } = this.props
 
     return(
-      <div>
+      <ContentLayout title="All Devices">
         <Paper>
           <DevicesTable devices={devices} deleteDevice={deleteDevice} />
         </Paper>
 
         <RandomDeviceButton />
-      </div>
+      </ContentLayout>
     )
   }
 }

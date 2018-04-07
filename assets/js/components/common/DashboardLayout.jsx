@@ -23,11 +23,11 @@ const styles = theme => ({
     marginLeft: drawerWidth,
   },
   toolbar: theme.mixins.toolbar,
-  content: {
+  main: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
-    marginTop: 64,
+    // padding: theme.spacing.unit * 3,
+    marginTop: 48,
     overflowY: 'scroll'
   },
 });
@@ -39,9 +39,10 @@ class DashboardLayout extends Component {
     return (
       <div className={classes.root}>
         <TopBar classes={{appBar: classes.appBar}} title={this.props.title} />
+
         <NavDrawer />
 
-        <main className={classes.content}>
+        <main className={classes.main}>
           {this.props.children}
         </main>
       </div>

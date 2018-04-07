@@ -6,6 +6,7 @@ import Paper from 'material-ui/Paper';
 import { fetchGateways, deleteGateway } from '../../actions/gateway'
 import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
+import ContentLayout from '../common/ContentLayout'
 
 class GatewayIndex extends Component {
   componentDidMount() {
@@ -16,12 +17,12 @@ class GatewayIndex extends Component {
     const { gateways, deleteGateway } = this.props
 
     return(
-      <div>
+      <ContentLayout title="All Gateways">
         <Paper>
           <GatewaysTable gateways={gateways} deleteGateway={deleteGateway} />
         </Paper>
         <RandomGatewayButton />
-      </div>
+      </ContentLayout>
     )
   }
 }
