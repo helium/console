@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom'
 
+import TeamSwitcher from './TeamSwitcher'
+
 import { logOut } from '../../actions/auth';
 
 import AppBar from 'material-ui/AppBar';
@@ -18,6 +20,9 @@ import IconButton from 'material-ui/IconButton';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ImageIcon from 'material-ui-icons/Image';
+import NotificationsIcon from 'material-ui-icons/Notifications';
+import Badge from 'material-ui/Badge';
+import Button from 'material-ui/Button'
 
 class TopBar extends Component {
   constructor(props) {
@@ -25,34 +30,41 @@ class TopBar extends Component {
 
     this.state = {
       anchorEl: null,
+      accountMenuOpen: false
     }
 
-    this.handleMenu = this.handleMenu.bind(this)
-    this.handleClose = this.handleClose.bind(this)
+    this.openAccountMenu = this.openAccountMenu.bind(this)
+    this.closeAccountMenu = this.closeAccountMenu.bind(this)
   }
 
-  handleMenu(event) {
-    this.setState({ anchorEl: event.currentTarget });
+  openAccountMenu(event) {
+    this.setState({ anchorEl: event.currentTarget, accountMenuOpen: true });
   };
 
-  handleClose() {
-    this.setState({ anchorEl: null });
+  closeAccountMenu() {
+    this.setState({ anchorEl: null, accountMenuOpen: false });
   };
 
   render() {
     const { classes, email, title, logOut } = this.props
-    const { anchorEl } = this.state
-    const open = Boolean(anchorEl)
+    const { anchorEl, teamMenuOpen, accountMenuOpen } = this.state
 
     return (
-      <AppBar position="absolute" className={classes.appBar}>
+      <AppBar position="absolute" className={classes.appBar} elevation={0}>
         <Toolbar>
-          <Typography variant="title" style={{flex: 1}} color="inherit">
-            {title}
-          </Typography>
+          <div style={{flex: 1}}>
+            <TeamSwitcher />
+          </div>
+
+
+          <IconButton onClick={() => alert('oh hai')} color="inherit">
+            <Badge badgeContent={3} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
 
           <div>
-            <IconButton onClick={this.handleMenu} color="inherit">
+            <IconButton onClick={this.openAccountMenu} color="inherit">
               <AccountCircle />
             </IconButton>
 
@@ -67,8 +79,8 @@ class TopBar extends Component {
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              open={open}
-              onClose={this.handleClose}
+              open={accountMenuOpen}
+              onClose={this.closeAccountMenu}
             >
               <ListItem>
                 <Avatar>

@@ -21,6 +21,10 @@ import ReportIcon from 'material-ui-icons/Report';
 import DevicesIcon from 'material-ui-icons/DeviceHub';
 import GatewaysIcon from 'material-ui-icons/Router';
 import ChannelsIcon from 'material-ui-icons/CompareArrows';
+import AccessIcon from 'material-ui-icons/People';
+import BillingIcon from 'material-ui-icons/CreditCard';
+import DashboardIcon from 'material-ui-icons/Dashboard';
+import ReportsIcon from 'material-ui-icons/TrackChanges';
 
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 const theme = createMuiTheme({
@@ -32,8 +36,15 @@ const theme = createMuiTheme({
   },
 });
 
-const mailFolderListItems = (
+const hardwareItems = (
   <div>
+    <ListItem button component={Link} to="/devices">
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Dashboard" />
+    </ListItem>
+
     <ListItem button component={Link} to="/devices">
       <ListItemIcon>
         <DevicesIcon />
@@ -57,25 +68,25 @@ const mailFolderListItems = (
   </div>
 );
 
-const otherMailFolderListItems = (
+const organizationItems = (
   <div>
     <ListItem button>
       <ListItemIcon>
-        <MailIcon />
+        <AccessIcon />
       </ListItemIcon>
-      <ListItemText primary="All mail" />
+      <ListItemText primary="Access" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <DeleteIcon />
+        <BillingIcon />
       </ListItemIcon>
-      <ListItemText primary="Trash" />
+      <ListItemText primary="Billing" />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
-        <ReportIcon />
+        <ReportsIcon />
       </ListItemIcon>
-      <ListItemText primary="Spam" />
+      <ListItemText primary="Reports" />
     </ListItem>
   </div>
 );
@@ -113,9 +124,9 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <List>{mailFolderListItems}</List>
+          <List>{hardwareItems}</List>
           <Divider />
-          <List>{otherMailFolderListItems}</List>
+          <List>{organizationItems}</List>
         </Drawer>
       </MuiThemeProvider>
     )
