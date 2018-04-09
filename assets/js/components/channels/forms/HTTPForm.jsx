@@ -8,6 +8,7 @@ class HTTPForm extends Component {
     this.handleHttpHeaderUpdate = this.handleHttpHeaderUpdate.bind(this)
     this.addHeaderRow = this.addHeaderRow.bind(this)
     this.removeHeaderRow = this.removeHeaderRow.bind(this)
+    this.validateInput = this.validateInput.bind(this)
     this.state = {
       method: "post",
       endpoint: "",
@@ -25,21 +26,11 @@ class HTTPForm extends Component {
 
   removeHeaderRow(index) {
     const newHeadersArray = this.state.headers.slice(0, index).concat(this.state.headers.slice(index + 1))
-    this.setState({ headers: newHeadersArray })
+    this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
   handleInputUpdate(e) {
-    this.setState({ [e.target.name]: e.target.value}, () => {
-      const { method, endpoint, headers } = this.state
-      if (method.length > 0 && endpoint.length > 0) {
-        // check validation, if pass
-        this.props.onValidInput({
-          method,
-          endpoint,
-          headers
-        })
-      }
-    })
+    this.setState({ [e.target.name]: e.target.value}, this.validateInput)
   }
 
   handleHttpHeaderUpdate(e) {
@@ -49,7 +40,19 @@ class HTTPForm extends Component {
     const updatedEntry = Object.assign({}, this.state.headers[index], { [input]: e.target.value })
     const newHeadersArray = this.state.headers.slice(0, index).concat(updatedEntry, this.state.headers.slice(index + 1))
 
-    this.setState({ headers: newHeadersArray })
+    this.setState({ headers: newHeadersArray }, this.validateInput)
+  }
+
+  validateInput() {
+    const { method, endpoint, headers } = this.state
+    if (method.length > 0 && endpoint.length > 0) {
+      // check header validation, if pass
+      this.props.onValidInput({
+        method,
+        endpoint,
+        headers
+      })
+    }
   }
 
   render() {

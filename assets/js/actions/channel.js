@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push, replace } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeChannel, normalizeChannels } from '../schemas/channel'
 import { DELETED_ENTITY } from './main'
@@ -53,7 +53,8 @@ export const createChannel = (params) => {
       })
       .then(response => {
         dispatch(receivedChannel(response.data))
-        displayInfo(`Channel ${params.name} has been created`)
+        displayInfo(`Channel ${response.data.name} has been created`)
+        dispatch(replace(`/channels/${response.data.id}`))
       })
   }
 }

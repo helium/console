@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../DashboardLayout'
 import AzureForm from './forms/AzureForm.jsx'
@@ -14,7 +15,6 @@ class ChannelNew extends Component {
   constructor(props) {
     super(props)
 
-    this.handleClick = this.handleClick.bind(this)
     this.handleStep2Input = this.handleStep2Input.bind(this)
     this.handleStep3Input = this.handleStep3Input.bind(this)
     this.handleStep3Submit = this.handleStep3Submit.bind(this)
@@ -27,10 +27,14 @@ class ChannelNew extends Component {
     }
   }
 
-  handleClick(type) {
-    if (this.state.type !== type) {
-      this.setState({ type, credentials: {}, showStep3: false, channelName: "" })
-    }
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id)
+      this.setState({
+        type: this.props.match.params.id,
+        showStep3: false,
+        credentials: {},
+        channelName: ""
+      })
   }
 
   handleStep2Input(credentials) {
@@ -76,11 +80,11 @@ class ChannelNew extends Component {
       <DashboardLayout title="Channel" current="channels">
         <h3>Step 1</h3>
         <p>Select a channel</p>
-        <div onClick={() => this.handleClick("azure")}>Azure IoT Hub</div>
-        <div onClick={() => this.handleClick("aws")}>AWS IoT</div>
-        <div onClick={() => this.handleClick("google")}>Google Cloud IoT Core</div>
-        <div onClick={() => this.handleClick("mqtt")}>MQTT</div>
-        <div onClick={() => this.handleClick("http")}>HTTP</div>
+        <div><Link to={'/channels/new/azure'} replace>Azure IoT Hub</Link></div>
+        <div><Link to={'/channels/new/aws'} replace>AWS IoT</Link></div>
+        <div><Link to={'/channels/new/google'} replace>Google Cloud IoT Core</Link></div>
+        <div><Link to={'/channels/new/mqtt'} replace>MQTT</Link></div>
+        <div><Link to={'/channels/new/http'} replace>HTTP</Link></div>
 
         <h3>Step 2</h3>
         {this.renderForm()}
