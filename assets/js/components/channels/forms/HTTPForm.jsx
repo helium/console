@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ChannelNameForm from './ChannelNameForm'
 
 class HTTPForm extends Component {
   constructor(props) {
@@ -9,11 +8,9 @@ class HTTPForm extends Component {
     this.handleHttpHeaderUpdate = this.handleHttpHeaderUpdate.bind(this)
     this.addHeaderRow = this.addHeaderRow.bind(this)
     this.removeHeaderRow = this.removeHeaderRow.bind(this)
-    this.renderStep3 = this.renderStep3.bind(this)
     this.state = {
       method: "post",
       endpoint: "",
-      channelName: "",
       headers: [
         { header: "", value: "" },
         { header: "", value: "" }
@@ -32,7 +29,17 @@ class HTTPForm extends Component {
   }
 
   handleInputUpdate(e) {
-    this.setState({ [e.target.name]: e.target.value})
+    this.setState({ [e.target.name]: e.target.value}, () => {
+      const { method, endpoint, headers } = this.state
+      if (method.length > 0 && endpoint.length > 0) {
+        // check validation, if pass
+        this.props.onValidInput({
+          method,
+          endpoint,
+          headers
+        })
+      }
+    })
   }
 
   handleHttpHeaderUpdate(e) {
@@ -41,13 +48,8 @@ class HTTPForm extends Component {
 
     const updatedEntry = Object.assign({}, this.state.headers[index], { [input]: e.target.value })
     const newHeadersArray = this.state.headers.slice(0, index).concat(updatedEntry, this.state.headers.slice(index + 1))
-    
-    this.setState({ headers: newHeadersArray })
-  }
 
-  renderStep3() {
-    if (this.state.method.length > 0 && this.state.endpoint.length > 0)
-      return <ChannelNameForm channelName={this.state.channelName} onInputUpdate={this.handleInputUpdate}/>
+    this.setState({ headers: newHeadersArray })
   }
 
   render() {
@@ -76,7 +78,6 @@ class HTTPForm extends Component {
           ))
         }
         <h4 onClick={this.addHeaderRow}>+</h4>
-        {this.renderStep3()}
       </div>
     );
   }

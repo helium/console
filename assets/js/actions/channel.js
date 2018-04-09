@@ -52,7 +52,8 @@ export const createChannel = (params) => {
         channel: params
       })
       .then(response => {
-        return dispatch(receivedChannel(response.data))
+        dispatch(receivedChannel(response.data))
+        displayInfo(`Channel ${params.name} has been created`)
       })
   }
 }

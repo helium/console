@@ -1,29 +1,29 @@
 import React, { Component } from 'react';
-import ChannelNameForm from './ChannelNameForm'
 
 class AWSForm extends Component {
   constructor(props) {
     super(props);
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.renderStep3 = this.renderStep3.bind(this)
     this.state ={
       accessKeyId: "",
       secretAccessKey: "",
-      region: "",
-      channelName: ""
+      region: ""
     }
   }
 
   handleInputUpdate(e) {
-    this.setState({ [e.target.name]: e.target.value})
-  }
-
-  renderStep3() {
-    if (this.state.accessKeyId.length > 0
-    && this.state.secretAccessKey.length > 0
-    && this.state.region.length > 0)
-      return <ChannelNameForm channelName={this.state.channelName} onInputUpdate={this.handleInputUpdate}/>
+    this.setState({ [e.target.name]: e.target.value}, () => {
+      const {accessKeyId, secretAccessKey, region } = this.state
+      if (accessKeyId.length > 0 && secretAccessKey.length > 0 && region.length > 0) {
+        // check validation, if pass
+        this.props.onValidInput({
+          accessKeyId,
+          secretAccessKey,
+          region
+        })
+      }
+    })
   }
 
   render() {
@@ -42,7 +42,6 @@ class AWSForm extends Component {
           <label>Region</label>
           <input type="text" name="region" value={this.state.region} onChange={this.handleInputUpdate}/>
         </div>
-        {this.renderStep3()}
       </div>
     );
   }

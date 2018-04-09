@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
-import ChannelNameForm from './ChannelNameForm'
 
 class AzureForm extends Component {
   constructor(props) {
     super(props);
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.renderStep3 = this.renderStep3.bind(this)
     this.state = {
       connectionString: "",
       hostName: "",
       accessKeyName: "",
-      accessKey: "",
-      channelName: ""
+      accessKey: ""
     }
   }
 
   handleInputUpdate(e) {
-    this.setState({ [e.target.name]: e.target.value})
-  }
-
-  renderStep3() {
-    if (this.state.connectionString.length > 0)
-      return <ChannelNameForm channelName={this.state.channelName} onInputUpdate={this.handleInputUpdate}/>
+    this.setState({ [e.target.name]: e.target.value}, () => {
+      const { connectionString } = this.state
+      if (connectionString.length > 0) {
+        // check validation, if pass
+        this.props.onValidInput({
+          connectionString
+        })
+      }
+    })
   }
 
   render() {
@@ -46,7 +46,6 @@ class AzureForm extends Component {
           <label>Shared Access Key</label>
           <input disabled type="text" name="accessKey" value={this.state.accessKey}/>
         </div>
-        {this.renderStep3()}
       </div>
     );
   }
