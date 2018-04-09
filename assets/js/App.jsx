@@ -5,7 +5,7 @@ import Router from './Router'
 class App extends Component {
   displayFlash(type, text) {
     const config = {
-      theme: 'relax',
+      theme: 'mui',
       type,
       text,
       timeout: 5000
