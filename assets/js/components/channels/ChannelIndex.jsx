@@ -6,8 +6,9 @@ import { fetchChannels, deleteChannel } from '../../actions/channel'
 import RandomChannelButton from './RandomChannelButton'
 import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
+import BlankSlate from '../common/BlankSlate'
 
-//MUU
+//MUI
 import Paper from 'material-ui/Paper';
 
 class ChannelIndex extends Component {
@@ -28,7 +29,14 @@ class ChannelIndex extends Component {
         <div><Link to={'/channels/new/http'}>HTTP</Link></div>
 
         <Paper>
-          <ChannelsTable channels={channels} deleteChannel={deleteChannel} />
+          {channels.length === 0 ? (
+            <BlankSlate
+              title="No channels"
+              subheading="To create a new channel, click the red button in the corner"
+            />
+          ) : (
+            <ChannelsTable channels={channels} deleteChannel={deleteChannel} />
+          ) }
         </Paper>
         <RandomChannelButton />
       </DashboardLayout>

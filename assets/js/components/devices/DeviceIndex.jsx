@@ -4,11 +4,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchDevices, deleteDevice } from '../../actions/device'
 import RandomDeviceButton from './RandomDeviceButton'
+import DevicesTable from './DevicesTable'
+import DashboardLayout from '../common/DashboardLayout'
+import BlankSlate from '../common/BlankSlate'
+
+// MUI
 import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
-import DevicesTable from './DevicesTable'
-import DashboardLayout from '../common/DashboardLayout'
 
 class DeviceIndex extends Component {
   componentDidMount() {
@@ -22,7 +25,16 @@ class DeviceIndex extends Component {
     return(
       <DashboardLayout title={"All Devices"}>
         <Paper>
-          <DevicesTable devices={devices} deleteDevice={deleteDevice} />
+        </Paper>
+        <Paper>
+          {devices.length === 0 ? (
+            <BlankSlate
+              title="No devices"
+              subheading="To create a new device, click the red button in the corner"
+            />
+          ) : (
+            <DevicesTable devices={devices} deleteDevice={deleteDevice} />
+          ) }
         </Paper>
 
         <RandomDeviceButton />

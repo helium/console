@@ -7,6 +7,7 @@ import { fetchGateways, deleteGateway } from '../../actions/gateway'
 import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
 import DashboardLayout from '../common/DashboardLayout'
+import BlankSlate from '../common/BlankSlate'
 
 // MUI
 import AppBar from 'material-ui/AppBar'
@@ -20,6 +21,20 @@ class GatewayIndex extends Component {
 
   render() {
     const { gateways, deleteGateway } = this.props
+
+    if (gateways.length === 0) {
+      return (
+        <DashboardLayout title="All Gateways" tabs={tabs}>
+          <Paper>
+            <BlankSlate
+              title="No gateways"
+              subheading="To create a new gateway, click the red button in the corner"
+            />
+            <RandomGatewayButton />
+          </Paper>
+        </DashboardLayout>
+      )
+    }
 
     const listView = (
       <Paper>
