@@ -5,6 +5,28 @@ import { connect } from 'react-redux';
 import { register, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
+import AuthLayout from '../common/AuthLayout'
+
+// MUI
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  title: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2,
+  },
+  extraLinks: {
+    marginTop: theme.spacing.unit * 2,
+    textAlign: 'center'
+  }
+});
 
 class Register extends Component {
   constructor(props) {
@@ -50,31 +72,83 @@ class Register extends Component {
   }
 
   render() {
+    const { classes } = this.props
+
     return(
-      <div>
-        <h2>Register</h2>
-        <form onSubmit={this.handleSubmit} noValidate>
-          <div>
-            <label>Team Name</label>
-            <input type="text" name="teamName" value={this.state.teamName} onChange={this.handleInputUpdate} />
-          </div>
-          <div>
-            <label>Email</label>
-            <input type="email" name="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          </div>
-          <div>
-            <label>Password</label>
-            <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          </div>
-          <div>
-            <label>Confirm Password</label>
-            <input type="password" name="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
-          </div>
-          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
-          <button type="submit">Register</button>
-        </form>
-        <Link to="/login"><p>Login Page</p></Link>
-      </div>
+      <AuthLayout>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" className={classes.title}>
+              Register
+            </Typography>
+
+            <form onSubmit={this.handleSubmit} noValidate>
+              <TextField
+                label="Team Name"
+                name="teamName"
+                value={this.state.teamName}
+                onChange={this.handleInputUpdate}
+                fullWidth
+              />
+
+              <TextField
+                type="email"
+                label="Email"
+                name="email"
+                value={this.state.email}
+                onChange={this.handleInputUpdate}
+                fullWidth
+              />
+
+              <TextField
+                type="password"
+                label="Password"
+                name="password"
+                value={this.state.password}
+                onChange={this.handleInputUpdate}
+                fullWidth
+              />
+
+              <TextField
+                type="password"
+                label="Confirm Password"
+                name="passwordConfirm"
+                value={this.state.passwordConfirm}
+                onChange={this.handleInputUpdate}
+                fullWidth
+                style={{marginBottom: 16}}
+              />
+
+              <Recaptcha
+                ref={e => this.recaptchaInstance = e}
+                sitekey={config.recaptcha.sitekey}
+                verifyCallback={this.verifyRecaptcha}
+              />
+
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                className={classes.formButton}
+              >
+                Register
+              </Button>
+
+              <Button
+                size="large"
+                className={classes.formButton}
+                style={{marginLeft: 16}}
+                component={Link}
+                to="/login"
+              >
+                Log in
+              </Button>
+
+            </form>
+          </CardContent>
+        </Card>
+      </AuthLayout>
     );
   }
 }
@@ -89,4 +163,5 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ register, hasResetCaptcha }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+const styled = withStyles(styles)(Register)
+export default connect(mapStateToProps, mapDispatchToProps)(styled);

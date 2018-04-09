@@ -5,6 +5,28 @@ import { connect } from 'react-redux';
 import { forgotPassword, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
+import AuthLayout from '../common/AuthLayout'
+
+// MUI
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  title: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2,
+  },
+  extraLinks: {
+    marginTop: theme.spacing.unit * 2,
+    textAlign: 'center'
+  }
+});
 
 class ForgotPassword extends Component {
   constructor(props) {
@@ -43,17 +65,52 @@ class ForgotPassword extends Component {
   }
 
   render() {
+    const { classes } = this.props
+
     return(
-      <div>
-        <h2>Enter your email</h2>
-        <form onSubmit={this.handleSubmit}>
-          <label>Email</label>
-          <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
-          <button type="submit">Send Email</button>
-        </form>
-        <Link to="/login"><p>Login Page</p></Link>
-      </div>
+      <AuthLayout>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" className={classes.title}>
+              Reset your password
+            </Typography>
+
+            <form onSubmit={this.handleSubmit}>
+              <TextField
+                type="email"
+                label="Email"
+                name="email"
+                value={this.state.email}
+                onChange={this.handleInputUpdate}
+                fullWidth
+                style={{marginBottom: 16}}
+              />
+
+              <Recaptcha
+                ref={e => this.recaptchaInstance = e}
+                sitekey={config.recaptcha.sitekey}
+                verifyCallback={this.verifyRecaptcha}
+              />
+
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                className={classes.formButton}
+              >
+                Send Email
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Typography component="p" className={classes.extraLinks}>
+          <Link to="/login">
+            Login page
+          </Link>
+        </Typography>
+      </AuthLayout>
     );
   }
 }
@@ -68,4 +125,5 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ forgotPassword, hasResetCaptcha }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);
+const styled = withStyles(styles)(ForgotPassword)
+export default connect(mapStateToProps, mapDispatchToProps)(styled);

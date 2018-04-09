@@ -1,6 +1,5 @@
 import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import purple from 'material-ui/colors/purple';
 import green from 'material-ui/colors/green';
 import lightBlue from 'material-ui/colors/lightBlue';
 import blue from 'material-ui/colors/blue';
@@ -19,13 +18,13 @@ const theme = createMuiTheme({
     },
     secondary: pink,
     background: {
-      // default: '#ECEFF1'
+      default: '#ECEFF1'
     }
   },
 });
 
-function withRoot(Component) {
-  function WithRoot(props) {
+function withTheme(Component) {
+  function WithTheme(props) {
     // MuiThemeProvider makes the theme available down the React tree
     // thanks to React context.
     return (
@@ -37,7 +36,7 @@ function withRoot(Component) {
     );
   }
 
-  return WithRoot;
+  return WithTheme;
 }
 
-export default withRoot;
+export default withTheme;

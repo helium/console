@@ -2,10 +2,37 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth.js';
-import config from '../../config/common.js';
-import Recaptcha from './Recaptcha.jsx';
-import TwoFactorForm from './TwoFactorForm.jsx'
+import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth';
+import config from '../../config/common';
+import Recaptcha from './Recaptcha';
+import TwoFactorForm from './TwoFactorForm'
+import AuthLayout from '../common/AuthLayout'
+
+// MUI
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  title: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
+  },
+  forgot: {
+    textAlign: 'right',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2,
+  },
+  extraLinks: {
+    marginTop: theme.spacing.unit * 2,
+    textAlign: 'center'
+  }
+});
 
 class Login extends Component {
   constructor(props) {
@@ -56,7 +83,7 @@ class Login extends Component {
     this.props.verify2fa(code, user.id)
   }
 
-  renderForm() {
+  renderForm(classes) {
     if (this.state.loginPage === "2fa") {
       return (
         <TwoFactorForm onSubmit={this.handleTwoFactorSubmit}/>
@@ -64,27 +91,81 @@ class Login extends Component {
     } else {
       return (
         <form onSubmit={this.handleSubmit}>
-          <label>Email</label>
-          <input type="email" name ="email" value={this.state.email} onChange={this.handleInputUpdate} />
-          <label>Password</label>
-          <input type="password" name="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          <Recaptcha ref={e => this.recaptchaInstance = e} sitekey={config.recaptcha.sitekey} verifyCallback={this.verifyRecaptcha}/>
-          <button type="submit">Sign In</button>
+          <TextField
+            type="email"
+            label="Email"
+            name="email"
+            value={this.state.email}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
+
+          <TextField
+            type="password"
+            label="Password"
+            name="password"
+            value={this.state.password}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
+
+          <Typography component="p" className={classes.forgot}>
+            <Link to="/forgot_password">Forgot password?</Link>
+          </Typography>
+
+          <Recaptcha
+            ref={e => this.recaptchaInstance = e}
+            sitekey={config.recaptcha.sitekey}
+            verifyCallback={this.verifyRecaptcha}
+            style={{marginTop: 24}}
+          />
+
+
+        <div>
+          <Button
+            type="submit"
+            variant="raised"
+            color="primary"
+            size="large"
+            className={classes.formButton}
+          >
+            Sign In
+          </Button>
+
+          <Button
+            size="large"
+            className={classes.formButton}
+            style={{marginLeft: 16}}
+            component={Link}
+            to="/register"
+          >
+            Register
+          </Button>
+        </div>
         </form>
       )
     }
   }
 
   render() {
+    const { classes } = this.props
     return(
-      <div>
-        <h2>Sign in</h2>
-        {this.renderForm()}
-        <Link to="/secret"><p>Secret Page</p></Link>
-        <Link to="/register"><p>Register Page</p></Link>
-        <Link to="/forgot_password"><p>Forgot Password</p></Link>
-        <Link to="/resend_verification"><p>Resend Verification</p></Link>
-      </div>
+      <AuthLayout>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" className={classes.title}>
+              Sign in
+            </Typography>
+            {this.renderForm(classes)}
+          </CardContent>
+        </Card>
+
+        <Typography component="p" className={classes.extraLinks}>
+          <Link to="/resend_verification">
+            Resend verification email
+          </Link>
+        </Typography>
+      </AuthLayout>
     );
   }
 }
@@ -99,4 +180,5 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ checkCredentials, hasResetCaptcha, verify2fa }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+const styled = withStyles(styles)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(styled)

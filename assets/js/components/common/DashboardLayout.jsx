@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { withStyles } from 'material-ui/styles';
-import withRoot from './withRoot.jsx'
+import withTheme from './withTheme.jsx'
 
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
@@ -54,4 +54,4 @@ class DashboardLayout extends Component {
   }
 }
 
-export default withRoot(withStyles(styles)(DashboardLayout))
+export default withTheme(withStyles(styles)(DashboardLayout))
