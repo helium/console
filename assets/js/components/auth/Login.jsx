@@ -20,9 +20,11 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
   },
+  input: {
+    marginBottom: theme.spacing.unit * 2,
+  },
   forgot: {
     textAlign: 'right',
-    marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2,
   },
   formButton: {
@@ -97,6 +99,7 @@ class Login extends Component {
             name="email"
             value={this.state.email}
             onChange={this.handleInputUpdate}
+            className={classes.input}
             fullWidth
           />
 
@@ -106,6 +109,7 @@ class Login extends Component {
             name="password"
             value={this.state.password}
             onChange={this.handleInputUpdate}
+            className={classes.input}
             fullWidth
           />
 
