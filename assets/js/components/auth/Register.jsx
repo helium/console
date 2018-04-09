@@ -19,13 +19,16 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit,
   },
+  input: {
+    marginBottom: theme.spacing.unit * 2,
+  },
   formButton: {
     marginTop: theme.spacing.unit * 2,
   },
   extraLinks: {
     marginTop: theme.spacing.unit * 2,
     textAlign: 'center'
-  }
+  },
 });
 
 class Register extends Component {
@@ -88,6 +91,7 @@ class Register extends Component {
                 name="teamName"
                 value={this.state.teamName}
                 onChange={this.handleInputUpdate}
+                className={classes.input}
                 fullWidth
               />
 
@@ -97,6 +101,7 @@ class Register extends Component {
                 name="email"
                 value={this.state.email}
                 onChange={this.handleInputUpdate}
+                className={classes.input}
                 fullWidth
               />
 
@@ -106,6 +111,7 @@ class Register extends Component {
                 name="password"
                 value={this.state.password}
                 onChange={this.handleInputUpdate}
+                className={classes.input}
                 fullWidth
               />
 
@@ -115,6 +121,7 @@ class Register extends Component {
                 name="passwordConfirm"
                 value={this.state.passwordConfirm}
                 onChange={this.handleInputUpdate}
+                className={classes.input}
                 fullWidth
                 style={{marginBottom: 16}}
               />
