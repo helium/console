@@ -29,12 +29,12 @@ class SocketHandler extends Component {
     // if the user has just logged in...
     if (!prevProps.isLoggedIn && this.props.isLoggedIn) {
       this.subscribeToUpdates()
-      this.props.fetchIndices()
+      return this.props.fetchIndices()
     }
 
     // if the user has just signed out...
     if (prevProps.isLoggedIn && !this.props.isLoggedIn) {
-      this.disconnect()
+      return this.disconnect()
     }
 
     // if the user has switched teams or refreshed their api key...
