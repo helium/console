@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchTeams, switchTeam } from '../../actions/team'
+import NewTeamModal from '../teams/NewTeamModal'
 
 // MUI
 import Button from 'material-ui/Button'
@@ -21,11 +22,14 @@ class TeamSwitcher extends Component {
     this.state = {
       anchorEl: null,
       teamMenuOpen: false,
+      newTeamOpen: false,
     }
 
     this.openTeamMenu = this.openTeamMenu.bind(this)
     this.closeTeamMenu = this.closeTeamMenu.bind(this)
     this.handleSwitchTeam = this.handleSwitchTeam.bind(this)
+    this.openNewTeamModal = this.openNewTeamModal.bind(this)
+    this.closeNewTeamModal = this.closeNewTeamModal.bind(this)
   }
 
   openTeamMenu(event) {
@@ -35,6 +39,14 @@ class TeamSwitcher extends Component {
   closeTeamMenu() {
     this.setState({ anchorEl: null, teamMenuOpen: false });
   };
+
+  openNewTeamModal() {
+    this.setState({newTeamOpen: true, teamMenuOpen: false})
+  }
+
+  closeNewTeamModal() {
+    this.setState({newTeamOpen: false})
+  }
 
   handleSwitchTeam(team) {
     const { switchTeam } = this.props
@@ -75,13 +87,19 @@ class TeamSwitcher extends Component {
             ))}
           </MenuList>
           <Divider />
-          <MenuItem component={Link} to="/teams/new">
+
+          <MenuItem onClick={this.openNewTeamModal}>
             <ListItemIcon>
               <NewTeamIcon style={{margin: 0}} />
             </ListItemIcon>
             <ListItemText inset primary="New Team" />
           </MenuItem>
         </Menu>
+
+        <NewTeamModal
+          open={this.state.newTeamOpen}
+          onClose={this.closeNewTeamModal}
+        />
       </div>
     )
   }
