@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
-import debounce from 'lodash/debounce'
+import throttle from 'lodash/throttle'
 import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 
@@ -39,12 +39,9 @@ class TopBar extends Component {
 
     this.openAccountMenu = this.openAccountMenu.bind(this)
     this.closeAccountMenu = this.closeAccountMenu.bind(this)
-    this.updateScrollPosition = debounce(
+    this.updateScrollPosition = throttle(
       this.updateScrollPosition.bind(this),
-      10,
-      {
-        leading: true
-      }
+      10
     )
   }
 
@@ -65,10 +62,10 @@ class TopBar extends Component {
   };
 
   updateScrollPosition(event) {
-    console.log('updating scroll pos')
+    // console.log('scroll pos:', event.target.scrollTop)
     this.setState({
       scrollPosition: event.target.scrollTop,
-      atTop: event.target.scrollTop <= 4
+      atTop: event.target.scrollTop <= 10
     })
   }
 

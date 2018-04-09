@@ -8,6 +8,11 @@ import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
 import DashboardLayout from '../common/DashboardLayout'
 
+// MUI
+import AppBar from 'material-ui/AppBar'
+import Tabs, { Tab } from 'material-ui/Tabs'
+import Typography from 'material-ui/Typography';
+
 class GatewayIndex extends Component {
   componentDidMount() {
     this.props.fetchGateways()
@@ -16,11 +21,30 @@ class GatewayIndex extends Component {
   render() {
     const { gateways, deleteGateway } = this.props
 
+    const listView = (
+      <Paper>
+        <GatewaysTable gateways={gateways} deleteGateway={deleteGateway} />
+      </Paper>
+    )
+
+    const mapView = (
+      <Paper>
+        <Typography variant="display1" style={{textAlign: 'center', padding: '3em', color: "#e0e0e0"}}>
+          Map goes here
+        </Typography>
+      </Paper>
+    )
+
+    const tabs = [{
+      label: "List View",
+      content: listView
+    }, {
+      label: "Map View",
+      content: mapView
+    }]
+
     return(
-      <DashboardLayout title="All Gateways">
-        <Paper>
-          <GatewaysTable gateways={gateways} deleteGateway={deleteGateway} />
-        </Paper>
+      <DashboardLayout title="All Gateways" tabs={tabs}>
         <RandomGatewayButton />
       </DashboardLayout>
     )

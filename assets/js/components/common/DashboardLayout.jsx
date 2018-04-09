@@ -36,7 +36,7 @@ const styles = theme => ({
 
 class DashboardLayout extends Component {
   render() {
-    const { classes, title } = this.props;
+    const { classes, title, tabs } = this.props;
 
     return (
       <div className={classes.root}>
@@ -45,7 +45,7 @@ class DashboardLayout extends Component {
         <NavDrawer />
 
         <main className={classes.main}>
-          <ContentLayout title={title}>
+          <ContentLayout title={title} tabs={tabs}>
             {this.props.children}
           </ContentLayout>
         </main>
