@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import throttle from 'lodash/throttle'
 import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
+import { fetchUser } from '../../actions/user';
 
 // MUI
 import List, { ListItem, ListItemText } from 'material-ui/List'
@@ -47,6 +48,7 @@ class TopBar extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.updateScrollPosition, true)
+    this.props.fetchUser()
   }
 
   componentWillUnmount() {
@@ -136,7 +138,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut }, dispatch);
+  return bindActionCreators({ logOut, fetchUser }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBar);
