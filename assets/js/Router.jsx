@@ -28,7 +28,6 @@ import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import TeamIndex from './components/teams/TeamIndex'
-import TeamNew from './components/teams/TeamNew'
 
 class Router extends React.Component {
   render() {
@@ -39,24 +38,24 @@ class Router extends React.Component {
             { /* ConnectedRouter will use the store from Provider automatically */ }
             <ConnectedRouter history={history}>
               <Switch>
-                  <Route exact path="/" component={Home}/>
-                  <PublicRoute path="/login" component={Login}/>
-                  <PublicRoute path="/resend_verification" component={ResendVerification}/>
-                  <PublicRoute path="/forgot_password" component={ForgotPassword}/>
-                  <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
-                  <PublicRoute path="/register" component={Register}/>
-                  <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
-                  <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
-                  <PrivateRoute path="/secret" component={Secret}/>
-                  <PrivateRoute exact path="/devices" component={DeviceIndex} />
-                  <PrivateRoute path="/devices/:id" component={DeviceShow}/>
-                  <PrivateRoute exact path="/gateways" component={GatewayIndex} />
-                  <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
-                  <PrivateRoute exact path="/channels" component={ChannelIndex} />
-                  <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
-                  <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
-                  <PrivateRoute exact path="/teams" component={TeamIndex} />
-                  <PrivateRoute exact path="/teams/new" component={TeamNew} />
+                <Route exact path="/" component={Home}/>
+                <PublicRoute path="/login" component={Login}/>
+                <PublicRoute path="/resend_verification" component={ResendVerification}/>
+                <PublicRoute path="/forgot_password" component={ForgotPassword}/>
+                <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
+                <PublicRoute path="/register" component={Register}/>
+                <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
+
+                <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
+                <PrivateRoute path="/secret" component={Secret}/>
+                <PrivateRoute exact path="/devices" component={DeviceIndex} />
+                <PrivateRoute path="/devices/:id" component={DeviceShow}/>
+                <PrivateRoute exact path="/gateways" component={GatewayIndex} />
+                <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
+                <PrivateRoute exact path="/channels" component={ChannelIndex} />
+                <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
+                <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
+                <PrivateRoute exact path="/teams" component={TeamIndex} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

@@ -53,7 +53,8 @@ export const createTeam = (name) => {
         }
       })
       .then(response => {
-        return dispatch(receivedTeam(response.data))
+        dispatch(receivedTeam(response.data))
+        dispatch(switchTeam(response.data.id))
       })
   }
 }

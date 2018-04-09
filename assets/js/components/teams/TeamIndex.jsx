@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchTeams, switchTeam } from '../../actions/team'
-import DashboardLayout from '../DashboardLayout'
 
 const CurrentTeam = (props) => {
   if (props.team !== undefined) {
@@ -39,7 +38,7 @@ class TeamIndex extends Component {
     const { teams, currentTeam } = this.props
 
     return(
-      <DashboardLayout current="teams" title="Teams">
+      <div>
         <CurrentTeam team={currentTeam} />
         {teams.length > 0 ? (
           <ul>
@@ -51,7 +50,7 @@ class TeamIndex extends Component {
         ) : (
           <p>No teams</p>
         )}
-      </DashboardLayout>
+      </div>
     )
   }
 }

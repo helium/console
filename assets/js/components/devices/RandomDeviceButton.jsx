@@ -3,6 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { createDevice } from '../../actions/device'
 import { randomName, randomMac } from '../../util/random'
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
 class RandomDeviceButton extends Component {
   handleClick(e) {
@@ -16,9 +18,13 @@ class RandomDeviceButton extends Component {
 
   render() {
     return (
-      <a onClick={this.handleClick.bind(this)} className="btn btn-primary">
-        Random Device
-      </a>
+      <Button
+        variant="fab"
+        color="secondary"
+        onClick={this.handleClick.bind(this)}
+        style={{position: 'fixed', right: 30, bottom: 30}} >
+        <AddIcon />
+      </Button>
     )
   }
 }

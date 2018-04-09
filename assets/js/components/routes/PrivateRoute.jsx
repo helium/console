@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 class PrivateRoute extends Component {
   render() {
-    const { path } = this.props;
-    const { isLoggedIn } = this.props.auth;
-    const Component = this.props.component;
+    const { path } = this.props
+    const { isLoggedIn } = this.props.auth
+    const Component = this.props.component
 
     return(
       <Route path={path} render={(p) => (

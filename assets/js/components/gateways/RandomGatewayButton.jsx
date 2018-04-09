@@ -3,6 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { createGateway } from '../../actions/gateway'
 import { randomName, randomMac, randomLatitude, randomLongitude } from '../../util/random'
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
 class RandomGatewayButton extends Component {
   handleClick(e) {
@@ -18,9 +20,13 @@ class RandomGatewayButton extends Component {
 
   render() {
     return (
-      <a onClick={this.handleClick.bind(this)} className="btn btn-primary">
-        Random Gateway
-      </a>
+      <Button
+        variant="fab"
+        color="secondary"
+        onClick={this.handleClick.bind(this)}
+        style={{position: 'fixed', right: 30, bottom: 30}} >
+        <AddIcon />
+      </Button>
     )
   }
 }
