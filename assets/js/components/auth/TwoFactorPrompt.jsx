@@ -64,7 +64,7 @@ class TwoFactorPrompt extends Component {
 
   componentDidMount() {
     const { user } = this.props.auth
-    if (user.twoFactorEnabled) return this.props.history.replace("/secret")
+    if (user.twoFactorEnabled) return this.props.history.replace("/devices")
 
     this.props.getNew2fa()
   }
@@ -83,11 +83,11 @@ class TwoFactorPrompt extends Component {
   handleSkip() {
     const { user } = this.props.auth
     this.props.skip2fa(user.id)
-    this.props.history.replace("/secret")
+    this.props.history.replace("/devices")
   }
 
   handleContinue() {
-    this.props.history.replace("/secret")
+    this.props.history.replace("/devices")
   }
 
   handleInputUpdate(e) {

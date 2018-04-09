@@ -37,7 +37,7 @@ class GatewayIndex extends Component {
 
     const tabs = [{
       label: "List View",
-      content: listView
+      content: listView,
     }, {
       label: "Map View",
       content: mapView

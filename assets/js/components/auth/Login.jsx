@@ -51,7 +51,7 @@ class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
-    this.renderForm = this.renderForm.bind(this);
+    this.loginForm = this.loginForm.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -85,82 +85,70 @@ class Login extends Component {
     this.props.verify2fa(code, user.id)
   }
 
-  renderForm(classes) {
-    if (this.state.loginPage === "2fa") {
-      return (
-        <TwoFactorForm onSubmit={this.handleTwoFactorSubmit}/>
-      )
-    } else {
-      return (
-        <form onSubmit={this.handleSubmit}>
-          <TextField
-            type="email"
-            label="Email"
-            name="email"
-            value={this.state.email}
-            onChange={this.handleInputUpdate}
-            className={classes.input}
-            fullWidth
-          />
-
-          <TextField
-            type="password"
-            label="Password"
-            name="password"
-            value={this.state.password}
-            onChange={this.handleInputUpdate}
-            className={classes.input}
-            fullWidth
-          />
-
-          <Typography component="p" className={classes.forgot}>
-            <Link to="/forgot_password">Forgot password?</Link>
-          </Typography>
-
-          <Recaptcha
-            ref={e => this.recaptchaInstance = e}
-            sitekey={config.recaptcha.sitekey}
-            verifyCallback={this.verifyRecaptcha}
-            style={{marginTop: 24}}
-          />
-
-
-        <div>
-          <Button
-            type="submit"
-            variant="raised"
-            color="primary"
-            size="large"
-            className={classes.formButton}
-          >
-            Sign In
-          </Button>
-
-          <Button
-            size="large"
-            className={classes.formButton}
-            style={{marginLeft: 16}}
-            component={Link}
-            to="/register"
-          >
-            Register
-          </Button>
-        </div>
-        </form>
-      )
-    }
-  }
-
-  render() {
-    const { classes } = this.props
-    return(
+  loginForm(classes) {
+    return (
       <AuthLayout>
         <Card>
           <CardContent>
             <Typography variant="headline" className={classes.title}>
               Sign in
             </Typography>
-            {this.renderForm(classes)}
+
+            <form onSubmit={this.handleSubmit}>
+              <TextField
+                type="email"
+                label="Email"
+                name="email"
+                value={this.state.email}
+                onChange={this.handleInputUpdate}
+                className={classes.input}
+                fullWidth
+              />
+
+              <TextField
+                type="password"
+                label="Password"
+                name="password"
+                value={this.state.password}
+                onChange={this.handleInputUpdate}
+                className={classes.input}
+                fullWidth
+              />
+
+              <Typography component="p" className={classes.forgot}>
+                <Link to="/forgot_password">Forgot password?</Link>
+              </Typography>
+
+              <Recaptcha
+                ref={e => this.recaptchaInstance = e}
+                sitekey={config.recaptcha.sitekey}
+                verifyCallback={this.verifyRecaptcha}
+                style={{marginTop: 24}}
+              />
+
+              <div>
+                <Button
+                  type="submit"
+                  variant="raised"
+                  color="primary"
+                  size="large"
+                  className={classes.formButton}
+                >
+                  Sign In
+                </Button>
+
+                <Button
+                  size="large"
+                  className={classes.formButton}
+                  style={{marginLeft: 16}}
+                  component={Link}
+                  to="/register"
+                >
+                  Register
+                </Button>
+              </div>
+
+            </form>
           </CardContent>
         </Card>
 
@@ -170,8 +158,20 @@ class Login extends Component {
           </Link>
         </Typography>
       </AuthLayout>
-    );
+    )
   }
+
+  render() {
+    const { classes } = this.props
+    if (this.state.loginPage === "2fa") {
+      return (
+        <TwoFactorForm onSubmit={this.handleTwoFactorSubmit}/>
+      )
+    } else {
+      return(this.loginForm(classes))
+    }
+  }
+
 }
 
 function mapStateToProps(state) {
