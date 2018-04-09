@@ -26,7 +26,7 @@ class DevicesTable extends Component {
                 </TableCell>
                 <TableCell>{device.mac}</TableCell>
                 <TableCell>
-                  <Button color="primary">
+                  <Button color="primary" component={Link} to={`/devices/${device.id}`}>
                     View
                   </Button>
 

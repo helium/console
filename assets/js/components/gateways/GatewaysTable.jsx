@@ -26,7 +26,7 @@ class GatewaysTable extends Component {
                 </TableCell>
                 <TableCell>{gateway.mac}</TableCell>
                 <TableCell>
-                  <Button color="primary">
+                  <Button color="primary" component={Link} to={`/gateways/${gateway.id}`}>
                     View
                   </Button>
 

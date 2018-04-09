@@ -26,7 +26,7 @@ class ChannelsTable extends Component {
                 </TableCell>
                 <TableCell>{channel.type}</TableCell>
                 <TableCell>
-                  <Button color="primary">
+                  <Button color="primary" component={Link} to={`/channels/${channel.id}`}>
                     View
                   </Button>
 
