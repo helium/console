@@ -14,6 +14,7 @@ defmodule ConsoleWeb.TeamController do
 
   def show(conn, %{"id" => id}) do
     team = Teams.get_team!(conn.assigns.current_user, id)
+           |> Teams.fetch_assoc([memberships: [:user]])
     render(conn, "show.json", team: team)
   end
 

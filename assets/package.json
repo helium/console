@@ -11,6 +11,7 @@
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.40",
     "material-ui-icons": "^1.0.0-beta.36",
+    "moment": "^2.22.0",
     "normalizr": "^3.2.4",
     "noty": "^3.2.0-beta",
     "npm": "^5.8.0",
