@@ -49,7 +49,7 @@ class NewUserModal extends Component {
 
     this.props.inviteUser({ email, role });
 
-    this.setState={{ email: '', role: '' }}
+    this.setState({ email: '', role: '' })
 
     this.props.onClose()
   }

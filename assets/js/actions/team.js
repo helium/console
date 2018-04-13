@@ -79,7 +79,7 @@ export const switchedTeam = (apikey) => {
 
 export const inviteUser = (invitation) => {
   return (dispatch) => {
-    rest.post(`/invitations`, { invitation })
+    rest.post(`/api/invitations`, { invitation })
     .then(response => console.log(response))
   }
 }
