@@ -81,6 +81,9 @@ defmodule Console.Teams do
   end
 
   def valid_invitation_token?(token) do
-    true
+    with %Invitation{} = invitation <- Repo.get_by(Invitation, token: token) do
+      invitation.pending
+    else nil -> false
+    end
   end
 end

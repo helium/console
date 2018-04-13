@@ -14,6 +14,7 @@ defmodule Console.Repo.Migrations.CreateInvitations do
     end
 
     create unique_index(:invitations, [:email, :team_id], name: :invitations_email_team_id_index)
+    create unique_index(:invitations, :token)
 
   end
 end
