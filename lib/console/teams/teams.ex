@@ -79,4 +79,8 @@ defmodule Console.Teams do
     |> Invitation.create_changeset(attrs)
     |> Repo.insert()
   end
+
+  def valid_invitation_token?(token) do
+    true
+  end
 end

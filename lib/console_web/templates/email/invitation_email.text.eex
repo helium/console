@@ -1,0 +1,2 @@
+You've been invited to collarborate on a team at Helium.
+Visit <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %> to join the team

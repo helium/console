@@ -2,6 +2,7 @@ defmodule Console.Email do
   use Bamboo.Phoenix, view: ConsoleWeb.EmailView
 
   alias Console.Auth.User
+  alias Console.Teams.Invitation
 
   def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()
@@ -17,6 +18,14 @@ defmodule Console.Email do
     |> subject("Your Password Reset Link")
     |> assign(:token, token)
     |> render(:reset_password)
+  end
+
+  def invitation_email(%Invitation{email: email, token: token}) do
+    base_email()
+    |> to(email)
+    |> subject("You've been invited to join Helium")
+    |> assign(:token, token)
+    |> render(:invitation_email)
   end
 
   defp base_email do
