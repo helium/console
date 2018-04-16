@@ -2,7 +2,6 @@ defmodule ConsoleWeb.UserControllerTest do
   use ConsoleWeb.ConnCase
 
   alias Console.Auth
-  # alias Console.Auth.User
   import Console.Factory
 
   @create_attrs %{email: "test@hello.com", password: "some password"}
@@ -28,6 +27,15 @@ defmodule ConsoleWeb.UserControllerTest do
       team_attrs = %{name: "Test"}
       conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs, recaptcha: "recaptcha"
       assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
+
+  describe "create user via invitation" do
+    test "renders user when data is valid", %{conn: conn} do
+      team = insert(:team)
+      invitation = insert(:invitation, team_id: team.id)
+      conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}, recaptcha: "recaptcha"
+      assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
   end
 

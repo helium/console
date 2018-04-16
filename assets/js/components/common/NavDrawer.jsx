@@ -64,7 +64,7 @@ const hardwareItems = (
 
 const organizationItems = (
   <div>
-    <ListItem button>
+    <ListItem button component={Link} to="/teams/access">
       <ListItemIcon>
         <AccessIcon />
       </ListItemIcon>

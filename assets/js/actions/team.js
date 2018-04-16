@@ -76,3 +76,10 @@ export const switchedTeam = (apikey) => {
     currentTeamId: getTeamId(apikey)
   }
 }
+
+export const inviteUser = (invitation) => {
+  return (dispatch) => {
+    rest.post(`/api/invitations`, { invitation })
+    .then(response => console.log(response))
+  }
+}

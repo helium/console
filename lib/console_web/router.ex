@@ -34,6 +34,7 @@ defmodule ConsoleWeb.Router do
     resources "/teams", TeamController, except: [:new, :edit] do
       post "/switch", TeamController, :switch, as: :switch
     end
+    resources "/invitations", InvitationController, only: [:create]
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
@@ -51,6 +52,8 @@ defmodule ConsoleWeb.Router do
 
     get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
     get "/users/reset_password/:token", UserController, :reset_password, as: "reset_password"
+
+    get "/invitations/accept/:token", InvitationController, :accept, as: "accept_invitation"
 
     get "/*path", PageController, :index
   end

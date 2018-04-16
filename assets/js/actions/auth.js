@@ -96,19 +96,32 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, email, password, passwordConfirm, recaptcha) => {
+export const register = (teamName, email, password, passwordConfirm, recaptcha, invitationToken) => {
+  let params = {
+    recaptcha,
+    user: {
+      email,
+      password,
+      password_confirmation: passwordConfirm
+    }
+  }
+
+  if (invitationToken !== undefined) {
+    params = Object.assign(params, {
+      invitation: {
+        token: invitationToken
+      }
+    })
+  } else {
+    params = Object.assign(params, {
+      team: {
+        name: teamName
+      }
+    })
+  }
+
   return (dispatch) => {
-    rest.post('/api/users', {
-        recaptcha,
-        user: {
-          email,
-          password,
-          password_confirmation: passwordConfirm
-        },
-        team: {
-          name: teamName
-        }
-      })
+    rest.post('/api/users', params)
       .then(() => {
         return dispatch(registered())
       })

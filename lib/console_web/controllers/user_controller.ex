@@ -3,6 +3,7 @@ defmodule ConsoleWeb.UserController do
 
   alias Console.Auth
   alias Console.Auth.User
+  alias Console.Teams
 
   alias Console.Email
   alias Console.Mailer
@@ -12,12 +13,26 @@ defmodule ConsoleWeb.UserController do
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
       {:ok, %User{} = user} <- Auth.create_user(user_params, team_params) do
-        Email.confirm_email(user) |> Mailer.deliver_later()
-
         conn
-        |> put_status(:created)
-        |> render("show.json", user: user)
+        |> handle_created(user)
     end
+  end
+
+  def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
+    with true <- Auth.verify_captcha(recaptcha),
+      {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
+      {:ok, %User{} = user} <- Auth.create_user_via_invitation(invitation, user_params) do
+        conn
+        |> handle_created(user)
+    end
+  end
+
+  defp handle_created(conn, %User{} = user) do
+    Email.confirm_email(user) |> Mailer.deliver_later()
+
+    conn
+    |> put_status(:created)
+    |> render("show.json", user: user)
   end
 
   def confirm_email(conn, %{"token" => token}) do

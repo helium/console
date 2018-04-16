@@ -8,6 +8,7 @@ defmodule Console.Auth do
 
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
+  alias Console.Teams.Invitation
   alias Console.Helpers
 
   def get_user_by_id!(id) do
@@ -36,6 +37,28 @@ defmodule Console.Auth do
       |> Ecto.Multi.insert(:user, user_changeset)
       |> Ecto.Multi.run(:team, fn %{user: user} ->
         Console.Teams.create_team(user, team_attrs)
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user}} -> {:ok, user}
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
+  def create_user_via_invitation(%Invitation{} = inv, user_attrs \\ %{}) do
+    team = Console.Teams.get_team!(inv.team_id)
+
+    user_changeset =
+      %User{}
+      |> User.registration_changeset(user_attrs)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, user_changeset)
+      |> Ecto.Multi.run(:team, fn %{user: user} ->
+        Console.Teams.join_team(user, team)
+        Console.Teams.mark_invitation_used(inv)
       end)
       |> Repo.transaction()
 
@@ -173,8 +196,8 @@ defmodule Console.Auth do
     :pot.valid_totp(code, secret2fa)
   end
 
-  def fetch_assoc(%User{} = user) do
-    Repo.preload(user, [:twofactor, :teams])
+  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams]) do
+    Repo.preload(user, assoc)
   end
 
   def generate_session_token(user) do

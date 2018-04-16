@@ -3,6 +3,7 @@ defmodule Console.TeamsTest do
 
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Teams.Invitation
 
   import Console.Factory
 
@@ -22,6 +23,17 @@ defmodule Console.TeamsTest do
       user = insert(:user)
       assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{})
       assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{name: "s"})
+    end
+  end
+
+  describe "invitations" do
+    test "create_invitation/3 with valid data creates an invitation" do
+      user = insert(:user)
+      team = insert(:team)
+      attrs = %{"email" => "test@example.com", "role" => "admin"}
+      assert {:ok, %Invitation{} = invitation} = Teams.create_invitation(user, team, attrs)
+      invitation = invitation |> Teams.fetch_assoc_invitation()
+      assert invitation.inviter.email == user.email
     end
   end
 end
