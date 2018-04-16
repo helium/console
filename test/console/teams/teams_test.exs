@@ -32,7 +32,6 @@ defmodule Console.TeamsTest do
       team = insert(:team)
       attrs = %{"email" => "test@example.com", "role" => "admin"}
       assert {:ok, %Invitation{} = invitation} = Teams.create_invitation(user, team, attrs)
-      IO.inspect(invitation)
       invitation = invitation |> Teams.fetch_assoc_invitation()
       assert invitation.inviter.email == user.email
     end

@@ -21,10 +21,16 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def accept(conn, %{"token" => token}) do
-    with true <- Teams.valid_invitation_token?(token) do
+    with {true, %Invitation{} = inv} <- Teams.valid_invitation_token?(token) do
+      inv = Teams.fetch_assoc_invitation(inv)
+      team = inv.team
+      team_name = URI.encode(team.name)
+      inviter = inv.inviter
+      inviter_email = URI.encode(inviter.email)
+
       conn
-      |> redirect(to: "/register?invitation=#{token}")
-    else false ->
+      |> redirect(to: "/register?invitation=#{token}&team_name=#{team_name}&inviter=#{inviter_email}")
+    else {false, _} ->
       conn
       |> put_flash(:error, "This invitation is no longer valid")
       |> redirect(to: "/register")

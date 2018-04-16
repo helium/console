@@ -5,6 +5,7 @@ defmodule Console.AuthTest do
   alias Console.Auth.TwoFactor
 
   import Console.Factory
+
   describe "users" do
     alias Console.Auth.User
 
@@ -52,7 +53,9 @@ defmodule Console.AuthTest do
     end
 
     test "get_user_for_password_reset/1 returns the proper data depending on user email" do
-      assert {:error, :not_found, "The email address you have entered is not valid"} = Auth.get_user_for_password_reset(@invalid_attrs.email)
+      assert {:error, :not_found, "The email address you have entered is not valid"} =
+               Auth.get_user_for_password_reset(@invalid_attrs.email)
+
       user = insert(:user)
       {:ok, returnedUser} = Auth.get_user_for_password_reset(user.email)
       assert returnedUser.id == user.id
@@ -72,6 +75,17 @@ defmodule Console.AuthTest do
       assert Auth.fetch_assoc(user).twofactor === nil
       assert {:ok, %TwoFactor{}} = Auth.enable_2fa(user, "SECRETKEY", ["1234567890"])
       assert Auth.fetch_assoc(user).twofactor !== nil
+    end
+
+    test "create_user_via_invitation/2 creates user and marks invitation used" do
+      team = insert(:team)
+      invitation = insert(:invitation, team_id: team.id)
+      attrs = params_for(:user, password: "sekret")
+
+      assert {:ok, %User{} = user} = Auth.create_user_via_invitation(invitation, attrs)
+      user = Auth.fetch_assoc(user)
+      assert Console.Teams.user_has_access?(user, team)
+      assert Console.Teams.get_invitation!(invitation.id).pending == false
     end
   end
 end

@@ -24,6 +24,10 @@ defmodule Console.Teams do
     Repo.get!(Team, id)
   end
 
+  def get_invitation!(id) do
+    Repo.get!(Invitation, id)
+  end
+
   def user_has_access?(%User{} = user, %Team{} = team) do
     query =
       from(
@@ -36,7 +40,7 @@ defmodule Console.Teams do
     count > 0
   end
 
-  def create_team(user, attrs \\ %{}) do
+  def create_team(%User{} = user, attrs \\ %{}) do
     team_changeset =
       %Team{}
       |> Team.changeset(attrs)
@@ -57,6 +61,12 @@ defmodule Console.Teams do
       {:ok, %{team: team}} -> {:ok, team}
       {:error, :team, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
+  end
+
+  def join_team(%User{} = user, %Team{} = team) do
+    %Membership{}
+    |> Membership.join_changeset(user, team)
+    |> Repo.insert()
   end
 
   def fetch_assoc(%Team{} = team, assoc \\ [:users, :devices, :gateways, :channels]) do
@@ -80,10 +90,16 @@ defmodule Console.Teams do
     |> Repo.insert()
   end
 
+  def mark_invitation_used(%Invitation{} = invitation) do
+    invitation
+    |> Invitation.used_changeset()
+    |> Repo.update()
+  end
+
   def valid_invitation_token?(token) do
     with %Invitation{} = invitation <- Repo.get_by(Invitation, token: token) do
-      invitation.pending
-    else nil -> false
+      {invitation.pending, invitation}
+    else nil -> {false, nil}
     end
   end
 end

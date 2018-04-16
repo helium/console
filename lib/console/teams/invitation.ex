@@ -16,10 +16,10 @@ defmodule Console.Teams.Invitation do
   end
 
   @doc false
-  def changeset(invitation, attrs) do
+  def changeset(invitation, attrs \\ %{}) do
     invitation
     |> cast(attrs, [:email, :role, :team_id, :inviter_id])
-    |> validate_required([:team_id, :inviter_id])
+    |> validate_required([:team_id])
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")
@@ -30,6 +30,12 @@ defmodule Console.Teams.Invitation do
     invitation
     |> changeset(attrs)
     |> put_token()
+  end
+
+  def used_changeset(invitation) do
+    invitation
+    |> changeset()
+    |> put_change(:pending, false)
   end
 
   defp put_token(changeset) do
