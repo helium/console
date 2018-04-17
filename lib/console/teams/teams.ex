@@ -87,15 +87,11 @@ defmodule Console.Teams do
   end
 
   def create_invitation(%User{} = inviter, %Team{} = team, attrs) do
-    with {true, %User{} = existing_user} <- Auth.user_exists?(attrs["email"]) do
-      join_team(existing_user, team, attrs["role"])
-    else false ->
-      attrs = Map.merge(attrs, %{"inviter_id" => inviter.id, "team_id" => team.id})
+    attrs = Map.merge(attrs, %{"inviter_id" => inviter.id, "team_id" => team.id})
 
-      %Invitation{}
-      |> Invitation.create_changeset(attrs)
-      |> Repo.insert()
-    end
+    %Invitation{}
+    |> Invitation.create_changeset(attrs)
+    |> Repo.insert()
   end
 
   def mark_invitation_used(%Invitation{} = invitation) do
