@@ -63,9 +63,9 @@ defmodule Console.Teams do
     end
   end
 
-  def join_team(%User{} = user, %Team{} = team) do
+  def join_team(%User{} = user, %Team{} = team, role \\ "viewer") do
     %Membership{}
-    |> Membership.join_changeset(user, team)
+    |> Membership.join_changeset(user, team, role)
     |> Repo.insert()
   end
 
@@ -74,6 +74,10 @@ defmodule Console.Teams do
   end
 
   def fetch_assoc_invitation(%Invitation{} = team, assoc \\ [:inviter, :team]) do
+    Repo.preload(team, assoc)
+  end
+
+  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team]) do
     Repo.preload(team, assoc)
   end
 

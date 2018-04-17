@@ -10,7 +10,8 @@ defmodule ConsoleWeb.InvitationView do
     %{
       id: invitation.id,
       email: invitation.email,
-      role: invitation.role
+      role: invitation.role,
+      type: "invitations"
     }
   end
 end
