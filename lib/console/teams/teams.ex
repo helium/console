@@ -63,9 +63,9 @@ defmodule Console.Teams do
     end
   end
 
-  def join_team(%User{} = user, %Team{} = team) do
+  def join_team(%User{} = user, %Team{} = team, role \\ "viewer") do
     %Membership{}
-    |> Membership.join_changeset(user, team)
+    |> Membership.join_changeset(user, team, role)
     |> Repo.insert()
   end
 
@@ -77,17 +77,25 @@ defmodule Console.Teams do
     Repo.preload(team, assoc)
   end
 
+  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team]) do
+    Repo.preload(team, assoc)
+  end
+
   def current_team_for(%User{} = user) do
     # TODO: use a timestamp on membership to track the last-viewed team
     List.last(Auth.fetch_assoc(user).teams)
   end
 
   def create_invitation(%User{} = inviter, %Team{} = team, attrs) do
-    attrs = Map.merge(attrs, %{"inviter_id" => inviter.id, "team_id" => team.id})
+    with {true, %User{} = existing_user} <- Auth.user_exists?(attrs["email"]) do
+      join_team(existing_user, team, attrs["role"])
+    else false ->
+      attrs = Map.merge(attrs, %{"inviter_id" => inviter.id, "team_id" => team.id})
 
-    %Invitation{}
-    |> Invitation.create_changeset(attrs)
-    |> Repo.insert()
+      %Invitation{}
+      |> Invitation.create_changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   def mark_invitation_used(%Invitation{} = invitation) do

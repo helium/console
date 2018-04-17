@@ -3,6 +3,7 @@ defmodule ConsoleWeb.InvitationController do
 
   alias Console.Teams
   alias Console.Teams.Invitation
+  alias Console.Teams.Membership
   alias Console.Email
   alias Console.Mailer
 
@@ -17,6 +18,13 @@ defmodule ConsoleWeb.InvitationController do
       conn
       |> put_status(:created)
       |> render("show.json", invitation: invitation)
+    else {:ok, %Membership{} = membership} ->
+      membership = membership |> Teams.fetch_assoc_membership()
+      # Email.joined_team_email(membership) |> Mailer.deliver_later()
+      conn
+      |> put_status(:created)
+      |> put_view(ConsoleWeb.MembershipView)
+      |> render("show.json", membership: membership)
     end
   end
 

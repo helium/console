@@ -2,12 +2,17 @@ defmodule ConsoleWeb.MembershipView do
   use ConsoleWeb, :view
   alias ConsoleWeb.MembershipView
 
+  def render("show.json", %{membership: membership}) do
+    render_one(membership, MembershipView, "membership.json")
+  end
+
   def render("membership.json", %{membership: membership}) do
     %{
       id: membership.id,
       email: membership.user.email,
       role: membership.role,
-      joined_at: membership.inserted_at
+      joined_at: membership.inserted_at,
+      type: "memberships"
     }
   end
 
