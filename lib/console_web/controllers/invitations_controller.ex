@@ -19,7 +19,8 @@ defmodule ConsoleWeb.InvitationController do
         with {:ok, %Membership{} = membership} <-
                Teams.join_team(existing_user, current_team, attrs["role"]) do
           membership = membership |> Teams.fetch_assoc_membership()
-          # Email.joined_team_email(membership) |> Mailer.deliver_later()
+          Email.joined_team_email(membership) |> Mailer.deliver_later()
+
           conn
           |> put_status(:created)
           |> put_view(ConsoleWeb.MembershipView)

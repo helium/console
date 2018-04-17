@@ -3,6 +3,8 @@ defmodule Console.Email do
 
   alias Console.Auth.User
   alias Console.Teams.Invitation
+  alias Console.Teams.Membership
+  alias Console.Teams.Team
 
   def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()
@@ -28,13 +30,20 @@ defmodule Console.Email do
     |> render(:invitation_email)
   end
 
+  def joined_team_email(%Membership{user: %User{email: email}, team: %Team{name: team_name}}) do
+    base_email()
+    |> to(email)
+    |> subject("You've been added to the #{team_name} team on Helium")
+    |> assign(:team_name, team_name)
+    |> render(:joined_team_email)
+  end
+
   defp base_email do
+    # This will use the "email.html.eex" file as a layout when rendering html emails.
+    # Plain text emails will not use a layout unless you use `put_text_layout`
     new_email()
     |> from("Helium <dashboard@helium.com>")
     |> put_header("Reply-To", "dashboard@helium.com")
-    # This will use the "email.html.eex" file as a layout when rendering html emails.
-    # Plain text emails will not use a layout unless you use `put_text_layout`
     |> put_html_layout({ConsoleWeb.LayoutView, "email.html"})
   end
-
 end
