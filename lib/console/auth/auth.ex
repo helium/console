@@ -16,7 +16,6 @@ defmodule Console.Auth do
   end
 
   def user_exists?(email) do
-    # user = Repo.get_by(User, email: email)
     if user = Repo.get_by(User, email: email) do
       {true, user}
     else
