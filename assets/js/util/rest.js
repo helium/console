@@ -48,7 +48,7 @@ const checkTokenBeforeApiCall = (originalApiCall) => {
 
 const refreshTokenBeforeApiCall = (apikey, originalApiCall) => (
   axios({
-    url: 'api/sessions/refresh',
+    url: '/api/sessions/refresh',
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
