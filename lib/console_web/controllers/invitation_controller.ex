@@ -59,4 +59,17 @@ defmodule ConsoleWeb.InvitationController do
         |> halt()
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    invitation = Teams.get_invitation!(id)
+
+    with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
+      send_resp(conn, :no_content, "")
+    end
+
+    # if invitation.pending do
+    # else
+      # error
+    # end
+  end
 end

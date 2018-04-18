@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchTeam } from '../../actions/team'
+import { deleteInvitation } from '../../actions/invitation'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
@@ -41,14 +42,18 @@ class TeamShow extends Component {
   }
 
   render() {
-    const { memberships, invitations } = this.props
+    const { memberships, invitations, deleteInvitation } = this.props
 
     return (
       <DashboardLayout title="Team Access">
         <Card>
           <CardContent>
 
-            <MembersTable memberships={memberships} invitations={invitations} />
+            <MembersTable
+              memberships={memberships}
+              invitations={invitations}
+              deleteInvitation={deleteInvitation}
+            />
 
           </CardContent>
           <CardActions>
@@ -93,7 +98,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchTeam }, dispatch);
+  return bindActionCreators({ fetchTeam, deleteInvitation }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamShow);
