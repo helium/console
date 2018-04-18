@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import RoleControl from './RoleControl'
 
 // MUI
 import Typography from 'material-ui/Typography'
@@ -7,10 +8,6 @@ import Button from 'material-ui/Button'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
-import Select from 'material-ui/Select'
-import { MenuItem } from 'material-ui/Menu'
-import Input, { InputLabel } from 'material-ui/Input'
-import { FormControl, FormHelperText } from 'material-ui/Form'
 
 const styles = theme => ({
   paper: {
@@ -76,17 +73,11 @@ class EditMembershipModal extends Component {
           </Typography>
 
           <form onSubmit={this.handleSubmit}>
-            <FormControl className={classes.input} fullWidth>
-              <InputLabel htmlFor="role">Role</InputLabel>
-              <Select
-                value={this.state.role}
-                onChange={this.handleInputUpdate}
-                inputProps={{id: 'role', name: 'role'}}
-              >
-                <MenuItem value="admin">Administrator</MenuItem>
-                <MenuItem value="viewer">Read-Only</MenuItem>
-              </Select>
-            </FormControl>
+            <RoleControl
+              value={this.state.role}
+              onChange={this.handleInputUpdate}
+              classes={classes}
+            />
 
             <Button
               type="submit"
