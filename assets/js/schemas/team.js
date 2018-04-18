@@ -1,9 +1,11 @@
 import { schema, normalize } from 'normalizr'
 
 const membership = new schema.Entity('memberships')
+const invitation = new schema.Entity('invitations')
 
 const team = new schema.Entity('teams', {
-  memberships: [ membership ]
+  memberships: [ membership ],
+  invitations: [ invitation ]
 })
 
 export const teamsSchema = [team]

@@ -2,6 +2,7 @@ defmodule ConsoleWeb.TeamView do
   use ConsoleWeb, :view
   alias ConsoleWeb.TeamView
   alias ConsoleWeb.MembershipView
+  alias ConsoleWeb.InvitationView
 
   def render("index.json", %{teams: teams}) do
     render_many(teams, TeamView, "team.json")
@@ -23,6 +24,7 @@ defmodule ConsoleWeb.TeamView do
       name: team.name
     }
     |> MembershipView.append_memberships(team.memberships)
+    |> InvitationView.append_invitations(team.invitations)
   end
 
   def append_team(json, team) do

@@ -41,16 +41,15 @@ class TeamShow extends Component {
   }
 
   render() {
-    const { memberships } = this.props
+    const { memberships, invitations } = this.props
 
     return (
       <DashboardLayout title="Team Access">
         <Card>
           <CardContent>
-            <Typography variant="headline" component="h3">
-              Team Access
-            </Typography>
-            <MembersTable members={memberships} />
+
+            <MembersTable memberships={memberships} invitations={invitations} />
+
           </CardContent>
           <CardActions>
             <Button variant="raised" size="small" onClick={this.openNewUserModal}>
@@ -77,9 +76,16 @@ function mapStateToProps(state, ownProps) {
     memberships = Object.values(state.entities.memberships, team.memberships)
   }
 
+  let invitations = []
+  if (team !== undefined && team.invitations !== undefined) {
+    invitations = Object.values(state.entities.invitations, team.invitations)
+    invitations = invitations.filter(invitation => invitation.pending)
+  }
+
   return {
     currentTeamId,
-    memberships
+    memberships,
+    invitations
   }
 }
 

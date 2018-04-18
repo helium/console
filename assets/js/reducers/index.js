@@ -11,6 +11,8 @@ const defaultEntityState = {
   gateways: {},
   channels: {},
   teams: {},
+  memberships: {},
+  invitations: {},
 }
 
 const entities = (state = defaultEntityState, action) => {
