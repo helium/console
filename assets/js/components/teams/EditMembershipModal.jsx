@@ -32,7 +32,7 @@ class EditMembershipModal extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps) {
     const { membership } = this.props
 
     if (membership !== prevProps.membership) {
