@@ -10,6 +10,7 @@ defmodule ConsoleWeb.UserController do
 
   action_fallback ConsoleWeb.FallbackController
 
+  # Registration via signing up
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
       {:ok, %User{} = user} <- Auth.create_user(user_params, team_params) do
@@ -18,10 +19,21 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
+  # Registration via accepting invitation to team
   def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
     with true <- Auth.verify_captcha(recaptcha),
       {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
       {:ok, %User{} = user} <- Auth.create_user_via_invitation(invitation, user_params) do
+
+        # notify clients that the invitation has been used
+        Teams.get_invitation!(invitation.id)
+        |> ConsoleWeb.InvitationController.broadcast("update")
+
+        # notify clients of the new membership
+        user = user |> Auth.fetch_assoc([:memberships])
+        List.last(user.memberships)
+        |> ConsoleWeb.MembershipController.broadcast("new")
+
         conn
         |> handle_created(user)
     end

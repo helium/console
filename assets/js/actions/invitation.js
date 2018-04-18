@@ -4,12 +4,22 @@ import { DELETED_ENTITY } from './main'
 import { displayInfo } from '../util/messages'
 
 export const RECEIVED_INVITATION = 'RECEIVED_INVITATION'
+export const UPDATED_INVITATION = 'UPDATED_INVITATION'
 
 export const receivedInvitation = (invitation) => {
   const entities = normalizeInvitation(invitation)
 
   return {
     type: RECEIVED_INVITATION,
+    entities
+  }
+}
+
+export const updatedInvitation = (invitation) => {
+  const entities = normalizeInvitation(invitation)
+
+  return {
+    type: UPDATED_INVITATION,
     entities
   }
 }
