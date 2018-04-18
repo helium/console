@@ -20,6 +20,7 @@ defmodule ConsoleWeb.InvitationController do
                Teams.join_team(existing_user, current_team, attrs["role"]) do
           membership = membership |> Teams.fetch_assoc_membership()
           Email.joined_team_email(membership) |> Mailer.deliver_later()
+          ConsoleWeb.MembershipController.broadcast(membership, "new")
 
           conn
           |> put_status(:created)
@@ -31,6 +32,7 @@ defmodule ConsoleWeb.InvitationController do
         with {:ok, %Invitation{} = invitation} <-
                Teams.create_invitation(current_user, current_team, attrs) do
           Email.invitation_email(invitation) |> Mailer.deliver_later()
+          broadcast(invitation, "new")
 
           conn
           |> put_status(:created)
@@ -65,10 +67,17 @@ defmodule ConsoleWeb.InvitationController do
 
     if invitation.pending do
       with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
+        broadcast(invitation, "delete")
         send_resp(conn, :no_content, "")
       end
     else
       {:error, :forbidden, "Cannot remove an invitation that has already been used"}
     end
+  end
+
+  def broadcast(%Invitation{} = invitation, action) do
+    invitation = invitation |> Teams.fetch_assoc_invitation()
+    body = ConsoleWeb.InvitationView.render("show.json", invitation: invitation)
+    ConsoleWeb.Endpoint.broadcast("invitation:#{invitation.team_id}", action, body)
   end
 end

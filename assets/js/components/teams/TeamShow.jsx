@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import pick from 'lodash/pick'
 import { fetchTeam } from '../../actions/team'
 import { deleteInvitation } from '../../actions/invitation'
 import { deleteMembership, updateMembership } from '../../actions/membership'
@@ -107,15 +106,15 @@ function mapStateToProps(state, ownProps) {
   const team = state.entities.teams[currentTeamId]
 
   let memberships = []
-  if (team !== undefined && team.memberships !== undefined) {
+  if (team !== undefined) {
     memberships = Object
-      .values(pick(state.entities.memberships, team.memberships))
+      .values(state.entities.memberships)
   }
 
   let invitations = []
-  if (team !== undefined && team.invitations !== undefined) {
+  if (team !== undefined) {
     invitations = Object
-      .values(pick(state.entities.invitations, team.invitations))
+      .values(state.entities.invitations)
       .filter(invitation => invitation.pending)
   }
 

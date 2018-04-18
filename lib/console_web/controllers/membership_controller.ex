@@ -11,6 +11,7 @@ defmodule ConsoleWeb.MembershipController do
 
     with {:ok, %Membership{} = membership} <- Teams.update_membership(membership, attrs) do
       membership = membership |> Teams.fetch_assoc_membership()
+      broadcast(membership, "update")
       render(conn, "show.json", membership: membership)
     end
   end
@@ -19,7 +20,14 @@ defmodule ConsoleWeb.MembershipController do
     membership = Teams.get_membership!(id)
 
     with {:ok, %Membership{}} <- Teams.delete_membership(membership) do
+      broadcast(membership, "delete")
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def broadcast(%Membership{} = membership, action) do
+    membership = membership |> Teams.fetch_assoc_membership()
+    body = ConsoleWeb.MembershipView.render("show.json", membership: membership)
+    ConsoleWeb.Endpoint.broadcast("membership:#{membership.team_id}", action, body)
   end
 end

@@ -6,6 +6,8 @@ import { receivedEvent, deletedEvent } from '../actions/event'
 import { receivedDevice, deletedDevice } from '../actions/device'
 import { receivedGateway, deletedGateway } from '../actions/gateway'
 import { receivedChannel, deletedChannel } from '../actions/channel'
+import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
+import { receivedInvitation, deletedInvitation } from '../actions/invitation'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -55,6 +57,10 @@ class SocketHandler extends Component {
       deletedGateway,
       receivedChannel,
       deletedChannel,
+      receivedInvitation,
+      deletedInvitation,
+      receivedMembership,
+      deletedMembership,
       apikey,
       currentTeamId
     } = this.props
@@ -69,6 +75,8 @@ class SocketHandler extends Component {
       this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
       this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
       this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
+      this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership)
+      this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation)
     }
   }
 
@@ -115,7 +123,12 @@ function mapDispatchToProps(dispatch) {
     receivedGateway,
     deletedGateway,
     receivedChannel,
-    deletedChannel
+    deletedChannel,
+    receivedMembership,
+    deletedMembership,
+    updatedMembership,
+    receivedInvitation,
+    deletedInvitation,
   }, dispatch);
 }
 
