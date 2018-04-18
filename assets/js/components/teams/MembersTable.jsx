@@ -20,7 +20,7 @@ const Role = (props) => {
 }
 
 const MembershipRow = (props) => {
-  const { membership, deleteMembership } = props
+  const { membership, deleteMembership, openEditMembershipModal } = props
 
   return (
     <TableRow key={membership.id}>
@@ -32,7 +32,12 @@ const MembershipRow = (props) => {
       </TableCell>
       <TableCell> {moment(membership.joined_at).format('LL')} </TableCell>
       <TableCell>
-        <Button variant="raised" size="small" style={{marginRight: 16}}>
+        <Button
+          onClick={() => openEditMembershipModal(membership)}
+          variant="raised"
+          size="small"
+          style={{marginRight: 16}}
+        >
           Edit
         </Button>
 
@@ -72,7 +77,8 @@ class MembersTable extends Component {
 
   render() {
     const {
-      memberships, invitations, deleteInvitation, deleteMembership
+      memberships, invitations, deleteInvitation, deleteMembership,
+      openEditMembershipModal
     } = this.props
 
     return(
@@ -91,6 +97,7 @@ class MembersTable extends Component {
               key={membership.id}
               membership={membership}
               deleteMembership={() => deleteMembership(membership)}
+              openEditMembershipModal={openEditMembershipModal}
             />
           )}
           {invitations.map(invitation =>
