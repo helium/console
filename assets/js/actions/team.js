@@ -1,6 +1,8 @@
 import * as rest from '../util/rest';
 import { getTeamId } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'
+import { receivedInvitation } from './invitation'
+import { receivedMembership } from './membership'
 
 export const FETCH_TEAMS = 'FETCH_TEAMS'
 export const RECEIVED_TEAMS = 'RECEIVED_TEAMS'
@@ -80,6 +82,13 @@ export const switchedTeam = (apikey) => {
 export const inviteUser = (invitation) => {
   return (dispatch) => {
     rest.post(`/api/invitations`, { invitation })
-    .then(response => console.log(response))
+    .then(response => {
+      if (response.data.type === "invitations") {
+        dispatch(receivedInvitation(response.data))
+      }
+      if (response.data.type === "memberships") {
+        dispatch(receivedMembership(response.data))
+      }
+    })
   }
 }

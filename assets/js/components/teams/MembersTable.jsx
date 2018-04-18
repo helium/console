@@ -10,6 +10,8 @@ const Role = (props) => {
   switch(props.role) {
     case 'owner':
       return <span>Administrator (Owner)</span>
+    case 'admin':
+      return <span>Administrator</span>
     case 'viewer':
       return <span>Viewer (Read-Only)</span>
     default:
@@ -17,43 +19,77 @@ const Role = (props) => {
   }
 }
 
+const MembershipRow = (props) => {
+  const { membership } = props
+
+  return (
+    <TableRow key={membership.id}>
+      <TableCell>
+        {membership.email}
+      </TableCell>
+      <TableCell>
+        <Role role={membership.role} />
+      </TableCell>
+      <TableCell> {moment(membership.joined_at).format('LL')} </TableCell>
+      <TableCell>
+        <Button variant="raised" size="small" style={{marginRight: 16}}>
+          Edit
+        </Button>
+
+        <Button variant="raised" color="secondary" size="small">
+          Remove
+        </Button>
+      </TableCell>
+    </TableRow>
+  )
+}
+
+const InvitationRow = (props) => {
+  const { invitation } = props
+
+  return (
+    <TableRow key={invitation.id}>
+      <TableCell>
+        {invitation.email}
+      </TableCell>
+      <TableCell>
+        <Role role={invitation.role} />
+      </TableCell>
+      <TableCell>
+        <span>Invitation Sent</span>
+      </TableCell>
+      <TableCell>
+        <Button variant="raised" color="secondary" size="small">
+          Remove
+        </Button>
+      </TableCell>
+    </TableRow>
+  )
+}
+
 
 class MembersTable extends Component {
 
   render() {
-    const { members } = this.props
+    const { memberships, invitations } = this.props
 
     return(
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Email</TableCell>
+            <TableCell>User</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Joined</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {members.map(member => {
-            return (
-              <TableRow key={member.id}>
-                <TableCell> {member.email} </TableCell>
-                <TableCell>
-                  <Role role={member.role} />
-                </TableCell>
-                <TableCell> {moment(member.joined_at).format('LL')} </TableCell>
-                <TableCell>
-                  <Button variant="raised" size="small" style={{marginRight: 16}}>
-                    Edit
-                  </Button>
-
-                  <Button variant="raised" color="secondary" size="small">
-                    Remove
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          {memberships.map(membership =>
+            <MembershipRow key={membership.id} membership={membership} />
+          )}
+          {invitations.map(invitation =>
+            <InvitationRow key={invitation.id} invitation={invitation} />
+          )}
         </TableBody>
       </Table>
     )

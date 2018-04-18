@@ -8,6 +8,7 @@ defmodule Console.Teams.Team do
     field :name, :string
     has_many :memberships, Console.Teams.Membership
     many_to_many :users, Console.Auth.User, join_through: "memberships"
+    has_many :invitations, Console.Teams.Invitation
 
     has_many :devices, Console.Devices.Device
     has_many :gateways, Console.Gateways.Gateway
