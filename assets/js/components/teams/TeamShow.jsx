@@ -71,15 +71,18 @@ class TeamShow extends Component {
 function mapStateToProps(state, ownProps) {
   const currentTeamId = state.auth.currentTeamId
   const team = state.entities.teams[currentTeamId]
+
   let memberships = []
   if (team !== undefined && team.memberships !== undefined) {
-    memberships = Object.values(state.entities.memberships, team.memberships)
+    memberships = Object
+      .values(pick(state.entities.memberships, team.memberships))
   }
 
   let invitations = []
   if (team !== undefined && team.invitations !== undefined) {
-    invitations = Object.values(state.entities.invitations, team.invitations)
-    invitations = invitations.filter(invitation => invitation.pending)
+    invitations = Object
+      .values(pick(state.entities.invitations, team.invitations))
+      .filter(invitation => invitation.pending)
   }
 
   return {
