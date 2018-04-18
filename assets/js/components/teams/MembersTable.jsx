@@ -84,16 +84,12 @@ class MembersTable extends Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {memberships.map(membership => {
-            return (
-              <MembershipRow key={membership.id} membership={membership} />
-            );
-          })}
-          {invitations.map(invitation => {
-            return (
-              <InvitationRow key={invitation.id} invitation={invitation} />
-            );
-          })}
+          {memberships.map(membership =>
+            <MembershipRow key={membership.id} membership={membership} />
+          )}
+          {invitations.map(invitation =>
+            <InvitationRow key={invitation.id} invitation={invitation} />
+          )}
         </TableBody>
       </Table>
     )
