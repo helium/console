@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchTeam } from '../../actions/team'
 import { deleteInvitation } from '../../actions/invitation'
+import { deleteMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
@@ -42,7 +43,9 @@ class TeamShow extends Component {
   }
 
   render() {
-    const { memberships, invitations, deleteInvitation } = this.props
+    const {
+      memberships, invitations, deleteInvitation, deleteMembership
+    } = this.props
 
     return (
       <DashboardLayout title="Team Access">
@@ -53,6 +56,7 @@ class TeamShow extends Component {
               memberships={memberships}
               invitations={invitations}
               deleteInvitation={deleteInvitation}
+              deleteMembership={deleteMembership}
             />
 
           </CardContent>
@@ -98,7 +102,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchTeam, deleteInvitation }, dispatch);
+  return bindActionCreators({ fetchTeam, deleteInvitation, deleteMembership }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamShow);

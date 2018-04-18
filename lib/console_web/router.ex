@@ -35,6 +35,7 @@ defmodule ConsoleWeb.Router do
       post "/switch", TeamController, :switch, as: :switch
     end
     resources "/invitations", InvitationController, only: [:create, :delete]
+    resources "/memberships", MembershipController, only: [:delete]
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
