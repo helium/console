@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchTeam } from '../../actions/team'
 import { deleteInvitation } from '../../actions/invitation'
-import { deleteMembership } from '../../actions/membership'
+import { deleteMembership, updateMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
+import EditMembershipModal from './EditMembershipModal'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -22,11 +23,15 @@ class TeamShow extends Component {
     super(props)
 
     this.state = {
-      newUserOpen: false
+      newUserOpen: false,
+      editMembershipOpen: false,
+      editingMembership: null
     }
 
     this.openNewUserModal = this.openNewUserModal.bind(this)
     this.closeNewUserModal = this.closeNewUserModal.bind(this)
+    this.openEditMembershipModal = this.openEditMembershipModal.bind(this)
+    this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
   }
 
   componentDidMount() {
@@ -42,9 +47,21 @@ class TeamShow extends Component {
     this.setState({newUserOpen: false})
   }
 
+  openEditMembershipModal(membership) {
+    this.setState({
+      editMembershipOpen: true,
+      editingMembership: membership
+    })
+  }
+
+  closeEditMembershipModal() {
+    this.setState({editMembershipOpen: false})
+  }
+
   render() {
     const {
-      memberships, invitations, deleteInvitation, deleteMembership
+      memberships, invitations, deleteInvitation, deleteMembership,
+      updateMembership
     } = this.props
 
     return (
@@ -57,6 +74,7 @@ class TeamShow extends Component {
               invitations={invitations}
               deleteInvitation={deleteInvitation}
               deleteMembership={deleteMembership}
+              openEditMembershipModal={this.openEditMembershipModal}
             />
 
           </CardContent>
@@ -71,6 +89,13 @@ class TeamShow extends Component {
         <NewUserModal
           open={this.state.newUserOpen}
           onClose={this.closeNewUserModal}
+        />
+
+        <EditMembershipModal
+          open={this.state.editMembershipOpen}
+          onClose={this.closeEditMembershipModal}
+          membership={this.state.editingMembership}
+          updateMembership={updateMembership}
         />
       </DashboardLayout>
     )
@@ -102,7 +127,9 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchTeam, deleteInvitation, deleteMembership }, dispatch);
+  return bindActionCreators({
+    fetchTeam, deleteInvitation, deleteMembership, updateMembership
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamShow);

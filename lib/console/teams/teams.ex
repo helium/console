@@ -111,6 +111,12 @@ defmodule Console.Teams do
     end
   end
 
+  def update_membership(%Membership{} = membership, attrs) do
+    membership
+    |> Membership.changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_invitation(%Invitation{} = invitation) do
     Repo.delete(invitation)
   end

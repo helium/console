@@ -26,6 +26,17 @@ export const post = (path, data) => {
   return checkTokenBeforeApiCall(originalApiCall)
 }
 
+export const put = (path, data) => {
+  const originalApiCall = axios({
+    url: path,
+    method: 'put',
+    headers: headers(),
+    data
+  })
+
+  return checkTokenBeforeApiCall(originalApiCall)
+}
+
 export const destroy = (path) => {
   const originalApiCall = axios({
     url: path,
