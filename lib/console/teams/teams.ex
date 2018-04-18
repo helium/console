@@ -28,6 +28,10 @@ defmodule Console.Teams do
     Repo.get!(Invitation, id)
   end
 
+  def get_membership!(id) do
+    Repo.get!(Membership, id)
+  end
+
   def user_has_access?(%User{} = user, %Team{} = team) do
     query =
       from(
@@ -109,5 +113,9 @@ defmodule Console.Teams do
 
   def delete_invitation(%Invitation{} = invitation) do
     Repo.delete(invitation)
+  end
+
+  def delete_membership(%Membership{} = membership) do
+    Repo.delete(membership)
   end
 end
