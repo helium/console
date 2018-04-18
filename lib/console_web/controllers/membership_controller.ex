@@ -6,6 +6,11 @@ defmodule ConsoleWeb.MembershipController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
+  def index(conn, _params) do
+    current_team = conn.assigns.current_team |> Teams.fetch_assoc([memberships: [:user]])
+    render(conn, "index.json", memberships: current_team.memberships)
+  end
+
   def update(conn, %{"id" => id, "membership" => attrs}) do
     membership = Teams.get_membership!(id)
 
