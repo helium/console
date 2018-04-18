@@ -59,4 +59,16 @@ defmodule ConsoleWeb.InvitationController do
         |> halt()
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    invitation = Teams.get_invitation!(id)
+
+    if invitation.pending do
+      with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
+        send_resp(conn, :no_content, "")
+      end
+    else
+      {:error, :forbidden, "Cannot remove an invitation that has already been used"}
+    end
+  end
 end

@@ -106,4 +106,8 @@ defmodule Console.Teams do
     else nil -> {false, nil}
     end
   end
+
+  def delete_invitation(%Invitation{} = invitation) do
+    Repo.delete(invitation)
+  end
 end

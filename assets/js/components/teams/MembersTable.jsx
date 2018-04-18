@@ -45,7 +45,7 @@ const MembershipRow = (props) => {
 }
 
 const InvitationRow = (props) => {
-  const { invitation } = props
+  const { invitation, deleteInvitation } = props
 
   return (
     <TableRow key={invitation.id}>
@@ -59,7 +59,7 @@ const InvitationRow = (props) => {
         <span>Invitation Sent</span>
       </TableCell>
       <TableCell>
-        <Button variant="raised" color="secondary" size="small">
+        <Button onClick={deleteInvitation} variant="raised" color="secondary" size="small">
           Remove
         </Button>
       </TableCell>
@@ -71,7 +71,7 @@ const InvitationRow = (props) => {
 class MembersTable extends Component {
 
   render() {
-    const { memberships, invitations } = this.props
+    const { memberships, invitations, deleteInvitation } = this.props
 
     return(
       <Table>
@@ -88,7 +88,11 @@ class MembersTable extends Component {
             <MembershipRow key={membership.id} membership={membership} />
           )}
           {invitations.map(invitation =>
-            <InvitationRow key={invitation.id} invitation={invitation} />
+            <InvitationRow
+              key={invitation.id}
+              invitation={invitation}
+              deleteInvitation={() => deleteInvitation(invitation)}
+            />
           )}
         </TableBody>
       </Table>
