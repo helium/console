@@ -93,7 +93,7 @@ class SocketHandler extends Component {
     channel.on("delete", res => deleteHandler(res))
 
     if (updateHandler !== undefined) {
-      channel.on("update", res => deleteHandler(res))
+      channel.on("update", res => updateHandler(res))
     }
   }
 
