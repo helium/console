@@ -1,5 +1,14 @@
 import Noty from 'noty'
 
+const timeouts = {}
+
+const debounceMessage = (key, config) => {
+  const clearKey = () => { delete timeouts[key] }
+  if (timeouts[key]) return
+  timeouts[key] = setTimeout(clearKey, 300)
+  new Noty(config).show()
+}
+
 export const displayInfo = (msg) => {
   if (msg) {
     const config = {
@@ -9,7 +18,7 @@ export const displayInfo = (msg) => {
       timeout: 5000
     }
 
-    new Noty(config).show()
+    debounceMessage(msg, config)
   }
 }
 
@@ -21,6 +30,6 @@ export const displayError = (errorMsg) => {
     timeout: 5000
   }
 
-  new Noty(config).show()
+  debounceMessage(msg, config)
 }
 

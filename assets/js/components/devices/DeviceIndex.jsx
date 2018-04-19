@@ -7,6 +7,7 @@ import RandomDeviceButton from './RandomDeviceButton'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
+import {displayInfo} from '../../util/messages'
 
 // MUI
 import Button from 'material-ui/Button'
@@ -17,6 +18,14 @@ class DeviceIndex extends Component {
   componentDidMount() {
     const { fetchDevices } = this.props
     fetchDevices()
+    displayInfo("hello there")
+    displayInfo("hello there")
+    displayInfo("hello there")
+    displayInfo("hello there")
+    displayInfo("hello there")
+    displayInfo("hi there")
+
+    setTimeout(() => displayInfo("hello there"), 500)
   }
 
   render() {
