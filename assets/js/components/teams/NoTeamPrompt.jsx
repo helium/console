@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { createTeam, switchTeam } from '../../actions/team'
+import { createTeam } from '../../actions/team'
 import { logOut } from '../../actions/auth'
 import AuthLayout from '../common/AuthLayout'
 
@@ -10,7 +10,7 @@ import AuthLayout from '../common/AuthLayout'
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
+import Card, { CardContent } from 'material-ui/Card';
 import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({
@@ -108,14 +108,11 @@ class NoTeamPrompt extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    teams: Object.values(state.entities.teams),
-    currentTeam: state.entities.teams[state.auth.currentTeamId]
-  }
+  return { }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createTeam, switchTeam, logOut }, dispatch);
+  return bindActionCreators({ createTeam, logOut }, dispatch);
 }
 
 const styled = withStyles(styles)(NoTeamPrompt)
