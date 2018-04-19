@@ -6,6 +6,8 @@ defmodule ConsoleWeb.UserSocket do
   channel("device:*", ConsoleWeb.DeviceChannel)
   channel("gateway:*", ConsoleWeb.GatewayChannel)
   channel("channel:*", ConsoleWeb.ChannelChannel)
+  channel("membership:*", ConsoleWeb.MembershipChannel)
+  channel("invitation:*", ConsoleWeb.InvitationChannel)
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket,

@@ -2,10 +2,14 @@ import { schema, normalize } from 'normalizr'
 
 const membership = new schema.Entity('memberships')
 
+export const membershipsSchema = [membership]
 export const membershipSchema = membership
 
+export const normalizeMemberships = (membershipsData) => {
+  return normalize(membershipsData, membershipsSchema).entities
+}
+
 export const normalizeMembership = (membershipData) => {
-  const normalizedData = normalize(membershipData, membershipSchema)
-  return normalizedData.entities
+  return normalize(membershipData, membershipSchema).entities
 }
 

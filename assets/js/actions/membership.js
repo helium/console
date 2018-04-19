@@ -1,10 +1,29 @@
 import * as rest from '../util/rest';
-import { normalizeMembership } from '../schemas/membership'
+import { normalizeMembership, normalizeMemberships  } from '../schemas/membership'
 import { DELETED_ENTITY } from './main'
 import { displayInfo } from '../util/messages'
 
+export const RECEIVED_MEMBERSHIPS = 'RECEIVED_MEMBERSHIPS'
 export const RECEIVED_MEMBERSHIP = 'RECEIVED_MEMBERSHIP'
 export const UPDATED_MEMBERSHIP = 'UPDATED_MEMBERSHIP'
+
+export const fetchMemberships = () => {
+  return (dispatch) => {
+    rest.get('/api/memberships')
+      .then(response => {
+        return dispatch(receivedMemberships(response.data))
+      })
+  }
+}
+
+export const receivedMemberships = (memberships) => {
+  const entities = normalizeMemberships(memberships)
+
+  return {
+    type: RECEIVED_MEMBERSHIPS,
+    entities
+  }
+}
 
 export const receivedMembership = (membership) => {
   const entities = normalizeMembership(membership)

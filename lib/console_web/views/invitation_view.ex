@@ -2,6 +2,10 @@ defmodule ConsoleWeb.InvitationView do
   use ConsoleWeb, :view
   alias ConsoleWeb.InvitationView
 
+  def render("index.json", %{invitations: invitations}) do
+    render_many(invitations, InvitationView, "invitation.json")
+  end
+
   def render("show.json", %{invitation: invitation}) do
     render_one(invitation, InvitationView, "invitation.json")
   end

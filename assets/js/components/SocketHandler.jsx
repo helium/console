@@ -6,6 +6,8 @@ import { receivedEvent, deletedEvent } from '../actions/event'
 import { receivedDevice, deletedDevice } from '../actions/device'
 import { receivedGateway, deletedGateway } from '../actions/gateway'
 import { receivedChannel, deletedChannel } from '../actions/channel'
+import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
+import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -55,6 +57,12 @@ class SocketHandler extends Component {
       deletedGateway,
       receivedChannel,
       deletedChannel,
+      receivedInvitation,
+      deletedInvitation,
+      updatedInvitation,
+      receivedMembership,
+      deletedMembership,
+      updatedMembership,
       apikey,
       currentTeamId
     } = this.props
@@ -69,10 +77,12 @@ class SocketHandler extends Component {
       this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
       this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
       this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
+      this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
+      this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
     }
   }
 
-  join(channelName, newHandler, deleteHandler) {
+  join(channelName, newHandler, deleteHandler, updateHandler) {
     let channel = this.socket.channel(channelName, {})
 
     channel.join()
@@ -81,6 +91,10 @@ class SocketHandler extends Component {
 
     channel.on("new", res => newHandler(res))
     channel.on("delete", res => deleteHandler(res))
+
+    if (updateHandler !== undefined) {
+      channel.on("update", res => updateHandler(res))
+    }
   }
 
   disconnect() {
@@ -115,7 +129,13 @@ function mapDispatchToProps(dispatch) {
     receivedGateway,
     deletedGateway,
     receivedChannel,
-    deletedChannel
+    deletedChannel,
+    receivedMembership,
+    deletedMembership,
+    updatedMembership,
+    receivedInvitation,
+    deletedInvitation,
+    updatedInvitation,
   }, dispatch);
 }
 
