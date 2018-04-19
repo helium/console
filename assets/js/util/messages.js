@@ -2,10 +2,15 @@ import Noty from 'noty'
 
 const timeouts = {}
 
-const debounceMessage = (key, config) => {
-  const clearKey = () => { delete timeouts[key] }
+const makeKey = (config) => {
+  // use a base-64 encoded, stringified version of the config to craft a key
+  return btoa(JSON.stringify(config))
+}
+
+const debounceMessage = (config) => {
+  const key = makeKey(config)
   if (timeouts[key]) return
-  timeouts[key] = setTimeout(clearKey, 300)
+  timeouts[key] = setTimeout(() => { delete timeouts[key]}, 300)
   new Noty(config).show()
 }
 
@@ -18,7 +23,7 @@ export const displayInfo = (msg) => {
       timeout: 5000
     }
 
-    debounceMessage(msg, config)
+    debounceMessage(config)
   }
 }
 
@@ -30,6 +35,6 @@ export const displayError = (errorMsg) => {
     timeout: 5000
   }
 
-  debounceMessage(msg, config)
+  debounceMessage(config)
 }
 
