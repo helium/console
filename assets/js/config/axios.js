@@ -30,6 +30,11 @@ axios.interceptors.response.use(
     } else {
       displayError()
     }
+
+    if (error.response.data.type === "forbidden_team") {
+      store.dispatch(logOut())
+    }
+
     return Promise.reject(error);
   }
 )
