@@ -9,6 +9,8 @@ defmodule Console.Auth do
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
   alias Console.Teams.Invitation
+  alias Console.Teams.Invitation
+  alias Console.Teams.Team
   alias Console.Helpers
 
   def get_user_by_id!(id) do
@@ -213,9 +215,14 @@ defmodule Console.Auth do
     generate_session_token(user, current_team)
   end
 
-  def generate_session_token(user, current_team) do
+  def generate_session_token(%User{} = user, %Team{} = current_team) do
     claims = %{team: current_team.id}
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
+    token
+  end
+
+  def generate_session_token(%User{} = user, nil) do
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{}, ttl: { 1, :day })
     token
   end
 

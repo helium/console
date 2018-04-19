@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { getTeamId } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'
@@ -47,7 +48,7 @@ export const receivedTeam = (team) => {
 }
 
 
-export const createTeam = (name) => {
+export const createTeam = (name, afterSwitchPath) => {
   return (dispatch) => {
     rest.post('/api/teams', {
         team: {
@@ -56,17 +57,20 @@ export const createTeam = (name) => {
       })
       .then(response => {
         dispatch(receivedTeam(response.data))
-        dispatch(switchTeam(response.data.id))
+        dispatch(switchTeam(response.data.id, afterSwitchPath))
       })
   }
 }
 
-export const switchTeam = (id) => {
+export const switchTeam = (id, afterSwitchPath) => {
   return (dispatch) => {
     rest.post(`/api/teams/${id}/switch`)
       .then(response => {
-        return dispatch(switchedTeam(response.data.jwt))
-        // dispatch(fetchTeams())
+        dispatch(switchedTeam(response.data.jwt))
+
+        if (afterSwitchPath) {
+          dispatch(push(afterSwitchPath))
+        }
       })
   }
 }

@@ -29,6 +29,7 @@ import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import TeamIndex from './components/teams/TeamIndex'
 import TeamShow from './components/teams/TeamShow'
+import NoTeamPrompt from './components/teams/NoTeamPrompt'
 
 class Router extends React.Component {
   render() {
@@ -58,6 +59,7 @@ class Router extends React.Component {
                 <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
                 <PrivateRoute exact path="/teams" component={TeamIndex} />
                 <PrivateRoute exact path="/teams/access" component={TeamShow} />
+                <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
               </Switch>
             </ConnectedRouter>
           </SocketHandler>

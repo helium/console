@@ -4,23 +4,33 @@ import { connect } from 'react-redux';
 
 class PrivateRoute extends Component {
   render() {
-    const { path } = this.props
-    const { isLoggedIn } = this.props.auth
+    const { path, isLoggedIn, currentTeamId } = this.props
     const Component = this.props.component
 
     return(
-      <Route path={path} render={(p) => (
-        isLoggedIn === true
-          ? <Component {...p} />
-          : <Redirect to='/login' />
-      )} />
+      <Route path={path} render={(p) => {
+        if (!isLoggedIn) {
+          return <Redirect to='/login' />
+        }
+
+        if (!currentTeamId && path !== '/teams/none') {
+          return <Redirect to='/teams/none' />
+        }
+
+        if (currentTeamId && path === '/teams/none') {
+          return <Redirect to='/devices' />
+        }
+
+        return <Component {...p} />
+      }} />
     )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    auth: state.auth
+    isLoggedIn: state.auth.isLoggedIn,
+    currentTeamId: state.auth.currentTeamId
   }
 }
 

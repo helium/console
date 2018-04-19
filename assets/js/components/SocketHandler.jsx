@@ -21,29 +21,31 @@ class SocketHandler extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isLoggedIn) {
+    if (this.props.isLoggedIn && this.props.currentTeamId) {
       this.props.fetchIndices()
       this.subscribeToUpdates()
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { isLoggedIn, currentTeamId, apikey, fetchIndicies } = this.props
+
     // if the user has just logged in...
-    if (!prevProps.isLoggedIn && this.props.isLoggedIn) {
+    if (!prevProps.isLoggedIn && isLoggedIn && currentTeamId) {
       this.subscribeToUpdates()
-      return this.props.fetchIndices()
+      return fetchIndices()
     }
 
     // if the user has just signed out...
-    if (prevProps.isLoggedIn && !this.props.isLoggedIn) {
+    if (prevProps.isLoggedIn && !isLoggedIn) {
       return this.disconnect()
     }
 
     // if the user has switched teams or refreshed their api key...
-    if (prevProps.apikey !== this.props.apikey) {
+    if (prevProps.apikey !== apikey) {
       this.disconnect()
       this.subscribeToUpdates()
-      this.props.fetchIndices()
+      return fetchIndices()
     }
   }
 
@@ -67,10 +69,10 @@ class SocketHandler extends Component {
       currentTeamId
     } = this.props
 
-    if (this.socket !== undefined) { this.disconnect() }
+    this.disconnect()
 
     this.socket = new Socket("/socket", {params: {token: apikey }})
-    if (!isJwtExpired(apikey)) {
+    if (!isJwtExpired(apikey) && currentTeamId) {
       this.socket.connect()
 
       this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
@@ -98,8 +100,10 @@ class SocketHandler extends Component {
   }
 
   disconnect() {
-    console.log('disconnecting')
-    this.socket.disconnect()
+    if (this.socket !== undefined) {
+      console.log('disconnecting')
+      this.socket.disconnect()
+    }
   }
 
   render() {
