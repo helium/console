@@ -17,6 +17,10 @@ class PrivateRoute extends Component {
           return <Redirect to='/teams/none' />
         }
 
+        if (currentTeamId && path === '/teams/none') {
+          return <Redirect to='/devices' />
+        }
+
         return <Component {...p} />
       }} />
     )
