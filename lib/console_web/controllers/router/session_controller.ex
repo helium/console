@@ -1,5 +1,6 @@
 defmodule ConsoleWeb.Router.SessionController do
   use ConsoleWeb, :controller
+  import ConsoleWeb.AuthErrorHandler
 
   def create(conn, %{"secret" => given_secret}) do
     valid_secrets = Application.fetch_env!(:console, :router_secrets)
@@ -28,8 +29,8 @@ defmodule ConsoleWeb.Router.SessionController do
       |> render("show.json", jwt: token)
     else
       conn
-      |> put_status(:unauthorized)
-      |> render(ConsoleWeb.ErrorView, "error.json", error: "Invalid secret")
+      |> auth_error({:invalid_secret, :invalid_secret}, %{})
+      |> halt()
     end
   end
 
