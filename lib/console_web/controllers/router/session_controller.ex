@@ -34,6 +34,14 @@ defmodule ConsoleWeb.Router.SessionController do
     end
   end
 
+  def refresh(conn, %{"jwt" => jwt}) do
+    with {:ok, _, {newToken, _}} = ConsoleWeb.Guardian.refresh(jwt, ttl: { 1, :day }) do
+      conn
+      |> put_status(:created)
+      |> render("show.json", jwt: newToken)
+    end
+  end
+
   def secret(conn, _params) do
     conn
     |> render("secret.json", %{})

@@ -48,7 +48,7 @@ defmodule ConsoleWeb.Router do
     pipe_through :api
 
     post "/sessions", SessionController, :create
-    post "/sessions", SessionController, :refresh
+    post "/sessions/refresh", SessionController, :refresh
   end
 
   scope "/api/router", ConsoleWeb.Router do
