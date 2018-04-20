@@ -44,6 +44,17 @@ defmodule ConsoleWeb.Router do
     post "/sessions/refresh", SessionController, :refresh
   end
 
+  scope "/api/router", ConsoleWeb.Router do
+    pipe_through :api
+
+    post "/sessions", SessionController, :create
+    post "/sessions", SessionController, :refresh
+  end
+
+  # scope "api/router", ConsoleWeb do
+  #   pipe_through ConsoleWeb.RouterApiPipeline
+  # end
+
   if Mix.env == :dev do
     forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end
