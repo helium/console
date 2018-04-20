@@ -10,7 +10,7 @@ const makeKey = (config) => {
 const debounceMessage = (config) => {
   const key = makeKey(config)
   if (timeouts[key]) return
-  timeouts[key] = setTimeout(() => { delete timeouts[key]}, 300)
+  timeouts[key] = setTimeout(() => { delete timeouts[key] }, 300)
   new Noty(config).show()
 }
 
