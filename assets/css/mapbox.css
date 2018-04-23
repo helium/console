@@ -431,3 +431,28 @@ a.mapboxgl-ctrl-logo {
     }
 /* stylelint-enable */
 }
+
+.mapboxgl-marker .inner {
+  position: absolute;
+  background-color: red;
+  height: 10px;
+  width: 10px;
+  border-radius: 5px;
+  left: -5px;
+  top: -5px;
+  z-index: 2;
+}
+
+.mapboxgl-marker .outer {
+  position: absolute;
+  background-color: yellow;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  left: -10px;
+  top: -10px;
+}
+
+.mapboxgl-marker .popover {
+  position: absolute;
+}

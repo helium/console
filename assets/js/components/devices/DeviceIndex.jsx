@@ -26,7 +26,7 @@ class DeviceIndex extends Component {
     return(
       <DashboardLayout title={"All Devices"}>
         <Paper>
-          <Mapbox />
+          <Mapbox elements={this.props.devices}/>
         </Paper>
         <Paper>
           {devices.length === 0 ? (
