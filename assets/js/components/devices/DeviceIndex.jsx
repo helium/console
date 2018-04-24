@@ -7,7 +7,6 @@ import RandomDeviceButton from './RandomDeviceButton'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
-import Mapbox from '../common/Mapbox'
 
 // MUI
 import Button from 'material-ui/Button'
@@ -26,7 +25,6 @@ class DeviceIndex extends Component {
     return(
       <DashboardLayout title={"All Devices"}>
         <Paper>
-          <Mapbox elements={this.props.devices}/>
         </Paper>
         <Paper>
           {devices.length === 0 ? (

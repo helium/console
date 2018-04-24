@@ -74,7 +74,8 @@ exports.config = {
     whitelist: ["phoenix", "phoenix_html", "react", "react-dom"],
     styles: {
       noty: ["lib/noty.css"],
-      "react-table": ["react-table.css"]
+      "react-table": ["react-table.css"],
+      "mapbox-gl": ["dist/mapbox-gl.css"]
     }
   }
 };

@@ -8,6 +8,7 @@ import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
+import Mapbox from '../common/Mapbox'
 
 // MUI
 import AppBar from 'material-ui/AppBar'
@@ -44,9 +45,7 @@ class GatewayIndex extends Component {
 
     const mapView = (
       <Paper>
-        <Typography variant="display1" style={{textAlign: 'center', padding: '3em', color: "#e0e0e0"}}>
-          Map goes here
-        </Typography>
+        <Mapbox type={"gateways"} elements={this.props.gateways}/>
       </Paper>
     )
 
