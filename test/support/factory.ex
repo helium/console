@@ -8,6 +8,7 @@ defmodule Console.Factory do
   alias Console.Events.Event
   alias Console.Teams.Team
   alias Console.Teams.Invitation
+  alias Console.Groups.Group
 
   def user_factory do
     %User{
@@ -16,7 +17,7 @@ defmodule Console.Factory do
       confirmed_at: DateTime.utc_now()
     }
   end
-  
+
   def unconfirmedUser_factory do
     %User{
       email: sequence(:email, &"email-#{&1}@example.com"),
@@ -76,6 +77,12 @@ defmodule Console.Factory do
       email: sequence(:email, &"email-#{&1}@example.com"),
       role: sequence(:role, ~w(admin viewer)),
       token: sequence(:token, &"TOKEN-#{&1}")
+    }
+  end
+
+  def group_factory do
+    %Group{
+      name: sequence(:name, &"group #{&1}")
     }
   end
 end
