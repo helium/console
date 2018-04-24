@@ -30,6 +30,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(conn, 201) == %{
         "id" => id,
         "active" => true,
+        "credentials" => %{"a" => "b"},
         "name" => "some name",
         "type" => "some type",
         "team_id" => team.id
@@ -51,6 +52,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(conn, 200) == %{
         "id" => channel.id,
         "active" => false,
+        "credentials" => %{"a" => "c"},
         "name" => "some updated name",
         "type" => "some updated type",
         "team_id" => team.id
