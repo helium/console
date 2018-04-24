@@ -14,9 +14,9 @@ defmodule ConsoleWeb.ChannelView do
   def render("channel.json", %{channel: channel}) do
     %{
       id: channel.id,
-      token: channel.token,
       name: channel.name,
       type: channel.type,
+      credentials: channel.credentials,
       active: channel.active,
       team_id: channel.team_id
     }

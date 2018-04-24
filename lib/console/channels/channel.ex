@@ -13,7 +13,6 @@ defmodule Console.Channels.Channel do
     field :encryption_version, :binary
     field :name, :string
     field :type, :string
-    field :token, :string
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
@@ -37,8 +36,8 @@ defmodule Console.Channels.Channel do
 
   defp put_token(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true} ->
-        put_change(changeset, :token, generate_token(16))
+      %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
+        put_change(changeset, :credentials, Map.merge(creds, %{inbound_token: generate_token(16)}))
       _ -> changeset
     end
   end

@@ -105,4 +105,8 @@ defmodule Console.Channels do
   def change_channel(%Channel{} = channel) do
     Channel.changeset(channel, %{})
   end
+
+  def get_by_token(token) do
+    Repo.get_by(Channel, token: token)
+  end
 end
