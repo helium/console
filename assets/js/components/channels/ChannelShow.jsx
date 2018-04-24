@@ -35,6 +35,9 @@ class ChannelShow extends Component {
               ID: {channel.id}
             </Typography>
             <Typography component="p">
+              Token: {channel.token}
+            </Typography>
+            <Typography component="p">
               Name: {channel.name}
             </Typography>
             <Typography component="p">

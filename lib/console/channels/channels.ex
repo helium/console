@@ -55,7 +55,7 @@ defmodule Console.Channels do
   """
   def create_channel(attrs \\ %{}) do
     %Channel{}
-    |> Channel.changeset(attrs)
+    |> Channel.create_changeset(attrs)
     |> Repo.insert()
   end
 
