@@ -11,19 +11,12 @@ defmodule Console.Groups do
   alias Console.Channels.Channel
   alias Console.Teams.Team
 
-  def create_group(object, attrs \\ %{})
-
-  def create_group(%Team{} = team, attrs) do
+  def create_group(%Team{} = team, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{team_id: team.id})
 
     %Group{}
     |> Group.changeset(attrs)
     |> Repo.insert()
-  end
-
-  def create_group(%Device{} = device, attrs) do
-    %Group{}
-    |> Group.changeset(attrs)
   end
 
   def add_to_group(%Device{} = device, %Group{} = group) do
