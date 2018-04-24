@@ -7,6 +7,7 @@ import { fetchChannel, deleteChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
+import HttpDetails from './HttpDetails'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -56,6 +57,8 @@ class ChannelShow extends Component {
             </Button>
           </CardActions>
         </Card>
+
+        {channel.type === "http" && <HttpDetails channel={channel} />}
 
         <Card style={{marginTop: 24}}>
           <CardContent>
