@@ -7,6 +7,7 @@ import { fetchGateway, deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
+import Mapbox from '../common/Mapbox'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -67,6 +68,10 @@ class GatewayShow extends Component {
             </Typography>
             <EventsTable events={events} />
           </CardContent>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <Mapbox type={"gateways"} elements={[this.props.gateway]}/>
         </Card>
       </DashboardLayout>
     )
