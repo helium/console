@@ -4,6 +4,7 @@ defmodule Console.GroupsTest do
   alias Console.Groups
   alias Console.Groups.Group
   alias Console.Devices.Device
+  alias Console.Channels.Channel
 
   import Console.Factory
 
@@ -35,6 +36,21 @@ defmodule Console.GroupsTest do
       assert (%Group{} = group) = Groups.add_to_group(device2, group)
       device_ids = for d <- group.devices, do: d.id
       assert Enum.all?([device.id, device2.id], fn d -> d in device_ids end)
+    end
+
+    test "add_to_group/2 given channel and group adds channel to group" do
+      team = insert(:team)
+      channel = insert(:channel, %{team: team})
+      group = insert(:group, %{team: team})
+
+      assert (%Group{} = group) = Groups.add_to_group(channel, group)
+      assert List.first(group.channels).id == channel.id
+
+      # add another device
+      channel2 = insert(:channel, %{team: team})
+      assert (%Group{} = group) = Groups.add_to_group(channel2, group)
+      channel_ids = for c <- group.channels, do: c.id
+      assert Enum.all?([channel.id, channel2.id], fn c -> c in channel_ids end)
     end
   end
 end

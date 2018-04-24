@@ -8,6 +8,7 @@ defmodule Console.Groups do
 
   alias Console.Groups.Group
   alias Console.Devices.Device
+  alias Console.Channels.Channel
   alias Console.Teams.Team
 
   def create_group(object, attrs \\ %{})
@@ -28,6 +29,12 @@ defmodule Console.Groups do
   def add_to_group(%Device{} = device, %Group{} = group) do
     group
     |> Group.assoc_device_changeset(device)
+    |> Repo.update!()
+  end
+
+  def add_to_group(%Channel{} = channel, %Group{} = group) do
+    group
+    |> Group.assoc_channel_changeset(channel)
     |> Repo.update!()
   end
 

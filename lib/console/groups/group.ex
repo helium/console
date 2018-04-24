@@ -2,23 +2,20 @@ defmodule Console.Groups.Group do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Devices.Device
   alias Console.Groups
   alias Console.Groups.DevicesGroup
+  alias Console.Groups.ChannelsGroups
   alias Console.Teams.Team
+  alias Console.Devices.Device
+  alias Console.Channels.Channel
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "groups" do
-    field(:name, :string)
-    belongs_to(:team, Team)
-
-    many_to_many(
-      :devices,
-      Device,
-      join_through: DevicesGroup,
-      on_replace: :delete
-    )
+    field :name, :string
+    belongs_to :team, Team
+    many_to_many :devices, Device, join_through: DevicesGroup
+    many_to_many :channels, Channel, join_through: ChannelsGroups
 
     timestamps()
   end
@@ -37,5 +34,14 @@ defmodule Console.Groups.Group do
     group
     |> changeset()
     |> put_assoc(:devices, [device | group.devices])
+  end
+
+  @doc false
+  def assoc_channel_changeset(group, %Channel{} = channel) do
+    group = group |> Groups.fetch_assoc([:channels])
+
+    group
+    |> changeset()
+    |> put_assoc(:channels, [channel | group.channels])
   end
 end
