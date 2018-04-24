@@ -1,4 +1,4 @@
-defmodule Console.Groups.DevicesGroup do
+defmodule Console.Groups.DevicesGroups do
   use Ecto.Schema
 
   @primary_key {:id, :binary_id, autogenerate: true}

@@ -3,7 +3,7 @@ defmodule Console.Groups.Group do
   import Ecto.Changeset
 
   alias Console.Groups
-  alias Console.Groups.DevicesGroup
+  alias Console.Groups.DevicesGroups
   alias Console.Groups.ChannelsGroups
   alias Console.Teams.Team
   alias Console.Devices.Device
@@ -14,8 +14,8 @@ defmodule Console.Groups.Group do
   schema "groups" do
     field :name, :string
     belongs_to :team, Team
-    many_to_many :devices, Device, join_through: DevicesGroup
-    many_to_many :channels, Channel, join_through: ChannelsGroups
+    many_to_many :devices, Device, join_through: DevicesGroups, on_replace: :delete
+    many_to_many :channels, Channel, join_through: ChannelsGroups, on_replace: :delete
 
     timestamps()
   end

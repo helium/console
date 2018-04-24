@@ -4,6 +4,8 @@ defmodule Console.Channels.Channel do
 
   alias Console.Teams.Team
   alias Console.Events.Event
+  alias Console.Groups.Group
+  alias Console.Groups.ChannelsGroups
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -16,6 +18,8 @@ defmodule Console.Channels.Channel do
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
+    many_to_many :groups, Group, join_through: ChannelsGroups
+    has_many :devices, through: [:groups, :devices]
 
     timestamps()
   end

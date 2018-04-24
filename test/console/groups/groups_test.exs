@@ -52,5 +52,21 @@ defmodule Console.GroupsTest do
       channel_ids = for c <- group.channels, do: c.id
       assert Enum.all?([channel.id, channel2.id], fn c -> c in channel_ids end)
     end
+
+    test "many_to_many relationship btwn devices and channels through groups" do
+      team = insert(:team)
+      channel = insert(:channel, %{team: team})
+      device = insert(:device, %{team: team})
+      group = insert(:group, %{team: team})
+
+      Groups.add_to_group(channel, group)
+      Groups.add_to_group(device, group)
+
+      device = device |> Console.Devices.fetch_assoc([:channels])
+      assert List.first(device.channels).id == channel.id
+
+      channel = channel |> Console.Channels.fetch_assoc([:devices])
+      assert List.first(channel.devices).id == device.id
+    end
   end
 end
