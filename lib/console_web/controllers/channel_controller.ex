@@ -40,7 +40,9 @@ defmodule ConsoleWeb.ChannelController do
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, channel_params) do
-      render(conn, "show.json", channel: channel)
+      conn
+      |> put_resp_header("message", "#{channel.name} updated successfully")
+      |> render("show.json", channel: channel)
     end
   end
 

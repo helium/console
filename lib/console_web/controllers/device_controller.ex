@@ -39,7 +39,9 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-      render(conn, "show.json", device: device)
+      conn
+      |> put_resp_header("message", "#{device.name} updated successfully")
+      |> render("show.json", device: device)
     end
   end
 

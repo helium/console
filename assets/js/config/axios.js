@@ -17,6 +17,10 @@ axios.interceptors.response.use(
   response => {
     if (response.status >= 200 && response.status < 300 &&
       response.data && response.data.success_message !== undefined) displayInfo(response.data.success_message)
+
+    if (response.status >= 200 && response.status < 300 &&
+      response.headers.message !== undefined) displayInfo(response.headers.message)
+
     return response
   },
   error => {

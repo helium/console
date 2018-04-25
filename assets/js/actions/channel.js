@@ -59,6 +59,17 @@ export const createChannel = (params) => {
   }
 }
 
+export const updateChannel = (id, params) => {
+  return (dispatch) => {
+    rest.put(`/api/channels/${id}`, {
+      channel: params
+    })
+    .then(response => {
+      dispatch(receivedChannel(response.data))
+    })
+  }
+}
+
 export const deleteChannel = (channel) => {
   return (dispatch) => {
     rest.destroy(`/api/channels/${channel.id}`)

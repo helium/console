@@ -4,6 +4,8 @@ defmodule Console.Channels.Channel do
 
   alias Console.Teams.Team
   alias Console.Events.Event
+  alias Console.Channels
+  alias Console.Groups
   alias Console.Groups.Group
   alias Console.Groups.ChannelsGroups
 
@@ -18,7 +20,7 @@ defmodule Console.Channels.Channel do
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
-    many_to_many :groups, Group, join_through: ChannelsGroups
+    many_to_many :groups, Group, join_through: ChannelsGroups, on_replace: :delete
     has_many :devices, through: [:groups, :devices]
 
     timestamps()
@@ -38,6 +40,17 @@ defmodule Console.Channels.Channel do
     |> put_token()
   end
 
+  def update_changeset(channel, attrs \\ %{}) do
+    channel = channel |> Channels.fetch_assoc([:groups])
+
+    changeset =
+      channel
+      |> changeset(attrs)
+
+    changeset
+    |> put_assoc(:groups, parse_groups(changeset, attrs))
+  end
+
   defp put_token(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
@@ -50,5 +63,13 @@ defmodule Console.Channels.Channel do
     :crypto.strong_rand_bytes(length)
     |> Base.url_encode64
     |> binary_part(0, length)
+  end
+
+  defp parse_groups(changeset, attrs) do
+    (attrs["groups"] || "")
+    |> String.split(",")
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(& &1 == "")
+    |> Groups.insert_and_get_all_by_names(changeset.data.team_id)
   end
 end

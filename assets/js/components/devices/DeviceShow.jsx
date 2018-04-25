@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchDevice, deleteDevice } from '../../actions/device'
+import { fetchDevice, deleteDevice, updateDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
@@ -22,7 +22,7 @@ class DeviceShow extends Component {
   }
 
   render() {
-    const { device, events, deleteDevice } = this.props
+    const { device, events, deleteDevice, updateDevice } = this.props
 
     if (device === undefined) return (<div>loading...</div>)
 
@@ -49,6 +49,7 @@ class DeviceShow extends Component {
               <div style={{width: '50%'}}>
                 <GroupsControl
                   groups={device.groups}
+                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
                 />
               </div>
             </div>
@@ -89,7 +90,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevice, deleteDevice }, dispatch);
+  return bindActionCreators({ fetchDevice, deleteDevice, updateDevice }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);
