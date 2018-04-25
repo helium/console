@@ -32,6 +32,7 @@ defmodule Console.Channels.Channel do
     |> cast(attrs, ~w(name type active credentials team_id))
     |> validate_required([:name, :type, :active, :credentials, :team_id])
     |> put_change(:encryption_version, Cloak.version)
+    |> filter_credentials()
   end
 
   def create_changeset(channel, attrs \\ %{}) do
@@ -52,6 +53,17 @@ defmodule Console.Channels.Channel do
   end
 
   defp put_token(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
+        filtered_headers = Enum.reject(creds["headers"], fn(h) -> h["header"] == "" end)
+        creds = Map.merge(creds, %{ "headers" => filtered_headers })
+
+        put_change(changeset, :credentials, creds)
+      _ -> changeset
+    end
+  end
+
+  defp filter_credentials(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
         put_change(changeset, :credentials, Map.merge(creds, %{inbound_token: generate_token(16)}))
