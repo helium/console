@@ -13,7 +13,7 @@ defmodule Console.Events.Event do
     field(:direction, :string)
     field(:payload, :string)
     field(:payload_size, :integer)
-    field(:reported_at, :naive_datetime, default: DateTime.utc_now())
+    field(:reported_at, :naive_datetime)
     field(:rssi, :float)
     field(:signal_strength, :integer)
     field(:status, :string)
@@ -40,6 +40,7 @@ defmodule Console.Events.Event do
       :gateway_id,
       :channel_id
     ])
+    |> validate_required([:reported_at])
     |> validate_required([:direction])
     |> validate_inclusion(:direction, ~w(inbound outbound))
   end

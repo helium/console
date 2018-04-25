@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "chart.js": "^2.7.2",
     "history": "^4.7.2",
     "lodash": "^4.17.5",
     "mapbox-gl": "^0.45.0-beta.1",
@@ -22,6 +23,7 @@
     "qrcode.react": "^0.8.0",
     "query-string": "^6.0.0",
     "react": "^16.2.0",
+    "react-chartjs-2": "^2.7.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",

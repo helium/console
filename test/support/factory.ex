@@ -14,7 +14,7 @@ defmodule Console.Factory do
     %User{
       email: sequence(:email, &"email-#{&1}@example.com"),
       password_hash: "$2b$12$8JVaQdWzTkKYJoEtORLwx.BrIWMfRZQ.0loabtPw38Y2aV9geMgt6",
-      confirmed_at: DateTime.utc_now()
+      confirmed_at: NaiveDateTime.utc_now()
     }
   end
 
