@@ -55,6 +55,8 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.RouterApiPipeline
 
     get "/secret", SessionController, :secret
+
+    resources "/devices", DeviceController, only: [:show]
   end
 
   if Mix.env == :dev do
