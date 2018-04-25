@@ -2,6 +2,7 @@ defmodule ConsoleWeb.ChannelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.ChannelView
   alias ConsoleWeb.EventView
+  alias ConsoleWeb.GroupView
 
   def render("index.json", %{channels: channels}) do
     render_many(channels, ChannelView, "channel.json")
@@ -21,6 +22,7 @@ defmodule ConsoleWeb.ChannelView do
       team_id: channel.team_id
     }
     |> append_events(channel.events)
+    |> GroupView.append_group_names(channel.groups)
   end
 
   # TODO: could I import this from events view? used across 3 views

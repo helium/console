@@ -7,6 +7,7 @@ import { fetchDevice, deleteDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
+import GroupsControl from '../common/GroupsControl'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -25,7 +26,6 @@ class DeviceShow extends Component {
 
     if (device === undefined) return (<div>loading...</div>)
 
-
     return(
       <DashboardLayout title={device.name}>
         <Card>
@@ -33,15 +33,25 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Device Details
             </Typography>
-            <Typography component="p">
-              ID: {device.id}
-            </Typography>
-            <Typography component="p">
-              Name: {device.name}
-            </Typography>
-            <Typography component="p">
-              MAC: {device.mac}
-            </Typography>
+
+            <div style={{display: 'flex'}}>
+              <div style={{width: '50%'}}>
+                <Typography component="p">
+                  ID: {device.id}
+                </Typography>
+                <Typography component="p">
+                  Name: {device.name}
+                </Typography>
+                <Typography component="p">
+                  MAC: {device.mac}
+                </Typography>
+              </div>
+              <div style={{width: '50%'}}>
+                <GroupsControl
+                  groups={device.groups}
+                />
+              </div>
+            </div>
           </CardContent>
 
           <CardActions>

@@ -8,6 +8,7 @@ import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
+import GroupsControl from '../common/GroupsControl'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -32,18 +33,28 @@ class ChannelShow extends Component {
             <Typography variant="headline" component="h3">
               Channel Details
             </Typography>
-            <Typography component="p">
-              ID: {channel.id}
-            </Typography>
-            <Typography component="p">
-              Name: {channel.name}
-            </Typography>
-            <Typography component="p">
-              Type: {channel.type}
-            </Typography>
-            <Typography component="p">
-              Active: {channel.active ? "Yes" : "No"}
-            </Typography>
+
+            <div style={{display: 'flex'}}>
+              <div style={{width: '50%'}}>
+                <Typography component="p">
+                  ID: {channel.id}
+                </Typography>
+                <Typography component="p">
+                  Name: {channel.name}
+                </Typography>
+                <Typography component="p">
+                  Type: {channel.type}
+                </Typography>
+                <Typography component="p">
+                  Active: {channel.active ? "Yes" : "No"}
+                </Typography>
+              </div>
+              <div style={{width: '50%'}}>
+                <GroupsControl
+                  groups={channel.groups}
+                />
+              </div>
+            </div>
           </CardContent>
 
           <CardActions>

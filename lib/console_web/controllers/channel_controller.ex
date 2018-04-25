@@ -7,8 +7,10 @@ defmodule ConsoleWeb.ChannelController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    current_team = conn.assigns.current_team
-                   |> Console.Teams.fetch_assoc([:channels])
+    current_team =
+      conn.assigns.current_team
+      |> Console.Teams.fetch_assoc([channels: :groups])
+
     render(conn, "index.json", channels: current_team.channels)
   end
 
@@ -27,7 +29,10 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def show(conn, %{"id" => id}) do
-    channel = Channels.get_channel!(id) |> Channels.fetch_assoc()
+    channel =
+      Channels.get_channel!(id)
+      |> Channels.fetch_assoc([:events, :groups])
+
     render(conn, "show.json", channel: channel)
   end
 
