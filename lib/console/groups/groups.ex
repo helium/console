@@ -11,6 +11,8 @@ defmodule Console.Groups do
   alias Console.Channels.Channel
   alias Console.Teams.Team
 
+  def get_group!(id), do: Repo.get!(Group, id)
+
   def create_group(%Team{} = team, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{team_id: team.id})
 
