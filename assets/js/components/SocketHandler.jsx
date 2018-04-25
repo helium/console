@@ -28,7 +28,7 @@ class SocketHandler extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isLoggedIn, currentTeamId, apikey, fetchIndicies } = this.props
+    const { isLoggedIn, currentTeamId, apikey, fetchIndices } = this.props
 
     // if the user has just logged in...
     if (!prevProps.isLoggedIn && isLoggedIn && currentTeamId) {
