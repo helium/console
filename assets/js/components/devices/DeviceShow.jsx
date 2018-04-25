@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchDevice, deleteDevice } from '../../actions/device'
+import { fetchDevice, deleteDevice, updateDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
+import GroupsControl from '../common/GroupsControl'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -21,10 +22,9 @@ class DeviceShow extends Component {
   }
 
   render() {
-    const { device, events, deleteDevice } = this.props
+    const { device, events, deleteDevice, updateDevice } = this.props
 
     if (device === undefined) return (<div>loading...</div>)
-
 
     return(
       <DashboardLayout title={device.name}>
@@ -33,15 +33,26 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Device Details
             </Typography>
-            <Typography component="p">
-              ID: {device.id}
-            </Typography>
-            <Typography component="p">
-              Name: {device.name}
-            </Typography>
-            <Typography component="p">
-              MAC: {device.mac}
-            </Typography>
+
+            <div style={{display: 'flex'}}>
+              <div style={{width: '50%'}}>
+                <Typography component="p">
+                  ID: {device.id}
+                </Typography>
+                <Typography component="p">
+                  Name: {device.name}
+                </Typography>
+                <Typography component="p">
+                  MAC: {device.mac}
+                </Typography>
+              </div>
+              <div style={{width: '50%'}}>
+                <GroupsControl
+                  groups={device.groups}
+                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
+                />
+              </div>
+            </div>
           </CardContent>
 
           <CardActions>
@@ -79,7 +90,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevice, deleteDevice }, dispatch);
+  return bindActionCreators({ fetchDevice, deleteDevice, updateDevice }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);

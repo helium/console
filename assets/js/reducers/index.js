@@ -1,5 +1,7 @@
 import merge from 'lodash/mergeWith'
 import isArray from 'lodash/isArray'
+import isObject from 'lodash/isObject'
+import every from 'lodash/every'
 import auth from './auth';
 import user from './user';
 import { SWITCHED_TEAM } from '../actions/team'
@@ -15,11 +17,15 @@ const defaultEntityState = {
   invitations: {},
 }
 
+const isArrayOfObjects = (array) => {
+  isArray(array) && every(array, isObject)
+}
+
 const entities = (state = defaultEntityState, action) => {
   // Updates an entity cache in response to any action with entities.
   if (action.entities) {
     return merge({}, state, action.entities, (objValue, srcValue) => {
-      if (isArray(objValue)) return objValue.concat(srcValue) // merge arrays
+      if (isArrayOfObjects(objValue)) return objValue.concat(srcValue) // merge arrays
     })
   }
 

@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchChannel, deleteChannel } from '../../actions/channel'
+import { fetchChannel, deleteChannel, updateChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
+import GroupsControl from '../common/GroupsControl'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -21,7 +22,7 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { channel, events, deleteChannel } = this.props
+    const { channel, events, deleteChannel, updateChannel } = this.props
 
     if (channel === undefined) return (<div>loading...</div>)
 
@@ -32,18 +33,29 @@ class ChannelShow extends Component {
             <Typography variant="headline" component="h3">
               Channel Details
             </Typography>
-            <Typography component="p">
-              ID: {channel.id}
-            </Typography>
-            <Typography component="p">
-              Name: {channel.name}
-            </Typography>
-            <Typography component="p">
-              Type: {channel.type}
-            </Typography>
-            <Typography component="p">
-              Active: {channel.active ? "Yes" : "No"}
-            </Typography>
+
+            <div style={{display: 'flex'}}>
+              <div style={{width: '50%'}}>
+                <Typography component="p">
+                  ID: {channel.id}
+                </Typography>
+                <Typography component="p">
+                  Name: {channel.name}
+                </Typography>
+                <Typography component="p">
+                  Type: {channel.type}
+                </Typography>
+                <Typography component="p">
+                  Active: {channel.active ? "Yes" : "No"}
+                </Typography>
+              </div>
+              <div style={{width: '50%'}}>
+                <GroupsControl
+                  groups={channel.groups}
+                  handleUpdate={(groups) => updateChannel(channel.id, {groups: groups})}
+                />
+              </div>
+            </div>
           </CardContent>
 
           <CardActions>
@@ -83,7 +95,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchChannel, deleteChannel }, dispatch);
+  return bindActionCreators({ fetchChannel, deleteChannel, updateChannel }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChannelShow);

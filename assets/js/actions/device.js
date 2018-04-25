@@ -57,6 +57,17 @@ export const createDevice = (params) => {
   }
 }
 
+export const updateDevice = (id, params) => {
+  return (dispatch) => {
+    rest.put(`/api/devices/${id}`, {
+      device: params
+    })
+    .then(response => {
+      dispatch(receivedDevice(response.data))
+    })
+  }
+}
+
 export const deleteDevice = (device) => {
   return (dispatch) => {
     rest.destroy(`/api/devices/${device.id}`)

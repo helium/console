@@ -21,11 +21,11 @@ const HttpDetails = (props) => {
         <Typography component="p">
           endpoint: {credentials.endpoint}
         </Typography>
-        <Typography component="p">
+        <Typography component="div">
           Inbound:
           <TextField
             value={`https://router.helium.com/http/${credentials.inbound_token}`}
-            readonly
+            readOnly
             style={{width: 400}}
           />
         </Typography>
