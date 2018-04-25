@@ -42,7 +42,7 @@ defmodule Console.Auth.User do
   def confirm_email_changeset(user) do
     user
     |> changeset()
-    |> put_change(:confirmed_at, DateTime.utc_now)
+    |> put_change(:confirmed_at, NaiveDateTime.utc_now())
     |> put_change(:confirmation_token, "Verified")
   end
 
@@ -64,7 +64,7 @@ defmodule Console.Auth.User do
   def update_2fa_last_skipped_changeset(user) do
     user
     |> changeset()
-    |> put_change(:last_2fa_skipped_at, DateTime.utc_now)
+    |> put_change(:last_2fa_skipped_at, NaiveDateTime.utc_now())
   end
 
   defp put_password_hash(changeset) do

@@ -31,7 +31,8 @@ class RandomEventButton extends Component {
       status: sample(["success", "error"]),
       device_id,
       gateway_id,
-      channel_id
+      channel_id,
+      reported_at: new Date().toISOString()
     })
   }
 

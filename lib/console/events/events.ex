@@ -66,6 +66,7 @@ defmodule Console.Events do
 
   """
   def create_event(attrs \\ %{}) do
+    attrs = Map.merge(attrs, %{"reported_at" => NaiveDateTime.from_iso8601!(attrs["reported_at"])})
     %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()

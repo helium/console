@@ -1,0 +1,71 @@
+.chartjs-render-monitor {
+  max-height: 400px;
+  min-height: 400px;
+}
+
+.chart-legend {
+  height: 1em;
+  display: flex;
+  align-items: center;
+}
+
+.chart-legend.left {
+  margin-top: 20px;
+}
+
+.chart-legend.right {
+  justify-content: flex-end;
+}
+
+.chart-legend p {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.chart-legend-bulb {
+  display: inline-block;
+  height: 0.8em;
+  width: 0.8em;
+  border-radius: 50px;
+  margin-right: 4px;
+}
+
+.chart-legend-bulb.blue{
+  background-color: #2196F3;
+}
+
+.chart-legend-bulb.green{
+  background-color: #69F0AE;
+}
+
+.chart-legend-bulb.red{
+  background-color: red;
+  box-shadow: 0 0 0 rgba(204,169,44, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0.4);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0.4);
+    box-shadow: 0 0 0 0 rgba(204,169,44, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+    box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+    box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
