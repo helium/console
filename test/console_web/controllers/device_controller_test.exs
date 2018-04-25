@@ -31,7 +31,8 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "id" => id,
         "mac" => "some mac",
         "name" => "some name",
-        "team_id" => team.id
+        "team_id" => team.id,
+        "groups" => []
       }
     end
 
@@ -52,7 +53,9 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "mac" => device.mac,
         "name" => device.name,
         "team_id" => team.id,
-        "events" => []}
+        "events" => [],
+        "groups" => []
+      }
     end
   end
 
@@ -66,7 +69,8 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "id" => device.id,
         "mac" => "some updated mac",
         "name" => "some updated name",
-        "team_id" => team.id
+        "team_id" => team.id,
+        "groups" => []
       }
     end
 

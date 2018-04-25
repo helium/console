@@ -55,7 +55,8 @@ defmodule ConsoleWeb.ChannelControllerTest do
         "credentials" => %{"a" => "c"},
         "name" => "some updated name",
         "type" => "some updated type",
-        "team_id" => team.id
+        "team_id" => team.id,
+        "groups" => []
       }
     end
 
