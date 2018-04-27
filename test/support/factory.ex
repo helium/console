@@ -59,7 +59,7 @@ defmodule Console.Factory do
       direction: sequence(:direction, ~w(inbound outbound)),
       payload: "some payload",
       payload_size: 42,
-      reported_at: ~N[2010-04-17 14:00:00.000000],
+      reported_at: "2010-04-17T14:00:00.000000Z",
       rssi: 120.5,
       signal_strength: 42,
       status: "some status"

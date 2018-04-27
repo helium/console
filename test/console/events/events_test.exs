@@ -8,8 +8,8 @@ defmodule Console.EventsTest do
   describe "events" do
     alias Console.Events.Event
 
-    @valid_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
-    @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: ~N[2011-05-18 15:01:01.000000], rssi: 456.7, signal_strength: 43, status: "some updated status"}
+    @valid_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: "2010-04-17T14:00:00.000000Z", rssi: 120.5, signal_strength: 42, status: "some status"}
+    @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: "2011-05-18T15:01:01.000000Z", rssi: 456.7, signal_strength: 43, status: "some updated status"}
     @invalid_attrs %{description: nil, direction: "invalid direction", payload: nil, payload_size: nil, reported_at: nil, rssi: nil, signal_strength: nil, status: nil}
 
     def event_fixture(attrs \\ %{}) do
@@ -17,7 +17,6 @@ defmodule Console.EventsTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> Events.create_event()
-
       event
     end
 
@@ -47,7 +46,7 @@ defmodule Console.EventsTest do
       device = insert(:device)
       gateway = insert(:gateway)
       channel = insert(:channel)
-      attrs = params_for(:event, device: device, gateway: gateway, channel: channel)
+      attrs = params_for(:event, device: device, gateway: gateway, channel: channel, reported_at: "2011-05-18T15:01:01.000Z")
       {:ok, event} = Events.create_event(attrs)
       event = Events.fetch_assoc(event)
       assert event.device.id == device.id
