@@ -26,6 +26,7 @@ const entities = (state = defaultEntityState, action) => {
   if (action.entities) {
     return merge({}, state, action.entities, (objValue, srcValue) => {
       if (isArrayOfObjects(objValue)) return objValue.concat(srcValue) // merge arrays
+      if (isArray(objValue)) return objValue.concat(srcValue)
     })
   }
 
