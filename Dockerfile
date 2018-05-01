@@ -24,4 +24,7 @@ ADD priv/ priv/
 RUN mix compile
 RUN mix phx.digest
 
-CMD ["mix", "phx.server"]
+ADD scripts/ scripts/
+RUN chmod +x scripts/docker-startup.sh
+
+CMD ["./scripts/docker-startup.sh"]
