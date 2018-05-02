@@ -19,18 +19,14 @@ export const createEvent = (eventParams) => {
     rest.post('/api/events', {
         event: eventParams
       })
-      .then(response => {
-        return dispatch(receivedEvent(response.data))
-      })
+      .then(response => {})
   }
 }
 
 export const deleteEvent = (event) => {
   return (dispatch) => {
     rest.destroy(`/api/events/${event.id}`)
-      .then(response => {
-        dispatch(deletedEvent(event))
-      })
+      .then(response => {})
   }
 }
 

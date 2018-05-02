@@ -24,7 +24,6 @@ defmodule ConsoleWeb.UserController do
     with true <- Auth.verify_captcha(recaptcha),
       {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
       {:ok, %User{} = user} <- Auth.create_user_via_invitation(invitation, user_params) do
-
         # notify clients that the invitation has been used
         Teams.get_invitation!(invitation.id)
         |> ConsoleWeb.InvitationController.broadcast("update")

@@ -52,7 +52,6 @@ export const createChannel = (params) => {
         channel: params
       })
       .then(response => {
-        dispatch(receivedChannel(response.data))
         displayInfo(`Channel ${response.data.name} has been created`)
         dispatch(replace(`/channels/${response.data.id}`))
       })
@@ -74,7 +73,6 @@ export const deleteChannel = (channel) => {
   return (dispatch) => {
     rest.destroy(`/api/channels/${channel.id}`)
       .then(response => {
-        dispatch(deletedChannel(channel))
         dispatch(push('/channels'))
         displayInfo(`${channel.name} deleted`)
       })

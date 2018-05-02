@@ -51,9 +51,7 @@ export const createDevice = (params) => {
     rest.post('/api/devices', {
         device: params
       })
-      .then(response => {
-        return dispatch(receivedDevice(response.data))
-      })
+      .then(response => {})
   }
 }
 
@@ -72,7 +70,6 @@ export const deleteDevice = (device) => {
   return (dispatch) => {
     rest.destroy(`/api/devices/${device.id}`)
       .then(response => {
-        dispatch(deletedDevice(device))
         dispatch(push('/devices'))
         displayInfo(`${device.name} deleted`)
       })

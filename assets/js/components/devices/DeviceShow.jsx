@@ -8,6 +8,7 @@ import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
+import PacketGraph from '../common/PacketGraph'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -25,7 +26,6 @@ class DeviceShow extends Component {
     const { device, events, deleteDevice, updateDevice } = this.props
 
     if (device === undefined) return (<div>loading...</div>)
-
     return(
       <DashboardLayout title={device.name}>
         <Card>
@@ -73,6 +73,31 @@ class DeviceShow extends Component {
               Event Log
             </Typography>
             <EventsTable events={events} />
+          </CardContent>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Real Time Packets
+            </Typography>
+            <div className="chart-legend left">
+              <div className="chart-legend-bulb red"></div>
+              <Typography component="p">
+                Live Data
+              </Typography>
+            </div>
+            <div className="chart-legend right">
+              <div className="chart-legend-bulb blue"></div>
+              <Typography component="p">
+                From Device
+              </Typography>
+              <div className="chart-legend-bulb green"></div>
+              <Typography component="p">
+                To Device
+              </Typography>
+            </div>
+            <PacketGraph data={this.props.events}/>
           </CardContent>
         </Card>
       </DashboardLayout>

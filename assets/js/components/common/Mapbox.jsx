@@ -86,7 +86,7 @@ class Mapbox extends Component {
       }
 
       const popup = new mapboxgl.Popup({
-        closeButton: true,
+        closeButton: false,
         closeOnClick: false
       })
 
@@ -107,6 +107,7 @@ class Mapbox extends Component {
 
       map.on('mouseleave', 'innerCircle', function() {
         map.getCanvas().style.cursor = ''
+        popup.remove()
       })
     })
   }

@@ -199,6 +199,7 @@ class Register extends Component {
           ref={e => this.recaptchaInstance = e}
           sitekey={config.recaptcha.sitekey}
           verifyCallback={this.verifyRecaptcha}
+          style={{marginTop: 24}}
         />
       </div>
     )

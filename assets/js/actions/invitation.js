@@ -47,7 +47,6 @@ export const deleteInvitation = (invitation) => {
   return (dispatch) => {
     rest.destroy(`/api/invitations/${invitation.id}`)
       .then(response => {
-        dispatch(deletedInvitation(invitation))
         displayInfo(`Invitation removed successfully`)
       })
   }

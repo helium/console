@@ -7,7 +7,6 @@ defmodule Console.Events do
   alias Console.Repo
 
   alias Console.Events.Event
-  alias Console.Devices.Device
 
   @doc """
   Returns the list of events.
@@ -66,6 +65,12 @@ defmodule Console.Events do
 
   """
   def create_event(attrs \\ %{}) do
+    attrs =
+      case (attrs["reported_at"]) != nil do
+        true -> Map.merge(attrs, %{"reported_at" => NaiveDateTime.from_iso8601!(attrs["reported_at"])})
+        false -> attrs
+      end
+
     %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()
@@ -84,6 +89,12 @@ defmodule Console.Events do
 
   """
   def update_event(%Event{} = event, attrs) do
+    attrs =
+      case (attrs["reported_at"]) != nil do
+        true -> Map.merge(attrs, %{"reported_at" => NaiveDateTime.from_iso8601!(attrs["reported_at"])})
+        false -> attrs
+      end
+      
     event
     |> Event.changeset(attrs)
     |> Repo.update()

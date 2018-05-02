@@ -86,13 +86,6 @@ export const switchedTeam = (apikey) => {
 export const inviteUser = (invitation) => {
   return (dispatch) => {
     rest.post(`/api/invitations`, { invitation })
-    .then(response => {
-      if (response.data.type === "invitations") {
-        dispatch(receivedInvitation(response.data))
-      }
-      if (response.data.type === "memberships") {
-        dispatch(receivedMembership(response.data))
-      }
-    })
+    .then(response => {})
   }
 }

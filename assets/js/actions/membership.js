@@ -42,7 +42,6 @@ export const updateMembership = (id, role) => {
       }
     })
       .then(response => {
-        dispatch(updatedMembership(response.data))
         displayInfo(`Membership updated successfully`)
       })
   }
@@ -61,7 +60,6 @@ export const deleteMembership = (membership) => {
   return (dispatch) => {
     rest.destroy(`/api/memberships/${membership.id}`)
       .then(response => {
-        dispatch(deletedMembership(membership))
         displayInfo(`Membership removed successfully`)
       })
   }

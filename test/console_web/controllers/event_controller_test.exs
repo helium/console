@@ -7,8 +7,8 @@ defmodule ConsoleWeb.EventControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: ~N[2010-04-17 14:00:00.000000], rssi: 120.5, signal_strength: 42, status: "some status"}
-  @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: ~N[2011-05-18 15:01:01.000000], rssi: 456.7, signal_strength: 43, status: "some updated status"}
+  @create_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: "2010-04-17T14:00:00.000000Z", rssi: 120.5, signal_strength: 42, status: "some status"}
+  @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: "2011-05-18T15:01:01.000000Z", rssi: 456.7, signal_strength: 43, status: "some updated status"}
   @invalid_attrs %{description: nil, direction: "invalid direction", payload: nil, payload_size: nil, reported_at: nil, rssi: nil, signal_strength: nil, status: nil}
 
   def fixture(:event) do
