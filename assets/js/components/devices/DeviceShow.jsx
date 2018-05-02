@@ -90,11 +90,11 @@ class DeviceShow extends Component {
             <div className="chart-legend right">
               <div className="chart-legend-bulb blue"></div>
               <Typography component="p">
-                From Atom
+                From Device
               </Typography>
               <div className="chart-legend-bulb green"></div>
               <Typography component="p">
-                To Atom
+                To Device
               </Typography>
             </div>
             <PacketGraph data={this.props.events}/>

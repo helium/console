@@ -82,11 +82,11 @@ class PacketGraph extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) { // change to getDerivedStateFromProps when we update react to 16.3+
-    if ((nextProps.data[0] && !this.props.data[0]) ||
-      (nextProps.data[0] && this.props.data[0] && nextProps.data[nextProps.data.length-1].id !== this.props.data[this.props.data.length-1].id)) {
+  componentDidUpdate(prevProps) { // change to getDerivedStateFromProps when we update react to 16.3+
+    if ((this.props.data[0] && !prevProps.data[0]) || (this.props.data[0] && this.state.data.datasets.length == 0) ||
+      (this.props.data[0] && prevProps.data[0] && this.props.data[this.props.data.length-1].id !== prevProps.data[prevProps.data.length-1].id)) {
       clearInterval(this.chartUpdateInterval)
-      this.updateChart(nextProps.data)
+      this.updateChart(this.props.data)
       this.chartUpdateInterval = setInterval(() => {
         this.updateChart(this.props.data)
       }, 5000)
