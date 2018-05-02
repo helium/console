@@ -51,9 +51,7 @@ export const createGateway = (params) => {
     rest.post('/api/gateways', {
         gateway: params
       })
-      .then(response => {
-        return dispatch(receivedGateway(response.data))
-      })
+      .then(response => {})
   }
 }
 
@@ -61,7 +59,6 @@ export const deleteGateway = (gateway) => {
   return (dispatch) => {
     rest.destroy(`/api/gateways/${gateway.id}`)
       .then(response => {
-        dispatch(deletedGateway(gateway))
         dispatch(push('/gateways'))
         displayInfo(`${gateway.name} deleted`)
       })
