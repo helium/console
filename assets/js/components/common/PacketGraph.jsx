@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
 
-class BubbleChart extends Component {
+class PacketGraph extends Component {
   constructor(props) {
     super(props)
 
@@ -144,4 +144,4 @@ class BubbleChart extends Component {
   }
 }
 
-export default BubbleChart
+export default PacketGraph

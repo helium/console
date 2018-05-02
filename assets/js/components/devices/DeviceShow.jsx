@@ -8,7 +8,7 @@ import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
-import BubbleChart from '../common/BubbleChart'
+import PacketGraph from '../common/PacketGraph'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -97,7 +97,7 @@ class DeviceShow extends Component {
                 To Atom
               </Typography>
             </div>
-            <BubbleChart data={this.props.events}/>
+            <PacketGraph data={this.props.events}/>
           </CardContent>
         </Card>
       </DashboardLayout>
