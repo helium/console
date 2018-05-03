@@ -7,7 +7,7 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
-
+  alias Console.Events.Event
   @doc """
   Returns the list of devices.
 
@@ -39,8 +39,17 @@ defmodule Console.Devices do
   def get_device(id), do: Repo.get(Device, id)
   def get_by_mac(mac), do: Repo.get_by(Device, mac: mac)
 
-  def fetch_assoc(%Device{} = device, assoc \\ [:events, :team]) do
+  def fetch_assoc(%Device{} = device, assoc \\ [:team]) do
     Repo.preload(device, assoc)
+  end
+
+  def get_paginated_events(%Device{} = device, event_page_number \\ 1) do
+    events =
+      Event
+      |> where([e], e.device_id == ^device.id)
+      |> order_by(desc: :reported_at)
+      |> Repo.paginate(page: event_page_number)
+    Map.put(device, :events, events)
   end
 
   @doc """
