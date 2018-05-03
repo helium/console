@@ -16,11 +16,21 @@ import { withStyles } from 'material-ui/styles'
 const styles = theme => ({
   paper: {
     margin: 'auto',
-    padding: theme.spacing.unit * 2,
-    width: 420,
+    padding: theme.spacing.unit * 4,
+    width: 700,
   },
   input: {
     marginBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2,
+  },
+  table: {
+    marginTop: theme.spacing.unit * 2
+  },
+  actions: {
+    textAlign: "right"
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2
   },
 })
 
@@ -30,7 +40,7 @@ class NewUserModal extends Component {
 
     this.state = {
       email: "",
-      role: ""
+      role: "viewer"
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -47,7 +57,7 @@ class NewUserModal extends Component {
 
     this.props.inviteUser({ email, role });
 
-    this.setState({ email: '', role: '' })
+    this.setState({ email: '' })
 
     this.props.onClose()
   }
@@ -65,8 +75,8 @@ class NewUserModal extends Component {
             Invite new user
           </Typography>
 
-          <Typography variant="subheading">
-            Invite a new user to TEAM
+          <Typography variant="subheading" style={{marginTop: 16}}>
+            Enter the email address of the user you'd like to invite, and choose the role they should have.
           </Typography>
 
           <form onSubmit={this.handleSubmit}>
@@ -76,6 +86,8 @@ class NewUserModal extends Component {
               value={this.state.email}
               onChange={this.handleInputUpdate}
               className={classes.input}
+              placeholder="alice@example.com"
+              autoFocus
               fullWidth
             />
 
@@ -85,16 +97,17 @@ class NewUserModal extends Component {
               classes={classes}
             />
 
-
-            <Button
-              type="submit"
-              variant="raised"
-              color="primary"
-              size="large"
-              className={classes.formButton}
-            >
-              Invite User
-            </Button>
+            <div className={classes.actions}>
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                className={classes.formButton}
+              >
+                Invite User
+              </Button>
+            </div>
           </form>
         </Paper>
       </Modal>

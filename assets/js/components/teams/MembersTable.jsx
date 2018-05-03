@@ -10,8 +10,12 @@ const Role = (props) => {
   switch(props.role) {
     case 'admin':
       return <span>Administrator</span>
+    case 'developer':
+      return <span>Developer</span>
+    case 'analyst':
+      return <span>Analyst</span>
     case 'viewer':
-      return <span>Viewer (Read-Only)</span>
+      return <span>View Only</span>
     default:
       return <span>{props.role}</span>
   }

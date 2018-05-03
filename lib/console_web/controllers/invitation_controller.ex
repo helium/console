@@ -31,6 +31,7 @@ defmodule ConsoleWeb.InvitationController do
 
           conn
           |> put_status(:created)
+          |> put_resp_header("message", "User added to team")
           |> put_view(ConsoleWeb.MembershipView)
           |> render("show.json", membership: membership)
         end
@@ -43,6 +44,7 @@ defmodule ConsoleWeb.InvitationController do
 
           conn
           |> put_status(:created)
+          |> put_resp_header("message", "Invitation sent")
           |> render("show.json", invitation: invitation)
         end
     end
@@ -75,7 +77,9 @@ defmodule ConsoleWeb.InvitationController do
     if invitation.pending do
       with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
         broadcast(invitation, "delete")
-        send_resp(conn, :no_content, "")
+        conn
+        |> put_resp_header("message", "Invitation removed")
+        |> send_resp(:no_content, "")
       end
     else
       {:error, :forbidden, "Cannot remove an invitation that has already been used"}

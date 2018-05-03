@@ -20,7 +20,10 @@ defmodule ConsoleWeb.MembershipController do
     with {:ok, %Membership{} = membership} <- Teams.update_membership(membership, attrs) do
       membership = membership |> Teams.fetch_assoc_membership()
       broadcast(membership, "update")
-      render(conn, "show.json", membership: membership)
+
+      conn
+      |> put_resp_header("message", "User role updated successfully")
+      |> render("show.json", membership: membership)
     end
   end
 
@@ -29,7 +32,10 @@ defmodule ConsoleWeb.MembershipController do
 
     with {:ok, %Membership{}} <- Teams.delete_membership(membership) do
       broadcast(membership, "delete")
-      send_resp(conn, :no_content, "")
+
+      conn
+      |> put_resp_header("message", "User removed from team")
+      |> send_resp(:no_content, "")
     end
   end
 

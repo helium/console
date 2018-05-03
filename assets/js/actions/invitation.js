@@ -1,7 +1,6 @@
 import * as rest from '../util/rest';
 import { normalizeInvitation, normalizeInvitations  } from '../schemas/invitation'
 import { DELETED_ENTITY } from './main'
-import { displayInfo } from '../util/messages'
 
 export const RECEIVED_INVITATIONS = 'RECEIVED_INVITATIONS'
 export const RECEIVED_INVITATION = 'RECEIVED_INVITATION'
@@ -46,9 +45,7 @@ export const updatedInvitation = (invitation) => {
 export const deleteInvitation = (invitation) => {
   return (dispatch) => {
     rest.destroy(`/api/invitations/${invitation.id}`)
-      .then(response => {
-        displayInfo(`Invitation removed successfully`)
-      })
+      .then(response => {})
   }
 }
 
