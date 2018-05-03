@@ -9,6 +9,7 @@ import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
 import GroupsControl from '../common/GroupsControl'
+import userCan from '../../util/abilities'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -53,20 +54,26 @@ class ChannelShow extends Component {
                 <GroupsControl
                   groups={channel.groups}
                   handleUpdate={(groups) => updateChannel(channel.id, {groups: groups})}
+                  editable={userCan('update', 'channel', channel)}
                 />
               </div>
             </div>
           </CardContent>
 
           <CardActions>
-            <RandomEventButton channel_id={channel.id} />
-            <Button
-              size="small"
-              color="secondary"
-              onClick={() => deleteChannel(channel)}
-            >
-              Delete Channel
-            </Button>
+            {userCan('create', 'event') &&
+              <RandomEventButton channel_id={channel.id} />
+            }
+
+            {userCan('delete', 'channel', channel) &&
+              <Button
+                size="small"
+                color="secondary"
+                onClick={() => deleteChannel(channel)}
+              >
+                Delete Channel
+              </Button>
+            }
           </CardActions>
         </Card>
 

@@ -9,6 +9,7 @@ import GatewaysTable from './GatewaysTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import Mapbox from '../common/Mapbox'
+import userCan from '../../util/abilities'
 
 // MUI
 import AppBar from 'material-ui/AppBar'
@@ -31,7 +32,9 @@ class GatewayIndex extends Component {
               title="No gateways"
               subheading="To create a new gateway, click the red button in the corner"
             />
-            <RandomGatewayButton />
+            {userCan('create', 'gateway') &&
+              <RandomGatewayButton />
+            }
           </Paper>
         </DashboardLayout>
       )
@@ -59,7 +62,9 @@ class GatewayIndex extends Component {
 
     return(
       <DashboardLayout title="All Gateways" tabs={tabs}>
-        <RandomGatewayButton />
+        {userCan('create', 'gateway') &&
+          <RandomGatewayButton />
+        }
       </DashboardLayout>
     )
   }

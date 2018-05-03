@@ -32,7 +32,7 @@ const theme = createMuiTheme({
 
 const hardwareItems = (
   <div>
-    <ListItem button component={Link} to="/devices">
+    <ListItem button component={Link} to="/dashboard">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>

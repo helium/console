@@ -8,6 +8,7 @@ import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
+import userCan from '../../util/abilities'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -50,14 +51,19 @@ class GatewayShow extends Component {
           </CardContent>
 
           <CardActions>
-            <RandomEventButton gateway_id={gateway.id} />
-            <Button
-              size="small"
-              color="secondary"
-              onClick={() => deleteGateway(gateway)}
-            >
-              Delete Gateway
-            </Button>
+            {userCan('create', 'event') &&
+              <RandomEventButton gateway_id={gateway.id} />
+            }
+
+            {userCan('delete', 'gateway', gateway) &&
+              <Button
+                size="small"
+                color="secondary"
+                onClick={() => deleteGateway(gateway)}
+              >
+                Delete Gateway
+              </Button>
+            }
           </CardActions>
         </Card>
 

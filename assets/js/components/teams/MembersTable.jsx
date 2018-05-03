@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
+import userCan from '../../util/abilities'
 
 // MUI
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
@@ -34,18 +35,22 @@ const MembershipRow = (props) => {
       </TableCell>
       <TableCell> {moment(membership.joined_at).format('LL')} </TableCell>
       <TableCell>
-        <Button
-          onClick={() => openEditMembershipModal(membership)}
-          variant="raised"
-          size="small"
-          style={{marginRight: 16}}
-        >
-          Edit
-        </Button>
+        {userCan('update', 'membership', membership) &&
+          <Button
+            onClick={() => openEditMembershipModal(membership)}
+            variant="raised"
+            size="small"
+            style={{marginRight: 16}}
+          >
+            Edit
+          </Button>
+        }
 
-        <Button onClick={deleteMembership} variant="raised" color="secondary" size="small">
-          Remove
-        </Button>
+        {userCan('delete', 'membership', membership) &&
+          <Button onClick={deleteMembership} variant="raised" color="secondary" size="small">
+            Remove
+          </Button>
+        }
       </TableCell>
     </TableRow>
   )

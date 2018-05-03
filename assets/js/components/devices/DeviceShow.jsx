@@ -9,6 +9,7 @@ import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
+import userCan from '../../util/abilities'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -50,20 +51,25 @@ class DeviceShow extends Component {
                 <GroupsControl
                   groups={device.groups}
                   handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
+                  editable={userCan('update', 'device', device)}
                 />
               </div>
             </div>
           </CardContent>
 
           <CardActions>
-            <RandomEventButton device_id={device.id} />
-            <Button
-              size="small"
-              color="secondary"
-              onClick={() => deleteDevice(device)}
-            >
-              Delete Device
-            </Button>
+            {userCan('create', 'event') &&
+              <RandomEventButton device_id={device.id} />
+            }
+            {userCan('delete', 'device', device) &&
+              <Button
+                size="small"
+                color="secondary"
+                onClick={() => deleteDevice(device)}
+              >
+                Delete Device
+              </Button>
+            }
           </CardActions>
         </Card>
 

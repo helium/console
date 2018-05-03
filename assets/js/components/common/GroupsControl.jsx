@@ -31,24 +31,33 @@ class GroupsControl extends Component {
 
   render() {
     const { groups } = this.state
+    const { editable } = this.props
 
     return (
       <form style={{display: 'flex'}} onSubmit={this.handleSubmit} autoComplete="off">
-          <TextField
-            label="Groups"
-            name="groups"
-            value={groups}
-            helperText="comma seperated"
-            onChange={this.handleInputUpdate}
-            style={{width: '100%'}}
-          />
+        <TextField
+          label="Groups"
+          name="groups"
+          value={groups}
+          helperText={editable ? "comma seperated" : ""}
+          onChange={this.handleInputUpdate}
+          style={{width: '100%'}}
+          disabled={!editable}
+        />
 
-        <div style={{marginTop: 16, marginLeft: 16}}>
-          <Button type="submit">Save</Button>
-        </div>
+        {editable &&
+          <div style={{marginTop: 16, marginLeft: 16}}>
+            <Button type="submit">Save</Button>
+          </div>
+        }
+
       </form>
     )
   }
+}
+
+GroupsControl.defaultProps = {
+  editable: true
 }
 
 export default GroupsControl
