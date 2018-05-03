@@ -30,7 +30,7 @@ export const receivedDevices = (devices) => {
 
 export const fetchDevice = (id) => {
   return (dispatch) => {
-    rest.get(`/api/devices/${id}`)
+    rest.get(`/api/devices/${id}?event_page_number=1`)
       .then(response => {
         return dispatch(receivedDevice(response.data))
       })

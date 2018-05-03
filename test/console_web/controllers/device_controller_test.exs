@@ -54,7 +54,11 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "name" => device.name,
         "team_id" => team.id,
         "events" => [],
-        "groups" => []
+        "groups" => [],
+        "events_page_number" => 1,
+        "events_page_size" => 15,
+        "events_total_entries" => 0,
+        "events_total_pages" => 1
       }
     end
   end

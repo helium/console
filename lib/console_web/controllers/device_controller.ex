@@ -28,10 +28,12 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
+  def show(conn, params) do
     device =
-      Devices.get_device!(id)
-      |> Devices.fetch_assoc([:events, :groups])
+      Devices.get_device!(params["id"])
+      |> Devices.fetch_assoc([:groups])
+      |> Devices.get_paginated_events(params["event_page_number"])
+
     render(conn, "show.json", device: device)
   end
 

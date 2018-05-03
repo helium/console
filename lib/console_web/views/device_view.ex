@@ -25,8 +25,12 @@ defmodule ConsoleWeb.DeviceView do
 
   defp append_events(json, events) do
     if Ecto.assoc_loaded?(events) do
-      events_json = render_many(events, EventView, "event.json")
+      events_json = render_many(events.entries, EventView, "event.json")
       Map.put(json, :events, events_json)
+      |> Map.put(:events_page_number, events.page_number)
+      |> Map.put(:events_page_size, events.page_size)
+      |> Map.put(:events_total_entries, events.total_entries)
+      |> Map.put(:events_total_pages, events.total_pages)
     else
       json
     end
