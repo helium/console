@@ -4,6 +4,8 @@ defmodule ConsoleWeb.EventController do
   alias Console.Events
   alias Console.Events.Event
 
+  plug ConsoleWeb.Plug.AuthorizeAction
+
   action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, params) do

@@ -5,7 +5,7 @@ defmodule Console.Teams.Membership do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "memberships" do
-    field :role, :string, default: "owner"
+    field :role, :string, default: "admin"
     belongs_to :user, Console.Auth.User
     belongs_to :team, Console.Teams.Team
 
@@ -20,7 +20,7 @@ defmodule Console.Teams.Membership do
     |> unique_constraint(:unique_member, name: :memberships_user_id_team_id_index, message: "That email is already part of this team")
   end
 
-  def join_changeset(membership, user, team, role \\ "owner") do
+  def join_changeset(membership, user, team, role \\ "admin") do
     membership
     |> changeset(%{user_id: user.id, team_id: team.id, role: role})
   end

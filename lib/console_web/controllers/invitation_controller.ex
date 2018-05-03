@@ -8,6 +8,8 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Email
   alias Console.Mailer
 
+  plug ConsoleWeb.Plug.AuthorizeAction, except: [:accept]
+
   action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, _params) do

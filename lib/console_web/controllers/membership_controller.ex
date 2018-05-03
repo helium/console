@@ -4,6 +4,8 @@ defmodule ConsoleWeb.MembershipController do
   alias Console.Teams
   alias Console.Teams.Membership
 
+  plug ConsoleWeb.Plug.AuthorizeAction
+
   action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, _params) do

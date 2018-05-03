@@ -36,6 +36,10 @@ defmodule Console.Teams do
     Repo.get!(Membership, id)
   end
 
+  def get_membership!(%User{id: user_id}, %Team{id: team_id}) do
+    Repo.get_by!(Membership, user_id: user_id, team_id: team_id)
+  end
+
   def user_has_access?(%User{} = user, %Team{} = team) do
     query =
       from(

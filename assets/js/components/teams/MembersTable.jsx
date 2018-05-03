@@ -8,8 +8,6 @@ import Button from 'material-ui/Button';
 
 const Role = (props) => {
   switch(props.role) {
-    case 'owner':
-      return <span>Administrator (Owner)</span>
     case 'admin':
       return <span>Administrator</span>
     case 'viewer':

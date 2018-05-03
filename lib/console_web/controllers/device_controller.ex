@@ -4,6 +4,8 @@ defmodule ConsoleWeb.DeviceController do
   alias Console.Devices
   alias Console.Devices.Device
 
+  plug ConsoleWeb.Plug.AuthorizeAction
+
   action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, _params) do
