@@ -17,6 +17,7 @@ defmodule Console.Teams.Membership do
     membership
     |> cast(attrs, [:role, :user_id, :team_id])
     |> validate_required([:role, :user_id, :team_id])
+    |> validate_inclusion(:role, ~w(admin developer analyst viewer))
     |> unique_constraint(:unique_member, name: :memberships_user_id_team_id_index, message: "That email is already part of this team")
   end
 
