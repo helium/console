@@ -7,8 +7,7 @@ defmodule ConsoleWeb.Plug.AuthorizeAction do
   def call(conn, _default) do
     current_membership = conn.assigns.current_membership
     action = conn.private.phoenix_action
-    item = nil # TODO if there are any abilities that require access to the
-               # current resource, it can be plugged in prior to this plug
+    item = conn.assigns[:auth_item]
 
     if can?(current_membership, action, item) do
       conn

@@ -10,6 +10,14 @@ defmodule ConsoleWeb.UserController do
 
   action_fallback ConsoleWeb.FallbackController
 
+  def current(conn, _params) do
+    user = conn.assigns.current_user
+    membership = conn.assigns.current_membership
+
+    conn
+      |> render("current.json", user: user, membership: membership)
+  end
+
   # Registration via signing up
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),

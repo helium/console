@@ -26,6 +26,15 @@ import NotificationsIcon from 'material-ui-icons/Notifications'
 import ImageIcon from 'material-ui-icons/Image'
 import IconButton from 'material-ui/IconButton'
 
+const roleText = (role) => {
+  switch(role) {
+    case "admin":
+      return "Administrator"
+    case "viewer":
+      return "Viewer (Read-Only)"
+  }
+}
+
 
 class TopBar extends Component {
   constructor(props) {
@@ -64,7 +73,6 @@ class TopBar extends Component {
   };
 
   updateScrollPosition(event) {
-    // console.log('scroll pos:', event.target.scrollTop)
     this.setState({
       scrollPosition: event.target.scrollTop,
       atTop: event.target.scrollTop <= 10
@@ -72,7 +80,7 @@ class TopBar extends Component {
   }
 
   render() {
-    const { classes, email, title, logOut } = this.props
+    const { classes, email, role, title, logOut } = this.props
     const { anchorEl, teamMenuOpen, accountMenuOpen, atTop, scrollPosition } = this.state
 
     return (
@@ -119,7 +127,7 @@ class TopBar extends Component {
                 <Avatar>
                   {email === null ? "U" : email[0].toUpperCase()}
                 </Avatar>
-                <ListItemText primary={email} secondary="Administrator" />
+                <ListItemText primary={email} secondary={roleText(role)}/>
               </ListItem>
               <MenuItem component={Link} to="/secret">Profile</MenuItem>
               <MenuItem onClick={logOut}>Log Out</MenuItem>
@@ -134,6 +142,7 @@ class TopBar extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     email: state.user.email,
+    role: state.user.role,
   }
 }
 

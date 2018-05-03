@@ -4,6 +4,7 @@ defmodule ConsoleWeb.MembershipController do
   alias Console.Teams
   alias Console.Teams.Membership
 
+  plug :put_auth_item when action in [:update, :delete]
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback(ConsoleWeb.FallbackController)
@@ -36,5 +37,12 @@ defmodule ConsoleWeb.MembershipController do
     membership = membership |> Teams.fetch_assoc_membership()
     body = ConsoleWeb.MembershipView.render("show.json", membership: membership)
     ConsoleWeb.Endpoint.broadcast("membership:#{membership.team_id}", action, body)
+  end
+
+  def put_auth_item(conn, _) do
+    membership = Teams.get_membership!(conn.params["id"])
+
+    conn
+    |> assign(:auth_item, membership)
   end
 end

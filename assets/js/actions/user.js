@@ -4,16 +4,17 @@ export const RECEIVE_USER = 'RECEIVE_USER';
 
 export const fetchUser = () => {
   return (dispatch) => {
-    rest.get('/api/secret')
+    rest.get('/api/users/current')
       .then(response => {
-        dispatch(receiveUser(response.data.your_email))
+        dispatch(receiveUser(response.data))
       })
   };
 }
 
-const receiveUser = (email) => {
+const receiveUser = (user) => {
   return {
     type: RECEIVE_USER,
-    email
+    email: user.email,
+    role: user.role
   };
 }
