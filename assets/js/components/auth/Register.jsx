@@ -6,8 +6,9 @@ import { parse } from 'query-string'
 import { register, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
+import GDPRPrompt from './GDPRPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
-
+import DocumentLayout from '../common/DocumentLayout'
 // MUI
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
@@ -41,11 +42,13 @@ class Register extends Component {
       email: "",
       password: "",
       passwordConfirm: "",
-      recaptcha: ""
+      recaptcha: "",
+      showGDPR: false
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.registerUser = this.registerUser.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
 
     this.registerContent = this.registerContent.bind(this)
@@ -55,8 +58,10 @@ class Register extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.shouldResetCaptcha) {
-      this.recaptchaInstance.reset()
-      this.props.hasResetCaptcha()
+      this.setState({ showGDPR: false }, () => {
+        this.recaptchaInstance.reset()
+        this.props.hasResetCaptcha()
+      })
     }
   }
 
@@ -65,6 +70,11 @@ class Register extends Component {
   }
 
   handleSubmit(e) {
+    e.preventDefault();
+    this.setState({ showGDPR: true })
+  }
+
+  registerUser(e) {
     e.preventDefault();
     const { teamName, email, password, passwordConfirm, recaptcha } = this.state;
     const { register, invitationToken } = this.props
@@ -207,14 +217,23 @@ class Register extends Component {
 
   render() {
     const { version } = this.props
+    const { showGDPR } = this.state
 
-    return(
-      <AuthLayout>
-        <Card>
-          {version === "register" ? this.registerContent() : this.joinContent()}
-        </Card>
-      </AuthLayout>
-    );
+    if (showGDPR) {
+      return(
+        <DocumentLayout>
+          <GDPRPrompt handleSubmit={this.registerUser}/>
+        </DocumentLayout>
+      );
+    } else {
+      return(
+        <AuthLayout>
+          <Card>
+            {version === "register" ? this.registerContent() : this.joinContent()}
+          </Card>
+        </AuthLayout>
+      );
+    }
   }
 }
 
