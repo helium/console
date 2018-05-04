@@ -8,6 +8,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
+import userCan from '../../util/abilities'
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -78,10 +79,12 @@ class TeamShow extends Component {
 
           </CardContent>
           <CardActions>
-            <Button variant="raised" size="small" onClick={this.openNewUserModal}>
-              <AddIcon style={{marginRight: 4}} />
-              New User
-            </Button>
+            {userCan('create', 'membership') &&
+              <Button variant="raised" size="small" onClick={this.openNewUserModal}>
+                <AddIcon style={{marginRight: 4}} />
+                New User
+              </Button>
+            }
           </CardActions>
         </Card>
 

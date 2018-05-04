@@ -2,6 +2,13 @@ defmodule ConsoleWeb.UserView do
   use ConsoleWeb, :view
   alias ConsoleWeb.UserView
 
+  def render("current.json", %{user: user, membership: membership}) do
+    %{
+      email: user.email,
+      role: membership.role
+    }
+  end
+
   def render("show.json", %{user: user}) do
     %{data: render_one(user, UserView, "user.json")}
   end

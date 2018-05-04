@@ -1,7 +1,6 @@
 import * as rest from '../util/rest';
 import { normalizeMembership, normalizeMemberships  } from '../schemas/membership'
 import { DELETED_ENTITY } from './main'
-import { displayInfo } from '../util/messages'
 
 export const RECEIVED_MEMBERSHIPS = 'RECEIVED_MEMBERSHIPS'
 export const RECEIVED_MEMBERSHIP = 'RECEIVED_MEMBERSHIP'
@@ -41,9 +40,7 @@ export const updateMembership = (id, role) => {
         role
       }
     })
-      .then(response => {
-        displayInfo(`Membership updated successfully`)
-      })
+      .then(response => {})
   }
 }
 
@@ -59,9 +56,7 @@ export const updatedMembership = (membership) => {
 export const deleteMembership = (membership) => {
   return (dispatch) => {
     rest.destroy(`/api/memberships/${membership.id}`)
-      .then(response => {
-        displayInfo(`Membership removed successfully`)
-      })
+      .then(response => {})
   }
 }
 

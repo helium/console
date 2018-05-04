@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Button from 'material-ui/Button';
+import userCan from '../../util/abilities'
 
 class DevicesTable extends Component {
 
@@ -30,9 +31,11 @@ class DevicesTable extends Component {
                     View
                   </Button>
 
-                  <Button color="secondary" onClick={() => deleteDevice(device)}>
-                    Delete
-                  </Button>
+                  {userCan('delete', 'device', device) &&
+                    <Button color="secondary" onClick={() => deleteDevice(device)}>
+                      Delete
+                    </Button>
+                  }
 
                 </TableCell>
               </TableRow>

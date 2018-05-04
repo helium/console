@@ -7,6 +7,7 @@ import RandomDeviceButton from './RandomDeviceButton'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
+import userCan from '../../util/abilities'
 
 // MUI
 import Button from 'material-ui/Button'
@@ -37,7 +38,9 @@ class DeviceIndex extends Component {
           ) }
         </Paper>
 
-        <RandomDeviceButton />
+        {userCan('create', 'device') &&
+          <RandomDeviceButton />
+        }
       </DashboardLayout>
     )
   }

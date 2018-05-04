@@ -12,11 +12,20 @@ import { withStyles } from 'material-ui/styles'
 const styles = theme => ({
   paper: {
     margin: 'auto',
-    padding: theme.spacing.unit * 2,
-    width: 420,
+    padding: theme.spacing.unit * 4,
+    width: 700,
   },
   input: {
     marginBottom: theme.spacing.unit * 2,
+  },
+  table: {
+    marginTop: theme.spacing.unit * 2
+  },
+  actions: {
+    textAlign: "right"
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2
   },
 })
 
@@ -69,7 +78,11 @@ class EditMembershipModal extends Component {
       >
         <Paper className={classes.paper}>
           <Typography variant="title">
-            Edit role for {membership.email}
+            Edit user
+          </Typography>
+
+          <Typography variant="subheading" style={{marginTop: 16}}>
+            Select a new role for {membership.email}
           </Typography>
 
           <form onSubmit={this.handleSubmit}>
@@ -79,15 +92,17 @@ class EditMembershipModal extends Component {
               classes={classes}
             />
 
-            <Button
-              type="submit"
-              variant="raised"
-              color="primary"
-              size="large"
-              className={classes.formButton}
-            >
-              Update User
-            </Button>
+            <div className={classes.actions}>
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                className={classes.formButton}
+              >
+                Update User
+              </Button>
+            </div>
           </form>
         </Paper>
       </Modal>

@@ -4,6 +4,8 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Channels
   alias Console.Channels.Channel
 
+  plug ConsoleWeb.Plug.AuthorizeAction
+
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do

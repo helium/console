@@ -7,6 +7,7 @@ import RandomChannelButton from './RandomChannelButton'
 import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
+import userCan from '../../util/abilities'
 
 //MUI
 import Paper from 'material-ui/Paper';
@@ -21,12 +22,16 @@ class ChannelIndex extends Component {
 
     return(
       <DashboardLayout title="All Channels">
-        <h4>Create New Channel</h4>
-        <div><Link to={'/channels/new/azure'}>Azure IoT Hub</Link></div>
-        <div><Link to={'/channels/new/aws'}>AWS IoT</Link></div>
-        <div><Link to={'/channels/new/google'}>Google Cloud IoT Core</Link></div>
-        <div><Link to={'/channels/new/mqtt'}>MQTT</Link></div>
-        <div><Link to={'/channels/new/http'}>HTTP</Link></div>
+        {userCan('create', 'channel') &&
+          <div>
+            <h4>Create New Channel</h4>
+            <div><Link to={'/channels/new/azure'}>Azure IoT Hub</Link></div>
+            <div><Link to={'/channels/new/aws'}>AWS IoT</Link></div>
+            <div><Link to={'/channels/new/google'}>Google Cloud IoT Core</Link></div>
+            <div><Link to={'/channels/new/mqtt'}>MQTT</Link></div>
+            <div><Link to={'/channels/new/http'}>HTTP</Link></div>
+          </div>
+        }
 
         <Paper>
           {channels.length === 0 ? (
@@ -38,7 +43,10 @@ class ChannelIndex extends Component {
             <ChannelsTable channels={channels} deleteChannel={deleteChannel} />
           ) }
         </Paper>
-        <RandomChannelButton />
+
+        {userCan('create', 'channel') &&
+          <RandomChannelButton />
+        }
       </DashboardLayout>
     )
   }
