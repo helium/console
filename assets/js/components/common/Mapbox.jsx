@@ -60,7 +60,7 @@ class Mapbox extends Component {
           'circle-radius': {
             type: 'exponential',
             stops: [
-              [0, 4], [10,7], [12, 25], [14, 120], [22,3000]
+              [0, 10], [10,16], [12, 20], [14, 150], [22,3000]
             ]
           }
         }
@@ -81,7 +81,7 @@ class Mapbox extends Component {
           'circle-radius': {
             type: 'exponential',
             stops: [
-              [0, 2], [10,3], [12, 3], [14, 5], [22,20]
+              [0, 5], [10,8], [12, 10], [14, 15], [22,20]
             ]
           }
         }
