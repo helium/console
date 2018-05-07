@@ -6,7 +6,7 @@ import { parse } from 'query-string'
 import { register, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
-import GDPRPrompt from './GDPRPrompt.jsx'
+import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
 import DocumentLayout from '../common/DocumentLayout'
 // MUI
@@ -222,7 +222,7 @@ class Register extends Component {
     if (showGDPR) {
       return(
         <DocumentLayout>
-          <GDPRPrompt handleSubmit={this.registerUser}/>
+          <TermsPrompt handleSubmit={this.registerUser}/>
         </DocumentLayout>
       );
     } else {

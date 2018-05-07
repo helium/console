@@ -63,3 +63,26 @@ a
   color: #1B5E20; }
   .noty_theme__mui.noty_type__success .noty_buttons {
     border-color: #50C24E; }
+
+.terms {
+  font-family: Roboto;
+  box-shadow: inset 0 0 10px #9E9E9E;
+  padding: 20px;
+  height: 80vh;
+  overflow-y: scroll;
+}
+.terms h1 {
+  font-weight: 500;
+  font-size: 1.3em;
+  margin: 0;
+}
+.terms h3 {
+  font-weight: 500;
+  font-size: 1em;
+}
+.terms p {
+  font-size: 0.9em;
+}
+.terms li {
+  font-size: 0.9em;
+}
