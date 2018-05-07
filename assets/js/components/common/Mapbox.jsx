@@ -7,12 +7,20 @@ import mapboxgl from 'mapbox-gl'
 class Mapbox extends Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ'
+    const { elements } = this.props
+
+    let initialCenter = [-93.436, 37.778] //US Center
+    let initialZoom = 2
+    if (elements.length == 1) {
+      initialCenter = [elements[0].longitude, elements[0].latitude]
+      initialZoom = 14
+    }
 
     const map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/dark-v9',
-      center: [-100.436, 37.778], //US center
-      zoom: 3
+      center: initialCenter,
+      zoom: initialZoom
     })
     map.addControl(new mapboxgl.NavigationControl())
     map.scrollZoom.disable()
@@ -21,7 +29,7 @@ class Mapbox extends Component {
     let features = []
 
     map.on('load', () => {
-      this.props.elements.forEach(element => {
+      elements.forEach(element => {
         features.push({
           "type": "Feature",
           "properties": {
@@ -79,7 +87,7 @@ class Mapbox extends Component {
         }
       })
 
-      if (this.props.elements.length > 0) {
+      if (elements.length > 1) {
         map.fitBounds(bounds, {
           padding: {top: 100, bottom: 100, left: 100, right: 100}
         })
