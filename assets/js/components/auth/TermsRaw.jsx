@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import Typography from 'material-ui/Typography';
 
-class GDPRTermsRaw extends Component {
+class TermsRaw extends Component {
   render() {
-    return <div className='terms'>
-      <h1>Privacy Policy</h1>
+    return <Typography component="div">
+      <h2>Privacy Policy</h2>
       <p>This Privacy Policy governs the manner in which Helium Inc. ("Helium") collect, use, maintain and disclose information collected from users (each, a "User" or "you") on the www.helium.com website and all products and services offered by Helium ("Site").</p>
       <p>By using the Site or otherwise providing information to Helium, you agree to our Privacy Policy. If you do not agree with this policy or its terms, please do not visit or use our Site. The Helium Terms and Conditions are incorporated within the terms of this Privacy Policy. Please make sure you read and agree to them before using our Site.</p>
       <p>Our Privacy Policy does not apply to products or services offered by other companies, individuals or business partners, or to information that you provide or that is collected by third parties using our technologies. These third parties may have their own privacy policies, which we encourage you to read before providing information to them.</p>
@@ -28,8 +29,8 @@ class GDPRTermsRaw extends Component {
       <h3>Accessing your personal information</h3>
       <p>You may log in to Helium to update your registration information. Also, California law permits Users who are California residents to request certain information regarding our disclosure of personal information to third parties for their direct marketing purposes. To make such a request, please send an e-mail to the contact information below with "California Shine the Light Privacy Request" in the subject line and your full name, email address, postal address and specific services you have used in the body of your email.</p>
       <p>Helium has the discretion to update this privacy policy at any time. When we do, we revise the updated date at the top of this page. We encourage Users to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect. You acknowledge and agree that it is your responsibility to review this Privacy Policy periodically and become aware of modifications.</p>
-    </div>
+    </Typography>
   }
 }
 
-export default GDPRTermsRaw
+export default TermsRaw
