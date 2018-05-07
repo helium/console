@@ -7,11 +7,17 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Card, { CardContent } from 'material-ui/Card';
 import { withStyles } from 'material-ui/styles';
-import GDPRTermsRaw from './GDPRTermsRaw.jsx';
+import TermsRaw from './TermsRaw.jsx';
 
 const styles = theme => ({
   card: {
     marginBottom: theme.spacing.unit * 4,
+  },
+  terms: {
+    boxShadow: 'inset 0 0 10px #9E9E9E',
+    padding: '20px',
+    height: '80vh',
+    overflowY: 'scroll'
   },
   title: {
     marginTop: theme.spacing.unit,
@@ -57,11 +63,9 @@ class TermsPrompt extends Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="headline" className={classes.title}>
-            GDPR Privacy Policy Agreement
-          </Typography>
-
-          <GDPRTermsRaw ref={elem => (this.termsContainer = elem)}/>
+          <div className={classes.terms} ref={elem => (this.termsContainer = elem)}>
+            <TermsRaw />
+          </div>
 
           <form onSubmit={this.props.handleSubmit} noValidate>
             <Button

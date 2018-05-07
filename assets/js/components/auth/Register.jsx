@@ -43,7 +43,7 @@ class Register extends Component {
       password: "",
       passwordConfirm: "",
       recaptcha: "",
-      showGDPR: false
+      showTerms: false
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -56,9 +56,9 @@ class Register extends Component {
     this.commonFields = this.commonFields.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.shouldResetCaptcha) {
-      this.setState({ showGDPR: false }, () => {
+  componentDidUpdate(prevProps) {
+    if (this.props.auth.shouldResetCaptcha) {
+      this.setState({ showTerms: false }, () => {
         this.recaptchaInstance.reset()
         this.props.hasResetCaptcha()
       })
@@ -71,7 +71,7 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ showGDPR: true })
+    this.setState({ showTerms: true })
   }
 
   registerUser(e) {
@@ -217,9 +217,9 @@ class Register extends Component {
 
   render() {
     const { version } = this.props
-    const { showGDPR } = this.state
+    const { showTerms } = this.state
 
-    if (showGDPR) {
+    if (showTerms) {
       return(
         <DocumentLayout>
           <TermsPrompt handleSubmit={this.registerUser}/>
