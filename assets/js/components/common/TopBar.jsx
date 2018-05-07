@@ -77,10 +77,12 @@ class TopBar extends Component {
   };
 
   updateScrollPosition(event) {
-    this.setState({
-      scrollPosition: event.target.scrollTop,
-      atTop: event.target.scrollTop <= 10
-    })
+    if (event.target.id == 'mainContainer') {
+      this.setState({
+        scrollPosition: event.target.scrollTop,
+        atTop: event.target.scrollTop <= 10
+      })
+    }
   }
 
   render() {

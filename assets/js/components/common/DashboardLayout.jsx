@@ -44,7 +44,7 @@ class DashboardLayout extends Component {
 
         <NavDrawer />
 
-        <main className={classes.main}>
+        <main className={classes.main} id="mainContainer">
           <ContentLayout title={title} tabs={tabs}>
             {this.props.children}
           </ContentLayout>
