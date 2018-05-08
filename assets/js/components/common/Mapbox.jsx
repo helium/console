@@ -127,10 +127,18 @@ class Mapbox extends Component {
   }
 
   render() {
-    const style = {
-      width: 'calc(100% - 240px)',
-      height: 'calc(100% - 160px)',
-      position: 'absolute'
+    let style
+    if (this.props.elements.length == 1) {
+      style = {
+        width: '100%',
+        height: '600px'
+      }
+    } else {
+      style = {
+        width: 'calc(100% - 240px)',
+        height: 'calc(100% - 160px)',
+        position: 'absolute'
+      }
     }
 
     return <div style={style} ref={el => this.mapContainer = el} />
