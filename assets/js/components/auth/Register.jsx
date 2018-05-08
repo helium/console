@@ -6,8 +6,9 @@ import { parse } from 'query-string'
 import { register, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
+import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
-
+import DocumentLayout from '../common/DocumentLayout'
 // MUI
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
@@ -41,11 +42,13 @@ class Register extends Component {
       email: "",
       password: "",
       passwordConfirm: "",
-      recaptcha: ""
+      recaptcha: "",
+      showTerms: false
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.registerUser = this.registerUser.bind(this);
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
 
     this.registerContent = this.registerContent.bind(this)
@@ -53,10 +56,12 @@ class Register extends Component {
     this.commonFields = this.commonFields.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.shouldResetCaptcha) {
-      this.recaptchaInstance.reset()
-      this.props.hasResetCaptcha()
+  componentDidUpdate(prevProps) {
+    if (this.props.auth.shouldResetCaptcha) {
+      this.setState({ showTerms: false }, () => {
+        this.recaptchaInstance.reset()
+        this.props.hasResetCaptcha()
+      })
     }
   }
 
@@ -65,6 +70,11 @@ class Register extends Component {
   }
 
   handleSubmit(e) {
+    e.preventDefault();
+    this.setState({ showTerms: true })
+  }
+
+  registerUser(e) {
     e.preventDefault();
     const { teamName, email, password, passwordConfirm, recaptcha } = this.state;
     const { register, invitationToken } = this.props
@@ -207,14 +217,23 @@ class Register extends Component {
 
   render() {
     const { version } = this.props
+    const { showTerms } = this.state
 
-    return(
-      <AuthLayout>
-        <Card>
-          {version === "register" ? this.registerContent() : this.joinContent()}
-        </Card>
-      </AuthLayout>
-    );
+    if (showTerms) {
+      return(
+        <DocumentLayout>
+          <TermsPrompt handleSubmit={this.registerUser}/>
+        </DocumentLayout>
+      );
+    } else {
+      return(
+        <AuthLayout>
+          <Card>
+            {version === "register" ? this.registerContent() : this.joinContent()}
+          </Card>
+        </AuthLayout>
+      );
+    }
   }
 }
 
