@@ -33,7 +33,8 @@ class Mapbox extends Component {
         features.push({
           "type": "Feature",
           "properties": {
-            "description": `<div><p class="blue">${element.name}</p><p>${element.longitude}, ${element.latitude}</p></div>`
+            "description": `<div><p class="blue">${element.name}</p><p>${element.longitude}, ${element.latitude}</p></div>`,
+            "id": element.id
           },
           "geometry": {
             "type": "Point",
@@ -87,18 +88,12 @@ class Mapbox extends Component {
         }
       })
 
-      if (elements.length > 1) {
-        map.fitBounds(bounds, {
-          padding: {top: 100, bottom: 100, left: 100, right: 100}
-        })
-      }
-
       const popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false
       })
 
-      map.on('mouseenter', 'innerCircle', function(e) {
+      map.on('mouseenter', 'innerCircle', (e) => {
         map.getCanvas().style.cursor = 'pointer'
 
         var coordinates = e.features[0].geometry.coordinates.slice()
@@ -113,17 +108,29 @@ class Mapbox extends Component {
           .addTo(map)
       })
 
-      map.on('mouseleave', 'innerCircle', function() {
+      map.on('mouseleave', 'innerCircle', () => {
         map.getCanvas().style.cursor = ''
         popup.remove()
       })
+
+      if (elements.length > 1) {
+        map.fitBounds(bounds, {
+          padding: {top: 100, bottom: 100, left: 100, right: 100}
+        })
+
+        map.on('click', 'innerCircle', (e) => {
+          const id = e.features[0].properties.id
+          this.props.push(`/gateways/${id}`)
+        })
+      }
     })
   }
 
   render() {
     const style = {
-      width: '100%',
-      height: '600px'
+      width: 'calc(100% - 240px)',
+      height: 'calc(100% - 160px)',
+      position: 'absolute'
     }
 
     return <div style={style} ref={el => this.mapContainer = el} />
