@@ -118,6 +118,8 @@ class Mapbox extends Component {
           padding: {top: 100, bottom: 100, left: 100, right: 100}
         })
 
+        map.scrollZoom.enable()
+
         map.on('click', 'innerCircle', (e) => {
           const id = e.features[0].properties.id
           this.props.push(`/gateways/${id}`)
