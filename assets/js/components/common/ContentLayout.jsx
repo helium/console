@@ -16,6 +16,9 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3,
     overflowY: 'scroll'
   },
+  contentNoPad: {
+    overflowY: 'scroll'
+  }
 });
 
 const TabContainer = (props) => {
@@ -55,9 +58,7 @@ class ContentLayout extends Component {
 
         {tabs.map((tab, i) => {
           if (currentTab === i) {
-            return (
-            <TabContainer key={i} content={tab.content} className={classes.content} />
-            )
+            return <TabContainer key={i} content={tab.content} className={tab.noPadding ? classes.contentNoPad : classes.content} />
           }
         })}
       </div>

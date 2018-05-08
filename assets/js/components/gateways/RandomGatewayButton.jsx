@@ -24,7 +24,7 @@ class RandomGatewayButton extends Component {
         variant="fab"
         color="secondary"
         onClick={this.handleClick.bind(this)}
-        style={{position: 'fixed', right: 30, bottom: 30}} >
+        style={{position: 'fixed', right: 30, bottom: 30, zIndex: 2}} >
         <AddIcon />
       </Button>
     )

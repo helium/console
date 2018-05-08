@@ -7,12 +7,20 @@ import mapboxgl from 'mapbox-gl'
 class Mapbox extends Component {
   componentDidMount() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ'
+    const { elements } = this.props
+
+    let initialCenter = [-93.436, 37.778] //US Center
+    let initialZoom = 2
+    if (elements.length == 1) {
+      initialCenter = [elements[0].longitude, elements[0].latitude]
+      initialZoom = 14
+    }
 
     const map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/dark-v9',
-      center: [-100.436, 37.778], //US center
-      zoom: 3
+      center: initialCenter,
+      zoom: initialZoom
     })
     map.addControl(new mapboxgl.NavigationControl())
     map.scrollZoom.disable()
@@ -21,11 +29,12 @@ class Mapbox extends Component {
     let features = []
 
     map.on('load', () => {
-      this.props.elements.forEach(element => {
+      elements.forEach(element => {
         features.push({
           "type": "Feature",
           "properties": {
-            "description": `<div><p class="blue">${element.name}</p><p>${element.longitude}, ${element.latitude}</p></div>`
+            "description": `<div><p class="blue">${element.name}</p><p>${element.longitude}, ${element.latitude}</p></div>`,
+            "id": element.id
           },
           "geometry": {
             "type": "Point",
@@ -52,7 +61,7 @@ class Mapbox extends Component {
           'circle-radius': {
             type: 'exponential',
             stops: [
-              [0, 4], [10,7], [12, 25], [14, 120], [22,3000]
+              [0, 10], [10,16], [12, 20], [14, 150], [22,3000]
             ]
           }
         }
@@ -73,24 +82,18 @@ class Mapbox extends Component {
           'circle-radius': {
             type: 'exponential',
             stops: [
-              [0, 2], [10,3], [12, 3], [14, 5], [22,20]
+              [0, 5], [10,8], [12, 10], [14, 15], [22,20]
             ]
           }
         }
       })
-
-      if (this.props.elements.length > 0) {
-        map.fitBounds(bounds, {
-          padding: {top: 100, bottom: 100, left: 100, right: 100}
-        })
-      }
 
       const popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false
       })
 
-      map.on('mouseenter', 'innerCircle', function(e) {
+      map.on('mouseenter', 'innerCircle', (e) => {
         map.getCanvas().style.cursor = 'pointer'
 
         var coordinates = e.features[0].geometry.coordinates.slice()
@@ -105,17 +108,39 @@ class Mapbox extends Component {
           .addTo(map)
       })
 
-      map.on('mouseleave', 'innerCircle', function() {
+      map.on('mouseleave', 'innerCircle', () => {
         map.getCanvas().style.cursor = ''
         popup.remove()
       })
+
+      if (elements.length > 1) {
+        map.fitBounds(bounds, {
+          padding: {top: 100, bottom: 100, left: 100, right: 100}
+        })
+
+        map.scrollZoom.enable()
+
+        map.on('click', 'innerCircle', (e) => {
+          const id = e.features[0].properties.id
+          this.props.push(`/gateways/${id}`)
+        })
+      }
     })
   }
 
   render() {
-    const style = {
-      width: '100%',
-      height: '600px'
+    let style
+    if (this.props.elements.length == 1) {
+      style = {
+        width: '100%',
+        height: '600px'
+      }
+    } else {
+      style = {
+        width: 'calc(100% - 240px)',
+        height: 'calc(100% - 160px)',
+        position: 'absolute'
+      }
     }
 
     return <div style={style} ref={el => this.mapContainer = el} />

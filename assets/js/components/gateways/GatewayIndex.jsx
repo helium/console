@@ -57,7 +57,8 @@ class GatewayIndex extends Component {
       content: listView,
     }, {
       label: "Map View",
-      content: mapView
+      content: mapView,
+      noPadding: true
     }]
 
     return(
