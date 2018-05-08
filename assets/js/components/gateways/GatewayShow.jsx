@@ -103,7 +103,7 @@ class GatewayShow extends Component {
         </Card>
 
         <Card style={{marginTop: 24}}>
-          <Mapbox type={"gateways"} elements={[this.props.gateway]}/>
+          <Mapbox type={"gateways"} view={"show"} gateways={[gateway]}/>
         </Card>
       </DashboardLayout>
     )

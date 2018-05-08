@@ -48,7 +48,7 @@ class GatewayIndex extends Component {
 
     const mapView = (
       <Paper>
-        <Mapbox type={"gateways"} elements={this.props.gateways}/>
+        <Mapbox type={"gateways"} view={"index"} gateways={gateways}/>
       </Paper>
     )
 
