@@ -21,14 +21,14 @@ class Mapbox extends Component {
       this.addGatewaysToMap()
       this.addPopupsToMap()
 
-      if (this.props.location.pathname === "/gateways") {
+      if (this.props.view === "index") {
         this.map.scrollZoom.enable()
       }
     })
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.elements.length !== this.props.elements.length) {
+    if (prevProps.gateways.length !== this.props.gateways.length) {
       this.removeGatewaysFromMap()
       this.addGatewaysToMap()
     }
@@ -39,8 +39,8 @@ class Mapbox extends Component {
 
     let initialCenter = [-93.436, 37.778] //US Center
     let initialZoom = 2
-    if (this.props.location.pathname !== "/gateways") {
-      initialCenter = [this.props.elements[0].longitude, this.props.elements[0].latitude]
+    if (this.props.view === "show") {
+      initialCenter = [this.props.gateways[0].longitude, this.props.gateways[0].latitude]
       initialZoom = 14
     }
 
@@ -62,20 +62,20 @@ class Mapbox extends Component {
   addGatewaysToMap() {
     let features = []
 
-    this.props.elements.forEach(element => {
+    this.props.gateways.forEach(gateway => {
       features.push({
         "type": "Feature",
         "properties": {
-          "description": `<div><p class="blue">${element.name}</p><p>${element.longitude}, ${element.latitude}</p></div>`,
-          "id": element.id
+          "description": `<div><p class="blue">${gateway.name}</p><p>${gateway.longitude}, ${gateway.latitude}</p></div>`,
+          "id": gateway.id
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [element.longitude, element.latitude]
+          "coordinates": [gateway.longitude, gateway.latitude]
         }
       })
 
-      this.bounds.extend([element.longitude, element.latitude])
+      this.bounds.extend([gateway.longitude, gateway.latitude])
     })
 
     this.map.addLayer({
@@ -121,7 +121,7 @@ class Mapbox extends Component {
       }
     })
 
-    if (this.props.elements.length > 1) {
+    if (this.props.gateways.length > 1) {
       this.map.fitBounds(this.bounds, {
         padding: {top: 100, bottom: 100, left: 100, right: 100}
       })
@@ -156,7 +156,7 @@ class Mapbox extends Component {
       this.popup.remove()
     })
 
-    if (this.props.location.pathname === "/gateways") {
+    if (this.props.view === "index") {
       this.map.on('click', 'innerCircle', (e) => {
         const id = e.features[0].properties.id
         this.props.push(`/gateways/${id}`)
@@ -166,7 +166,7 @@ class Mapbox extends Component {
 
   render() {
     let style
-    if (this.props.elements.length == 1) {
+    if (this.props.gateways.length == 1) {
       style = {
         width: '100%',
         height: '600px'
