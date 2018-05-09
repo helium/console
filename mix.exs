@@ -48,7 +48,9 @@ defmodule Console.Mixfile do
       {:ex_machina, "~> 2.2", only: :test},
       {:cloak, "~> 0.6.1"},
       {:httpoison, "~> 1.0"},
-      {:pot, "~> 0.9.6"}
+      {:pot, "~> 0.9.6"},
+      {:absinthe, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4"}
     ]
   end
 
