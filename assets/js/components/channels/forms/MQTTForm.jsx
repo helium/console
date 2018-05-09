@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
+
 class MQTTForm extends Component {
   constructor(props) {
     super(props);
@@ -26,17 +31,37 @@ class MQTTForm extends Component {
 
   render() {
     return(
-      <div>
-        <p>Enter your MQTT Connection Details</p>
-        <div>
-          <label>Endpoint</label>
-          <input type="text" name="endpoint" value={this.state.endpoint} onChange={this.handleInputUpdate}/>
-        </div>
-        <div>
-          <label>Topic</label>
-          <input type="text" name="topic" value={this.state.topic} onChange={this.handleInputUpdate}/>
-        </div>
-      </div>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Enter your MQTT Connection Details
+          </Typography>
+
+          <div style={{width: '50%'}}>
+            <TextField
+              type="text"
+              label="Endpoint"
+              name="endpoint"
+              value={this.state.endpoint}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+
+            <TextField
+              type="text"
+              label="Topic"
+              name="topic"
+              value={this.state.topic}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 }

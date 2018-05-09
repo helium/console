@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
+
 class AWSForm extends Component {
   constructor(props) {
     super(props);
@@ -28,21 +33,46 @@ class AWSForm extends Component {
 
   render() {
     return(
-      <div>
-        <p>Enter your AWS Connection Details</p>
-        <div>
-          <label>Access Key ID</label>
-          <input type="text" name="accessKeyId" value={this.state.accessKeyId} onChange={this.handleInputUpdate}/>
-        </div>
-        <div>
-          <label>Secret Access Key</label>
-          <input type="text" name="secretAccessKey" value={this.state.secretAccessKey} onChange={this.handleInputUpdate}/>
-        </div>
-        <div>
-          <label>Region</label>
-          <input type="text" name="region" value={this.state.region} onChange={this.handleInputUpdate}/>
-        </div>
-      </div>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Enter your AWS Connection Details
+          </Typography>
+
+          <div style={{width: '50%'}}>
+            <TextField
+              type="text"
+              label="Access Key ID"
+              name="accessKeyId"
+              value={this.state.accessKeyId}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+
+            <TextField
+              type="text"
+              label="Secret Access Key"
+              name="secretAccessKey"
+              value={this.state.secretAccessKey}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+
+            <TextField
+              type="text"
+              label="Region"
+              name="region"
+              value={this.state.region}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 }

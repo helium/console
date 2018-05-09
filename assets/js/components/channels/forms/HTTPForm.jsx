@@ -1,5 +1,15 @@
 import React, { Component } from 'react';
 
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
+import TextField from 'material-ui/TextField';
+import AddIcon from 'material-ui-icons/Add';
+import ClearIcon from 'material-ui-icons/Clear';
+import Button from 'material-ui/Button';
+
 class HTTPForm extends Component {
   constructor(props) {
     super(props);
@@ -57,31 +67,77 @@ class HTTPForm extends Component {
 
   render() {
     return(
-      <div>
-        <p>Enter your HTTP Connection Details</p>
-        <div>
-          <label>Method</label>
-          <select name="method" onChange={this.handleInputUpdate}>
-            <option value="post">POST</option>
-            <option value="get">GET</option>
-            <option value="put">PUT</option>
-            <option value="patch">PATCH</option>
-          </select>
-          <label>Endpoint</label>
-          <input type="text" name="endpoint" value={this.state.endpoint} onChange={this.handleInputUpdate}/>
-        </div>
-        {
-          this.state.headers.map((obj, i) => (
-            <div key={i}>
-              <label>HTTP Headers</label>
-              <input type="text" name={`${i}-header`} value={obj.header} onChange={this.handleHttpHeaderUpdate}/>
-              <input type="text" name={`${i}-value`} value={obj.value} onChange={this.handleHttpHeaderUpdate}/>
-              {i > 1 && <span onClick={() => this.removeHeaderRow(i)}> x</span>}
-            </div>
-          ))
-        }
-        <h4 onClick={this.addHeaderRow}>+</h4>
-      </div>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Enter your HTTP Connection Details
+          </Typography>
+
+          <div style={{width: '50%'}}>
+            <Select
+              value={this.state.method}
+              onChange={this.handleInputUpdate}
+              inputProps={{
+                name: 'method',
+                id: 'httpMethod',
+              }}
+              style={{width: 100}}
+            >
+              <MenuItem value="post">POST</MenuItem>
+              <MenuItem value="get">GET</MenuItem>
+              <MenuItem value="put">PUT</MenuItem>
+              <MenuItem value="patch">PATCH</MenuItem>
+            </Select>
+
+            <TextField
+              type="text"
+              label="Endpoint"
+              name="endpoint"
+              value={this.state.endpoint}
+              onChange={this.handleInputUpdate}
+              style={{width: "calc(100% - 112px)", marginLeft: 12}}
+            />
+          </div>
+
+          {
+            this.state.headers.map((obj, i) => (
+              <div key={i} style={{width: '50%'}}>
+                <TextField
+                  type="text"
+                  label="HTTP Header"
+                  name={`${i}-header`}
+                  value={obj.header}
+                  onChange={this.handleHttpHeaderUpdate}
+                />
+
+                <TextField
+                  type="text"
+                  label="Value"
+                  name={`${i}-value`}
+                  value={obj.value}
+                  onChange={this.handleHttpHeaderUpdate}
+                  style={{marginLeft: 12}}
+                />
+
+                {
+                  (i > 1) &&
+                    <Button variant="fab" mini onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}>
+                      <ClearIcon />
+                    </Button>
+                }
+              </div>
+            ))
+          }
+
+          <Button variant="fab" mini onClick={this.addHeaderRow} style={{marginTop: 12}}>
+            <AddIcon />
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 }

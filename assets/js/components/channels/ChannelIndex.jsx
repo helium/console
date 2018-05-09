@@ -8,9 +8,12 @@ import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
+import ChannelCreateRow from './ChannelCreateRow'
 
 //MUI
 import Paper from 'material-ui/Paper';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
 
 class ChannelIndex extends Component {
   componentDidMount() {
@@ -18,22 +21,23 @@ class ChannelIndex extends Component {
   }
 
   render() {
-    const { channels, deleteChannel } = this.props
+    const { channels, deleteChannel, classes } = this.props
 
     return(
       <DashboardLayout title="All Channels">
         {userCan('create', 'channel') &&
-          <div>
-            <h4>Create New Channel</h4>
-            <div><Link to={'/channels/new/azure'}>Azure IoT Hub</Link></div>
-            <div><Link to={'/channels/new/aws'}>AWS IoT</Link></div>
-            <div><Link to={'/channels/new/google'}>Google Cloud IoT Core</Link></div>
-            <div><Link to={'/channels/new/mqtt'}>MQTT</Link></div>
-            <div><Link to={'/channels/new/http'}>HTTP</Link></div>
-          </div>
+          <Card>
+            <CardContent>
+              <Typography variant="headline" component="h3">
+                Create New Channel
+              </Typography>
+
+              <ChannelCreateRow />
+            </CardContent>
+          </Card>
         }
 
-        <Paper>
+        <Paper style={{marginTop: 24}}>
           {channels.length === 0 ? (
             <BlankSlate
               title="No channels"

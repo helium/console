@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
+
 class GoogleForm extends Component {
   constructor(props) {
     super(props);
@@ -28,22 +33,46 @@ class GoogleForm extends Component {
 
   render() {
     return(
-      <div>
-        <p>Enter your Google Details</p>
-        <div>
-          <label>Registry ID</label>
-          <input type="text" name="registryId" value={this.state.registryId} onChange={this.handleInputUpdate}/>
-        </div>
-        <div>
-          <label>Region</label>
-          <input type="text" name="region" value={this.state.region} onChange={this.handleInputUpdate}/>
-        </div>
-        <div>
-          <p></p>
-          <label>JSON Private Key</label>
-          <textarea rows="3" name="privateKey" onChange={this.handleInputUpdate}>{this.state.privatekey}</textarea>
-        </div>
-      </div>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Enter your Google Details
+          </Typography>
+
+          <div style={{width: '50%'}}>
+            <TextField
+              type="text"
+              label="Registry ID"
+              name="registryId"
+              value={this.state.registryId}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+
+            <TextField
+              type="text"
+              label="Region"
+              name="region"
+              value={this.state.region}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+          </div>
+
+          <TextField
+            type="text"
+            label="JSON Private Key"
+            name="privateKey"
+            value={this.state.privateKey}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
+        </CardContent>
+      </Card>
     );
   }
 }
