@@ -9,7 +9,12 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
+import ChannelCreateRow from './ChannelCreateRow'
 import { createChannel } from '../../actions/channel'
+
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
 
 class ChannelNew extends Component {
   constructor(props) {
@@ -78,15 +83,20 @@ class ChannelNew extends Component {
   render() {
     return(
       <DashboardLayout title="Channel" current="channels">
-        <h3>Step 1</h3>
-        <p>Select a channel</p>
-        <div><Link to={'/channels/new/azure'} replace>Azure IoT Hub</Link></div>
-        <div><Link to={'/channels/new/aws'} replace>AWS IoT</Link></div>
-        <div><Link to={'/channels/new/google'} replace>Google Cloud IoT Core</Link></div>
-        <div><Link to={'/channels/new/mqtt'} replace>MQTT</Link></div>
-        <div><Link to={'/channels/new/http'} replace>HTTP</Link></div>
+        <Card>
+          <CardContent>
+            <Typography variant="headline">
+              Step 1
+            </Typography>
 
-        <h3>Step 2</h3>
+            <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+              Select a channel
+            </Typography>
+
+            <ChannelCreateRow />
+          </CardContent>
+        </Card>
+
         {this.renderForm()}
         {this.renderStep3()}
       </DashboardLayout>

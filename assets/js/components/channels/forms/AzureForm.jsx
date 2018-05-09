@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 
+//MUI
+import Card, { CardContent } from 'material-ui/Card';
+import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
+
 class AzureForm extends Component {
   constructor(props) {
     super(props);
@@ -27,26 +32,59 @@ class AzureForm extends Component {
 
   render() {
     return(
-      <div>
-        <p>Enter your Azure Connection String</p>
-        <div>
-          <label>Connection String</label>
-          <input type="text" name="connectionString" value={this.state.connectionString} onChange={this.handleInputUpdate}/>
-        </div>
-        <p></p>
-        <div>
-          <label>Hostname</label>
-          <input disabled type="text" name="hostName" value={this.state.hostName}/>
-        </div>
-        <div>
-          <label>Shared Access Key Name</label>
-          <input disabled type="text" name="accessKeyName" value={this.state.accessKeyName}/>
-        </div>
-        <div>
-          <label>Shared Access Key</label>
-          <input disabled type="text" name="accessKey" value={this.state.accessKey}/>
-        </div>
-      </div>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Enter your Azure Connection String
+          </Typography>
+
+          <div style={{width: '50%'}}>
+            <TextField
+              type="text"
+              label="Connection String"
+              name="connectionString"
+              value={this.state.connectionString}
+              onChange={this.handleInputUpdate}
+              fullWidth
+            />
+            <p></p>
+
+            <TextField
+              type="text"
+              label="Hostname"
+              name="hostName"
+              value={this.state.hostName}
+              onChange={this.handleInputUpdate}
+              fullWidth
+              disabled={true}
+            />
+
+            <TextField
+              type="text"
+              label="Shared Access Key Name"
+              name="accessKeyName"
+              value={this.state.accessKeyName}
+              onChange={this.handleInputUpdate}
+              fullWidth
+              disabled={true}
+            />
+
+            <TextField
+              type="text"
+              label="Shared Access Key"
+              name="accessKey"
+              value={this.state.accessKey}
+              onChange={this.handleInputUpdate}
+              fullWidth
+              disabled={true}
+            />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 }
