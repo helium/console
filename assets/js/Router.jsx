@@ -17,7 +17,7 @@ import ResendVerification from './components/auth/ResendVerification.jsx';
 import ForgotPassword from './components/auth/ForgotPassword.jsx';
 import ResetPassword from './components/auth/ResetPassword.jsx';
 import Home from './components/Home.jsx';
-import Secret from './components/Secret.jsx';
+import Profile from './components/Profile.jsx';
 import TwoFactorPrompt from './components/auth/TwoFactorPrompt.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
@@ -50,7 +50,7 @@ class Router extends React.Component {
                 <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
 
                 <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
-                <PrivateRoute path="/secret" component={Secret}/>
+                <PrivateRoute path="/profile" component={Profile}/>
                 <PrivateRoute exact path="/devices" component={DeviceIndex} />
                 <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                 <PrivateRoute exact path="/gateways" component={GatewayIndex} />

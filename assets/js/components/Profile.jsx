@@ -11,7 +11,7 @@ import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Card, { CardActions, CardContent } from 'material-ui/Card';
 
-class Secret extends Component {
+class Profile extends Component {
   constructor(props) {
     super(props);
   }
@@ -60,4 +60,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchUser, logOut }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Secret);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
