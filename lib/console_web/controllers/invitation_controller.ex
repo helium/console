@@ -8,7 +8,7 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Email
   alias Console.Mailer
 
-  plug ConsoleWeb.Plug.AuthorizeAction, except: [:accept]
+  plug ConsoleWeb.Plug.AuthorizeAction when not action in [:accept]
 
   action_fallback(ConsoleWeb.FallbackController)
 
