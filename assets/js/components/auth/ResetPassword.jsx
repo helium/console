@@ -3,6 +3,28 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { changePassword } from '../../actions/auth.js';
+import AuthLayout from '../common/AuthLayout'
+
+//MUI
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Button from 'material-ui/Button';
+import Card, { CardContent } from 'material-ui/Card';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+  title: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit,
+  },
+  formButton: {
+    marginTop: theme.spacing.unit * 2,
+  },
+  extraLinks: {
+    marginTop: theme.spacing.unit * 2,
+    textAlign: 'center'
+  }
+});
 
 class ResetPassword extends Component {
   constructor(props) {
@@ -29,18 +51,56 @@ class ResetPassword extends Component {
     this.props.changePassword(password, passwordConfirm, token);
   }
   render() {
+    const { classes } = this.props
+
     return(
-      <div>
-        <h2>Reset your password</h2>
-        <form onSubmit={this.handleSubmit}>
-          <label>New Password</label>
-          <input type="password" name ="password" value={this.state.password} onChange={this.handleInputUpdate} />
-          <label>Confirm Password</label>
-          <input type="password" name ="passwordConfirm" value={this.state.passwordConfirm} onChange={this.handleInputUpdate} />
-          <button type="submit">Reset Password</button>
-        </form>
-        <Link to="/login"><p>Login Page</p></Link>
-      </div>
+      <AuthLayout>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" className={classes.title}>
+              Reset your password
+            </Typography>
+
+            <form onSubmit={this.handleSubmit}>
+              <TextField
+                type="password"
+                label="New Password"
+                name="password"
+                value={this.state.password}
+                onChange={this.handleInputUpdate}
+                fullWidth
+                style={{marginBottom: 16}}
+              />
+
+              <TextField
+                type="password"
+                label="Confirm Password"
+                name="passwordConfirm"
+                value={this.state.passwordConfirm}
+                onChange={this.handleInputUpdate}
+                fullWidth
+                style={{marginBottom: 16}}
+              />
+
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                className={classes.formButton}
+              >
+                Reset Password
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Typography component="p" className={classes.extraLinks}>
+          <Link to="/login">
+            Login page
+          </Link>
+        </Typography>
+      </AuthLayout>
     );
   }
 }
@@ -53,4 +113,5 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ changePassword }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResetPassword);
+const styled = withStyles(styles)(ResetPassword)
+export default connect(mapStateToProps, mapDispatchToProps)(styled);
