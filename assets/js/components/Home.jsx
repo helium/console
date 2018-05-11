@@ -13,7 +13,7 @@ class Home extends Component {
     if (this.props.auth.isLoggedIn) {
       return (
         <div>
-          <Link to="/secret">Secret</Link>
+          <Link to="/profile">Profile</Link>
         </div>
       )
     } else {

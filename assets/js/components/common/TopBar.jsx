@@ -135,7 +135,7 @@ class TopBar extends Component {
                 </Avatar>
                 <ListItemText primary={email} secondary={roleText(role)}/>
               </ListItem>
-              <MenuItem component={Link} to="/secret">Profile</MenuItem>
+              <MenuItem component={Link} to="/profile">Profile</MenuItem>
               <MenuItem onClick={logOut}>Log Out</MenuItem>
             </Menu>
           </div>
