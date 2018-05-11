@@ -1,6 +1,9 @@
 defmodule ConsoleWeb.Schema.Types do
   use Absinthe.Schema.Notation
   import_types Absinthe.Type.Custom
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Console.Events
 
   object :item do
     field :id, :id
@@ -11,6 +14,9 @@ defmodule ConsoleWeb.Schema.Types do
     field :id, :id
     field :name, :string
     field :mac, :string
+    field :events, list_of(:event), resolve: dataloader(Events) do
+      arg :count, :integer
+    end
   end
 
   object :event do

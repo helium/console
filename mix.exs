@@ -50,7 +50,8 @@ defmodule Console.Mixfile do
       {:httpoison, "~> 1.0"},
       {:pot, "~> 0.9.6"},
       {:absinthe, "~> 1.4"},
-      {:absinthe_plug, "~> 1.4"}
+      {:absinthe_plug, "~> 1.4"},
+      {:dataloader, "~> 1.0.0"}
     ]
   end
 
