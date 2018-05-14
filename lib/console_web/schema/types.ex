@@ -5,11 +5,6 @@ defmodule ConsoleWeb.Schema.Types do
 
   alias Console.Events
 
-  object :item do
-    field :id, :id
-    field :name, :string
-  end
-
   object :device do
     field :id, :id
     field :name, :string
