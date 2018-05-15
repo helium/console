@@ -32,8 +32,9 @@ defmodule ConsoleWeb.UserControllerTest do
 
   describe "create user via invitation" do
     test "renders user when data is valid", %{conn: conn} do
+      user = insert(:user)
       team = insert(:team)
-      invitation = insert(:invitation, team_id: team.id)
+      invitation = insert(:invitation, team_id: team.id, inviter_id: user.id)
       conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}, recaptcha: "recaptcha"
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
@@ -73,7 +74,8 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "reset password email clicked" do
     test "redirects to login when token is invalid" do
       token = "lkhgkjahkj98798kjghlkajshgklyasiut987197ghljkashgdka"
-      conn = get build_conn(), "/users/reset_password/#{token}"
+      email = URI.encode("test@test.com")
+      conn = get build_conn(), "/users/reset_password/#{token}?email=#{email}"
       assert "/login" = redirected_to(conn, 302)
 
       conn = get build_conn(), "/users/reset_password/"
@@ -82,19 +84,22 @@ defmodule ConsoleWeb.UserControllerTest do
 
     test "redirects to reset_password/:token when token is valid" do
       user = insert(:user)
-      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
-      conn = get build_conn(), "/users/reset_password/#{token}"
+      email = URI.encode(user.email)
+      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
+      conn = get build_conn(), "/users/reset_password/#{token}?email=#{email}"
 
-      assert redirected_to(conn, 302) === "/reset_password/#{token}"
+      assert redirected_to(conn, 302) === "/reset_password/#{token}?email=#{email}"
     end
   end
 
   describe "change password functionality" do
     test "renders errors when invalid token is supplied", %{conn: conn} do
-      user = %{
-        token: "jglashdlhkgalkshklg098709q7oihkjashg"
+      user = insert(:user)
+      params = %{
+        token: "jglashdlhkgalkshklg098709q7oihkjashg",
+        email: user.email
       }
-      conn = post conn, user_path(conn, :change_password), %{user: user}
+      conn = post conn, user_path(conn, :change_password), %{user: params}
 
       assert %{"error" => ["Password reset link may have expired, please check your email or request a new password reset link"]} = json_response(conn, 401)["errors"]
     end
