@@ -8,7 +8,7 @@ defmodule Console.AuditTrails do
     Repo.all(AuditTrail)
   end
 
-  def create_audit_trail(object, action, user \\ %{}, team \\ %{}, target_table \\ false, target \\ %{}) do
+  def create_audit_trail(object, action, user \\ %{}, team \\ %{}, target_table \\ nil, target \\ %{}) do
     attrs = generate_audit_attrs(object, action, user, team, target_table, target)
 
     %AuditTrail{}
@@ -18,14 +18,14 @@ defmodule Console.AuditTrails do
 
   defp generate_audit_attrs(object, action, user, team, target_table, target) do
     cond do
-      object == "user account" ->
-        generate_user_account_attrs(object, action, user, team)
+      object == "user_account" ->
+        generate_user_account_attrs(object, action, user, team, target_table, target)
       object == "team" ->
         generate_team_attrs(object, action, user, team)
     end
   end
 
-  defp generate_user_account_attrs(object, action, user, team) do
+  defp generate_user_account_attrs(object, action, user, team, target_table, target) do
     case action do
       "register" ->
         %{
@@ -34,8 +34,18 @@ defmodule Console.AuditTrails do
           object: object,
           action: action,
           description: "#{user.email} registered as a brand new user",
+          team_id: team.id
+        }
+      "register_from_invite" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} registered with an invite from #{target.email} to join team: #{team.name}",
           team_id: team.id,
-          team_name: team.name
+          target_table: target_table,
+          target_id: target.id
         }
     end
   end
@@ -48,9 +58,8 @@ defmodule Console.AuditTrails do
           user_email: user.email,
           object: object,
           action: action,
-          description: "#{user.email} created team #{team.name} as a brand new user",
-          team_id: team.id,
-          team_name: team.name
+          description: "#{user.email} created team: #{team.name} as a brand new user",
+          team_id: team.id
         }
     end
   end

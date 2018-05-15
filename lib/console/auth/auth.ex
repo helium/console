@@ -66,14 +66,14 @@ defmodule Console.Auth do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:team, fn %{user: user} ->
+      |> Ecto.Multi.run(:invitation, fn %{user: user} ->
         Console.Teams.join_team(user, team)
         Console.Teams.mark_invitation_used(inv)
       end)
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user: user}} -> {:ok, user}
+      {:ok, %{user: user, invitation: invitation}} -> {:ok, user, invitation}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end

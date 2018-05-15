@@ -9,10 +9,8 @@ defmodule Console.AuditTrails.AuditTrail do
     field(:object, :string)
     field(:action, :string)
     field(:description, :string)
-    field(:team_name, :string)
     field(:target_table, :string)
     field(:target_id, :binary_id)
-    field(:target_name, :string)
     belongs_to(:user, Console.Auth.User)
     belongs_to(:team, Console.Teams.Team)
 
@@ -28,10 +26,8 @@ defmodule Console.AuditTrails.AuditTrail do
       :action,
       :description,
       :team_id,
-      :team_name,
       :target_table,
       :target_id,
-      :target_name
     ])
     |> validate_required([:object])
     |> validate_required([:action])

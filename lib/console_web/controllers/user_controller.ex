@@ -5,6 +5,7 @@ defmodule ConsoleWeb.UserController do
   alias Console.Auth.User
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Teams.Invitation
   alias Console.AuditTrails
 
   alias Console.Email
@@ -24,7 +25,7 @@ defmodule ConsoleWeb.UserController do
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
       {:ok, %User{} = user, %Team{} = team} <- Auth.create_user(user_params, team_params) do
-        AuditTrails.create_audit_trail("user account", "register", user, team, nil)
+        AuditTrails.create_audit_trail("user_account", "register", user, team, nil)
         AuditTrails.create_audit_trail("team", "create", user, team, nil)
 
         conn
@@ -36,7 +37,11 @@ defmodule ConsoleWeb.UserController do
   def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
     with true <- Auth.verify_captcha(recaptcha),
       {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
-      {:ok, %User{} = user} <- Auth.create_user_via_invitation(invitation, user_params) do
+      {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
+        inviter = Auth.get_user_by_id!(invitation.inviter_id)
+        team = Teams.get_team!(invitation.team_id)
+        AuditTrails.create_audit_trail("user_account", "register_from_invite", user, team, "users", inviter)
+
         # notify clients that the invitation has been used
         Teams.get_invitation!(invitation.id)
         |> ConsoleWeb.InvitationController.broadcast("update")
