@@ -51,7 +51,7 @@ defmodule Console.Auth do
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user: user}} -> {:ok, user}
+      {:ok, %{user: user, team: team}} -> {:ok, user, team}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end

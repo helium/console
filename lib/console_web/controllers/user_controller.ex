@@ -4,6 +4,8 @@ defmodule ConsoleWeb.UserController do
   alias Console.Auth
   alias Console.Auth.User
   alias Console.Teams
+  alias Console.Teams.Team
+  alias Console.AuditTrails
 
   alias Console.Email
   alias Console.Mailer
@@ -21,7 +23,10 @@ defmodule ConsoleWeb.UserController do
   # Registration via signing up
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user} <- Auth.create_user(user_params, team_params) do
+      {:ok, %User{} = user, %Team{} = team} <- Auth.create_user(user_params, team_params) do
+        AuditTrails.create_audit_trail("user account", "register", user, team, nil)
+        AuditTrails.create_audit_trail("team", "create", user, team, nil)
+
         conn
         |> handle_created(user)
     end
