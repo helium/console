@@ -101,7 +101,7 @@ defmodule Console.Auth do
 
       user ->
         case mark_email_confirmed(user) do
-          {:ok, _struct} -> :ok
+          {:ok, _struct} -> {:ok, user}
           _ -> :error
         end
     end

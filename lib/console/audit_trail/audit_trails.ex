@@ -47,6 +47,54 @@ defmodule Console.AuditTrails do
           target_table: target_table,
           target_id: target.id
         }
+      "resend_verification_email" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} requested an account verification email resend"
+        }
+      "activate_account" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} verified and activated his/her account"
+        }
+      "request_password_reset" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} requested a reset password link"
+        }
+      "use_password_reset_link" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} used his/her password reset link"
+        }
+      "change_password" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} changed his/her password"
+        }
+      "login" ->
+        %{
+          user_id: user.id,
+          user_email: user.email,
+          object: object,
+          action: action,
+          description: "#{user.email} logged in"
+        }
     end
   end
 

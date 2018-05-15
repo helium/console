@@ -4,6 +4,7 @@ defmodule ConsoleWeb.SessionController do
   alias Console.Auth
   alias Console.Auth.User
   alias Console.Teams
+  alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -12,6 +13,7 @@ defmodule ConsoleWeb.SessionController do
          {:ok, %User{} = user} <- Auth.authenticate(session_params),
          current_team <- Teams.current_team_for(user),
          jwt <- Auth.generate_session_token(user, current_team) do
+      AuditTrails.create_audit_trail("user_account", "login", user)
 
       if user.twofactor do
         conn
