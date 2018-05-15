@@ -127,8 +127,8 @@ defmodule Console.Auth do
     end
   end
 
-  def change_password(attrs) do
-    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"]) do
+  def change_password(attrs, user) do
+    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"], %{}, secret: user.password_hash) do
       {:ok, jwt} ->
         case Repo.get_by(User, id: jwt["sub"]) do
           nil ->

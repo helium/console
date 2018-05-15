@@ -144,13 +144,14 @@ export const forgotPassword = (email, recaptcha) => {
   }
 }
 
-export const changePassword = (password, passwordConfirm, token) => {
+export const changePassword = (password, passwordConfirm, token, email) => {
   return (dispatch) => {
     rest.post('/api/users/change_password', {
         user: {
           token,
           password,
-          password_confirmation: passwordConfirm
+          password_confirmation: passwordConfirm,
+          email
         }
       })
       .then(response => {
