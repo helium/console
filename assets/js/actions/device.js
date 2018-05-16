@@ -2,7 +2,6 @@ import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeDevice, normalizeDevices } from '../schemas/device'
 import { DELETED_ENTITY } from './main'
-import { displayInfo } from '../util/messages'
 
 export const FETCH_DEVICES = 'FETCH_DEVICES'
 export const RECEIVED_DEVICES = 'RECEIVED_DEVICES'
@@ -66,12 +65,11 @@ export const updateDevice = (id, params) => {
   }
 }
 
-export const deleteDevice = (device) => {
+export const deleteDevice = (id) => {
   return (dispatch) => {
-    rest.destroy(`/api/devices/${device.id}`)
+    rest.destroy(`/api/devices/${id}`)
       .then(response => {
         dispatch(push('/devices'))
-        displayInfo(`${device.name} deleted`)
       })
   }
 }

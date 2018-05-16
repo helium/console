@@ -62,8 +62,9 @@ defmodule ConsoleWeb.DeviceController do
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device, "delete")
       AuditTrails.create_audit_trail("device", "delete", current_user, current_team, "devices", device)
-
-      send_resp(conn, :no_content, "")
+      conn
+      |> put_resp_header("message", "#{device.name} deleted successfully")
+      |> send_resp(:no_content, "")
     end
   end
 

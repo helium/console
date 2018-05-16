@@ -57,7 +57,6 @@ class DeviceShow extends Component {
     const { deleteDevice, updateDevice } = this.props
     const { loading, device } = this.props.data
 
-    if (device === undefined) return (<div>loading...</div>)
     if (loading) return <DashboardLayout />
 
     return(
@@ -83,7 +82,7 @@ class DeviceShow extends Component {
               <div style={{width: '50%'}}>
                 <GroupsControl
                   groups={device.groups}
-                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
+                  handleUpdate={(groups) => updateDevice(id, {groups: groups})}
                   editable={userCan('update', 'device', device)}
                 />
               </div>
@@ -98,7 +97,7 @@ class DeviceShow extends Component {
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteDevice(device)}
+                onClick={() => deleteDevice(id)}
               >
                 Delete Device
               </Button>
