@@ -8,7 +8,7 @@ defmodule Console.AuditTrails do
     Repo.all(AuditTrail)
   end
 
-  def create_audit_trail(object, action, user \\ %{}, team \\ %{}, target_table \\ nil, target \\ %{}) do
+  def create_audit_trail(object, action, user \\ nil, team \\ nil, target_table \\ nil, target \\ nil) do
     attrs = generate_audit_attrs(object, action, user, team, target_table, target)
 
     %AuditTrail{}
@@ -16,7 +16,7 @@ defmodule Console.AuditTrails do
     |> Repo.insert()
   end
 
-  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{}, nil, target = %{}) do
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = nil, nil, target = nil) do
     %{
       user_id: user_id,
       user_email: user_email,
@@ -25,10 +25,28 @@ defmodule Console.AuditTrails do
       description: generate_description(object, action, user, team, target)
     }
   end
-  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target = %{}) do
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target = nil) do
     %{
       user_id: user_id,
       user_email: user_email,
+      object: object,
+      action: action,
+      description: generate_description(object, action, user, team, target),
+      team_id: team_id
+    }
+  end
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target) do
+    %{
+      user_id: user_id,
+      user_email: user_email,
+      object: object,
+      action: action,
+      description: generate_description(object, action, user, team, target),
+      team_id: team_id
+    }
+  end
+  defp generate_audit_attrs(object, action, user = nil, team = %{id: team_id}, nil, target) do
+    %{
       object: object,
       action: action,
       description: generate_description(object, action, user, team, target),
@@ -63,7 +81,27 @@ defmodule Console.AuditTrails do
         end
       "team" ->
         case action do
-          "create" -> "#{user.email} created team: #{team.name} as a brand new user"
+          "create" -> "#{user.email} created team: #{team.name}"
+          "switch" -> "#{user.email} switched to view team: #{team.name}"
+        end
+      "two_factor" ->
+        case action do
+          "activate" -> "#{user.email} activated 2fa"
+          "authenticate" -> "#{user.email} authenticated successfully with 2fa"
+          "skip_activation" -> "#{user.email} skipped activation of 2fa"
+        end
+      "team_membership" ->
+        case action do
+          "update" -> "#{user.email} changed #{target.email} to #{target.role} in team: #{team.name}"
+          "delete" -> "#{user.email} removed #{target.email} from team: #{team.name}"
+          "join" -> "#{user.email} joined team: #{team.name} as #{user.role}"
+        end
+      "team_invitation" ->
+        case action do
+          "create_existing" -> "#{user.email} invited existing user #{target.email} to team: #{team.name} as #{target.role}"
+          "create_new" -> "#{user.email} invited new user #{target.email} to team: #{team.name} as #{target.role}"
+          "delete" -> "#{user.email} deleted an invitation to #{target.email} in team: #{team.name}"
+          "use_invite_link" -> "#{target.email} used his/her team invitation link to team: #{team.name}"
         end
     end
   end

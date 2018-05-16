@@ -3,6 +3,8 @@ defmodule ConsoleWeb.MembershipController do
 
   alias Console.Teams
   alias Console.Teams.Membership
+  alias Console.Auth
+  alias Console.AuditTrails
 
   plug :put_auth_item when action in [:update, :delete]
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -21,6 +23,9 @@ defmodule ConsoleWeb.MembershipController do
       membership = membership |> Teams.fetch_assoc_membership()
       broadcast(membership, "update")
 
+      updatedUser = Map.merge(membership.user, %{role: membership.role})
+      AuditTrails.create_audit_trail("team_membership", "update", conn.assigns.current_user, conn.assigns.current_team, "users", updatedUser)
+
       conn
       |> put_resp_header("message", "User role updated successfully")
       |> render("show.json", membership: membership)
@@ -33,6 +38,8 @@ defmodule ConsoleWeb.MembershipController do
     with {:ok, %Membership{}} <- Teams.delete_membership(membership) do
       broadcast(membership, "delete")
 
+      updatedUser = Auth.get_user_by_id!(membership.user_id)
+      AuditTrails.create_audit_trail("team_membership", "delete", conn.assigns.current_user, conn.assigns.current_team, "users", updatedUser)
       conn
       |> put_resp_header("message", "User removed from team")
       |> send_resp(:no_content, "")
