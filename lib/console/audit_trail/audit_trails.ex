@@ -72,6 +72,11 @@ defmodule Console.AuditTrails do
           "authenticate" -> "#{user.email} authenticated successfully with 2fa"
           "skip_activation" -> "#{user.email} skipped activation of 2fa"
         end
+      "team_membership" ->
+        case action do
+          "update" -> "#{user.email} changed #{target.email} to #{target.role} in team: #{team.name}"
+          "delete" -> "#{user.email} removed #{target.email} from team: #{team.name}"
+        end
     end
   end
 end
