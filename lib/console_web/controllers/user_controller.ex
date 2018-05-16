@@ -105,14 +105,21 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
-  def reset_password(conn, %{"token" => token, "email" => email}) do
+  def reset_password(conn, %{"token" => token}) do
+    email =
+      try do
+        ConsoleWeb.Guardian.peek(token).claims["email"]
+      rescue
+        _ -> "invalid_token"
+      end
+
     with {true, user} <- Auth.user_exists?(email),
       {:ok, _} <- ConsoleWeb.Guardian.decode_and_verify(token, %{}, secret: user.password_hash) do
         AuditTrails.create_audit_trail("user_account", "use_password_reset_link", user)
 
         conn
         |> put_flash(:info, "Please choose a new password")
-        |> redirect(to: "/reset_password/#{token}?email=#{URI.encode(email)}")
+        |> redirect(to: "/reset_password/#{token}")
         |> halt()
     else _ ->
       conn
@@ -123,13 +130,22 @@ defmodule ConsoleWeb.UserController do
   end
 
   def change_password(conn, %{"user" => params}) do
-    with {true, user} <- Auth.user_exists?(params["email"]),
-      {:ok, %User{} = updatedUser} <- Auth.change_password(params, user) do
+    email =
+      try do
+        ConsoleWeb.Guardian.peek(params["token"]).claims["email"]
+      rescue
+        _ -> "invalid_token"
+      end
+
+    with {true, user} <- Auth.user_exists?(email),
+      {:ok, %User{} = updatedUser} <- Auth.change_password(params, user.password_hash) do
         AuditTrails.create_audit_trail("user_account", "change_password", updatedUser)
 
         conn
         |> put_status(:accepted)
         |> render("user_status.json", message: "Your password has been changed successfully, please login with your new credentials", email: user.email)
+    else _ ->
+      {:error, :unauthorized, "Password reset link may have expired, please check your email or request a new password reset link"}
     end
   end
 end

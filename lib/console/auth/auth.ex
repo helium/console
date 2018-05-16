@@ -127,21 +127,15 @@ defmodule Console.Auth do
     end
   end
 
-  def change_password(attrs, user) do
-    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"], %{}, secret: user.password_hash) do
+  def change_password(attrs, secret) do
+    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"], %{}, secret: secret) do
       {:ok, jwt} ->
         case Repo.get_by(User, id: jwt["sub"]) do
-          nil ->
-            {:error, :unauthorized,
-             "Password reset link may have expired, please check your email or request a new password reset link"}
-
-          user ->
-            confirm_password_change(user, attrs)
+          nil -> :error
+          user -> confirm_password_change(user, attrs)
         end
+      {:error, _} -> :error
 
-      {:error, _} ->
-        {:error, :unauthorized,
-         "Password reset link may have expired, please check your email or request a new password reset link"}
     end
   end
 

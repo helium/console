@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router'
 import { changePassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 
@@ -48,10 +47,8 @@ class ResetPassword extends Component {
     e.preventDefault();
     const { password, passwordConfirm } = this.state;
     const token = this.props.match.params.token
-    const params = new URLSearchParams(this.props.location.search);
-    const email = params.get("email")
 
-    this.props.changePassword(password, passwordConfirm, token, email);
+    this.props.changePassword(password, passwordConfirm, token);
   }
 
   render() {
@@ -118,4 +115,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 const styled = withStyles(styles)(ResetPassword)
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(styled));
+export default connect(mapStateToProps, mapDispatchToProps)(styled);

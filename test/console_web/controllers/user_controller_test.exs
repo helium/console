@@ -74,8 +74,7 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "reset password email clicked" do
     test "redirects to login when token is invalid" do
       token = "lkhgkjahkj98798kjghlkajshgklyasiut987197ghljkashgdka"
-      email = URI.encode("test@test.com")
-      conn = get build_conn(), "/users/reset_password/#{token}?email=#{email}"
+      conn = get build_conn(), "/users/reset_password/#{token}"
       assert "/login" = redirected_to(conn, 302)
 
       conn = get build_conn(), "/users/reset_password/"
@@ -84,22 +83,19 @@ defmodule ConsoleWeb.UserControllerTest do
 
     test "redirects to reset_password/:token when token is valid" do
       user = insert(:user)
-      email = URI.encode(user.email)
       {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
-      conn = get build_conn(), "/users/reset_password/#{token}?email=#{email}"
+      conn = get build_conn(), "/users/reset_password/#{token}"
 
-      assert redirected_to(conn, 302) === "/reset_password/#{token}?email=#{email}"
+      assert redirected_to(conn, 302) === "/reset_password/#{token}"
     end
   end
 
   describe "change password functionality" do
     test "renders errors when invalid token is supplied", %{conn: conn} do
-      user = insert(:user)
-      params = %{
-        token: "jglashdlhkgalkshklg098709q7oihkjashg",
-        email: user.email
+      user = %{
+        token: "jglashdlhkgalkshklg098709q7oihkjashg"
       }
-      conn = post conn, user_path(conn, :change_password), %{user: params}
+      conn = post conn, user_path(conn, :change_password), %{user: user}
 
       assert %{"error" => ["Password reset link may have expired, please check your email or request a new password reset link"]} = json_response(conn, 401)["errors"]
     end

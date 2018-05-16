@@ -19,7 +19,6 @@ defmodule Console.Email do
     |> to(email)
     |> subject("Your Password Reset Link")
     |> assign(:token, token)
-    |> assign(:email, email)
     |> render(:reset_password)
   end
 
