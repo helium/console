@@ -77,7 +77,6 @@ class Router extends React.Component {
                   <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
                   <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
                   <PrivateRoute path="/profile" component={Profile}/>
-                  <PrivateRoute path="/secret" component={Secret}/>
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                   <PrivateRoute exact path="/gateways" component={GatewayIndex} />
