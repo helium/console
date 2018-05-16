@@ -4,6 +4,7 @@ defmodule ConsoleWeb.TeamController do
   alias Console.Teams
   alias Console.Teams.Team
   alias Console.Auth
+  alias Console.AuditTrails
 
   action_fallback ConsoleWeb.FallbackController
 
@@ -20,6 +21,8 @@ defmodule ConsoleWeb.TeamController do
 
   def create(conn, %{"team" => team_attrs}) do
     with {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs) do
+      # AuditTrails.create_audit_trail("team", "create", user, team)
+
       conn
       |> put_status(:created)
       |> render("show.json", team: team)

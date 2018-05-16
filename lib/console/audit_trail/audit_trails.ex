@@ -8,7 +8,7 @@ defmodule Console.AuditTrails do
     Repo.all(AuditTrail)
   end
 
-  def create_audit_trail(object, action, user \\ %{}, team \\ %{}, target_table \\ nil, target \\ %{}) do
+  def create_audit_trail(object, action, user \\ nil, team \\ nil, target_table \\ nil, target \\ nil) do
     attrs = generate_audit_attrs(object, action, user, team, target_table, target)
 
     %AuditTrail{}
@@ -16,7 +16,7 @@ defmodule Console.AuditTrails do
     |> Repo.insert()
   end
 
-  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{}, nil, target = %{}) do
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = nil, nil, target = nil) do
     %{
       user_id: user_id,
       user_email: user_email,
@@ -25,7 +25,7 @@ defmodule Console.AuditTrails do
       description: generate_description(object, action, user, team, target)
     }
   end
-  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target = %{}) do
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target = nil) do
     %{
       user_id: user_id,
       user_email: user_email,
@@ -63,7 +63,13 @@ defmodule Console.AuditTrails do
         end
       "team" ->
         case action do
-          "create" -> "#{user.email} created team: #{team.name} as a brand new user"
+          "create" -> "#{user.email} created team: #{team.name}"
+        end
+      "two_factor" ->
+        case action do
+          "activate" -> "#{user.email} activated 2fa"
+          "authenticate" -> "#{user.email} authenticated successfully with 2fa"
+          "skip_activation" -> "#{user.email} skipped activation of 2fa"
         end
     end
   end

@@ -5,6 +5,7 @@ defmodule ConsoleWeb.TwoFactorController do
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
   alias Console.Teams
+  alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -21,6 +22,8 @@ defmodule ConsoleWeb.TwoFactorController do
       if Auth.verify_2fa_code(code, secret2fa) do
           codes = Auth.generate_backup_codes()
           with {:ok, %TwoFactor{}} <- Auth.enable_2fa(user, secret2fa, codes) do
+            AuditTrails.create_audit_trail("two_factor", "activate", user)
+            
             conn
             |> put_status(:accepted)
             |> render("2fa_status.json", message: "Your account now has 2FA", user: user, backup_codes: codes)
@@ -40,6 +43,8 @@ defmodule ConsoleWeb.TwoFactorController do
         with current_team <- Teams.current_team_for(user),
                       jwt <- Auth.generate_session_token(user, current_team),
                       {:ok, _} <- Auth.update_2fa_last_verification(userTwoFactor) do
+          AuditTrails.create_audit_trail("two_factor", "authenticate", user)
+
           conn
           |> put_status(:created)
           |> render("2fa_show.json", jwt: jwt, email: user.email)
@@ -53,6 +58,8 @@ defmodule ConsoleWeb.TwoFactorController do
   def skip(conn, %{"userId" => userId}) do
     with %User{} = user <- Auth.get_user_by_id!(userId),
       {:ok, _} = Auth.update_2fa_last_skipped(user) do
+      AuditTrails.create_audit_trail("two_factor", "skip_activation", user)
+
       conn
       |> put_status(:accepted)
       |> render("2fa_status.json", message: "You have skipped 2fa for 24 hours")
