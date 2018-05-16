@@ -9,37 +9,39 @@ class PaginatedTable extends Component {
     const { devices } = this.props
 
     return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>MAC</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {devices.map(device => {
-            return (
-              <TableRow key={device.id}>
-                <TableCell>
-                  <Link to={`/devices/${device.id}`}>{device.name}</Link>
-                </TableCell>
-                <TableCell>{device.mac}</TableCell>
-                <TableCell>
-                  <Button color="primary">
-                    View
-                  </Button>
+      <div>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>MAC</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {devices.map(device => {
+              return (
+                <TableRow key={device.id}>
+                  <TableCell>
+                    <Link to={`/devices/${device.id}`}>{device.name}</Link>
+                  </TableCell>
+                  <TableCell>{device.mac}</TableCell>
+                  <TableCell>
+                    <Button color="primary">
+                      View
+                    </Button>
 
-                  <Button color="secondary">
-                    Delete
-                  </Button>
+                    <Button color="secondary">
+                      Delete
+                    </Button>
 
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
     )
   }
 }

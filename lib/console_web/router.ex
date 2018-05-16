@@ -22,8 +22,8 @@ defmodule ConsoleWeb.Router do
     plug ConsoleWeb.Plug.GraphqlContext
   end
 
-  forward "/gql/console", Absinthe.Plug.GraphiQL, schema: ConsoleWeb.Schema
-  scope "/gql" do
+  forward "/graphql/console", Absinthe.Plug.GraphiQL, schema: ConsoleWeb.Schema
+  scope "/graphql" do
     # pipe_through :graphql
     pipe_through ConsoleWeb.Plug.GraphqlPipeline
 

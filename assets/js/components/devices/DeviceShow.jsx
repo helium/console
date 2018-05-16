@@ -4,12 +4,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchDevice, deleteDevice, updateDevice } from '../../actions/device'
-import EventsTable from '../events/EventsTable'
+import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -21,12 +25,41 @@ class DeviceShow extends Component {
     const { fetchDevice } = this.props
     const { id } = this.props.match.params
     fetchDevice(id)
+
+    this.fetchEventsNextPage = this.fetchEventsNextPage.bind(this)
+    this.fetchEventsPreviousPage = this.fetchEventsPreviousPage.bind(this)
+  }
+
+  fetchEventsNextPage() {
+    const { id } = this.props.match.params
+    const { fetchMore } = this.props.data
+    const after = this.props.data.device.events.pageInfo.endCursor
+
+    fetchMore({
+      variables: { after },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  fetchEventsPreviousPage() {
+    const { id } = this.props.match.params
+    const { fetchMore } = this.props.data
+    const before = this.props.data.device.events.pageInfo.startCursor
+
+    fetchMore({
+      variables: { last: 5, first: undefined, before },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
   }
 
   render() {
-    const { device, events, deleteDevice, updateDevice } = this.props
+    const { id } = this.props.match.params
+    const { deleteDevice, updateDevice } = this.props
+    const { loading, device } = this.props.data
 
     if (device === undefined) return (<div>loading...</div>)
+    if (loading) return <DashboardLayout />
+
     return(
       <DashboardLayout title={device.name}>
         <Card>
@@ -59,7 +92,7 @@ class DeviceShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton device_id={device.id} />
+              <RandomEventButton device_id={id} />
             }
             {userCan('delete', 'device', device) &&
               <Button
@@ -78,7 +111,11 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable events={events} />
+            <EventsTable
+              events={device.events}
+              handleNextPage={this.fetchEventsNextPage}
+              handlePreviousPage={this.fetchEventsPreviousPage}
+            />
           </CardContent>
         </Card>
 
@@ -124,4 +161,43 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchDevice, deleteDevice, updateDevice }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id,
+      first: 5
+    }
+  })
+}
+
+const query = gql`
+  query DeviceShowQuery ($id: ID!, $first: Int, $last: Int, $after: String, $before: String) {
+    device(id: $id) {
+      name,
+      mac,
+      id,
+      events(first: $first, last: $last, after: $after, before: $before) {
+        edges {
+          node {
+            id,
+            description,
+            rssi,
+            payload_size,
+            reported_at,
+            status
+          }
+        },
+        pageInfo {
+          endCursor
+          startCursor,
+          hasNextPage,
+          hasPreviousPage
+        }
+      }
+    }
+  }
+`
+
+const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceShowWithData);
