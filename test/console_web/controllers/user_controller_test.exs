@@ -32,8 +32,9 @@ defmodule ConsoleWeb.UserControllerTest do
 
   describe "create user via invitation" do
     test "renders user when data is valid", %{conn: conn} do
+      user = insert(:user)
       team = insert(:team)
-      invitation = insert(:invitation, team_id: team.id)
+      invitation = insert(:invitation, team_id: team.id, inviter_id: user.id)
       conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}, recaptcha: "recaptcha"
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
@@ -82,7 +83,7 @@ defmodule ConsoleWeb.UserControllerTest do
 
     test "redirects to reset_password/:token when token is valid" do
       user = insert(:user)
-      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
+      {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
       conn = get build_conn(), "/users/reset_password/#{token}"
 
       assert redirected_to(conn, 302) === "/reset_password/#{token}"

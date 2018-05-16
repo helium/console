@@ -4,6 +4,9 @@ defmodule ConsoleWeb.UserController do
   alias Console.Auth
   alias Console.Auth.User
   alias Console.Teams
+  alias Console.Teams.Team
+  alias Console.Teams.Invitation
+  alias Console.AuditTrails
 
   alias Console.Email
   alias Console.Mailer
@@ -21,7 +24,10 @@ defmodule ConsoleWeb.UserController do
   # Registration via signing up
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user} <- Auth.create_user(user_params, team_params) do
+      {:ok, %User{} = user, %Team{} = team} <- Auth.create_user(user_params, team_params) do
+        AuditTrails.create_audit_trail("user_account", "register", user, team, nil)
+        AuditTrails.create_audit_trail("team", "create", user, team, nil)
+
         conn
         |> handle_created(user)
     end
@@ -31,7 +37,11 @@ defmodule ConsoleWeb.UserController do
   def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
     with true <- Auth.verify_captcha(recaptcha),
       {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
-      {:ok, %User{} = user} <- Auth.create_user_via_invitation(invitation, user_params) do
+      {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
+        inviter = Auth.get_user_by_id!(invitation.inviter_id)
+        team = Teams.get_team!(invitation.team_id)
+        AuditTrails.create_audit_trail("user_account", "register_from_invite", user, team, "users", inviter)
+
         # notify clients that the invitation has been used
         Teams.get_invitation!(invitation.id)
         |> ConsoleWeb.InvitationController.broadcast("update")
@@ -55,7 +65,9 @@ defmodule ConsoleWeb.UserController do
   end
 
   def confirm_email(conn, %{"token" => token}) do
-    with :ok <- Auth.confirm_email(token) do
+    with {:ok, %User{} = user} <- Auth.confirm_email(token) do
+      AuditTrails.create_audit_trail("user_account", "activate_account", user)
+
       conn
       |> put_flash(:info, "Email confirmed, you may now log in")
       |> redirect(to: "/login")
@@ -72,6 +84,7 @@ defmodule ConsoleWeb.UserController do
     with true <- Auth.verify_captcha(recaptcha),
       {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
         Email.confirm_email(user) |> Mailer.deliver_later()
+        AuditTrails.create_audit_trail("user_account", "resend_verification_email", user)
 
         conn
         |> put_status(:accepted)
@@ -82,8 +95,9 @@ defmodule ConsoleWeb.UserController do
   def forgot_password(conn, %{"email" => email, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
       {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
-        {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour})
+        {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
         Email.password_reset_email(user, token) |> Mailer.deliver_later()
+        AuditTrails.create_audit_trail("user_account", "request_password_reset", user)
 
         conn
         |> put_status(:accepted)
@@ -92,12 +106,22 @@ defmodule ConsoleWeb.UserController do
   end
 
   def reset_password(conn, %{"token" => token}) do
-    with {:ok, _} <- ConsoleWeb.Guardian.decode_and_verify(token) do
-      conn
-      |> put_flash(:info, "Please choose a new password")
-      |> redirect(to: "/reset_password/#{token}")
-      |> halt()
-    else {:error, _} ->
+    email =
+      try do
+        ConsoleWeb.Guardian.peek(token).claims["email"]
+      rescue
+        _ -> "invalid_token"
+      end
+
+    with {true, user} <- Auth.user_exists?(email),
+      {:ok, _} <- ConsoleWeb.Guardian.decode_and_verify(token, %{}, secret: user.password_hash) do
+        AuditTrails.create_audit_trail("user_account", "use_password_reset_link", user)
+
+        conn
+        |> put_flash(:info, "Please choose a new password")
+        |> redirect(to: "/reset_password/#{token}")
+        |> halt()
+    else _ ->
       conn
       |> put_flash(:error, "Password reset link is not valid, please check your email or request a new password reset link")
       |> redirect(to: "/login")
@@ -105,11 +129,23 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
-  def change_password(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Auth.change_password(user_params) do
-      conn
-      |> put_status(:accepted)
-      |> render("user_status.json", message: "Your password has been changed successfully, please login with your new credentials", email: user.email)
+  def change_password(conn, %{"user" => params}) do
+    email =
+      try do
+        ConsoleWeb.Guardian.peek(params["token"]).claims["email"]
+      rescue
+        _ -> "invalid_token"
+      end
+
+    with {true, user} <- Auth.user_exists?(email),
+      {:ok, %User{} = updatedUser} <- Auth.change_password(params, user.password_hash) do
+        AuditTrails.create_audit_trail("user_account", "change_password", updatedUser)
+
+        conn
+        |> put_status(:accepted)
+        |> render("user_status.json", message: "Your password has been changed successfully, please login with your new credentials", email: user.email)
+    else _ ->
+      {:error, :unauthorized, "Password reset link may have expired, please check your email or request a new password reset link"}
     end
   end
 end

@@ -2,6 +2,8 @@ defmodule Console.AuthTest do
   use Console.DataCase
 
   alias Console.Auth
+  alias Console.Teams.Team
+  alias Console.Teams.Invitation
   alias Console.Auth.TwoFactor
 
   import Console.Factory
@@ -24,7 +26,7 @@ defmodule Console.AuthTest do
 
     test "create_user/1 with valid data creates a user" do
       team_attrs = %{name: "Test Team"}
-      assert {:ok, %User{} = user} = Auth.create_user(@valid_attrs, team_attrs)
+      assert {:ok, %User{} = user, %Team{}} = Auth.create_user(@valid_attrs, team_attrs)
       assert user.email == "test@hello.com"
       user = Auth.fetch_assoc(user)
       assert List.first(user.teams).name == team_attrs.name
@@ -82,7 +84,7 @@ defmodule Console.AuthTest do
       invitation = insert(:invitation, team_id: team.id)
       attrs = params_for(:user, password: "sekret")
 
-      assert {:ok, %User{} = user} = Auth.create_user_via_invitation(invitation, attrs)
+      assert {:ok, %User{} = user, %Invitation{}} = Auth.create_user_via_invitation(invitation, attrs)
       user = Auth.fetch_assoc(user)
       assert Console.Teams.user_has_access?(user, team)
       assert Console.Teams.get_invitation!(invitation.id).pending == false

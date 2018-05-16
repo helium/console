@@ -51,7 +51,7 @@ defmodule Console.Auth do
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user: user}} -> {:ok, user}
+      {:ok, %{user: user, team: team}} -> {:ok, user, team}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
@@ -66,14 +66,14 @@ defmodule Console.Auth do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:team, fn %{user: user} ->
+      |> Ecto.Multi.run(:invitation, fn %{user: user} ->
         Console.Teams.join_team(user, team)
         Console.Teams.mark_invitation_used(inv)
       end)
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user: user}} -> {:ok, user}
+      {:ok, %{user: user, invitation: invitation}} -> {:ok, user, invitation}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
@@ -101,7 +101,7 @@ defmodule Console.Auth do
 
       user ->
         case mark_email_confirmed(user) do
-          {:ok, _struct} -> :ok
+          {:ok, _struct} -> {:ok, user}
           _ -> :error
         end
     end
@@ -127,21 +127,15 @@ defmodule Console.Auth do
     end
   end
 
-  def change_password(attrs) do
-    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"]) do
+  def change_password(attrs, secret) do
+    case ConsoleWeb.Guardian.decode_and_verify(attrs["token"], %{}, secret: secret) do
       {:ok, jwt} ->
         case Repo.get_by(User, id: jwt["sub"]) do
-          nil ->
-            {:error, :unauthorized,
-             "Password reset link may have expired, please check your email or request a new password reset link"}
-
-          user ->
-            confirm_password_change(user, attrs)
+          nil -> :error
+          user -> confirm_password_change(user, attrs)
         end
+      {:error, _} -> :error
 
-      {:error, _} ->
-        {:error, :unauthorized,
-         "Password reset link may have expired, please check your email or request a new password reset link"}
     end
   end
 

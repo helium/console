@@ -50,6 +50,7 @@ class ResetPassword extends Component {
 
     this.props.changePassword(password, passwordConfirm, token);
   }
+
   render() {
     const { classes } = this.props
 
