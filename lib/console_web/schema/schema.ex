@@ -4,12 +4,6 @@ defmodule ConsoleWeb.Schema do
   use Absinthe.Schema.Notation
   import_types Absinthe.Type.Custom
 
-  import Ecto.Query, warn: false
-  alias Console.Repo
-  alias Console.Events
-  alias Console.Events.Event
-  alias Absinthe.Relay.Connection
-
   node interface do
     resolve_type fn
       %Console.Devices.Device{}, _ ->
@@ -37,14 +31,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :mac, :string
     connection field :events, node_type: :event do
-      resolve fn
-        pagination_args, %{source: device} ->
-          # TODO: move to a resolver module
-          Event
-          |> where(device_id: ^device.id)
-          |> order_by([desc: :reported_at])
-          |> Connection.from_query(&Repo.all/1, pagination_args)
-      end
+      resolve &Console.Events.EventResolver.connection/2
     end
   end
 

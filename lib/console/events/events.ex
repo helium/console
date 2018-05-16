@@ -21,11 +21,6 @@ defmodule Console.Events do
     Repo.all(Event)
   end
 
-  def list_events(%{device_id: device_id}) do
-    query = from e in Event, where: e.device_id == ^device_id
-    Repo.all(query)
-  end
-
   def list_events(%{"device_id" => device_id}) do
     query = from e in Event, where: e.device_id == ^device_id
     Repo.all(query)
@@ -132,17 +127,5 @@ defmodule Console.Events do
   """
   def change_event(%Event{} = event) do
     Event.changeset(event, %{})
-  end
-
-  def data() do
-    Dataloader.Ecto.new(Repo, query: &query/2)
-  end
-
-  def query(Event, %{count: count}) do
-    from Event, limit: ^count
-  end
-
-  def query(queryable, _params) do
-    queryable
   end
 end

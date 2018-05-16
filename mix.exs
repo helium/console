@@ -51,7 +51,6 @@ defmodule Console.Mixfile do
       {:pot, "~> 0.9.6"},
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
-      {:dataloader, "~> 1.0.0"},
       {:absinthe_relay, "~> 1.4.0-rc"}
     ]
   end
