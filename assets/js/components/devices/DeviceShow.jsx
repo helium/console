@@ -28,6 +28,8 @@ class DeviceShow extends Component {
 
     this.fetchEventsNextPage = this.fetchEventsNextPage.bind(this)
     this.fetchEventsPreviousPage = this.fetchEventsPreviousPage.bind(this)
+    this.fetchEventsFirstPage = this.fetchEventsFirstPage.bind(this)
+    this.fetchEventsLastPage = this.fetchEventsLastPage.bind(this)
   }
 
   fetchEventsNextPage() {
@@ -48,6 +50,28 @@ class DeviceShow extends Component {
 
     fetchMore({
       variables: { last: 5, first: undefined, before },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  fetchEventsFirstPage() {
+    const { id } = this.props.match.params
+    const { fetchMore } = this.props.data
+
+    fetchMore({
+      variables: { first: 5 },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  // TODO this isn't working... need a way to jump to last page if possible
+  fetchEventsLastPage() {
+    const { id } = this.props.match.params
+    const { fetchMore } = this.props.data
+    const after = this.props.data.device.events.pageInfo.endCursor
+
+    fetchMore({
+      variables: { last: 5, first: undefined, after },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
   }
@@ -114,6 +138,8 @@ class DeviceShow extends Component {
               events={device.events}
               handleNextPage={this.fetchEventsNextPage}
               handlePreviousPage={this.fetchEventsPreviousPage}
+              handleFirstPage={this.fetchEventsFirstPage}
+              handleLastPage={this.fetchEventsLastPage}
             />
           </CardContent>
         </Card>
