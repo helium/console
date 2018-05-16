@@ -21,7 +21,7 @@ defmodule ConsoleWeb.TeamController do
 
   def create(conn, %{"team" => team_attrs}) do
     with {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs) do
-      # AuditTrails.create_audit_trail("team", "create", user, team)
+      AuditTrails.create_audit_trail("team", "create", conn.assigns.current_user, team)
 
       conn
       |> put_status(:created)
@@ -32,6 +32,7 @@ defmodule ConsoleWeb.TeamController do
   def switch(conn, %{"team_id" => team_id}) do
     team = Teams.get_team!(conn.assigns.current_user, team_id)
     jwt = Auth.generate_session_token(conn.assigns.current_user, team)
+    AuditTrails.create_audit_trail("team", "switch", conn.assigns.current_user, team)
 
     render(conn, "switch.json", jwt: jwt)
   end

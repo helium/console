@@ -64,6 +64,7 @@ defmodule Console.AuditTrails do
       "team" ->
         case action do
           "create" -> "#{user.email} created team: #{team.name}"
+          "switch" -> "#{user.email} switched to view team: #{team.name}"
         end
       "two_factor" ->
         case action do
