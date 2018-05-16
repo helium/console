@@ -51,6 +51,9 @@ defmodule ConsoleWeb.UserController do
         List.last(user.memberships)
         |> ConsoleWeb.MembershipController.broadcast("new")
 
+        updatedUser = Map.merge(user, %{role: List.last(user.memberships).role})
+        AuditTrails.create_audit_trail("team_membership", "join", updatedUser, team)
+
         conn
         |> handle_created(user)
     end

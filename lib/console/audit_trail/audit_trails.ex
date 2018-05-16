@@ -35,6 +35,24 @@ defmodule Console.AuditTrails do
       team_id: team_id
     }
   end
+  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target) do
+    %{
+      user_id: user_id,
+      user_email: user_email,
+      object: object,
+      action: action,
+      description: generate_description(object, action, user, team, target),
+      team_id: team_id
+    }
+  end
+  defp generate_audit_attrs(object, action, user = nil, team = %{id: team_id}, nil, target) do
+    %{
+      object: object,
+      action: action,
+      description: generate_description(object, action, user, team, target),
+      team_id: team_id
+    }
+  end
   defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, target_table, target = %{id: target_id}) do
     %{
       user_id: user_id,
@@ -76,6 +94,14 @@ defmodule Console.AuditTrails do
         case action do
           "update" -> "#{user.email} changed #{target.email} to #{target.role} in team: #{team.name}"
           "delete" -> "#{user.email} removed #{target.email} from team: #{team.name}"
+          "join" -> "#{user.email} joined team: #{team.name} as #{user.role}"
+        end
+      "team_invitation" ->
+        case action do
+          "create_existing" -> "#{user.email} invited existing user #{target.email} to team: #{team.name} as #{target.role}"
+          "create_new" -> "#{user.email} invited new user #{target.email} to team: #{team.name} as #{target.role}"
+          "delete" -> "#{user.email} deleted an invitation to #{target.email} in team: #{team.name}"
+          "use_invite_link" -> "#{target.email} used his/her team invitation link to team: #{team.name}"
         end
     end
   end

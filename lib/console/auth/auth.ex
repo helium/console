@@ -67,7 +67,7 @@ defmodule Console.Auth do
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
       |> Ecto.Multi.run(:invitation, fn %{user: user} ->
-        Console.Teams.join_team(user, team)
+        Console.Teams.join_team(user, team, inv.role)
         Console.Teams.mark_invitation_used(inv)
       end)
       |> Repo.transaction()
