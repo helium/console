@@ -3,6 +3,7 @@ defmodule ConsoleWeb.DeviceController do
 
   alias Console.Devices
   alias Console.Devices.Device
+  alias Console.AuditTrails
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -17,11 +18,13 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def create(conn, %{"device" => device_params}) do
+    current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
     device_params = Map.merge(device_params, %{"team_id" => current_team.id})
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
       broadcast(device, "new")
+      AuditTrails.create_audit_trail("device", "create", current_user, current_team, "devices", device)
 
       conn
       |> put_status(:created)
@@ -38,9 +41,13 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def update(conn, %{"id" => id, "device" => device_params}) do
+    current_user = conn.assigns.current_user
+    current_team = conn.assigns.current_team
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
+      AuditTrails.create_audit_trail("device", "update", current_user, current_team, "devices", device)
+
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
       |> render("show.json", device: device)
@@ -48,10 +55,14 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def delete(conn, %{"id" => id}) do
+    current_user = conn.assigns.current_user
+    current_team = conn.assigns.current_team
     device = Devices.get_device!(id)
 
-    with {:ok, %Device{}} <- Devices.delete_device(device) do
+    with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device, "delete")
+      AuditTrails.create_audit_trail("device", "delete", current_user, current_team, "devices", device)
+
       send_resp(conn, :no_content, "")
     end
   end
