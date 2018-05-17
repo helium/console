@@ -1,14 +1,13 @@
 defmodule Console.Devices.DeviceResolver do
-  alias Console.Devices
-  alias Console.Teams
+  alias Console.Repo
 
   def all(_, %{context: %{current_team: current_team}}) do
-    current_team = current_team |> Teams.fetch_assoc([devices: :groups])
-    {:ok, current_team.devices}
+    devices = Ecto.assoc(current_team, :devices) |> Repo.all()
+    {:ok, devices}
   end
 
   def find(%{id: id}, %{context: %{current_team: current_team}}) do
-    device = Devices.get_device!(id)
+    device = Ecto.assoc(current_team, :devices) |> Repo.get!(id)
     {:ok, device}
   end
 end

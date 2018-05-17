@@ -4,6 +4,8 @@ defmodule ConsoleWeb.Schema do
   use Absinthe.Schema.Notation
   import_types Absinthe.Type.Custom
 
+  def internal_id(_, %{source: source}), do: {:ok, source.id}
+
   node interface do
     resolve_type fn
       %Console.Devices.Device{}, _ ->
@@ -18,6 +20,7 @@ defmodule ConsoleWeb.Schema do
   connection(node_type: :event)
   node object :event do
     field :id, :id
+    field :_id, :string, resolve: &internal_id/2
     field :description, :string
     field :payload_size, :integer
     field :rssi, :float
@@ -28,11 +31,13 @@ defmodule ConsoleWeb.Schema do
   connection(node_type: :group)
   node object :group do
     field :id, :id
+    field :_id, :string, resolve: &internal_id/2
     field :name, :string
   end
 
   node object :device do
     field :id, :id
+    field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :mac, :string
     connection field :events, node_type: :event do
