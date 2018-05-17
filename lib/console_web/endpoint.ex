@@ -1,5 +1,6 @@
 defmodule ConsoleWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :console
+  use Absinthe.Phoenix.Endpoint
 
   socket "/socket", ConsoleWeb.UserSocket
 
