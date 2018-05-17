@@ -103,6 +103,24 @@ defmodule Console.AuditTrails do
           "delete" -> "#{user.email} deleted an invitation to #{target.email} in team: #{team.name}"
           "use_invite_link" -> "#{target.email} used his/her team invitation link to team: #{team.name}"
         end
+      "gateway" ->
+        case action do
+          "create" -> "#{user.email} created gateway #{target.name} in team: #{team.name}"
+          "update" -> "#{user.email} updated gateway #{target.name} in team: #{team.name}"
+          "delete" -> "#{user.email} deleted gateway #{target.name} in team: #{team.name}"
+        end
+      "device" ->
+        case action do
+          "create" -> "#{user.email} created device #{target.name} in team: #{team.name}"
+          "update" -> "#{user.email} updated device #{target.name} in team: #{team.name}"
+          "delete" -> "#{user.email} deleted device #{target.name} in team: #{team.name}"
+        end
+      "channel" ->
+        case action do
+          "create" -> "#{user.email} created channel #{target.name} in team: #{team.name}"
+          "update" -> "#{user.email} updated channel #{target.name} in team: #{team.name}"
+          "delete" -> "#{user.email} deleted channel #{target.name} in team: #{team.name}"
+        end
     end
   end
 end
