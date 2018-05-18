@@ -28,6 +28,24 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
+  # TODO turn this into a macro
+  object :paginated_events do
+    field :entries, list_of(:paginated_event)
+    field :page_number, :integer
+    field :page_size, :integer
+    field :total_entries, :integer
+    field :total_pages, :integer
+  end
+
+  object :paginated_event do
+    field :id, :id
+    field :description, :string
+    field :payload_size, :integer
+    field :rssi, :float
+    field :reported_at, :naive_datetime
+    field :status, :string
+  end
+
   connection(node_type: :group)
   node object :group do
     field :id, :id
@@ -58,6 +76,12 @@ defmodule ConsoleWeb.Schema do
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    @desc "Get paginated events"
+    field :events, :paginated_events do
+      arg :device_id, :string
+      resolve &Console.Events.EventResolver.paginate/2
     end
   end
 end
