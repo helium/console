@@ -11,11 +11,12 @@ defmodule Console.Events.EventResolver do
     |> Connection.from_query(&Repo.all/1, pagination_args)
   end
 
-  def paginate(%{device_id: device_id}, context) do
+  def paginate(%{device_id: device_id, page: page, page_size: page_size}, context) do
     events =
       Event
       |> where([e], e.device_id == ^device_id)
-      |> Repo.paginate(page: 1, page_size: 5)
+      |> order_by([desc: :reported_at])
+      |> Repo.paginate(page: page, page_size: page_size)
     IO.inspect(events)
     {:ok, events}
   end

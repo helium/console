@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchDevice, deleteDevice, updateDevice } from '../../actions/device'
+import { deleteDevice, updateDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
@@ -21,61 +21,6 @@ import Button from 'material-ui/Button';
 import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class DeviceShow extends Component {
-  componentDidMount() {
-    const { fetchDevice } = this.props
-    const { id } = this.props.match.params
-    fetchDevice(id)
-
-    this.fetchEventsNextPage = this.fetchEventsNextPage.bind(this)
-    this.fetchEventsPreviousPage = this.fetchEventsPreviousPage.bind(this)
-    this.fetchEventsFirstPage = this.fetchEventsFirstPage.bind(this)
-    this.fetchEventsLastPage = this.fetchEventsLastPage.bind(this)
-  }
-
-  fetchEventsNextPage() {
-    const { id } = this.props.match.params
-    const { fetchMore } = this.props.data
-    const after = this.props.data.device.events.pageInfo.endCursor
-
-    fetchMore({
-      variables: { after },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  fetchEventsPreviousPage() {
-    const { id } = this.props.match.params
-    const { fetchMore } = this.props.data
-    const before = this.props.data.device.events.pageInfo.startCursor
-
-    fetchMore({
-      variables: { last: 5, first: undefined, before },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  fetchEventsFirstPage() {
-    const { id } = this.props.match.params
-    const { fetchMore } = this.props.data
-
-    fetchMore({
-      variables: { first: 5 },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  // TODO this isn't working... need a way to jump to last page if possible
-  fetchEventsLastPage() {
-    const { id } = this.props.match.params
-    const { fetchMore } = this.props.data
-    const after = this.props.data.device.events.pageInfo.endCursor
-
-    fetchMore({
-      variables: { last: 5, first: undefined, after },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
   render() {
     const { id } = this.props.match.params
     const { deleteDevice, updateDevice } = this.props
@@ -134,13 +79,7 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable
-              events={device.events}
-              handleNextPage={this.fetchEventsNextPage}
-              handlePreviousPage={this.fetchEventsPreviousPage}
-              handleFirstPage={this.fetchEventsFirstPage}
-              handleLastPage={this.fetchEventsLastPage}
-            />
+            <EventsTable deviceId={device._id} />
           </CardContent>
         </Card>
 
@@ -174,56 +113,33 @@ class DeviceShow extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const device = state.entities.devices[ownProps.match.params.id]
-  if (device === undefined) return {}
-  return {
-    device,
-    events: Object.values(pick(state.entities.events, device.events))
-  }
+  return { }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevice, deleteDevice, updateDevice }, dispatch);
+  return bindActionCreators({ deleteDevice, updateDevice }, dispatch);
 }
 
 const queryOptions = {
   options: props => ({
     variables: {
-      id: props.match.params.id,
-      first: 5
+      id: props.match.params.id
     }
   })
 }
 
 const query = gql`
-  query DeviceShowQuery ($id: ID!, $first: Int, $last: Int, $after: String, $before: String) {
+  query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       name,
       mac,
       id,
+      _id,
       groups(first: 100) {
         edges {
           node {
             name
           }
-        }
-      },
-      events(first: $first, last: $last, after: $after, before: $before) {
-        edges {
-          node {
-            id,
-            description,
-            rssi,
-            payload_size,
-            reported_at,
-            status
-          }
-        },
-        pageInfo {
-          endCursor
-          startCursor,
-          hasNextPage,
-          hasPreviousPage
         }
       }
     }

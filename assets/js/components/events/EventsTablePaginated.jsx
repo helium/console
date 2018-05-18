@@ -1,16 +1,12 @@
 import React, { Component } from 'react'
 import { formatDatetime } from '../../util/time'
 
-// MUI
-import { withStyles } from 'material-ui/styles';
-import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter } from 'material-ui/Table';
-import IconButton from 'material-ui/IconButton'
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
-// Icons
-import FirstIcon from 'material-ui-icons/FirstPage';
-import PreviousIcon from 'material-ui-icons/KeyboardArrowLeft';
-import NextIcon from 'material-ui-icons/KeyboardArrowRight';
-import LastIcon from 'material-ui-icons/LastPage';
+// MUI
+import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter, TablePagination } from 'material-ui/Table';
 
 const EventStatus = (props) => {
   switch(props.status) {
@@ -29,77 +25,115 @@ const EventPayloadSize = (props) => {
 }
 
 class EventsTablePaginated extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      page: 1
+    }
+
+    this.handleChangePage = this.handleChangePage.bind(this)
+    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+  }
+
+  handleChangeRowsPerPage(pageSize) {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  handleChangePage(page) {
+    this.setState({ page })
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
   render() {
-    const { events, handleFirstPage, handleNextPage, handlePreviousPage, handleLastPage } = this.props
-    const { pageInfo } = events
+    const { loading, events } = this.props.data
+    const { page } = this.state
+
+    if (loading) return <div />
 
     return (
-      <div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Type</TableCell>
-              <TableCell>Size</TableCell>
-              <TableCell>RSSI</TableCell>
-              <TableCell>Time</TableCell>
-              <TableCell>Response</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {events.edges.map(edge => (
-              <TableRow key={edge.node.id}>
-                <TableCell>
-                  {edge.node.description}
-                </TableCell>
-                <TableCell>
-                  <EventPayloadSize size={edge.node.payload_size} />
-                </TableCell>
-                <TableCell>
-                  {edge.node.rssi}
-                </TableCell>
-                <TableCell>
-                  {formatDatetime(edge.node.reported_at)}
-                </TableCell>
-                <TableCell>
-                  <EventStatus status={edge.node.status} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell colspan="5" style={{textAlign: 'right'}}>
-                <IconButton
-                  disabled={!pageInfo.hasPreviousPage}
-                  onClick={handleFirstPage}
-                >
-                  <FirstIcon />
-                </IconButton>
-                <IconButton
-                  disabled={!pageInfo.hasPreviousPage}
-                  onClick={handlePreviousPage}
-                >
-                  <PreviousIcon />
-                </IconButton>
-                <IconButton
-                  disabled={!pageInfo.hasNextPage}
-                  onClick={handleNextPage}
-                >
-                  <NextIcon />
-                </IconButton>
-                <IconButton
-                  disabled={!pageInfo.hasNextPage}
-                  onClick={handleLastPage}
-                >
-                  <LastIcon />
-                </IconButton>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Type</TableCell>
+            <TableCell>Size</TableCell>
+            <TableCell>RSSI</TableCell>
+            <TableCell>Time</TableCell>
+            <TableCell>Response</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {events.entries.map(event => (
+            <TableRow key={event.id}>
+              <TableCell>
+                {event.description}
+              </TableCell>
+              <TableCell>
+                <EventPayloadSize size={event.payload_size} />
+              </TableCell>
+              <TableCell>
+                {event.rssi}
+              </TableCell>
+              <TableCell>
+                {formatDatetime(event.reported_at)}
+              </TableCell>
+              <TableCell>
+                <EventStatus status={event.status} />
               </TableCell>
             </TableRow>
-          </TableFooter>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TablePagination
+            count={events.totalEntries}
+            onChangePage={(e, page) => this.handleChangePage(page + 1)}
+            onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
+            page={page - 1}
+            rowsPerPage={events.pageSize}
+          />
+        </TableFooter>
+      </Table>
     )
   }
 }
 
-export default EventsTablePaginated
+const queryOptions = {
+  options: props => ({
+    variables: {
+      deviceId: props.deviceId,
+      page: 1,
+      pageSize: 5
+    }
+  })
+}
+
+const query = gql`
+  query PaginatedEventsQuery ($deviceId: String, $page: Int, $pageSize: Int) {
+    events(deviceId: $deviceId, page: $page, pageSize: $pageSize) {
+      entries {
+        id,
+        description,
+        rssi,
+        payload_size,
+        reported_at,
+        status
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`
+
+const EventsTableWithData = graphql(query, queryOptions)(EventsTablePaginated)
+
+export default EventsTableWithData
