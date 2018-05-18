@@ -92,4 +92,14 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Devices.AuditResolver.paginate/2)
     end
   end
+
+  subscription do
+    field :event_added, :event do
+      arg :device_id, :string
+
+      config fn args, _ ->
+        {:ok, topic: args.device_id}
+      end
+    end
+  end
 end

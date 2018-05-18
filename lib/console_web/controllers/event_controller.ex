@@ -64,5 +64,9 @@ defmodule ConsoleWeb.EventController do
     Enum.each(team_ids, fn team_id ->
       ConsoleWeb.Endpoint.broadcast("event:#{team_id}", action, body)
     end)
+
+    if event.device do
+      Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: event.device.id)
+    end
   end
 end
