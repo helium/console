@@ -6,8 +6,12 @@
     "watch": "brunch watch --stdin"
   },
   "dependencies": {
+    "apollo-client-preset": "^1.0.8",
+    "apollo-link-context": "^1.0.8",
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
     "history": "^4.7.2",
     "lodash": "^4.17.5",
     "mapbox-gl": "^0.45.0-beta.1",
@@ -23,6 +27,7 @@
     "qrcode.react": "^0.8.0",
     "query-string": "^6.0.0",
     "react": "^16.2.0",
+    "react-apollo": "^2.1.4",
     "react-chartjs-2": "^2.7.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",

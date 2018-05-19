@@ -3,13 +3,17 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchDevice, deleteDevice, updateDevice } from '../../actions/device'
-import EventsTable from '../events/EventsTable'
+import { deleteDevice, updateDevice } from '../../actions/device'
+import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Typography from 'material-ui/Typography';
@@ -17,16 +21,13 @@ import Button from 'material-ui/Button';
 import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 class DeviceShow extends Component {
-  componentDidMount() {
-    const { fetchDevice } = this.props
-    const { id } = this.props.match.params
-    fetchDevice(id)
-  }
-
   render() {
-    const { device, events, deleteDevice, updateDevice } = this.props
+    const { id } = this.props.match.params
+    const { deleteDevice, updateDevice } = this.props
+    const { loading, device } = this.props.data
 
-    if (device === undefined) return (<div>loading...</div>)
+    if (loading) return <DashboardLayout />
+
     return(
       <DashboardLayout title={device.name}>
         <Card>
@@ -49,8 +50,8 @@ class DeviceShow extends Component {
               </div>
               <div style={{width: '50%'}}>
                 <GroupsControl
-                  groups={device.groups}
-                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
+                  groups={device.groups.edges.map(e => e.node.name)}
+                  handleUpdate={(groups) => updateDevice(id, {groups: groups})}
                   editable={userCan('update', 'device', device)}
                 />
               </div>
@@ -59,13 +60,13 @@ class DeviceShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton device_id={device.id} />
+              <RandomEventButton device_id={id} />
             }
             {userCan('delete', 'device', device) &&
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteDevice(device)}
+                onClick={() => deleteDevice(id)}
               >
                 Delete Device
               </Button>
@@ -78,7 +79,7 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable events={events} />
+            <EventsTable deviceId={device._id} />
           </CardContent>
         </Card>
 
@@ -112,16 +113,39 @@ class DeviceShow extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const device = state.entities.devices[ownProps.match.params.id]
-  if (device === undefined) return {}
-  return {
-    device,
-    events: Object.values(pick(state.entities.events, device.events))
-  }
+  return { }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchDevice, deleteDevice, updateDevice }, dispatch);
+  return bindActionCreators({ deleteDevice, updateDevice }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceShow);
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    }
+  })
+}
+
+const query = gql`
+  query DeviceShowQuery ($id: ID!) {
+    device(id: $id) {
+      name,
+      mac,
+      id,
+      _id,
+      groups(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+`
+
+const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceShowWithData);

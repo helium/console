@@ -83,8 +83,13 @@ class PacketGraph extends Component {
   }
 
   componentDidUpdate(prevProps) { // change to getDerivedStateFromProps when we update react to 16.3+
-    if ((this.props.data[0] && !prevProps.data[0]) || (this.props.data[0] && this.state.data.datasets.length == 0) ||
-      (this.props.data[0] && prevProps.data[0] && this.props.data[this.props.data.length-1].id !== prevProps.data[prevProps.data.length-1].id)) {
+    if (!this.props.data || !prevProps.data) return
+
+    if (
+      (this.props.data[0] && !prevProps.data[0]) ||
+      (this.props.data[0] && this.state.data.datasets.length == 0) ||
+      (this.props.data[0] && prevProps.data[0] && this.props.data[this.props.data.length-1].id !== prevProps.data[prevProps.data.length-1].id)
+    ) {
       clearInterval(this.chartUpdateInterval)
       this.updateChart(this.props.data)
       this.chartUpdateInterval = setInterval(() => {
