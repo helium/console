@@ -16,15 +16,6 @@ defmodule Console.AuditTrails do
     |> Repo.insert()
   end
 
-  defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = nil, nil, target = nil) do
-    %{
-      user_id: user_id,
-      user_email: user_email,
-      object: object,
-      action: action,
-      description: generate_description(object, action, user, team, target)
-    }
-  end
   defp generate_audit_attrs(object, action, user = %{id: user_id, email: user_email}, team = %{id: team_id}, nil, target = nil) do
     %{
       user_id: user_id,

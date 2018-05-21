@@ -13,6 +13,7 @@ defmodule Console.Teams.Team do
     has_many :devices, Console.Devices.Device
     has_many :gateways, Console.Gateways.Gateway
     has_many :channels, Console.Channels.Channel
+    has_many :audit_trails, Console.AuditTrails.AuditTrail
 
     timestamps()
   end

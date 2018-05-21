@@ -82,6 +82,12 @@ const organizationItems = (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItem>
+    <ListItem button component={Link} to="/audit">
+      <ListItemIcon>
+        <ReportsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Audit Trails" />
+    </ListItem>
   </div>
 );
 

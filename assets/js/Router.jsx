@@ -38,6 +38,7 @@ import TeamIndex from './components/teams/TeamIndex'
 import TeamShow from './components/teams/TeamShow'
 import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
+import Audit from './components/dashboard/Audit'
 
 const httpLink = createHttpLink({
   uri: "/graphql"
@@ -88,6 +89,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/teams/access" component={TeamShow} />
                   <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                  <PrivateRoute exact path="/audit" component={Audit} />
                 </Switch>
               </ConnectedRouter>
             </SocketHandler>

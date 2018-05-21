@@ -2,6 +2,7 @@ defmodule ConsoleWeb.UserControllerTest do
   use ConsoleWeb.ConnCase
 
   alias Console.Auth
+  alias Console.Teams
   import Console.Factory
 
   @create_attrs %{email: "test@hello.com", password: "some password"}
@@ -43,6 +44,8 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "resend verification email" do
     test "renders accepted when user has not been confirmed", %{conn: conn} do
       user = insert(:unconfirmedUser)
+      team = insert(:team)
+      Teams.join_team(user, team, "admin")
       conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
       assert json_response(conn, 202)
     end
@@ -60,6 +63,8 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "forgot password email generation" do
     test "renders accepted when valid email is supplied", %{conn: conn} do
       user = insert(:user)
+      team = insert(:team)
+      Teams.join_team(user, team, "developer")
       conn = post conn, user_path(conn, :forgot_password), email: user.email, recaptcha: "recaptcha"
 
       assert json_response(conn, 202)
@@ -83,6 +88,8 @@ defmodule ConsoleWeb.UserControllerTest do
 
     test "redirects to reset_password/:token when token is valid" do
       user = insert(:user)
+      team = insert(:team)
+      Teams.join_team(user, team, "analyst")
       {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
       conn = get build_conn(), "/users/reset_password/#{token}"
 
