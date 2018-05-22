@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
 
 // MUI
 import Drawer from 'material-ui/Drawer';
@@ -30,67 +31,6 @@ const theme = createMuiTheme({
   },
 });
 
-const hardwareItems = (
-  <div>
-    <ListItem button component={Link} to="/dashboard">
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItem>
-
-    <ListItem button component={Link} to="/devices">
-      <ListItemIcon>
-        <DevicesIcon />
-      </ListItemIcon>
-      <ListItemText primary="Devices" />
-    </ListItem>
-
-    <ListItem button component={Link} to="/gateways">
-      <ListItemIcon>
-        <GatewaysIcon />
-      </ListItemIcon>
-      <ListItemText primary="Gateways" />
-    </ListItem>
-
-    <ListItem button component={Link} to="/channels">
-      <ListItemIcon>
-        <ChannelsIcon />
-      </ListItemIcon>
-      <ListItemText primary="Channels" />
-    </ListItem>
-  </div>
-);
-
-const organizationItems = (
-  <div>
-    <ListItem button component={Link} to="/teams/access">
-      <ListItemIcon>
-        <AccessIcon />
-      </ListItemIcon>
-      <ListItemText primary="Access" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <BillingIcon />
-      </ListItemIcon>
-      <ListItemText primary="Billing" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <ReportsIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button component={Link} to="/audit">
-      <ListItemIcon>
-        <ReportsIcon />
-      </ListItemIcon>
-      <ListItemText primary="Audit Trails" />
-    </ListItem>
-  </div>
-);
-
 const drawerWidth = 240;
 const styles = theme => ({
   drawerPaper: {
@@ -106,10 +46,81 @@ const styles = theme => ({
 })
 
 class NavDrawer extends Component {
+  renderHardwareItems() {
+    return (
+      <div>
+        <ListItem button component={Link} to="/dashboard">
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/devices">
+          <ListItemIcon>
+            <DevicesIcon />
+          </ListItemIcon>
+          <ListItemText primary="Devices" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/gateways">
+          <ListItemIcon>
+            <GatewaysIcon />
+          </ListItemIcon>
+          <ListItemText primary="Gateways" />
+        </ListItem>
+
+        <ListItem button component={Link} to="/channels">
+          <ListItemIcon>
+            <ChannelsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Channels" />
+        </ListItem>
+      </div>
+    )
+  }
+
+  renderOrganizationalItems() {
+    return (
+      <div>
+        <ListItem button component={Link} to="/teams/access">
+          <ListItemIcon>
+            <AccessIcon />
+          </ListItemIcon>
+          <ListItemText primary="Access" />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <BillingIcon />
+          </ListItemIcon>
+          <ListItemText primary="Billing" />
+        </ListItem>
+        <ListItem button>
+          <ListItemIcon>
+            <ReportsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Reports" />
+        </ListItem>
+        {this.renderAuditTrails()}
+      </div>
+    )
+  }
+
+  renderAuditTrails() {
+    if (this.props.isAdmin) {
+      return (
+        <ListItem button component={Link} to="/audit">
+          <ListItemIcon>
+            <ReportsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Audit Trails" />
+        </ListItem>
+      )
+    }
+  }
 
   render() {
     const { classes } = this.props
-
     // const drawerPaper = Object.assign({}, classes.drawerPaper, {backgroundColor: '#ff0000'})
 
     return (
@@ -124,13 +135,20 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <List>{hardwareItems}</List>
+          <List>{this.renderHardwareItems()}</List>
           <Divider />
-          <List>{organizationItems}</List>
+          <List>{this.renderOrganizationalItems()}</List>
         </Drawer>
       </MuiThemeProvider>
     )
   }
 }
 
-export default withStyles(styles)(NavDrawer)
+const mapStateToProps = (state) => {
+  return {
+    isAdmin: state.user.role == "admin"
+  }
+}
+
+const styled = withStyles(styles)(NavDrawer)
+export default connect(mapStateToProps, null)(styled)

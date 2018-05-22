@@ -16,6 +16,7 @@ import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-r
 import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './components/routes/PrivateRoute.jsx';
+import AdminRoute from './components/routes/AdminRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import SocketHandler from './components/SocketHandler'
 import Login from './components/auth/Login.jsx';
@@ -89,7 +90,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/teams/access" component={TeamShow} />
                   <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
-                  <PrivateRoute exact path="/audit" component={Audit} />
+                  <AdminRoute exact path="/audit" component={Audit} />
                 </Switch>
               </ConnectedRouter>
             </SocketHandler>
