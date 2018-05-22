@@ -18,7 +18,8 @@ defmodule ConsoleWeb.TwoFactorController do
   end
 
   def create(conn, %{"user" => %{"code" => code, "userId" => userId, "secret2fa" => secret2fa}}) do
-    with %User{} = user <- Auth.get_user_by_id!(userId), current_team <- Teams.current_team_for(user) do
+    current_team = conn.assigns.current_team
+    with %User{} = user <- Auth.get_user_by_id!(userId) do
       if Auth.verify_2fa_code(code, secret2fa) do
           codes = Auth.generate_backup_codes()
           with {:ok, %TwoFactor{}} <- Auth.enable_2fa(user, secret2fa, codes) do
@@ -56,8 +57,8 @@ defmodule ConsoleWeb.TwoFactorController do
   end
 
   def skip(conn, %{"userId" => userId}) do
+    current_team = conn.assigns.current_team
     with %User{} = user <- Auth.get_user_by_id!(userId),
-      current_team <- Teams.current_team_for(user),
       {:ok, _} = Auth.update_2fa_last_skipped(user) do
         AuditTrails.create_audit_trail("two_factor", "skip_activation", user, current_team)
 
