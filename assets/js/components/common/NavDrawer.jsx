@@ -44,80 +44,71 @@ const styles = theme => ({
   },
 })
 
-class NavDrawer extends Component {
-  renderHardwareItems() {
-    return (
-      <div>
-        <ListItem button component={Link} to="/dashboard">
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
+const HardwareNavItems = (props) => (
+  <div>
+    <ListItem button component={Link} to="/dashboard">
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Dashboard" />
+    </ListItem>
 
-        <ListItem button component={Link} to="/devices">
-          <ListItemIcon>
-            <DevicesIcon />
-          </ListItemIcon>
-          <ListItemText primary="Devices" />
-        </ListItem>
+    <ListItem button component={Link} to="/devices">
+      <ListItemIcon>
+        <DevicesIcon />
+      </ListItemIcon>
+      <ListItemText primary="Devices" />
+    </ListItem>
 
-        <ListItem button component={Link} to="/gateways">
-          <ListItemIcon>
-            <GatewaysIcon />
-          </ListItemIcon>
-          <ListItemText primary="Gateways" />
-        </ListItem>
+    <ListItem button component={Link} to="/gateways">
+      <ListItemIcon>
+        <GatewaysIcon />
+      </ListItemIcon>
+      <ListItemText primary="Gateways" />
+    </ListItem>
 
-        <ListItem button component={Link} to="/channels">
-          <ListItemIcon>
-            <ChannelsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Channels" />
-        </ListItem>
-      </div>
-    )
-  }
+    <ListItem button component={Link} to="/channels">
+      <ListItemIcon>
+        <ChannelsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Channels" />
+    </ListItem>
+  </div>
+)
 
-  renderOrganizationalItems() {
-    return (
-      <div>
-        <ListItem button component={Link} to="/teams/access">
-          <ListItemIcon>
-            <AccessIcon />
-          </ListItemIcon>
-          <ListItemText primary="Access" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <BillingIcon />
-          </ListItemIcon>
-          <ListItemText primary="Billing" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <ReportsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Reports" />
-        </ListItem>
-        {this.renderAuditTrails()}
-      </div>
-    )
-  }
-
-  renderAuditTrails() {
-    if (userCan('view', 'auditTrails')) {
-      return (
-        <ListItem button component={Link} to="/audit">
-          <ListItemIcon>
-            <ReportsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Audit Trails" />
-        </ListItem>
-      )
+const OrganizationalNavItems = (props) => (
+  <div>
+    <ListItem button component={Link} to="/teams/access">
+      <ListItemIcon>
+        <AccessIcon />
+      </ListItemIcon>
+      <ListItemText primary="Access" />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <BillingIcon />
+      </ListItemIcon>
+      <ListItemText primary="Billing" />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <ReportsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Reports" />
+    </ListItem>
+    {
+      userCan('view', 'auditTrails') &&
+      <ListItem button component={Link} to="/audit">
+        <ListItemIcon>
+          <ReportsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Audit Trails" />
+      </ListItem>
     }
-  }
+  </div>
+)
 
+class NavDrawer extends Component {
   render() {
     const { classes } = this.props
     // const drawerPaper = Object.assign({}, classes.drawerPaper, {backgroundColor: '#ff0000'})
@@ -134,9 +125,9 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <List>{this.renderHardwareItems()}</List>
+          <List><HardwareNavItems /></List>
           <Divider />
-          <List>{this.renderOrganizationalItems()}</List>
+          <List><OrganizationalNavItems /></List>
         </Drawer>
       </MuiThemeProvider>
     )
