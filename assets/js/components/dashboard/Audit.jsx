@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import DashboardLayout from '../common/DashboardLayout'
 
 // GraphQL
@@ -62,16 +61,6 @@ class Audit extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    currentTeamId: state.auth.currentTeamId
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ }, dispatch);
-}
-
 const query = gql`
   query AuditTrailsQuery {
     auditTrails {
@@ -92,5 +81,4 @@ const queryOptions = {
 }
 
 const AuditWithData = graphql(query, queryOptions)(Audit)
-
-export default connect(mapStateToProps, mapDispatchToProps)(AuditWithData);
+export default AuditWithData
