@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux';
 
 // MUI
 import Drawer from 'material-ui/Drawer';
@@ -10,7 +9,7 @@ import Divider from 'material-ui/Divider';
 import List from 'material-ui/List';
 import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
-
+import userCan from '../../util/abilities'
 
 // Icons
 import DevicesIcon from 'material-ui-icons/Memory';
@@ -107,7 +106,7 @@ class NavDrawer extends Component {
   }
 
   renderAuditTrails() {
-    if (this.props.isAdmin) {
+    if (userCan('view', 'auditTrails')) {
       return (
         <ListItem button component={Link} to="/audit">
           <ListItemIcon>
@@ -144,11 +143,5 @@ class NavDrawer extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    isAdmin: state.user.role == "admin"
-  }
-}
 
-const styled = withStyles(styles)(NavDrawer)
-export default connect(mapStateToProps, null)(styled)
+export default withStyles(styles)(NavDrawer)
