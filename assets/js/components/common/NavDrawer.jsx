@@ -45,7 +45,7 @@ const styles = theme => ({
 })
 
 const HardwareNavItems = (props) => (
-  <div>
+  <List>
     <ListItem button component={Link} to="/dashboard">
       <ListItemIcon>
         <DashboardIcon />
@@ -73,11 +73,11 @@ const HardwareNavItems = (props) => (
       </ListItemIcon>
       <ListItemText primary="Channels" />
     </ListItem>
-  </div>
+  </List>
 )
 
 const OrganizationalNavItems = (props) => (
-  <div>
+  <List>
     <ListItem button component={Link} to="/teams/access">
       <ListItemIcon>
         <AccessIcon />
@@ -105,7 +105,7 @@ const OrganizationalNavItems = (props) => (
         <ListItemText primary="Audit Trails" />
       </ListItem>
     }
-  </div>
+  </List>
 )
 
 class NavDrawer extends Component {
@@ -125,9 +125,9 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <List><HardwareNavItems /></List>
+          <HardwareNavItems />
           <Divider />
-          <List><OrganizationalNavItems /></List>
+          <OrganizationalNavItems />
         </Drawer>
       </MuiThemeProvider>
     )
