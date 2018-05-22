@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 class PrivateRoute extends Component {
   render() {
-    const { path, isLoggedIn, currentTeamId } = this.props
+    const { path, isLoggedIn, currentTeamId, adminOnly, isAdmin } = this.props
     const Component = this.props.component
 
     return(
@@ -21,6 +21,10 @@ class PrivateRoute extends Component {
           return <Redirect to='/devices' />
         }
 
+        if (adminOnly && !isAdmin) {
+          return <Redirect to='/dashboard' />
+        }
+
         return <Component {...p} />
       }} />
     )
@@ -30,7 +34,8 @@ class PrivateRoute extends Component {
 function mapStateToProps(state) {
   return {
     isLoggedIn: state.auth.isLoggedIn,
-    currentTeamId: state.auth.currentTeamId
+    currentTeamId: state.auth.currentTeamId,
+    isAdmin: state.user.role == "admin"
   }
 }
 

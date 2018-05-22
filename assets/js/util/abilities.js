@@ -5,6 +5,7 @@ const userCan = (action, itemType, item) => {
   const { email, role } = user
 
   if (itemType === 'membership' && item && email === item.email) return false
+  if (itemType === 'auditTrails' && role !== 'admin') return false
 
   if (role === 'admin') return true
   if (role === 'developer') return true

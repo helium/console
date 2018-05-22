@@ -9,7 +9,7 @@ import Divider from 'material-ui/Divider';
 import List from 'material-ui/List';
 import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
-
+import userCan from '../../util/abilities'
 
 // Icons
 import DevicesIcon from 'material-ui-icons/Memory';
@@ -30,8 +30,22 @@ const theme = createMuiTheme({
   },
 });
 
-const hardwareItems = (
-  <div>
+const drawerWidth = 240;
+const styles = theme => ({
+  drawerPaper: {
+    position: 'relative',
+    width: drawerWidth,
+    // backgroundColor: theme.palette.background.default,
+    backgroundColor: "#27303D",
+  },
+  logo: {
+    display: 'block',
+    width: '100%',
+  },
+})
+
+const HardwareNavItems = (props) => (
+  <List>
     <ListItem button component={Link} to="/dashboard">
       <ListItemIcon>
         <DashboardIcon />
@@ -59,11 +73,11 @@ const hardwareItems = (
       </ListItemIcon>
       <ListItemText primary="Channels" />
     </ListItem>
-  </div>
-);
+  </List>
+)
 
-const organizationItems = (
-  <div>
+const OrganizationalNavItems = (props) => (
+  <List>
     <ListItem button component={Link} to="/teams/access">
       <ListItemIcon>
         <AccessIcon />
@@ -82,28 +96,21 @@ const organizationItems = (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItem>
-  </div>
-);
-
-const drawerWidth = 240;
-const styles = theme => ({
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth,
-    // backgroundColor: theme.palette.background.default,
-    backgroundColor: "#27303D",
-  },
-  logo: {
-    display: 'block',
-    width: '100%',
-  },
-})
+    {
+      userCan('view', 'auditTrails') &&
+      <ListItem button component={Link} to="/audit">
+        <ListItemIcon>
+          <ReportsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Audit Trails" />
+      </ListItem>
+    }
+  </List>
+)
 
 class NavDrawer extends Component {
-
   render() {
     const { classes } = this.props
-
     // const drawerPaper = Object.assign({}, classes.drawerPaper, {backgroundColor: '#ff0000'})
 
     return (
@@ -118,13 +125,14 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <List>{hardwareItems}</List>
+          <HardwareNavItems />
           <Divider />
-          <List>{organizationItems}</List>
+          <OrganizationalNavItems />
         </Drawer>
       </MuiThemeProvider>
     )
   }
 }
+
 
 export default withStyles(styles)(NavDrawer)

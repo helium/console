@@ -23,7 +23,7 @@ defmodule ConsoleWeb.TwoFactorController do
           codes = Auth.generate_backup_codes()
           with {:ok, %TwoFactor{}} <- Auth.enable_2fa(user, secret2fa, codes) do
             AuditTrails.create_audit_trail("two_factor", "activate", user)
-            
+
             conn
             |> put_status(:accepted)
             |> render("2fa_status.json", message: "Your account now has 2FA", user: user, backup_codes: codes)
@@ -58,11 +58,11 @@ defmodule ConsoleWeb.TwoFactorController do
   def skip(conn, %{"userId" => userId}) do
     with %User{} = user <- Auth.get_user_by_id!(userId),
       {:ok, _} = Auth.update_2fa_last_skipped(user) do
-      AuditTrails.create_audit_trail("two_factor", "skip_activation", user)
+        AuditTrails.create_audit_trail("two_factor", "skip_activation", user)
 
-      conn
-      |> put_status(:accepted)
-      |> render("2fa_status.json", message: "You have skipped 2fa for 24 hours")
+        conn
+        |> put_status(:accepted)
+        |> render("2fa_status.json", message: "You have skipped 2fa for 24 hours")
     end
   end
 end
