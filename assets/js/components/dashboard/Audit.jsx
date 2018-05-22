@@ -85,6 +85,12 @@ const query = gql`
   }
 `
 
-const AuditWithData = graphql(query)(Audit)
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'network-only'
+  })
+}
+
+const AuditWithData = graphql(query, queryOptions)(Audit)
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuditWithData);
