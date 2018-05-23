@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
-import Audit from './dashboard/Audit'
-import userCan from '../util/abilities'
+import UserAuditTrail from './audit_trails/UserAuditTrail'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -49,7 +48,10 @@ class Profile extends Component {
             </Button>
           </CardActions>
         </Card>
-        {userCan("view", "auditTrails") && <Audit />}
+
+        <Card style={{marginTop: 24}}>
+          <UserAuditTrail />
+        </Card>
       </DashboardLayout>
     );
   }
