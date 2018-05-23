@@ -43,8 +43,8 @@ class ForgotPassword extends Component {
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.shouldResetCaptcha) {
+  componentDidUpdate(prevProps) {
+    if (this.props.auth.shouldResetCaptcha) {
       this.recaptchaInstance.reset()
       this.props.hasResetCaptcha()
     }
