@@ -2,6 +2,7 @@ defmodule ConsoleWeb.Schema do
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :modern
   use Absinthe.Schema.Notation
+  use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
   def internal_id(_, %{source: source}), do: {:ok, source.id}
@@ -28,16 +29,8 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
-  # TODO turn this into a macro
-  object :paginated_events do
-    field :entries, list_of(:paginated_event)
-    field :page_number, :integer
-    field :page_size, :integer
-    field :total_entries, :integer
-    field :total_pages, :integer
-  end
-
-  object :paginated_event do
+  # creates 2 obects: :paginated_event and :paginated_events
+  paginated object :event do
     field :id, :id
     field :description, :string
     field :payload_size, :integer
@@ -46,15 +39,7 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
-  object :paginated_audit_trails do
-    field :entries, list_of(:paginated_audit_trail)
-    field :page_number, :integer
-    field :page_size, :integer
-    field :total_entries, :integer
-    field :total_pages, :integer
-  end
-
-  object :paginated_audit_trail do
+  paginated object :audit_trail do
     field :id, :id
     field :user_email, :string
     field :object, :string
@@ -96,17 +81,13 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Get paginated events"
-    field :events, :paginated_events do
+    paginated field :events, :paginated_events do
       arg :device_id, :string
-      arg :page, :integer
-      arg :page_size, :integer
       resolve &Console.Events.EventResolver.paginate/2
     end
 
     @desc "Get all audit trails"
-    field :audit_trails, :paginated_audit_trails do
-      arg :page, :integer
-      arg :page_size, :integer
+    paginated field :audit_trails, :paginated_audit_trails do
       resolve(&Console.Devices.AuditResolver.paginate/2)
     end
   end
