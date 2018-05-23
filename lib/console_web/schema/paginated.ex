@@ -23,18 +23,28 @@ defmodule ConsoleWeb.Schema.Paginated do
   end
 
   defmacro paginated({:field, _, [identifier | rest]}, do: block) do
+    IO.inspect(block)
     quote do
       field :events, :paginated_events, do: unquote(field_block(block))
     end
   end
 
   defp field_block({:__block__, _, body}) do
-    {:__block__, _, pagination_args} =
-      quote do
-      arg :page, :integer
-      arg :page_size, :integer
-    end
+    {:__block__, [], pagination_args() ++ body}
+  end
 
-    {:__block__, [], pagination_args ++ body}
+  defp field_block(body) do
+    body = List.flatten([body])
+    {:__block__, [], pagination_args() ++ body}
+  end
+
+  defp pagination_args() do
+    {:__block__, _, args} =
+      quote do
+        arg :page, :integer
+        arg :page_size, :integer
+      end
+
+    args
   end
 end

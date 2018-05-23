@@ -39,15 +39,7 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
-  object :paginated_audit_trails do
-    field :entries, list_of(:paginated_audit_trail)
-    field :page_number, :integer
-    field :page_size, :integer
-    field :total_entries, :integer
-    field :total_pages, :integer
-  end
-
-  object :paginated_audit_trail do
+  paginated object :audit_trail do
     field :id, :id
     field :user_email, :string
     field :object, :string
@@ -95,9 +87,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Get all audit trails"
-    field :audit_trails, :paginated_audit_trails do
-      arg :page, :integer
-      arg :page_size, :integer
+    paginated field :audit_trails, :paginated_audit_trails do
       resolve(&Console.Devices.AuditResolver.paginate/2)
     end
   end
