@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
 // MUI
-import Typography from 'material-ui/Typography';
-import { withStyles } from 'material-ui/styles';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 // Icons
-import Icon from 'material-ui-icons/SentimentNeutral';
+import Icon from '@material-ui/icons/SentimentNeutral';
 
 const styles = theme => ({
   main: {

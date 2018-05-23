@@ -1,15 +1,16 @@
 import React, { Component } from 'react'
 
 // MUI
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import Tabs, { Tab } from 'material-ui/Tabs'
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 
 // Icons
-import HelpIcon from 'material-ui-icons/Help';
+import HelpIcon from '@material-ui/icons/Help';
 
 const styles = theme => ({
   content: {
@@ -50,7 +51,7 @@ class ContentLayout extends Component {
 
     return (
       <div>
-        <AppBar position="initial" elevation={0}>
+        <AppBar position="static" elevation={0}>
           <Tabs value={currentTab} onChange={this.handleChangeTab}>
             {tabs.map((tab, i) => <Tab key={i} label={tab.label} />)}
           </Tabs>
@@ -70,7 +71,7 @@ class ContentLayout extends Component {
 
     return (
       <div>
-        <AppBar position="initial" elevation={0}>
+        <AppBar position="static" elevation={0}>
           <Toolbar>
             <Typography variant="display1" color="inherit" style={{flex: 1}}>
               {title}

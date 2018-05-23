@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 
 // MUI
-import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table';
-import Radio, { RadioGroup } from 'material-ui/Radio';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 // Icons
-import InfoOutlineIcon from 'material-ui-icons/InfoOutline'
+import InfoOutlineIcon from '@material-ui/icons/InfoOutline'
 
 const roles = [
   {

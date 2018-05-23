@@ -13,8 +13,9 @@ import ChannelCreateRow from './ChannelCreateRow'
 import { createChannel } from '../../actions/channel'
 
 //MUI
-import Card, { CardContent } from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 class ChannelNew extends Component {
   constructor(props) {

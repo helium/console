@@ -8,23 +8,26 @@ import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
 
 // MUI
-import List, { ListItem, ListItemText } from 'material-ui/List'
-import Avatar from 'material-ui/Avatar'
-import Badge from 'material-ui/Badge'
-import Button from 'material-ui/Button'
-import AppBar from 'material-ui/AppBar'
-import Toolbar from 'material-ui/Toolbar'
-import Typography from 'material-ui/Typography'
-import Menu, { MenuItem } from 'material-ui/Menu'
-import { withStyles } from 'material-ui/styles'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+import Badge from '@material-ui/core/Badge'
+import Button from '@material-ui/core/Button'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import { withStyles } from '@material-ui/core/styles'
+import Slide from '@material-ui/core/Slide'
+import IconButton from '@material-ui/core/IconButton'
 import SmallBadge from './SmallBadge'
-import Slide from 'material-ui/transitions/Slide'
 
 // Icons
-import AccountCircle from 'material-ui-icons/AccountCircle'
-import NotificationsIcon from 'material-ui-icons/Notifications'
-import ImageIcon from 'material-ui-icons/Image'
-import IconButton from 'material-ui/IconButton'
+import AccountCircle from '@material-ui/icons/AccountCircle'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import ImageIcon from '@material-ui/icons/Image'
 
 const roleText = (role) => {
   switch(role) {

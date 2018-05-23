@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Paper from 'material-ui/Paper';
 import { fetchGateways, deleteGateway } from '../../actions/gateway'
 import RandomGatewayButton from './RandomGatewayButton'
 import GatewaysTable from './GatewaysTable'
@@ -12,9 +11,11 @@ import Mapbox from '../common/Mapbox'
 import userCan from '../../util/abilities'
 
 // MUI
-import AppBar from 'material-ui/AppBar'
-import Tabs, { Tab } from 'material-ui/Tabs'
-import Typography from 'material-ui/Typography';
+import AppBar from '@material-ui/core/AppBar'
+import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import Typography from '@material-ui/core/Typography';
 
 class GatewayIndex extends Component {
   componentDidMount() {

@@ -8,11 +8,12 @@ import Recaptcha from './Recaptcha.jsx';
 import AuthLayout from '../common/AuthLayout'
 
 // MUI
-import TextField from 'material-ui/TextField';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
-import { withStyles } from 'material-ui/styles';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   title: {
@@ -42,8 +43,8 @@ class ForgotPassword extends Component {
     this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.shouldResetCaptcha) {
+  componentDidUpdate(prevProps) {
+    if (this.props.auth.shouldResetCaptcha) {
       this.recaptchaInstance.reset()
       this.props.hasResetCaptcha()
     }

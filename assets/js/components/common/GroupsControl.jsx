@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 
 // MUI
-import Typography from 'material-ui/Typography';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 class GroupsControl extends Component {
   constructor(props) {

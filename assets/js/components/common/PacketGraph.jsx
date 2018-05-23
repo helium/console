@@ -82,7 +82,7 @@ class PacketGraph extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) { // change to getDerivedStateFromProps when we update react to 16.3+
+  componentDidUpdate(prevProps) {
     if (!this.props.data || !prevProps.data) return
 
     if (

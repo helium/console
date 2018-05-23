@@ -8,13 +8,20 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 // MUI
-import Typography from 'material-ui/Typography';
-import Card, { CardContent } from 'material-ui/Card';
-import Paper from 'material-ui/Paper';
-import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter, TablePagination } from 'material-ui/Table';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Paper from '@material-ui/core/Paper';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 
 // Icons
-import DashboardIcon from 'material-ui-icons/Dashboard';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 class Audit extends Component {
   constructor(props) {
@@ -91,13 +98,15 @@ class Audit extends Component {
                 ))}
               </TableBody>
               <TableFooter>
-                <TablePagination
-                  count={auditTrails.totalEntries}
-                  onChangePage={(e, page) => this.handleChangePage(page + 1)}
-                  onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
-                  page={page - 1}
-                  rowsPerPage={auditTrails.pageSize}
-                />
+                <TableRow>
+                  <TablePagination
+                    count={auditTrails.totalEntries}
+                    onChangePage={(e, page) => this.handleChangePage(page + 1)}
+                    onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
+                    page={page - 1}
+                    rowsPerPage={auditTrails.pageSize}
+                  />
+                </TableRow>
               </TableFooter>
             </Table>
           </CardContent>

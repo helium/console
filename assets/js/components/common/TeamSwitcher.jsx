@@ -6,14 +6,18 @@ import { fetchTeams, switchTeam } from '../../actions/team'
 import NewTeamModal from '../teams/NewTeamModal'
 
 // MUI
-import Button from 'material-ui/Button'
-import Menu, { MenuItem, MenuList } from 'material-ui/Menu';
-import Divider from 'material-ui/Divider';
-import { ListItemIcon, ListItemText, ListSubheader } from 'material-ui/List';
+import Button from '@material-ui/core/Button'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import Divider from '@material-ui/core/Divider';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 // Icons
-import ArrowIcon from 'material-ui-icons/ArrowDropDown';
-import NewTeamIcon from 'material-ui-icons/Add';
+import ArrowIcon from '@material-ui/icons/ArrowDropDown';
+import NewTeamIcon from '@material-ui/icons/Add';
 
 class TeamSwitcher extends Component {
   constructor(props) {
@@ -83,7 +87,7 @@ class TeamSwitcher extends Component {
             subheader={<ListSubheader component="div" style={{padding: '14px 16px 14px', lineHeight: 0}}>Available Teams</ListSubheader>}
           >
             {teams.map(team => (
-              <MenuItem onClick={() => this.handleSwitchTeam(team)}>{team.name}</MenuItem>
+              <MenuItem key={team.id} onClick={() => this.handleSwitchTeam(team)}>{team.name}</MenuItem>
             ))}
           </MenuList>
           <Divider />

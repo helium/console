@@ -6,7 +6,13 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 // MUI
-import Table, { TableBody, TableCell, TableHead, TableRow, TableFooter, TablePagination } from 'material-ui/Table';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
 
 const EventStatus = (props) => {
   switch(props.status) {
@@ -92,13 +98,15 @@ class EventsTablePaginated extends Component {
           ))}
         </TableBody>
         <TableFooter>
-          <TablePagination
-            count={events.totalEntries}
-            onChangePage={(e, page) => this.handleChangePage(page + 1)}
-            onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
-            page={page - 1}
-            rowsPerPage={events.pageSize}
-          />
+          <TableRow>
+            <TablePagination
+              count={events.totalEntries}
+              onChangePage={(e, page) => this.handleChangePage(page + 1)}
+              onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
+              page={page - 1}
+              rowsPerPage={events.pageSize}
+            />
+          </TableRow>
         </TableFooter>
       </Table>
     )

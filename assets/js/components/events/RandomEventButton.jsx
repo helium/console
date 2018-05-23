@@ -6,7 +6,7 @@ import { createEvent } from '../../actions/event'
 import { randomInt, randomFloat } from '../../util/random'
 
 // MUI
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 
 const descriptions = [
   "Received a packet",

@@ -10,9 +10,9 @@ import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
 
 // MUI
-import Button from 'material-ui/Button'
-import Paper from 'material-ui/Paper';
-import Typography from 'material-ui/Typography';
+import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 class DeviceIndex extends Component {
   componentDidMount() {
