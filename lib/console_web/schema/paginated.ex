@@ -10,9 +10,7 @@ defmodule ConsoleWeb.Schema.Paginated do
     collection_id = String.to_atom("#{Atom.to_string(node_id)}s")
 
     quote do
-      unquote do
-        Absinthe.Relay.Node.Notation.record_object!(env, node_id, attrs, block)
-      end
+      object unquote(node_id), do: unquote(block)
 
       object unquote(collection_id) do
         field :entries, list_of(unquote(node_id))
