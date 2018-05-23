@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
-import DashboardLayout from '../common/DashboardLayout'
 import { formatDatetime } from '../../util/time'
 
 // GraphQL
@@ -60,58 +59,57 @@ class Audit extends Component {
   render() {
     if (this.props.data.loading) {
       return (
-        <DashboardLayout title="Audit Trails">
-          <Paper style={{textAlign: 'center', padding: '5em'}}>
-            <Typography variant="display1" style={{color: "#e0e0e0"}}>
-              Loading...
-            </Typography>
-          </Paper>
-        </DashboardLayout>
+        <Paper style={{textAlign: 'center', padding: '5em'}}>
+          <Typography variant="display1" style={{color: "#e0e0e0"}}>
+            Loading...
+          </Typography>
+        </Paper>
       )
     }
     const { auditTrails } = this.props.data
     const { page } = this.state
 
     return (
-      <DashboardLayout title="Audit Trails">
-        <Card>
-          <CardContent>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>User</TableCell>
-                  <TableCell>Object</TableCell>
-                  <TableCell>Action</TableCell>
-                  <TableCell>Description</TableCell>
-                  <TableCell>Time</TableCell>
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline" component="h3">
+            Audit Trails
+          </Typography>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User</TableCell>
+                <TableCell>Object</TableCell>
+                <TableCell>Action</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Time</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {auditTrails.entries.map(action => (
+                <TableRow key={action.id}>
+                  <TableCell>{action.userEmail}</TableCell>
+                  <TableCell>{action.object}</TableCell>
+                  <TableCell>{action.action}</TableCell>
+                  <TableCell>{action.description}</TableCell>
+                  <TableCell>{formatDatetime(action.updatedAt)}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {auditTrails.entries.map(action => (
-                  <TableRow key={action.id}>
-                    <TableCell>{action.userEmail}</TableCell>
-                    <TableCell>{action.object}</TableCell>
-                    <TableCell>{action.action}</TableCell>
-                    <TableCell>{action.description}</TableCell>
-                    <TableCell>{formatDatetime(action.updatedAt)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    count={auditTrails.totalEntries}
-                    onChangePage={(e, page) => this.handleChangePage(page + 1)}
-                    onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
-                    page={page - 1}
-                    rowsPerPage={auditTrails.pageSize}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </CardContent>
-        </Card>
-      </DashboardLayout>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  count={auditTrails.totalEntries}
+                  onChangePage={(e, page) => this.handleChangePage(page + 1)}
+                  onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
+                  page={page - 1}
+                  rowsPerPage={auditTrails.pageSize}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </CardContent>
+      </Card>
     )
   }
 }
