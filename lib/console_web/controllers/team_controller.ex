@@ -32,7 +32,6 @@ defmodule ConsoleWeb.TeamController do
   def switch(conn, %{"team_id" => team_id}) do
     team = Teams.get_team!(conn.assigns.current_user, team_id)
     jwt = Auth.generate_session_token(conn.assigns.current_user, team)
-    AuditTrails.create_audit_trail("team", "switch", conn.assigns.current_user, team)
 
     render(conn, "switch.json", jwt: jwt)
   end

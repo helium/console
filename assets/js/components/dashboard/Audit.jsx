@@ -87,7 +87,7 @@ class Audit extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.props.data.auditTrails.entries.map(action => (
+                {auditTrails.entries.map(action => (
                   <TableRow key={action.id}>
                     <TableCell>{action.userEmail}</TableCell>
                     <TableCell>{action.object}</TableCell>

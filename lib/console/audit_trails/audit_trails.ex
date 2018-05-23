@@ -71,7 +71,7 @@ defmodule Console.AuditTrails do
       "user_account" ->
         case action do
           "register" -> "#{user.email} registered as a brand new user"
-          "register_from_invite" -> "#{user.email} registered with an invite from #{target.email} to join team: #{team.name}"
+          "register_from_invite" -> "#{user.email} registered with an invite from #{target.email}"
           "resend_verification_email" -> "#{user.email} requested an account verification email resend"
           "activate_account" -> "#{user.email} verified and activated his/her account"
           "request_password_reset" -> "#{user.email} requested a reset password link"
@@ -82,7 +82,6 @@ defmodule Console.AuditTrails do
       "team" ->
         case action do
           "create" -> "#{user.email} created team: #{team.name}"
-          "switch" -> "#{user.email} switched to view team: #{team.name}"
         end
       "two_factor" ->
         case action do
@@ -92,34 +91,34 @@ defmodule Console.AuditTrails do
         end
       "team_membership" ->
         case action do
-          "update" -> "#{user.email} changed #{target.email} to #{target.role} in team: #{team.name}"
-          "delete" -> "#{user.email} removed #{target.email} from team: #{team.name}"
-          "join" -> "#{user.email} joined team: #{team.name} as #{user.role}"
+          "update" -> "#{user.email} changed #{target.email} to #{target.role}"
+          "delete" -> "#{user.email} removed #{target.email} from the team"
+          "join" -> "#{user.email} joined the team as #{user.role}"
         end
       "team_invitation" ->
         case action do
-          "create_existing" -> "#{user.email} invited existing user #{target.email} to team: #{team.name} as #{target.role}"
-          "create_new" -> "#{user.email} invited new user #{target.email} to team: #{team.name} as #{target.role}"
-          "delete" -> "#{user.email} deleted an invitation to #{target.email} in team: #{team.name}"
-          "use_invite_link" -> "#{target.email} used his/her team invitation link to team: #{team.name}"
+          "create_existing" -> "#{user.email} invited existing user #{target.email} to the team as #{target.role}"
+          "create_new" -> "#{user.email} invited new user #{target.email} to the team as #{target.role}"
+          "delete" -> "#{user.email} deleted an invitation to #{target.email}"
+          "use_invite_link" -> "#{target.email} used his/her team invitation link"
         end
       "gateway" ->
         case action do
-          "create" -> "#{user.email} created gateway #{target.name} in team: #{team.name}"
-          "update" -> "#{user.email} updated gateway #{target.name} in team: #{team.name}"
-          "delete" -> "#{user.email} deleted gateway #{target.name} in team: #{team.name}"
+          "create" -> "#{user.email} created gateway #{target.name}"
+          "update" -> "#{user.email} updated gateway #{target.name}"
+          "delete" -> "#{user.email} deleted gateway #{target.name}"
         end
       "device" ->
         case action do
-          "create" -> "#{user.email} created device #{target.name} in team: #{team.name}"
-          "update" -> "#{user.email} updated device #{target.name} in team: #{team.name}"
-          "delete" -> "#{user.email} deleted device #{target.name} in team: #{team.name}"
+          "create" -> "#{user.email} created device #{target.name}"
+          "update" -> "#{user.email} updated device #{target.name}"
+          "delete" -> "#{user.email} deleted device #{target.name}"
         end
       "channel" ->
         case action do
-          "create" -> "#{user.email} created channel #{target.name} in team: #{team.name}"
-          "update" -> "#{user.email} updated channel #{target.name} in team: #{team.name}"
-          "delete" -> "#{user.email} deleted channel #{target.name} in team: #{team.name}"
+          "create" -> "#{user.email} created channel #{target.name}"
+          "update" -> "#{user.email} updated channel #{target.name}"
+          "delete" -> "#{user.email} deleted channel #{target.name}"
         end
     end
   end
