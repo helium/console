@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import withTheme from './withTheme.jsx'
 
 const styles = theme => ({

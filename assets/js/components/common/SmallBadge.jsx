@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
 // MUI
-import { withStyles } from 'material-ui/styles';
-import Badge from 'material-ui/Badge';
+import { withStyles } from '@material-ui/core/styles';
+import Badge from '@material-ui/core/Badge';
 
 const styles = theme => ({
   badge: {

@@ -3,8 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { createDevice } from '../../actions/device'
 import { randomName, randomMac } from '../../util/random'
-import Button from 'material-ui/Button';
-import AddIcon from 'material-ui-icons/Add';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
 
 class RandomDeviceButton extends Component {
   handleClick(e) {

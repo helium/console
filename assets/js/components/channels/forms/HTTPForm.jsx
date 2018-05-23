@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 
 //MUI
-import Card, { CardContent } from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
-import TextField from 'material-ui/TextField';
-import AddIcon from 'material-ui-icons/Add';
-import ClearIcon from 'material-ui-icons/Clear';
-import Button from 'material-ui/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
+//icons
+import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 
 class HTTPForm extends Component {
   constructor(props) {

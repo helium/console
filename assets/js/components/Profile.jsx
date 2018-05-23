@@ -7,9 +7,11 @@ import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
 
 // MUI
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 
 class Profile extends Component {
   constructor(props) {

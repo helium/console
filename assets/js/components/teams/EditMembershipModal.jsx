@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import RoleControl from './RoleControl'
 
 // MUI
-import Typography from 'material-ui/Typography'
-import Modal from 'material-ui/Modal'
-import Button from 'material-ui/Button'
-import Paper from 'material-ui/Paper'
-import TextField from 'material-ui/TextField'
-import { withStyles } from 'material-ui/styles'
+import Typography from '@material-ui/core/Typography'
+import Modal from '@material-ui/core/Modal'
+import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
+import TextField from '@material-ui/core/TextField'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
   paper: {

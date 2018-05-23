@@ -11,9 +11,10 @@ import userCan from '../../util/abilities'
 import ChannelCreateRow from './ChannelCreateRow'
 
 //MUI
-import Paper from 'material-ui/Paper';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
+import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 class ChannelIndex extends Component {
   componentDidMount() {

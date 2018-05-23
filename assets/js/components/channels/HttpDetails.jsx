@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 
 // MUI
-import Typography from 'material-ui/Typography';
-import TextField from 'material-ui/TextField';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const HttpDetails = (props) => {
   const { channel } = props

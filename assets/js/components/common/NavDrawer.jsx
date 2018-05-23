@@ -2,25 +2,27 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 // MUI
-import Drawer from 'material-ui/Drawer';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
-import List from 'material-ui/List';
-import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import { withStyles } from 'material-ui/styles';
+import Drawer from '@material-ui/core/Drawer';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import { withStyles } from '@material-ui/core/styles';
 import userCan from '../../util/abilities'
 
 // Icons
-import DevicesIcon from 'material-ui-icons/Memory';
-import GatewaysIcon from 'material-ui-icons/Router';
-import ChannelsIcon from 'material-ui-icons/CompareArrows';
-import AccessIcon from 'material-ui-icons/People';
-import BillingIcon from 'material-ui-icons/CreditCard';
-import DashboardIcon from 'material-ui-icons/Dashboard';
-import ReportsIcon from 'material-ui-icons/TrackChanges';
+import DevicesIcon from '@material-ui/icons/Memory';
+import GatewaysIcon from '@material-ui/icons/Router';
+import ChannelsIcon from '@material-ui/icons/CompareArrows';
+import AccessIcon from '@material-ui/icons/People';
+import BillingIcon from '@material-ui/icons/CreditCard';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import ReportsIcon from '@material-ui/icons/TrackChanges';
 
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 const theme = createMuiTheme({
   palette: {
     type: 'dark',

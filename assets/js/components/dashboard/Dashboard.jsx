@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 
 // MUI
-import Typography from 'material-ui/Typography';
-import Paper from 'material-ui/Paper';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
 // Icons
-import DashboardIcon from 'material-ui-icons/Dashboard';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 class Dashboard extends Component {
   render() {

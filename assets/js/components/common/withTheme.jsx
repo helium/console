@@ -1,10 +1,10 @@
 import React from 'react';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import green from 'material-ui/colors/green';
-import lightBlue from 'material-ui/colors/lightBlue';
-import blue from 'material-ui/colors/blue';
-import pink from 'material-ui/colors/pink';
-import CssBaseline from 'material-ui/CssBaseline';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import green from '@material-ui/core/colors/green';
+import lightBlue from '@material-ui/core/colors/lightBlue';
+import blue from '@material-ui/core/colors/blue';
+import pink from '@material-ui/core/colors/pink';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 // A theme with custom primary and secondary color.
 // It's optional.
