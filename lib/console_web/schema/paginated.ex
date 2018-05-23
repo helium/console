@@ -24,7 +24,7 @@ defmodule ConsoleWeb.Schema.Paginated do
 
   defmacro paginated({:field, _, [identifier | rest]}, do: block) do
     quote do
-      field :events, :paginated_events, do: unquote(field_block(block))
+      field unquote(identifier), unquote(List.first(rest)), do: unquote(field_block(block))
     end
   end
 
