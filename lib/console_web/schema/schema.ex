@@ -88,6 +88,7 @@ defmodule ConsoleWeb.Schema do
 
     @desc "Get all audit trails"
     paginated field :audit_trails, :paginated_audit_trails do
+      arg :user_id, :string
       resolve(&Console.Devices.AuditResolver.paginate/2)
     end
   end
