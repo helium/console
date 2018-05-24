@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { formatDatetime } from '../../util/time'
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+import { connect } from 'react-redux';
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -67,7 +70,7 @@ class AuditTable extends Component {
     return (
       <CardContent>
         <Typography variant="headline" component="h3">
-          Audit Trails
+          {this.props.title}
         </Typography>
         <Table>
           <TableHead>
@@ -107,4 +110,46 @@ class AuditTable extends Component {
   }
 }
 
-export default AuditTable
+const query = gql`
+  query AuditTrailsQuery ($userId: ID, $page: Int, $pageSize: Int) {
+    auditTrails (userId: $userId, page: $page, pageSize: $pageSize) {
+      entries {
+        id
+        userEmail
+        object
+        action
+        description
+        updatedAt
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`
+
+const queryOptions = {
+  options: props => {
+    const variables = {
+      page: 1,
+      pageSize: 10
+    }
+    if (props.type == "user") {
+      variables.userId = props.userId
+    }
+    return {
+      fetchPolicy: 'network-only',
+      variables
+    }
+  }
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    userId: state.auth.user.id,
+  }
+}
+
+const AuditWithData = graphql(query, queryOptions)(AuditTable)
+export default connect(mapStateToProps, null)(AuditWithData)

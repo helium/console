@@ -9,7 +9,7 @@ import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import userCan from '../../util/abilities'
-import TeamAuditTrail from '../audit_trails/TeamAuditTrail'
+import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -94,7 +94,7 @@ class TeamShow extends Component {
         {
           userCan("view", "auditTrails") &&
           <Card style={{marginTop: 24}}>
-            <TeamAuditTrail />
+            <AuditTable type="team" title="Team History"/>
           </Card>
         }
 

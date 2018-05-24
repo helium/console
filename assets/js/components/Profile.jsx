@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
-import UserAuditTrail from './audit_trails/UserAuditTrail'
+import AuditTable from './audit_trails/AuditTable'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -50,7 +50,7 @@ class Profile extends Component {
         </Card>
 
         <Card style={{marginTop: 24}}>
-          <UserAuditTrail />
+          <AuditTable type="user" title="User History"/>
         </Card>
       </DashboardLayout>
     );
