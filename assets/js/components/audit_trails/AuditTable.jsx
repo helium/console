@@ -133,10 +133,8 @@ const queryOptions = {
   options: props => {
     const variables = {
       page: 1,
-      pageSize: 10
-    }
-    if (props.type == "user") {
-      variables.userId = props.userId
+      pageSize: 10,
+      userId: props.userId
     }
     return {
       fetchPolicy: 'network-only',
@@ -145,11 +143,5 @@ const queryOptions = {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    userId: state.auth.user.id,
-  }
-}
-
 const AuditWithData = graphql(query, queryOptions)(AuditTable)
-export default connect(mapStateToProps, null)(AuditWithData)
+export default AuditWithData

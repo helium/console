@@ -50,7 +50,7 @@ class Profile extends Component {
         </Card>
 
         <Card style={{marginTop: 24}}>
-          <AuditTable type="user" title="User History"/>
+          <AuditTable title="User History" userId={this.props.userId}/>
         </Card>
       </DashboardLayout>
     );
@@ -59,7 +59,8 @@ class Profile extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    user: state.user,
+    userId: state.auth.user.id
   }
 }
 

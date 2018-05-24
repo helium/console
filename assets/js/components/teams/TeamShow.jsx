@@ -94,7 +94,7 @@ class TeamShow extends Component {
         {
           userCan("view", "auditTrails") &&
           <Card style={{marginTop: 24}}>
-            <AuditTable type="team" title="Team History"/>
+            <AuditTable title="Team History"/>
           </Card>
         }
 
