@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
+import AuditTable from './audit_trails/AuditTable'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -47,6 +48,10 @@ class Profile extends Component {
             </Button>
           </CardActions>
         </Card>
+
+        <Card style={{marginTop: 24}}>
+          <AuditTable title="User History" userId={this.props.userId}/>
+        </Card>
       </DashboardLayout>
     );
   }
@@ -54,7 +59,8 @@ class Profile extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    user: state.user,
+    userId: state.auth.user.id
   }
 }
 

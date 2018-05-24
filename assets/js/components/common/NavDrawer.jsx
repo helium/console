@@ -11,7 +11,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
-import userCan from '../../util/abilities'
 
 // Icons
 import DevicesIcon from '@material-ui/icons/Memory';
@@ -98,15 +97,6 @@ const OrganizationalNavItems = (props) => (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItem>
-    {
-      userCan('view', 'auditTrails') &&
-      <ListItem button component={Link} to="/audit">
-        <ListItemIcon>
-          <ReportsIcon />
-        </ListItemIcon>
-        <ListItemText primary="Audit Trails" />
-      </ListItem>
-    }
   </List>
 )
 

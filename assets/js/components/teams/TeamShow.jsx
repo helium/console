@@ -9,6 +9,7 @@ import MembersTable from './MembersTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import userCan from '../../util/abilities'
+import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -89,6 +90,13 @@ class TeamShow extends Component {
             }
           </CardActions>
         </Card>
+
+        {
+          userCan("view", "auditTrails") &&
+          <Card style={{marginTop: 24}}>
+            <AuditTable title="Team History"/>
+          </Card>
+        }
 
         <NewUserModal
           open={this.state.newUserOpen}
