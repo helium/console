@@ -145,7 +145,8 @@ class EventsTablePaginated extends Component {
 const queryOptions = {
   options: props => ({
     variables: {
-      deviceId: props.deviceId,
+      contextId: props.contextId,
+      contextName: props.contextName,
       page: 1,
       pageSize: 5
     }
@@ -153,8 +154,8 @@ const queryOptions = {
 }
 
 const query = gql`
-  query PaginatedEventsQuery ($deviceId: String, $page: Int, $pageSize: Int) {
-    events(deviceId: $deviceId, page: $page, pageSize: $pageSize) {
+  query PaginatedEventsQuery ($contextId: String, $contextName: String, $page: Int, $pageSize: Int) {
+    events(contextId: $contextId, contextName: $contextName, page: $page, pageSize: $pageSize) {
       entries {
         id,
         description,

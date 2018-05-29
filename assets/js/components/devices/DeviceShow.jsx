@@ -81,7 +81,7 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable deviceId={device._id} />
+            <EventsTable contextName="devices" contextId={device._id} />
           </CardContent>
         </Card>
 

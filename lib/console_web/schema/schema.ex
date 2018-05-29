@@ -82,7 +82,8 @@ defmodule ConsoleWeb.Schema do
 
     @desc "Get paginated events"
     paginated field :events, :paginated_events do
-      arg :device_id, :string
+      arg :context_id, :string
+      arg :context_name, :string
       resolve &Console.Events.EventResolver.paginate/2
     end
 

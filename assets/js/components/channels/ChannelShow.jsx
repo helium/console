@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchChannel, deleteChannel, updateChannel } from '../../actions/channel'
-import EventsTable from '../events/EventsTable'
+import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
@@ -26,7 +26,7 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { channel, events, deleteChannel, updateChannel } = this.props
+    const { channel, deleteChannel, updateChannel } = this.props
 
     if (channel === undefined) return (<div>loading...</div>)
 
@@ -87,7 +87,7 @@ class ChannelShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable events={events} />
+            <EventsTable contextId={channel.id} contextName="channels"/>
           </CardContent>
         </Card>
 
@@ -124,8 +124,7 @@ function mapStateToProps(state, ownProps) {
   const channel = state.entities.channels[ownProps.match.params.id]
   if (channel === undefined) return {}
   return {
-    channel,
-    events: Object.values(pick(state.entities.events, channel.events))
+    channel
   }
 }
 

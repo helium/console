@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { fetchGateway, deleteGateway } from '../../actions/gateway'
-import EventsTable from '../events/EventsTable'
+import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
@@ -25,7 +25,7 @@ class GatewayShow extends Component {
   }
 
   render() {
-    const { gateway, events, deleteGateway } = this.props
+    const { gateway, deleteGateway } = this.props
 
     if (gateway === undefined) return (<div>loading...</div>)
 
@@ -75,7 +75,7 @@ class GatewayShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable events={events} />
+            <EventsTable contextName="gateways" contextId={gateway.id} />
           </CardContent>
         </Card>
 
@@ -116,8 +116,7 @@ function mapStateToProps(state, ownProps) {
   const gateway = state.entities.gateways[ownProps.match.params.id]
   if (gateway === undefined) return {}
   return {
-    gateway,
-    events: Object.values(pick(state.entities.events, gateway.events))
+    gateway
   }
 }
 
