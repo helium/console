@@ -3,12 +3,8 @@ import React from "react"
 import { store, persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 
-// GraphQL
-import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
+import apolloClient from './util/apolloClient'
 
 // Routes
 import { Provider } from 'react-redux';
@@ -39,31 +35,13 @@ import TeamShow from './components/teams/TeamShow'
 import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
 
-const httpLink = createHttpLink({
-  uri: "/graphql"
-})
-
-const authLink = setContext((_, { headers }) => {
-  const token = store.getState().auth.apikey
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ""
-    }
-  }
-})
-
-const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
-})
 
 class Router extends React.Component {
   render() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <ApolloProvider client={client}>
+          <ApolloProvider client={apolloClient}>
             <SocketHandler>
               { /* ConnectedRouter will use the store from Provider automatically */ }
               <ConnectedRouter history={history}>

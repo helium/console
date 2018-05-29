@@ -52,6 +52,7 @@ defmodule Console.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
+      {:absinthe_phoenix, "~> 1.4"},
       {:absinthe_relay, "~> 1.4.0-rc"}
     ]
   end

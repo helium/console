@@ -1,5 +1,6 @@
 defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
+  use Absinthe.Phoenix.Socket, schema: ConsoleWeb.Schema
 
   ## Channels
   channel("event:*", ConsoleWeb.EventChannel)

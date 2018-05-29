@@ -12,6 +12,7 @@ defmodule Console.Application do
       supervisor(Console.Repo, []),
       # Start the endpoint when the application starts
       supervisor(ConsoleWeb.Endpoint, []),
+      supervisor(Absinthe.Subscription, [ConsoleWeb.Endpoint]),
       # Start your own worker by calling: Console.Worker.start_link(arg1, arg2, arg3)
       # worker(Console.Worker, [arg1, arg2, arg3]),
     ]

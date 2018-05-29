@@ -42,6 +42,35 @@ class EventsTablePaginated extends Component {
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
   }
 
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: EVENTS_SUBSCRIPTION,
+      variables: {deviceId: this.props.deviceId},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        if (this.state.page !== 1) return Object.assign({}, prev, {
+          events: {
+            ...prev.events,
+            totalEntries: prev.events.totalEntries + 1,
+          }
+        })
+
+        const newEvent = subscriptionData.data.eventAdded
+
+        return Object.assign({}, prev, {
+          events: {
+            ...prev.events,
+            totalEntries: prev.events.totalEntries + 1,
+            entries: [newEvent, ...prev.events.entries.slice(0, 4)],
+          }
+        })
+      }
+    })
+  }
+
   handleChangeRowsPerPage(pageSize) {
     const { fetchMore } = this.props.data
     fetchMore({
@@ -138,6 +167,20 @@ const query = gql`
       totalPages,
       pageSize,
       pageNumber
+    }
+  }
+`
+
+// TODO create event fragment?
+const EVENTS_SUBSCRIPTION = gql`
+  subscription onEventAdded($deviceId: String) {
+    eventAdded(deviceId: $deviceId) {
+      id,
+      description,
+      rssi,
+      payload_size,
+      reported_at,
+      status
     }
   }
 `
