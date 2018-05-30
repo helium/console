@@ -68,5 +68,11 @@ defmodule ConsoleWeb.EventController do
     if event.device do
       Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: event.device.id)
     end
+    if event.gateway do
+      Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: event.gateway.id)
+    end
+    if event.channel do
+      Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: event.channel.id)
+    end
   end
 end

@@ -36,6 +36,30 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
   end
 
+  node object :device do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :mac, :string
+    connection field :events, node_type: :event do
+      resolve &Console.Events.EventResolver.connection/2
+    end
+    connection field :groups, node_type: :group do
+      resolve &Console.Groups.GroupResolver.connection/2
+    end
+  end
+
+  node object :channel do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :type, :string
+    field :active, :boolean
+    connection field :groups, node_type: :group do
+      resolve &Console.Groups.GroupResolver.connection/2
+    end
+  end
+
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -55,37 +79,13 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
-  node object :device do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-    field :mac, :string
-    connection field :events, node_type: :event do
-      resolve &Console.Events.EventResolver.connection/2
-    end
-    connection field :groups, node_type: :group do
-      resolve &Console.Groups.GroupResolver.connection/2
-    end
-  end
-
-  node object :gateway do
+  object :gateway do
     field :id, :id
     field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :mac, :string
     field :longitude, :decimal
     field :latitude, :decimal
-  end
-
-  node object :channel do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-    field :type, :string
-    field :active, :boolean
-    connection field :groups, node_type: :group do
-      resolve &Console.Groups.GroupResolver.connection/2
-    end
   end
 
   query do
@@ -128,10 +128,10 @@ defmodule ConsoleWeb.Schema do
 
   subscription do
     field :event_added, :event do
-      arg :device_id, :string
+      arg :context_id, :string
 
       config fn args, _ ->
-        {:ok, topic: args.device_id}
+        {:ok, topic: args.context_id}
       end
     end
   end

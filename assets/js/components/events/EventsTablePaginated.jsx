@@ -47,7 +47,7 @@ class EventsTablePaginated extends Component {
 
     subscribeToMore({
       document: EVENTS_SUBSCRIPTION,
-      variables: {deviceId: this.props.deviceId},
+      variables: {contextId: this.props.contextId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
 
@@ -174,8 +174,8 @@ const query = gql`
 
 // TODO create event fragment?
 const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($deviceId: String) {
-    eventAdded(deviceId: $deviceId) {
+  subscription onEventAdded($contextId: String) {
+    eventAdded(contextId: $contextId) {
       id,
       description,
       rssi,
