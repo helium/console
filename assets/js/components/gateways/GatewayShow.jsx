@@ -3,13 +3,17 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchGateway, deleteGateway } from '../../actions/gateway'
+import { deleteGateway } from '../../actions/gateway'
 import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -19,15 +23,11 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
 class GatewayShow extends Component {
-  componentDidMount() {
-    const { id } = this.props.match.params
-    this.props.fetchGateway(id)
-  }
-
   render() {
-    const { gateway, deleteGateway } = this.props
+    const { deleteGateway } = this.props
+    const { loading, gateway } = this.props.data
 
-    if (gateway === undefined) return (<div>loading...</div>)
+    if (loading) return <DashboardLayout />
 
     return(
       <DashboardLayout title={gateway.name}>
@@ -37,7 +37,7 @@ class GatewayShow extends Component {
               Gateway Details
             </Typography>
             <Typography component="p">
-              ID: {gateway.id}
+              ID: {gateway._id}
             </Typography>
             <Typography component="p">
               Name: {gateway.name}
@@ -55,14 +55,14 @@ class GatewayShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton gateway_id={gateway.id} />
+              <RandomEventButton gateway_id={gateway._id} />
             }
 
             {userCan('delete', 'gateway', gateway) &&
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteGateway(gateway)}
+                onClick={() => deleteGateway(gateway._id)}
               >
                 Delete Gateway
               </Button>
@@ -75,7 +75,7 @@ class GatewayShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable contextName="gateways" contextId={gateway.id} />
+            <EventsTable contextName="gateways" contextId={gateway._id} />
           </CardContent>
         </Card>
 
@@ -113,15 +113,33 @@ class GatewayShow extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const gateway = state.entities.gateways[ownProps.match.params.id]
-  if (gateway === undefined) return {}
-  return {
-    gateway
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchGateway, deleteGateway }, dispatch);
+  return bindActionCreators({ deleteGateway }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GatewayShow);
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    }
+  })
+}
+
+const query = gql`
+  query GatewayShowQuery ($id: ID!) {
+    gateway(id: $id) {
+      name,
+      mac,
+      id,
+      _id,
+      latitude,
+      longitude
+    }
+  }
+`
+const GatewayShowWithData = graphql(query, queryOptions)(GatewayShow)
+
+export default connect(mapStateToProps, mapDispatchToProps)(GatewayShowWithData);

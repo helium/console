@@ -68,6 +68,15 @@ defmodule ConsoleWeb.Schema do
     end
   end
 
+  node object :gateway do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :mac, :string
+    field :longitude, :decimal
+    field :latitude, :decimal
+  end
+
   query do
     @desc "Get all devices"
     field :devices, list_of(:device) do
@@ -78,6 +87,12 @@ defmodule ConsoleWeb.Schema do
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    @desc "Get a single gateway"
+    field :gateway, :gateway do
+      arg :id, non_null(:id)
+      resolve &Console.Gateways.GatewayResolver.find/2
     end
 
     @desc "Get paginated events"

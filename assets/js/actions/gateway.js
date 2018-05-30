@@ -55,12 +55,11 @@ export const createGateway = (params) => {
   }
 }
 
-export const deleteGateway = (gateway) => {
+export const deleteGateway = (id) => {
   return (dispatch) => {
-    rest.destroy(`/api/gateways/${gateway.id}`)
+    rest.destroy(`/api/gateways/${id}`)
       .then(response => {
         dispatch(push('/gateways'))
-        displayInfo(`${gateway.name} deleted`)
       })
   }
 }
