@@ -86,10 +86,27 @@ class PacketGraph extends Component {
     }
   }
 
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: EVENTS_SUBSCRIPTION,
+      variables: {contextId: this.props.contextId},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        const newEvent = subscriptionData.data.eventAdded
+        return Object.assign({}, prev, {
+          recentEvents: [newEvent, ...prev.recentEvents],
+        })
+      }
+    })
+  }
+
   componentDidUpdate(prevProps) {
     const { recentEvents } = this.props.data
 
-    if (!prevProps.data.recentEvents && recentEvents) {
+    if ((!prevProps.data.recentEvents && recentEvents) || (prevProps.data.recentEvents.length !== recentEvents.length)) {
       clearInterval(this.chartUpdateInterval)
       this.updateChart(recentEvents)
       this.chartUpdateInterval = setInterval(() => {
@@ -171,6 +188,22 @@ const query = gql`
     }
   }
 `
+
+// TODO create event fragment?
+const EVENTS_SUBSCRIPTION = gql`
+  subscription onEventAdded($contextId: String) {
+    eventAdded(contextId: $contextId) {
+      id,
+      description,
+      rssi,
+      payload_size,
+      reported_at,
+      status,
+      direction
+    }
+  }
+`
+
 const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)
 
 export default PacketGraphWithData
