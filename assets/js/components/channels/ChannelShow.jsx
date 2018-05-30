@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { fetchChannel, deleteChannel, updateChannel } from '../../actions/channel'
+import { deleteChannel, updateChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTablePaginated'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
@@ -11,6 +11,10 @@ import HttpDetails from './HttpDetails'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -20,15 +24,11 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 
 class ChannelShow extends Component {
-  componentDidMount() {
-    const { id } = this.props.match.params
-    this.props.fetchChannel(id)
-  }
-
   render() {
-    const { channel, deleteChannel, updateChannel } = this.props
+    const { deleteChannel, updateChannel } = this.props
+    const { loading, channel } = this.props.data
 
-    if (channel === undefined) return (<div>loading...</div>)
+    if (loading) return <DashboardLayout />
 
     return(
       <DashboardLayout title={channel.name}>
@@ -41,7 +41,7 @@ class ChannelShow extends Component {
             <div style={{display: 'flex'}}>
               <div style={{width: '50%'}}>
                 <Typography component="p">
-                  ID: {channel.id}
+                  ID: {channel._id}
                 </Typography>
                 <Typography component="p">
                   Name: {channel.name}
@@ -55,8 +55,8 @@ class ChannelShow extends Component {
               </div>
               <div style={{width: '50%'}}>
                 <GroupsControl
-                  groups={channel.groups}
-                  handleUpdate={(groups) => updateChannel(channel.id, {groups: groups})}
+                  groups={channel.groups.edges.map(e => e.node.name)}
+                  handleUpdate={(groups) => updateChannel(channel._id, {groups: groups})}
                   editable={userCan('update', 'channel', channel)}
                 />
               </div>
@@ -65,7 +65,7 @@ class ChannelShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton channel_id={channel.id} />
+              <RandomEventButton channel_id={channel._id} />
             }
 
             {userCan('delete', 'channel', channel) &&
@@ -87,7 +87,7 @@ class ChannelShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable contextId={channel.id} contextName="channels"/>
+            <EventsTable contextId={channel._id} contextName="channels"/>
           </CardContent>
         </Card>
 
@@ -121,15 +121,40 @@ class ChannelShow extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const channel = state.entities.channels[ownProps.match.params.id]
-  if (channel === undefined) return {}
-  return {
-    channel
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchChannel, deleteChannel, updateChannel }, dispatch);
+  return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChannelShow);
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    }
+  })
+}
+
+const query = gql`
+  query ChannelShowQuery ($id: ID!) {
+    channel(id: $id) {
+      name,
+      type,
+      active,
+      id,
+      _id,
+      groups(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+  }
+`
+
+const ChannelShowWithData = graphql(query, queryOptions)(ChannelShow)
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelShowWithData);

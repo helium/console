@@ -29,6 +29,13 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
+  connection(node_type: :group)
+  node object :group do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+  end
+
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -46,13 +53,6 @@ defmodule ConsoleWeb.Schema do
     field :action, :string
     field :description, :string
     field :updated_at, :naive_datetime
-  end
-
-  connection(node_type: :group)
-  node object :group do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
   end
 
   node object :device do
@@ -77,6 +77,17 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
   end
 
+  node object :channel do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :type, :string
+    field :active, :boolean
+    connection field :groups, node_type: :group do
+      resolve &Console.Groups.GroupResolver.connection/2
+    end
+  end
+
   query do
     @desc "Get all devices"
     field :devices, list_of(:device) do
@@ -93,6 +104,12 @@ defmodule ConsoleWeb.Schema do
     field :gateway, :gateway do
       arg :id, non_null(:id)
       resolve &Console.Gateways.GatewayResolver.find/2
+    end
+
+    @desc "Get a single channel"
+    field :channel, :channel do
+      arg :id, non_null(:id)
+      resolve &Console.Channels.ChannelResolver.find/2
     end
 
     @desc "Get paginated events"
