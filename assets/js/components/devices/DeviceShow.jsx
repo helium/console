@@ -24,7 +24,6 @@ import CardContent from '@material-ui/core/CardContent';
 
 class DeviceShow extends Component {
   render() {
-    const { id } = this.props.match.params
     const { deleteDevice, updateDevice } = this.props
     const { loading, device } = this.props.data
 
@@ -41,7 +40,7 @@ class DeviceShow extends Component {
             <div style={{display: 'flex'}}>
               <div style={{width: '50%'}}>
                 <Typography component="p">
-                  ID: {device.id}
+                  ID: {device._id}
                 </Typography>
                 <Typography component="p">
                   Name: {device.name}
@@ -53,7 +52,7 @@ class DeviceShow extends Component {
               <div style={{width: '50%'}}>
                 <GroupsControl
                   groups={device.groups.edges.map(e => e.node.name)}
-                  handleUpdate={(groups) => updateDevice(id, {groups: groups})}
+                  handleUpdate={(groups) => updateDevice(device._id, {groups: groups})}
                   editable={userCan('update', 'device', device)}
                 />
               </div>
@@ -62,13 +61,13 @@ class DeviceShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton device_id={id} />
+              <RandomEventButton device_id={device._id} />
             }
             {userCan('delete', 'device', device) &&
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteDevice(id)}
+                onClick={() => deleteDevice(device._id)}
               >
                 Delete Device
               </Button>
@@ -81,7 +80,7 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable deviceId={device._id} />
+            <EventsTable contextName="devices" contextId={device._id} />
           </CardContent>
         </Card>
 
@@ -115,7 +114,7 @@ class DeviceShow extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return { }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {

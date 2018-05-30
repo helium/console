@@ -29,6 +29,13 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
+  connection(node_type: :group)
+  node object :group do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+  end
+
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -48,13 +55,6 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
-  connection(node_type: :group)
-  node object :group do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-  end
-
   node object :device do
     field :id, :id
     field :_id, :string, resolve: &internal_id/2
@@ -63,6 +63,26 @@ defmodule ConsoleWeb.Schema do
     connection field :events, node_type: :event do
       resolve &Console.Events.EventResolver.connection/2
     end
+    connection field :groups, node_type: :group do
+      resolve &Console.Groups.GroupResolver.connection/2
+    end
+  end
+
+  node object :gateway do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :mac, :string
+    field :longitude, :decimal
+    field :latitude, :decimal
+  end
+
+  node object :channel do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :type, :string
+    field :active, :boolean
     connection field :groups, node_type: :group do
       resolve &Console.Groups.GroupResolver.connection/2
     end
@@ -80,9 +100,22 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.find/2
     end
 
+    @desc "Get a single gateway"
+    field :gateway, :gateway do
+      arg :id, non_null(:id)
+      resolve &Console.Gateways.GatewayResolver.find/2
+    end
+
+    @desc "Get a single channel"
+    field :channel, :channel do
+      arg :id, non_null(:id)
+      resolve &Console.Channels.ChannelResolver.find/2
+    end
+
     @desc "Get paginated events"
     paginated field :events, :paginated_events do
-      arg :device_id, :string
+      arg :context_id, :string
+      arg :context_name, :string
       resolve &Console.Events.EventResolver.paginate/2
     end
 
