@@ -105,7 +105,7 @@ class DeviceShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph data={this.props.events}/>
+            <PacketGraph contextName="devices" contextId={device._id} />
           </CardContent>
         </Card>
       </DashboardLayout>

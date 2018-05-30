@@ -18,17 +18,6 @@ defmodule ConsoleWeb.Schema do
     end
   end
 
-  connection(node_type: :event)
-  node object :event do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :description, :string
-    field :payload_size, :integer
-    field :rssi, :float
-    field :reported_at, :naive_datetime
-    field :status, :string
-  end
-
   connection(node_type: :group)
   node object :group do
     field :id, :id
@@ -41,9 +30,6 @@ defmodule ConsoleWeb.Schema do
     field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :mac, :string
-    connection field :events, node_type: :event do
-      resolve &Console.Events.EventResolver.connection/2
-    end
     connection field :groups, node_type: :group do
       resolve &Console.Groups.GroupResolver.connection/2
     end
@@ -68,6 +54,7 @@ defmodule ConsoleWeb.Schema do
     field :rssi, :float
     field :reported_at, :naive_datetime
     field :status, :string
+    field :direction, :string
   end
 
   paginated object :audit_trail do
@@ -123,6 +110,13 @@ defmodule ConsoleWeb.Schema do
     paginated field :audit_trails, :paginated_audit_trails do
       arg :user_id, :string
       resolve(&Console.Devices.AuditResolver.paginate/2)
+    end
+
+    @desc "Get recent events for a context (packet graph)"
+    field :recent_events, list_of(:event) do
+      arg :context_id, :string
+      arg :context_name, :string
+      resolve &Console.Events.EventResolver.recent/2
     end
   end
 

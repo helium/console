@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
 
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+
 class PacketGraph extends Component {
   constructor(props) {
     super(props)
@@ -83,17 +87,13 @@ class PacketGraph extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.data || !prevProps.data) return
+    const { recentEvents } = this.props.data
 
-    if (
-      (this.props.data[0] && !prevProps.data[0]) ||
-      (this.props.data[0] && this.state.data.datasets.length == 0) ||
-      (this.props.data[0] && prevProps.data[0] && this.props.data[this.props.data.length-1].id !== prevProps.data[prevProps.data.length-1].id)
-    ) {
+    if (!prevProps.data.recentEvents && recentEvents) {
       clearInterval(this.chartUpdateInterval)
-      this.updateChart(this.props.data)
+      this.updateChart(recentEvents)
       this.chartUpdateInterval = setInterval(() => {
-        this.updateChart(this.props.data)
+        this.updateChart(recentEvents)
       }, 5000)
     }
   }
@@ -149,4 +149,28 @@ class PacketGraph extends Component {
   }
 }
 
-export default PacketGraph
+const queryOptions = {
+  options: props => ({
+    variables: {
+      contextId: props.contextId,
+      contextName: props.contextName
+    }
+  })
+}
+
+const query = gql`
+  query RecentEventsQuery ($contextId: String, $contextName: String) {
+    recentEvents(contextId: $contextId, contextName: $contextName) {
+      id,
+      description,
+      rssi,
+      payload_size,
+      reported_at,
+      status,
+      direction
+    }
+  }
+`
+const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)
+
+export default PacketGraphWithData

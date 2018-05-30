@@ -112,7 +112,7 @@ class ChannelShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph data={this.props.events}/>
+            <PacketGraph contextId={channel._id} contextName="channels"/>
           </CardContent>
         </Card>
       </DashboardLayout>
