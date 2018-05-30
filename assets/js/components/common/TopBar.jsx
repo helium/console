@@ -6,6 +6,7 @@ import throttle from 'lodash/throttle'
 import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
+import SearchBar from './SearchBar'
 
 // MUI
 import List from '@material-ui/core/List'
@@ -106,6 +107,8 @@ class TopBar extends Component {
           </Slide>
 
           <div style={{flex: 1}} />
+
+          <SearchBar />
 
           <IconButton onClick={() => alert('oh hai')} color="inherit">
             <SmallBadge badgeContent={3} color="secondary">
