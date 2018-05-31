@@ -45,10 +45,11 @@ class EventsTablePaginated extends Component {
 
   componentDidMount() {
     const { subscribeToMore } = this.props.data
+    const { contextId, contextName } = this.props
 
     subscribeToMore({
       document: EVENTS_SUBSCRIPTION,
-      variables: {contextId: this.props.contextId},
+      variables: {contextId, contextName},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
 

@@ -123,9 +123,10 @@ defmodule ConsoleWeb.Schema do
   subscription do
     field :event_added, :event do
       arg :context_id, :string
+      arg :context_name, :string
 
       config fn args, _ ->
-        {:ok, topic: args.context_id}
+        {:ok, topic: "#{args.context_name}/#{args.context_id}"}
       end
     end
   end

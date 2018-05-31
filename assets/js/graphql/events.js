@@ -12,8 +12,8 @@ export const EVENT_FRAGMENT = gql`
   }
 `
 export const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($contextId: String) {
-    eventAdded(contextId: $contextId) {
+  subscription onEventAdded($contextId: String, $contextName: String) {
+    eventAdded(contextId: $contextId, contextName: $contextName) {
       ...EventFragment
     }
   }
