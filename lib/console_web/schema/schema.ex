@@ -3,8 +3,6 @@ defmodule ConsoleWeb.Schema do
   use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
-  def internal_id(_, %{source: source}), do: {:ok, source.id}
-
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -27,7 +25,6 @@ defmodule ConsoleWeb.Schema do
 
   object :gateway do
     field :id, :id
-    field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :mac, :string
     field :longitude, :decimal
@@ -36,7 +33,6 @@ defmodule ConsoleWeb.Schema do
 
   object :device do
     field :id, :id
-    field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :mac, :string
     field :groups, list_of(:group) do
@@ -46,7 +42,6 @@ defmodule ConsoleWeb.Schema do
 
   object :channel do
     field :id, :id
-    field :_id, :string, resolve: &internal_id/2
     field :name, :string
     field :type, :string
     field :active, :boolean
@@ -57,7 +52,6 @@ defmodule ConsoleWeb.Schema do
 
   object :group do
     field :id, :id
-    field :_id, :string, resolve: &internal_id/2
     field :name, :string
   end
 

@@ -41,7 +41,7 @@ class ChannelShow extends Component {
             <div style={{display: 'flex'}}>
               <div style={{width: '50%'}}>
                 <Typography component="p">
-                  ID: {channel._id}
+                  ID: {channel.id}
                 </Typography>
                 <Typography component="p">
                   Name: {channel.name}
@@ -56,7 +56,7 @@ class ChannelShow extends Component {
               <div style={{width: '50%'}}>
                 <GroupsControl
                   groups={channel.groups.map(e => e.name)}
-                  handleUpdate={(groups) => updateDevice(channel._id, {groups: groups})}
+                  handleUpdate={(groups) => updateChannel(channel.id, {groups: groups})}
                   editable={userCan('update', 'channel', channel)}
                 />
               </div>
@@ -65,7 +65,7 @@ class ChannelShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton channel_id={channel._id} />
+              <RandomEventButton channel_id={channel.id} />
             }
 
             {userCan('delete', 'channel', channel) &&
@@ -87,7 +87,7 @@ class ChannelShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable contextId={channel._id} contextName="channels"/>
+            <EventsTable contextId={channel.id} contextName="channels"/>
           </CardContent>
         </Card>
 
@@ -112,7 +112,7 @@ class ChannelShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph contextId={channel._id} contextName="channels"/>
+            <PacketGraph contextId={channel.id} contextName="channels"/>
           </CardContent>
         </Card>
       </DashboardLayout>
@@ -143,7 +143,6 @@ const query = gql`
       type,
       active,
       id,
-      _id,
       groups {
         name
       }
