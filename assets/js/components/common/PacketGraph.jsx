@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
-import { EVENTS_SUBSCRIPTION, EventFragment } from '../../graphql/events'
+import { EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -182,7 +182,7 @@ const query = gql`
       ...EventFragment
     }
   }
-  ${EventFragment}
+  ${EVENT_FRAGMENT}
 `
 
 const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)

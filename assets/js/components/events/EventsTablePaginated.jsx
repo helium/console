@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { formatDatetime } from '../../util/time'
-import { EVENTS_SUBSCRIPTION, EventFragment } from '../../graphql/events'
+import { EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -166,7 +166,7 @@ const query = gql`
       pageNumber
     }
   }
-  ${EventFragment}
+  ${EVENT_FRAGMENT}
 `
 
 const EventsTableWithData = graphql(query, queryOptions)(EventsTablePaginated)

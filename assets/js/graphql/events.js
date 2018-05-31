@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export const EventFragment = gql`
+export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
     id,
     description,
@@ -17,5 +17,5 @@ export const EVENTS_SUBSCRIPTION = gql`
       ...EventFragment
     }
   }
-  ${EventFragment}
+  ${EVENT_FRAGMENT}
 `
