@@ -55,8 +55,8 @@ class ChannelShow extends Component {
               </div>
               <div style={{width: '50%'}}>
                 <GroupsControl
-                  groups={channel.groups.edges.map(e => e.node.name)}
-                  handleUpdate={(groups) => updateChannel(channel._id, {groups: groups})}
+                  groups={channel.groups.map(e => e.name)}
+                  handleUpdate={(groups) => updateDevice(channel._id, {groups: groups})}
                   editable={userCan('update', 'channel', channel)}
                 />
               </div>
@@ -144,12 +144,8 @@ const query = gql`
       active,
       id,
       _id,
-      groups(first: 100) {
-        edges {
-          node {
-            name
-          }
-        }
+      groups {
+        name
       }
     }
   }

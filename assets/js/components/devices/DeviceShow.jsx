@@ -51,7 +51,7 @@ class DeviceShow extends Component {
               </div>
               <div style={{width: '50%'}}>
                 <GroupsControl
-                  groups={device.groups.edges.map(e => e.node.name)}
+                  groups={device.groups.map(e => e.name)}
                   handleUpdate={(groups) => updateDevice(device._id, {groups: groups})}
                   editable={userCan('update', 'device', device)}
                 />
@@ -136,12 +136,8 @@ const query = gql`
       mac,
       id,
       _id,
-      groups(first: 100) {
-        edges {
-          node {
-            name
-          }
-        }
+      groups {
+        name
       }
     }
   }

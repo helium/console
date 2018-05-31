@@ -1,50 +1,9 @@
 defmodule ConsoleWeb.Schema do
   use Absinthe.Schema
-  use Absinthe.Relay.Schema, :modern
-  use Absinthe.Schema.Notation
   use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
   def internal_id(_, %{source: source}), do: {:ok, source.id}
-
-  node interface do
-    resolve_type fn
-      %Console.Devices.Device{}, _ ->
-        :device
-      %Console.Events.Event{}, _ ->
-        :event
-      _, _ ->
-        nil
-    end
-  end
-
-  connection(node_type: :group)
-  node object :group do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-  end
-
-  node object :device do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-    field :mac, :string
-    connection field :groups, node_type: :group do
-      resolve &Console.Groups.GroupResolver.connection/2
-    end
-  end
-
-  node object :channel do
-    field :id, :id
-    field :_id, :string, resolve: &internal_id/2
-    field :name, :string
-    field :type, :string
-    field :active, :boolean
-    connection field :groups, node_type: :group do
-      resolve &Console.Groups.GroupResolver.connection/2
-    end
-  end
 
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
@@ -73,6 +32,33 @@ defmodule ConsoleWeb.Schema do
     field :mac, :string
     field :longitude, :decimal
     field :latitude, :decimal
+  end
+
+  object :device do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :mac, :string
+    field :groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.find/2
+    end
+  end
+
+  object :channel do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
+    field :type, :string
+    field :active, :boolean
+    field :groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.find/2
+    end
+  end
+
+  object :group do
+    field :id, :id
+    field :_id, :string, resolve: &internal_id/2
+    field :name, :string
   end
 
   query do
