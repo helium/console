@@ -6,7 +6,7 @@ import throttle from 'lodash/throttle'
 import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
-import SearchBar from './SearchBar'
+import SearchBar from '../search/SearchBar'
 
 // MUI
 import List from '@material-ui/core/List'
