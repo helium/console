@@ -37,7 +37,7 @@ class GatewayShow extends Component {
               Gateway Details
             </Typography>
             <Typography component="p">
-              ID: {gateway._id}
+              ID: {gateway.id}
             </Typography>
             <Typography component="p">
               Name: {gateway.name}
@@ -55,14 +55,14 @@ class GatewayShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton gateway_id={gateway._id} />
+              <RandomEventButton gateway_id={gateway.id} />
             }
 
             {userCan('delete', 'gateway', gateway) &&
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteGateway(gateway._id)}
+                onClick={() => deleteGateway(gateway.id)}
               >
                 Delete Gateway
               </Button>
@@ -75,7 +75,7 @@ class GatewayShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable contextName="gateways" contextId={gateway._id} />
+            <EventsTable contextName="gateways" contextId={gateway.id} />
           </CardContent>
         </Card>
 
@@ -100,7 +100,7 @@ class GatewayShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph contextName="gateways" contextId={gateway._id} />
+            <PacketGraph contextName="gateways" contextId={gateway.id} />
           </CardContent>
         </Card>
 
@@ -134,7 +134,6 @@ const query = gql`
       name,
       mac,
       id,
-      _id,
       latitude,
       longitude
     }

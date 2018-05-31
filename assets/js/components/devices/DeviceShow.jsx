@@ -40,7 +40,7 @@ class DeviceShow extends Component {
             <div style={{display: 'flex'}}>
               <div style={{width: '50%'}}>
                 <Typography component="p">
-                  ID: {device._id}
+                  ID: {device.id}
                 </Typography>
                 <Typography component="p">
                   Name: {device.name}
@@ -51,8 +51,8 @@ class DeviceShow extends Component {
               </div>
               <div style={{width: '50%'}}>
                 <GroupsControl
-                  groups={device.groups.edges.map(e => e.node.name)}
-                  handleUpdate={(groups) => updateDevice(device._id, {groups: groups})}
+                  groups={device.groups.map(e => e.name)}
+                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
                   editable={userCan('update', 'device', device)}
                 />
               </div>
@@ -61,13 +61,13 @@ class DeviceShow extends Component {
 
           <CardActions>
             {userCan('create', 'event') &&
-              <RandomEventButton device_id={device._id} />
+              <RandomEventButton device_id={device.id} />
             }
             {userCan('delete', 'device', device) &&
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteDevice(device._id)}
+                onClick={() => deleteDevice(device.id)}
               >
                 Delete Device
               </Button>
@@ -80,7 +80,7 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Event Log
             </Typography>
-            <EventsTable contextName="devices" contextId={device._id} />
+            <EventsTable contextName="devices" contextId={device.id} />
           </CardContent>
         </Card>
 
@@ -105,7 +105,7 @@ class DeviceShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph contextName="devices" contextId={device._id} />
+            <PacketGraph contextName="devices" contextId={device.id} />
           </CardContent>
         </Card>
       </DashboardLayout>
@@ -135,13 +135,8 @@ const query = gql`
       name,
       mac,
       id,
-      _id,
-      groups(first: 100) {
-        edges {
-          node {
-            name
-          }
-        }
+      groups {
+        name
       }
     }
   }
