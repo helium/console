@@ -100,7 +100,7 @@ class GatewayShow extends Component {
                 To Device
               </Typography>
             </div>
-            <PacketGraph data={this.props.events}/>
+            <PacketGraph contextName="gateways" contextId={gateway._id} />
           </CardContent>
         </Card>
 

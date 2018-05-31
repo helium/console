@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { formatDatetime } from '../../util/time'
+import { EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -44,10 +45,11 @@ class EventsTablePaginated extends Component {
 
   componentDidMount() {
     const { subscribeToMore } = this.props.data
+    const { contextId, contextName } = this.props
 
     subscribeToMore({
       document: EVENTS_SUBSCRIPTION,
-      variables: {deviceId: this.props.deviceId},
+      variables: {contextId, contextName},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
 
@@ -157,12 +159,7 @@ const query = gql`
   query PaginatedEventsQuery ($contextId: String, $contextName: String, $page: Int, $pageSize: Int) {
     events(contextId: $contextId, contextName: $contextName, page: $page, pageSize: $pageSize) {
       entries {
-        id,
-        description,
-        rssi,
-        payload_size,
-        reported_at,
-        status
+        ...EventFragment
       },
       totalEntries,
       totalPages,
@@ -170,20 +167,7 @@ const query = gql`
       pageNumber
     }
   }
-`
-
-// TODO create event fragment?
-const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($deviceId: String) {
-    eventAdded(deviceId: $deviceId) {
-      id,
-      description,
-      rssi,
-      payload_size,
-      reported_at,
-      status
-    }
-  }
+  ${EVENT_FRAGMENT}
 `
 
 const EventsTableWithData = graphql(query, queryOptions)(EventsTablePaginated)

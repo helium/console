@@ -1,5 +1,10 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
+import { EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 class PacketGraph extends Component {
   constructor(props) {
@@ -82,18 +87,32 @@ class PacketGraph extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (!this.props.data || !prevProps.data) return
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+    const { contextId, contextName } = this.props
 
-    if (
-      (this.props.data[0] && !prevProps.data[0]) ||
-      (this.props.data[0] && this.state.data.datasets.length == 0) ||
-      (this.props.data[0] && prevProps.data[0] && this.props.data[this.props.data.length-1].id !== prevProps.data[prevProps.data.length-1].id)
-    ) {
+    subscribeToMore({
+      document: EVENTS_SUBSCRIPTION,
+      variables: {contextId, contextName},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        const newEvent = subscriptionData.data.eventAdded
+        return Object.assign({}, prev, {
+          recentEvents: [newEvent, ...prev.recentEvents],
+        })
+      }
+    })
+  }
+
+  componentDidUpdate(prevProps) {
+    const { recentEvents } = this.props.data
+
+    if ((!prevProps.data.recentEvents && recentEvents) || (prevProps.data.recentEvents.length !== recentEvents.length)) {
       clearInterval(this.chartUpdateInterval)
-      this.updateChart(this.props.data)
+      this.updateChart(recentEvents)
       this.chartUpdateInterval = setInterval(() => {
-        this.updateChart(this.props.data)
+        this.updateChart(recentEvents)
       }, 5000)
     }
   }
@@ -149,4 +168,24 @@ class PacketGraph extends Component {
   }
 }
 
-export default PacketGraph
+const queryOptions = {
+  options: props => ({
+    variables: {
+      contextId: props.contextId,
+      contextName: props.contextName
+    }
+  })
+}
+
+const query = gql`
+  query RecentEventsQuery ($contextId: String, $contextName: String) {
+    recentEvents(contextId: $contextId, contextName: $contextName) {
+      ...EventFragment
+    }
+  }
+  ${EVENT_FRAGMENT}
+`
+
+const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)
+
+export default PacketGraphWithData

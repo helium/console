@@ -6,8 +6,8 @@ defmodule ConsoleWeb.Schema.Paginated do
   end
 
   defmacro paginated({:object, _, [identifier | rest]}, do: block) do
-    node_id = String.to_atom("paginated_#{Atom.to_string(identifier)}")
-    collection_id = String.to_atom("#{Atom.to_string(node_id)}s")
+    node_id = String.to_atom("#{Atom.to_string(identifier)}")
+    collection_id = String.to_atom("paginated_#{Atom.to_string(node_id)}s")
 
     quote do
       object unquote(node_id), do: unquote(block)
