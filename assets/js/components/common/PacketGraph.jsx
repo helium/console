@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
+import { EVENTS_SUBSCRIPTION, EventFragment } from '../../graphql/events'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -178,30 +179,10 @@ const queryOptions = {
 const query = gql`
   query RecentEventsQuery ($contextId: String, $contextName: String) {
     recentEvents(contextId: $contextId, contextName: $contextName) {
-      id,
-      description,
-      rssi,
-      payload_size,
-      reported_at,
-      status,
-      direction
+      ...EventFragment
     }
   }
-`
-
-// TODO create event fragment?
-const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($contextId: String) {
-    eventAdded(contextId: $contextId) {
-      id,
-      description,
-      rssi,
-      payload_size,
-      reported_at,
-      status,
-      direction
-    }
-  }
+  ${EventFragment}
 `
 
 const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)

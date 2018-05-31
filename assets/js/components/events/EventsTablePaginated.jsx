@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { formatDatetime } from '../../util/time'
+import { EVENTS_SUBSCRIPTION, EventFragment } from '../../graphql/events'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -157,12 +158,7 @@ const query = gql`
   query PaginatedEventsQuery ($contextId: String, $contextName: String, $page: Int, $pageSize: Int) {
     events(contextId: $contextId, contextName: $contextName, page: $page, pageSize: $pageSize) {
       entries {
-        id,
-        description,
-        rssi,
-        payload_size,
-        reported_at,
-        status
+        ...EventFragment
       },
       totalEntries,
       totalPages,
@@ -170,20 +166,7 @@ const query = gql`
       pageNumber
     }
   }
-`
-
-// TODO create event fragment?
-const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($contextId: String) {
-    eventAdded(contextId: $contextId) {
-      id,
-      description,
-      rssi,
-      payload_size,
-      reported_at,
-      status
-    }
-  }
+  ${EventFragment}
 `
 
 const EventsTableWithData = graphql(query, queryOptions)(EventsTablePaginated)
