@@ -1,8 +1,10 @@
 defmodule Console.Devices.DeviceResolver do
   alias Console.Repo
 
-  def all(_, %{context: %{current_team: current_team}}) do
-    devices = Ecto.assoc(current_team, :devices) |> Repo.all()
+  def paginate(%{page: page, page_size: page_size}, %{context: %{current_team: current_team}}) do
+    devices =
+      Ecto.assoc(current_team, :devices)
+      |> Repo.paginate(page: page, page_size: page_size)
     {:ok, devices}
   end
 
