@@ -19,12 +19,13 @@ import AccessIcon from '@material-ui/icons/People';
 import BillingIcon from '@material-ui/icons/CreditCard';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ReportsIcon from '@material-ui/icons/TrackChanges';
+import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
+import AccountCircle from '@material-ui/icons/AccountCircle'
 
 
 class SearchResults extends Component {
   render() {
-    const { results, selectedResult } = this.props
-    const pageResults = find(results, r => r.index === "pages")
+    const { results, selectedResult, pageResults } = this.props
     const deviceResults = find(results, r => r.index === "devices")
     const gatewayResults = find(results, r => r.index === "gateways")
     const channelResults = find(results, r => r.index === "channels")
@@ -36,7 +37,7 @@ class SearchResults extends Component {
           <List component="nav" dense>
             {pageResults &&
               <PageSearchResults
-                hits={pageResults.hits}
+                hits={pageResults}
                 selectedResult={selectedResult}
               />
             }
@@ -80,11 +81,14 @@ const PageSearchResults = (props) => {
           to={hit.url}
         >
           <ListItemIcon>
-            {searchResultIcon(hit.category)}
+            {searchResultIcon(hit.icon)}
           </ListItemIcon>
           <ListItemText
             primary={hit.title}
             secondary={hit.description}
+          />
+          <JumpTo
+            show={selectedResult && selectedResult.objectID === hit.objectID}
           />
         </MenuItem>
       )}
@@ -113,6 +117,9 @@ const DeviceSearchResults = (props) => {
             primary={hit.name}
             secondary={hit.mac}
           />
+          <JumpTo
+            show={selectedResult && selectedResult.objectID === hit.objectID}
+          />
         </MenuItem>
       )}
     </div>
@@ -139,6 +146,9 @@ const GatewaySearchResults = (props) => {
           <ListItemText
             primary={hit.name}
             secondary={hit.mac}
+          />
+          <JumpTo
+            show={selectedResult && selectedResult.objectID === hit.objectID}
           />
         </MenuItem>
       )}
@@ -167,11 +177,24 @@ const ChannelSearchResults = (props) => {
             primary={hit.name}
             secondary={hit.kind}
           />
+          <JumpTo
+            show={selectedResult && selectedResult.objectID === hit.objectID}
+          />
         </MenuItem>
       )}
     </div>
   )
 }
+
+const JumpTo = (props) => (
+  <span className="jumpto">
+    {props.show &&
+      <span className="jumpto--inner">
+        Jump to <KeyboardReturnIcon />
+      </span>
+    }
+  </span>
+)
 
 const searchResultIcon = (objectType) => {
   switch (objectType) {
@@ -181,6 +204,12 @@ const searchResultIcon = (objectType) => {
       return <GatewaysIcon />
     case "channels":
       return <ChannelsIcon />
+    case "access":
+      return <AccessIcon />
+    case "dashboard":
+      return <DashboardIcon />
+    case "profile":
+      return <AccountCircle />
     default:
       return <DevicesIcon />
   }

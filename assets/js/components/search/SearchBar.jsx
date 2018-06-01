@@ -4,23 +4,12 @@ import findIndex from 'lodash/findIndex'
 import flatten from 'lodash/flatten'
 import last from 'lodash/last'
 import SearchResults from './SearchResults'
+import searchPages from './pages'
 
 // Icons
 import SearchIcon from '@material-ui/icons/Search'
 
 const initialResults = [
-  {
-    index: "pages",
-    hits: [
-      {
-        objectID: "devices",
-        url: "/devices",
-        title: "Devices",
-        description: "View and manage devices",
-        category: "devices",
-      },
-    ]
-  },
   {
     index: "devices",
     hits: [
@@ -56,16 +45,22 @@ const initialResults = [
   },
 ]
 
+const flattenResults = (pageResults, results) => (
+  pageResults.concat(flatten(results.map(r => r.hits)))
+)
 
 class SearchBar extends Component {
   constructor(props) {
     super(props)
 
+
     this.state = {
       query: "",
       open: false,
       results: initialResults,
-      selectedResult: null
+      selectedResult: null,
+      pageResults: [],
+      flatResults: flattenResults([], initialResults)
     }
 
     this.container = null
@@ -121,9 +116,17 @@ class SearchBar extends Component {
   }
 
   handleUpdateQuery(e) {
+    const newQuery = e.target.value
+    const { results } = this.state
+    const pageResults = searchPages(newQuery)
+    const newResults = results // TODO this will update when backend is ready
+
     this.setState({
-      query: e.target.value,
-      open: e.target.value.length > 0
+      query: newQuery,
+      open: newQuery.length > 0,
+      results: newResults,
+      pageResults,
+      flatResults: flattenResults(pageResults, newResults)
     })
   }
 
@@ -132,8 +135,7 @@ class SearchBar extends Component {
   }
 
   nextResult() {
-    const { selectedResult, results } = this.state
-    const flatResults = flatten(results.map(r => r.hits))
+    const { selectedResult, flatResults } = this.state
     const resultIndex = findIndex(flatResults, r => selectedResult && r.objectID === selectedResult.objectID)
     const result = flatResults[resultIndex + 1]
     this.setState({
@@ -142,8 +144,7 @@ class SearchBar extends Component {
   }
 
   previousResult() {
-    const { selectedResult, results } = this.state
-    const flatResults = flatten(results.map(r => r.hits))
+    const { selectedResult, flatResults } = this.state
     const resultIndex = findIndex(flatResults, r => selectedResult && r.objectID === selectedResult.objectID)
     const result = resultIndex >= 0 ? flatResults[resultIndex - 1] : last(flatResults)
     this.setState({
@@ -155,7 +156,8 @@ class SearchBar extends Component {
     this.searchBarInput.current.blur()
     this.setState({
       query: "",
-      open: false
+      open: false,
+      selectedResult: null
     })
   }
 
@@ -165,7 +167,7 @@ class SearchBar extends Component {
   }
 
   render() {
-    const { query, open, results, selectedResult } = this.state
+    const { query, open, results, selectedResult, pageResults } = this.state
 
     return (
       <div>
@@ -178,7 +180,11 @@ class SearchBar extends Component {
           />
         </div>
 
-        {open && <SearchResults results={results} selectedResult={selectedResult} /> }
+        {open && <SearchResults
+          results={results}
+          pageResults={pageResults}
+          selectedResult={selectedResult}
+        /> }
       </div>
     )
   }

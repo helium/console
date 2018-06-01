@@ -119,5 +119,21 @@ a
   top: 48px;
   z-index: 100;
   right: 100px;
-  min-width: 320px;
+  width: 360px;
+}
+
+#searchResults .jumpto .jumpto--inner
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #949494;
+  width: 60px;
+  margin-left: 14px;
+}
+
+#searchResults .jumpto svg
+{
+  font-size: 16px;
 }
