@@ -35,7 +35,7 @@ class SearchResults extends Component {
         <Paper id="searchResults">
 
           <List component="nav" dense>
-            {pageResults &&
+            {pageResults && pageResults.length > 0 &&
               <PageSearchResults
                 hits={pageResults}
                 selectedResult={selectedResult}
