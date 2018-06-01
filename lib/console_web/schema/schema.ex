@@ -3,6 +3,15 @@ defmodule ConsoleWeb.Schema do
   use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
+  paginated object :device do
+    field :id, :id
+    field :name, :string
+    field :mac, :string
+    field :groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.find/2
+    end
+  end
+
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -31,15 +40,6 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
   end
 
-  object :device do
-    field :id, :id
-    field :name, :string
-    field :mac, :string
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
-  end
-
   object :channel do
     field :id, :id
     field :name, :string
@@ -56,9 +56,9 @@ defmodule ConsoleWeb.Schema do
   end
 
   query do
-    @desc "Get all devices"
-    field :devices, list_of(:device) do
-      resolve(&Console.Devices.DeviceResolver.all/2)
+    @desc "Get paginated devices"
+    paginated field :devices, :paginated_devices do
+      resolve(&Console.Devices.DeviceResolver.paginate/2)
     end
 
     @desc "Get a single device"
@@ -86,7 +86,7 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Events.EventResolver.paginate/2
     end
 
-    @desc "Get all audit trails"
+    @desc "Get paginated audit trails"
     paginated field :audit_trails, :paginated_audit_trails do
       arg :user_id, :string
       resolve(&Console.Devices.AuditResolver.paginate/2)
