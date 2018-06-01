@@ -2,13 +2,17 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchChannels, deleteChannel } from '../../actions/channel'
+import { deleteChannel } from '../../actions/channel'
 import RandomChannelButton from './RandomChannelButton'
 import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
 import ChannelCreateRow from './ChannelCreateRow'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 //MUI
 import Paper from '@material-ui/core/Paper';
@@ -17,12 +21,44 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
 class ChannelIndex extends Component {
-  componentDidMount() {
-    this.props.fetchChannels()
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      page: 1,
+      pageSize: 10
+    }
+
+    this.handleChangePage = this.handleChangePage.bind(this)
+    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+  }
+
+  handleChangeRowsPerPage(pageSize) {
+    this.setState({ pageSize, page: 1 })
+    const { fetchMore } = this.props.data
+
+    fetchMore({
+      variables: { page: 1, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  handleChangePage(page) {
+    this.setState({ page })
+    const { fetchMore } = this.props.data
+    const { pageSize } = this.state
+
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
   }
 
   render() {
-    const { channels, deleteChannel, classes } = this.props
+    const { deleteChannel } = this.props
+    const { loading, channels } = this.props.data
+
+    if (loading) return <DashboardLayout title={"All Channels"} />
 
     return(
       <DashboardLayout title="All Channels">
@@ -45,7 +81,15 @@ class ChannelIndex extends Component {
               subheading="To create a new channel, click the red button in the corner"
             />
           ) : (
-            <ChannelsTable channels={channels} deleteChannel={deleteChannel} />
+            <ChannelsTable
+              channels={channels.entries}
+              deleteChannel={deleteChannel}
+              totalEntries={channels.totalEntries}
+              page={this.state.page}
+              pageSize={this.state.pageSize}
+              handleChangePage={this.handleChangePage}
+              handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+            />
           ) }
         </Paper>
 
@@ -58,13 +102,38 @@ class ChannelIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    channels: Object.values(state.entities.channels)
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchChannels, deleteChannel }, dispatch);
+  return bindActionCreators({ deleteChannel }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChannelIndex);
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    }
+  })
+}
+
+const query = gql`
+  query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
+    channels(page: $page, pageSize: $pageSize) {
+      entries {
+        name,
+        type,
+        id
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`
+
+const ChannelIndexWithData = graphql(query, queryOptions)(ChannelIndex)
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelIndexWithData);

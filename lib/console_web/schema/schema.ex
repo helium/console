@@ -12,6 +12,24 @@ defmodule ConsoleWeb.Schema do
     end
   end
 
+  paginated object :channel do
+    field :id, :id
+    field :name, :string
+    field :type, :string
+    field :active, :boolean
+    field :groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.find/2
+    end
+  end
+
+  paginated object :gateway do
+    field :id, :id
+    field :name, :string
+    field :mac, :string
+    field :longitude, :decimal
+    field :latitude, :decimal
+  end
+
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
@@ -32,24 +50,6 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
-  object :gateway do
-    field :id, :id
-    field :name, :string
-    field :mac, :string
-    field :longitude, :decimal
-    field :latitude, :decimal
-  end
-
-  object :channel do
-    field :id, :id
-    field :name, :string
-    field :type, :string
-    field :active, :boolean
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
-  end
-
   object :group do
     field :id, :id
     field :name, :string
@@ -67,10 +67,20 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.find/2
     end
 
+    @desc "Get paginated gateways"
+    paginated field :gateways, :paginated_gateways do
+      resolve(&Console.Gateways.GatewayResolver.paginate/2)
+    end
+
     @desc "Get a single gateway"
     field :gateway, :gateway do
       arg :id, non_null(:id)
       resolve &Console.Gateways.GatewayResolver.find/2
+    end
+
+    @desc "Get paginated channels"
+    paginated field :channels, :paginated_channels do
+      resolve(&Console.Channels.ChannelResolver.paginate/2)
     end
 
     @desc "Get a single channel"
