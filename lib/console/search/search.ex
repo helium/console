@@ -2,12 +2,15 @@ defmodule Console.Search do
   alias Console.Teams.Team
   @sim_limit 0.05
 
+  # When query is empty, just return an array
   def run(query, _team) when byte_size(query) == 0 do
     []
   end
 
-  # When queries are 3+ characters, we can use a more elegant search with
-  # trigrams, but for searches of 1-2 characters, we have to kind of hack it
+  # When queries are 1-2 characters, we can't use trigram search so we check
+  # if any items start with the query and assign them a score of 1.0, and then
+  # we check if any items contain but don't start with the query and assign
+  # them a score of 0.5
   def run(query, %Team{id: team_id}) when byte_size(query) < 3 do
     {:ok, team_id} = Ecto.UUID.dump(team_id)
 
@@ -69,6 +72,7 @@ defmodule Console.Search do
     to_json(result)
   end
 
+  # When queries are 3+ characters, we can use Postgres trigram search
   def run(query, %Team{id: team_id}) when byte_size(query) >= 3 do
     {:ok, team_id} = Ecto.UUID.dump(team_id)
 
