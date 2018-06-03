@@ -62,7 +62,7 @@ defmodule Console.Search do
         )
       ) a
       ORDER BY score DESC
-      LIMIT 10
+      LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, team_id])
@@ -106,7 +106,7 @@ defmodule Console.Search do
       WHERE score > $3
     )
     ORDER BY score DESC
-    LIMIT 10
+    LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, team_id, @sim_limit])

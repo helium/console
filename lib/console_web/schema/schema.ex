@@ -119,7 +119,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Search for devices, gateways and channels"
-    field :search, list_of(:search_result) do
+    field :search_results, list_of(:search_result) do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search/2
     end

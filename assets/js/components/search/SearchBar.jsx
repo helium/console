@@ -6,62 +6,24 @@ import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'
 
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
+
 // Icons
 import SearchIcon from '@material-ui/icons/Search'
-
-const initialResults = [
-  {
-    index: "devices",
-    hits: [
-      {
-        objectID: "f8b8afcc-3bbb-468c-bfd5-f627bd23d848",
-        url: "/devices/f8b8afcc-3bbb-468c-bfd5-f627bd23d848",
-        name: "Fiery Cactus",
-        mac: "C9839439B4E5",
-      },
-    ]
-  },
-  {
-    index: "gateways",
-    hits: [
-      {
-        objectID: "736c67f1-89a0-4959-af79-af001e0edf8b",
-        url: "/gateways/736c67f1-89a0-4959-af79-af001e0edf8b",
-        name: "Frightening Shelf",
-        mac: "05938C1BD7A9",
-      },
-    ]
-  },
-  {
-    index: "channels",
-    hits: [
-      {
-        objectID: "c6ad8a4f-9476-4260-9fe1-e0783559622a",
-        url: "/channels/c6ad8a4f-9476-4260-9fe1-e0783559622a",
-        name: "Sudden Plate",
-        kind: "AWS IoT",
-      }
-    ]
-  },
-]
-
-const flattenResults = (pageResults, results) => (
-  pageResults.concat(flatten(results.map(r => r.hits)))
-)
 
 class SearchBar extends Component {
   constructor(props) {
     super(props)
 
-    const flatResults = flattenResults([], initialResults)
-
     this.state = {
       query: "",
       open: false,
-      results: initialResults,
-      selectedResult: null,
+      searchResults: [],
       pageResults: [],
-      flatResults
+      flatResults: [],
+      selectedResult: null
     }
 
     this.container = null
@@ -81,6 +43,50 @@ class SearchBar extends Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeydown)
+  }
+
+  handleUpdateQuery(e) {
+    // Update query state first
+    const newQuery = e.target.value
+
+    this.setState({
+      query: newQuery,
+      open: newQuery.length > 0
+    })
+
+    // update page results state
+    const { searchResults } = this.state
+    const pageResults = searchPages(newQuery)
+    const flatResults = pageResults.concat(searchResults)
+    const selectedResult = flatResults[0]
+
+    this.setState({
+      pageResults,
+      flatResults,
+      selectedResult
+    })
+
+    // fire off graphql query to get searchResults
+    const { fetchMore } = this.props.data
+
+    fetchMore({
+      variables: { query: newQuery },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        // update searchResults state
+        const { searchResults } = fetchMoreResult
+        const { pageResults } = this.state
+        const flatResults = pageResults.concat(searchResults)
+        const selectedResult = flatResults[0]
+
+        this.setState({
+          searchResults,
+          flatResults,
+          selectedResult
+        })
+
+        return fetchMoreResult
+      }
+    })
   }
 
   handleKeydown(event) {
@@ -116,31 +122,13 @@ class SearchBar extends Component {
     }
   }
 
-  handleUpdateQuery(e) {
-    const newQuery = e.target.value
-    const { results } = this.state
-    const pageResults = searchPages(newQuery)
-    const newResults = results // TODO this will update when backend is ready
-    const flatResults = flattenResults(pageResults, newResults)
-    const selectedResult = flatResults[0]
-
-    this.setState({
-      query: newQuery,
-      open: newQuery.length > 0,
-      results: newResults,
-      pageResults,
-      flatResults,
-      selectedResult
-    })
-  }
-
   focusSearchBar() {
     this.searchBarInput.current.focus()
   }
 
   nextResult() {
     const { selectedResult, flatResults } = this.state
-    const resultIndex = findIndex(flatResults, r => selectedResult && r.objectID === selectedResult.objectID)
+    const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
     const result = flatResults[resultIndex + 1]
     this.setState({
       selectedResult: result
@@ -149,7 +137,7 @@ class SearchBar extends Component {
 
   previousResult() {
     const { selectedResult, flatResults } = this.state
-    const resultIndex = findIndex(flatResults, r => selectedResult && r.objectID === selectedResult.objectID)
+    const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
     const result = resultIndex >= 0 ? flatResults[resultIndex - 1] : last(flatResults)
     this.setState({
       selectedResult: result
@@ -167,11 +155,13 @@ class SearchBar extends Component {
 
   gotoSelectedResult() {
     const { selectedResult } = this.state
+    this.clearResults()
     this.props.history.replace(selectedResult.url)
   }
 
   render() {
-    const { query, open, results, selectedResult, pageResults } = this.state
+    const { query, open, selectedResult, pageResults } = this.state
+    const { searchResults } = this.props.data
 
     return (
       <div>
@@ -185,7 +175,7 @@ class SearchBar extends Component {
         </div>
 
         {open && <SearchResults
-          results={results}
+          searchResults={searchResults}
           pageResults={pageResults}
           selectedResult={selectedResult}
         /> }
@@ -194,4 +184,27 @@ class SearchBar extends Component {
   }
 }
 
-export default withRouter(SearchBar)
+const queryOptions = {
+  options: props => ({
+    variables: {
+      query: ""
+    }
+  })
+}
+
+const query = gql`
+  query SearchQuery ($query: String) {
+    searchResults(query: $query) {
+      id,
+      title,
+      description,
+      category,
+      score,
+      url
+    }
+  }
+`
+
+const SearchBarWithData = graphql(query, queryOptions)(SearchBar)
+
+export default withRouter(SearchBarWithData)

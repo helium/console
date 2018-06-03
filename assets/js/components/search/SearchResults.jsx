@@ -25,37 +25,24 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 
 class SearchResults extends Component {
   render() {
-    const { results, selectedResult, pageResults } = this.props
-    const deviceResults = find(results, r => r.index === "devices")
-    const gatewayResults = find(results, r => r.index === "gateways")
-    const channelResults = find(results, r => r.index === "channels")
+    const { searchResults, selectedResult, pageResults } = this.props
 
     return(
       <Portal container={this.container}>
         <Paper id="searchResults">
-
           <List component="nav" dense>
             {pageResults && pageResults.length > 0 &&
-              <PageSearchResults
-                hits={pageResults}
+              <SearchResultsSection
+                title="PAGES"
+                results={pageResults}
                 selectedResult={selectedResult}
               />
             }
-            {deviceResults &&
-              <DeviceSearchResults
-                hits={deviceResults.hits}
-                selectedResult={selectedResult}
-              />
-            }
-            {gatewayResults &&
-              <GatewaySearchResults
-                hits={gatewayResults.hits}
-                selectedResult={selectedResult}
-              />
-            }
-            {channelResults &&
-              <ChannelSearchResults
-                hits={channelResults.hits}
+
+            {searchResults && searchResults.length > 0 &&
+              <SearchResultsSection
+                title="SEARCH RESULTS"
+                results={searchResults}
                 selectedResult={selectedResult}
               />
             }
@@ -66,125 +53,36 @@ class SearchResults extends Component {
   }
 }
 
-const PageSearchResults = (props) => {
-  const { hits, selectedResult } = props
+const SearchResultsSection = (props) => (
+  <div>
+    <ListSubheader>{props.title}</ListSubheader>
+    {props.results.map(result =>
+      <SearchResult
+        key={result.id}
+        result={result}
+        selected={props.selectedResult && props.selectedResult.id === result.id}
+      />
+    )}
+  </div>
+)
 
-  return (
-    <div>
-      <ListSubheader>PAGES</ListSubheader>
-      {hits.map(hit =>
-        <MenuItem
-          key={hit.objectID}
-          button
-          component={Link}
-          selected={selectedResult && selectedResult.objectID === hit.objectID}
-          to={hit.url}
-        >
-          <ListItemIcon>
-            {searchResultIcon(hit.icon)}
-          </ListItemIcon>
-          <ListItemText
-            primary={hit.title}
-            secondary={hit.description}
-          />
-          <JumpTo
-            show={selectedResult && selectedResult.objectID === hit.objectID}
-          />
-        </MenuItem>
-      )}
-    </div>
-  )
-}
-
-const DeviceSearchResults = (props) => {
-  const { hits, selectedResult } = props
-
-  return (
-    <div>
-      <ListSubheader>DEVICES</ListSubheader>
-      {hits.map(hit =>
-        <MenuItem
-          key={hit.objectID}
-          button
-          component={Link}
-          selected={selectedResult && selectedResult.objectID === hit.objectID}
-          to={hit.url}
-        >
-          <ListItemIcon>
-            <DevicesIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={hit.name}
-            secondary={hit.mac}
-          />
-          <JumpTo
-            show={selectedResult && selectedResult.objectID === hit.objectID}
-          />
-        </MenuItem>
-      )}
-    </div>
-  )
-}
-
-const GatewaySearchResults = (props) => {
-  const { hits, selectedResult } = props
-
-  return (
-    <div>
-      <ListSubheader>GATEWAYS</ListSubheader>
-      {hits.map(hit =>
-        <MenuItem
-          key={hit.objectID}
-          button
-          component={Link}
-          selected={selectedResult && selectedResult.objectID === hit.objectID}
-          to={hit.url}
-        >
-          <ListItemIcon>
-            <GatewaysIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={hit.name}
-            secondary={hit.mac}
-          />
-          <JumpTo
-            show={selectedResult && selectedResult.objectID === hit.objectID}
-          />
-        </MenuItem>
-      )}
-    </div>
-  )
-}
-
-const ChannelSearchResults = (props) => {
-  const { hits, selectedResult } = props
-
-  return (
-    <div>
-      <ListSubheader>CHANNELS</ListSubheader>
-      {hits.map(hit =>
-        <MenuItem
-          key={hit.objectID}
-          button
-          component={Link}
-          selected={selectedResult && selectedResult.objectID === hit.objectID}
-          to={hit.url}
-        >
-          <ListItemIcon>
-            <ChannelsIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={hit.name}
-            secondary={hit.kind}
-          />
-          <JumpTo
-            show={selectedResult && selectedResult.objectID === hit.objectID}
-          />
-        </MenuItem>
-      )}
-    </div>
-  )
-}
+const SearchResult = (props) => (
+  <MenuItem
+    button
+    component={Link}
+    selected={props.selected}
+    to={props.result.url}
+  >
+    <ListItemIcon>
+      <SearchResultIcon category={props.result.category} />
+    </ListItemIcon>
+    <ListItemText
+      primary={props.result.title}
+      secondary={props.result.description}
+    />
+    <JumpTo show={props.selected} />
+  </MenuItem>
+)
 
 const JumpTo = (props) => (
   <span className="jumpto">
@@ -196,8 +94,8 @@ const JumpTo = (props) => (
   </span>
 )
 
-const searchResultIcon = (objectType) => {
-  switch (objectType) {
+const SearchResultIcon = (props) => {
+  switch (props.category) {
     case "devices":
       return <DevicesIcon />
     case "gateways":

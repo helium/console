@@ -5,48 +5,48 @@ const pages = [
     title: "Dashboard",
     description: "See everything at a glance",
     url: "/dashboard",
-    objectID: "/dashboard",
-    icon: "dashboard",
+    id: "/dashboard",
+    category: "dashboard",
     synonyms: ""
   },
   {
     title: "Devices",
     description: "View and manage devices",
     url: "/devices",
-    objectID: "/devices",
-    icon: "devices",
+    id: "/devices",
+    category: "devices",
     synonyms: ""
   },
   {
     title: "Gateways",
     description: "View and manage gateways",
     url: "/gateways",
-    objectID: "/gateways",
-    icon: "gateways",
+    id: "/gateways",
+    category: "gateways",
     synonyms: ""
   },
   {
     title: "Channels",
     description: "View and manage channels",
     url: "/channels",
-    objectID: "/channels",
-    icon: "channels",
+    id: "/channels",
+    category: "channels",
     synonyms: ""
   },
   {
     title: "Access",
     description: "Manage team member access",
     url: "/teams/access",
-    objectID: "/teams/access",
-    icon: "access",
+    id: "/teams/access",
+    category: "access",
     synonyms: "team"
   },
   {
     title: "Profile",
     description: "Configure your account settings",
     url: "/profile",
-    objectID: "/profile",
-    icon: "profile",
+    id: "/profile",
+    category: "profile",
     synonyms: "account"
   },
 ]
