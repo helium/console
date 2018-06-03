@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import find from 'lodash/find'
+import sample from 'lodash/sample'
 
 // MUI
 import Portal from '@material-ui/core/Portal';
@@ -10,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListSubheader from '@material-ui/core/ListSubheader'
+import Typography from '@material-ui/core/Typography'
 
 // Icons
 import DevicesIcon from '@material-ui/icons/Memory';
@@ -26,30 +28,45 @@ import AccountCircle from '@material-ui/icons/AccountCircle'
 class SearchResults extends Component {
   render() {
     const { searchResults, selectedResult, pageResults } = this.props
+    const pageResultsLength = pageResults ? pageResults.length : 0
+    const searchResultsLength = searchResults ? searchResults.length : 0
 
-    return(
-      <Portal container={this.container}>
-        <Paper id="searchResults">
-          <List component="nav" dense>
-            {pageResults && pageResults.length > 0 &&
-              <SearchResultsSection
-                title="PAGES"
-                results={pageResults}
-                selectedResult={selectedResult}
-              />
-            }
+    if ((pageResultsLength + searchResultsLength) > 0) {
+      return(
+        <Portal container={this.container}>
+          <Paper id="searchResults">
+            <List component="nav" dense>
+              {pageResultsLength > 0 &&
+                <SearchResultsSection
+                  title="PAGES"
+                  results={pageResults}
+                  selectedResult={selectedResult}
+                />
+              }
 
-            {searchResults && searchResults.length > 0 &&
-              <SearchResultsSection
-                title="SEARCH RESULTS"
-                results={searchResults}
-                selectedResult={selectedResult}
-              />
-            }
-          </List>
-        </Paper>
-      </Portal>
-    )
+              {searchResultsLength > 0 &&
+                <SearchResultsSection
+                  title="SEARCH RESULTS"
+                  results={searchResults}
+                  selectedResult={selectedResult}
+                />
+              }
+            </List>
+          </Paper>
+        </Portal>
+      )
+    } else {
+      return(
+        <Portal container={this.container}>
+          <Paper id="searchResults">
+            <Typography style={{textAlign: 'center', padding: 20, color: "#6a6a6a"}}>
+              no results {reactionFace()}
+            </Typography>
+          </Paper>
+        </Portal>
+      )
+    }
+
   }
 }
 
@@ -112,5 +129,9 @@ const SearchResultIcon = (props) => {
       return <DevicesIcon />
   }
 }
+
+const reactionFace = () => (
+  sample([":(", ":'(", ":c", ":{", ":[", ">:("])
+)
 
 export default SearchResults
