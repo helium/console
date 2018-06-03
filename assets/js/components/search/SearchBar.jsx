@@ -53,6 +53,7 @@ class SearchBar extends Component {
   constructor(props) {
     super(props)
 
+    const flatResults = flattenResults([], initialResults)
 
     this.state = {
       query: "",
@@ -60,7 +61,7 @@ class SearchBar extends Component {
       results: initialResults,
       selectedResult: null,
       pageResults: [],
-      flatResults: flattenResults([], initialResults)
+      flatResults
     }
 
     this.container = null
@@ -120,13 +121,16 @@ class SearchBar extends Component {
     const { results } = this.state
     const pageResults = searchPages(newQuery)
     const newResults = results // TODO this will update when backend is ready
+    const flatResults = flattenResults(pageResults, newResults)
+    const selectedResult = flatResults[0]
 
     this.setState({
       query: newQuery,
       open: newQuery.length > 0,
       results: newResults,
       pageResults,
-      flatResults: flattenResults(pageResults, newResults)
+      flatResults,
+      selectedResult
     })
   }
 

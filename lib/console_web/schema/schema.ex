@@ -55,6 +55,15 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
   end
 
+  object :search_result do
+    field :id, :id
+    field :title, :string
+    field :description, :string
+    field :url, :string
+    field :category, :string
+    field :score, :float
+  end
+
   query do
     @desc "Get paginated devices"
     paginated field :devices, :paginated_devices do
@@ -107,6 +116,12 @@ defmodule ConsoleWeb.Schema do
       arg :context_id, :string
       arg :context_name, :string
       resolve &Console.Events.EventResolver.recent/2
+    end
+
+    @desc "Search for devices, gateways and channels"
+    field :search, list_of(:search_result) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search/2
     end
   end
 
