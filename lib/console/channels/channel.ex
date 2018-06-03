@@ -17,6 +17,7 @@ defmodule Console.Channels.Channel do
     field :encryption_version, :binary
     field :name, :string
     field :type, :string
+    field :type_name, :string
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
@@ -33,12 +34,13 @@ defmodule Console.Channels.Channel do
     |> validate_required([:name, :type, :active, :credentials, :team_id])
     |> put_change(:encryption_version, Cloak.version)
     |> filter_credentials()
+    |> put_type_name()
   end
 
   def create_changeset(channel, attrs \\ %{}) do
     channel
     |> changeset(attrs)
-    |> put_token()
+    |> put_http_filtered_headers()
   end
 
   def update_changeset(channel, attrs \\ %{}) do
@@ -52,13 +54,34 @@ defmodule Console.Channels.Channel do
     |> put_assoc(:groups, parse_groups(changeset, attrs))
   end
 
-  defp put_token(changeset) do
+  defp put_http_filtered_headers(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
-        filtered_headers = Enum.reject(creds["headers"], fn(h) -> h["header"] == "" end)
-        creds = Map.merge(creds, %{ "headers" => filtered_headers })
+        if creds["headers"] do
+          filtered_headers = Enum.reject(creds["headers"], fn(h) -> h["header"] == "" end)
+          creds = Map.merge(creds, %{ "headers" => filtered_headers })
 
-        put_change(changeset, :credentials, creds)
+          put_change(changeset, :credentials, creds)
+        else
+          changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp put_type_name(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
+        type_name =
+          case type do
+            "aws" -> "AWS IoT"
+            "azure" -> "Azure IoT Hub"
+            "google" -> "Google Cloud IoT Core"
+            "mqtt" -> "MQTT"
+            "http" -> "HTTP"
+          end
+
+        put_change(changeset, :type_name, type_name)
       _ -> changeset
     end
   end

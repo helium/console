@@ -34,6 +34,46 @@ const pages = [
     synonyms: ""
   },
   {
+    title: "New Azure IoT Hub",
+    description: "Create a new Azure channel",
+    url: "/channels/new/azure",
+    id: "/channels/new/azure",
+    category: "channels",
+    synonyms: ""
+  },
+  {
+    title: "New AWS IoT",
+    description: "Create a new AWS channel",
+    url: "/channels/new/aws",
+    id: "/channels/new/aws",
+    category: "channels",
+    synonyms: ""
+  },
+  {
+    title: "New Google Cloud IoT",
+    description: "Create a new Google channel",
+    url: "/channels/new/google",
+    id: "/channels/new/google",
+    category: "channels",
+    synonyms: ""
+  },
+  {
+    title: "New MQTT Channel",
+    description: "Create a new MQTT channel",
+    url: "/channels/new/mqtt",
+    id: "/channels/new/mqtt",
+    category: "channels",
+    synonyms: ""
+  },
+  {
+    title: "New HTTP Channel",
+    description: "Create a new HTTP channel",
+    url: "/channels/new/http",
+    id: "/channels/new/http",
+    category: "channels",
+    synonyms: ""
+  },
+  {
     title: "Access",
     description: "Manage team member access",
     url: "/teams/access",

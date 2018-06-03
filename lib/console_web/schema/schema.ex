@@ -16,6 +16,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :type, :string
+    field :type_name, :string
     field :active, :boolean
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2

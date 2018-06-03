@@ -50,15 +50,15 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, type AS description, 1.0::float AS score, 'channels' AS category
+            SELECT id, name AS title, type_name AS description, 1.0::float AS score, 'channels' AS category
             FROM channels
-            WHERE team_id = $3 AND (name ILIKE $1 OR type ILIKE $1)
+            WHERE team_id = $3 AND (name ILIKE $1 OR type_name ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, type AS description, 0.5::float AS score, 'channels' AS category
+            SELECT id, name AS title, type_name AS description, 0.5::float AS score, 'channels' AS category
             FROM channels
-            WHERE team_id = $3 AND (name ~* $2 OR type ~* $2)
+            WHERE team_id = $3 AND (name ~* $2 OR type_name ~* $2)
           )
         ) c
           ORDER BY id, score DESC
@@ -100,9 +100,9 @@ defmodule Console.Search do
     )
     UNION
     (
-      SELECT id, name AS title, type AS description, score, 'channels' AS category
+      SELECT id, name AS title, type_name AS description, score, 'channels' AS category
       FROM (
-        SELECT *, SIMILARITY(name || ' ' || type, $1) AS score
+        SELECT *, SIMILARITY(name || ' ' || type_name, $1) AS score
         FROM channels
         WHERE team_id = $2
         ORDER BY score DESC

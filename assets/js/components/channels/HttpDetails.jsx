@@ -10,6 +10,8 @@ const HttpDetails = (props) => {
   const { channel } = props
   const { credentials } = channel
 
+  if (credentials === undefined) return <div />
+
   return (
     <Card style={{marginTop: 24}}>
       <CardContent>

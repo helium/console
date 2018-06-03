@@ -31,7 +31,7 @@ class ChannelsTable extends Component {
                 <TableCell>
                   <Link to={`/channels/${channel.id}`}>{channel.name}</Link>
                 </TableCell>
-                <TableCell>{channel.type}</TableCell>
+                <TableCell>{channel.type_name}</TableCell>
                 <TableCell>
                   <Button color="primary" component={Link} to={`/channels/${channel.id}`}>
                     View

@@ -17,6 +17,7 @@ defmodule ConsoleWeb.ChannelView do
       id: channel.id,
       name: channel.name,
       type: channel.type,
+      type_name: channel.type_name,
       credentials: channel.credentials,
       active: channel.active,
       team_id: channel.team_id
