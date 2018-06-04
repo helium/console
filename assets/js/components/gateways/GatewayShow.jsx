@@ -22,10 +22,25 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import { withStyles } from '@material-ui/core/styles'
+
+const styles = theme => ({
+  details: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  left: {
+    width: "50%"
+  },
+  right: {
+    width: "50%"
+  },
+})
+
 
 class GatewayShow extends Component {
   render() {
-    const { deleteGateway } = this.props
+    const { deleteGateway, classes } = this.props
     const { loading, gateway } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -33,25 +48,31 @@ class GatewayShow extends Component {
     return(
       <DashboardLayout title={gateway.name}>
         <Card>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Gateway Details
-            </Typography>
-            <Typography component="p">
-              ID: {gateway.id}
-            </Typography>
-            <Typography component="p">
-              Name: {gateway.name}
-            </Typography>
-            <Typography component="p">
-              MAC: {gateway.mac}
-            </Typography>
-            <Typography component="p">
-              Lat: {gateway.latitude}
-            </Typography>
-            <Typography component="p">
-              Lng: {gateway.longitude}
-            </Typography>
+          <CardContent className={classes.details}>
+            <div className={classes.left}>
+              <Typography variant="headline" component="h3">
+                Gateway Details
+              </Typography>
+              <Typography component="p">
+                ID: {gateway.id}
+              </Typography>
+              <Typography component="p">
+                Name: {gateway.name}
+              </Typography>
+              <Typography component="p">
+                MAC: {gateway.mac}
+              </Typography>
+              <Typography component="p">
+                Lat: {gateway.latitude}
+              </Typography>
+              <Typography component="p">
+                Lng: {gateway.longitude}
+              </Typography>
+            </div>
+
+            <div className={classes.right}>
+              <Mapbox type={"gateways"} view={"show"} gateways={[gateway]}/>
+            </div>
           </CardContent>
 
           <CardActions>
@@ -104,10 +125,6 @@ class GatewayShow extends Component {
             <PacketGraph contextName="gateways" contextId={gateway.id} />
           </CardContent>
         </Card>
-
-        <Card style={{marginTop: 24}}>
-          <Mapbox type={"gateways"} view={"show"} gateways={[gateway]}/>
-        </Card>
       </DashboardLayout>
     )
   }
@@ -137,6 +154,8 @@ const query = gql`
   }
   ${GATEWAY_FRAGMENT}
 `
-const GatewayShowWithData = graphql(query, queryOptions)(GatewayShow)
 
+// TODO convert to decorators
+const Styled = withStyles(styles)(GatewayShow)
+const GatewayShowWithData = graphql(query, queryOptions)(Styled)
 export default connect(mapStateToProps, mapDispatchToProps)(GatewayShowWithData);

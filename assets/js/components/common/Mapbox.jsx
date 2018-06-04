@@ -41,7 +41,7 @@ class Mapbox extends Component {
     let initialZoom = 2
     if (this.props.view === "show") {
       initialCenter = [this.props.gateways[0].longitude, this.props.gateways[0].latitude]
-      initialZoom = 14
+      initialZoom = 13
     }
 
     this.map = new mapboxgl.Map({
@@ -169,7 +169,7 @@ class Mapbox extends Component {
     if (this.props.gateways.length == 1) {
       style = {
         width: '100%',
-        height: '600px'
+        height: '280px'
       }
     } else {
       style = {
