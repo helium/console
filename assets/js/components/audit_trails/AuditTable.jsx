@@ -28,7 +28,7 @@ class AuditTable extends Component {
 
     this.state = {
       page: 1,
-      pageSize: 10
+      pageSize: 5
     }
   }
 
@@ -128,7 +128,7 @@ const queryOptions = {
   options: props => {
     const variables = {
       page: 1,
-      pageSize: 10,
+      pageSize: 5,
       userId: props.userId
     }
     return {
