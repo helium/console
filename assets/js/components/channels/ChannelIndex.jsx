@@ -31,23 +31,43 @@ class ChannelIndex extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+    this.handleSubscriptionChannelAdded = this.handleSubscriptionChannelAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: CHANNELS_SUBSCRIPTION,
+      variables: {teamId: this.props.currentTeamId},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionChannelAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    const { fetchMore } = this.props.data
 
-    fetchMore({
-      variables: { page: 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.refetchPaginatedChannels(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
-    const { fetchMore } = this.props.data
-    const { pageSize } = this.state
 
+    const { pageSize } = this.state
+    this.refetchPaginatedChannels(page, pageSize)
+  }
+
+  handleSubscriptionChannelAdded() {
+    const { page, pageSize } = this.state
+    
+    this.refetchPaginatedChannels(page, pageSize)
+  }
+
+  refetchPaginatedChannels(page, pageSize) {
+    const { fetchMore } = this.props.data
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -102,7 +122,9 @@ class ChannelIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    currentTeamId: state.auth.currentTeamId
+  }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -130,6 +152,16 @@ const query = gql`
       totalPages,
       pageSize,
       pageNumber
+    }
+  }
+`
+
+const CHANNELS_SUBSCRIPTION = gql`
+  subscription onChannelAdded($teamId: String) {
+    channelAdded(teamId: $teamId) {
+      name,
+      type,
+      id
     }
   }
 `
