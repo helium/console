@@ -9,6 +9,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
 import ChannelCreateRow from './ChannelCreateRow'
+import { CHANNEL_SUBSCRIPTION, CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -38,7 +39,7 @@ class ChannelIndex extends Component {
     const { subscribeToMore } = this.props.data
 
     subscribeToMore({
-      document: CHANNELS_SUBSCRIPTION,
+      document: CHANNEL_SUBSCRIPTION,
       variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
@@ -62,7 +63,7 @@ class ChannelIndex extends Component {
 
   handleSubscriptionChannelAdded() {
     const { page, pageSize } = this.state
-    
+
     this.refetchPaginatedChannels(page, pageSize)
   }
 
@@ -144,9 +145,7 @@ const query = gql`
   query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
     channels(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        type,
-        id
+        ...ChannelFragment
       },
       totalEntries,
       totalPages,
@@ -154,16 +153,7 @@ const query = gql`
       pageNumber
     }
   }
-`
-
-const CHANNELS_SUBSCRIPTION = gql`
-  subscription onChannelAdded($teamId: String) {
-    channelAdded(teamId: $teamId) {
-      name,
-      type,
-      id
-    }
-  }
+  ${CHANNEL_FRAGMENT}
 `
 
 const ChannelIndexWithData = graphql(query, queryOptions)(ChannelIndex)
