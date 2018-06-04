@@ -11,6 +11,7 @@ import HttpDetails from './HttpDetails'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import { CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -139,16 +140,13 @@ const queryOptions = {
 const query = gql`
   query ChannelShowQuery ($id: ID!) {
     channel(id: $id) {
-      name,
-      type,
-      type_name,
-      active,
-      id,
+      ...ChannelFragment
       groups {
         name
       }
     }
   }
+  ${CHANNEL_FRAGMENT}
 `
 
 const ChannelShowWithData = graphql(query, queryOptions)(ChannelShow)

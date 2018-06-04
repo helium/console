@@ -8,6 +8,7 @@ import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
+import { DEVICE_SUBSCRIPTION, DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -29,23 +30,41 @@ class DeviceIndex extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+    this.handleSubscriptionDeviceAdded = this.handleSubscriptionDeviceAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: DEVICE_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionDeviceAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    const { fetchMore } = this.props.data
 
-    fetchMore({
-      variables: { page: 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.refetchPaginatedDevices(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
-    const { fetchMore } = this.props.data
-    const { pageSize } = this.state
 
+    const { pageSize } = this.state
+    this.refetchPaginatedDevices(page, pageSize)
+  }
+
+  handleSubscriptionDeviceAdded() {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedDevices(page, pageSize)
+  }
+
+  refetchPaginatedDevices(page, pageSize) {
+    const { fetchMore } = this.props.data
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -110,9 +129,7 @@ const query = gql`
   query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
     devices(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        mac,
-        id
+        ...DeviceFragment
       },
       totalEntries,
       totalPages,
@@ -120,6 +137,7 @@ const query = gql`
       pageNumber
     }
   }
+  ${DEVICE_FRAGMENT}
 `
 
 const DeviceIndexWithData = graphql(query, queryOptions)(DeviceIndex)

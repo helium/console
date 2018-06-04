@@ -10,6 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -131,13 +132,10 @@ const queryOptions = {
 const query = gql`
   query GatewayShowQuery ($id: ID!) {
     gateway(id: $id) {
-      name,
-      mac,
-      id,
-      latitude,
-      longitude
+      ...GatewayFragment
     }
   }
+  ${GATEWAY_FRAGMENT}
 `
 const GatewayShowWithData = graphql(query, queryOptions)(GatewayShow)
 

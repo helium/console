@@ -9,6 +9,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import Mapbox from '../common/Mapbox'
 import userCan from '../../util/abilities'
+import { GATEWAY_SUBSCRIPTION, GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -32,23 +33,42 @@ class GatewayIndex extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+    this.handleSubscriptionGatewayAdded = this.handleSubscriptionGatewayAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: GATEWAY_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionGatewayAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    const { fetchMore } = this.props.data
 
-    fetchMore({
-      variables: { page: 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.refetchPaginatedGateways(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
-    const { fetchMore } = this.props.data
-    const { pageSize } = this.state
 
+    const { pageSize } = this.state
+    this.refetchPaginatedGateways(page, pageSize)
+  }
+
+  handleSubscriptionGatewayAdded() {
+    const { page, pageSize } = this.state
+
+    this.refetchPaginatedGateways(page, pageSize)
+  }
+
+  refetchPaginatedGateways(page, pageSize) {
+    const { fetchMore } = this.props.data
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -137,11 +157,7 @@ const query = gql`
   query PaginatedGatewaysQuery ($page: Int, $pageSize: Int) {
     gateways(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        mac,
-        id,
-        latitude,
-        longitude
+        ...GatewayFragment
       },
       totalEntries,
       totalPages,
@@ -149,6 +165,7 @@ const query = gql`
       pageNumber
     }
   }
+  ${GATEWAY_FRAGMENT}
 `
 
 const GatewayIndexWithData = graphql(query, queryOptions)(GatewayIndex)

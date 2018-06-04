@@ -10,6 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import { DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -132,14 +133,13 @@ const queryOptions = {
 const query = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
-      name,
-      mac,
-      id,
+      ...DeviceFragment
       groups {
         name
       }
     }
   }
+  ${DEVICE_FRAGMENT}
 `
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)

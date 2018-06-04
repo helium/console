@@ -9,6 +9,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
 import ChannelCreateRow from './ChannelCreateRow'
+import { CHANNEL_SUBSCRIPTION, CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -31,23 +32,42 @@ class ChannelIndex extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+    this.handleSubscriptionChannelAdded = this.handleSubscriptionChannelAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: CHANNEL_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionChannelAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    const { fetchMore } = this.props.data
 
-    fetchMore({
-      variables: { page: 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.refetchPaginatedChannels(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
-    const { fetchMore } = this.props.data
-    const { pageSize } = this.state
 
+    const { pageSize } = this.state
+    this.refetchPaginatedChannels(page, pageSize)
+  }
+
+  handleSubscriptionChannelAdded() {
+    const { page, pageSize } = this.state
+
+    this.refetchPaginatedChannels(page, pageSize)
+  }
+
+  refetchPaginatedChannels(page, pageSize) {
+    const { fetchMore } = this.props.data
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -110,21 +130,23 @@ function mapDispatchToProps(dispatch) {
 }
 
 const queryOptions = {
-  options: props => ({
-    variables: {
+  options: props => {
+    const variables = {
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     }
-  })
+    return {
+      fetchPolicy: 'network-only',
+      variables
+    }
+  }
 }
 
 const query = gql`
   query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
     channels(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        type,
-        id
+        ...ChannelFragment
       },
       totalEntries,
       totalPages,
@@ -132,6 +154,7 @@ const query = gql`
       pageNumber
     }
   }
+  ${CHANNEL_FRAGMENT}
 `
 
 const ChannelIndexWithData = graphql(query, queryOptions)(ChannelIndex)
