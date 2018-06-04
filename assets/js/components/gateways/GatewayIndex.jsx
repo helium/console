@@ -9,6 +9,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import Mapbox from '../common/Mapbox'
 import userCan from '../../util/abilities'
+import { GATEWAY_SUBSCRIPTION, GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -39,7 +40,7 @@ class GatewayIndex extends Component {
     const { subscribeToMore } = this.props.data
 
     subscribeToMore({
-      document: GATEWAYS_SUBSCRIPTION,
+      document: GATEWAY_SUBSCRIPTION,
       variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
@@ -159,11 +160,7 @@ const query = gql`
   query PaginatedGatewaysQuery ($page: Int, $pageSize: Int) {
     gateways(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        mac,
-        id,
-        latitude,
-        longitude
+        ...GatewayFragment
       },
       totalEntries,
       totalPages,
@@ -171,18 +168,7 @@ const query = gql`
       pageNumber
     }
   }
-`
-
-const GATEWAYS_SUBSCRIPTION = gql`
-  subscription onGatewayAdded($teamId: String) {
-    gatewayAdded(teamId: $teamId) {
-      name,
-      mac,
-      id,
-      latitude,
-      longitude
-    }
-  }
+  ${GATEWAY_FRAGMENT}
 `
 
 const GatewayIndexWithData = graphql(query, queryOptions)(GatewayIndex)
