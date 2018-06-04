@@ -32,23 +32,43 @@ class GatewayIndex extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
+    this.handleSubscriptionGatewayAdded = this.handleSubscriptionGatewayAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: GATEWAYS_SUBSCRIPTION,
+      variables: {teamId: this.props.currentTeamId},
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionGatewayAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    const { fetchMore } = this.props.data
 
-    fetchMore({
-      variables: { page: 1, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.refetchPaginatedGateways(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
-    const { fetchMore } = this.props.data
-    const { pageSize } = this.state
 
+    const { pageSize } = this.state
+    this.refetchPaginatedGateways(page, pageSize)
+  }
+
+  handleSubscriptionGatewayAdded() {
+    const { page, pageSize } = this.state
+
+    this.refetchPaginatedGateways(page, pageSize)
+  }
+
+  refetchPaginatedGateways(page, pageSize) {
+    const { fetchMore } = this.props.data
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -117,7 +137,9 @@ class GatewayIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    currentTeamId: state.auth.currentTeamId
+  }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -147,6 +169,18 @@ const query = gql`
       totalPages,
       pageSize,
       pageNumber
+    }
+  }
+`
+
+const GATEWAYS_SUBSCRIPTION = gql`
+  subscription onGatewayAdded($teamId: String) {
+    gatewayAdded(teamId: $teamId) {
+      name,
+      mac,
+      id,
+      latitude,
+      longitude
     }
   }
 `
