@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import SearchResultsSection from './SearchResultsSection'
+import sample from 'lodash/sample'
 
 // MUI
 import Portal from '@material-ui/core/Portal';
