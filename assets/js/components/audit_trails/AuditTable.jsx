@@ -14,8 +14,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
+import TableFooterPagination from '../common/TableFooterPagination'
 
 // Icons
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -65,7 +64,7 @@ class AuditTable extends Component {
       )
     }
     const { auditTrails } = this.props.data
-    const { page } = this.state
+    const { page, pageSize } = this.state
 
     return (
       <CardContent>
@@ -93,17 +92,13 @@ class AuditTable extends Component {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                count={auditTrails.totalEntries}
-                onChangePage={(e, page) => this.handleChangePage(page + 1)}
-                onChangeRowsPerPage={(e) => this.handleChangeRowsPerPage(e.target.value)}
-                page={page - 1}
-                rowsPerPage={auditTrails.pageSize}
-              />
-            </TableRow>
-          </TableFooter>
+          <TableFooterPagination
+            totalEntries={auditTrails.totalEntries}
+            page={page}
+            pageSize={pageSize}
+            handleChangePage={this.handleChangePage}
+            handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
         </Table>
       </CardContent>
     )
