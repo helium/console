@@ -30,7 +30,6 @@ import GatewayShow from './components/gateways/GatewayShow'
 import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
-import TeamIndex from './components/teams/TeamIndex'
 import TeamShow from './components/teams/TeamShow'
 import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
@@ -62,7 +61,6 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
                   <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
-                  <PrivateRoute exact path="/teams" component={TeamIndex} />
                   <PrivateRoute exact path="/teams/access" component={TeamShow} />
                   <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
