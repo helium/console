@@ -9,8 +9,8 @@ export const DEVICE_FRAGMENT = gql`
 `
 
 export const DEVICE_SUBSCRIPTION = gql`
-  subscription onDeviceAdded($teamId: String) {
-    deviceAdded(teamId: $teamId) {
+  subscription onDeviceAdded {
+    deviceAdded {
       ...DeviceFragment
     }
   }

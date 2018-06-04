@@ -40,7 +40,6 @@ class ChannelIndex extends Component {
 
     subscribeToMore({
       document: CHANNEL_SUBSCRIPTION,
-      variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionChannelAdded()
@@ -123,9 +122,7 @@ class ChannelIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    currentTeamId: state.auth.currentTeamId
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {

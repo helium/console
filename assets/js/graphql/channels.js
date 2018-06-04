@@ -11,8 +11,8 @@ export const CHANNEL_FRAGMENT = gql`
 `
 
 export const CHANNEL_SUBSCRIPTION = gql`
-  subscription onChannelAdded($teamId: String) {
-    channelAdded(teamId: $teamId) {
+  subscription onChannelAdded {
+    channelAdded {
       ...ChannelFragment
     }
   }

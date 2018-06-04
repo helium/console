@@ -11,8 +11,8 @@ export const GATEWAY_FRAGMENT = gql`
 `
 
 export const GATEWAY_SUBSCRIPTION = gql`
-  subscription onGatewayAdded($teamId: String) {
-    gatewayAdded(teamId: $teamId) {
+  subscription onGatewayAdded {
+    gatewayAdded {
       ...GatewayFragment
     }
   }

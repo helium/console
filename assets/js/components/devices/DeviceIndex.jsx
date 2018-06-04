@@ -38,7 +38,6 @@ class DeviceIndex extends Component {
 
     subscribeToMore({
       document: DEVICE_SUBSCRIPTION,
-      variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionDeviceAdded()
@@ -110,9 +109,7 @@ class DeviceIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    currentTeamId: state.auth.currentTeamId
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {

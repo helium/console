@@ -41,7 +41,6 @@ class GatewayIndex extends Component {
 
     subscribeToMore({
       document: GATEWAY_SUBSCRIPTION,
-      variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionGatewayAdded()
@@ -138,9 +137,7 @@ class GatewayIndex extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-    currentTeamId: state.auth.currentTeamId
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
