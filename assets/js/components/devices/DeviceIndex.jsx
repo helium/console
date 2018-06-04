@@ -8,6 +8,7 @@ import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import BlankSlate from '../common/BlankSlate'
 import userCan from '../../util/abilities'
+import { DEVICE_SUBSCRIPTION, DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -36,7 +37,7 @@ class DeviceIndex extends Component {
     const { subscribeToMore } = this.props.data
 
     subscribeToMore({
-      document: DEVICES_SUBSCRIPTION,
+      document: DEVICE_SUBSCRIPTION,
       variables: {teamId: this.props.currentTeamId},
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
@@ -47,7 +48,7 @@ class DeviceIndex extends Component {
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
-    
+
     this.refetchPaginatedDevices(1, pageSize)
   }
 
@@ -131,9 +132,7 @@ const query = gql`
   query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
     devices(page: $page, pageSize: $pageSize) {
       entries {
-        name,
-        mac,
-        id
+        ...DeviceFragment
       },
       totalEntries,
       totalPages,
@@ -141,16 +140,7 @@ const query = gql`
       pageNumber
     }
   }
-`
-
-const DEVICES_SUBSCRIPTION = gql`
-  subscription onDeviceAdded($teamId: String) {
-    deviceAdded(teamId: $teamId) {
-      name,
-      mac,
-      id
-    }
-  }
+  ${DEVICE_FRAGMENT}
 `
 
 const DeviceIndexWithData = graphql(query, queryOptions)(DeviceIndex)
