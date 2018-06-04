@@ -47,7 +47,7 @@ class ChannelShow extends Component {
                   Name: {channel.name}
                 </Typography>
                 <Typography component="p">
-                  Type: {channel.type}
+                  Type: {channel.type_name}
                 </Typography>
                 <Typography component="p">
                   Active: {channel.active ? "Yes" : "No"}
@@ -141,6 +141,7 @@ const query = gql`
     channel(id: $id) {
       name,
       type,
+      type_name,
       active,
       id,
       groups {

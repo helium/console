@@ -51,7 +51,8 @@ exports.config = {
       plugins: [
         "transform-es2015-destructuring",
         "transform-es2015-parameters",
-        "transform-object-rest-spread"
+        "transform-object-rest-spread",
+        "transform-decorators-legacy"
       ]
     }
   },

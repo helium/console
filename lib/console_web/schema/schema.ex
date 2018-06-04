@@ -16,6 +16,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :type, :string
+    field :type_name, :string
     field :active, :boolean
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2
@@ -53,6 +54,15 @@ defmodule ConsoleWeb.Schema do
   object :group do
     field :id, :id
     field :name, :string
+  end
+
+  object :search_result do
+    field :id, :id
+    field :title, :string
+    field :description, :string
+    field :url, :string
+    field :category, :string
+    field :score, :float
   end
 
   query do
@@ -107,6 +117,12 @@ defmodule ConsoleWeb.Schema do
       arg :context_id, :string
       arg :context_name, :string
       resolve &Console.Events.EventResolver.recent/2
+    end
+
+    @desc "Search for devices, gateways and channels"
+    field :search_results, list_of(:search_result) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search/2
     end
   end
 
