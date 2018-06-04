@@ -36,7 +36,8 @@ class EventsTablePaginated extends Component {
     super(props)
 
     this.state = {
-      page: 1
+      page: 1,
+      pageSize: 5
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
@@ -66,7 +67,7 @@ class EventsTablePaginated extends Component {
           events: {
             ...prev.events,
             totalEntries: prev.events.totalEntries + 1,
-            entries: [newEvent, ...prev.events.entries.slice(0, 4)],
+            entries: [newEvent, ...prev.events.entries.slice(0, this.state.pageSize - 1)],
           }
         })
       }
@@ -74,9 +75,11 @@ class EventsTablePaginated extends Component {
   }
 
   handleChangeRowsPerPage(pageSize) {
+    this.setState({ pageSize, page: 1 })
     const { fetchMore } = this.props.data
+
     fetchMore({
-      variables: { pageSize },
+      variables: { page: 1, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
   }
@@ -84,8 +87,10 @@ class EventsTablePaginated extends Component {
   handleChangePage(page) {
     this.setState({ page })
     const { fetchMore } = this.props.data
+    const { pageSize } = this.state
+
     fetchMore({
-      variables: { page },
+      variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
   }
