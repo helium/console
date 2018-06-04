@@ -133,12 +133,16 @@ function mapDispatchToProps(dispatch) {
 }
 
 const queryOptions = {
-  options: props => ({
-    variables: {
+  options: props => {
+    const variables = {
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     }
-  })
+    return {
+      fetchPolicy: 'network-only',
+      variables
+    }
+  }
 }
 
 const query = gql`
