@@ -17,6 +17,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
+@connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
   constructor(props) {
     super(props)
@@ -109,4 +110,4 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ createChannel }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(ChannelNew);
+export default ChannelNew

@@ -37,7 +37,26 @@ const styles = theme => ({
   },
 })
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    }
+  })
+}
 
+const query = gql`
+  query GatewayShowQuery ($id: ID!) {
+    gateway(id: $id) {
+      ...GatewayFragment
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
+
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(query, queryOptions)
 class GatewayShow extends Component {
   render() {
     const { deleteGateway, classes } = this.props
@@ -138,24 +157,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteGateway }, dispatch);
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    }
-  })
-}
-
-const query = gql`
-  query GatewayShowQuery ($id: ID!) {
-    gateway(id: $id) {
-      ...GatewayFragment
-    }
-  }
-  ${GATEWAY_FRAGMENT}
-`
-
-// TODO convert to decorators
-const Styled = withStyles(styles)(GatewayShow)
-const GatewayShowWithData = graphql(query, queryOptions)(Styled)
-export default connect(mapStateToProps, mapDispatchToProps)(GatewayShowWithData);
+export default GatewayShow

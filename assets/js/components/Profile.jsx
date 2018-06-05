@@ -14,6 +14,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
+@connect(mapStateToProps, mapDispatchToProps)
 class Profile extends Component {
   constructor(props) {
     super(props);
@@ -68,4 +69,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchUser, logOut }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default Profile

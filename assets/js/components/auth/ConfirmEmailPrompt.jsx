@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../common/AuthLayout'
 
@@ -17,23 +17,30 @@ const styles = theme => ({
   },
 });
 
-const ConfirmEmailPrompt = (props) => (
+@withStyles(styles)
+class ConfirmEmailPrompt extends Component {
 
-  <AuthLayout>
-    <Card>
-      <CardContent>
-        <Typography variant="headline" className={props.classes.title}>
-          Registration Successful
-        </Typography>
-        <Typography component="p">
-          Please check your inbox for a confirmation email
-        </Typography>
-        <Typography component="p">
-          In Development: Visit <a href="/sent_emails">/sent_emails</a> to see the email
-        </Typography>
-      </CardContent>
-    </Card>
-  </AuthLayout>
-)
+  render() {
+    const { classes } = this.props
 
-export default withStyles(styles)(ConfirmEmailPrompt)
+    return (
+      <AuthLayout>
+        <Card>
+          <CardContent>
+            <Typography variant="headline" className={classes.title}>
+              Registration Successful
+            </Typography>
+            <Typography component="p">
+              Please check your inbox for a confirmation email
+            </Typography>
+            <Typography component="p">
+              In Development: Visit <a href="/sent_emails">/sent_emails</a> to see the email
+            </Typography>
+          </CardContent>
+        </Card>
+      </AuthLayout>
+    )
+  }
+}
+
+export default ConfirmEmailPrompt

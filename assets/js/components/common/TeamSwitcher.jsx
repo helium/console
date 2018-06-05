@@ -19,6 +19,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import ArrowIcon from '@material-ui/icons/ArrowDropDown';
 import NewTeamIcon from '@material-ui/icons/Add';
 
+@connect(mapStateToProps, mapDispatchToProps)
 class TeamSwitcher extends Component {
   constructor(props) {
     super(props)
@@ -120,4 +121,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ fetchTeams, switchTeam }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TeamSwitcher);
+export default TeamSwitcher

@@ -34,6 +34,8 @@ const styles = theme => ({
   },
 });
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class Register extends Component {
   constructor(props) {
     super(props);
@@ -260,5 +262,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ register, hasResetCaptcha }, dispatch);
 }
 
-const styled = withStyles(styles)(Register)
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default Register

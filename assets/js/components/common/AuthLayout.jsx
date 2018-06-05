@@ -22,6 +22,8 @@ const styles = theme => ({
 
 });
 
+@withTheme
+@withStyles(styles)
 class AuthLayout extends Component {
   render() {
     const { classes, title } = this.props;
@@ -36,4 +38,4 @@ class AuthLayout extends Component {
   }
 }
 
-export default withTheme(withStyles(styles)(AuthLayout))
+export default AuthLayout

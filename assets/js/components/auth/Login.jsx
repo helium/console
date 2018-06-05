@@ -37,6 +37,8 @@ const styles = theme => ({
   }
 });
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -185,5 +187,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ checkCredentials, hasResetCaptcha, verify2fa }, dispatch);
 }
 
-const styled = withStyles(styles)(Login)
-export default connect(mapStateToProps, mapDispatchToProps)(styled)
+export default Login

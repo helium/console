@@ -35,6 +35,8 @@ const styles = theme => ({
   }
 });
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class NoTeamPrompt extends Component {
   constructor(props) {
     super(props)
@@ -116,5 +118,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createTeam, logOut }, dispatch);
 }
 
-const styled = withStyles(styles)(NoTeamPrompt)
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default NoTeamPrompt

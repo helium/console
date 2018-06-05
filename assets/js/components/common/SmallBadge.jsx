@@ -14,6 +14,7 @@ const styles = theme => ({
   }
 })
 
+@withStyles(styles)
 class SmallBadge extends Component {
   render() {
     return (
@@ -24,4 +25,4 @@ class SmallBadge extends Component {
   }
 }
 
-export default withStyles(styles)(SmallBadge)
+export default SmallBadge

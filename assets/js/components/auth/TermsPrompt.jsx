@@ -33,6 +33,7 @@ const styles = theme => ({
   },
 });
 
+@withStyles(styles)
 class TermsPrompt extends Component {
   constructor(props) {
     super(props);
@@ -93,5 +94,4 @@ class TermsPrompt extends Component {
   }
 }
 
-const styled = withStyles(styles)(TermsPrompt)
-export default styled
+export default TermsPrompt

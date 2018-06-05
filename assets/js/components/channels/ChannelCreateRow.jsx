@@ -38,6 +38,7 @@ const channelTypes = [
   { name: "HTTP", link: "/channels/new/http", img: "url('/images/http-channel.png')" },
 ]
 
+@withStyles(styles)
 class ChannelCreateRow extends Component {
   render() {
     const { channels, deleteChannel, classes } = this.props
@@ -61,5 +62,4 @@ class ChannelCreateRow extends Component {
   }
 }
 
-const styled = withStyles(styles)(ChannelCreateRow)
-export default styled
+export default ChannelCreateRow

@@ -24,6 +24,28 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    }
+  })
+}
+
+const query = gql`
+  query ChannelShowQuery ($id: ID!) {
+    channel(id: $id) {
+      ...ChannelFragment
+      groups {
+        name
+      }
+    }
+  }
+  ${CHANNEL_FRAGMENT}
+`
+
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(query, queryOptions)
 class ChannelShow extends Component {
   render() {
     const { deleteChannel, updateChannel } = this.props
@@ -129,26 +151,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    }
-  })
-}
-
-const query = gql`
-  query ChannelShowQuery ($id: ID!) {
-    channel(id: $id) {
-      ...ChannelFragment
-      groups {
-        name
-      }
-    }
-  }
-  ${CHANNEL_FRAGMENT}
-`
-
-const ChannelShowWithData = graphql(query, queryOptions)(ChannelShow)
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChannelShowWithData);
+export default ChannelShow

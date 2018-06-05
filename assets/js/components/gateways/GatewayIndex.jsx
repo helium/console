@@ -22,6 +22,32 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography';
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    }
+  })
+}
+
+const query = gql`
+  query PaginatedGatewaysQuery ($page: Int, $pageSize: Int) {
+    gateways(page: $page, pageSize: $pageSize) {
+      entries {
+        ...GatewayFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
+
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(query, queryOptions)
 class GatewayIndex extends Component {
   constructor(props) {
     super(props)
@@ -146,30 +172,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteGateway }, dispatch);
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    }
-  })
-}
-
-const query = gql`
-  query PaginatedGatewaysQuery ($page: Int, $pageSize: Int) {
-    gateways(page: $page, pageSize: $pageSize) {
-      entries {
-        ...GatewayFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-  ${GATEWAY_FRAGMENT}
-`
-
-const GatewayIndexWithData = graphql(query, queryOptions)(GatewayIndex)
-
-export default connect(mapStateToProps, mapDispatchToProps)(GatewayIndexWithData);
+export default GatewayIndex

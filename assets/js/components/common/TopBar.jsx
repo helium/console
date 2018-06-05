@@ -42,7 +42,7 @@ const roleText = (role) => {
   }
 }
 
-
+@connect(mapStateToProps, mapDispatchToProps)
 class TopBar extends Component {
   constructor(props) {
     super(props)
@@ -161,4 +161,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logOut, fetchUser }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopBar);
+export default TopBar

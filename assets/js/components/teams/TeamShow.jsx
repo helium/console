@@ -35,6 +35,8 @@ const styles = theme => ({
   },
 })
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class TeamShow extends Component {
   constructor(props) {
     super(props)
@@ -161,6 +163,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-// TODO convert to decorators
-const Styled = withStyles(styles)(TeamShow)
-export default connect(mapStateToProps, mapDispatchToProps)(Styled);
+export default TeamShow
