@@ -120,10 +120,12 @@ class GatewayIndex extends Component {
     const tabs = [{
       label: "List View",
       content: listView,
+      path: "/gateways",
     }, {
       label: "Map View",
       content: mapView,
-      noPadding: true
+      noPadding: true,
+      path: "/gateways/map",
     }]
 
     return(

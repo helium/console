@@ -156,7 +156,7 @@ class SearchBar extends Component {
   gotoSelectedResult() {
     const { selectedResult } = this.state
     this.clearResults()
-    this.props.history.replace(selectedResult.url)
+    this.props.history.push(selectedResult.url)
   }
 
   render() {
