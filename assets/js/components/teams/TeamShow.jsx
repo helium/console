@@ -12,15 +12,31 @@ import userCan from '../../util/abilities'
 import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import { withStyles } from '@material-ui/core/styles'
 
 // Icons
 import AddIcon from '@material-ui/icons/Add';
 
+const styles = theme => ({
+  paper: {
+    padding: theme.spacing.unit * 3,
+    paddingTop: theme.spacing.unit * 2,
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+})
+
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class TeamShow extends Component {
   constructor(props) {
     super(props)
@@ -67,10 +83,23 @@ class TeamShow extends Component {
       updateMembership
     } = this.props
 
+    const { classes } = this.props
+
     return (
       <DashboardLayout title="Team Access">
-        <Card>
-          <CardContent>
+        <Paper className={classes.paper}>
+          <header className={classes.header}>
+            <Typography variant="headline" component="h3">
+              Members
+            </Typography>
+
+            {userCan('create', 'membership') &&
+              <Button variant="raised" size="small" onClick={this.openNewUserModal}>
+                <AddIcon style={{marginRight: 4}} />
+                New User
+              </Button>
+            }
+          </header>
 
             <MembersTable
               memberships={memberships}
@@ -79,17 +108,7 @@ class TeamShow extends Component {
               deleteMembership={deleteMembership}
               openEditMembershipModal={this.openEditMembershipModal}
             />
-
-          </CardContent>
-          <CardActions>
-            {userCan('create', 'membership') &&
-              <Button variant="raised" size="small" onClick={this.openNewUserModal}>
-                <AddIcon style={{marginRight: 4}} />
-                New User
-              </Button>
-            }
-          </CardActions>
-        </Card>
+        </Paper>
 
         {
           userCan("view", "auditTrails") &&
@@ -144,4 +163,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TeamShow);
+export default TeamShow

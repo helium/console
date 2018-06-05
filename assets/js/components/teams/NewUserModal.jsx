@@ -34,6 +34,8 @@ const styles = theme => ({
   },
 })
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class NewUserModal extends Component {
   constructor(props) {
     super(props);
@@ -124,5 +126,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ inviteUser }, dispatch)
 }
 
-const styled = withStyles(styles)(NewUserModal)
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default NewUserModal

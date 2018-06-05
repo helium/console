@@ -34,6 +34,8 @@ const styles = theme => ({
   },
 });
 
+@withTheme
+@withStyles(styles)
 class DashboardLayout extends Component {
   render() {
     const { classes, title, tabs } = this.props;
@@ -54,4 +56,4 @@ class DashboardLayout extends Component {
   }
 }
 
-export default withTheme(withStyles(styles)(DashboardLayout))
+export default DashboardLayout

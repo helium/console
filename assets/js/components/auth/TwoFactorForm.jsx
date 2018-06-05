@@ -30,6 +30,7 @@ const styles = theme => ({
   }
 });
 
+@withStyles(styles)
 class TwoFactorForm extends Component {
   constructor(props) {
     super(props)
@@ -89,4 +90,4 @@ class TwoFactorForm extends Component {
   }
 }
 
-export default withStyles(styles)(TwoFactorForm)
+export default TwoFactorForm

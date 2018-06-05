@@ -20,6 +20,8 @@ const styles = theme => ({
 
 });
 
+@withTheme
+@withStyles(styles)
 class DocumentLayout extends Component {
   render() {
     const { classes, title } = this.props;
@@ -34,4 +36,4 @@ class DocumentLayout extends Component {
   }
 }
 
-export default withTheme(withStyles(styles)(DocumentLayout))
+export default DocumentLayout

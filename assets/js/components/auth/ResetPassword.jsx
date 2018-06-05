@@ -27,6 +27,8 @@ const styles = theme => ({
   }
 });
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class ResetPassword extends Component {
   constructor(props) {
     super(props);
@@ -115,5 +117,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ changePassword }, dispatch);
 }
 
-const styled = withStyles(styles)(ResetPassword)
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default ResetPassword

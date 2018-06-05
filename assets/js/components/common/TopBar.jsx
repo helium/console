@@ -20,7 +20,6 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { withStyles } from '@material-ui/core/styles'
 import Slide from '@material-ui/core/Slide'
 import IconButton from '@material-ui/core/IconButton'
 import SmallBadge from './SmallBadge'
@@ -43,7 +42,7 @@ const roleText = (role) => {
   }
 }
 
-
+@connect(mapStateToProps, mapDispatchToProps)
 class TopBar extends Component {
   constructor(props) {
     super(props)
@@ -162,4 +161,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logOut, fetchUser }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopBar);
+export default TopBar

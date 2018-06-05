@@ -11,6 +11,45 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
+class MembersTable extends Component {
+  render() {
+    const {
+      memberships, invitations, deleteInvitation, deleteMembership,
+      openEditMembershipModal
+    } = this.props
+
+    return(
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>User</TableCell>
+            <TableCell>Role</TableCell>
+            <TableCell>Joined</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {memberships.map(membership =>
+            <MembershipRow
+              key={membership.id}
+              membership={membership}
+              deleteMembership={() => deleteMembership(membership)}
+              openEditMembershipModal={openEditMembershipModal}
+            />
+          )}
+          {invitations.map(invitation =>
+            <InvitationRow
+              key={invitation.id}
+              invitation={invitation}
+              deleteInvitation={() => deleteInvitation(invitation)}
+            />
+          )}
+        </TableBody>
+      </Table>
+    )
+  }
+}
+
 const Role = (props) => {
   switch(props.role) {
     case 'admin':
@@ -81,47 +120,6 @@ const InvitationRow = (props) => {
       </TableCell>
     </TableRow>
   )
-}
-
-
-class MembersTable extends Component {
-
-  render() {
-    const {
-      memberships, invitations, deleteInvitation, deleteMembership,
-      openEditMembershipModal
-    } = this.props
-
-    return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>User</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Joined</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {memberships.map(membership =>
-            <MembershipRow
-              key={membership.id}
-              membership={membership}
-              deleteMembership={() => deleteMembership(membership)}
-              openEditMembershipModal={openEditMembershipModal}
-            />
-          )}
-          {invitations.map(invitation =>
-            <InvitationRow
-              key={invitation.id}
-              invitation={invitation}
-              deleteInvitation={() => deleteInvitation(invitation)}
-            />
-          )}
-        </TableBody>
-      </Table>
-    )
-  }
 }
 
 export default MembersTable

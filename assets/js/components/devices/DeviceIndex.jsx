@@ -19,6 +19,32 @@ import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    }
+  })
+}
+
+const query = gql`
+  query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
+    devices(page: $page, pageSize: $pageSize) {
+      entries {
+        ...DeviceFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${DEVICE_FRAGMENT}
+`
+
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(query, queryOptions)
 class DeviceIndex extends Component {
   constructor(props) {
     super(props)
@@ -116,30 +142,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteDevice }, dispatch);
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    }
-  })
-}
-
-const query = gql`
-  query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
-    devices(page: $page, pageSize: $pageSize) {
-      entries {
-        ...DeviceFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-  ${DEVICE_FRAGMENT}
-`
-
-const DeviceIndexWithData = graphql(query, queryOptions)(DeviceIndex)
-
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceIndexWithData);
+export default DeviceIndex

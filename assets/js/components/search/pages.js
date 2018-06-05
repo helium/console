@@ -26,6 +26,14 @@ const pages = [
     synonyms: ""
   },
   {
+    title: "Gateway Map",
+    description: "View a map of gateway locations",
+    url: "/gateways/map",
+    id: "/gateways/map",
+    category: "map",
+    synonyms: ""
+  },
+  {
     title: "Channels",
     description: "View and manage channels",
     url: "/channels",

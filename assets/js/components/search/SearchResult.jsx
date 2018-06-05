@@ -17,6 +17,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ReportsIcon from '@material-ui/icons/TrackChanges';
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import AccountCircle from '@material-ui/icons/AccountCircle'
+import MapIcon from '@material-ui/icons/MyLocation'
 
 const styles = theme => ({
   selected: {
@@ -75,6 +76,8 @@ const SearchResultIcon = (props) => {
       return <DashboardIcon style={{color: '#616161'}} />
     case "profile":
       return <AccountCircle style={{color: '#616161'}} />
+    case "map":
+      return <MapIcon style={{color: '#616161'}} />
     default:
       return <DevicesIcon style={{color: '#616161'}} />
   }

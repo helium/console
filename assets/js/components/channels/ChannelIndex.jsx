@@ -21,6 +21,36 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
+const queryOptions = {
+  options: props => {
+    const variables = {
+      page: 1,
+      pageSize: 10,
+    }
+    return {
+      fetchPolicy: 'network-only',
+      variables
+    }
+  }
+}
+
+const query = gql`
+  query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
+    channels(page: $page, pageSize: $pageSize) {
+      entries {
+        ...ChannelFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${CHANNEL_FRAGMENT}
+`
+
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(query, queryOptions)
 class ChannelIndex extends Component {
   constructor(props) {
     super(props)
@@ -129,34 +159,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteChannel }, dispatch);
 }
 
-const queryOptions = {
-  options: props => {
-    const variables = {
-      page: 1,
-      pageSize: 10,
-    }
-    return {
-      fetchPolicy: 'network-only',
-      variables
-    }
-  }
-}
-
-const query = gql`
-  query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
-    channels(page: $page, pageSize: $pageSize) {
-      entries {
-        ...ChannelFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-  ${CHANNEL_FRAGMENT}
-`
-
-const ChannelIndexWithData = graphql(query, queryOptions)(ChannelIndex)
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChannelIndexWithData);
+export default ChannelIndex

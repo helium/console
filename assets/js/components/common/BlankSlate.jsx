@@ -26,21 +26,25 @@ const styles = theme => ({
   },
 })
 
-const BlankSlate = (props) => {
-  const { classes } = props
 
-  return (
-    <div className={classes.main}>
-      <Icon className={classes.icon} />
-      <Typography variant="display1" className={classes.title}>
-        {props.title}
-      </Typography>
+@withStyles(styles)
+class BlankSlate extends Component {
+  render() {
+    const { classes } = props
 
-      <Typography component="p" className={classes.subheading}>
-        {props.subheading}
-      </Typography>
-    </div>
-  )
+    return (
+      <div className={classes.main}>
+        <Icon className={classes.icon} />
+        <Typography variant="display1" className={classes.title}>
+          {props.title}
+        </Typography>
+
+        <Typography component="p" className={classes.subheading}>
+          {props.subheading}
+        </Typography>
+      </div>
+    )
+  }
 }
 
-export default withStyles(styles)(BlankSlate)
+export default BlankSlate

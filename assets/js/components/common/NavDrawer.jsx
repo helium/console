@@ -100,6 +100,7 @@ const OrganizationalNavItems = (props) => (
   </List>
 )
 
+@withStyles(styles)
 class NavDrawer extends Component {
   render() {
     const { classes } = this.props
@@ -127,4 +128,4 @@ class NavDrawer extends Component {
 }
 
 
-export default withStyles(styles)(NavDrawer)
+export default NavDrawer

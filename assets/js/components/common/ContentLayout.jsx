@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
+import findIndex from 'lodash/findIndex'
 
 // MUI
 import { withStyles } from '@material-ui/core/styles';
@@ -30,35 +32,36 @@ const TabContainer = (props) => {
   )
 }
 
+@withRouter
+@withStyles(styles)
 class ContentLayout extends Component {
 
   constructor(props) {
     super(props)
 
-    this.state = {
-      currentTab: 0
-    }
-
     this.handleChangeTab = this.handleChangeTab.bind(this)
   }
 
-  handleChangeTab(event, value) {
-    this.setState({currentTab: value})
+  handleChangeTab(event, tabIndex) {
+    const { tabs } = this.props
+    const selectedTab = tabs[tabIndex]
+    this.props.history.push(selectedTab.path)
   }
 
   renderTabs(tabs, classes) {
-    const { currentTab } = this.state
+    const currentPath = this.props.match.path
+    const currentTabIndex = findIndex(tabs, tab => tab.path === currentPath)
 
     return (
       <div>
         <AppBar position="static" elevation={0}>
-          <Tabs value={currentTab} onChange={this.handleChangeTab}>
+          <Tabs value={currentTabIndex} onChange={this.handleChangeTab}>
             {tabs.map((tab, i) => <Tab key={i} label={tab.label} />)}
           </Tabs>
         </AppBar>
 
         {tabs.map((tab, i) => {
-          if (currentTab === i) {
+          if (currentTabIndex === i) {
             return <TabContainer key={i} content={tab.content} className={tab.noPadding ? classes.contentNoPad : classes.content} />
           }
         })}
@@ -94,4 +97,4 @@ class ContentLayout extends Component {
   }
 }
 
-export default withStyles(styles)(ContentLayout)
+export default ContentLayout

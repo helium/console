@@ -46,6 +46,9 @@ const styles = theme => ({
   }
 })
 
+@withRouter
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class TwoFactorPrompt extends Component {
   constructor(props) {
     super(props);
@@ -204,5 +207,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ enable2fa, getNew2fa, clear2faBackupCodes, skip2fa }, dispatch);
 }
 
-const styled = withStyles(styles)(TwoFactorPrompt)
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(styled));
+export default TwoFactorPrompt

@@ -11,6 +11,7 @@ import { receivedInvitation, deletedInvitation, updatedInvitation } from '../act
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
+@connect(mapStateToProps, mapDispatchToProps)
 class SocketHandler extends Component {
   constructor(props) {
     super(props)
@@ -143,4 +144,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SocketHandler);
+export default SocketHandler

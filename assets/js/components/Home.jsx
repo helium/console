@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+@connect(mapStateToProps, {})
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -42,4 +43,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {})(Home);
+export default Home

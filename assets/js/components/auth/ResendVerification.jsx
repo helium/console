@@ -29,6 +29,8 @@ const styles = theme => ({
   }
 });
 
+@withStyles(styles)
+@connect(mapStateToProps, mapDispatchToProps)
 class ResendVerification extends Component {
   constructor(props) {
     super(props);
@@ -127,5 +129,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ resendVerification, hasResetCaptcha }, dispatch);
 }
 
-const styled = withStyles(styles)(ResendVerification)
-export default connect(mapStateToProps, mapDispatchToProps)(styled);
+export default ResendVerification

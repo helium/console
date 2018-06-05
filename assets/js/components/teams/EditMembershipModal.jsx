@@ -29,6 +29,7 @@ const styles = theme => ({
   },
 })
 
+@withStyles(styles)
 class EditMembershipModal extends Component {
   constructor(props) {
     super(props);
@@ -110,4 +111,4 @@ class EditMembershipModal extends Component {
   }
 }
 
-export default withStyles(styles)(EditMembershipModal)
+export default EditMembershipModal
