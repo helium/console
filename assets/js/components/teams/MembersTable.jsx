@@ -10,6 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
+import SmallChip from '../common/SmallChip'
 
 class MembersTable extends Component {
   render() {
@@ -25,6 +26,7 @@ class MembersTable extends Component {
             <TableCell>User</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Joined</TableCell>
+            <TableCell>Two Factor Auth</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -78,6 +80,9 @@ const MembershipRow = (props) => {
       </TableCell>
       <TableCell> {moment(membership.joined_at).format('LL')} </TableCell>
       <TableCell>
+        <SmallChip label="Enabled" />
+      </TableCell>
+      <TableCell>
         {userCan('update', 'membership', membership) &&
           <Button
             onClick={() => openEditMembershipModal(membership)}
@@ -113,6 +118,7 @@ const InvitationRow = (props) => {
       <TableCell>
         <span>Invitation Sent</span>
       </TableCell>
+      <TableCell> </TableCell>
       <TableCell>
         <Button onClick={deleteInvitation} variant="raised" color="secondary" size="small">
           Remove
