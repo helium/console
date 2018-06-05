@@ -26,7 +26,6 @@ class SearchBar extends Component {
       selectedResult: null
     }
 
-    this.container = null
     this.searchBarInput = React.createRef()
     this.handleUpdateQuery = this.handleUpdateQuery.bind(this)
     this.handleKeydown = this.handleKeydown.bind(this)
@@ -34,15 +33,21 @@ class SearchBar extends Component {
     this.nextResult = this.nextResult.bind(this)
     this.previousResult = this.previousResult.bind(this)
     this.clearResults = this.clearResults.bind(this)
-    this.gotoSelecetedResult = this.gotoSelectedResult.bind(this)
+    this.gotoResult = this.gotoResult.bind(this)
+    this.handleFocus = this.handleFocus.bind(this)
+    this.handleBlur = this.handleBlur.bind(this)
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeydown)
+    this.searchBarInput.current.addEventListener('focus', this.handleFocus)
+    this.searchBarInput.current.addEventListener('blur', this.handleBlur)
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeydown)
+    this.searchBarInput.current.removeEventListener('focus', this.handleFocus)
+    this.searchBarInput.current.removeEventListener('blur', this.handleBlur)
   }
 
   handleUpdateQuery(e) {
@@ -89,6 +94,24 @@ class SearchBar extends Component {
     })
   }
 
+  handleFocus(e) {
+    const { query } = this.state
+
+    this.setState({
+      open: query.length > 0
+    })
+  }
+
+  handleBlur(e) {
+    // if user is clicking on a search result, don't close the results
+    const results = document.getElementById("searchResults")
+    if (results && results.contains(e.relatedTarget)) return
+
+    this.setState({
+      open: false
+    })
+  }
+
   handleKeydown(event) {
     if (this.state.open) {
       if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
@@ -103,7 +126,7 @@ class SearchBar extends Component {
 
       if (event.key === 'Enter') {
         event.preventDefault()
-        this.gotoSelectedResult()
+        this.gotoResult(this.state.selectedResult)
       }
 
       if (event.key === 'Escape') {
@@ -153,10 +176,9 @@ class SearchBar extends Component {
     })
   }
 
-  gotoSelectedResult() {
-    const { selectedResult } = this.state
+  gotoResult(result) {
     this.clearResults()
-    this.props.history.push(selectedResult.url)
+    this.props.history.push(result.url)
   }
 
   render() {
@@ -178,6 +200,7 @@ class SearchBar extends Component {
           searchResults={searchResults}
           pageResults={pageResults}
           selectedResult={selectedResult}
+          gotoResult={this.gotoResult}
         /> }
       </div>
     )

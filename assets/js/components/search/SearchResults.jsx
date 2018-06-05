@@ -9,8 +9,13 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography'
 
 class SearchResults extends Component {
+  constructor(props) {
+    super(props)
+    this.container = null
+  }
+
   render() {
-    const { searchResults, selectedResult, pageResults } = this.props
+    const { searchResults, selectedResult, pageResults, gotoResult } = this.props
     const pageResultsLength = pageResults ? pageResults.length : 0
     const searchResultsLength = searchResults ? searchResults.length : 0
 
@@ -24,6 +29,7 @@ class SearchResults extends Component {
                   title="PAGES"
                   results={pageResults}
                   selectedResult={selectedResult}
+                  gotoResult={gotoResult}
                 />
               }
 
@@ -32,6 +38,7 @@ class SearchResults extends Component {
                   title="SEARCH RESULTS"
                   results={searchResults}
                   selectedResult={selectedResult}
+                  gotoResult={gotoResult}
                 />
               }
             </List>

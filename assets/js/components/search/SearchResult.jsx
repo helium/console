@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 
 // MUI
 import MenuItem from '@material-ui/core/MenuItem';
@@ -29,14 +28,13 @@ const styles = theme => ({
 class SearchResult extends Component {
 
   render() {
-    const { selected, result, classes } = this.props
+    const { selected, result, classes, gotoResult } = this.props
 
     return (
       <MenuItem
         button
-        component={Link}
+        onClick={() => gotoResult(result)}
         selected={selected}
-        to={result.url}
         classes={{selected: classes.selected}}
       >
         <ListItemIcon>
