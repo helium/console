@@ -30,17 +30,17 @@ const styles = theme => ({
 @withStyles(styles)
 class BlankSlate extends Component {
   render() {
-    const { classes } = props
+    const { classes, title, subheading } = this.props
 
     return (
       <div className={classes.main}>
         <Icon className={classes.icon} />
         <Typography variant="display1" className={classes.title}>
-          {props.title}
+          {title}
         </Typography>
 
         <Typography component="p" className={classes.subheading}>
-          {props.subheading}
+          {subheading}
         </Typography>
       </div>
     )

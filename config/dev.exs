@@ -73,3 +73,4 @@ config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
 
 config :console, recaptcha_secret: "6Lew200UAAAAAA-Z2uxdyuC2RrdCjCpuncsXzCh3"
+config :console, google_maps_secret: "AIzaSyBDifcwr-8OoEj024h_rN6IvXOWIyGXwEE"

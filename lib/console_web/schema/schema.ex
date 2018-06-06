@@ -27,6 +27,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :mac, :string
+    field :location, :string
     field :longitude, :decimal
     field :latitude, :decimal
   end
