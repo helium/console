@@ -33,8 +33,8 @@ defmodule Console.Gateways.Gateway do
 
   defp putGeocodingLocation(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: changes} ->
-        put_change(changeset, :location, Helpers.geocodeLatLng(changes.latitude, changes.longitude))
+      %Ecto.Changeset{valid?: true, changes: %{ latitude: lat, longitude: lng}} ->
+        put_change(changeset, :location, Helpers.geocodeLatLng(lat, lng))
       _ -> changeset
     end
   end
