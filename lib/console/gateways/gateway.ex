@@ -12,6 +12,7 @@ defmodule Console.Gateways.Gateway do
     field :longitude, :decimal
     field :mac, :string
     field :name, :string
+    field :location, :string
     field :public_key, :binary
 
     belongs_to :team, Team
@@ -23,7 +24,7 @@ defmodule Console.Gateways.Gateway do
   @doc false
   def changeset(gateway, attrs) do
     gateway
-    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id])
+    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :location])
     |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id])
     |> unique_constraint(:mac)
   end

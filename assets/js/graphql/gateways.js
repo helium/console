@@ -5,6 +5,7 @@ export const GATEWAY_FRAGMENT = gql`
     name,
     mac,
     id,
+    location,
     latitude,
     longitude
   }
