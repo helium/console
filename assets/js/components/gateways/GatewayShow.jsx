@@ -10,6 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import { parseLocation } from '../../util/geolocation'
 import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
 // GraphQL
@@ -80,6 +81,9 @@ class GatewayShow extends Component {
               </Typography>
               <Typography component="p">
                 MAC: {gateway.mac}
+              </Typography>
+              <Typography component="p">
+                Location: {parseLocation(gateway.location)}
               </Typography>
               <Typography component="p">
                 Lat: {gateway.latitude}
