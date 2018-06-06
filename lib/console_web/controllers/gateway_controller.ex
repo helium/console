@@ -55,7 +55,9 @@ defmodule ConsoleWeb.GatewayController do
       broadcast(gateway, "delete")
       AuditTrails.create_audit_trail("gateway", "delete", current_user, current_team, "gateways", gateway)
 
-      send_resp(conn, :no_content, "")
+      conn
+      |> put_resp_header("message", "#{gateway.name} deleted successfully")
+      |> send_resp(:no_content, "")
     end
   end
 

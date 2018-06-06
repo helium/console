@@ -78,6 +78,10 @@ const SearchResultIcon = (props) => {
       return <AccountCircle style={{color: '#616161'}} />
     case "map":
       return <MapIcon style={{color: '#616161'}} />
+    case "billing":
+      return <BillingIcon style={{color: '#616161'}} />
+    case "reports":
+      return <ReportsIcon style={{color: '#616161'}} />
     default:
       return <DevicesIcon style={{color: '#616161'}} />
   }

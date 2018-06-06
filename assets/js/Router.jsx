@@ -33,6 +33,8 @@ import ChannelNew from './components/channels/ChannelNew'
 import TeamShow from './components/teams/TeamShow'
 import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
+import Billing from './components/billing/Billing'
+import Reports from './components/reports/Reports'
 
 
 class Router extends React.Component {
@@ -65,6 +67,8 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/teams/access" component={TeamShow} />
                   <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                  <PrivateRoute exact path="/billing" component={Billing} />
+                  <PrivateRoute exact path="/reports" component={Reports} />
                 </Switch>
               </ConnectedRouter>
             </SocketHandler>
