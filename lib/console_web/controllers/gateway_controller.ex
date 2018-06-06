@@ -18,9 +18,7 @@ defmodule ConsoleWeb.GatewayController do
   def create(conn, %{"gateway" => gateway_params}) do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
-    location = geocodeLatLng(gateway_params)
-
-    gateway_params = Map.merge(gateway_params, %{"team_id" => current_team.id, "location" => location})
+    gateway_params = Map.merge(gateway_params, %{"team_id" => current_team.id})
     with {:ok, %Gateway{} = gateway} <- Gateways.create_gateway(gateway_params) do
       broadcast(gateway, "new")
       AuditTrails.create_audit_trail("gateway", "create", current_user, current_team, "gateways", gateway)
@@ -67,26 +65,5 @@ defmodule ConsoleWeb.GatewayController do
     ConsoleWeb.Endpoint.broadcast("gateway:#{gateway.team.id}", action, body)
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, gateway, gateway_added: "#{gateway.team.id}/gateway_added")
-  end
-
-  defp geocodeLatLng(%{"latitude" => lat, "longitude" => lng}) do
-    case HTTPoison.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{Application.get_env(:console, :google_maps_secret)}") do
-      {:ok, response} ->
-        case response.status_code do
-          200 ->
-            responseBody = Poison.decode!(response.body)
-
-            case List.first(responseBody["results"]) do
-              %{"address_components" => address_components} ->
-                city = Enum.find(address_components, fn c -> c["types"] == ["locality", "political"] end)["long_name"] || "Unknown"
-                state = Enum.find(address_components, fn c -> c["types"] == ["administrative_area_level_1", "political"] end)["long_name"] || "Unknown"
-                country = Enum.find(address_components, fn c -> c["types"] == ["country", "political"] end)["short_name"] || "Unknown"
-                "#{city}, #{state}, #{country}"
-              _ -> "unknown_location"
-            end
-          _ -> "api_call_failed"
-        end
-      _ -> "api_call_failed"
-    end
   end
 end

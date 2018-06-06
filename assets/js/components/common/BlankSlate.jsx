@@ -29,10 +29,6 @@ const styles = theme => ({
 
 @withStyles(styles)
 class BlankSlate extends Component {
-  constructor(props) {
-    super(props)
-  }
-  
   render() {
     const { classes, title, subheading } = this.props
 

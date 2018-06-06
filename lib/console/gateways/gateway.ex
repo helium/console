@@ -4,6 +4,7 @@ defmodule Console.Gateways.Gateway do
 
   alias Console.Teams.Team
   alias Console.Events.Event
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -24,8 +25,17 @@ defmodule Console.Gateways.Gateway do
   @doc false
   def changeset(gateway, attrs) do
     gateway
-    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :location])
+    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id])
     |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id])
+    |> putGeocodingLocation()
     |> unique_constraint(:mac)
+  end
+
+  defp putGeocodingLocation(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: changes} ->
+        put_change(changeset, :location, Helpers.geocodeLatLng(changes.latitude, changes.longitude))
+      _ -> changeset
+    end
   end
 end

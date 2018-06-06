@@ -12,4 +12,25 @@ defmodule Console.Helpers do
       "Day" -> 24 * 60 * 60 * num
     end
   end
+
+  def geocodeLatLng(lat, lng) do
+    case HTTPoison.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{Application.get_env(:console, :google_maps_secret)}") do
+      {:ok, response} ->
+        case response.status_code do
+          200 ->
+            responseBody = Poison.decode!(response.body)
+
+            case List.first(responseBody["results"]) do
+              %{"address_components" => address_components} ->
+                city = Enum.find(address_components, fn c -> c["types"] == ["locality", "political"] end)["long_name"] || "Unknown"
+                state = Enum.find(address_components, fn c -> c["types"] == ["administrative_area_level_1", "political"] end)["long_name"] || "Unknown"
+                country = Enum.find(address_components, fn c -> c["types"] == ["country", "political"] end)["short_name"] || "Unknown"
+                "#{city}, #{state}, #{country}"
+              _ -> "unknown_location"
+            end
+          _ -> "api_call_failed"
+        end
+      _ -> "api_call_failed"
+    end
+  end
 end
