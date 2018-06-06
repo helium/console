@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import mapboxgl from 'mapbox-gl'
+import { parseLocation } from '../../util/geolocation'
 
 @connect(null, mapDispatchToProps)
 class Mapbox extends Component {
@@ -67,7 +68,7 @@ class Mapbox extends Component {
       features.push({
         "type": "Feature",
         "properties": {
-          "description": `<div><p class="blue">${gateway.name}</p><p>${this.parseLocation(gateway.location)}</p></div>`,
+          "description": `<div><p class="blue">${gateway.name}</p><p>${parseLocation(gateway.location)}</p></div>`,
           "id": gateway.id
         },
         "geometry": {
@@ -162,14 +163,6 @@ class Mapbox extends Component {
         const id = e.features[0].properties.id
         this.props.push(`/gateways/${id}`)
       })
-    }
-  }
-
-  parseLocation(location) {
-    if (location == "unknown_location" || location == "api_call_failed") {
-      return "Location Unavailable"
-    } else {
-      return location
     }
   }
 

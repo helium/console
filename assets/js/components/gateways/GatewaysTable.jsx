@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import random from 'lodash/random'
 import sample from 'lodash/sample'
 import userCan from '../../util/abilities'
+import { parseLocation } from '../../util/geolocation'
 
 // MUI
 import Table from '@material-ui/core/Table';
@@ -12,15 +13,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooterPagination from '../common/TableFooterPagination'
 import Button from '@material-ui/core/Button';
-
-const randomCity = () => (
-  sample([
-    "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX",
-    "Phoenix, AZ", "Philadelphia, PA", "San Antonio, TX", "San Diego, CA",
-    "Dallas, TX", "San Jose, CA", "Austin, TX", "Jacksonville, FL",
-    "San Francisco, CA"
-  ])
-)
 
 class GatewaysTable extends Component {
 
@@ -52,7 +44,7 @@ class GatewaysTable extends Component {
                 </TableCell>
 
                 <TableCell>
-                  {randomCity()}
+                  {parseLocation(gateway.location)}
                 </TableCell>
 
                 <TableCell>
