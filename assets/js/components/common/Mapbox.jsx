@@ -19,12 +19,16 @@ class Mapbox extends Component {
     this.setMapDefaults()
 
     this.map.on('load', () => {
-      this.addGatewaysToMap()
-      this.addPopupsToMap()
-
       if (this.props.view === "index") {
         this.map.scrollZoom.enable()
       }
+
+      this.addPopupsToMap()
+
+      Promise.all(this.props.gateways.map(gateway => fetch(this.generateGeocodingUrl(gateway))))
+      .then(responses => Promise.all(responses.map(response => response.json())))
+      .then(data => data.map(location => location.results[0] && location.results[0].formatted_address))
+      .then(locations => this.addGatewaysToMap(locations))
     })
   }
 
@@ -33,6 +37,10 @@ class Mapbox extends Component {
       this.removeGatewaysFromMap()
       this.addGatewaysToMap()
     }
+  }
+
+  generateGeocodingUrl(gateway) {
+    return `https://maps.googleapis.com/maps/api/geocode/json?latlng=${gateway.latitude},${gateway.longitude}&key=AIzaSyBDifcwr-8OoEj024h_rN6IvXOWIyGXwEE`
   }
 
   setMapDefaults() {
@@ -60,14 +68,15 @@ class Mapbox extends Component {
     })
   }
 
-  addGatewaysToMap() {
+  addGatewaysToMap(locations) {
     let features = []
 
-    this.props.gateways.forEach(gateway => {
+    this.props.gateways.forEach((gateway, index) => {
+      const location = locations[index] || `${gateway.longitude}, ${gateway.latitude}`
       features.push({
         "type": "Feature",
         "properties": {
-          "description": `<div><p class="blue">${gateway.name}</p><p>${gateway.longitude}, ${gateway.latitude}</p></div>`,
+          "description": `<div><p class="blue">${gateway.name}</p><p>${location}</p></div>`,
           "id": gateway.id
         },
         "geometry": {
