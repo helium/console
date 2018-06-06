@@ -65,11 +65,11 @@ export const updateDevice = (id, params) => {
   }
 }
 
-export const deleteDevice = (id) => {
+export const deleteDevice = (id, redirect = false) => {
   return (dispatch) => {
     rest.destroy(`/api/devices/${id}`)
       .then(response => {
-        dispatch(push('/devices'))
+        if (redirect) dispatch(push('/devices'))
       })
   }
 }

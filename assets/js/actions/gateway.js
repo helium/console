@@ -55,11 +55,11 @@ export const createGateway = (params) => {
   }
 }
 
-export const deleteGateway = (id) => {
+export const deleteGateway = (id, redirect = false) => {
   return (dispatch) => {
     rest.destroy(`/api/gateways/${id}`)
       .then(response => {
-        dispatch(push('/gateways'))
+        if (redirect) dispatch(push('/gateways'))
       })
   }
 }

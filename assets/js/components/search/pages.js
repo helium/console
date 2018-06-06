@@ -1,4 +1,5 @@
 import Fuse from "fuse.js"
+import take from 'lodash/take'
 
 const pages = [
   {
@@ -97,6 +98,22 @@ const pages = [
     category: "profile",
     synonyms: "account"
   },
+  {
+    title: "Billing",
+    description: "Set up and manage billing",
+    url: "/billing",
+    id: "/billing",
+    category: "billing",
+    synonyms: ""
+  },
+  {
+    title: "Reports",
+    description: "View and export enterprise reports",
+    url: "/reports",
+    id: "/reports",
+    category: "reports",
+    synonyms: ""
+  },
 ]
 
 const fuseOpts = {
@@ -114,6 +131,6 @@ const fuseOpts = {
 
 const fuse = new Fuse(pages, fuseOpts)
 
-const searchPages = (query) => fuse.search(query)
+const searchPages = (query) => take(fuse.search(query), 5)
 
 export default searchPages

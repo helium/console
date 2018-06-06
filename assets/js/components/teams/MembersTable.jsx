@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
+import random from 'lodash/random'
 import userCan from '../../util/abilities'
 
 // MUI
@@ -26,8 +27,9 @@ class MembersTable extends Component {
             <TableCell>User</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Joined</TableCell>
-            <TableCell>Two Factor Auth</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>Last Login</TableCell>
+            <TableCell>Two Factor</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,27 +77,39 @@ const MembershipRow = (props) => {
       <TableCell>
         {membership.email}
       </TableCell>
+
       <TableCell>
         <Role role={membership.role} />
       </TableCell>
-      <TableCell> {moment(membership.joined_at).format('LL')} </TableCell>
+
+      <TableCell>
+        {moment(membership.joined_at).format('LL')}
+      </TableCell>
+
+      <TableCell>
+        {moment([2018, random(0, 4), random(1, 28)]).fromNow()}
+      </TableCell>
+
       <TableCell>
         <SmallChip label="Enabled" />
       </TableCell>
-      <TableCell>
+
+      <TableCell numeric>
         {userCan('update', 'membership', membership) &&
           <Button
             onClick={() => openEditMembershipModal(membership)}
-            variant="raised"
             size="small"
-            style={{marginRight: 16}}
           >
             Edit
           </Button>
         }
 
         {userCan('delete', 'membership', membership) &&
-          <Button onClick={deleteMembership} variant="raised" color="secondary" size="small">
+          <Button
+            color="secondary"
+            onClick={deleteMembership}
+            size="small"
+          >
             Remove
           </Button>
         }
@@ -119,8 +133,12 @@ const InvitationRow = (props) => {
         <span>Invitation Sent</span>
       </TableCell>
       <TableCell> </TableCell>
-      <TableCell>
-        <Button onClick={deleteInvitation} variant="raised" color="secondary" size="small">
+      <TableCell numeric>
+        <Button
+          onClick={deleteInvitation}
+          color="secondary"
+          size="small"
+        >
           Remove
         </Button>
       </TableCell>

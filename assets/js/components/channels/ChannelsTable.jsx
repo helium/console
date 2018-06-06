@@ -20,7 +20,7 @@ class ChannelsTable extends Component {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Type</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -31,13 +31,22 @@ class ChannelsTable extends Component {
                   <Link to={`/channels/${channel.id}`}>{channel.name}</Link>
                 </TableCell>
                 <TableCell>{channel.type_name}</TableCell>
-                <TableCell>
-                  <Button color="primary" component={Link} to={`/channels/${channel.id}`}>
+                <TableCell numeric>
+                  <Button
+                    color="primary"
+                    component={Link}
+                    to={`/channels/${channel.id}`}
+                    size="small"
+                  >
                     View
                   </Button>
 
                   {userCan('delete', 'channel', channel) &&
-                    <Button color="secondary" onClick={() => deleteChannel(channel)}>
+                    <Button
+                      color="secondary"
+                      onClick={() => deleteChannel(channel)}
+                      size="small"
+                    >
                       Delete
                     </Button>
                   }

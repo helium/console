@@ -94,8 +94,10 @@ class TeamShow extends Component {
             </Typography>
 
             {userCan('create', 'membership') &&
-              <Button variant="raised" size="small" onClick={this.openNewUserModal}>
-                <AddIcon style={{marginRight: 4}} />
+              <Button
+                color="primary"
+                onClick={this.openNewUserModal}
+              >
                 New User
               </Button>
             }

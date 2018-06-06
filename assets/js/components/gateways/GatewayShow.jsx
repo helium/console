@@ -103,7 +103,7 @@ class GatewayShow extends Component {
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteGateway(gateway.id)}
+                onClick={() => deleteGateway(gateway.id, true)}
               >
                 Delete Gateway
               </Button>
