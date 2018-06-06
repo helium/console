@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import random from 'lodash/random'
-import sample from 'lodash/sample'
-import userCan from '../../util/abilities'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Table from '@material-ui/core/Table';
@@ -10,36 +10,22 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableFooterPagination from '../common/TableFooterPagination'
+import TableFooterPagination from './TableFooterPagination'
 import Button from '@material-ui/core/Button';
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    }
+  })
+}
 
-const randomCity = () => (
-  sample([
-    "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX",
-    "Phoenix, AZ", "Philadelphia, PA", "San Antonio, TX", "San Diego, CA",
-    "Dallas, TX", "San Jose, CA", "Austin, TX", "Jacksonville, FL",
-    "San Francisco, CA"
-  ])
-)
+class PaginatedTable extends Component {
 
-class DevicesTable extends Component {
 
   render() {
-    const { devices, deleteDevice, totalEntries, page, pageSize } = this.props
-
-    const columns = [
-      {
-        Header: 'Name',
-        accessor: 'name',
-        Cell: props => <Link to={`/devices/${props.row.id}`}>{device.name}</Link>
-      },
-      {
-        Header: 'MAC',
-        accessor: 'mac'
-      },
-    ]
-
     return(
       <Table>
         <TableHead>
@@ -57,6 +43,7 @@ class DevicesTable extends Component {
             return (
               <TableRow key={device.id}>
                 <TableCell>
+                  <Link to={`/devices/${device.id}`}>{device.name}</Link>
                 </TableCell>
 
                 <TableCell>
@@ -111,4 +98,4 @@ class DevicesTable extends Component {
   }
 }
 
-export default DevicesTable
+export default PaginatedTable
