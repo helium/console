@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import find from 'lodash/find'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -33,7 +34,7 @@ const variables = {
 class PaginatedTable extends Component {
 
   render() {
-    const { query } = this.props
+    const { query, columns } = this.props
 
     return(
       <Query query={query} variables={variables}>
@@ -43,6 +44,7 @@ class PaginatedTable extends Component {
             error={error}
             data={data}
             fetchMore={fetchMore}
+            columns={columns}
           />
         )}
       </Query>
@@ -50,6 +52,7 @@ class PaginatedTable extends Component {
   }
 }
 
+// TODO container?
 class QueryResults extends Component {
   constructor(props) {
     super(props)
@@ -61,29 +64,41 @@ class QueryResults extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
-    this.refetchPaginatedDevices = this.refetchPaginatedDevices.bind(this)
+    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
     this.handleSubscriptionDeviceAdded = this.handleSubscriptionDeviceAdded.bind(this)
+  }
+
+  componentDidMount() {
+    // const { subscribeToMore } = this.props.data
+    //
+    // subscribeToMore({
+    //   document: DEVICE_SUBSCRIPTION,
+    //   updateQuery: (prev, { subscriptionData }) => {
+    //     if (!subscriptionData.data) return prev
+    //     this.handleSubscriptionDeviceAdded()
+    //   }
+    // })
   }
 
   handleChangeRowsPerPage(pageSize) {
     this.setState({ pageSize, page: 1 })
 
-    this.refetchPaginatedDevices(1, pageSize)
+    this.refetchPaginatedEntries(1, pageSize)
   }
 
   handleChangePage(page) {
     this.setState({ page })
 
     const { pageSize } = this.state
-    this.refetchPaginatedDevices(page, pageSize)
+    this.refetchPaginatedEntries(page, pageSize)
   }
 
   handleSubscriptionDeviceAdded() {
     const { page, pageSize } = this.state
-    this.refetchPaginatedDevices(page, pageSize)
+    this.refetchPaginatedEntries(page, pageSize)
   }
 
-  refetchPaginatedDevices(page, pageSize) {
+  refetchPaginatedEntries(page, pageSize) {
     const { fetchMore } = this.props
     fetchMore({
       variables: { page, pageSize },
@@ -92,14 +107,17 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data } = this.props
+    const { loading, error, data, columns } = this.props
 
     if (loading) return null;
     if (error) return `Error!: ${error}`;
 
+    const results = find(data, d => d.entries !== undefined)
+
     return (
       <ResultsTable
-        results={data.devices}
+        columns={columns}
+        results={results}
         handleChangePage={this.handleChangePage}
         handleChangeRowsPerPage={this.handleChangeRowsPerPage}
       />
@@ -107,78 +125,63 @@ class QueryResults extends Component {
   }
 }
 
+// TODO PaginatedTableBody?
 const ResultsTable = (props) => {
-  const { entries, pageNumber, pageSize, totalEntries, totalPages } = props.results
-  const {handleChangePage, handleChangeRowsPerPage} = props
+  const { handleChangePage, handleChangeRowsPerPage, columns } = props
+  const { pageNumber, pageSize, totalEntries, totalPages } = props.results
+  const rows = props.results.entries
 
   return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>MAC</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Cost</TableCell>
-              <TableCell>Bid</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {entries.map(device => {
-              return (
-                <TableRow key={device.id}>
-                  <TableCell>
-                    <Link to={`/devices/${device.id}`}>{device.name}</Link>
-                  </TableCell>
+    <Table>
+      <TableHead>
+        <TableRow>
+          {columns.map((column, i) =>
+            <TableCell key={`header-${i}`}>{column.Header}</TableCell>
+          )}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map(row =>
+          <PaginatedRow key={row.id} row={row} columns={columns} />
+        )}
+      </TableBody>
+      <TableFooterPagination
+        totalEntries={totalEntries}
+        page={pageNumber}
+        pageSize={pageSize}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </Table>
+  )
+}
 
-                  <TableCell>
-                    {device.mac}
-                  </TableCell>
+const PaginatedRow = (props) => {
+  const { row, columns } = props
+  return (
+    <TableRow>
+      {columns.map((column, i) =>
+        <PaginatedCell key={`${row.id}-${i}`} row={row} column={column} />
+      )}
+    </TableRow>
+  )
+}
 
-                  <TableCell>
-                    {randomCity()}
-                  </TableCell>
+const PaginatedCell = (props) => {
+  const { row, column } = props
+  const { Cell } = column
+  const value = row[column.accessor]
 
-                  <TableCell>
-                    {random(0, 1000).toLocaleString()} HLM
-                  </TableCell>
+  if (Cell) return (
+    <TableCell>
+      <Cell row={row} value={value} />
+    </TableCell>
+  )
 
-                  <TableCell>
-                    {random(0.01, 5.0).toFixed(2)} HLM
-                  </TableCell>
-
-                  <TableCell numeric>
-                    <Button
-                      color="primary"
-                      component={Link}
-                      to={`/devices/${device.id}`}
-                      size="small"
-                    >
-                      View
-                    </Button>
-
-                    {userCan('delete', 'device', device) &&
-                      <Button
-                        color="secondary"
-                        onClick={() => deleteDevice(device)}
-                        size="small"
-                      >
-                        Delete
-                      </Button>
-                    }
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooterPagination
-            totalEntries={totalEntries}
-            page={pageNumber}
-            pageSize={pageSize}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Table>
+  return (
+    <TableCell>
+      {value}
+    </TableCell>
   )
 }
 
