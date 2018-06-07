@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import find from 'lodash/find'
+import merge from 'lodash/merge'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -11,22 +12,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooterPagination from './TableFooterPagination'
-import Button from '@material-ui/core/Button';
 
-import { Link } from 'react-router-dom'
-const randomCity = () => (
-  sample([
-    "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX",
-    "Phoenix, AZ", "Philadelphia, PA", "San Antonio, TX", "San Diego, CA",
-    "Dallas, TX", "San Jose, CA", "Austin, TX", "Jacksonville, FL",
-    "San Francisco, CA"
-  ])
-)
-import random from 'lodash/random'
-import sample from 'lodash/sample'
-import userCan from '../../util/abilities'
 
-const variables = {
+const defaultVariables = {
   page: 1,
   pageSize: 10
 }
@@ -34,17 +22,22 @@ const variables = {
 class PaginatedTable extends Component {
 
   render() {
-    const { query, columns } = this.props
+    const { query, columns, subscription, EmptyComponent, pageSize } = this.props
+    const variables = merge({}, defaultVariables, { pageSize })
 
     return(
       <Query query={query} variables={variables}>
-        {({ loading, error, data, fetchMore }) => (
+        {({ loading, error, data, fetchMore, subscribeToMore }) => (
           <QueryResults
             loading={loading}
             error={error}
             data={data}
             fetchMore={fetchMore}
+            subscribeToMore={subscribeToMore}
             columns={columns}
+            subscription={subscription}
+            EmptyComponent={EmptyComponent}
+            pageSize={pageSize}
           />
         )}
       </Query>
@@ -52,32 +45,31 @@ class PaginatedTable extends Component {
   }
 }
 
-// TODO container?
 class QueryResults extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       page: 1,
-      pageSize: 10
+      pageSize: props.pageSize || 10
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
-    this.handleSubscriptionDeviceAdded = this.handleSubscriptionDeviceAdded.bind(this)
+    this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
   }
 
   componentDidMount() {
-    // const { subscribeToMore } = this.props.data
-    //
-    // subscribeToMore({
-    //   document: DEVICE_SUBSCRIPTION,
-    //   updateQuery: (prev, { subscriptionData }) => {
-    //     if (!subscriptionData.data) return prev
-    //     this.handleSubscriptionDeviceAdded()
-    //   }
-    // })
+    const { subscribeToMore, subscription } = this.props
+
+    subscribeToMore({
+      document: subscription,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
   }
 
   handleChangeRowsPerPage(pageSize) {
@@ -93,7 +85,7 @@ class QueryResults extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionDeviceAdded() {
+  handleSubscriptionAdded() {
     const { page, pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
@@ -107,12 +99,16 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data, columns } = this.props
+    const { loading, error, data, columns, EmptyComponent } = this.props
 
     if (loading) return null;
     if (error) return `Error!: ${error}`;
 
     const results = find(data, d => d.entries !== undefined)
+
+    if (results.entries.length === 0 && EmptyComponent) return (
+      <EmptyComponent />
+    )
 
     return (
       <ResultsTable
@@ -125,7 +121,6 @@ class QueryResults extends Component {
   }
 }
 
-// TODO PaginatedTableBody?
 const ResultsTable = (props) => {
   const { handleChangePage, handleChangeRowsPerPage, columns } = props
   const { pageNumber, pageSize, totalEntries, totalPages } = props.results

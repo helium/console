@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import userCan from '../../util/abilities'
 import PaginatedTable from '../common/PaginatedTable'
-import { PAGINATED_DEVICES } from '../../graphql/devices'
+import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
+import BlankSlate from '../common/BlankSlate'
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -24,7 +25,7 @@ const randomCity = () => (
 )
 
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 class DevicesTable extends Component {
 
   render() {
@@ -84,16 +85,13 @@ class DevicesTable extends Component {
 
     return (
       <PaginatedTable
-        query={PAGINATED_DEVICES}
         columns={columns}
-        emptyState={""}
+        query={PAGINATED_DEVICES}
+        subscription={DEVICE_SUBSCRIPTION}
+        EmptyComponent={ props => <BlankSlate title="No devices" subheading="To create a new device, click the red button in the corner" /> }
       />
     )
   }
-}
-
-function mapStateToProps(state) {
-  return {}
 }
 
 function mapDispatchToProps(dispatch) {
