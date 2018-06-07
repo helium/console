@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import random from 'lodash/random'
-import sample from 'lodash/sample'
 import userCan from '../../util/abilities'
+import PaginatedTable from '../common/PaginatedTable'
+import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
+import BlankSlate from '../common/BlankSlate'
+
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { deleteDevice } from '../../actions/device'
 
 // MUI
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooterPagination from '../common/TableFooterPagination'
 import Button from '@material-ui/core/Button';
 
-
+import random from 'lodash/random'
+import sample from 'lodash/sample'
 const randomCity = () => (
   sample([
     "New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX",
@@ -23,81 +24,78 @@ const randomCity = () => (
   ])
 )
 
+
+@connect(null, mapDispatchToProps)
 class DevicesTable extends Component {
 
   render() {
-    const { devices, deleteDevice, totalEntries, page, pageSize } = this.props
+    const { deleteDevice } = this.props
 
-    return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>MAC</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell>Cost</TableCell>
-            <TableCell>Bid</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {devices.map(device => {
-            return (
-              <TableRow key={device.id}>
-                <TableCell>
-                  <Link to={`/devices/${device.id}`}>{device.name}</Link>
-                </TableCell>
+    const columns = [
+      {
+        Header: 'Name',
+        accessor: 'name',
+        Cell: props => <Link to={`/devices/${props.row.id}`}>{props.value}</Link>
+      },
+      {
+        Header: 'MAC',
+        accessor: 'mac'
+      },
+      {
+        Header: 'Location',
+        accessor: 'mac',
+        Cell: props => <span>{randomCity()}</span>
+      },
+      {
+        Header: 'Cost',
+        accessor: 'mac',
+        Cell: props => <span> {random(0, 1000).toLocaleString()} HLM </span>
+      },
+      {
+        Header: 'Bid',
+        accessor: 'mac',
+        Cell: props => <span> {random(0.01, 5.0).toFixed(2)} HLM </span>
+      },
+      {
+        Header: '',
+        numeric: true,
+        accessor: 'mac',
+        Cell: props => <span>
+          <Button
+            color="primary"
+            component={Link}
+            to={`/devices/${props.row.id}`}
+            size="small"
+          >
+            View
+          </Button>
 
-                <TableCell>
-                  {device.mac}
-                </TableCell>
+          {userCan('delete', 'device', props.row) &&
+            <Button
+              color="secondary"
+              onClick={() => deleteDevice(props.row.id)}
+              size="small"
+            >
+              Delete
+            </Button>
+          }
+        </span>
+      },
+    ]
 
-                <TableCell>
-                  {randomCity()}
-                </TableCell>
-
-                <TableCell>
-                  {random(0, 1000).toLocaleString()} HLM
-                </TableCell>
-
-                <TableCell>
-                  {random(0.01, 5.0).toFixed(2)} HLM
-                </TableCell>
-
-                <TableCell numeric>
-                  <Button
-                    color="primary"
-                    component={Link}
-                    to={`/devices/${device.id}`}
-                    size="small"
-                  >
-                    View
-                  </Button>
-
-                  {userCan('delete', 'device', device) &&
-                    <Button
-                      color="secondary"
-                      onClick={() => deleteDevice(device)}
-                      size="small"
-                    >
-                      Delete
-                    </Button>
-                  }
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-        <TableFooterPagination
-          totalEntries={totalEntries}
-          page={page}
-          pageSize={pageSize}
-          handleChangePage={this.props.handleChangePage}
-          handleChangeRowsPerPage={this.props.handleChangeRowsPerPage}
-        />
-      </Table>
+    return (
+      <PaginatedTable
+        columns={columns}
+        query={PAGINATED_DEVICES}
+        subscription={DEVICE_SUBSCRIPTION}
+        EmptyComponent={ props => <BlankSlate title="No devices" subheading="To create a new device, click the red button in the corner" /> }
+      />
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ deleteDevice }, dispatch);
 }
 
 export default DevicesTable

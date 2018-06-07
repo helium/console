@@ -16,3 +16,18 @@ export const DEVICE_SUBSCRIPTION = gql`
   }
   ${DEVICE_FRAGMENT}
 `
+
+export const PAGINATED_DEVICES = gql`
+  query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
+    devices(page: $page, pageSize: $pageSize) {
+      entries {
+        ...DeviceFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${DEVICE_FRAGMENT}
+`
