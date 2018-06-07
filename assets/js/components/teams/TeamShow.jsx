@@ -87,8 +87,8 @@ class TeamShow extends Component {
 
     const { classes } = this.props
 
-    return (
-      <DashboardLayout title="Team Access">
+    const accessView = (
+      <div>
         <Paper className={classes.paper}>
           <header className={classes.header}>
             <Typography variant="headline" component="h3">
@@ -125,13 +125,6 @@ class TeamShow extends Component {
           />
         </Paper>
 
-        {
-          userCan("view", "auditTrails") &&
-          <Card style={{marginTop: 24}}>
-            <AuditTable title="Team History"/>
-          </Card>
-        }
-
         <NewUserModal
           open={this.state.newUserOpen}
           onClose={this.closeNewUserModal}
@@ -143,8 +136,40 @@ class TeamShow extends Component {
           membership={this.state.editingMembership}
           updateMembership={updateMembership}
         />
-      </DashboardLayout>
+      </div>
     )
+
+    const activityView = (
+      <Card>
+        <AuditTable title="Team History"/>
+      </Card>
+    )
+
+    const tabs = [{
+      label: "Access View",
+      content: accessView,
+      path: "/teams/access",
+    }, {
+      label: "Activity View",
+      content: activityView,
+      path: "/teams/activity",
+    }]
+
+    if (userCan("view", "auditTrails")) {
+      return (
+        <DashboardLayout title="Team Access" tabs={tabs} />
+      )
+    } else if (!userCan("view", "auditTrails") && memberships.length == 0) {
+      return (
+        <DashboardLayout title="Team Access" />
+      )
+    } else {
+      return (
+        <DashboardLayout title="Team Access">
+          {accessView}
+        </DashboardLayout>
+      )
+    }
   }
 }
 
