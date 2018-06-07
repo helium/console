@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import RandomDeviceButton from './RandomDeviceButton'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 
 // MUI
 import Paper from '@material-ui/core/Paper';
@@ -10,14 +10,14 @@ import Paper from '@material-ui/core/Paper';
 class DeviceIndex extends Component {
   render() {
     return(
-      <DashboardLayout title={"All Devices"}>
+      <DashboardLayout title="All Devices">
         <Paper>
           <DevicesTable />
         </Paper>
 
-        {userCan('create', 'device') &&
+        <UserCan action="create" itemType="device">
           <RandomDeviceButton />
-        }
+        </UserCan>
       </DashboardLayout>
     )
   }
