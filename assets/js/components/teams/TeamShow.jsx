@@ -6,6 +6,7 @@ import { deleteInvitation } from '../../actions/invitation'
 import { deleteMembership, updateMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
+import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import userCan from '../../util/abilities'
@@ -28,6 +29,7 @@ const styles = theme => ({
   paper: {
     padding: theme.spacing.unit * 3,
     paddingTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 3
   },
   header: {
     display: 'flex',
@@ -103,13 +105,24 @@ class TeamShow extends Component {
             }
           </header>
 
-            <MembersTable
-              memberships={memberships}
-              invitations={invitations}
-              deleteInvitation={deleteInvitation}
-              deleteMembership={deleteMembership}
-              openEditMembershipModal={this.openEditMembershipModal}
-            />
+          <MembersTable
+            memberships={memberships}
+            deleteMembership={deleteMembership}
+            openEditMembershipModal={this.openEditMembershipModal}
+          />
+        </Paper>
+
+        <Paper className={classes.paper}>
+          <header className={classes.header}>
+            <Typography variant="headline" component="h3">
+              Invitations
+            </Typography>
+          </header>
+
+          <InvitationsTable
+            invitations={invitations}
+            deleteInvitation={deleteInvitation}
+          />
         </Paper>
 
         {

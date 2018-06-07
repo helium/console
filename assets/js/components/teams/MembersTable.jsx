@@ -16,8 +16,7 @@ import SmallChip from '../common/SmallChip'
 class MembersTable extends Component {
   render() {
     const {
-      memberships, invitations, deleteInvitation, deleteMembership,
-      openEditMembershipModal
+      memberships, deleteMembership, openEditMembershipModal
     } = this.props
 
     return(
@@ -39,13 +38,6 @@ class MembersTable extends Component {
               membership={membership}
               deleteMembership={() => deleteMembership(membership)}
               openEditMembershipModal={openEditMembershipModal}
-            />
-          )}
-          {invitations.map(invitation =>
-            <InvitationRow
-              key={invitation.id}
-              invitation={invitation}
-              deleteInvitation={() => deleteInvitation(invitation)}
             />
           )}
         </TableBody>
@@ -113,34 +105,6 @@ const MembershipRow = (props) => {
             Remove
           </Button>
         }
-      </TableCell>
-    </TableRow>
-  )
-}
-
-const InvitationRow = (props) => {
-  const { invitation, deleteInvitation } = props
-
-  return (
-    <TableRow key={invitation.id}>
-      <TableCell>
-        {invitation.email}
-      </TableCell>
-      <TableCell>
-        <Role role={invitation.role} />
-      </TableCell>
-      <TableCell>
-        <span>Invitation Sent</span>
-      </TableCell>
-      <TableCell> </TableCell>
-      <TableCell numeric>
-        <Button
-          onClick={deleteInvitation}
-          color="secondary"
-          size="small"
-        >
-          Remove
-        </Button>
       </TableCell>
     </TableRow>
   )

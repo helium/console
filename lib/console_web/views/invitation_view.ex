@@ -16,7 +16,8 @@ defmodule ConsoleWeb.InvitationView do
       email: invitation.email,
       role: invitation.role,
       pending: invitation.pending,
-      type: "invitations"
+      type: "invitations",
+      sent_at: invitation.inserted_at
     }
   end
 
