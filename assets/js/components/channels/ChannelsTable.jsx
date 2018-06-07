@@ -60,7 +60,7 @@ class ChannelsTable extends Component {
         query={PAGINATED_CHANNELS}
         subscription={CHANNEL_SUBSCRIPTION}
         EmptyComponent={ props => <BlankSlate title="No channels" subheading="To create a new channel, click the red button in the corner" /> }
-        pageSize={5}
+        variables={{pageSize: 5}}
       />
     )
   }

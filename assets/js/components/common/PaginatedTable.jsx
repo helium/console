@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import find from 'lodash/find'
+import get from 'lodash/get'
 import merge from 'lodash/merge'
 
 // GraphQL
@@ -22,8 +23,8 @@ const defaultVariables = {
 class PaginatedTable extends Component {
 
   render() {
-    const { query, pageSize } = this.props
-    const variables = merge({}, defaultVariables, { pageSize })
+    const { query } = this.props
+    const variables = merge({}, defaultVariables, this.props.variables)
 
     return(
       <Query query={query} variables={variables}>
@@ -34,6 +35,7 @@ class PaginatedTable extends Component {
             data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
+            variables={variables}
             {...this.props}
           />
         )}
@@ -48,7 +50,7 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: props.pageSize || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
@@ -58,10 +60,11 @@ class QueryResults extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore, subscription } = this.props
+    const { subscribeToMore, subscription, subscriptionVariables } = this.props
 
     subscribeToMore({
       document: subscription,
+      variables: subscriptionVariables,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionAdded()

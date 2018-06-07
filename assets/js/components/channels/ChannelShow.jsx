@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import { deleteChannel, updateChannel } from '../../actions/channel'
-import EventsTable from '../events/EventsTablePaginated'
+import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
