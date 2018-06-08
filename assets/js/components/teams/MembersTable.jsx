@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom'
 import { deleteMembership } from '../../actions/membership'
 import moment from 'moment'
 import random from 'lodash/random'
@@ -10,11 +9,6 @@ import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 
 // MUI
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import SmallChip from '../common/SmallChip'
 

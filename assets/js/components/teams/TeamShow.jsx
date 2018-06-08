@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { deleteInvitation } from '../../actions/invitation'
-import { deleteMembership, updateMembership } from '../../actions/membership'
+import { updateMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import InvitationsTable from './InvitationsTable'
@@ -11,22 +10,12 @@ import EditMembershipModal from './EditMembershipModal'
 import userCan from '../../util/abilities'
 import AuditTable from '../audit_trails/AuditTable'
 
-// GraphQL
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
-
 // MUI
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles'
-
-// Icons
-import AddIcon from '@material-ui/icons/Add';
 
 const styles = theme => ({
   paper: {

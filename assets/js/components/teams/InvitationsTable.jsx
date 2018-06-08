@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom'
 import moment from 'moment'
 import userCan from '../../util/abilities'
 import { deleteInvitation } from '../../actions/invitation'
@@ -9,11 +8,6 @@ import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 
 // MUI
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
 @connect(null, mapDispatchToProps)
