@@ -13,6 +13,29 @@ import gql from 'graphql-tag';
 // Icons
 import SearchIcon from '@material-ui/icons/Search'
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      query: ""
+    }
+  })
+}
+
+const query = gql`
+  query SearchQuery ($query: String) {
+    searchResults(query: $query) {
+      id,
+      title,
+      description,
+      category,
+      score,
+      url
+    }
+  }
+`
+
+@withRouter
+@graphql(query, queryOptions)
 class SearchBar extends Component {
   constructor(props) {
     super(props)
@@ -207,27 +230,4 @@ class SearchBar extends Component {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-const query = gql`
-  query SearchQuery ($query: String) {
-    searchResults(query: $query) {
-      id,
-      title,
-      description,
-      category,
-      score,
-      url
-    }
-  }
-`
-
-const SearchBarWithData = graphql(query, queryOptions)(SearchBar)
-
-export default withRouter(SearchBarWithData)
+export default SearchBar

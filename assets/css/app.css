@@ -64,6 +64,8 @@ a
   .noty_theme__mui.noty_type__success .noty_buttons {
     border-color: #50C24E; }
 
+/* Search Bar */
+
 #searchBar
 {
   background: rgba(255, 255, 255, 0.1);
@@ -136,4 +138,14 @@ a
 #searchResults .jumpto svg
 {
   font-size: 16px;
+}
+
+/* Notifications */
+#notificationsMenu
+{
+  position: absolute;
+  top: 48px;
+  z-index: 100;
+  right: 100px;
+  width: 360px;
 }
