@@ -114,6 +114,14 @@ const pages = [
     category: "reports",
     synonyms: ""
   },
+  {
+    title: "Notifications",
+    description: "View all active and past notifications",
+    url: "/notifications",
+    id: "/notifications",
+    category: "notifications",
+    synonyms: ""
+  },
 ]
 
 const fuseOpts = {

@@ -7,7 +7,7 @@ import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
 import SearchBar from '../search/SearchBar'
-import Notifications from '../notifications/Notifications'
+import NotificationsBar from '../notifications/NotificationsBar'
 
 // MUI
 import List from '@material-ui/core/List'
@@ -107,7 +107,7 @@ class TopBar extends Component {
           <div style={{flex: 1}} />
 
           <SearchBar />
-          <Notifications />
+          <NotificationsBar />
 
           <div>
             <IconButton onClick={this.openAccountMenu} color="inherit">

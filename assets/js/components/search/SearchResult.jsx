@@ -16,6 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ReportsIcon from '@material-ui/icons/TrackChanges';
 import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import AccountCircle from '@material-ui/icons/AccountCircle'
+import NotificationsIcon from '@material-ui/icons/Notifications'
 import MapIcon from '@material-ui/icons/MyLocation'
 
 const styles = theme => ({
@@ -80,6 +81,8 @@ const SearchResultIcon = (props) => {
       return <BillingIcon style={{color: '#616161'}} />
     case "reports":
       return <ReportsIcon style={{color: '#616161'}} />
+    case "notifications":
+      return <NotificationsIcon style={{color: '#616161'}} />
     default:
       return <DevicesIcon style={{color: '#616161'}} />
   }
