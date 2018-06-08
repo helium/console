@@ -178,5 +178,17 @@ defmodule ConsoleWeb.Schema do
         {:ok, topic: "#{team_id}/channel_added"}
       end
     end
+
+    field :membership_added, :membership do
+      config fn what, test = %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/membership_added"}
+      end
+    end
+
+    field :invitation_added, :invitation do
+      config fn _, %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/invitation_added"}
+      end
+    end
   end
 end

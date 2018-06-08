@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import userCan from '../../util/abilities'
+import { deleteInvitation } from '../../actions/invitation'
+import PaginatedTable from '../common/PaginatedTable'
+import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 
 // MUI
 import Table from '@material-ui/core/Table';
@@ -11,30 +16,51 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
+@connect(null, mapDispatchToProps)
 class InvitationsTable extends Component {
   render() {
-    const { invitations, deleteInvitation } = this.props
+    const { deleteInvitation } = this.props
 
-    return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>User</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Sent At</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {invitations.map(invitation =>
-            <InvitationRow
-              key={invitation.id}
-              invitation={invitation}
-              deleteInvitation={() => deleteInvitation(invitation)}
-            />
-          )}
-        </TableBody>
-      </Table>
+    const columns = [
+      {
+        Header: 'User',
+        accessor: 'email',
+        Cell: props => <span>{props.row.email}</span>
+      },
+      {
+        Header: 'Role',
+        accessor: 'role',
+        Cell: props => <Role role={props.row.role} />
+      },
+      {
+        Header: 'Sent At',
+        accessor: 'inserted_at',
+        Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
+      },
+      {
+        Header: '',
+        numeric: true,
+        Cell: props => <span>
+          {userCan('delete', 'membership', props.row) &&
+            <Button
+              onClick={() => deleteInvitation(props.row)}
+              color="secondary"
+              size="small"
+              >
+              Remove
+            </Button>
+          }
+        </span>
+      },
+    ]
+
+    return (
+      <PaginatedTable
+        columns={columns}
+        query={PAGINATED_INVITATIONS}
+        subscription={INVITATION_SUBSCRIPTION}
+        EmptyComponent={ props => <BlankSlate title="Loading..." /> }
+      />
     )
   }
 }
@@ -54,31 +80,10 @@ const Role = (props) => {
   }
 }
 
-const InvitationRow = (props) => {
-  const { invitation, deleteInvitation } = props
-
-  return (
-    <TableRow key={invitation.id}>
-      <TableCell>
-        {invitation.email}
-      </TableCell>
-      <TableCell>
-        <Role role={invitation.role} />
-      </TableCell>
-      <TableCell>
-        {moment(invitation.inserted_at).format('LL')}
-      </TableCell>
-      <TableCell numeric>
-        <Button
-          onClick={deleteInvitation}
-          color="secondary"
-          size="small"
-        >
-          Remove
-        </Button>
-      </TableCell>
-    </TableRow>
-  )
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    deleteInvitation
+  }, dispatch);
 }
 
 export default InvitationsTable

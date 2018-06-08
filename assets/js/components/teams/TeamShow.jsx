@@ -40,47 +40,8 @@ const styles = theme => ({
   },
 })
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    }
-  })
-}
-
-const query = gql`
-  query PaginatedMembershipsQuery ($page: Int, $pageSize: Int) {
-    memberships(page: $page, pageSize: $pageSize) {
-      entries {
-        id,
-        email,
-        role,
-        inserted_at
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    },
-    invitations(page: $page, pageSize: $pageSize) {
-      entries {
-        id,
-        email,
-        role,
-        inserted_at
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-`
-
 @withStyles(styles)
 @connect(null, mapDispatchToProps)
-@graphql(query, queryOptions)
 class TeamShow extends Component {
   constructor(props) {
     super(props)
@@ -117,11 +78,7 @@ class TeamShow extends Component {
   }
 
   render() {
-    const { deleteInvitation, deleteMembership, updateMembership } = this.props
-
-    const { classes } = this.props
-    const { memberships, invitations, loading } = this.props.data
-    if (this.props.data.loading) return <DashboardLayout title="Team Access" />
+    const { classes, updateMembership } = this.props
 
     const accessView = (
       <div>
@@ -142,8 +99,6 @@ class TeamShow extends Component {
           </header>
 
           <MembersTable
-            memberships={memberships.entries}
-            deleteMembership={deleteMembership}
             openEditMembershipModal={this.openEditMembershipModal}
           />
         </Paper>
@@ -155,10 +110,7 @@ class TeamShow extends Component {
             </Typography>
           </header>
 
-          <InvitationsTable
-            invitations={invitations.entries}
-            deleteInvitation={deleteInvitation}
-          />
+          <InvitationsTable />
         </Paper>
 
         <NewUserModal
@@ -191,23 +143,23 @@ class TeamShow extends Component {
       path: "/teams/activity",
     }]
 
-    if (userCan("view", "auditTrails")) {
+    // if (userCan("view", "auditTrails")) {
       return (
         <DashboardLayout title="Team Access" tabs={tabs} />
       )
-    } else {
-      return (
-        <DashboardLayout title="Team Access">
-          {accessView}
-        </DashboardLayout>
-      )
-    }
+    // } else {
+    //   return (
+    //     <DashboardLayout title="Team Access">
+    //       {accessView}
+    //     </DashboardLayout>
+    //   )
+    // }
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    deleteInvitation, deleteMembership, updateMembership
+    updateMembership
   }, dispatch);
 }
 

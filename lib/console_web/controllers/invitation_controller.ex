@@ -101,5 +101,7 @@ defmodule ConsoleWeb.InvitationController do
     invitation = invitation |> Teams.fetch_assoc_invitation()
     body = ConsoleWeb.InvitationView.render("show.json", invitation: invitation)
     ConsoleWeb.Endpoint.broadcast("invitation:#{invitation.team_id}", action, body)
+
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_added: "#{invitation.team.id}/invitation_added")
   end
 end
