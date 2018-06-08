@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import find from 'lodash/find'
+import get from 'lodash/get'
 import merge from 'lodash/merge'
 
 // GraphQL
@@ -22,8 +23,8 @@ const defaultVariables = {
 class PaginatedTable extends Component {
 
   render() {
-    const { query, columns, subscription, EmptyComponent, pageSize } = this.props
-    const variables = merge({}, defaultVariables, { pageSize })
+    const { query } = this.props
+    const variables = merge({}, defaultVariables, this.props.variables)
 
     return(
       <Query query={query} variables={variables}>
@@ -34,10 +35,8 @@ class PaginatedTable extends Component {
             data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
-            columns={columns}
-            subscription={subscription}
-            EmptyComponent={EmptyComponent}
-            pageSize={pageSize}
+            variables={variables}
+            {...this.props}
           />
         )}
       </Query>
@@ -51,7 +50,7 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: props.pageSize || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
@@ -61,10 +60,11 @@ class QueryResults extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore, subscription } = this.props
+    const { subscribeToMore, subscription, subscriptionVariables } = this.props
 
     subscribeToMore({
       document: subscription,
+      variables: subscriptionVariables,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionAdded()
@@ -99,7 +99,7 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data, columns, EmptyComponent } = this.props
+    const { loading, error, data, EmptyComponent } = this.props
 
     if (loading) return null;
     if (error) return `Error!: ${error}`;
@@ -112,10 +112,10 @@ class QueryResults extends Component {
 
     return (
       <ResultsTable
-        columns={columns}
         results={results}
         handleChangePage={this.handleChangePage}
         handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+        {...this.props}
       />
     )
   }
@@ -131,7 +131,12 @@ const ResultsTable = (props) => {
       <TableHead>
         <TableRow>
           {columns.map((column, i) =>
-            <TableCell key={`header-${i}`}>{column.Header}</TableCell>
+            <TableCell
+              key={`header-${i}`}
+              numeric={column.numeric}
+            >
+              {column.Header}
+            </TableCell>
           )}
         </TableRow>
       </TableHead>
@@ -168,13 +173,13 @@ const PaginatedCell = (props) => {
   const value = row[column.accessor]
 
   if (Cell) return (
-    <TableCell>
+    <TableCell numeric={column.numeric}>
       <Cell row={row} value={value} />
     </TableCell>
   )
 
   return (
-    <TableCell>
+    <TableCell numeric={column.numeric}>
       {value}
     </TableCell>
   )

@@ -18,3 +18,18 @@ export const CHANNEL_SUBSCRIPTION = gql`
   }
   ${CHANNEL_FRAGMENT}
 `
+
+export const PAGINATED_CHANNELS = gql`
+  query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
+    channels(page: $page, pageSize: $pageSize) {
+      entries {
+        ...ChannelFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${CHANNEL_FRAGMENT}
+`

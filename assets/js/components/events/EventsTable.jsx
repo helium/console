@@ -1,53 +1,66 @@
 import React, { Component } from 'react'
-import ReactTable from 'react-table'
+import { formatDatetime } from '../../util/time'
+import PaginatedTable from '../common/PaginatedTable'
+import { EVENTS_SUBSCRIPTION, PAGINATED_EVENTS } from '../../graphql/events'
+
+// MUI
 
 class EventsTable extends Component {
   render() {
-    const { events } = this.props
+    const { contextId, contextName } = this.props
 
     const columns = [
       {
         Header: 'Type',
-        accessor: 'description'
+        accessor: 'description',
       },
       {
-        Header: 'Size',
+        Header: 'size',
         accessor: 'payload_size',
-        Cell: props => props.value ? <span>{props.value} bytes</span> : ''
+        Cell: props => <EventPayloadSize size={props.value} />
       },
       {
         Header: 'RSSI',
-        accessor: 'rssi'
+        accessor: 'rssi',
       },
       {
         Header: 'Time',
-        accessor: 'reported_at'
+        accessor: 'reported_at',
+        Cell: props => <span> {formatDatetime(props.value)} </span>
       },
       {
         Header: 'Response',
         accessor: 'status',
-        Cell: props => props.value == "success" ? <span>OK</span> : <span>ERROR</span>
-      }
+        Cell: props => <EventStatus status={props.value} />
+      },
     ]
 
-    const tableContent = events.length > 0 ? (
-      <ReactTable
-        data={events}
+    return (
+      <PaginatedTable
         columns={columns}
-        minRows={0}
-        defaultPageSize={10}
-        defaultSorted={[{id: "reported_at", desc: true}]}
+        query={PAGINATED_EVENTS}
+        subscription={EVENTS_SUBSCRIPTION}
+        variables={{ pageSize: 5, contextId, contextName }}
+        subscriptionVariables={{ contextId, contextName }}
       />
-    ) : (
-      <div>No Events</div>
-    )
-
-    return(
-      <div>
-        {tableContent}
-      </div>
     )
   }
+}
+
+const EventStatus = (props) => {
+  switch(props.status) {
+    case "success":
+      return <span>OK</span>
+    case "error":
+      return <span>ERROR</span>
+    default:
+      return <span>{props.status}</span>
+  }
+}
+
+const EventPayloadSize = (props) => {
+  if (!props.size) return <span />
+  return <span>{props.size} bytes</span>
 }
 
 export default EventsTable

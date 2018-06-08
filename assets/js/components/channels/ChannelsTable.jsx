@@ -1,71 +1,73 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableFooterPagination from '../common/TableFooterPagination'
-import Button from '@material-ui/core/Button';
-import userCan from '../../util/abilities';
+import UserCan from '../common/UserCan'
+import PaginatedTable from '../common/PaginatedTable'
+import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 
+// redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { deleteChannel } from '../../actions/channel'
+
+// MUI
+import Button from '@material-ui/core/Button';
+
+@connect(null, mapDispatchToProps)
 class ChannelsTable extends Component {
 
   render() {
-    const { channels, deleteChannel, totalEntries, page, pageSize } = this.props
+    const { deleteChannel } = this.props
 
-    return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {channels.map(channel => {
-            return (
-              <TableRow key={channel.id}>
-                <TableCell>
-                  <Link to={`/channels/${channel.id}`}>{channel.name}</Link>
-                </TableCell>
-                <TableCell>{channel.type_name}</TableCell>
-                <TableCell numeric>
-                  <Button
-                    color="primary"
-                    component={Link}
-                    to={`/channels/${channel.id}`}
-                    size="small"
-                  >
-                    View
-                  </Button>
+    const columns = [
+      {
+        Header: 'Name',
+        accessor: 'name',
+        Cell: props => <Link to={`/channels/${props.row.id}`}>{props.value}</Link>
+      },
+      {
+        Header: 'Type',
+        accessor: 'type_name'
+      },
+      {
+        Header: '',
+        numeric: true,
+        Cell: props => <span>
+          <Button
+            color="primary"
+            component={Link}
+            to={`/channels/${props.row.id}`}
+            size="small"
+          >
+            View
+          </Button>
 
-                  {userCan('delete', 'channel', channel) &&
-                    <Button
-                      color="secondary"
-                      onClick={() => deleteChannel(channel)}
-                      size="small"
-                    >
-                      Delete
-                    </Button>
-                  }
+          <UserCan action="delete" itemType="channel" item={props.row}>
+            <Button
+              color="secondary"
+              onClick={() => deleteChannel(props.row.id)}
+              size="small"
+            >
+              Delete
+            </Button>
+          </UserCan>
+        </span>
+      },
+    ]
 
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-        <TableFooterPagination
-          totalEntries={totalEntries}
-          page={page}
-          pageSize={pageSize}
-          handleChangePage={this.props.handleChangePage}
-          handleChangeRowsPerPage={this.props.handleChangeRowsPerPage}
-        />
-      </Table>
+    return (
+      <PaginatedTable
+        columns={columns}
+        query={PAGINATED_CHANNELS}
+        subscription={CHANNEL_SUBSCRIPTION}
+        EmptyComponent={ props => <BlankSlate title="No channels" subheading="To create a new channel, click the red button in the corner" /> }
+        variables={{pageSize: 5}}
+      />
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ deleteChannel }, dispatch);
 }
 
 export default ChannelsTable

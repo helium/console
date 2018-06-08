@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import BlankSlate from '../common/BlankSlate'
@@ -59,7 +59,6 @@ class DevicesTable extends Component {
       {
         Header: '',
         numeric: true,
-        accessor: 'mac',
         Cell: props => <span>
           <Button
             color="primary"
@@ -70,7 +69,7 @@ class DevicesTable extends Component {
             View
           </Button>
 
-          {userCan('delete', 'device', props.row) &&
+          <UserCan action="delete" itemType="device" item={props.row}>
             <Button
               color="secondary"
               onClick={() => deleteDevice(props.row.id)}
@@ -78,7 +77,7 @@ class DevicesTable extends Component {
             >
               Delete
             </Button>
-          }
+          </UserCan>
         </span>
       },
     ]

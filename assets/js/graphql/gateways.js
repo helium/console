@@ -19,3 +19,18 @@ export const GATEWAY_SUBSCRIPTION = gql`
   }
   ${GATEWAY_FRAGMENT}
 `
+
+export const PAGINATED_GATEWAYS = gql`
+  query PaginatedGatewaysQuery ($page: Int, $pageSize: Int) {
+    gateways(page: $page, pageSize: $pageSize) {
+      entries {
+        ...GatewayFragment
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
