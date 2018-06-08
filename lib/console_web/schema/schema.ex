@@ -52,6 +52,20 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
+  paginated object :membership do
+    field :id, :id
+    field :email, :string, resolve: &Console.Teams.MembershipResolver.user_email/2
+    field :role, :string
+    field :inserted_at, :naive_datetime
+  end
+
+  paginated object :invitation do
+    field :id, :id
+    field :email, :string
+    field :role, :string
+    field :inserted_at, :naive_datetime
+  end
+
   object :group do
     field :id, :id
     field :name, :string
@@ -105,6 +119,16 @@ defmodule ConsoleWeb.Schema do
       arg :context_id, :string
       arg :context_name, :string
       resolve &Console.Events.EventResolver.paginate/2
+    end
+
+    @desc "Get paginated memberships"
+    paginated field :memberships, :paginated_memberships do
+      resolve(&Console.Teams.MembershipResolver.paginate/2)
+    end
+
+    @desc "Get paginated invitations"
+    paginated field :invitations, :paginated_invitations do
+      resolve(&Console.Teams.InvitationResolver.paginate/2)
     end
 
     @desc "Get paginated audit trails"

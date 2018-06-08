@@ -66,7 +66,7 @@ const InvitationRow = (props) => {
         <Role role={invitation.role} />
       </TableCell>
       <TableCell>
-        {moment(invitation.joined_at).format('LL')}
+        {moment(invitation.inserted_at).format('LL')}
       </TableCell>
       <TableCell numeric>
         <Button

@@ -75,7 +75,7 @@ const MembershipRow = (props) => {
       </TableCell>
 
       <TableCell>
-        {moment(membership.joined_at).format('LL')}
+        {moment(membership.inserted_at).format('LL')}
       </TableCell>
 
       <TableCell>

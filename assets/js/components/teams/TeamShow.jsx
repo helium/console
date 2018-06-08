@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchTeam } from '../../actions/team'
 import { deleteInvitation } from '../../actions/invitation'
 import { deleteMembership, updateMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
@@ -11,6 +10,10 @@ import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import userCan from '../../util/abilities'
 import AuditTable from '../audit_trails/AuditTable'
+
+// GraphQL
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 // MUI
 import Paper from '@material-ui/core/Paper';
@@ -37,8 +40,47 @@ const styles = theme => ({
   },
 })
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    }
+  })
+}
+
+const query = gql`
+  query PaginatedMembershipsQuery ($page: Int, $pageSize: Int) {
+    memberships(page: $page, pageSize: $pageSize) {
+      entries {
+        id,
+        email,
+        role,
+        inserted_at
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    },
+    invitations(page: $page, pageSize: $pageSize) {
+      entries {
+        id,
+        email,
+        role,
+        inserted_at
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`
+
 @withStyles(styles)
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
+@graphql(query, queryOptions)
 class TeamShow extends Component {
   constructor(props) {
     super(props)
@@ -53,11 +95,6 @@ class TeamShow extends Component {
     this.closeNewUserModal = this.closeNewUserModal.bind(this)
     this.openEditMembershipModal = this.openEditMembershipModal.bind(this)
     this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
-  }
-
-  componentDidMount() {
-    const { fetchTeam, currentTeamId } = this.props
-    fetchTeam(currentTeamId)
   }
 
   openNewUserModal() {
@@ -80,12 +117,11 @@ class TeamShow extends Component {
   }
 
   render() {
-    const {
-      memberships, invitations, deleteInvitation, deleteMembership,
-      updateMembership
-    } = this.props
+    const { deleteInvitation, deleteMembership, updateMembership } = this.props
 
     const { classes } = this.props
+    const { memberships, invitations, loading } = this.props.data
+    if (this.props.data.loading) return <DashboardLayout title="Team Access" />
 
     const accessView = (
       <div>
@@ -106,7 +142,7 @@ class TeamShow extends Component {
           </header>
 
           <MembersTable
-            memberships={memberships}
+            memberships={memberships.entries}
             deleteMembership={deleteMembership}
             openEditMembershipModal={this.openEditMembershipModal}
           />
@@ -120,7 +156,7 @@ class TeamShow extends Component {
           </header>
 
           <InvitationsTable
-            invitations={invitations}
+            invitations={invitations.entries}
             deleteInvitation={deleteInvitation}
           />
         </Paper>
@@ -159,10 +195,6 @@ class TeamShow extends Component {
       return (
         <DashboardLayout title="Team Access" tabs={tabs} />
       )
-    } else if (!userCan("view", "auditTrails") && memberships.length == 0) {
-      return (
-        <DashboardLayout title="Team Access" />
-      )
     } else {
       return (
         <DashboardLayout title="Team Access">
@@ -173,33 +205,9 @@ class TeamShow extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const currentTeamId = state.auth.currentTeamId
-  const team = state.entities.teams[currentTeamId]
-
-  let memberships = []
-  if (team !== undefined) {
-    memberships = Object
-      .values(state.entities.memberships)
-  }
-
-  let invitations = []
-  if (team !== undefined) {
-    invitations = Object
-      .values(state.entities.invitations)
-      .filter(invitation => invitation.pending)
-  }
-
-  return {
-    currentTeamId,
-    memberships,
-    invitations
-  }
-}
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchTeam, deleteInvitation, deleteMembership, updateMembership
+    deleteInvitation, deleteMembership, updateMembership
   }, dispatch);
 }
 
