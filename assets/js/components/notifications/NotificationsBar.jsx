@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import NotificationsMenu from './NotificationsMenu'
+import { PAGINATED_NOTIFICATIONS } from '../../graphql/notifications'
+import { graphql } from 'react-apollo';
 
 // MUI
 import IconButton from '@material-ui/core/IconButton'
@@ -8,31 +10,12 @@ import SmallBadge from '../common/SmallBadge'
 // Icons
 import NotificationsIcon from '@material-ui/icons/Notifications'
 
-const initialNotifications = [
-  {
-    id: "123",
-    title: "Gateway Pending Confirmation",
-    body: "Confirm your gateways",
-    category: "gateways",
-    createdAt: 1528487101,
-    url: "/gateways",
-  },
-  {
-    id: "124",
-    title: "Gateway Pending Confirmation",
-    body: "Confirm your gateways",
-    category: "gateways",
-    createdAt: 1528487101,
-    url: "/gateways",
-  }
-]
-
+@graphql(PAGINATED_NOTIFICATIONS, {page: 1, pageSize: 5})
 class NotificationsBar extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      notifications: initialNotifications,
       anchorEl: null
     }
 
@@ -53,13 +36,17 @@ class NotificationsBar extends Component {
   }
 
   render() {
-    const { notifications, anchorEl } = this.state
+    const { anchorEl } = this.state
+    const { loading, notifications } = this.props.data
+
+    if (loading) return <NotificationsIcon />
+    const { totalEntries, entries } = notifications
 
     return (
       <div>
         <IconButton onClick={this.handleClick} color="inherit">
-          {notifications.length > 0 ?
-            <SmallBadge badgeContent={notifications.length} color="secondary">
+          {totalEntries > 0 ?
+            <SmallBadge badgeContent={totalEntries} color="secondary">
               <NotificationsIcon />
             </SmallBadge>
             :
@@ -68,7 +55,7 @@ class NotificationsBar extends Component {
         </IconButton>
 
         <NotificationsMenu
-          notifications={notifications}
+          notifications={entries}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={this.handleClose}

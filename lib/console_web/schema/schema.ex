@@ -73,7 +73,7 @@ defmodule ConsoleWeb.Schema do
     field :url, :string
     field :category, :string
     field :active, :boolean
-    field :created_at, :naive_datetime
+    field :inserted_at, :naive_datetime
   end
 
   object :group do

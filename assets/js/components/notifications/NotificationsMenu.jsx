@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { formatDatetimeAgo } from '../../util/time'
 
 // MUI
 import Portal from '@material-ui/core/Portal';
@@ -34,6 +35,7 @@ class NotificationsMenu extends Component {
   render() {
     const { anchorEl, open, onClose, notifications } = this.props
 
+
     return (
       <Menu {...this.props}>
         <ListSubheader>Notifications</ListSubheader>
@@ -64,7 +66,7 @@ const NotificationsList = (props) => (
         <ListItemText primary={notification.title} secondary={notification.body} />
         <div>
           <Typography component="small" color="textSecondary" style={{fontSize: "0.6rem", height: "34px"}}>
-            just now
+            {formatDatetimeAgo(notification.insertedAt)}
           </Typography>
         </div>
       </MenuItem>
