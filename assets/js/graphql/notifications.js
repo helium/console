@@ -27,7 +27,10 @@ export const PAGINATED_NOTIFICATIONS = gql`
       entries {
         ...NotificationFragment
       },
-      totalEntries
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
     }
   }
   ${NOTIFICATION_FRAGMENT}
