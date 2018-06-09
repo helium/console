@@ -26,7 +26,7 @@ class Profile extends Component {
 
   render() {
     const { email } = this.props.user;
-    const { logOut } = this.props
+    const { logOut, apikey } = this.props
 
     return(
       <DashboardLayout title="Profile">
@@ -37,6 +37,9 @@ class Profile extends Component {
             </Typography>
             <Typography component="p">
               Your email is: {email}
+            </Typography>
+            <Typography component="p">
+              Token: <input value={apikey} />
             </Typography>
           </CardContent>
           <CardActions>
@@ -61,7 +64,8 @@ class Profile extends Component {
 function mapStateToProps(state) {
   return {
     user: state.user,
-    userId: state.auth.user.id
+    userId: state.auth.user.id,
+    apikey: state.auth.apikey
   }
 }
 

@@ -28,6 +28,7 @@ import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import MapIcon from '@material-ui/icons/MyLocation'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ActiveIcon from '@material-ui/icons/FiberManualRecord';
 
 class NotificationsMenu extends Component {
   render() {
@@ -54,6 +55,9 @@ const NotificationsList = (props) => (
   <div>
     {props.notifications.map(notification =>
       <MenuItem key={notification.id} component={Link} to={notification.url}>
+        <ListItemIcon>
+          <ActiveIcon style={{fontSize: "14px", color: "#f50057"}} />
+        </ListItemIcon>
         <ListItemIcon>
           <NotificationIcon category={notification.category} />
         </ListItemIcon>
