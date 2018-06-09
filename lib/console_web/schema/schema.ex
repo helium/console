@@ -66,6 +66,16 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
+  paginated object :notification do
+    field :id, :id
+    field :title, :string
+    field :body, :string
+    field :url, :string
+    field :category, :string
+    field :active, :boolean
+    field :created_at, :naive_datetime
+  end
+
   object :group do
     field :id, :id
     field :name, :string
@@ -134,7 +144,13 @@ defmodule ConsoleWeb.Schema do
     @desc "Get paginated audit trails"
     paginated field :audit_trails, :paginated_audit_trails do
       arg :user_id, :string
-      resolve(&Console.Devices.AuditResolver.paginate/2)
+      resolve(&Console.AuditTrails.AuditResolver.paginate/2)
+    end
+
+    @desc "Get paginated notifications"
+    paginated field :notifications, :paginated_notifications do
+      arg :active, :boolean
+      resolve(&Console.Notifications.NotificationResolver.paginate/2)
     end
 
     @desc "Get recent events for a context (packet graph)"

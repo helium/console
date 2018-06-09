@@ -1,4 +1,4 @@
-defmodule Console.Devices.AuditResolver do
+defmodule Console.AuditTrails.AuditResolver do
   import Ecto.Query, warn: false
 
   alias Console.Repo
