@@ -8,6 +8,7 @@ import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import UserCan from '../common/UserCan'
+import UserCannot from '../common/UserCannot'
 import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
@@ -140,11 +141,11 @@ class TeamShow extends Component {
 
     return (
       <div>
-        <UserCan type="not" action="view" itemType="auditTrails">
+        <UserCannot action="view" itemType="auditTrails">
           <DashboardLayout title="Team Access">
             {accessView}
           </DashboardLayout>
-        </UserCan>
+        </UserCannot>
         <UserCan action="view" itemType="auditTrails">
           <DashboardLayout title="Team Access" tabs={tabs} />
         </UserCan>

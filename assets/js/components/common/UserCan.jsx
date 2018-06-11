@@ -5,26 +5,10 @@ import { connect } from 'react-redux';
 class UserCan extends Component {
   constructor(props) {
     super(props)
-    this.userCan = this.userCan.bind(this)
-  }
-
-  userCan() {
-    const { user, action, itemType, item } = this.props
-    const { email, role } = user
-
-    if (itemType === 'membership' && item && email === item.email) return false
-    if (itemType === 'auditTrails' && role !== 'admin') return false
-
-    if (role === 'admin') return true
-    if (role === 'developer') return true
-    if (role === 'analyst') return true
-
-    return false
   }
 
   render() {
-    if (this.props.type == "not" && !this.userCan()) return this.props.children
-    if (!this.props.type && this.userCan()) return this.props.children
+    if (userCan(this.props)) return this.props.children
     return null
   }
 }
@@ -33,6 +17,20 @@ function mapStateToProps(state) {
   return {
     user: state.user
   }
+}
+
+export const userCan = (props) => {
+  const { user, action, itemType, item } = props
+  const { email, role } = user
+
+  if (itemType === 'membership' && item && email === item.email) return false
+  if (itemType === 'auditTrails' && role !== 'admin') return false
+
+  if (role === 'admin') return true
+  if (role === 'developer') return true
+  if (role === 'analyst') return true
+
+  return false
 }
 
 export default UserCan
