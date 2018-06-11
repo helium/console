@@ -10,6 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import { DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
@@ -61,10 +62,10 @@ class DeviceShow extends Component {
           </CardContent>
 
           <CardActions>
-            {userCan('create', 'event') &&
+            <UserCan action="create" itemType="event">
               <RandomEventButton device_id={device.id} />
-            }
-            {userCan('delete', 'device', device) &&
+            </UserCan>
+            <UserCan action="delete" itemType="device" item={device}>
               <Button
                 size="small"
                 color="secondary"
@@ -72,7 +73,7 @@ class DeviceShow extends Component {
               >
                 Delete Device
               </Button>
-            }
+            </UserCan>
           </CardActions>
         </Card>
 

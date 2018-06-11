@@ -9,7 +9,7 @@ import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import { parseLocation } from '../../util/geolocation'
 import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
@@ -99,11 +99,11 @@ class GatewayShow extends Component {
           </CardContent>
 
           <CardActions>
-            {userCan('create', 'event') &&
+            <UserCan action="create" itemType="event">
               <RandomEventButton gateway_id={gateway.id} />
-            }
+            </UserCan>
 
-            {userCan('delete', 'gateway', gateway) &&
+            <UserCan action="delete" itemType="gateway" item={gateway}>
               <Button
                 size="small"
                 color="secondary"
@@ -111,7 +111,7 @@ class GatewayShow extends Component {
               >
                 Delete Gateway
               </Button>
-            }
+            </UserCan>
           </CardActions>
         </Card>
 

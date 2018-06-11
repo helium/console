@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
+import BlankSlate from '../common/BlankSlate'
 
 // redux
 import { bindActionCreators } from 'redux';
