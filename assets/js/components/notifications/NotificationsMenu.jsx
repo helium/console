@@ -17,30 +17,40 @@ import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
+// Redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import  { updateNotification } from '../../actions/notifications'
+
 // Icons
-import DevicesIcon from '@material-ui/icons/Memory';
-import GatewaysIcon from '@material-ui/icons/Router';
-import ChannelsIcon from '@material-ui/icons/CompareArrows';
-import AccessIcon from '@material-ui/icons/People';
-import BillingIcon from '@material-ui/icons/CreditCard';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ReportsIcon from '@material-ui/icons/TrackChanges';
-import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import MapIcon from '@material-ui/icons/MyLocation'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ActiveIcon from '@material-ui/icons/FiberManualRecord';
+import ConsoleIcon from '../common/ConsoleIcon'
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateNotification }, dispatch);
+}
+
+@connect(null, mapDispatchToProps)
 class NotificationsMenu extends Component {
+  constructor(props) {
+    super(props)
+    this.markRead = this.markRead.bind(this)
+  }
+
+  markRead(notification) {
+    const { updateNotification } = this.props
+    updateNotification(notification.id, {active: false}, notification.url)
+  }
+
   render() {
     const { anchorEl, open, onClose, notifications } = this.props
 
-
     return (
-      <Menu {...this.props}>
-        <ListSubheader>Notifications</ListSubheader>
+      <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
+        <ListSubheader>Recent Notifications</ListSubheader>
         {notifications.length > 0 ?
-          <NotificationsList notifications={notifications} />
+          <NotificationsList notifications={notifications} markRead={this.markRead} />
           :
           <NoNotifications />
         }
@@ -56,12 +66,12 @@ class NotificationsMenu extends Component {
 const NotificationsList = (props) => (
   <div>
     {props.notifications.map(notification =>
-      <MenuItem key={notification.id} component={Link} to={notification.url}>
+      <MenuItem key={notification.id} onClick={() => props.markRead(notification)}>
         <ListItemIcon>
           <ActiveIcon style={{fontSize: "14px", color: "#f50057"}} />
         </ListItemIcon>
         <ListItemIcon>
-          <NotificationIcon category={notification.category} />
+          <ConsoleIcon category={notification.category} />
         </ListItemIcon>
         <ListItemText primary={notification.title} secondary={notification.body} />
         <div>
@@ -82,30 +92,5 @@ const NoNotifications = (props) => (
     <ListItemText secondary="No new notifications" />
   </ListItem>
 )
-
-const NotificationIcon = (props) => {
-  switch (props.category) {
-    case "devices":
-      return <DevicesIcon style={{color: '#616161'}} />
-    case "gateways":
-      return <GatewaysIcon style={{color: '#616161'}} />
-    case "channels":
-      return <ChannelsIcon style={{color: '#616161'}} />
-    case "access":
-      return <AccessIcon style={{color: '#616161'}} />
-    case "dashboard":
-      return <DashboardIcon style={{color: '#616161'}} />
-    case "profile":
-      return <AccountCircle style={{color: '#616161'}} />
-    case "map":
-      return <MapIcon style={{color: '#616161'}} />
-    case "billing":
-      return <BillingIcon style={{color: '#616161'}} />
-    case "reports":
-      return <ReportsIcon style={{color: '#616161'}} />
-    default:
-      return <DevicesIcon style={{color: '#616161'}} />
-  }
-}
 
 export default NotificationsMenu

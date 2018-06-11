@@ -39,7 +39,7 @@ class Profile extends Component {
               Your email is: {email}
             </Typography>
             <Typography component="p">
-              Token: <input value={apikey} />
+              Token: <input defaultValue={apikey} />
             </Typography>
           </CardContent>
           <CardActions>

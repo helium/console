@@ -6,6 +6,11 @@ import { PAGINATED_NOTIFICATIONS } from '../../graphql/notifications'
 import { formatDatetimeAgo } from '../../util/time'
 import BlankSlate from '../common/BlankSlate'
 
+// Redux
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import  { updateNotification } from '../../actions/notifications'
+
 // MUI
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -28,8 +33,27 @@ const styles = theme => ({
   },
 })
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateNotification }, dispatch);
+}
+
 @withStyles(styles)
+@connect(null, mapDispatchToProps)
 class Notifications extends Component {
+  constructor(props) {
+    super(props)
+    this.markRead = this.markRead.bind(this)
+  }
+
+  markRead(notification, followUrl = true) {
+    const { updateNotification } = this.props
+    if (followUrl) {
+      updateNotification(notification.id, {active: false}, notification.url)
+    } else {
+      updateNotification(notification.id, {active: false})
+    }
+  }
+
   render() {
     const { classes } = this.props
 
@@ -48,9 +72,9 @@ class Notifications extends Component {
       },
       {
         Header: 'Message',
-        Cell: props => <Link to={props.row.url} style={{fontWeight: props.row.active ? 500 : 300}}>
+        Cell: props => <a onClick={() => this.markRead(props.row)} href="javascript:void(0)" style={{fontWeight: props.row.active ? 500 : 300}}>
           {props.row.title}: {props.row.body}
-          </Link>
+          </a>
       },
       {
         Header: 'Time',
@@ -61,21 +85,15 @@ class Notifications extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          <Button
-            component={Link}
-            to={props.row.url}
-            size="small"
-          >
-            View
-          </Button>
-          <Button
-            color="secondary"
-            component={Link}
-            to={`/notifications/${props.row.id}`}
-            size="small"
-          >
-            Mark as read
-          </Button>
+          {props.row.active &&
+            <Button
+              color="secondary"
+              onClick={() => this.markRead(props.row, false)}
+              size="small"
+            >
+              Mark as read
+            </Button>
+          }
         </span>
       },
     ]

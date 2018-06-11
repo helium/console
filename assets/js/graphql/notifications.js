@@ -22,8 +22,8 @@ export const NOTIFICATION_FRAGMENT = gql`
 // `
 
 export const PAGINATED_NOTIFICATIONS = gql`
-  query PaginatedNotificationsQuery ($page: Int, $pageSize: Int) {
-    notifications(page: $page, pageSize: $pageSize) {
+  query PaginatedNotificationsQuery ($active: Boolean, $page: Int, $pageSize: Int) {
+    notifications(active: $active, page: $page, pageSize: $pageSize) {
       entries {
         ...NotificationFragment
       },

@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.NotificationController do
   use ConsoleWeb, :controller
   alias Console.Notifications
+  alias Console.Notifications.Notification
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -13,6 +14,16 @@ defmodule ConsoleWeb.NotificationController do
 
       conn
       |> put_status(:created)
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def update(conn, %{"id" => id, "notification" => params}) do
+    current_membership = conn.assigns.current_membership
+    notification = Notifications.get_notification!(current_membership, id)
+
+    with {:ok, %Notification{} = notification} <- Notifications.update_notification(notification, params) do
+      conn
       |> send_resp(:no_content, "")
     end
   end

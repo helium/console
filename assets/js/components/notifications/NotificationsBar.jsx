@@ -10,7 +10,19 @@ import SmallBadge from '../common/SmallBadge'
 // Icons
 import NotificationsIcon from '@material-ui/icons/Notifications'
 
-@graphql(PAGINATED_NOTIFICATIONS, {page: 1, pageSize: 5})
+const queryOptions = {
+  options: props => ({
+    variables: {
+      active: true,
+      page: 1,
+      pageSize: 5
+    },
+    fetchPolicy: 'network-only',
+  })
+}
+
+// @graphql(PAGINATED_NOTIFICATIONS, {active: true, page: 1, pageSize: 5})
+@graphql(PAGINATED_NOTIFICATIONS, queryOptions)
 class NotificationsBar extends Component {
   constructor(props) {
     super(props)
