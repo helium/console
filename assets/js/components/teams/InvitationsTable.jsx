@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import { deleteInvitation } from '../../actions/invitation'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
@@ -18,8 +18,7 @@ class InvitationsTable extends Component {
     const columns = [
       {
         Header: 'User',
-        accessor: 'email',
-        Cell: props => <span>{props.row.email}</span>
+        accessor: 'email'
       },
       {
         Header: 'Role',
@@ -35,7 +34,7 @@ class InvitationsTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          {userCan('delete', 'membership', props.row) &&
+          <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
               onClick={() => deleteInvitation(props.row)}
               color="secondary"
@@ -43,7 +42,7 @@ class InvitationsTable extends Component {
               >
               Remove
             </Button>
-          }
+          </UserCan>
         </span>
       },
     ]

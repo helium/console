@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { deleteMembership } from '../../actions/membership'
 import moment from 'moment'
 import random from 'lodash/random'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 
@@ -22,8 +22,7 @@ class MembersTable extends Component {
     const columns = [
       {
         Header: 'User',
-        accessor: 'email',
-        Cell: props => <span>{props.row.email}</span>
+        accessor: 'email'
       },
       {
         Header: 'Role',
@@ -47,16 +46,16 @@ class MembersTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          {userCan('update', 'membership', props.row) &&
+          <UserCan action="update" itemType="membership" item={props.row}>
             <Button
               onClick={() => openEditMembershipModal(props.row)}
               size="small"
             >
               Edit
             </Button>
-          }
+          </UserCan>
 
-          {userCan('delete', 'membership', props.row) &&
+          <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
               color="secondary"
               onClick={() => deleteMembership(props.row)}
@@ -64,7 +63,7 @@ class MembersTable extends Component {
             >
               Remove
             </Button>
-          }
+          </UserCan>
         </span>
       },
     ]

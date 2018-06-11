@@ -23,7 +23,8 @@ class UserCan extends Component {
   }
 
   render() {
-    if (this.userCan()) return this.props.children
+    if (this.props.type == "not" && !this.userCan()) return this.props.children
+    if (!this.props.type && this.userCan()) return this.props.children
     return null
   }
 }

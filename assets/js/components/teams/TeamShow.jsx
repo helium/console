@@ -138,17 +138,18 @@ class TeamShow extends Component {
       path: "/teams/activity",
     }]
 
-    // if (userCan("view", "auditTrails")) {
-      return (
-        <DashboardLayout title="Team Access" tabs={tabs} />
-      )
-    // } else {
-    //   return (
-    //     <DashboardLayout title="Team Access">
-    //       {accessView}
-    //     </DashboardLayout>
-    //   )
-    // }
+    return (
+      <div>
+        <UserCan type="not" action="view" itemType="auditTrails">
+          <DashboardLayout title="Team Access">
+            {accessView}
+          </DashboardLayout>
+        </UserCan>
+        <UserCan action="view" itemType="auditTrails">
+          <DashboardLayout title="Team Access" tabs={tabs} />
+        </UserCan>
+      </div>
+    )
   }
 }
 

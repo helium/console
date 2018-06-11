@@ -29,23 +29,19 @@ class AuditTable extends Component {
     const columns = [
       {
         Header: 'User',
-        accessor: 'userEmail',
-        Cell: props => <span>{props.row.userEmail}</span>
+        accessor: 'userEmail'
       },
       {
         Header: 'Object',
-        accessor: 'object',
-        Cell: props => <span>{props.row.object}</span>
+        accessor: 'object'
       },
       {
         Header: 'Action',
-        accessor: 'action',
-        Cell: props => <span>{props.row.action}</span>
+        accessor: 'action'
       },
       {
         Header: 'Description',
-        accessor: 'description',
-        Cell: props => <span>{props.row.description}</span>
+        accessor: 'description'
       },
       {
         Header: 'Time',
