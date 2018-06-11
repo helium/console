@@ -23,11 +23,11 @@ const defaultVariables = {
 class PaginatedTable extends Component {
 
   render() {
-    const { query } = this.props
+    const { query, fetchPolicy } = this.props
     const variables = merge({}, defaultVariables, this.props.variables)
 
     return(
-      <Query query={query} variables={variables}>
+      <Query query={query} variables={variables} fetchPolicy={fetchPolicy || 'cache-first'}>
         {({ loading, error, data, fetchMore, subscribeToMore }) => (
           <QueryResults
             loading={loading}
@@ -62,7 +62,7 @@ class QueryResults extends Component {
   componentDidMount() {
     const { subscribeToMore, subscription, subscriptionVariables } = this.props
 
-    subscribeToMore({
+    subscription && subscribeToMore({
       document: subscription,
       variables: subscriptionVariables,
       updateQuery: (prev, { subscriptionData }) => {

@@ -117,9 +117,15 @@ class TeamShow extends Component {
     )
 
     const activityView = (
-      <Card>
-        <AuditTable title="Team History"/>
-      </Card>
+      <Paper className={classes.paper}>
+        <header className={classes.header}>
+          <Typography variant="headline" component="h3">
+            Team History
+          </Typography>
+        </header>
+
+        <AuditTable />
+      </Paper>
     )
 
     const tabs = [{
