@@ -7,7 +7,7 @@ import MembersTable from './MembersTable'
 import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
@@ -77,14 +77,14 @@ class TeamShow extends Component {
               Members
             </Typography>
 
-            {userCan('create', 'membership') &&
+            <UserCan action="create" itemType="membership">
               <Button
                 color="primary"
                 onClick={this.openNewUserModal}
               >
                 New User
               </Button>
-            }
+            </UserCan>
           </header>
 
           <MembersTable
