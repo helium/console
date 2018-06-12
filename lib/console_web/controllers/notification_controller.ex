@@ -10,7 +10,6 @@ defmodule ConsoleWeb.NotificationController do
 
     with {:ok, notification = %Notification{}} <- Notifications.create_notification(current_team, params) do
       broadcast(notification, "new")
-      # AuditTrails.create_audit_trail("device", "create", current_user, current_team, "devices", device)
 
       conn
       |> put_status(:created)
