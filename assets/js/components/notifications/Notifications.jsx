@@ -82,6 +82,10 @@ class Notifications extends Component {
         Cell: props => <span style={{fontWeight: props.row.active ? 500 : 300}}>{formatDatetimeAgo(props.value)}</span>
       },
       {
+        Header: 'Seen by',
+        Cell: props => <span style={{fontWeight: props.row.active ? 500 : 300}}>3 teammates</span>
+      },
+      {
         Header: '',
         numeric: true,
         Cell: props => <span>

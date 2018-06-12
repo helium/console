@@ -16,6 +16,7 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Tooltip from '@material-ui/core/Tooltip'
 
 // Redux
 import { bindActionCreators } from 'redux';
@@ -26,6 +27,7 @@ import  { markRead } from '../../actions/notifications'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ActiveIcon from '@material-ui/icons/FiberManualRecord';
 import ConsoleIcon from '../common/ConsoleIcon'
+import ViewIcon from '@material-ui/icons/RemoveRedEye'
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ markRead }, dispatch);
@@ -66,23 +68,38 @@ class NotificationsMenu extends Component {
 const NotificationsList = (props) => (
   <div>
     {props.notifications.map(notification =>
-      <MenuItem key={notification.id} onClick={() => props.markRead(notification)}>
-        <ListItemIcon>
-          <ActiveIcon style={{fontSize: "14px", color: "#f50057"}} />
-        </ListItemIcon>
-        <ListItemIcon>
-          <ConsoleIcon category={notification.category} />
-        </ListItemIcon>
-        <ListItemText primary={notification.title} secondary={notification.body} />
-        <div>
-          <Typography component="small" color="textSecondary" style={{fontSize: "0.6rem", height: "34px"}}>
-            {formatDatetimeAgo(notification.insertedAt)}
-          </Typography>
-        </div>
-      </MenuItem>
+      <Notification
+        key={notification.id}
+        notification={notification}
+        markRead={props.markRead}
+        />
     )}
   </div>
 )
+
+const Notification = (props) => {
+  const { notification, markRead } = props
+
+  return (
+    <MenuItem onClick={() => markRead(notification)}>
+      <ListItemIcon>
+        <ActiveIcon style={{fontSize: "14px", color: "#f50057"}} />
+      </ListItemIcon>
+      <ListItemIcon>
+        <ConsoleIcon category={notification.category} />
+      </ListItemIcon>
+      <ListItemText primary={notification.title} secondary={notification.body} />
+      <div style={{display: "flex", flexWrap: "wrap", width: "4em", height: "2.1em"}}>
+        <Typography component="small" color="textSecondary" style={{fontSize: "0.6rem", width: "100%", textAlign: "right"}}>
+          {formatDatetimeAgo(notification.insertedAt)}
+        </Typography>
+        <Tooltip title="Seen by 3 teammates" placement="top">
+          <ViewIcon style={{fontSize: "0.7rem", color: "#999", width: "100%", textAlign: "center"}} />
+        </Tooltip>
+      </div>
+    </MenuItem>
+  )
+}
 
 const NoNotifications = (props) => (
   <ListItem>
