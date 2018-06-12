@@ -1,5 +1,4 @@
 import * as rest from '../util/rest';
-import { DELETED_ENTITY } from './main'
 
 export const createEvent = (eventParams) => {
   return (dispatch) => {

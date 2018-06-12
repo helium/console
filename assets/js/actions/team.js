@@ -65,7 +65,6 @@ export const switchTeam = (id, afterSwitchPath) => {
     rest.post(`/api/teams/${id}/switch`)
       .then(response => {
         dispatch(switchedTeam(response.data.jwt))
-
         if (afterSwitchPath) {
           dispatch(push(afterSwitchPath))
         }
