@@ -1,6 +1,5 @@
 import { push, replace } from 'react-router-redux';
 import * as rest from '../util/rest';
-import { DELETED_ENTITY } from './main'
 import { displayInfo } from '../util/messages'
 
 export const createChannel = (params) => {
@@ -20,6 +19,7 @@ export const updateChannel = (id, params) => {
     rest.put(`/api/channels/${id}`, {
       channel: params
     })
+    .then(response => {})
   }
 }
 
@@ -29,13 +29,5 @@ export const deleteChannel = (id, redirect = false) => {
       .then(response => {
         if (redirect) dispatch(replace('/channels'))
       })
-  }
-}
-
-export const deletedChannel = (channel) => {
-  return {
-    type: DELETED_ENTITY,
-    entity: 'channels',
-    id: channel.id
   }
 }

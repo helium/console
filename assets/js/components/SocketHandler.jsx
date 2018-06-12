@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { receivedEvent, deletedEvent } from '../actions/event'
-import { receivedDevice, deletedDevice } from '../actions/device'
 import { receivedGateway, deletedGateway } from '../actions/gateway'
 import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
 import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
@@ -53,8 +52,6 @@ class SocketHandler extends Component {
     const {
       receivedEvent,
       deletedEvent,
-      receivedDevice,
-      deletedDevice,
       receivedGateway,
       deletedGateway,
       receivedInvitation,
@@ -74,7 +71,6 @@ class SocketHandler extends Component {
       this.socket.connect()
 
       this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
-      this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
       this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
       this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
       this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
@@ -125,8 +121,6 @@ function mapDispatchToProps(dispatch) {
     fetchIndices,
     receivedEvent,
     deletedEvent,
-    receivedDevice,
-    deletedDevice,
     receivedGateway,
     deletedGateway,
     receivedMembership,
