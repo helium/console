@@ -1,9 +1,11 @@
 // GraphQL
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { store } from '../store/configureStore';
+import { replace } from 'react-router-redux';
 
 import {ApolloLink} from "apollo-link";
 import {hasSubscription} from "@jumpn/utils-graphql";
@@ -24,7 +26,25 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-const authHttpLink = authLink.concat(httpLink)
+const authErrorLink = onError(({ networkError, operation: { operationName }}) => {
+  if (networkError.statusCode == 404) {
+    switch(operationName) {
+      case "DeviceShowQuery":
+        store.dispatch(replace("/devices"))
+        break
+      case "ChannelShowQuery":
+        store.dispatch(replace("/channels"))
+        break
+      case "GatewayShowQuery":
+        store.dispatch(replace("/gateways"))
+        break
+      default:
+        break
+    }
+  }
+})
+
+const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
 
 const link = new ApolloLink.split(
   operation => hasSubscription(operation.query),
