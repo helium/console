@@ -48,9 +48,9 @@ class Notifications extends Component {
   markRead(notification, followUrl = true) {
     const { markRead } = this.props
     if (followUrl) {
-      markRead(notification.id, {active: false}, notification.url)
+      markRead(notification.id, notification.url)
     } else {
-      markRead(notification.id, {active: false})
+      markRead(notification.id)
     }
   }
 

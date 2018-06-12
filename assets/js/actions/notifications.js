@@ -10,7 +10,7 @@ export const createNotification = (params) => {
   }
 }
 
-export const markRead = (id, params, url = null) => {
+export const markRead = (id, url = null) => {
   return (dispatch) => {
     rest.post(`/api/notifications/${id}/view`)
     .then(response => {

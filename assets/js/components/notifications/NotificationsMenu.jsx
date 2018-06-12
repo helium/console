@@ -41,8 +41,9 @@ class NotificationsMenu extends Component {
   }
 
   markRead(notification) {
-    const { markRead } = this.props
-    markRead(notification.id, {active: false}, notification.url)
+    const { markRead, onClose } = this.props
+    onClose()
+    markRead(notification.id, notification.url)
   }
 
   render() {
