@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
-import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -48,9 +47,6 @@ class SocketHandler extends Component {
 
   subscribeToUpdates() {
     const {
-      receivedInvitation,
-      deletedInvitation,
-      updatedInvitation,
       receivedMembership,
       deletedMembership,
       updatedMembership,
@@ -65,7 +61,6 @@ class SocketHandler extends Component {
       this.socket.connect()
 
       this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
-      this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
     }
   }
 
@@ -114,9 +109,6 @@ function mapDispatchToProps(dispatch) {
     receivedMembership,
     deletedMembership,
     updatedMembership,
-    receivedInvitation,
-    deletedInvitation,
-    updatedInvitation,
   }, dispatch);
 }
 
