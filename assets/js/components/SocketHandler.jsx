@@ -5,7 +5,6 @@ import { Socket } from 'phoenix'
 import { receivedEvent, deletedEvent } from '../actions/event'
 import { receivedDevice, deletedDevice } from '../actions/device'
 import { receivedGateway, deletedGateway } from '../actions/gateway'
-import { receivedChannel, deletedChannel } from '../actions/channel'
 import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
 import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
 import { isJwtExpired } from '../util/jwt.js'
@@ -58,8 +57,6 @@ class SocketHandler extends Component {
       deletedDevice,
       receivedGateway,
       deletedGateway,
-      receivedChannel,
-      deletedChannel,
       receivedInvitation,
       deletedInvitation,
       updatedInvitation,
@@ -79,7 +76,6 @@ class SocketHandler extends Component {
       this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
       this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
       this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
-      this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
       this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
       this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
     }
@@ -133,8 +129,6 @@ function mapDispatchToProps(dispatch) {
     deletedDevice,
     receivedGateway,
     deletedGateway,
-    receivedChannel,
-    deletedChannel,
     receivedMembership,
     deletedMembership,
     updatedMembership,
