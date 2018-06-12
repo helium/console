@@ -9,7 +9,7 @@ import BlankSlate from '../common/BlankSlate'
 // Redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import  { updateNotification } from '../../actions/notifications'
+import  { markRead } from '../../actions/notifications'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -34,7 +34,7 @@ const styles = theme => ({
 })
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateNotification }, dispatch);
+  return bindActionCreators({ markRead }, dispatch);
 }
 
 @withStyles(styles)
@@ -46,11 +46,11 @@ class Notifications extends Component {
   }
 
   markRead(notification, followUrl = true) {
-    const { updateNotification } = this.props
+    const { markRead } = this.props
     if (followUrl) {
-      updateNotification(notification.id, {active: false}, notification.url)
+      markRead(notification.id, {active: false}, notification.url)
     } else {
-      updateNotification(notification.id, {active: false})
+      markRead(notification.id, {active: false})
     }
   }
 

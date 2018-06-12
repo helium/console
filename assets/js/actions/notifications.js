@@ -1,11 +1,9 @@
 import * as rest from '../util/rest';
 import { push } from 'react-router-redux';
 
-export const updateNotification = (id, params, url = null) => {
+export const markRead = (id, params, url = null) => {
   return (dispatch) => {
-    rest.put(`/api/notifications/${id}`, {
-      notification: params
-    })
+    rest.post(`/api/notifications/${id}/view`)
     .then(response => {
       if (url) dispatch(push(url))
     })

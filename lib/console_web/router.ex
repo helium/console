@@ -38,7 +38,9 @@ defmodule ConsoleWeb.Router do
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
-    resources "/notifications", NotificationController, only: [:create, :update]
+    resources "/notifications", NotificationController, only: [:create] do
+      post "/view", NotificationController, :view, as: :view
+    end
     resources "/teams", TeamController, except: [:new, :edit] do
       post "/switch", TeamController, :switch, as: :switch
     end

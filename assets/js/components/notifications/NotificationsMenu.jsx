@@ -20,7 +20,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 // Redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import  { updateNotification } from '../../actions/notifications'
+import  { markRead } from '../../actions/notifications'
 
 // Icons
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -28,7 +28,7 @@ import ActiveIcon from '@material-ui/icons/FiberManualRecord';
 import ConsoleIcon from '../common/ConsoleIcon'
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateNotification }, dispatch);
+  return bindActionCreators({ markRead }, dispatch);
 }
 
 @connect(null, mapDispatchToProps)
@@ -39,8 +39,8 @@ class NotificationsMenu extends Component {
   }
 
   markRead(notification) {
-    const { updateNotification } = this.props
-    updateNotification(notification.id, {active: false}, notification.url)
+    const { markRead } = this.props
+    markRead(notification.id, {active: false}, notification.url)
   }
 
   render() {

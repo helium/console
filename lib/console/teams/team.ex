@@ -14,6 +14,7 @@ defmodule Console.Teams.Team do
     has_many :gateways, Console.Gateways.Gateway
     has_many :channels, Console.Channels.Channel
     has_many :audit_trails, Console.AuditTrails.AuditTrail
+    has_many :notifications, Console.Notifications.Notification
 
     timestamps()
   end
