@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import DashboardLayout from '../common/DashboardLayout'
 import PaginatedTable from '../common/PaginatedTable'
-import { PAGINATED_NOTIFICATIONS } from '../../graphql/notifications'
+import { PAGINATED_NOTIFICATIONS, NOTIFICATION_SUBSCRIPTION } from '../../graphql/notifications'
 import { formatDatetimeAgo } from '../../util/time'
 import BlankSlate from '../common/BlankSlate'
 
@@ -118,6 +118,7 @@ class Notifications extends Component {
           <PaginatedTable
             columns={columns}
             query={PAGINATED_NOTIFICATIONS}
+            subscription={NOTIFICATION_SUBSCRIPTION}
             fetchPolicy="network-only"
             EmptyComponent={ props => <BlankSlate title="No notifications" subheading="You don't currently have any active or past notifications" /> }
           />

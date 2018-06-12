@@ -12,14 +12,14 @@ export const NOTIFICATION_FRAGMENT = gql`
   }
 `
 
-// export const DEVICE_SUBSCRIPTION = gql`
-//   subscription onDeviceAdded {
-//     deviceAdded {
-//       ...DeviceFragment
-//     }
-//   }
-//   ${DEVICE_FRAGMENT}
-// `
+export const NOTIFICATION_SUBSCRIPTION = gql`
+  subscription onNotificationUpdate {
+    notificationUpdate {
+      ...NotificationFragment
+    }
+  }
+  ${NOTIFICATION_FRAGMENT}
+`
 
 export const PAGINATED_NOTIFICATIONS = gql`
   query PaginatedNotificationsQuery ($active: Boolean, $page: Int, $pageSize: Int) {

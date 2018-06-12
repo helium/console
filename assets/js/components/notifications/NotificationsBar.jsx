@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import NotificationsMenu from './NotificationsMenu'
-import { PAGINATED_NOTIFICATIONS } from '../../graphql/notifications'
+import { PAGINATED_NOTIFICATIONS, NOTIFICATION_SUBSCRIPTION } from '../../graphql/notifications'
 import { graphql } from 'react-apollo';
 
 // MUI
@@ -33,6 +33,21 @@ class NotificationsBar extends Component {
 
     this.handleClick = this.handleClick.bind(this)
     this.handleClose = this.handleClose.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, fetchMore } = this.props.data
+
+    subscribeToMore({
+      document: NOTIFICATION_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          variables: {active: true, page: 1, pageSize: 5},
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
   }
 
   handleClose() {

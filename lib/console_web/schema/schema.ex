@@ -206,5 +206,11 @@ defmodule ConsoleWeb.Schema do
         {:ok, topic: "#{team_id}/invitation_added"}
       end
     end
+
+    field :notification_update, :notification do
+      config fn _, %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/notification_update"}
+      end
+    end
   end
 end

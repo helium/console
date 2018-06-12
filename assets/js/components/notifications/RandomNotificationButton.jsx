@@ -17,7 +17,6 @@ class RandomNotificationButton extends Component {
   }
 
   handleClick() {
-    console.log("here")
     const { createNotification } = this.props
     createNotification({
       title: "hello",
@@ -28,7 +27,7 @@ class RandomNotificationButton extends Component {
 
   render() {
     return (
-      <Button onClick={this.handleClick}>Random Notification</Button>
+      <Button onClick={this.handleClick} style={{marginTop: 10}}>Random Notification</Button>
     )
   }
 }

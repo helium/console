@@ -125,7 +125,7 @@ class NavDrawer extends Component {
           <Divider />
           <OrganizationalNavItems />
           <Divider />
-          <RandomNotificationButton style={{marginTop: 10}} />
+          <RandomNotificationButton />
         </Drawer>
       </MuiThemeProvider>
     )

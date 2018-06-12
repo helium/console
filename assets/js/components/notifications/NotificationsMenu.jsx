@@ -89,12 +89,12 @@ const Notification = (props) => {
         <ConsoleIcon category={notification.category} />
       </ListItemIcon>
       <ListItemText primary={notification.title} secondary={notification.body} />
-      <div style={{display: "flex", flexWrap: "wrap", width: "4em", height: "2.1em"}}>
+      <div style={{display: "flex", flexWrap: "wrap", width: "5em", height: "2.1em"}}>
         <Typography component="small" color="textSecondary" style={{fontSize: "0.6rem", width: "100%", textAlign: "right"}}>
           {formatDatetimeAgo(notification.insertedAt)}
         </Typography>
         <Tooltip title="Seen by 3 teammates" placement="top">
-          <ViewIcon style={{fontSize: "0.7rem", color: "#999", width: "100%", textAlign: "center"}} />
+          <ViewIcon style={{fontSize: "0.7rem", color: "#999", width: "100%", marginLeft: "8px"}} />
         </Tooltip>
       </div>
     </MenuItem>

@@ -9,7 +9,7 @@ defmodule ConsoleWeb.NotificationController do
     current_team = conn.assigns.current_team
 
     with {:ok, notification = %Notification{}} <- Notifications.create_notification(current_team, params) do
-      # broadcast(device, "new")
+      broadcast(notification, "new")
       # AuditTrails.create_audit_trail("device", "create", current_user, current_team, "devices", device)
 
       conn
@@ -24,18 +24,14 @@ defmodule ConsoleWeb.NotificationController do
     notification = Notifications.get_notification!(current_team, id)
 
     with :ok <- Notifications.mark_viewed(notification, current_membership) do
+      broadcast(notification, "update")
+
       conn
       |> send_resp(:no_content, "")
     end
   end
 
-  def update(conn, %{"id" => id, "notification" => params}) do
-    current_membership = conn.assigns.current_membership
-    notification = Notifications.get_notification!(current_membership, id)
-
-    with {:ok, %Notification{} = notification} <- Notifications.mark_viewed(notification, current_membership) do
-      conn
-      |> send_resp(:no_content, "")
-    end
+  defp broadcast(%Notification{} = notification, action) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, notification, notification_update: "#{notification.team_id}/notification_update")
   end
 end
