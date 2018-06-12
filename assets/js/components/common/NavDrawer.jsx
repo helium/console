@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import RandomNotificationButton from '../notifications/RandomNotificationButton'
 
 // MUI
 import Drawer from '@material-ui/core/Drawer';
@@ -123,6 +124,8 @@ class NavDrawer extends Component {
           <HardwareNavItems />
           <Divider />
           <OrganizationalNavItems />
+          <Divider />
+          <RandomNotificationButton style={{marginTop: 10}} />
         </Drawer>
       </MuiThemeProvider>
     )

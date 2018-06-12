@@ -118,6 +118,7 @@ class Notifications extends Component {
           <PaginatedTable
             columns={columns}
             query={PAGINATED_NOTIFICATIONS}
+            fetchPolicy="network-only"
             EmptyComponent={ props => <BlankSlate title="No notifications" subheading="You don't currently have any active or past notifications" /> }
           />
 
