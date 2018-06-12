@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchTeams, switchTeam } from '../../actions/team'
+import { switchTeam } from '../../actions/team'
 import NewTeamModal from '../teams/NewTeamModal'
 
 // MUI
@@ -61,7 +61,7 @@ class TeamSwitcher extends Component {
 
   render() {
     const { anchorEl, teamMenuOpen } = this.state
-    const { teams, currentTeam, switchTeam } = this.props
+    const { teams, currentTeam } = this.props
 
     return (
       <div>
@@ -118,7 +118,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchTeams, switchTeam }, dispatch);
+  return bindActionCreators({ switchTeam }, dispatch);
 }
 
 export default TeamSwitcher

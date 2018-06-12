@@ -2,12 +2,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
-import { receivedEvent, deletedEvent } from '../actions/event'
-import { receivedDevice, deletedDevice } from '../actions/device'
-import { receivedGateway, deletedGateway } from '../actions/gateway'
-import { receivedChannel, deletedChannel } from '../actions/channel'
-import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
-import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -52,20 +46,6 @@ class SocketHandler extends Component {
 
   subscribeToUpdates() {
     const {
-      receivedEvent,
-      deletedEvent,
-      receivedDevice,
-      deletedDevice,
-      receivedGateway,
-      deletedGateway,
-      receivedChannel,
-      deletedChannel,
-      receivedInvitation,
-      deletedInvitation,
-      updatedInvitation,
-      receivedMembership,
-      deletedMembership,
-      updatedMembership,
       apikey,
       currentTeamId
     } = this.props
@@ -75,13 +55,6 @@ class SocketHandler extends Component {
     this.socket = new Socket("/socket", {params: {token: apikey }})
     if (!isJwtExpired(apikey) && currentTeamId) {
       this.socket.connect()
-
-      this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
-      this.join(`device:${currentTeamId}`, receivedDevice, deletedDevice)
-      this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
-      this.join(`channel:${currentTeamId}`, receivedChannel, deletedChannel)
-      this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
-      this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
     }
   }
 
@@ -127,20 +100,6 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchIndices,
-    receivedEvent,
-    deletedEvent,
-    receivedDevice,
-    deletedDevice,
-    receivedGateway,
-    deletedGateway,
-    receivedChannel,
-    deletedChannel,
-    receivedMembership,
-    deletedMembership,
-    updatedMembership,
-    receivedInvitation,
-    deletedInvitation,
-    updatedInvitation,
   }, dispatch);
 }
 

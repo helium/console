@@ -96,7 +96,7 @@ class ChannelShow extends Component {
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteChannel(channel)}
+                onClick={() => deleteChannel(channel.id, true)}
               >
                 Delete Channel
               </Button>
