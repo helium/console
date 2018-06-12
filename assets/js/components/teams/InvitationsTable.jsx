@@ -5,6 +5,7 @@ import moment from 'moment'
 import UserCan from '../common/UserCan'
 import { deleteInvitation } from '../../actions/invitation'
 import PaginatedTable from '../common/PaginatedTable'
+import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 
 // MUI
@@ -52,7 +53,7 @@ class InvitationsTable extends Component {
         columns={columns}
         query={PAGINATED_INVITATIONS}
         subscription={INVITATION_SUBSCRIPTION}
-        EmptyComponent={ props => <BlankSlate title="Loading..." /> }
+        EmptyComponent={ props => <BlankSlate title="No Pending Invitations" noIcon={true} /> }
       />
     )
   }

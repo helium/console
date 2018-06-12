@@ -5,6 +5,7 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { connect } from 'react-redux';
 import PaginatedTable from '../common/PaginatedTable'
+import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_AUDIT_TRAILS } from '../../graphql/auditTrails'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 

@@ -6,6 +6,7 @@ import moment from 'moment'
 import random from 'lodash/random'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
+import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 
 // MUI
