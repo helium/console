@@ -35,7 +35,8 @@ defmodule ConsoleWeb.NotificationController do
 
     with {:ok, notifications} <- Notifications.clear_all(current_membership) do
       # just broadcast one of the notifications to trigger the query reload
-      broadcast(List.last(notifications), "update")
+      notification = List.last(notifications)
+      if notification, do: broadcast(notification, "update")
 
       conn
       |> send_resp(:no_content, "")

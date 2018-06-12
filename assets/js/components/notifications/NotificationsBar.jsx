@@ -66,7 +66,7 @@ class NotificationsBar extends Component {
     const { anchorEl } = this.state
     const { loading, notifications } = this.props.data
 
-    if (loading) return <NotificationsIcon />
+    if (loading) return <IconButton color="inherit"><NotificationsIcon /></IconButton>
     const { totalEntries, entries } = notifications
 
     return (
