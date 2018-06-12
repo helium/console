@@ -38,14 +38,15 @@ defmodule ConsoleWeb.Router do
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
-    resources "/notifications", NotificationController, only: [:create] do
-      post "/view", NotificationController, :view, as: :view
-    end
     resources "/teams", TeamController, except: [:new, :edit] do
       post "/switch", TeamController, :switch, as: :switch
     end
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
+    resources "/notifications", NotificationController, only: [:create] do
+      post "/view", NotificationController, :view, as: :view
+    end
+    post "/notifications/clear", NotificationController, :clear, as: :clear_notifications
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create

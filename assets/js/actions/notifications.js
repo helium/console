@@ -18,3 +18,10 @@ export const markRead = (id, params, url = null) => {
     })
   }
 }
+
+export const clearAll = () => {
+  return (dispatch) => {
+    rest.post(`/api/notifications/clear`)
+    .then(response => { })
+  }
+}

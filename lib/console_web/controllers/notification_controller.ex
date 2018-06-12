@@ -31,6 +31,18 @@ defmodule ConsoleWeb.NotificationController do
     end
   end
 
+  def clear(conn, _params) do
+    current_membership = conn.assigns.current_membership
+
+    with {:ok, notifications} <- Notifications.clear_all(current_membership) do
+      # just broadcast one of the notifications to trigger the query reload
+      broadcast(List.last(notifications), "update")
+
+      conn
+      |> send_resp(:no_content, "")
+    end
+  end
+
   defp broadcast(%Notification{} = notification, action) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, notification, notification_update: "#{notification.team_id}/notification_update")
   end

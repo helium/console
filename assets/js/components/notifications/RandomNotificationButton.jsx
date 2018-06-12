@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import sample from 'lodash/sample'
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -7,6 +8,23 @@ import { createNotification } from '../../actions/notifications'
 
 // MUI
 import Button from '@material-ui/core/Button';
+
+const randomNotification = () => (
+  sample([
+    {
+      title: "Pending Gateway Activation",
+      body: "Confirm your pending gateway activation",
+      url: "/gateways",
+      category: "gateways"
+    },
+    {
+      title: "Gateway Confirmed",
+      body: "Gateway successfully confirmed",
+      url: "/gateways",
+      category: "gateways"
+    },
+  ])
+)
 
 @connect(null, mapDispatchToProps)
 class RandomNotificationButton extends Component {
@@ -18,11 +36,7 @@ class RandomNotificationButton extends Component {
 
   handleClick() {
     const { createNotification } = this.props
-    createNotification({
-      title: "hello",
-      body: "something",
-      category: "gateways"
-    })
+    createNotification(randomNotification())
   }
 
   render() {

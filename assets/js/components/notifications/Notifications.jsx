@@ -9,7 +9,7 @@ import BlankSlate from '../common/BlankSlate'
 // Redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import  { markRead } from '../../actions/notifications'
+import  { markRead, clearAll } from '../../actions/notifications'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -34,7 +34,7 @@ const styles = theme => ({
 })
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ markRead }, dispatch);
+  return bindActionCreators({ markRead, clearAll }, dispatch);
 }
 
 @withStyles(styles)
@@ -55,7 +55,7 @@ class Notifications extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, clearAll } = this.props
 
     const columns = [
       {
@@ -110,7 +110,7 @@ class Notifications extends Component {
               Notifications
             </Typography>
 
-            <Button>
+            <Button onClick={clearAll}>
               Mark all as read
             </Button>
           </header>

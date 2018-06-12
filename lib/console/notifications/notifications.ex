@@ -29,21 +29,25 @@ defmodule Console.Notifications do
     end
   end
 
-  # def create_notifications(team = %Team{}, attrs \\ %{}) do
-  #   memberships = Ecto.assoc(team, :memberships) |> Repo.all()
-  #   now = DateTime.utc_now()
-  #   entries =
-  #     for m <- memberships,
-  #         do:
-  #           Map.merge(attrs, %{
-  #             "membership_id" => m.id,
-  #             "inserted_at" => now,
-  #             "updated_at" => now
-  #           })
-  #           |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
-  #
-  #   Repo.insert_all(Notification, entries)
-  # end
+  def clear_all(membership = %Membership{}) do
+    notifications = Ecto.assoc(membership, :notifications)
+                    |> Notification.active(membership)
+                    |> Repo.all()
+    now = DateTime.utc_now()
+    entries =
+      for n <- notifications,
+          do:
+            %{
+              "membership_id" => membership.id,
+              "notification_id" => n.id,
+              "inserted_at" => now,
+              "updated_at" => now
+            }
+            |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+
+    Repo.insert_all(NotificationView, entries, on_conflict: :nothing)
+    {:ok, notifications}
+  end
 
   def update_notification(%Notification{} = notification, attrs \\ %{}) do
     notification
