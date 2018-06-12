@@ -11,6 +11,7 @@ import HttpDetails from './HttpDetails'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
 import { CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
@@ -87,11 +88,11 @@ class ChannelShow extends Component {
           </CardContent>
 
           <CardActions>
-            {userCan('create', 'event') &&
+            <UserCan action="create" itemType="event">
               <RandomEventButton channel_id={channel.id} />
-            }
+            </UserCan>
 
-            {userCan('delete', 'channel', channel) &&
+            <UserCan action="delete" itemType="channel" item={channel}>
               <Button
                 size="small"
                 color="secondary"
@@ -99,7 +100,7 @@ class ChannelShow extends Component {
               >
                 Delete Channel
               </Button>
-            }
+            </UserCan>
           </CardActions>
         </Card>
 

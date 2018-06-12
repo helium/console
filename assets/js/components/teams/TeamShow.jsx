@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchTeam } from '../../actions/team'
-import { deleteInvitation } from '../../actions/invitation'
-import { deleteMembership, updateMembership } from '../../actions/membership'
+import { updateMembership } from '../../actions/membership'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
+import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
-import userCan from '../../util/abilities'
+import UserCan from '../common/UserCan'
+import UserCannot from '../common/UserCannot'
 import AuditTable from '../audit_trails/AuditTable'
 
 // MUI
@@ -16,18 +16,13 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles'
-
-// Icons
-import AddIcon from '@material-ui/icons/Add';
 
 const styles = theme => ({
   paper: {
     padding: theme.spacing.unit * 3,
     paddingTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 3
   },
   header: {
     display: 'flex',
@@ -36,7 +31,7 @@ const styles = theme => ({
 })
 
 @withStyles(styles)
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 class TeamShow extends Component {
   constructor(props) {
     super(props)
@@ -51,11 +46,6 @@ class TeamShow extends Component {
     this.closeNewUserModal = this.closeNewUserModal.bind(this)
     this.openEditMembershipModal = this.openEditMembershipModal.bind(this)
     this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
-  }
-
-  componentDidMount() {
-    const { fetchTeam, currentTeamId } = this.props
-    fetchTeam(currentTeamId)
   }
 
   openNewUserModal() {
@@ -78,46 +68,40 @@ class TeamShow extends Component {
   }
 
   render() {
-    const {
-      memberships, invitations, deleteInvitation, deleteMembership,
-      updateMembership
-    } = this.props
+    const { classes, updateMembership } = this.props
 
-    const { classes } = this.props
-
-    return (
-      <DashboardLayout title="Team Access">
+    const accessView = (
+      <div>
         <Paper className={classes.paper}>
           <header className={classes.header}>
             <Typography variant="headline" component="h3">
               Members
             </Typography>
 
-            {userCan('create', 'membership') &&
+            <UserCan action="create" itemType="membership">
               <Button
                 color="primary"
                 onClick={this.openNewUserModal}
               >
                 New User
               </Button>
-            }
+            </UserCan>
           </header>
 
-            <MembersTable
-              memberships={memberships}
-              invitations={invitations}
-              deleteInvitation={deleteInvitation}
-              deleteMembership={deleteMembership}
-              openEditMembershipModal={this.openEditMembershipModal}
-            />
+          <MembersTable
+            openEditMembershipModal={this.openEditMembershipModal}
+          />
         </Paper>
 
-        {
-          userCan("view", "auditTrails") &&
-          <Card style={{marginTop: 24}}>
-            <AuditTable title="Team History"/>
-          </Card>
-        }
+        <Paper className={classes.paper}>
+          <header className={classes.header}>
+            <Typography variant="headline" component="h3">
+              Invitations
+            </Typography>
+          </header>
+
+          <InvitationsTable />
+        </Paper>
 
         <NewUserModal
           open={this.state.newUserOpen}
@@ -130,38 +114,49 @@ class TeamShow extends Component {
           membership={this.state.editingMembership}
           updateMembership={updateMembership}
         />
-      </DashboardLayout>
+      </div>
     )
-  }
-}
 
-function mapStateToProps(state, ownProps) {
-  const currentTeamId = state.auth.currentTeamId
-  const team = state.entities.teams[currentTeamId]
+    const activityView = (
+      <Paper className={classes.paper}>
+        <header className={classes.header}>
+          <Typography variant="headline" component="h3">
+            Team History
+          </Typography>
+        </header>
 
-  let memberships = []
-  if (team !== undefined) {
-    memberships = Object
-      .values(state.entities.memberships)
-  }
+        <AuditTable />
+      </Paper>
+    )
 
-  let invitations = []
-  if (team !== undefined) {
-    invitations = Object
-      .values(state.entities.invitations)
-      .filter(invitation => invitation.pending)
-  }
+    const tabs = [{
+      label: "Access View",
+      content: accessView,
+      path: "/teams/access",
+    }, {
+      label: "Activity View",
+      content: activityView,
+      path: "/teams/activity",
+    }]
 
-  return {
-    currentTeamId,
-    memberships,
-    invitations
+    return (
+      <div>
+        <UserCannot action="view" itemType="auditTrails">
+          <DashboardLayout title="Team Access">
+            {accessView}
+          </DashboardLayout>
+        </UserCannot>
+        <UserCan action="view" itemType="auditTrails">
+          <DashboardLayout title="Team Access" tabs={tabs} />
+        </UserCan>
+      </div>
+    )
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    fetchTeam, deleteInvitation, deleteMembership, updateMembership
+    updateMembership
   }, dispatch);
 }
 

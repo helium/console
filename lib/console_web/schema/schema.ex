@@ -52,6 +52,20 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
+  paginated object :membership do
+    field :id, :id
+    field :email, :string, resolve: &Console.Teams.MembershipResolver.user_email/2
+    field :role, :string
+    field :inserted_at, :naive_datetime
+  end
+
+  paginated object :invitation do
+    field :id, :id
+    field :email, :string
+    field :role, :string
+    field :inserted_at, :naive_datetime
+  end
+
   object :group do
     field :id, :id
     field :name, :string
@@ -107,6 +121,16 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Events.EventResolver.paginate/2
     end
 
+    @desc "Get paginated memberships"
+    paginated field :memberships, :paginated_memberships do
+      resolve(&Console.Teams.MembershipResolver.paginate/2)
+    end
+
+    @desc "Get paginated invitations"
+    paginated field :invitations, :paginated_invitations do
+      resolve(&Console.Teams.InvitationResolver.paginate/2)
+    end
+
     @desc "Get paginated audit trails"
     paginated field :audit_trails, :paginated_audit_trails do
       arg :user_id, :string
@@ -152,6 +176,18 @@ defmodule ConsoleWeb.Schema do
     field :channel_added, :channel do
       config fn _, %{context: %{ current_team_id: team_id }} ->
         {:ok, topic: "#{team_id}/channel_added"}
+      end
+    end
+
+    field :membership_added, :membership do
+      config fn what, test = %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/membership_added"}
+      end
+    end
+
+    field :invitation_added, :invitation do
+      config fn _, %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/invitation_added"}
       end
     end
   end

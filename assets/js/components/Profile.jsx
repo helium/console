@@ -51,7 +51,7 @@ class Profile extends Component {
         </Card>
 
         <Card style={{marginTop: 24}}>
-          <AuditTable title="User History" userId={this.props.userId}/>
+          <AuditTable userId={this.props.userId}/>
         </Card>
       </DashboardLayout>
     );

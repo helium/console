@@ -50,6 +50,8 @@ defmodule ConsoleWeb.MembershipController do
     membership = membership |> Teams.fetch_assoc_membership()
     body = ConsoleWeb.MembershipView.render("show.json", membership: membership)
     ConsoleWeb.Endpoint.broadcast("membership:#{membership.team_id}", action, body)
+
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.team.id}/membership_added")
   end
 
   def put_auth_item(conn, _) do

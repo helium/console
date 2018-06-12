@@ -1,23 +1,19 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { deleteMembership } from '../../actions/membership'
 import moment from 'moment'
-import random from 'lodash/random'
 import UserCan from '../common/UserCan'
+import { deleteInvitation } from '../../actions/invitation'
 import PaginatedTable from '../common/PaginatedTable'
-import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
+import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 
 // MUI
 import Button from '@material-ui/core/Button';
-import SmallChip from '../common/SmallChip'
 
 @connect(null, mapDispatchToProps)
-class MembersTable extends Component {
+class InvitationsTable extends Component {
   render() {
-    const {
-       deleteMembership, openEditMembershipModal
-    } = this.props
+    const { deleteInvitation } = this.props
 
     const columns = [
       {
@@ -30,37 +26,20 @@ class MembersTable extends Component {
         Cell: props => <Role role={props.row.role} />
       },
       {
-        Header: 'Joined',
+        Header: 'Sent At',
         accessor: 'inserted_at',
         Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
-      },
-      {
-        Header: 'Last Login',
-        Cell: props => <span>{moment([2018, random(0, 4), random(1, 28)]).fromNow()}</span>
-      },
-      {
-        Header: 'Two Factor',
-        Cell: props => <SmallChip label="Enabled" />
       },
       {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          <UserCan action="update" itemType="membership" item={props.row}>
-            <Button
-              onClick={() => openEditMembershipModal(props.row)}
-              size="small"
-            >
-              Edit
-            </Button>
-          </UserCan>
-
           <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
+              onClick={() => deleteInvitation(props.row)}
               color="secondary"
-              onClick={() => deleteMembership(props.row)}
               size="small"
-            >
+              >
               Remove
             </Button>
           </UserCan>
@@ -71,8 +50,8 @@ class MembersTable extends Component {
     return (
       <PaginatedTable
         columns={columns}
-        query={PAGINATED_MEMBERSHIPS}
-        subscription={MEMBERSHIP_SUBSCRIPTION}
+        query={PAGINATED_INVITATIONS}
+        subscription={INVITATION_SUBSCRIPTION}
         EmptyComponent={ props => <BlankSlate title="Loading..." /> }
       />
     )
@@ -96,8 +75,8 @@ const Role = (props) => {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    deleteMembership
+    deleteInvitation
   }, dispatch);
 }
 
-export default MembersTable
+export default InvitationsTable
