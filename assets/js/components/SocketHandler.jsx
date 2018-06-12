@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
-import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
@@ -47,9 +46,6 @@ class SocketHandler extends Component {
 
   subscribeToUpdates() {
     const {
-      receivedMembership,
-      deletedMembership,
-      updatedMembership,
       apikey,
       currentTeamId
     } = this.props
@@ -59,8 +55,6 @@ class SocketHandler extends Component {
     this.socket = new Socket("/socket", {params: {token: apikey }})
     if (!isJwtExpired(apikey) && currentTeamId) {
       this.socket.connect()
-
-      this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
     }
   }
 
@@ -106,9 +100,6 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchIndices,
-    receivedMembership,
-    deletedMembership,
-    updatedMembership,
   }, dispatch);
 }
 

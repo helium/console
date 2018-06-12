@@ -2,7 +2,6 @@ import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { getTeamId } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'
-import { receivedMembership } from './membership'
 
 export const FETCH_TEAMS = 'FETCH_TEAMS'
 export const RECEIVED_TEAMS = 'RECEIVED_TEAMS'
