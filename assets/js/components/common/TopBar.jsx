@@ -7,6 +7,7 @@ import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
 import SearchBar from '../search/SearchBar'
+import NotificationsBar from '../notifications/NotificationsBar'
 
 // MUI
 import List from '@material-ui/core/List'
@@ -22,11 +23,9 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Slide from '@material-ui/core/Slide'
 import IconButton from '@material-ui/core/IconButton'
-import SmallBadge from './SmallBadge'
 
 // Icons
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import NotificationsIcon from '@material-ui/icons/Notifications'
 import ImageIcon from '@material-ui/icons/Image'
 
 const roleText = (role) => {
@@ -108,12 +107,7 @@ class TopBar extends Component {
           <div style={{flex: 1}} />
 
           <SearchBar />
-
-          <IconButton onClick={() => alert('oh hai')} color="inherit">
-            <SmallBadge badgeContent={3} color="secondary">
-              <NotificationsIcon />
-            </SmallBadge>
-          </IconButton>
+          <NotificationsBar />
 
           <div>
             <IconButton onClick={this.openAccountMenu} color="inherit">

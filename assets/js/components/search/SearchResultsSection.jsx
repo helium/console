@@ -17,7 +17,7 @@ const styles = theme => ({
 @withStyles(styles)
 class SearchResultsSection extends Component {
   render() {
-    const { title, results, selectedResult, classes } = this.props
+    const { title, results, selectedResult, classes, gotoResult } = this.props
 
     return (
       <div>
@@ -27,6 +27,7 @@ class SearchResultsSection extends Component {
             key={result.id}
             result={result}
             selected={selectedResult && selectedResult.id === result.id}
+            gotoResult={gotoResult}
           />
         )}
       </div>

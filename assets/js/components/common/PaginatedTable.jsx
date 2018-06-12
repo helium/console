@@ -134,6 +134,7 @@ const ResultsTable = (props) => {
             <TableCell
               key={`header-${i}`}
               numeric={column.numeric}
+              padding={column.padding}
             >
               {column.Header}
             </TableCell>
@@ -173,13 +174,13 @@ const PaginatedCell = (props) => {
   const value = row[column.accessor]
 
   if (Cell) return (
-    <TableCell numeric={column.numeric}>
+    <TableCell numeric={column.numeric} padding={column.padding}>
       <Cell row={row} value={value} />
     </TableCell>
   )
 
   return (
-    <TableCell numeric={column.numeric}>
+    <TableCell numeric={column.numeric} padding={column.padding}>
       {value}
     </TableCell>
   )

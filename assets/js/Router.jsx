@@ -35,6 +35,7 @@ import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
 import Billing from './components/billing/Billing'
 import Reports from './components/reports/Reports'
+import Notifications from './components/notifications/Notifications'
 
 
 class Router extends React.Component {
@@ -70,6 +71,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
                   <PrivateRoute exact path="/billing" component={Billing} />
                   <PrivateRoute exact path="/reports" component={Reports} />
+                  <PrivateRoute exact path="/notifications" component={Notifications} />
                 </Switch>
               </ConnectedRouter>
             </SocketHandler>

@@ -9,6 +9,9 @@ defmodule Console.Teams.Membership do
     belongs_to :user, Console.Auth.User
     belongs_to :team, Console.Teams.Team
 
+    has_many :notification_views, Console.Notifications.NotificationView
+    has_many :notifications, Console.Notifications.Notification, references: :team_id, foreign_key: :team_id
+
     timestamps()
   end
 
