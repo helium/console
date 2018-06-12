@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
-import { receivedEvent, deletedEvent } from '../actions/event'
 import { receivedGateway, deletedGateway } from '../actions/gateway'
 import { receivedMembership, deletedMembership, updatedMembership } from '../actions/membership'
 import { receivedInvitation, deletedInvitation, updatedInvitation } from '../actions/invitation'
@@ -50,8 +49,6 @@ class SocketHandler extends Component {
 
   subscribeToUpdates() {
     const {
-      receivedEvent,
-      deletedEvent,
       receivedGateway,
       deletedGateway,
       receivedInvitation,
@@ -70,7 +67,6 @@ class SocketHandler extends Component {
     if (!isJwtExpired(apikey) && currentTeamId) {
       this.socket.connect()
 
-      this.join(`event:${currentTeamId}`, receivedEvent, deletedEvent)
       this.join(`gateway:${currentTeamId}`, receivedGateway, deletedGateway)
       this.join(`membership:${currentTeamId}`, receivedMembership, deletedMembership, updatedMembership)
       this.join(`invitation:${currentTeamId}`, receivedInvitation, deletedInvitation, updatedInvitation)
@@ -119,8 +115,6 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchIndices,
-    receivedEvent,
-    deletedEvent,
     receivedGateway,
     deletedGateway,
     receivedMembership,
