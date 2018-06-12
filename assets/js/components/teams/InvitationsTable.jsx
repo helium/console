@@ -7,7 +7,6 @@ import { deleteInvitation } from '../../actions/invitation'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
-import BlankSlate from '../common/BlankSlate'
 
 // MUI
 import Button from '@material-ui/core/Button';
