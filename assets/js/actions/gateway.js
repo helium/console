@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push, replace } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeGateway, normalizeGateways } from '../schemas/gateway'
 import { DELETED_ENTITY } from './main'
@@ -59,7 +59,7 @@ export const deleteGateway = (id, redirect = false) => {
   return (dispatch) => {
     rest.destroy(`/api/gateways/${id}`)
       .then(response => {
-        if (redirect) dispatch(push('/gateways'))
+        if (redirect) dispatch(replace('/gateways'))
       })
   }
 }

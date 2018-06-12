@@ -69,12 +69,11 @@ export const updateChannel = (id, params) => {
   }
 }
 
-export const deleteChannel = (channel) => {
+export const deleteChannel = (id, redirect = false) => {
   return (dispatch) => {
-    rest.destroy(`/api/channels/${channel.id}`)
+    rest.destroy(`/api/channels/${id}`)
       .then(response => {
-        dispatch(push('/channels'))
-        displayInfo(`${channel.name} deleted`)
+        if (redirect) dispatch(replace('/channels'))
       })
   }
 }

@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push, replace } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { normalizeDevice, normalizeDevices } from '../schemas/device'
 import { DELETED_ENTITY } from './main'
@@ -69,7 +69,7 @@ export const deleteDevice = (id, redirect = false) => {
   return (dispatch) => {
     rest.destroy(`/api/devices/${id}`)
       .then(response => {
-        if (redirect) dispatch(push('/devices'))
+        if (redirect) dispatch(replace('/devices'))
       })
   }
 }

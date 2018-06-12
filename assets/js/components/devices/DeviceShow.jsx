@@ -69,7 +69,7 @@ class DeviceShow extends Component {
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteDevice(device.id)}
+                onClick={() => deleteDevice(device.id, true)}
               >
                 Delete Device
               </Button>
