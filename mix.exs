@@ -52,7 +52,8 @@ defmodule Console.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
-      {:absinthe_phoenix, "~> 1.4"}
+      {:absinthe_phoenix, "~> 1.4"},
+      {:libp2p, github: "helium/erlang-libp2p", branch: "master"}
     ]
   end
 
