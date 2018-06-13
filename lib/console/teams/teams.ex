@@ -55,7 +55,7 @@ defmodule Console.Teams do
   def create_team(%User{} = user, attrs \\ %{}) do
     team_changeset =
       %Team{}
-      |> Team.changeset(attrs)
+      |> Team.create_changeset(attrs)
 
     membership_fn = fn %{team: team} ->
       %Membership{}
@@ -131,5 +131,9 @@ defmodule Console.Teams do
 
   def delete_membership(%Membership{} = membership) do
     Repo.delete(membership)
+  end
+
+  def delete_team(%Team{} = team) do
+    Repo.delete(team)
   end
 end
