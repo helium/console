@@ -50,21 +50,6 @@ defmodule ConsoleWeb.EventController do
   defp broadcast(%Event{} = event, action) do
     event = Events.fetch_assoc(event)
 
-    device_team_id = if event.device, do: event.device.team_id
-    gateway_team_id = if event.gateway, do: event.gateway.team_id
-    channel_team_id = if event.channel, do: event.channel.team_id
-
-    team_ids =
-      [device_team_id, gateway_team_id, channel_team_id]
-      |> Enum.reject(&is_nil/1)
-      |> Enum.uniq()
-
-    body = ConsoleWeb.EventView.render("show.json", event: event)
-
-    Enum.each(team_ids, fn team_id ->
-      ConsoleWeb.Endpoint.broadcast("event:#{team_id}", action, body)
-    end)
-
     if event.device do
       Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{event.device.id}")
     end
