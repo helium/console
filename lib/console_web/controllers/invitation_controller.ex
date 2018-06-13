@@ -97,7 +97,7 @@ defmodule ConsoleWeb.InvitationController do
     end
   end
 
-  def broadcast(%Invitation{} = invitation, action) do
+  def broadcast(%Invitation{} = invitation, _) do
     invitation = invitation |> Teams.fetch_assoc_invitation()
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_added: "#{invitation.team.id}/invitation_added")

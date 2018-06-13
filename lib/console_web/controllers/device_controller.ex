@@ -68,7 +68,7 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  defp broadcast(%Device{} = device, action) do
+  defp broadcast(%Device{} = device, _) do
     device = Devices.fetch_assoc(device, [:team])
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.team.id}/device_added")

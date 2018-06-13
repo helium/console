@@ -55,6 +55,7 @@ defmodule ConsoleWeb.Schema do
   paginated object :membership do
     field :id, :id
     field :email, :string, resolve: &Console.Teams.MembershipResolver.user_email/2
+    field :two_factor_enabled, :boolean, resolve: &Console.Teams.MembershipResolver.two_factor/2 
     field :role, :string
     field :inserted_at, :naive_datetime
   end
@@ -196,7 +197,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :membership_added, :membership do
-      config fn what, test = %{context: %{ current_team_id: team_id }} ->
+      config fn _, %{context: %{ current_team_id: team_id }} ->
         {:ok, topic: "#{team_id}/membership_added"}
       end
     end

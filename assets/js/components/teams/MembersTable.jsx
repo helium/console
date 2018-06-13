@@ -12,6 +12,7 @@ import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/me
 // MUI
 import Button from '@material-ui/core/Button';
 import SmallChip from '../common/SmallChip'
+import SuccessChip from '../common/SuccessChip'
 
 @connect(null, mapDispatchToProps)
 class MembersTable extends Component {
@@ -41,7 +42,7 @@ class MembersTable extends Component {
       },
       {
         Header: 'Two Factor',
-        Cell: props => <SmallChip label="Enabled" />
+        Cell: props => (props.row.two_factor_enabled ? <SuccessChip label="Enabled"/> : <SmallChip label="Disabled"/>)
       },
       {
         Header: '',

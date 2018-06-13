@@ -47,7 +47,7 @@ defmodule ConsoleWeb.EventController do
     end
   end
 
-  defp broadcast(%Event{} = event, action) do
+  defp broadcast(%Event{} = event, _) do
     event = Events.fetch_assoc(event)
 
     if event.device do

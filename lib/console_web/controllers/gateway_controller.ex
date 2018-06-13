@@ -61,7 +61,7 @@ defmodule ConsoleWeb.GatewayController do
     end
   end
 
-  defp broadcast(%Gateway{} = gateway, action) do
+  defp broadcast(%Gateway{} = gateway, _) do
     gateway = Gateways.fetch_assoc(gateway, [:team])
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, gateway, gateway_added: "#{gateway.team.id}/gateway_added")
