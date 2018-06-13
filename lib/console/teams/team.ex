@@ -79,11 +79,4 @@ defmodule Console.Teams.Team do
   defp to_bin(term) do
     :erlang.term_to_binary(term)
   end
-
-  defp generate_address(private_key_bin) do
-    private_key = :erlang.binary_to_term(private_key_bin)
-    public_key = :libp2p_crypto.make_public_key(private_key)
-    address = :libp2p_crypto.pubkey_to_address(public_key)
-    :libp2p_crypto.address_to_b58(address)
-  end
 end
