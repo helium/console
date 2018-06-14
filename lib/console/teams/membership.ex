@@ -1,11 +1,16 @@
 defmodule Console.Teams.Membership do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
+  alias Console.Auth.User
+  alias Console.Auth.TwoFactor
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "memberships" do
     field :role, :string, default: "admin"
+    field :email, :string, virtual: true
+    field :two_factor_enabled, :boolean, virtual: true
     belongs_to :user, Console.Auth.User
     belongs_to :team, Console.Teams.Team
 
@@ -27,5 +32,13 @@ defmodule Console.Teams.Membership do
   def join_changeset(membership, user, team, role \\ "admin") do
     membership
     |> changeset(%{user_id: user.id, team_id: team.id, role: role})
+  end
+
+  def user_twofactor(query) do
+    from u in User,
+    inner_join: m in ^query, on: [user_id: u.id],
+    left_join: t in TwoFactor, on: [user_id: u.id],
+    where: not is_nil(u.id),
+    select: %{m | email: u.email, two_factor_enabled: not is_nil(t.id)}
   end
 end

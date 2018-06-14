@@ -54,8 +54,8 @@ defmodule ConsoleWeb.Schema do
 
   paginated object :membership do
     field :id, :id
-    field :email, :string, resolve: &Console.Teams.MembershipResolver.user_email/2
-    field :two_factor_enabled, :boolean, resolve: &Console.Teams.MembershipResolver.two_factor/2 
+    field :email, :string
+    field :two_factor_enabled, :boolean
     field :role, :string
     field :inserted_at, :naive_datetime
   end
