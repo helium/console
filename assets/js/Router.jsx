@@ -26,6 +26,7 @@ import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
 import GatewayIndex from './components/gateways/GatewayIndex'
+import GatewayNew from './components/gateways/GatewayNew'
 import GatewayShow from './components/gateways/GatewayShow'
 import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
@@ -60,6 +61,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                   <PrivateRoute exact path="/gateways" component={GatewayIndex} />
+                  <PrivateRoute exact path="/gateways/new" component={GatewayNew} />
                   <PrivateRoute exact path="/gateways/map" component={GatewayIndex} />
                   <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />

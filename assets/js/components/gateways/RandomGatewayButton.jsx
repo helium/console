@@ -14,7 +14,8 @@ class RandomGatewayButton extends Component {
       mac: randomMac(),
       public_key: "some public key",
       latitude: randomLatitude(),
-      longitude: randomLongitude()
+      longitude: randomLongitude(),
+      status: "Pending"
     })
   }
 
