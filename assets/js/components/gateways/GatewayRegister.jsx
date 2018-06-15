@@ -9,7 +9,6 @@ import QRCode from 'qrcode.react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -62,29 +61,7 @@ class GatewayRegister extends Component {
     )
   }
 
-  renderSuccess() {
-    const { classes } = this.props
-    return (
-      <div className={classes.status}>
-        <div className={classes.icon} style={{backgroundImage: "url('/images/mqtt-channel.png')"}}></div>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-          Your gateway has been successfully registered
-        </Typography>
-        <Button
-          type="submit"
-          variant="raised"
-          color="primary"
-          size="large"
-          style={{marginTop: 12}}
-        >
-          View Gateway
-        </Button>
-      </div>
-    )
-  }
-
-  renderStep2() { // will render QRCode, gatewaySuccess, or LoadingStatus depending on progress
+  renderStep2() { // will render QRCode, LoadingStatus depending on progress
     return (
       <Card style={{marginTop: 24}}>
         <CardContent>
@@ -92,7 +69,7 @@ class GatewayRegister extends Component {
             Step 2
           </Typography>
 
-          {this.renderSuccess()}
+          {this.renderQRCode()}
         </CardContent>
       </Card>
     )
