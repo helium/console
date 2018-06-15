@@ -43,7 +43,7 @@ defmodule ConsoleWeb.NotificationController do
     end
   end
 
-  defp broadcast(%Notification{} = notification, action) do
+  defp broadcast(%Notification{} = notification, _) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, notification, notification_update: "#{notification.team_id}/notification_update")
   end
 end

@@ -67,10 +67,8 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  defp broadcast(%Channel{} = channel, action) do
+  defp broadcast(%Channel{} = channel, _) do
     channel = Channels.fetch_assoc(channel, [:team])
-    body = ConsoleWeb.ChannelView.render("show.json", channel: channel)
-    ConsoleWeb.Endpoint.broadcast("channel:#{channel.team.id}", action, body)
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.team.id}/channel_added")
   end
