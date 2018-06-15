@@ -15,7 +15,7 @@ class RandomGatewayButton extends Component {
       public_key: "some public key",
       latitude: randomLatitude(),
       longitude: randomLongitude(),
-      status: "Pending"
+      status: "Verified"
     })
   }
 
