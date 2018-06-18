@@ -33,7 +33,6 @@ class GatewayNew extends Component {
     this.props.createGateway({
       name: this.state.gatewayName,
       mac: randomMac(),
-      public_key: "some public key",
       latitude: randomLatitude(),
       longitude: randomLongitude(),
       status: "pending"

@@ -3,9 +3,10 @@ defmodule ConsoleWeb.GatewayController do
 
   alias Console.Gateways
   alias Console.Gateways.Gateway
+  alias Console.Gateways.GatewayIdentifier
   alias Console.AuditTrails
 
-  plug ConsoleWeb.Plug.AuthorizeAction
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:register, :verify]
 
   action_fallback ConsoleWeb.FallbackController
 
@@ -51,7 +52,7 @@ defmodule ConsoleWeb.GatewayController do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
     gateway = Gateways.get_gateway!(id)
-    with {:ok, %Gateway{} = gateway} <- Gateways.delete_gateway(gateway) do
+    with {:ok, %GatewayIdentifier{}} <- Gateways.delete_gateway(gateway) do
       broadcast(gateway, "delete")
       AuditTrails.create_audit_trail("gateway", "delete", current_user, current_team, "gateways", gateway)
 
@@ -61,32 +62,27 @@ defmodule ConsoleWeb.GatewayController do
     end
   end
 
-  def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => id, "public_key" => public_key, "payee_address" => payee_address}}) do
-    # receive the following from router:
-    #   nonce and OUI self explanatory
-    #   gateway["id"] is 32 bit gateway ID
-    #   gateway["public_key"] is the gateway public key router passes to console
-    #   gateway["payee_address"] is the team b58b58_address
-    #
-    # First check the following is valid:
-    #   nonce verification is valid and not messed with
-    #   OUI matches console's oui
-    #
-    # Then update gateway's public key
-    #
-    # If nonce and OUI verification fails, send back error status 404
-    # If verification succeeds, send back countersigned data
+  def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => gateway_id, "public_key" => public_key, "payee_address" => payee_address}}) do
+    with %GatewayIdentifier{gateway: gateway} <- Gateways.get_gateway_by_unique_identifier(gateway_id), # need to verify OUI and nonce
+      nil <- gateway.public_key,
+      {:ok, _} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
+
+        render(conn, "gateway_register.json", %{tx: "some transaction", signature: "some signature"}) # need to generate tx and sig
+    else _ ->
+      {:error, :not_found}
+    end
   end
 
-  def verify(conn, %{"OUI" => oui, "gateway" => %{"id" => id}}) do
-    # receive the following from router:
-    #   OUI self explanatory
-    #   gateway["id"] is 32 bit gateway ID
-    #
-    # Update gateway's status to verified
-    #
-    # If gateway cannot be found with id send back error status 404
-    # If gateway status changed, send back 202
+  def verify(conn, %{"OUI" => oui, "gateway" => %{"id" => gateway_id}}) do
+    with %GatewayIdentifier{gateway: gateway} <- Gateways.get_gateway_by_unique_identifier(gateway_id), # need to verify OUI
+      "pending" <- gateway.status,
+      {:ok, _} <- Gateways.update_gateway(gateway, %{status: "verified"}) do
+
+        conn
+        |> send_resp(:no_content, "")
+    else _ ->
+      {:error, :not_found}
+    end
   end
 
   defp broadcast(%Gateway{} = gateway, _) do

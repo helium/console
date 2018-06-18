@@ -7,6 +7,7 @@ defmodule Console.Gateways do
   alias Console.Repo
 
   alias Console.Gateways.Gateway
+  alias Console.Gateways.GatewayIdentifier
 
   @doc """
   Returns the list of gateways.
@@ -54,9 +55,13 @@ defmodule Console.Gateways do
 
   """
   def create_gateway(attrs \\ %{}) do
-    %Gateway{}
-    |> Gateway.changeset(attrs)
-    |> Repo.insert()
+    with {:ok, gatewayIdentifier } <- create_gateway_identifier() do
+      attrs = Map.merge(attrs, %{"gateway_identifier_id" => gatewayIdentifier.id})
+
+      %Gateway{}
+      |> Gateway.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
@@ -90,7 +95,8 @@ defmodule Console.Gateways do
 
   """
   def delete_gateway(%Gateway{} = gateway) do
-    Repo.delete(gateway)
+    Repo.get!(GatewayIdentifier, gateway.gateway_identifier_id)
+      |> Repo.delete
   end
 
   @doc """
@@ -104,5 +110,26 @@ defmodule Console.Gateways do
   """
   def change_gateway(%Gateway{} = gateway) do
     Gateway.changeset(gateway, %{})
+  end
+
+  def get_gateway_by_unique_identifier(id) do
+    case Base.decode32(id) do
+      {:ok, identifier} ->
+        case Repo.get_by(GatewayIdentifier, unique_identifier: identifier) do
+          gatewayIdentifier = %GatewayIdentifier{} -> gatewayIdentifier |> Repo.preload(:gateway)
+          nil -> :error
+        end
+      :error -> :error
+    end
+  end
+
+  defp create_gateway_identifier do
+    attrs = %{
+      unique_identifier: :crypto.strong_rand_bytes(4)
+    }
+
+    %GatewayIdentifier{}
+      |> GatewayIdentifier.changeset(attrs)
+      |> Repo.insert()
   end
 end

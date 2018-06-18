@@ -23,6 +23,13 @@ defmodule ConsoleWeb.GatewayView do
     |> append_events(gateway.events)
   end
 
+  def render("gateway_register.json", %{tx: tx, signature: signature}) do
+    %{
+      tx: tx,
+      signature: signature
+    }
+  end
+
   defp append_events(json, events) do
     if Ecto.assoc_loaded?(events) do
       events_json = render_many(events, EventView, "event.json")
