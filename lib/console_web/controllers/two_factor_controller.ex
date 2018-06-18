@@ -43,6 +43,7 @@ defmodule ConsoleWeb.TwoFactorController do
         with current_team <- Teams.current_team_for(user),
                       jwt <- Auth.generate_session_token(user, current_team),
                       {:ok, _} <- Auth.update_2fa_last_verification(userTwoFactor) do
+          Auth.update_user_last_login(user)
           AuditTrails.create_audit_trail("two_factor", "authenticate", user)
 
           conn

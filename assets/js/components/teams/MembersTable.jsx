@@ -38,7 +38,7 @@ class MembersTable extends Component {
       },
       {
         Header: 'Last Login',
-        Cell: props => <span>{moment([2018, random(0, 4), random(1, 28)]).fromNow()}</span>
+        Cell: props => <span>{props.row.last_login ? moment(props.row.last_login).format('LL') : "Never"}</span>
       },
       {
         Header: 'Two Factor',

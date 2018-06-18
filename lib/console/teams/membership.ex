@@ -11,6 +11,7 @@ defmodule Console.Teams.Membership do
     field :role, :string, default: "admin"
     field :email, :string, virtual: true
     field :two_factor_enabled, :boolean, virtual: true
+    field :last_login, :naive_datetime, virtual: true
     belongs_to :user, Console.Auth.User
     belongs_to :team, Console.Teams.Team
 
@@ -39,6 +40,6 @@ defmodule Console.Teams.Membership do
     inner_join: m in ^query, on: [user_id: u.id],
     left_join: t in TwoFactor, on: [user_id: u.id],
     where: not is_nil(u.id),
-    select: %{m | email: u.email, two_factor_enabled: not is_nil(t.id)}
+    select: %{m | email: u.email, two_factor_enabled: not is_nil(t.id), last_login: u.last_login}
   end
 end

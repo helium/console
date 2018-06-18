@@ -245,6 +245,12 @@ defmodule Console.Auth do
     |> Repo.update()
   end
 
+  def update_user_last_login(user) do
+    user
+    |> User.update_last_login_changeset()
+    |> Repo.update()
+  end
+
   defp get_user_for_authentication(email) do
     case Repo.get_by(User, email: email) do
       nil ->

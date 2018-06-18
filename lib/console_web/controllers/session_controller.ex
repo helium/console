@@ -20,6 +20,8 @@ defmodule ConsoleWeb.SessionController do
         |> put_status(:created)
         |> render("show.json", user: user)
       else
+        Auth.update_user_last_login(user)
+        
         conn
         |> put_status(:created)
         |> render("show.json", user: user, jwt: jwt, skip2fa: !Auth.should_skip_2fa_prompt?(user.last_2fa_skipped_at))

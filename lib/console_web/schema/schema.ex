@@ -58,6 +58,7 @@ defmodule ConsoleWeb.Schema do
     field :email, :string
     field :two_factor_enabled, :boolean
     field :role, :string
+    field :last_login, :naive_datetime
     field :inserted_at, :naive_datetime
   end
 
