@@ -61,6 +61,34 @@ defmodule ConsoleWeb.GatewayController do
     end
   end
 
+  def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => gateway}) do
+    # receive the following from router:
+    #   nonce and OUI self explanatory
+    #   gateway["id"] is 32 bit gateway ID
+    #   gateway["public_key"] is the gateway public key router passes to console
+    #   gateway["payee_address"] is the team b58b58_address
+    #
+    # First check the following is valid:
+    #   nonce verification is valid and not messed with
+    #   OUI matches console's oui
+    #
+    # Then update gateway's public key
+    #
+    # If nonce and OUI verification fails, send back error status 404
+    # If verification succeeds, send back countersigned data
+  end
+
+  def verify(conn, %{"OUI" => oui, "gateway" => %{"id" => id}}) do
+    # receive the following from router:
+    #   OUI self explanatory
+    #   gateway["id"] is 32 bit gateway ID
+    #
+    # Update gateway's status to verified
+    #
+    # If gateway cannot be found with id send back error status 404
+    # If gateway status changed, send back no content
+  end
+
   defp broadcast(%Gateway{} = gateway, _) do
     gateway = Gateways.fetch_assoc(gateway, [:team])
 
