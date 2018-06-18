@@ -15,6 +15,7 @@ defmodule Console.Gateways.Gateway do
     field :name, :string
     field :location, :string
     field :public_key, :binary
+    field :status, :string
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
@@ -25,8 +26,9 @@ defmodule Console.Gateways.Gateway do
   @doc false
   def changeset(gateway, attrs) do
     gateway
-    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id])
-    |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id])
+    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
+    |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
+    |> validate_inclusion(:status, ["verified", "pending"])
     |> putGeocodingLocation()
     |> unique_constraint(:mac)
   end

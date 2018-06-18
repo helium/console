@@ -10,6 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import UserCan from '../common/UserCan'
+import GatewayRegister from './GatewayRegister'
 import { parseLocation } from '../../util/geolocation'
 import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
@@ -64,6 +65,12 @@ class GatewayShow extends Component {
     const { loading, gateway } = this.props.data
 
     if (loading) return <DashboardLayout />
+
+    if (gateway.status == "pending") return (
+      <DashboardLayout title={gateway.name}>
+        <GatewayRegister gateway={gateway} />
+      </DashboardLayout>
+    )
 
     return(
       <DashboardLayout title={gateway.name}>

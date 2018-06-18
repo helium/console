@@ -30,6 +30,7 @@ defmodule ConsoleWeb.Schema do
     field :location, :string
     field :longitude, :decimal
     field :latitude, :decimal
+    field :status, :string
   end
 
   # creates 2 obects: :paginated_event and :paginated_events
