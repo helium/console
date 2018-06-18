@@ -66,7 +66,7 @@ class GatewayShow extends Component {
 
     if (loading) return <DashboardLayout />
 
-    if (gateway.status == "Pending") return (
+    if (gateway.status == "pending") return (
       <DashboardLayout title={gateway.name}>
         <GatewayRegister gateway={gateway} />
       </DashboardLayout>

@@ -8,7 +8,11 @@ defmodule Console.Repo.Migrations.AddStatusToGatewayTable do
 
     execute """
     UPDATE gateways
-    SET status = 'Verified'
+    SET status = 'verified'
     """
+
+    alter table(:gateways) do
+      modify :status, :string, null: false
+    end
   end
 end

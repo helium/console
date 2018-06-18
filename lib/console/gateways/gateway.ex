@@ -28,6 +28,7 @@ defmodule Console.Gateways.Gateway do
     gateway
     |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
     |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
+    |> validate_inclusion(:status, ["verified", "pending"])
     |> putGeocodingLocation()
     |> unique_constraint(:mac)
   end
