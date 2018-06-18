@@ -61,7 +61,7 @@ defmodule ConsoleWeb.GatewayController do
     end
   end
 
-  def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => gateway}) do
+  def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => id, "public_key" => public_key, "payee_address" => payee_address}}) do
     # receive the following from router:
     #   nonce and OUI self explanatory
     #   gateway["id"] is 32 bit gateway ID
@@ -86,7 +86,7 @@ defmodule ConsoleWeb.GatewayController do
     # Update gateway's status to verified
     #
     # If gateway cannot be found with id send back error status 404
-    # If gateway status changed, send back no content
+    # If gateway status changed, send back 202
   end
 
   defp broadcast(%Gateway{} = gateway, _) do
