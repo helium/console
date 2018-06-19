@@ -27,15 +27,10 @@ defmodule Console.HardwareIdentifiers.HardwareIdentifier do
   end
 
   def get_associated_resource(token, resource) do
-    table =
-      case resource do
-        :gateway -> Gateway
-      end
-
     query = from h in HardwareIdentifier,
-      left_join: t in ^table, on: [hardware_identifier_id: h.id],
+      left_join: r in ^resource, on: [hardware_identifier_id: h.id],
       where: h.token == ^token,
-      select: t
+      select: r
 
     Repo.one(query)
   end

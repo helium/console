@@ -9,7 +9,7 @@ defmodule ConsoleWeb.Router.GatewayController do
   action_fallback ConsoleWeb.FallbackController
 
   def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => token, "public_key" => public_key, "payee_address" => payee_address}}) do
-    with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, :gateway), # need to verify OUI and nonce
+    with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI and nonce
       nil <- gateway.public_key,
       {:ok, _} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
 
@@ -20,7 +20,7 @@ defmodule ConsoleWeb.Router.GatewayController do
   end
 
   def verify(conn, %{"OUI" => oui, "gateway" => %{"id" => token}}) do
-    with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, :gateway), # need to verify OUI
+    with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI
       "pending" <- gateway.status,
       {:ok, _} <- Gateways.update_gateway(gateway, %{status: "verified"}) do
 
