@@ -1,8 +1,11 @@
 defmodule Console.HardwareIdentifiers.HardwareIdentifier do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
 
+  alias Console.Repo
   alias Console.Gateways.Gateway
+  alias Console.HardwareIdentifiers.HardwareIdentifier
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,5 +24,19 @@ defmodule Console.HardwareIdentifiers.HardwareIdentifier do
     |> change(token: token)
     |> validate_required([:token])
     |> unique_constraint(:token)
+  end
+
+  def get_associated_resource(token, resource) do
+    table =
+      case resource do
+        :gateway -> Gateway
+      end
+
+    query = from h in HardwareIdentifier,
+      left_join: g in ^table, on: [hardware_identifier_id: h.id],
+      where: h.token == ^token,
+      select: g
+
+    Repo.one(query)
   end
 end
