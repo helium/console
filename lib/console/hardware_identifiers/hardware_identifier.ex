@@ -33,9 +33,9 @@ defmodule Console.HardwareIdentifiers.HardwareIdentifier do
       end
 
     query = from h in HardwareIdentifier,
-      left_join: g in ^table, on: [hardware_identifier_id: h.id],
+      left_join: t in ^table, on: [hardware_identifier_id: h.id],
       where: h.token == ^token,
-      select: g
+      select: t
 
     Repo.one(query)
   end
