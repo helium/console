@@ -7,7 +7,7 @@ defmodule Console.Gateways do
   alias Console.Repo
 
   alias Console.Gateways.Gateway
-  alias Console.Gateways.GatewayIdentifier
+  alias Console.HardwareIdentifiers.HardwareIdentifier
 
   @doc """
   Returns the list of gateways.
@@ -54,17 +54,17 @@ defmodule Console.Gateways do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_gateway(attrs \\ %{}) do
-    unique_id = :crypto.strong_rand_bytes(4)
+  def create_gateway(attrs \\ %{}, attempt \\ 1) do
+    token = :crypto.strong_rand_bytes(4)
 
-    gateway_identifier_changeset = %GatewayIdentifier{}
-      |> GatewayIdentifier.changeset(%{ unique_identifier: unique_id })
+    hardware_identifier_changeset = %HardwareIdentifier{}
+      |> HardwareIdentifier.changeset(%{ token: token })
 
     result =
       Ecto.Multi.new()
-      |> Ecto.Multi.insert(:gateway_identifier, gateway_identifier_changeset)
-      |> Ecto.Multi.run(:gateway, fn %{gateway_identifier: gateway_identifier} ->
-        attrs = Map.merge(attrs, %{"gateway_identifier_id" => gateway_identifier.id})
+      |> Ecto.Multi.insert(:hardware_identifier, hardware_identifier_changeset)
+      |> Ecto.Multi.run(:gateway, fn %{hardware_identifier: hardware_identifier} ->
+        attrs = Map.merge(attrs, %{"hardware_identifier_id" => hardware_identifier.id})
 
         %Gateway{}
         |> Gateway.changeset(attrs)
@@ -73,8 +73,16 @@ defmodule Console.Gateways do
       |> Repo.transaction
 
     case result do
-      {:ok, %{gateway: gateway, gateway_identifier: gateway_identifier}} -> {:ok, gateway}
-      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+      {:ok, %{gateway: gateway, hardware_identifier: _}} -> {:ok, gateway}
+      {:error, _, %Ecto.Changeset{} = changeset, _} ->
+        case changeset.errors do
+          [token: {"has already been taken", []}] ->
+            case attempt < 4 do
+              true -> create_gateway(attrs, attempt + 1)
+              false -> {:error, changeset}
+            end
+          _ -> {:error, changeset}
+        end
     end
   end
 
@@ -109,8 +117,12 @@ defmodule Console.Gateways do
 
   """
   def delete_gateway(%Gateway{} = gateway) do
-    Repo.get!(GatewayIdentifier, gateway.gateway_identifier_id)
+    result = Repo.get!(HardwareIdentifier, gateway.hardware_identifier_id)
       |> Repo.delete
+    case result do
+      {:ok, %HardwareIdentifier{}} -> {:ok, gateway}
+      _ -> result
+    end
   end
 
   @doc """
@@ -124,16 +136,5 @@ defmodule Console.Gateways do
   """
   def change_gateway(%Gateway{} = gateway) do
     Gateway.changeset(gateway, %{})
-  end
-
-  def get_gateway_by_unique_identifier(id) do
-    case Base.decode32(id) do
-      {:ok, identifier} ->
-        case Repo.get_by(GatewayIdentifier, unique_identifier: identifier) do
-          gatewayIdentifier = %GatewayIdentifier{} -> gatewayIdentifier |> Repo.preload(:gateway)
-          nil -> :error
-        end
-      :error -> :error
-    end
   end
 end
