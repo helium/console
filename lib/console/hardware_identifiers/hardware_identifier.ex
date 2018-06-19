@@ -14,9 +14,11 @@ defmodule Console.HardwareIdentifiers.HardwareIdentifier do
     timestamps()
   end
 
-  def changeset(hardware_identifier, attrs) do
-    hardware_identifier
-    |> cast(attrs, [:token])
+  def changeset(hardware_identifier) do
+    token = :crypto.strong_rand_bytes(4)
+
+    result = hardware_identifier
+    |> change(token: token)
     |> validate_required([:token])
     |> unique_constraint(:token)
   end

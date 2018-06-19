@@ -55,10 +55,9 @@ defmodule Console.Gateways do
 
   """
   def create_gateway(attrs \\ %{}, attempt \\ 1) do
-    token = :crypto.strong_rand_bytes(4)
-
-    hardware_identifier_changeset = %HardwareIdentifier{}
-      |> HardwareIdentifier.changeset(%{ token: token })
+    hardware_identifier_changeset =
+      %HardwareIdentifier{}
+      |> HardwareIdentifier.changeset
 
     result =
       Ecto.Multi.new()
@@ -77,7 +76,7 @@ defmodule Console.Gateways do
       {:error, _, %Ecto.Changeset{} = changeset, _} ->
         case changeset.errors do
           [token: {"has already been taken", []}] ->
-            case attempt < 4 do
+            case attempt < 3 do
               true -> create_gateway(attrs, attempt + 1)
               false -> {:error, changeset}
             end
