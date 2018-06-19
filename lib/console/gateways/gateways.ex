@@ -55,12 +55,26 @@ defmodule Console.Gateways do
 
   """
   def create_gateway(attrs \\ %{}) do
-    with {:ok, gatewayIdentifier } <- create_gateway_identifier() do
-      attrs = Map.merge(attrs, %{"gateway_identifier_id" => gatewayIdentifier.id})
+    unique_id = :crypto.strong_rand_bytes(4)
 
-      %Gateway{}
-      |> Gateway.changeset(attrs)
-      |> Repo.insert()
+    gateway_identifier_changeset = %GatewayIdentifier{}
+      |> GatewayIdentifier.changeset(%{ unique_identifier: unique_id })
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:gateway_identifier, gateway_identifier_changeset)
+      |> Ecto.Multi.run(:gateway, fn %{gateway_identifier: gateway_identifier} ->
+        attrs = Map.merge(attrs, %{"gateway_identifier_id" => gateway_identifier.id})
+
+        %Gateway{}
+        |> Gateway.changeset(attrs)
+        |> Repo.insert()
+      end)
+      |> Repo.transaction
+
+    case result do
+      {:ok, %{gateway: gateway, gateway_identifier: gateway_identifier}} -> {:ok, gateway}
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
 
@@ -121,15 +135,5 @@ defmodule Console.Gateways do
         end
       :error -> :error
     end
-  end
-
-  defp create_gateway_identifier do
-    attrs = %{
-      unique_identifier: :crypto.strong_rand_bytes(4)
-    }
-
-    %GatewayIdentifier{}
-      |> GatewayIdentifier.changeset(attrs)
-      |> Repo.insert()
   end
 end
