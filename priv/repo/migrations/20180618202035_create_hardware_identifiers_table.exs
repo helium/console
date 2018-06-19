@@ -11,7 +11,7 @@ defmodule Console.Repo.Migrations.CreateHardwareIdentifiersTable do
     create unique_index(:hardware_identifiers, [:token])
 
     alter table(:gateways) do
-      add :hardware_identifier_id, references(:hardware_identifiers, on_delete: :nothing, type: :binary_id), null: false
+      add :hardware_identifier_id, references(:hardware_identifiers, on_delete: :delete_all, type: :binary_id), null: false
     end
   end
 end
