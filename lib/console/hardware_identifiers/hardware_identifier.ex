@@ -27,10 +27,9 @@ defmodule Console.HardwareIdentifiers.HardwareIdentifier do
   end
 
   def get_associated_resource(token, resource) do
-    query = from h in HardwareIdentifier,
-      left_join: r in ^resource, on: [hardware_identifier_id: h.id],
-      where: h.token == ^token,
-      select: r
+    query = from r in resource,
+      left_join: h in HardwareIdentifier,
+      where: h.token == ^token
 
     Repo.one(query)
   end
