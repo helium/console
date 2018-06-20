@@ -11,10 +11,9 @@ class SocketHandler extends Component {
 
     this.subscribeToUpdates = this.subscribeToUpdates.bind(this)
     this.disconnect = this.disconnect.bind(this)
-    this.join = this.join.bind(this)
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.subscribeToUpdates()
   }
 
@@ -39,21 +38,8 @@ class SocketHandler extends Component {
     this.socket = new Socket("/socket", {params: {token: apikey }})
     if (!isJwtExpired(apikey)) {
       this.socket.connect()
-    }
-  }
-
-  join(channelName, newHandler, deleteHandler, updateHandler) {
-    let channel = this.socket.channel(channelName, {})
-
-    channel.join()
-      .receive("ok", resp => { console.log(`Joined ${channelName} successfully`, resp) })
-      .receive("error", resp => { console.log(`Unable to join ${channelName}`, resp) })
-
-    channel.on("new", res => newHandler(res))
-    channel.on("delete", res => deleteHandler(res))
-
-    if (updateHandler !== undefined) {
-      channel.on("update", res => updateHandler(res))
+      console.log('connecting')
+      // join goes here
     }
   }
 
@@ -67,7 +53,7 @@ class SocketHandler extends Component {
   render() {
     return (
       <div>
-        {this.props.children}
+        {React.cloneElement(this.props.children, { socket: this.socket, currentTeamId: this.props.currentTeamId })}
       </div>
     )
   }
@@ -75,7 +61,8 @@ class SocketHandler extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    apikey: state.auth.apikey
+    apikey: state.auth.apikey,
+    currentTeamId: state.auth.currentTeamId
   }
 }
 

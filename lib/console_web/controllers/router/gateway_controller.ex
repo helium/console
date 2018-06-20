@@ -12,6 +12,7 @@ defmodule ConsoleWeb.Router.GatewayController do
     with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI and nonce
       nil <- gateway.public_key,
       {:ok, _} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
+        broadcast(gateway, "registering")
 
         render(conn, "gateway_register.json", %{tx: "some transaction", signature: "some signature"}) # need to generate tx and sig
     else _ ->
@@ -23,11 +24,16 @@ defmodule ConsoleWeb.Router.GatewayController do
     with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI
       "pending" <- gateway.status,
       {:ok, _} <- Gateways.update_gateway(gateway, %{status: "verified"}) do
+        broadcast(gateway, "verified")
 
         conn
         |> send_resp(:no_content, "")
     else _ ->
       {:error, :not_found}
     end
+  end
+
+  defp broadcast(%Gateway{} = gateway, action) do
+    ConsoleWeb.Endpoint.broadcast("gateway:#{gateway.id}", action, %{})
   end
 end

@@ -11,6 +11,7 @@ import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import UserCan from '../common/UserCan'
 import GatewayRegister from './GatewayRegister'
+import SocketHandler from '../SocketHandler'
 import { parseLocation } from '../../util/geolocation'
 import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
 
@@ -68,7 +69,9 @@ class GatewayShow extends Component {
 
     if (gateway.status == "pending") return (
       <DashboardLayout title={gateway.name}>
-        <GatewayRegister gateway={gateway} />
+        <SocketHandler>
+          <GatewayRegister gateway={gateway} />
+        </SocketHandler>
       </DashboardLayout>
     )
 

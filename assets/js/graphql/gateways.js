@@ -8,7 +8,8 @@ export const GATEWAY_FRAGMENT = gql`
     location,
     latitude,
     longitude,
-    status
+    status,
+    public_key
   }
 `
 

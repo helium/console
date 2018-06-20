@@ -32,7 +32,25 @@ class GatewayRegister extends Component {
   constructor(props) {
     super(props)
 
+    this.state = {
+      showQRCode: props.gateway.public_key == null
+    }
+
     this.renderStep2 = this.renderStep2.bind(this)
+  }
+
+  componentDidMount() {
+    const { gateway, socket, currentTeamId } = this.props
+    const channelName = `gateway:${gateway.id}`
+
+    let channel = socket.channel(channelName, {team_id: currentTeamId})
+
+    channel.join()
+      .receive("ok", resp => { console.log(`Joined ${channelName} successfully`, resp) })
+      .receive("error", resp => { console.log(`Unable to join ${channelName}`, resp) })
+
+    channel.on("registering", () => { this.setState({showQRCode: false}) })
+    channel.on("verified", () => { window.location.reload() })
   }
 
   renderQRCode() {
@@ -69,7 +87,7 @@ class GatewayRegister extends Component {
             Step 2
           </Typography>
 
-          {this.renderQRCode()}
+          {this.state.showQRCode ? this.renderQRCode() : this.renderLoadingStatus()}
         </CardContent>
       </Card>
     )
