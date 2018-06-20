@@ -3,7 +3,7 @@ import { fetchUser } from './user';
 
 export const fetchIndices = () => {
   return (dispatch) => {
-    dispatch(fetchTeams())
     dispatch(fetchUser())
+    dispatch(fetchTeams())
   }
 }

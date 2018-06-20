@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { isJwtExpired } from '../util/jwt.js'
-import { fetchIndices } from '../actions/main'
 
 @connect(mapStateToProps, mapDispatchToProps)
 class SocketHandler extends Component {
@@ -16,44 +15,29 @@ class SocketHandler extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isLoggedIn && this.props.currentTeamId) {
-      this.props.fetchIndices()
-      this.subscribeToUpdates()
-    }
+    this.subscribeToUpdates()
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isLoggedIn, currentTeamId, apikey, fetchIndices } = this.props
-
-    // if the user has just logged in...
-    if (!prevProps.isLoggedIn && isLoggedIn && currentTeamId) {
-      this.subscribeToUpdates()
-      return fetchIndices()
-    }
-
-    // if the user has just signed out...
-    if (prevProps.isLoggedIn && !isLoggedIn) {
-      return this.disconnect()
-    }
-
+    const { apikey } = this.props
     // if the user has switched teams or refreshed their api key...
     if (prevProps.apikey !== apikey) {
       this.disconnect()
-      this.subscribeToUpdates()
-      return fetchIndices()
+      return this.subscribeToUpdates()
     }
   }
 
+  componentWillUnmount() {
+    this.disconnect()
+  }
+
   subscribeToUpdates() {
-    const {
-      apikey,
-      currentTeamId
-    } = this.props
+    const { apikey } = this.props
 
     this.disconnect()
 
     this.socket = new Socket("/socket", {params: {token: apikey }})
-    if (!isJwtExpired(apikey) && currentTeamId) {
+    if (!isJwtExpired(apikey)) {
       this.socket.connect()
     }
   }
@@ -91,16 +75,12 @@ class SocketHandler extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    isLoggedIn: state.auth.isLoggedIn,
-    apikey: state.auth.apikey,
-    currentTeamId: state.auth.currentTeamId
+    apikey: state.auth.apikey
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    fetchIndices,
-  }, dispatch);
+  return bindActionCreators({}, dispatch);
 }
 
 export default SocketHandler

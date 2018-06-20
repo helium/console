@@ -13,7 +13,7 @@ import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './components/routes/PrivateRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
-import SocketHandler from './components/SocketHandler'
+import UserTeamProvider from './components/UserTeamProvider'
 import Login from './components/auth/Login.jsx';
 import Register from './components/auth/Register.jsx';
 import ResendVerification from './components/auth/ResendVerification.jsx';
@@ -45,7 +45,7 @@ class Router extends React.Component {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ApolloProvider client={apolloClient}>
-            <SocketHandler>
+            <UserTeamProvider>
               { /* ConnectedRouter will use the store from Provider automatically */ }
               <ConnectedRouter history={history}>
                 <Switch>
@@ -76,7 +76,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/notifications" component={Notifications} />
                 </Switch>
               </ConnectedRouter>
-            </SocketHandler>
+            </UserTeamProvider>
           </ApolloProvider>
         </PersistGate>
       </Provider>
