@@ -20,7 +20,7 @@ class UserTeamProvider extends Component {
     }
 
     // if the user has switched teams or refreshed their api key...
-    if (prevProps.apikey !== apikey) {
+    if (prevProps.apikey !== apikey && isLoggedIn) {
       return fetchIndices()
     }
   }

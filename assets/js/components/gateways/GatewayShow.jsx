@@ -10,6 +10,8 @@ import DashboardLayout from '../common/DashboardLayout'
 import Mapbox from '../common/Mapbox'
 import PacketGraph from '../common/PacketGraph'
 import UserCan from '../common/UserCan'
+import UserCannot from '../common/UserCannot'
+import BlankSlate from '../common/BlankSlate'
 import GatewayRegister from './GatewayRegister'
 import SocketHandler from '../SocketHandler'
 import { parseLocation } from '../../util/geolocation'
@@ -69,9 +71,16 @@ class GatewayShow extends Component {
 
     if (gateway.status == "pending") return (
       <DashboardLayout title={gateway.name}>
-        <SocketHandler>
-          <GatewayRegister gateway={gateway} />
-        </SocketHandler>
+        <UserCan>
+          <SocketHandler>
+            <GatewayRegister gateway={gateway} />
+          </SocketHandler>
+        </UserCan>
+        <UserCannot>
+          <Card>
+            <BlankSlate noIcon={true} title="Gateway unavailable" subheading="Please wait while the gateway is being verified." />
+          </Card>
+        </UserCannot>
       </DashboardLayout>
     )
 
