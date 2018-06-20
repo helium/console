@@ -71,12 +71,12 @@ class GatewayShow extends Component {
 
     if (gateway.status == "pending") return (
       <DashboardLayout title={gateway.name}>
-        <UserCan>
+        <UserCan action="create" itemType="gateway">
           <SocketHandler>
             <GatewayRegister gateway={gateway} />
           </SocketHandler>
         </UserCan>
-        <UserCannot>
+        <UserCannot action="create" itemType="gateway">
           <Card>
             <BlankSlate noIcon={true} title="Gateway unavailable" subheading="Please wait while the gateway is being verified." />
           </Card>

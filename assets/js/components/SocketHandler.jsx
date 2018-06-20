@@ -39,7 +39,6 @@ class SocketHandler extends Component {
     if (!isJwtExpired(apikey)) {
       this.socket.connect()
       console.log('connecting')
-      // join goes here
     }
   }
 
