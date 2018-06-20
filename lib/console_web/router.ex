@@ -66,6 +66,8 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.RouterApiPipeline
 
     resources "/devices", DeviceController, only: [:show]
+    post "/gateways/register", GatewayController, :register
+    post "/gateways/verify", GatewayController, :verify
   end
 
   if Mix.env == :dev do

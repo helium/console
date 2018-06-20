@@ -5,6 +5,7 @@ defmodule Console.Gateways.Gateway do
   alias Console.Teams.Team
   alias Console.Events.Event
   alias Console.Helpers
+  alias Console.HardwareIdentifiers.HardwareIdentifier
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -18,16 +19,16 @@ defmodule Console.Gateways.Gateway do
     field :status, :string
 
     belongs_to :team, Team
+    belongs_to :hardware_identifier, HardwareIdentifier
     has_many :events, Event, on_delete: :delete_all
 
     timestamps()
   end
 
-  @doc false
   def changeset(gateway, attrs) do
     gateway
-    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
-    |> validate_required([:name, :mac, :public_key, :latitude, :longitude, :team_id, :status])
+    |> cast(attrs, [:name, :mac, :public_key, :latitude, :longitude, :team_id, :status, :hardware_identifier_id])
+    |> validate_required([:name, :mac, :latitude, :longitude, :team_id, :status, :hardware_identifier_id])
     |> validate_inclusion(:status, ["verified", "pending"])
     |> putGeocodingLocation()
     |> unique_constraint(:mac)

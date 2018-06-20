@@ -4,7 +4,7 @@ defmodule ConsoleWeb.GatewayController do
   alias Console.Gateways
   alias Console.Gateways.Gateway
   alias Console.AuditTrails
-
+  
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback ConsoleWeb.FallbackController
