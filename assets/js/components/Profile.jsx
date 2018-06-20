@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchUser } from '../actions/user.js';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
 import AuditTable from './audit_trails/AuditTable'
@@ -18,10 +17,6 @@ import CardContent from '@material-ui/core/CardContent';
 class Profile extends Component {
   constructor(props) {
     super(props);
-  }
-
-  componentDidMount() {
-    this.props.fetchUser();
   }
 
   render() {
@@ -70,7 +65,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ fetchUser, logOut }, dispatch)
+  return bindActionCreators({ logOut }, dispatch)
 }
 
 export default Profile
