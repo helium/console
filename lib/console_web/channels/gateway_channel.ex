@@ -8,7 +8,7 @@ defmodule ConsoleWeb.GatewayChannel do
     {:ok, socket}
   end
 
-  def join("gateway:" <> _, %{"team_id" => team_id}, socket) do
+  def join("gateway:" <> team_id, _params, socket) do
     current_user = Guardian.Phoenix.Socket.current_resource(socket)
     team = Teams.get_team!(team_id)
 

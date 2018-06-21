@@ -11,8 +11,8 @@ defmodule ConsoleWeb.Router.GatewayController do
   def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => token, "public_key" => public_key, "payee_address" => payee_address}}) do
     with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI and nonce
       nil <- gateway.public_key,
-      {:ok, _} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
-        broadcast(gateway, "registering")
+      {:ok, updatedGateway} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
+        broadcast(updatedGateway)
 
         render(conn, "gateway_register.json", %{tx: "some transaction", signature: "some signature"}) # need to generate tx and sig
     else _ ->
@@ -23,8 +23,8 @@ defmodule ConsoleWeb.Router.GatewayController do
   def verify(conn, %{"OUI" => oui, "gateway" => %{"id" => token}}) do
     with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI
       "pending" <- gateway.status,
-      {:ok, _} <- Gateways.update_gateway(gateway, %{status: "verified"}) do
-        broadcast(gateway, "verified")
+      {:ok, updatedGateway} <- Gateways.update_gateway(gateway, %{status: "verified"}) do
+        broadcast(updatedGateway)
 
         conn
         |> send_resp(:no_content, "")
@@ -33,7 +33,9 @@ defmodule ConsoleWeb.Router.GatewayController do
     end
   end
 
-  defp broadcast(%Gateway{} = gateway, action) do
-    ConsoleWeb.Endpoint.broadcast("gateway:#{gateway.id}", action, %{})
+  defp broadcast(%Gateway{} = gateway) do
+    gateway = Gateways.fetch_assoc(gateway, [:team])
+
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, gateway, gateway_updated: "#{gateway.team.id}/gateway_updated/#{gateway.id}")
   end
 end

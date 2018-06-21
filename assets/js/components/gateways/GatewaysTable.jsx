@@ -5,7 +5,7 @@ import { parseLocation } from '../../util/geolocation'
 
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
-import { PAGINATED_GATEWAYS, GATEWAY_SUBSCRIPTION } from '../../graphql/gateways'
+import { PAGINATED_GATEWAYS, GATEWAY_ADDED_SUBSCRIPTION } from '../../graphql/gateways'
 import BlankSlate from '../common/BlankSlate'
 
 // redux
@@ -76,7 +76,7 @@ class GatewaysTable extends Component {
       <PaginatedTable
         columns={columns}
         query={PAGINATED_GATEWAYS}
-        subscription={GATEWAY_SUBSCRIPTION}
+        subscription={GATEWAY_ADDED_SUBSCRIPTION}
         EmptyComponent={ props => <BlankSlate title="No gateways" subheading="To create a new gateway, click the red button in the corner" /> }
       />
     )

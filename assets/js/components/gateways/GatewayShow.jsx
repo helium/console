@@ -13,9 +13,8 @@ import UserCan from '../common/UserCan'
 import UserCannot from '../common/UserCannot'
 import BlankSlate from '../common/BlankSlate'
 import GatewayRegister from './GatewayRegister'
-import SocketHandler from '../SocketHandler'
 import { parseLocation } from '../../util/geolocation'
-import { GATEWAY_FRAGMENT } from '../../graphql/gateways'
+import { GATEWAY_SHOW_QUERY, GATEWAY_UPDATED_SUBSCRIPTION } from '../../graphql/gateways'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -50,19 +49,26 @@ const queryOptions = {
   })
 }
 
-const query = gql`
-  query GatewayShowQuery ($id: ID!) {
-    gateway(id: $id) {
-      ...GatewayFragment
-    }
-  }
-  ${GATEWAY_FRAGMENT}
-`
-
 @withStyles(styles)
 @connect(mapStateToProps, mapDispatchToProps)
-@graphql(query, queryOptions)
+@graphql(GATEWAY_SHOW_QUERY, queryOptions)
 class GatewayShow extends Component {
+  componentDidMount() {
+    const { subscribeToMore, fetchMore } = this.props.data
+    const { id } = this.props.match.params
+    subscribeToMore({
+      document: GATEWAY_UPDATED_SUBSCRIPTION,
+      variables: { id },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          variables: { id },
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+  }
+
   render() {
     const { deleteGateway, classes } = this.props
     const { loading, gateway } = this.props.data
@@ -72,13 +78,11 @@ class GatewayShow extends Component {
     if (gateway.status == "pending") return (
       <DashboardLayout title={gateway.name}>
         <UserCan action="create" itemType="gateway">
-          <SocketHandler>
-            <GatewayRegister gateway={gateway} />
-          </SocketHandler>
+          <GatewayRegister gateway={gateway} />
         </UserCan>
         <UserCannot action="create" itemType="gateway">
           <Card>
-            <BlankSlate noIcon={true} title="Gateway unavailable" subheading="Please wait while the gateway is being verified." />
+            <BlankSlate noIcon={true} title="Gateway currently unavailable" subheading="Please wait while the gateway is being verified." />
           </Card>
         </UserCannot>
       </DashboardLayout>

@@ -192,6 +192,14 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :gateway_updated, :gateway do
+      arg :id, non_null(:id)
+
+      config fn args, %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/gateway_updated/#{args.id}"}
+      end
+    end
+
     field :channel_added, :channel do
       config fn _, %{context: %{ current_team_id: team_id }} ->
         {:ok, topic: "#{team_id}/channel_added"}

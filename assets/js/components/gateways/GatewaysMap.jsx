@@ -3,7 +3,7 @@ import Mapbox from '../common/Mapbox'
 
 // GraphQL
 import { graphql } from 'react-apollo';
-import { PAGINATED_GATEWAYS, GATEWAY_SUBSCRIPTION } from '../../graphql/gateways'
+import { PAGINATED_GATEWAYS, GATEWAY_ADDED_SUBSCRIPTION } from '../../graphql/gateways'
 
 // TODO we're only fetching the first 100 gateways for this map...
 const queryOptions = {
@@ -25,7 +25,7 @@ class GatewaysMap extends Component {
     const { subscribeToMore, fetchMore } = this.props.data
 
     subscribeToMore({
-      document: GATEWAY_SUBSCRIPTION,
+      document: GATEWAY_ADDED_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         fetchMore({

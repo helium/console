@@ -13,9 +13,18 @@ export const GATEWAY_FRAGMENT = gql`
   }
 `
 
-export const GATEWAY_SUBSCRIPTION = gql`
+export const GATEWAY_ADDED_SUBSCRIPTION = gql`
   subscription onGatewayAdded {
     gatewayAdded {
+      ...GatewayFragment
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
+
+export const GATEWAY_UPDATED_SUBSCRIPTION = gql`
+  subscription onGatewayUpdated ($id: ID!) {
+    gatewayUpdated(id: $id) {
       ...GatewayFragment
     }
   }
@@ -32,6 +41,15 @@ export const PAGINATED_GATEWAYS = gql`
       totalPages,
       pageSize,
       pageNumber
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
+
+export const GATEWAY_SHOW_QUERY = gql`
+  query GatewayShowQuery ($id: ID!) {
+    gateway(id: $id) {
+      ...GatewayFragment
     }
   }
   ${GATEWAY_FRAGMENT}
