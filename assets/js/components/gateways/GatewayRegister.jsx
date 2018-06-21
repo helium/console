@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
-import QRCode from 'qrcode.react';
+import GatewayQRCode from './GatewayQRCode'
 
 //MUI
 import Card from '@material-ui/core/Card';
@@ -36,11 +36,10 @@ class GatewayRegister extends Component {
   }
 
   renderQRCode() {
-    const { classes } = this.props
-    const secret2fa = "otpauth://totp/BEAMCoin?secret=FAKEDATA&issuer=Helium%20Inc" // WILL UPDATE TO PROPER DATA
+    const { classes, gateway } = this.props
     return (
       <div className={classes.status}>
-        <QRCode value={secret2fa}/>
+        <GatewayQRCode gateway={gateway}/>
         <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
           Scan QR Code in the Helium App on your phone
         </Typography>

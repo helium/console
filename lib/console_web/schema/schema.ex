@@ -84,6 +84,14 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
   end
 
+  object :gateway_qr_data do
+    field :id, :id
+    field :nonce, :string
+    field :oui, :string
+    field :payee_address, :string
+    field :p2p_address, :string
+  end
+
   object :search_result do
     field :id, :id
     field :title, :string
@@ -114,6 +122,12 @@ defmodule ConsoleWeb.Schema do
     field :gateway, :gateway do
       arg :id, non_null(:id)
       resolve &Console.Gateways.GatewayResolver.find/2
+    end
+
+    @desc "Get QR code data for gateway registration"
+    field :gateway_qr_data, :gateway_qr_data do
+      arg :id, non_null(:id)
+      resolve &Console.Gateways.GatewayResolver.get_qr_data/2
     end
 
     @desc "Get paginated channels"

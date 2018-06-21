@@ -136,4 +136,8 @@ defmodule Console.Gateways do
   def change_gateway(%Gateway{} = gateway) do
     Gateway.changeset(gateway, %{})
   end
+
+  def generate_registration_nonce(gateway_id) do
+    Phoenix.Token.sign(ConsoleWeb.Endpoint, "gateway registration", gateway_id)
+  end
 end

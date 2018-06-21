@@ -54,3 +54,16 @@ export const GATEWAY_SHOW_QUERY = gql`
   }
   ${GATEWAY_FRAGMENT}
 `
+
+export const GATEWAY_QR_DATA_QUERY = gql`
+  query GatewayQRDataQuery ($id: ID!) {
+    gatewayQrData(id: $id) {
+      id,
+      nonce,
+      oui,
+      payee_address,
+      p2p_address
+    }
+  }
+  ${GATEWAY_FRAGMENT}
+`
