@@ -10,7 +10,7 @@ defmodule ConsoleWeb.Router.GatewayController do
 
   def register(conn, %{"OUI" => oui, "nonce" => nonce, "gateway" => %{"id" => token, "public_key" => public_key, "payee_address" => payee_address}}) do
     with gateway = %Gateway{} <- HardwareIdentifiers.get_resource_by_hardware_identifier(token, Gateway), # need to verify OUI and nonce
-      nil <- gateway.public_key,
+      nil <- gateway.public_key, "pending" <- gateway.status,
       {:ok, updatedGateway} <- Gateways.update_gateway(gateway, %{public_key: public_key}) do
         broadcast(updatedGateway)
 
