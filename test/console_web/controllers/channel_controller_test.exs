@@ -4,8 +4,8 @@ defmodule ConsoleWeb.ChannelControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "some type"}
-  @update_attrs %{active: false, credentials: %{"a" => "c"}, name: "some updated name", type: "some updated type"}
+  @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "http", type_name: "HTTP"}
+  @update_attrs %{active: false, credentials: %{"a" => "c"}, name: "some updated name", type: "mqtt", type_name: "MQTT"}
   @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
   describe "index" do
@@ -26,15 +26,11 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
     test "renders channel when data is valid", %{conn: conn, team: team} do
       conn = post conn, channel_path(conn, :create), channel: @create_attrs
-      %{"id" => id} = json_response(conn, 201)
-      assert json_response(conn, 201) == %{
-        "id" => id,
-        "active" => true,
-        "credentials" => %{"a" => "b"},
-        "name" => "some name",
-        "type" => "some type",
-        "team_id" => team.id
-      }
+      created_channel = json_response(conn, 201)
+      assert created_channel["name"] == @create_attrs.name
+      assert created_channel["active"] == @create_attrs.active
+      assert created_channel["credentials"]["a"] == @create_attrs.credentials["a"]
+      assert created_channel["type"] == @create_attrs.type
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -49,15 +45,11 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "renders channel when data is valid", %{conn: conn, team: team} do
       channel = create_channel_for_team(team)
       conn = put conn, channel_path(conn, :update, channel), channel: @update_attrs
-      assert json_response(conn, 200) == %{
-        "id" => channel.id,
-        "active" => false,
-        "credentials" => %{"a" => "c"},
-        "name" => "some updated name",
-        "type" => "some updated type",
-        "team_id" => team.id,
-        "groups" => []
-      }
+      updated_channel = json_response(conn, 200)
+      assert updated_channel["name"] == @update_attrs.name
+      assert updated_channel["active"] == @update_attrs.active
+      assert updated_channel["credentials"]["a"] == @update_attrs.credentials["a"]
+      assert updated_channel["type"] == @update_attrs.type
     end
 
     test "renders errors when data is invalid", %{conn: conn, team: team} do

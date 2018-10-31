@@ -4,11 +4,11 @@ defmodule Console.Factory do
   alias Console.Auth.User
   alias Console.Channels.Channel
   alias Console.Devices.Device
-  alias Console.Gateways.Gateway
   alias Console.Events.Event
   alias Console.Teams.Team
   alias Console.Teams.Invitation
   alias Console.Groups.Group
+  alias Console.Gateways.Gateway
 
   def user_factory do
     %User{
@@ -31,6 +31,7 @@ defmodule Console.Factory do
       active: true,
       credentials: %{"a field" => "a value"},
       name: sequence(:name, &"My Channel #{&1}"),
+      type_name: "Azure IoT Hub",
       type: "azure"
     }
   end
@@ -49,7 +50,8 @@ defmodule Console.Factory do
       mac: sequence(:mac, &"mac address #{&1}"),
       public_key: "my public key",
       latitude: 37.770918,
-      longitude: -122.419487
+      longitude: -122.419487,
+      status: "pending"
     }
   end
 
