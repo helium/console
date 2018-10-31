@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :description, :string
     field :payload_size, :integer
+    field :payload, :string
     field :rssi, :float
     field :reported_at, :naive_datetime
     field :status, :string
@@ -162,6 +163,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Events.EventResolver.recent/2
     end
 
+    @desc "Get recent events for demo"
+    field :demo_events, list_of(:event) do
+      arg :team_id, :string
+      resolve &Console.Events.EventResolver.demo/2
+    end
+
     @desc "Search for devices, gateways and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string
@@ -176,6 +183,14 @@ defmodule ConsoleWeb.Schema do
 
       config fn args, _ ->
         {:ok, topic: "#{args.context_name}/#{args.context_id}"}
+      end
+    end
+
+    field :demo_event_added, :event do
+      arg :team_id, :string
+
+      config fn args, _ ->
+        {:ok, topic: "#{args.team_id}/demo_event_added"}
       end
     end
 

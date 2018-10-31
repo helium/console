@@ -59,5 +59,8 @@ defmodule ConsoleWeb.EventController do
     if event.channel do
       Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "channels/#{event.channel.id}")
     end
+    if event.team_id do
+      Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, demo_event_added: "#{event.team_id}/demo_event_added")
+    end
   end
 end

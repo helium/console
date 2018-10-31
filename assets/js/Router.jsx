@@ -37,6 +37,7 @@ import Dashboard from './components/dashboard/Dashboard'
 import Billing from './components/billing/Billing'
 import Reports from './components/reports/Reports'
 import Notifications from './components/notifications/Notifications'
+import DemoEvents from './components/events/DemoEvents'
 
 
 class Router extends React.Component {
@@ -58,6 +59,7 @@ class Router extends React.Component {
                   <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
                   <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
                   <PrivateRoute path="/profile" component={Profile}/>
+                  <PrivateRoute path="/demo" component={DemoEvents} />
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                   <PrivateRoute exact path="/gateways" component={GatewayIndex} />

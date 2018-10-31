@@ -17,6 +17,7 @@ defmodule Console.Events.Event do
     field(:rssi, :float)
     field(:signal_strength, :integer)
     field(:status, :string)
+    field(:team_id, :binary_id)
     belongs_to(:device, Device)
     belongs_to(:gateway, Gateway)
     belongs_to(:channel, Channel)
@@ -38,7 +39,8 @@ defmodule Console.Events.Event do
       :status,
       :device_id,
       :gateway_id,
-      :channel_id
+      :channel_id,
+      :team_id
     ])
     |> put_reported_at_timestamp()
     |> validate_required([:reported_at])

@@ -5,6 +5,7 @@ export const EVENT_FRAGMENT = gql`
     id,
     description,
     rssi,
+    payload,
     payload_size,
     reported_at,
     status,
@@ -14,6 +15,15 @@ export const EVENT_FRAGMENT = gql`
 export const EVENTS_SUBSCRIPTION = gql`
   subscription onEventAdded($contextId: String, $contextName: String) {
     eventAdded(contextId: $contextId, contextName: $contextName) {
+      ...EventFragment
+    }
+  }
+  ${EVENT_FRAGMENT}
+`
+
+export const DEMO_EVENTS_SUBSCRIPTION = gql`
+  subscription onDemoEventAdded($teamId: String) {
+    demoEventAdded(teamId: $teamId) {
       ...EventFragment
     }
   }

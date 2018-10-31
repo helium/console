@@ -15,6 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
 
 // Icons
+import AnnouncementIcon from '@material-ui/icons/Announcement';
 import DevicesIcon from '@material-ui/icons/Memory';
 import GatewaysIcon from '@material-ui/icons/Router';
 import ChannelsIcon from '@material-ui/icons/CompareArrows';
@@ -54,6 +55,13 @@ const HardwareNavItems = (props) => (
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
+    </ListItem>
+
+    <ListItem button component={Link} to="/demo">
+      <ListItemIcon>
+        <AnnouncementIcon />
+      </ListItemIcon>
+      <ListItemText primary="Demo Events" />
     </ListItem>
 
     <ListItem button component={Link} to="/devices">

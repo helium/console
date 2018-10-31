@@ -20,7 +20,7 @@ class RandomEventButton extends Component {
   handleClick(e) {
     e.preventDefault()
 
-    const { device_id, gateway_id, channel_id } = this.props
+    const { device_id, gateway_id, channel_id, team_id } = this.props
 
     this.props.createEvent({
       description: sample(descriptions),
@@ -32,6 +32,7 @@ class RandomEventButton extends Component {
       device_id,
       gateway_id,
       channel_id,
+      team_id,
       reported_at: new Date().toISOString()
     })
   }
