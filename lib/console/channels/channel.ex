@@ -89,7 +89,7 @@ defmodule Console.Channels.Channel do
   defp filter_credentials(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
-        put_change(changeset, :credentials, Map.merge(creds, %{inbound_token: generate_token(16)}))
+        put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
       _ -> changeset
     end
   end

@@ -2,6 +2,8 @@ defmodule Console.EventsTest do
   use Console.DataCase
 
   alias Console.Events
+  alias Console.Gateways.Gateway
+  alias Console.Gateways
 
   import Console.Factory
 
@@ -11,6 +13,7 @@ defmodule Console.EventsTest do
     @valid_attrs %{description: "some description", direction: "inbound", payload: "some payload", payload_size: 42, reported_at: "2010-04-17T14:00:00.000000Z", rssi: 120.5, signal_strength: 42, status: "some status"}
     @update_attrs %{description: "some updated description", direction: "outbound", payload: "some updated payload", payload_size: 43, reported_at: "2011-05-18T15:01:01.000000Z", rssi: 456.7, signal_strength: 43, status: "some updated status"}
     @invalid_attrs %{description: nil, direction: "invalid direction", payload: nil, payload_size: nil, reported_at: nil, rssi: nil, signal_strength: nil, status: nil}
+    @valid_gateway %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key", status: "pending"}
 
     def event_fixture(attrs \\ %{}) do
       {:ok, event} =
@@ -44,7 +47,9 @@ defmodule Console.EventsTest do
 
     test "create_event/1 with device, gateway and channel to associate" do
       device = insert(:device)
-      gateway = insert(:gateway)
+      team = insert(:team)
+      attrs = @valid_gateway |> Enum.into(%{team_id: team.id})
+      {:ok, %Gateway{} = gateway} = Gateways.create_gateway(attrs)
       channel = insert(:channel)
       attrs = params_for(:event, device: device, gateway: gateway, channel: channel, reported_at: "2011-05-18T15:01:01.000Z")
       {:ok, event} = Events.create_event(attrs)

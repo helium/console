@@ -8,8 +8,8 @@ defmodule Console.GatewaysTest do
   describe "gateways" do
     alias Console.Gateways.Gateway
 
-    @valid_attrs %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key"}
-    @update_attrs %{latitude: "456.7", longitude: "456.7", mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
+    @valid_attrs %{latitude: "120.5", longitude: "120.5", mac: "some mac", name: "some name", public_key: "some public_key", status: "pending"}
+    @update_attrs %{latitude: "456.7", longitude: "456.7", mac: "some updated mac", name: "some updated name", public_key: "some updated public_key", status: "verified"}
     @invalid_attrs %{latitude: nil, longitude: nil, mac: nil, name: nil, public_key: nil}
 
     def gateway_fixture(attrs \\ %{}) do

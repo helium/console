@@ -63,7 +63,7 @@ defmodule Console.Gateways do
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:hardware_identifier, hardware_identifier_changeset)
       |> Ecto.Multi.run(:gateway, fn %{hardware_identifier: hardware_identifier} ->
-        attrs = Map.merge(attrs, %{"hardware_identifier_id" => hardware_identifier.id})
+        attrs = Map.merge(attrs, %{hardware_identifier_id: hardware_identifier.id})
 
         %Gateway{}
         |> Gateway.changeset(attrs)

@@ -10,8 +10,8 @@ defmodule Console.ChannelsTest do
 
     @valid_creds %{"a field" => "a value"}
     @updated_creds %{"a field" => "a value", "another field" => "another value"}
-    @valid_attrs %{active: true, credentials: @valid_creds, name: "some name", type: "some type"}
-    @update_attrs %{active: false, credentials: @updated_creds, name: "some updated name", type: "some updated type"}
+    @valid_attrs %{active: true, credentials: @valid_creds, name: "some name", type: "http", type_name: "HTTP"}
+    @update_attrs %{active: false, credentials: @updated_creds, name: "some updated name", type: "mqtt", type_name: "MQTT"}
     @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
     def channel_fixture(attrs \\ %{}) do
@@ -40,9 +40,9 @@ defmodule Console.ChannelsTest do
       attrs = @valid_attrs |> Enum.into(%{team_id: team.id})
       assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
       assert channel.active == true
-      assert channel.credentials == @valid_creds
+      assert channel.credentials["a field"] == @valid_creds["a field"]
       assert channel.name == "some name"
-      assert channel.type == "some type"
+      assert channel.type == "http"
     end
 
     test "create_channel/1 with invalid data returns error changeset" do
@@ -56,7 +56,7 @@ defmodule Console.ChannelsTest do
       assert channel.active == false
       assert channel.credentials == @updated_creds
       assert channel.name == "some updated name"
-      assert channel.type == "some updated type"
+      assert channel.type == "mqtt"
     end
 
     test "update_channel/2 with invalid data returns error changeset" do

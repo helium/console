@@ -4,7 +4,7 @@ defmodule ConsoleWeb.GatewayController do
   alias Console.Gateways
   alias Console.Gateways.Gateway
   alias Console.AuditTrails
-  
+
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback ConsoleWeb.FallbackController
@@ -18,7 +18,10 @@ defmodule ConsoleWeb.GatewayController do
   def create(conn, %{"gateway" => gateway_params}) do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
-    gateway_params = Map.merge(gateway_params, %{"team_id" => current_team.id})
+    gateway_params =
+      Map.merge(gateway_params, %{"team_id" => current_team.id})
+      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    
     with {:ok, %Gateway{} = gateway} <- Gateways.create_gateway(gateway_params) do
       broadcast(gateway, "new")
       AuditTrails.create_audit_trail("gateway", "create", current_user, current_team, "gateways", gateway)
