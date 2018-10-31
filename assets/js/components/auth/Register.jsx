@@ -231,6 +231,7 @@ class Register extends Component {
     } else {
       return(
         <AuthLayout>
+          <img src="/images/logo-horizontal.svg" style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
           <Card>
             {version === "register" ? this.registerContent() : this.joinContent()}
           </Card>

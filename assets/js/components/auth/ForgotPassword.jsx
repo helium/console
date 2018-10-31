@@ -72,6 +72,7 @@ class ForgotPassword extends Component {
 
     return(
       <AuthLayout>
+        <img src="/images/logo-horizontal.svg" style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
         <Card>
           <CardContent>
             <Typography variant="headline" className={classes.title}>

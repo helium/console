@@ -49,7 +49,7 @@ class Router extends React.Component {
               { /* ConnectedRouter will use the store from Provider automatically */ }
               <ConnectedRouter history={history}>
                 <Switch>
-                  <Route exact path="/" component={Home}/>
+                  <Redirect exact from="/" to="/login" />
                   <PublicRoute path="/login" component={Login}/>
                   <PublicRoute path="/resend_verification" component={ResendVerification}/>
                   <PublicRoute path="/forgot_password" component={ForgotPassword}/>
