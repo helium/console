@@ -58,5 +58,9 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
+  },
+  "engines": {
+    "node": "10.x",
+    "yarn": "1.x"
   }
 }
