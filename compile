@@ -1,4 +1,4 @@
-brunch build --production
+yarn run deploy
 
 cd $phoenix_dir
 
