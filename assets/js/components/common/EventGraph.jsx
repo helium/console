@@ -174,7 +174,7 @@ class EventGraph extends Component {
   }
 
   render() {
-    return <Bubble data={this.state.data} options={this.chartOptions}/>
+    return <Bubble data={this.state.data} options={this.chartOptions} height={400}/>
   }
 }
 
