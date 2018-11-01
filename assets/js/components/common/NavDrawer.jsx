@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import RandomNotificationButton from '../notifications/RandomNotificationButton'
+import Logo from '../../../img/logo-horizontalwhite.svg'
 
 // MUI
 import Drawer from '@material-ui/core/Drawer';
@@ -117,7 +118,7 @@ class NavDrawer extends Component {
         >
           <Toolbar style={{minHeight: 48}}>
             <Link to="/" className={classes.logo}>
-              <img src="/images/logo-horizontalwhite.svg" style={{width: "45%"}} />
+              <img src={Logo} style={{width: "45%"}} />
             </Link>
           </Toolbar>
           <Divider />

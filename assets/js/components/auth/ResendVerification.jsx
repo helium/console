@@ -6,6 +6,7 @@ import { resendVerification, hasResetCaptcha } from '../../actions/auth.js';
 import config from '../../config/common.js';
 import Recaptcha from './Recaptcha.jsx';
 import AuthLayout from '../common/AuthLayout'
+import Logo from '../../../img/logo-horizontal.svg'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -72,7 +73,7 @@ class ResendVerification extends Component {
 
     return(
       <AuthLayout>
-        <img src="/images/logo-horizontal.svg" style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
+        <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
         <Card>
           <CardContent>
             <Typography variant="headline" className={classes.title}>
