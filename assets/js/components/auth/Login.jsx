@@ -7,6 +7,7 @@ import config from '../../config/common';
 import Recaptcha from './Recaptcha';
 import TwoFactorForm from './TwoFactorForm'
 import AuthLayout from '../common/AuthLayout'
+import Logo from '../../../img/logo-horizontal.svg'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -91,7 +92,7 @@ class Login extends Component {
   loginForm(classes) {
     return (
       <AuthLayout>
-        <img src="/images/logo-horizontal.svg" style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
+        <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
         <Card>
           <CardContent>
             <Typography variant="headline" className={classes.title}>

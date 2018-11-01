@@ -9,6 +9,8 @@ import Recaptcha from './Recaptcha.jsx';
 import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
 import DocumentLayout from '../common/DocumentLayout'
+import Logo from '../../../img/logo-horizontal.svg'
+
 // MUI
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -231,7 +233,7 @@ class Register extends Component {
     } else {
       return(
         <AuthLayout>
-          <img src="/images/logo-horizontal.svg" style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
+          <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
           <Card>
             {version === "register" ? this.registerContent() : this.joinContent()}
           </Card>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
+import Mqtt from '../../../img/mqtt-channel.png'
 
 //MUI
 import Typography from '@material-ui/core/Typography';
@@ -42,7 +43,7 @@ class GatewayCreateRow extends Component {
       <div className={classes.createRow}>
         <ButtonBase key="Register Gateway" component={Link} to={"/gateways/new"} className={classes.button}>
           <div className={classes.tile}>
-            <div className={classes.icon} style={{backgroundImage: "url('/images/mqtt-channel.png')"}}></div>
+            <div className={classes.icon} style={{backgroundImage: `url('${Mqtt}')`}}></div>
             <Typography component="p" style={{marginTop: 12}}>
               Get Started
             </Typography>

@@ -6,6 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/Button';
 
+import Azure from '../../../img/azure-channel.png'
+import Aws from '../../../img/aws-channel.png'
+import Google from '../../../img/google-channel.svg'
+import Mqtt from '../../../img/mqtt-channel.png'
+import Http from '../../../img/http-channel.png'
+
 const styles = theme => ({
   createRow: {
     display: 'flex',
@@ -31,11 +37,11 @@ const styles = theme => ({
 })
 
 const channelTypes = [
-  { name: "Azure IoT Hub", link: "/channels/new/azure", img: "url('/images/azure-channel.png')" },
-  { name: "AWS IoT", link: "/channels/new/aws", img: "url('/images/aws-channel.png')" },
-  { name: "Google Cloud IoT Core", link: "/channels/new/google", img: "url('/images/google-channel.svg')" },
-  { name: "MQTT", link: "/channels/new/mqtt", img: "url('/images/mqtt-channel.png')" },
-  { name: "HTTP", link: "/channels/new/http", img: "url('/images/http-channel.png')" },
+  { name: "Azure IoT Hub", link: "/channels/new/azure", img: `url('${Azure}')` },
+  { name: "AWS IoT", link: "/channels/new/aws", img: `url('${Aws}')` },
+  { name: "Google Cloud IoT Core", link: "/channels/new/google", img: `url('${Google}')` },
+  { name: "MQTT", link: "/channels/new/mqtt", img: `url('${Mqtt}')` },
+  { name: "HTTP", link: "/channels/new/http", img: `url('${Http}')` },
 ]
 
 @withStyles(styles)

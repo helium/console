@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Noty from 'noty';
 import Router from './Router'
+import AppCss from '../css/app.css'
 
 class App extends Component {
   displayFlash(type, text) {
