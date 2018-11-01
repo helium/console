@@ -15,6 +15,9 @@
     "RECAPTCHA_SECRET": {
       "required": true
     },
+    "ROUTER_SECRETS": {
+      "required": true
+    },
     "SECRET_KEY_BASE": {
       "required": true
     }
