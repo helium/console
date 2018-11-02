@@ -1,6 +1,8 @@
 @import '~react-table/react-table.css';
 @import '~mapbox-gl/dist/mapbox-gl.css';
 @import '~noty/lib/noty.css';
+@import './mapbox.css';
+@import './chartjs.css';
 
 /* This file is for your main application css. */
 body {
