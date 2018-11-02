@@ -53,7 +53,7 @@ class TermsPrompt extends Component {
   }
 
   handleScroll(e) {
-    const scrolledToBottom = (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight)
+    const scrolledToBottom = (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 5)
     if (scrolledToBottom) {
       this.setState({ scrolledToBottom })
     }
