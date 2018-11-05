@@ -108,7 +108,7 @@ class PacketGraph extends Component {
   componentDidUpdate(prevProps) {
     const { recentEvents } = this.props.data
 
-    if ((!prevProps.data.recentEvents && recentEvents) || (prevProps.data.recentEvents.length !== recentEvents.length)) {
+    if ((!prevProps.data.demoEvents && demoEvents) || (prevProps.data.demoEvents && demoEvents) && (prevProps.data.demoEvents.length !== demoEvents.length)) {
       clearInterval(this.chartUpdateInterval)
       this.updateChart(recentEvents)
       this.chartUpdateInterval = setInterval(() => {
