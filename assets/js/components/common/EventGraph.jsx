@@ -118,7 +118,7 @@ class EventGraph extends Component {
   componentDidUpdate(prevProps) {
     const { demoEvents } = this.props.data
 
-    if ((!prevProps.data.demoEvents && demoEvents) || (prevProps.data.demoEvents.length !== demoEvents.length)) {
+    if ((!prevProps.data.demoEvents && demoEvents) || (prevProps.data.demoEvents && demoEvents) && (prevProps.data.demoEvents.length !== demoEvents.length)) {
       clearInterval(this.chartUpdateInterval)
       this.updateChart(demoEvents)
       this.chartUpdateInterval = setInterval(() => {

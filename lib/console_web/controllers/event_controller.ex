@@ -4,7 +4,7 @@ defmodule ConsoleWeb.EventController do
   alias Console.Events
   alias Console.Events.Event
 
-  plug ConsoleWeb.Plug.AuthorizeAction
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:create]
 
   action_fallback(ConsoleWeb.FallbackController)
 

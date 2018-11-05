@@ -29,6 +29,8 @@ defmodule ConsoleWeb.Router do
     post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
     post "/2fa/verify", TwoFactorController, :verify
+
+    post "/events", EventController, :create
   end
 
   scope "/api", ConsoleWeb do
@@ -37,7 +39,7 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, except: [:new, :edit]
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
-    resources "/events", EventController, except: [:new, :edit]
+    resources "/events", EventController, except: [:new, :edit, :create]
     resources "/teams", TeamController, except: [:new, :edit] do
       post "/switch", TeamController, :switch, as: :switch
     end
