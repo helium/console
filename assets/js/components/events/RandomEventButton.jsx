@@ -27,7 +27,7 @@ class RandomEventButton extends Component {
       direction: sample(["inbound", "outbound"]),
       payload: "some payload",
       payload_size: randomInt(1, 100),
-      rssi: randomFloat(1, 100).toFixed(2),
+      rssi: -1 * randomFloat(1, 100).toFixed(2),
       status: sample(["success", "error"]),
       device_id,
       gateway_id,

@@ -32,8 +32,8 @@ class EventGraph extends Component {
           offset: true,
           ticks: {
             beginAtZero: true,
-            min: 0,
-            max: 100
+            min: -120,
+            max: 0
           },
           scaleLabel: {
             display: true,
