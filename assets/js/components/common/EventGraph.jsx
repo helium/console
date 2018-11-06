@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
 import { DEMO_EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
+import minBy from 'lodash/minBy'
+import maxBy from 'lodash/maxBy'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -12,73 +14,6 @@ class EventGraph extends Component {
 
     this.updateChart = this.updateChart.bind(this)
     this.chartUpdateInterval = null
-    this.chartOptions = {
-      animation: false,
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-          padding: {
-              left: 0,
-              right: 10,
-              top: 30,
-              bottom: 0
-          }
-      },
-      scales: {
-        yAxes: [{
-          id: 'RSSI-axis',
-          type: 'linear',
-          position: 'left',
-          offset: true,
-          ticks: {
-            beginAtZero: true,
-            min: -120,
-            max: 0
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'RSSI'
-          }
-        }],
-        xAxes: [{
-          id: 'Time-axis',
-          type: 'linear',
-          position: 'bottom',
-          gridLines: {
-            display: false
-          },
-          ticks: {
-            beginAtZero: true,
-            min: 0,
-            max: 300,
-            stepSize: 30,
-            callback: (value) => {
-              if (value !== 0) return '-' + value + 's';
-              else return value + 's'
-            }
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Time Past in Seconds'
-          }
-        }]
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        displayColors: false,
-        callbacks: {
-          label: (tooltip, data) => {
-            return data.datasets[tooltip.datasetIndex].label + ' '
-              + data.datasets[tooltip.datasetIndex].data[tooltip.index].r * 2
-              + ' Kb packet '
-              + Math.floor(data.datasets[tooltip.datasetIndex].data[tooltip.index].x)
-              + ' seconds ago'
-          }
-        }
-      }
-    }
 
     this.state = {
       data: {
@@ -131,6 +66,84 @@ class EventGraph extends Component {
     clearInterval(this.chartUpdateInterval)
   }
 
+  generateChartOptions(demoEvents) {
+    let min, max
+    if (demoEvents && demoEvents.length > 0) {
+      min = Math.floor((minBy(demoEvents, e => e.rssi).rssi - 5) / 5) * 5
+      max = Math.ceil((maxBy(demoEvents, e => e.rssi).rssi + 5) / 5) * 5
+    } else {
+      min = -30
+      max = 0
+    }
+
+    return {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+          padding: {
+              left: 0,
+              right: 10,
+              top: 30,
+              bottom: 0
+          }
+      },
+      scales: {
+        yAxes: [{
+          id: 'RSSI-axis',
+          type: 'linear',
+          position: 'left',
+          offset: true,
+          ticks: {
+            min,
+            max
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'RSSI'
+          }
+        }],
+        xAxes: [{
+          id: 'Time-axis',
+          type: 'linear',
+          position: 'bottom',
+          gridLines: {
+            display: false
+          },
+          ticks: {
+            beginAtZero: true,
+            min: 0,
+            max: 300,
+            stepSize: 30,
+            callback: (value) => {
+              if (value !== 0) return '-' + value + 's';
+              else return value + 's'
+            }
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Time Past in Seconds'
+          }
+        }]
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        displayColors: false,
+        callbacks: {
+          label: (tooltip, data) => {
+            return data.datasets[tooltip.datasetIndex].label + ' '
+              + data.datasets[tooltip.datasetIndex].data[tooltip.index].r * 4
+              + ' Kb packet '
+              + Math.floor(data.datasets[tooltip.datasetIndex].data[tooltip.index].x)
+              + ' seconds ago'
+          }
+        }
+      }
+    }
+  }
+
   updateChart(events) {
     const inbound = []
     const outbound = []
@@ -143,13 +156,13 @@ class EventGraph extends Component {
           inbound.push({
             x: timeDiff,
             y: event.rssi,
-            r: event.payload_size / 2
+            r: event.payload_size / 4
           })
         } else if (event.direction == 'outbound') {
           outbound.push({
             x: timeDiff,
             y: event.rssi,
-            r: event.payload_size / 2
+            r: event.payload_size / 4
           })
         }
       }
@@ -174,7 +187,8 @@ class EventGraph extends Component {
   }
 
   render() {
-    return <Bubble data={this.state.data} options={this.chartOptions} height={400}/>
+    const chartOptions = this.generateChartOptions(this.props.data.demoEvents)
+    return <Bubble data={this.state.data} options={chartOptions} height={400}/>
   }
 }
 
