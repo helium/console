@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 let interval
 const waitForRecaptcha = new Promise(resolve=> {
   interval = setInterval(()=> {
-    if (typeof window !== 'undefined' && typeof window.grecaptcha !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.grecaptcha !== 'undefined' && window.grecaptcha.render) {
         clearInterval(interval);
         resolve(window.grecaptcha);
     }
