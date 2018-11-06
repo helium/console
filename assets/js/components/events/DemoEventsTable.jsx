@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { formatDatetime } from '../../util/time'
+import { listRandomB58Ids } from '../../util/random'
 import { DEMO_EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
 import { withStyles } from '@material-ui/core/styles';
 
@@ -13,6 +14,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+
+const Ids = listRandomB58Ids(100000)
 
 const styles = theme => ({
   newRow: {
@@ -44,10 +47,6 @@ class DemoEventsTable extends Component {
     const { newRow } = this.state
     const columns = [
       {
-        Header: 'Description',
-        accessor: 'description',
-      },
-      {
         Header: 'Payload',
         accessor: 'payload',
       },
@@ -71,6 +70,18 @@ class DemoEventsTable extends Component {
         Header: 'Status',
         accessor: 'status',
       },
+      {
+        Header: 'Txn Fee',
+        accessor: 'txn_fee',
+      },
+      {
+        Header: 'Block Height',
+        accessor: 'block_height',
+      },
+      {
+        Header: 'Txn Id',
+        accessor: 'txn_id',
+      },
     ]
 
     if (demoEvents) {
@@ -90,7 +101,7 @@ class DemoEventsTable extends Component {
           <TableBody>
             {demoEvents.map((event, i) =>
               <TableRow key={`row-${i}`} className={(i == 0 && newRow) ? classes.newRow : ""}>
-                {columns.map(column =>
+                {columns.slice(0,6).map(column =>
                     <TableCell key={`row-${i}-${column.accessor}`}>
                       {
                         (column.Header == "Time") ?
@@ -99,6 +110,15 @@ class DemoEventsTable extends Component {
                       }
                     </TableCell>
                 )}
+                <TableCell>
+                  2 SKNT
+                </TableCell>
+                <TableCell>
+                  582
+                </TableCell>
+                <TableCell>
+                  {Ids[demoEvents.length - 1 - i]}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>
