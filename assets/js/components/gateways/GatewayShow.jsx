@@ -78,7 +78,7 @@ class GatewayShow extends Component {
           <CardContent className={classes.details}>
             <div className={classes.left}>
               <Typography variant="headline" component="h3">
-                Gateway Details
+                Hotspot Details
               </Typography>
               <Typography component="p">
                 ID: {gateway.id}
@@ -116,7 +116,7 @@ class GatewayShow extends Component {
                 color="secondary"
                 onClick={() => deleteGateway(gateway.id, true)}
               >
-                Delete Gateway
+                Delete Hotspot
               </Button>
             </UserCan>
           </CardActions>

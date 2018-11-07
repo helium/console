@@ -77,7 +77,7 @@ class GatewaysTable extends Component {
         columns={columns}
         query={PAGINATED_GATEWAYS}
         subscription={GATEWAY_SUBSCRIPTION}
-        EmptyComponent={ props => <BlankSlate title="No gateways" subheading="To create a new gateway, click the red button in the corner" /> }
+        EmptyComponent={ props => <BlankSlate title="No hotspots" subheading="To create a new hotspot, click the red button in the corner" /> }
       />
     )
   }

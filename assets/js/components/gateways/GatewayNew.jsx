@@ -49,7 +49,7 @@ class GatewayNew extends Component {
             </Typography>
 
             <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-              Choose a name for your Gateway
+              Choose a name for your Hotspot
             </Typography>
 
             <div style={{width: '50%'}}>

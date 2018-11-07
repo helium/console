@@ -19,16 +19,16 @@ const pages = [
     synonyms: ""
   },
   {
-    title: "Gateways",
-    description: "View and manage gateways",
+    title: "Hotspots",
+    description: "View and manage hotspots",
     url: "/gateways",
     id: "/gateways",
     category: "gateways",
     synonyms: ""
   },
   {
-    title: "Gateway Map",
-    description: "View a map of gateway locations",
+    title: "Hotspot Map",
+    description: "View a map of hotspot locations",
     url: "/gateways/map",
     id: "/gateways/map",
     category: "map",

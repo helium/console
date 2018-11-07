@@ -12,14 +12,14 @@ import Button from '@material-ui/core/Button';
 const randomNotification = () => (
   sample([
     {
-      title: "Pending Gateway Activation",
-      body: "Confirm your pending gateway activation",
+      title: "Pending Hotspot Activation",
+      body: "Confirm your pending hotspot activation",
       url: "/gateways",
       category: "gateways"
     },
     {
-      title: "Gateway Confirmed",
-      body: "Gateway successfully confirmed",
+      title: "Hotspot Confirmed",
+      body: "Hotspot successfully confirmed",
       url: "/gateways",
       category: "gateways"
     },

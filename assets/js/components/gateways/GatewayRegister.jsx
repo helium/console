@@ -55,7 +55,7 @@ class GatewayRegister extends Component {
         <CircularProgress size={75} />
 
         <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-          Please wait, your gateway is being verified and written to the Helium Blockchain
+          Please wait, your hotspot is being verified and written to the Helium Blockchain
         </Typography>
       </div>
     )
@@ -92,7 +92,7 @@ class GatewayRegister extends Component {
             </Typography>
 
             <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-              You can change the gateway name after registration
+              You can change the hotspot name after registration
             </Typography>
 
           </CardContent>

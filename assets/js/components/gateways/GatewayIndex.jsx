@@ -21,7 +21,7 @@ class GatewayIndex extends Component {
           <Card style={{marginBottom: 24}}>
             <CardContent>
               <Typography variant="headline" component="h3">
-                Register New Gateway
+                Register New Hotspot
               </Typography>
 
               <GatewayCreateRow />
@@ -53,7 +53,7 @@ class GatewayIndex extends Component {
     }]
 
     return(
-      <DashboardLayout title="All Gateways" tabs={tabs}>
+      <DashboardLayout title="All Hotspots" tabs={tabs}>
         <UserCan action="create" itemType="gateway">
           <RandomGatewayButton />
         </UserCan>

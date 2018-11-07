@@ -75,7 +75,7 @@ const HardwareNavItems = (props) => (
       <ListItemIcon>
         <GatewaysIcon />
       </ListItemIcon>
-      <ListItemText primary="Gateways" />
+      <ListItemText primary="Hotspots" />
     </ListItem>
 
     <ListItem button component={Link} to="/channels">
