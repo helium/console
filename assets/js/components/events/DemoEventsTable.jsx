@@ -21,6 +21,9 @@ const styles = theme => ({
   newRow: {
     backgroundColor: "#E8E8E8"
   },
+  tableCell: {
+    paddingRight: 12
+  }
 });
 
 @withStyles(styles)
@@ -92,6 +95,7 @@ class DemoEventsTable extends Component {
               {columns.map((column, i) =>
                 <TableCell
                   key={`header-${i}`}
+                  className={classes.tableCell}
                 >
                   {column.Header}
                 </TableCell>
@@ -101,22 +105,31 @@ class DemoEventsTable extends Component {
           <TableBody>
             {demoEvents.map((event, i) =>
               <TableRow key={`row-${i}`} className={(i == 0 && newRow) ? classes.newRow : ""}>
-                {columns.slice(0,6).map(column =>
-                    <TableCell key={`row-${i}-${column.accessor}`}>
-                      {
-                        (column.Header == "Time") ?
-                          formatDatetime(demoEvents[i][column.accessor]) :
-                          demoEvents[i][column.accessor]
-                      }
-                    </TableCell>
-                )}
-                <TableCell>
+                <TableCell className={classes.tableCell}>
+                  {demoEvents[i]['payload']}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
+                  {demoEvents[i]['payload_size']}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
+                  {demoEvents[i]['rssi']}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
+                  {demoEvents[i]['direction']}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
+                  {formatDatetime(demoEvents[i]['reported_at'])}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
+                  {demoEvents[i]['status']}
+                </TableCell>
+                <TableCell className={classes.tableCell}>
                   2 SKNT
                 </TableCell>
-                <TableCell>
+                <TableCell className={classes.tableCell}>
                   582
                 </TableCell>
-                <TableCell>
+                <TableCell className={classes.tableCell}>
                   {Ids[demoEvents.length - 1 - i]}
                 </TableCell>
               </TableRow>
