@@ -14,6 +14,7 @@ defmodule ConsoleWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
+    IO.inspect event_params
     with {:ok, %Event{} = event} <- Events.create_event(event_params) do
       event = Events.fetch_assoc(event)
       broadcast(event, "new")
