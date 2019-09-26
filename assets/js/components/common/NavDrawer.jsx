@@ -119,7 +119,6 @@ class NavDrawer extends Component {
           <Divider />
           <OrganizationalNavItems />
           <Divider />
-          <RandomNotificationButton />
         </Drawer>
       </MuiThemeProvider>
     )
