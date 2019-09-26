@@ -21,7 +21,6 @@ defmodule ConsoleWeb.TeamController do
 
   def create(conn, %{"team" => team_attrs}) do
     with {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs) do
-      AuditTrails.create_audit_trail("team", "create", conn.assigns.current_user, team)
 
       conn
       |> put_status(:created)

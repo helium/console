@@ -3,7 +3,6 @@ defmodule ConsoleWeb.DeviceController do
 
   alias Console.Devices
   alias Console.Devices.Device
-  alias Console.AuditTrails
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -24,7 +23,6 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
       broadcast(device, "new")
-      AuditTrails.create_audit_trail("device", "create", current_user, current_team, "devices", device)
 
       conn
       |> put_status(:created)
@@ -46,7 +44,6 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-      AuditTrails.create_audit_trail("device", "update", current_user, current_team, "devices", device)
 
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
@@ -61,7 +58,6 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device, "delete")
-      AuditTrails.create_audit_trail("device", "delete", current_user, current_team, "devices", device)
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")

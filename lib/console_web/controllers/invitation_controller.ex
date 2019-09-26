@@ -7,7 +7,6 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Auth
   alias Console.Email
   alias Console.Mailer
-  alias Console.AuditTrails
 
   plug ConsoleWeb.Plug.AuthorizeAction when not action in [:accept]
 
@@ -31,8 +30,6 @@ defmodule ConsoleWeb.InvitationController do
           ConsoleWeb.MembershipController.broadcast(membership, "new")
 
           updatedUser = Map.merge(existing_user, %{role: membership.role})
-          AuditTrails.create_audit_trail("team_invitation", "create_existing", current_user, current_team, "users", updatedUser)
-          AuditTrails.create_audit_trail("team_membership", "join", updatedUser, current_team)
 
           conn
           |> put_status(:created)
@@ -46,7 +43,6 @@ defmodule ConsoleWeb.InvitationController do
                Teams.create_invitation(current_user, current_team, attrs) do
           Email.invitation_email(invitation) |> Mailer.deliver_later()
           broadcast(invitation, "new")
-          AuditTrails.create_audit_trail("team_invitation", "create_new", current_user, current_team, nil, %{email: invitation.email, role: invitation.role})
 
           conn
           |> put_status(:created)
@@ -63,7 +59,6 @@ defmodule ConsoleWeb.InvitationController do
       team_name = URI.encode(team.name)
       inviter = inv.inviter
       inviter_email = URI.encode(inviter.email)
-      AuditTrails.create_audit_trail("team_invitation", "use_invite_link", nil, team, nil, %{email: inv.email})
 
       conn
       |> redirect(
@@ -86,7 +81,6 @@ defmodule ConsoleWeb.InvitationController do
     if invitation.pending do
       with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
         broadcast(invitation, "delete")
-        AuditTrails.create_audit_trail("team_invitation", "delete", current_user, current_team, nil, %{email: invitation.email})
 
         conn
         |> put_resp_header("message", "Invitation removed")
