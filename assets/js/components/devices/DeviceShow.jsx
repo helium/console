@@ -51,13 +51,7 @@ class DeviceShow extends Component {
                   MAC: {device.mac}
                 </Typography>
               </div>
-              <div style={{width: '50%'}}>
-                <GroupsControl
-                  groups={device.groups.map(e => e.name)}
-                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
-                  editable={userCan('update', 'device', device)}
-                />
-              </div>
+              <div style={{width: '50%'}} />
             </div>
           </CardContent>
 
