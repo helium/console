@@ -96,7 +96,7 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, email, password, passwordConfirm, recaptcha, invitationToken) => {
+export const register = (teamName, organizationName, email, password, passwordConfirm, recaptcha, invitationToken) => {
   let params = {
     recaptcha,
     user: {
@@ -113,6 +113,13 @@ export const register = (teamName, email, password, passwordConfirm, recaptcha, 
       }
     })
   } else {
+    if (organizationName !== "") {
+      params = Object.assign(params, {
+        organization: {
+          name: organizationName
+        }
+      })
+    }
     params = Object.assign(params, {
       team: {
         name: teamName

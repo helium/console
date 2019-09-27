@@ -7,6 +7,7 @@ defmodule Console.Teams do
   alias Console.Repo
 
   alias Console.Teams.Team
+  alias Console.Teams.Organization
   alias Console.Teams.Membership
   alias Console.Teams.Invitation
   alias Console.Auth
@@ -52,7 +53,29 @@ defmodule Console.Teams do
     count > 0
   end
 
-  def create_team(%User{} = user, attrs \\ %{}) do
+  def create_team(%User{} = user, attrs, organization) do
+    team_changeset =
+      case organization do
+        nil ->
+          %Team{}
+          |> Team.create_changeset(attrs)
+        %Organization{} ->
+          %Team{}
+          |> Team.create_changeset(attrs, organization)
+      end
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:team, team_changeset)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{team: team}} -> {:ok, team}
+      {:error, :team, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
+  def create_team(%User{} = user, attrs) do
     team_changeset =
       %Team{}
       |> Team.create_changeset(attrs)

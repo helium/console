@@ -34,6 +34,14 @@ defmodule Console.Teams.Team do
     |> validate_length(:name, min: 3, message: "Team Name must be at least 3 letters")
   end
 
+  def create_changeset(team, attrs, organization) do
+    team
+    |> changeset(attrs)
+    |> put_keys()
+    |> put_change(:organization_id, organization.id)
+    |> put_change(:encryption_version, Cloak.version)
+  end
+  
   @doc false
   def create_changeset(team, attrs) do
     team

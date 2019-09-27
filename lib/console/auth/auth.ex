@@ -37,6 +37,29 @@ defmodule Console.Auth do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def create_org_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
+    user_changeset =
+      %User{}
+      |> User.registration_changeset(user_attrs)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, user_changeset)
+      |> Ecto.Multi.run(:organization, fn %{user: user} ->
+        Console.Teams.Organizations.create_organization(user, organization_attrs)
+      end)
+      |> Ecto.Multi.run(:team, fn %{user: user, organization: organization} ->
+        Console.Teams.create_team(user, team_attrs, organization)
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user, team: team, organization: organization}} -> {:ok, user, team, organization}
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
   def create_user(user_attrs \\ %{}, team_attrs \\ %{}) do
     user_changeset =
       %User{}

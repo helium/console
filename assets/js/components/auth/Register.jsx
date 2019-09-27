@@ -44,6 +44,7 @@ class Register extends Component {
 
     this.state = {
       teamName: "",
+      organizationName: "",
       email: "",
       password: "",
       passwordConfirm: "",
@@ -81,10 +82,11 @@ class Register extends Component {
 
   registerUser(e) {
     e.preventDefault();
-    const { teamName, email, password, passwordConfirm, recaptcha } = this.state;
+    const { teamName, email, password, passwordConfirm, recaptcha, organizationName } = this.state;
     const { register, invitationToken } = this.props
     register(
       teamName,
+      organizationName,
       email,
       password,
       passwordConfirm,
@@ -106,6 +108,15 @@ class Register extends Component {
         </Typography>
 
         <form onSubmit={this.handleSubmit} noValidate>
+          <TextField
+            label="Organization Name (Optional)"
+            name="organizationName"
+            value={this.state.organizationName}
+            onChange={this.handleInputUpdate}
+            className={classes.input}
+            fullWidth
+          />
+
           <TextField
             label="Team Name"
             name="teamName"
