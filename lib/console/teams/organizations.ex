@@ -7,6 +7,7 @@ defmodule Console.Teams.Organizations do
   alias Console.Repo
 
   alias Console.Teams.Organization
+  alias Console.Teams
   alias Console.Teams.Membership
   alias Console.Teams.Invitation
   alias Console.Auth
@@ -22,6 +23,13 @@ defmodule Console.Teams.Organizations do
 
   def get_organization(%User{} = current_user, id) do
     Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+  end
+
+  def get_organization_team(%User{} = current_user, team_id) do
+    current_team = Teams.get_team!(team_id)
+    with %Organization{} = current_organization <- Ecto.assoc(current_user, :organizations) |> Repo.get(current_team.organization_id) do
+      { current_team, current_organization }
+    end
   end
 
   def get_organization!(id) do
@@ -81,7 +89,7 @@ defmodule Console.Teams.Organizations do
     |> Repo.insert()
   end
 
-  def fetch_assoc(%Organization{} = organization, assoc \\ [:users, :devices, :gateways, :channels]) do
+  def fetch_assoc(%Organization{} = organization, assoc \\ [:teams]) do
     Repo.preload(organization, assoc)
   end
 

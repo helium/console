@@ -8,6 +8,7 @@ defmodule Console.Teams do
 
   alias Console.Teams.Team
   alias Console.Teams.Organization
+  alias Console.Teams.Organizations
   alias Console.Teams.Membership
   alias Console.Teams.Invitation
   alias Console.Auth
@@ -117,8 +118,13 @@ defmodule Console.Teams do
   end
 
   def current_team_for(%User{} = user) do
-    # TODO: use a timestamp on membership to track the last-viewed team
-    List.last(Auth.fetch_assoc(user).teams)
+    case Auth.fetch_assoc(user).organizations do
+      [] -> List.last(Auth.fetch_assoc(user).teams)
+      _ ->
+        organization = List.last(Auth.fetch_assoc(user).organizations)
+        Organizations.fetch_assoc(organization).teams
+        |> List.last()
+    end
   end
 
   def create_invitation(%User{} = inviter, %Team{} = team, attrs) do

@@ -223,7 +223,7 @@ defmodule Console.Auth do
     :pot.valid_totp(code, secret2fa)
   end
 
-  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams]) do
+  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams, :organizations]) do
     Repo.preload(user, assoc)
   end
 
