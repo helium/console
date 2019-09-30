@@ -6,6 +6,7 @@ import random from 'lodash/random'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import { switchTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
@@ -25,10 +26,10 @@ import Button from '@material-ui/core/Button';
 import SmallChip from '../common/SmallChip'
 import SuccessChip from '../common/SuccessChip'
 
-@connect(null, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 class OrganizationsTable extends Component {
   render() {
-
+    const { switchTeam, currentTeamId } = this.props
     const columns = [
       {
         Header: 'Team',
@@ -43,13 +44,19 @@ class OrganizationsTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          <Button
-            color="primary"
-            onClick={() => {}}
-            size="small"
-          >
-            VIEW
-          </Button>
+          {
+            currentTeamId !== props.row.id ? (
+              <Button
+                color="primary"
+                onClick={() => switchTeam(props.row.id)}
+                size="small"
+              >
+                VIEW
+              </Button>
+            ) : (
+              <span>CURRENT</span>
+            )
+          }
         </span>
       },
     ]
@@ -178,8 +185,14 @@ const PaginatedCell = (props) => {
   )
 }
 
+function mapStateToProps(state) {
+  return {
+    currentTeamId: state.auth.currentTeamId
+  }
+}
+
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({ switchTeam }, dispatch);
 }
 
 export default OrganizationsTable

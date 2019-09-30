@@ -133,7 +133,7 @@ class NavDrawer extends Component {
 
 function mapStateToProps(state) {
   return {
-    displayDashboard: state.user.inOrganization
+    displayDashboard: state.auth.currentOrganizationId
   }
 }
 

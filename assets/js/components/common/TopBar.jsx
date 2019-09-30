@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
 import throttle from 'lodash/throttle'
+import startCase from 'lodash/startCase'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
 import SearchBar from '../search/SearchBar'
@@ -87,13 +88,19 @@ class TopBar extends Component {
   }
 
   render() {
-    const { classes, email, role, title, logOut } = this.props
+    const { classes, email, role, title, logOut, currentOrganizationName, currentTeam } = this.props
     const { anchorEl, teamMenuOpen, accountMenuOpen, atTop, scrollPosition } = this.state
 
     return (
       <AppBar position="absolute" className={classes.appBar} elevation={atTop ? 0 : 2}>
         <Toolbar style={{minHeight: 48}}>
-          <div />
+          {
+            currentTeam && currentOrganizationName && (
+              <Typography variant="subheading" color="inherit">
+                {startCase(currentOrganizationName)} - {startCase(currentTeam.name)}
+              </Typography>
+            )
+          }
 
           <Slide direction="up" in={!atTop}>
             <Typography variant="subheading" color="inherit" style={{marginLeft: 16}}>
@@ -145,6 +152,8 @@ function mapStateToProps(state, ownProps) {
   return {
     email: state.user.email,
     role: state.user.role,
+    currentOrganizationName: state.auth.currentOrganizationName,
+    currentTeam: state.entities.teams[state.auth.currentTeamId],
   }
 }
 

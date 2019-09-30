@@ -21,6 +21,5 @@ const receiveUser = (user) => {
     type: RECEIVE_USER,
     email: user.email,
     role: user.role,
-    inOrganization: !!user.in_organization
   };
 }

@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
-import { getTeamId } from '../util/jwt';
+import { getTeamId, getOrganizationId, getOrganizationName } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'
 
 export const FETCH_TEAMS = 'FETCH_TEAMS'
@@ -93,7 +93,9 @@ export const switchedTeam = (apikey) => {
   return {
     type: SWITCHED_TEAM,
     apikey,
-    currentTeamId: getTeamId(apikey)
+    currentTeamId: getTeamId(apikey),
+    currentOrganizationId: getOrganizationId(apikey),
+    currentOrganizationName: getOrganizationName(apikey)
   }
 }
 

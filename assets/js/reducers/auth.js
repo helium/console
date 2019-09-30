@@ -16,7 +16,9 @@ const initialState = {
   apikey : null,
   shouldResetCaptcha: false,
   user: null,
-  currentTeamId: null
+  currentTeamId: null,
+  currentOrganizationId: null,
+  currentOrganizationName: null,
 }
 
 const auth = (state = initialState, action) => {
@@ -30,17 +32,17 @@ const auth = (state = initialState, action) => {
       const updatedUser = { id: state.user.id, twoFactorEnabled: state.user.twoFactorEnabled }
       return { ...state, user: updatedUser };
     case LOGGED_IN:
-      return { ...state, isLoggedIn: true, apikey: action.apikey, currentTeamId: action.currentTeamId };
+      return { ...state, isLoggedIn: true, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     case LOGGED_OUT:
-      return { ...state, isLoggedIn: false, apikey: null, user: null, currentTeamId: null };
+      return { ...state, isLoggedIn: false, apikey: null, user: null, currentTeamId: null, currentOrganizationId: null, currentOrganizationName: null };
     case REFRESHED_TOKEN:
-      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId };
+      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     case HAS_RESET_CAPTCHA:
       return { ...state, shouldResetCaptcha: false };
     case SHOULD_RESET_CAPTCHA:
       return { ...state, shouldResetCaptcha: true };
     case SWITCHED_TEAM:
-      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId };
+      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     default:
       return state;
   }
