@@ -3,6 +3,7 @@ defmodule ConsoleWeb.TeamController do
 
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Teams.Organizations
   alias Console.Auth
   alias Console.AuditTrails
 
@@ -10,7 +11,15 @@ defmodule ConsoleWeb.TeamController do
 
   def index(conn, _params) do
     current_user = conn.assigns.current_user |> Console.Auth.fetch_assoc()
-    render(conn, "index.json", teams: current_user.teams)
+    case current_user.organizations do
+      [] ->
+        render(conn, "index.json", teams: current_user.teams)
+      _ ->
+        teams = current_user.organizations
+          |> Enum.map(fn o -> Organizations.fetch_assoc(o).teams end)
+          |> List.flatten()
+        render(conn, "index.json", teams: teams)
+    end
   end
 
   def show(conn, %{"id" => id}) do

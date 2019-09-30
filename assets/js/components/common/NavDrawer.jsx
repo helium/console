@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import RandomNotificationButton from '../notifications/RandomNotificationButton'
 import Logo from '../../../img/logo-horizontalwhite.svg'
+import { connect } from 'react-redux';
 
 // MUI
 import Drawer from '@material-ui/core/Drawer';
@@ -49,12 +50,16 @@ const styles = theme => ({
 
 const HardwareNavItems = (props) => (
   <List>
-    <ListItem button component={Link} to="/dashboard">
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItem>
+    {
+      props.displayDashboard && (
+        <ListItem button component={Link} to="/dashboard">
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItem>
+      )
+    }
 
     <ListItem button component={Link} to="/devices">
       <ListItemIcon>
@@ -98,9 +103,10 @@ const OrganizationalNavItems = (props) => (
 )
 
 @withStyles(styles)
+@connect(mapStateToProps, null)
 class NavDrawer extends Component {
   render() {
-    const { classes } = this.props
+    const { classes, displayDashboard } = this.props
     // const drawerPaper = Object.assign({}, classes.drawerPaper, {backgroundColor: '#ff0000'})
 
     return (
@@ -115,7 +121,7 @@ class NavDrawer extends Component {
             </Link>
           </Toolbar>
           <Divider />
-          <HardwareNavItems />
+          <HardwareNavItems displayDashboard={displayDashboard} />
           <Divider />
           <OrganizationalNavItems />
           <Divider />
@@ -125,5 +131,10 @@ class NavDrawer extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    displayDashboard: state.user.inOrganization
+  }
+}
 
 export default NavDrawer

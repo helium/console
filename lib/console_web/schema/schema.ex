@@ -78,9 +78,24 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
+  object :organization do
+    field :id, :id
+    field :name, :string
+    field :inserted_at, :naive_datetime
+    field :teams, list_of(:team) do
+      resolve &Console.Teams.OrganizationResolver.get_teams/2
+    end
+  end
+
   object :group do
     field :id, :id
     field :name, :string
+  end
+
+  object :team do
+    field :id, :id
+    field :name, :string
+    field :inserted_at, :naive_datetime
   end
 
   object :search_result do
@@ -153,6 +168,11 @@ defmodule ConsoleWeb.Schema do
     paginated field :notifications, :paginated_notifications do
       arg :active, :boolean
       resolve(&Console.Notifications.NotificationResolver.paginate/2)
+    end
+
+    @desc "Get all organizations"
+    field :organizations, list_of(:organization) do
+      resolve(&Console.Teams.OrganizationResolver.all/2)
     end
 
     @desc "Get recent events for a context (packet graph)"

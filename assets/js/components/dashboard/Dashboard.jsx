@@ -1,22 +1,31 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import OrganizationsTable from '../teams/OrganizationsTable'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles'
 
 // Icons
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
+const styles = theme => ({
+  paper: {
+    padding: theme.spacing.unit * 3,
+    paddingTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 3
+  },
+})
+
+@withStyles(styles)
 class Dashboard extends Component {
   render() {
+    const { classes } = this.props
     return (
       <DashboardLayout title="Dashboard">
-        <Paper style={{textAlign: 'center', padding: '5em'}}>
-          <DashboardIcon style={{width: 80, height: 80, color: "#e0e0e0"}} />
-          <Typography variant="display1" style={{color: "#e0e0e0"}}>
-            Dashboard goes here
-          </Typography>
+        <Paper className={classes.paper}>
+          <OrganizationsTable />
         </Paper>
       </DashboardLayout>
     )

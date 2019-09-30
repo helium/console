@@ -6,6 +6,7 @@ defmodule ConsoleWeb.UserController do
   alias Console.Teams
   alias Console.Teams.Team
   alias Console.Teams.Organization
+  alias Console.Teams.Organizations
   alias Console.Teams.Invitation
   alias Console.AuditTrails
 
@@ -17,6 +18,17 @@ defmodule ConsoleWeb.UserController do
   def current(conn, _params) do
     user = conn.assigns.current_user
     membership = conn.assigns.current_membership
+
+    current_organizations = Organizations.get_organizations(user)
+
+    case length(current_organizations) > 0 do
+      false ->
+        conn
+          |> render("current.json", user: user, membership: membership)
+      true ->
+        conn
+          |> render("current.json", user: user, membership: membership, in_organization: true)
+    end
 
     conn
       |> render("current.json", user: user, membership: membership)

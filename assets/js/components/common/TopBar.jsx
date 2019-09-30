@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
 import throttle from 'lodash/throttle'
-import TeamSwitcher from './TeamSwitcher'
 import { logOut } from '../../actions/auth'
 import { fetchUser } from '../../actions/user';
 import SearchBar from '../search/SearchBar'
@@ -94,9 +93,7 @@ class TopBar extends Component {
     return (
       <AppBar position="absolute" className={classes.appBar} elevation={atTop ? 0 : 2}>
         <Toolbar style={{minHeight: 48}}>
-          <div>
-            <TeamSwitcher />
-          </div>
+          <div />
 
           <Slide direction="up" in={!atTop}>
             <Typography variant="subheading" color="inherit" style={{marginLeft: 16}}>

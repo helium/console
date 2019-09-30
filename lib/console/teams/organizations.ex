@@ -21,6 +21,10 @@ defmodule Console.Teams.Organizations do
     Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
   end
 
+  def get_organizations(%User{} = current_user) do
+    Ecto.assoc(current_user, :organizations) |> Repo.all()
+  end
+
   def get_organization(%User{} = current_user, id) do
     Ecto.assoc(current_user, :organizations) |> Repo.get(id)
   end
