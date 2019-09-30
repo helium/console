@@ -56,14 +56,8 @@ defmodule Console.Teams do
 
   def create_team(%User{} = user, attrs, organization) do
     team_changeset =
-      case organization do
-        nil ->
-          %Team{}
-          |> Team.create_changeset(attrs)
-        %Organization{} ->
-          %Team{}
-          |> Team.create_changeset(attrs, organization)
-      end
+      %Team{}
+      |> Team.create_changeset(attrs, organization)
 
     result =
       Ecto.Multi.new()

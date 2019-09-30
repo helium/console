@@ -3,6 +3,7 @@ defmodule ConsoleWeb.TeamController do
 
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Teams.Organization
   alias Console.Teams.Organizations
   alias Console.Auth
   alias Console.AuditTrails
@@ -26,6 +27,16 @@ defmodule ConsoleWeb.TeamController do
     team = Teams.get_team!(conn.assigns.current_user, id)
            |> Teams.fetch_assoc([:invitations, memberships: [:user]])
     render(conn, "show.json", team: team)
+  end
+
+  def create(conn, %{"team" => team_attrs, "organization" => %{ "id" => id } }) do
+    with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id),
+      {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs, organization) do
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", team: team)
+    end
   end
 
   def create(conn, %{"team" => team_attrs}) do

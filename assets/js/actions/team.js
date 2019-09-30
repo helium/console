@@ -45,6 +45,21 @@ export const receivedTeam = (team) => {
   }
 }
 
+export const createTeamUnderOrg = (orgId, name) => {
+  return (dispatch) => {
+    rest.post('/api/teams', {
+        organization: {
+          id: orgId
+        },
+        team: {
+          name
+        }
+      })
+      .then(response => {
+        dispatch(receivedTeam(response.data))
+      })
+  }
+}
 
 export const createTeam = (name, afterSwitchPath) => {
   return (dispatch) => {

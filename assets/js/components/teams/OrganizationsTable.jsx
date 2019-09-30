@@ -39,6 +39,19 @@ class OrganizationsTable extends Component {
         accessor: 'inserted_at',
         Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
       },
+      {
+        Header: '',
+        numeric: true,
+        Cell: props => <span>
+          <Button
+            color="primary"
+            onClick={() => {}}
+            size="small"
+          >
+            VIEW
+          </Button>
+        </span>
+      },
     ]
 
     return (
@@ -61,7 +74,7 @@ class OrganizationsTable extends Component {
 
 class QueryResults extends Component {
   render() {
-    const { loading, error, data, EmptyComponent, columns } = this.props
+    const { loading, error, data, EmptyComponent, columns, openTeamModal } = this.props
 
     if (loading) return null;
     if (error) return `Error!: ${error}`;
@@ -76,8 +89,16 @@ class QueryResults extends Component {
       <ResultsTable
         results={results}
         columns={columns}
+        openTeamModal={openTeamModal}
       />
     )
+  }
+}
+
+const styles = {
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between'
   }
 }
 
@@ -88,9 +109,20 @@ const ResultsTable = (props) => {
     <div>
       {rows.map(r => (
         <React.Fragment key={r.name}>
-          <Typography variant="headline" component="h3">
-            Organization: {r.name}
-          </Typography>
+          <header style={styles.header}>
+            <Typography variant="headline" component="h3">
+              Organization: {r.name}
+            </Typography>
+
+            <UserCan action="create">
+              <Button
+                color="primary"
+                onClick={() => props.openTeamModal(r.id, r.name)}
+              >
+                New Team
+              </Button>
+            </UserCan>
+          </header>
           <Table>
             <TableHead>
               <TableRow>
