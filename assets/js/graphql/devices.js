@@ -4,7 +4,8 @@ export const DEVICE_FRAGMENT = gql`
   fragment DeviceFragment on Device {
     name,
     mac,
-    id
+    id,
+    inserted_at,
   }
 `
 

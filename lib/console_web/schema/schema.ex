@@ -7,6 +7,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :mac, :string
+    field :inserted_at, :naive_datetime
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2
     end

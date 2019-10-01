@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { deleteDevice, updateDevice } from '../../actions/device'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
@@ -25,8 +22,15 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
 class DeviceShow extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showPairDetails: false
+    }
+  }
+
   render() {
-    const { deleteDevice, updateDevice } = this.props
+    const { showPairDetails } = this.state
     const { loading, device } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -38,36 +42,34 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Device Details
             </Typography>
-
-            <div style={{display: 'flex'}}>
-              <div style={{width: '50%'}}>
-                <Typography component="p">
-                  ID: {device.id}
-                </Typography>
-                <Typography component="p">
-                  Name: {device.name}
-                </Typography>
-                <Typography component="p">
-                  MAC: {device.mac}
-                </Typography>
-              </div>
-              <div style={{width: '50%'}} />
-            </div>
+            <Typography component="p">
+              Name: {device.name}
+            </Typography>
+            <Typography component="p">
+              MAC: {device.mac}
+            </Typography>
+            {
+              showPairDetails && <Typography component="p" style={{ marginTop: 10 }}>
+                Pairing: {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
+              </Typography>
+            }
           </CardContent>
 
           <CardActions>
-            <UserCan action="create" itemType="event">
-              <RandomEventButton device_id={device.id} />
-            </UserCan>
-            <UserCan action="delete" itemType="device" item={device}>
-              <Button
+            {
+              false && <UserCan action="create" itemType="event">
+                <RandomEventButton device_id={device.id} />
+              </UserCan>
+            }
+            {
+              !showPairDetails && <Button
                 size="small"
-                color="secondary"
-                onClick={() => deleteDevice(device.id, true)}
+                color="primary"
+                onClick={() => this.setState({ showPairDetails: true })}
               >
-                Delete Device
+                Pair Device
               </Button>
-            </UserCan>
+            }
           </CardActions>
         </Card>
 
@@ -109,14 +111,6 @@ class DeviceShow extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice, updateDevice }, dispatch);
-}
-
 const queryOptions = {
   options: props => ({
     variables: {
@@ -139,4 +133,4 @@ const query = gql`
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceShowWithData);
+export default DeviceShowWithData;
