@@ -2,6 +2,7 @@ defmodule ConsoleWeb.InvitationController do
   use ConsoleWeb, :controller
 
   alias Console.Teams
+  alias Console.Teams.Organizations
   alias Console.Teams.Invitation
   alias Console.Teams.Membership
   alias Console.Auth
@@ -20,35 +21,66 @@ defmodule ConsoleWeb.InvitationController do
   def create(conn, %{"invitation" => attrs}) do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
+    current_organization = conn.assigns.current_organization
 
-    case Auth.user_exists?(attrs["email"]) do
+    case current_user.email != attrs["email"] and Auth.user_exists?(attrs["email"]) do
       {true, existing_user} ->
-        with {:ok, %Membership{} = membership} <-
-               Teams.join_team(existing_user, current_team, attrs["role"]) do
-          membership = membership |> Teams.fetch_assoc_membership()
-          Email.joined_team_email(membership) |> Mailer.deliver_later()
-          ConsoleWeb.MembershipController.broadcast(membership, "new")
+        cond do
+          attrs["organization"] == "" and attrs["team"] == "" ->
+            with {:ok, %Membership{} = membership} <-
+                   Teams.join_team(existing_user, current_team, attrs["role"]) do
+              membership = membership |> Teams.fetch_assoc_membership()
+              Email.joined_team_email(membership) |> Mailer.deliver_later()
+              ConsoleWeb.MembershipController.broadcast(membership, "new")
 
-          updatedUser = Map.merge(existing_user, %{role: membership.role})
+              conn
+              |> put_status(:created)
+              |> put_resp_header("message", "User added to team")
+              |> put_view(ConsoleWeb.MembershipView)
+              |> render("show.json", membership: membership)
+            end
+          attrs["organization"] == "" ->
+            team = Teams.get_team!(attrs["team"])
+            with {:ok, %Membership{} = membership} <-
+                   Teams.join_team(existing_user, team, attrs["role"]) do
+              membership = membership |> Teams.fetch_assoc_membership()
+              Email.joined_team_email(membership) |> Mailer.deliver_later()
+              ConsoleWeb.MembershipController.broadcast(membership, "new")
 
-          conn
-          |> put_status(:created)
-          |> put_resp_header("message", "User added to team")
-          |> put_view(ConsoleWeb.MembershipView)
-          |> render("show.json", membership: membership)
+              conn
+              |> put_status(:created)
+              |> put_resp_header("message", "User added to team")
+              |> put_view(ConsoleWeb.MembershipView)
+              |> render("show.json", membership: membership)
+            end
+          attrs["team"] == "" ->
+            organization = Organizations.get_organization!(attrs["organization"])
+            with {:ok, %Membership{} = membership} <-
+                   Organizations.join_organization(existing_user, organization, attrs["role"]) do
+              membership = membership |> Teams.fetch_assoc_membership()
+              Email.joined_organization_email(membership) |> Mailer.deliver_later()
+              ConsoleWeb.MembershipController.broadcast(membership, "new")
+
+              conn
+              |> put_status(:created)
+              |> put_resp_header("message", "User added to team")
+              |> put_view(ConsoleWeb.MembershipView)
+              |> render("show.json", membership: membership)
+            end
         end
+
 
       false ->
-        with {:ok, %Invitation{} = invitation} <-
-               Teams.create_invitation(current_user, current_team, attrs) do
-          Email.invitation_email(invitation) |> Mailer.deliver_later()
-          broadcast(invitation, "new")
-
-          conn
-          |> put_status(:created)
-          |> put_resp_header("message", "Invitation sent")
-          |> render("show.json", invitation: invitation)
-        end
+        # with {:ok, %Invitation{} = invitation} <-
+        #        Teams.create_invitation(current_user, current_team, attrs) do
+        #   Email.invitation_email(invitation) |> Mailer.deliver_later()
+        #   broadcast(invitation, "new")
+        #
+        #   conn
+        #   |> put_status(:created)
+        #   |> put_resp_header("message", "Invitation sent")
+        #   |> render("show.json", invitation: invitation)
+        # end
     end
   end
 

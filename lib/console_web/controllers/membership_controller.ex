@@ -46,8 +46,12 @@ defmodule ConsoleWeb.MembershipController do
 
   def broadcast(%Membership{} = membership, _) do
     membership = membership |> Teams.fetch_assoc_membership()
-
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.team.id}/membership_added")
+    cond do
+      membership.team == nil ->
+        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.organization.id}/membership_added")
+      membership.organization == nil ->
+        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.team.id}/membership_added")
+    end
   end
 
   def put_auth_item(conn, _) do

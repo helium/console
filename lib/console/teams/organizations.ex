@@ -89,7 +89,7 @@ defmodule Console.Teams.Organizations do
 
   def join_organization(%User{} = user, %Organization{} = organization, role \\ "viewer") do
     %Membership{}
-    |> Membership.join_changeset(user, organization, role)
+    |> Membership.join_org_changeset(user, organization, role)
     |> Repo.insert()
   end
 

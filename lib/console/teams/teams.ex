@@ -107,7 +107,7 @@ defmodule Console.Teams do
     Repo.preload(team, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team]) do
+  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team, :organization]) do
     Repo.preload(team, assoc)
   end
 
