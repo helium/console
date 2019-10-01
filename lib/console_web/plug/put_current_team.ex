@@ -23,6 +23,7 @@ defmodule ConsoleWeb.Plug.PutCurrentTeam do
 
             conn
             |> assign(:current_team, current_team)
+            |> assign(:current_organization, current_organization)
             |> assign(:current_membership, current_membership)
           true ->
             conn

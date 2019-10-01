@@ -96,7 +96,7 @@ class TopBar extends Component {
         <Toolbar style={{minHeight: 48}}>
           {
             currentTeam && currentOrganizationName && (
-              <Typography variant="subheading" color="inherit">
+              <Typography variant="headline" color="inherit">
                 {startCase(currentOrganizationName)} - {startCase(currentTeam.name)}
               </Typography>
             )
