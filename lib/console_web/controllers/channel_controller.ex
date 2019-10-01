@@ -9,17 +9,17 @@ defmodule ConsoleWeb.ChannelController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    current_team =
-      conn.assigns.current_team
-      |> Console.Teams.fetch_assoc([channels: :groups])
+    current_organization =
+      conn.assigns.current_organization
+      |> Organizations.fetch_assoc([:channels])
 
-    render(conn, "index.json", channels: current_team.channels)
+    render(conn, "index.json", channels: current_organization.channels)
   end
 
   def create(conn, %{"channel" => channel_params}) do
     current_user = conn.assigns.current_user
-    current_team = conn.assigns.current_team
-    channel_params = Map.merge(channel_params, %{"team_id" => current_team.id})
+    current_organization = conn.assigns.current_organization
+    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(channel_params) do
       broadcast(channel, "new")
@@ -41,7 +41,6 @@ defmodule ConsoleWeb.ChannelController do
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
     current_user = conn.assigns.current_user
-    current_team = conn.assigns.current_team
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, channel_params) do
@@ -54,8 +53,8 @@ defmodule ConsoleWeb.ChannelController do
 
   def delete(conn, %{"id" => id}) do
     current_user = conn.assigns.current_user
-    current_team = conn.assigns.current_team
     channel = Channels.get_channel!(id)
+    
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel, "delete")
 
@@ -64,8 +63,8 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   defp broadcast(%Channel{} = channel, _) do
-    channel = Channels.fetch_assoc(channel, [:team])
+    channel = Channels.fetch_assoc(channel, [:organization])
 
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.team.id}/channel_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.organization.id}/channel_added")
   end
 end

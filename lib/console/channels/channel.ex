@@ -3,6 +3,7 @@ defmodule Console.Channels.Channel do
   import Ecto.Changeset
 
   alias Console.Teams.Team
+  alias Console.Teams.Organization
   alias Console.Events.Event
   alias Console.Channels
   alias Console.Devices.Device
@@ -14,14 +15,14 @@ defmodule Console.Channels.Channel do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "channels" do
-    field :active, :boolean, default: false
+    field :active, :boolean, default: true
     field :credentials, Cloak.EncryptedMapField
     field :encryption_version, :binary
     field :name, :string
     field :type, :string
     field :type_name, :string
 
-    belongs_to :team, Team
+    belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
     many_to_many :devices, Device, join_through: DevicesChannels, on_replace: :delete
     many_to_many :groups, Group, join_through: ChannelsGroups, on_replace: :delete
@@ -32,8 +33,8 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs \\ %{}) do
     channel
-    |> cast(attrs, ~w(name type active credentials team_id))
-    |> validate_required([:name, :type, :active, :credentials, :team_id])
+    |> cast(attrs, ~w(name type active credentials organization_id))
+    |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> put_change(:encryption_version, Cloak.version)
     |> filter_credentials()
     |> put_type_name()

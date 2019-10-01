@@ -1,17 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { deleteChannel, updateChannel } from '../../actions/channel'
 import EventsTable from '../events/EventsTable'
-import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
-import userCan from '../../util/abilities'
-import UserCan from '../common/UserCan'
 import { CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
@@ -45,7 +39,6 @@ const query = gql`
   ${CHANNEL_FRAGMENT}
 `
 
-@connect(mapStateToProps, mapDispatchToProps)
 @graphql(query, queryOptions)
 class ChannelShow extends Component {
   render() {
@@ -77,31 +70,8 @@ class ChannelShow extends Component {
                   Active: {channel.active ? "Yes" : "No"}
                 </Typography>
               </div>
-              <div style={{width: '50%'}}>
-                <GroupsControl
-                  groups={channel.groups.map(e => e.name)}
-                  handleUpdate={(groups) => updateChannel(channel.id, {groups: groups})}
-                  editable={userCan('update', 'channel', channel)}
-                />
-              </div>
             </div>
           </CardContent>
-
-          <CardActions>
-            <UserCan action="create" itemType="event">
-              <RandomEventButton channel_id={channel.id} />
-            </UserCan>
-
-            <UserCan action="delete" itemType="channel" item={channel}>
-              <Button
-                size="small"
-                color="secondary"
-                onClick={() => deleteChannel(channel.id, true)}
-              >
-                Delete Channel
-              </Button>
-            </UserCan>
-          </CardActions>
         </Card>
 
         {channel.type === "http" && <HttpDetails channel={channel} />}
@@ -142,14 +112,6 @@ class ChannelShow extends Component {
       </DashboardLayout>
     )
   }
-}
-
-function mapStateToProps(state, ownProps) {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
 }
 
 export default ChannelShow

@@ -33,15 +33,6 @@ class ChannelsTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          <Button
-            color="primary"
-            component={Link}
-            to={`/channels/${props.row.id}`}
-            size="small"
-          >
-            View
-          </Button>
-
           <UserCan action="delete" itemType="channel" item={props.row}>
             <Button
               color="secondary"
