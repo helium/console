@@ -5,6 +5,8 @@ defmodule Console.Channels.Channel do
   alias Console.Teams.Team
   alias Console.Events.Event
   alias Console.Channels
+  alias Console.Devices.Device
+  alias Console.Devices.DevicesChannels
   alias Console.Groups
   alias Console.Groups.Group
   alias Console.Groups.ChannelsGroups
@@ -21,8 +23,8 @@ defmodule Console.Channels.Channel do
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
+    many_to_many :devices, Device, join_through: DevicesChannels, on_replace: :delete
     many_to_many :groups, Group, join_through: ChannelsGroups, on_replace: :delete
-    has_many :devices, through: [:groups, :devices]
 
     timestamps()
   end
