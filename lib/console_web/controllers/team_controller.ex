@@ -49,18 +49,17 @@ defmodule ConsoleWeb.TeamController do
   end
 
   def switch(conn, %{"team_id" => team_id}) do
-    team = Teams.get_team!(team_id)
-
-    result =
-      case team.organization_id do
+    current_organization = Map.get(conn.assigns, :current_organization)
+    team =
+      case current_organization do
         nil ->
           Teams.get_team!(conn.assigns.current_user, team_id)
         _ ->
-          { current_team, current_organization } = Organizations.get_organization_team(conn.assigns.current_user, team_id)
+          { current_team, _ } = Organizations.get_organization_team(conn.assigns.current_user, team_id)
           current_team
       end
 
-    jwt = Auth.generate_session_token(conn.assigns.current_user, result)
+    jwt = Auth.generate_session_token(conn.assigns.current_user, team)
     render(conn, "switch.json", jwt: jwt)
   end
 end

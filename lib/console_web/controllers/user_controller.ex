@@ -19,17 +19,6 @@ defmodule ConsoleWeb.UserController do
     user = conn.assigns.current_user
     membership = conn.assigns.current_membership
 
-    current_organizations = Organizations.get_organizations(user)
-
-    case length(current_organizations) > 0 do
-      false ->
-        conn
-          |> render("current.json", user: user, membership: membership)
-      true ->
-        conn
-          |> render("current.json", user: user, membership: membership, in_organization: true)
-    end
-
     conn
       |> render("current.json", user: user, membership: membership)
   end
