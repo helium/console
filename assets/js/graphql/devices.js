@@ -5,6 +5,7 @@ export const DEVICE_FRAGMENT = gql`
     name,
     mac,
     id,
+    seq_id,
     inserted_at,
   }
 `

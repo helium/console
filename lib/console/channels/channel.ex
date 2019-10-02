@@ -24,7 +24,7 @@ defmodule Console.Channels.Channel do
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
-    many_to_many :devices, Device, join_through: DevicesChannels, on_replace: :delete
+    many_to_many :devices, Device, join_through: DevicesChannels, on_delete: :delete_all
     many_to_many :groups, Group, join_through: ChannelsGroups, on_replace: :delete
 
     timestamps()

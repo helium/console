@@ -58,6 +58,22 @@ defmodule Console.Devices do
 
   """
   def create_device(attrs \\ %{}) do
+    query = from(d in Device, select: d.seq_id)
+    seq_id =
+      case Repo.all(query) do
+        [] -> 0
+        list -> Enum.max(list) + 1
+      end
+
+    key = :crypto.strong_rand_bytes(16)
+      |> :binary.bin_to_list()
+      |> Enum.map(fn b -> :io_lib.format("0x~.16B", [b]) |> to_string() end)
+      |> Enum.join(", ")
+
+    attrs = attrs
+      |> Map.put_new("seq_id", seq_id)
+      |> Map.put_new("key", key)
+
     %Device{}
     |> Device.changeset(attrs)
     |> Repo.insert()

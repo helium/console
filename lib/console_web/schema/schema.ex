@@ -5,7 +5,9 @@ defmodule ConsoleWeb.Schema do
 
   paginated object :device do
     field :id, :id
+    field :seq_id, :integer
     field :name, :string
+    field :key, :string
     field :mac, :string
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)

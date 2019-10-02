@@ -34,7 +34,6 @@ class DeviceShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showPairDetails: false,
       channelSelected: "",
     }
 
@@ -54,7 +53,7 @@ class DeviceShow extends Component {
   }
 
   render() {
-    const { showPairDetails, channelSelected } = this.state
+    const { channelSelected } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -72,6 +71,17 @@ class DeviceShow extends Component {
             <Typography component="p">
               MAC: {device.mac}
             </Typography>
+            <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
+              <Typography variant="caption">
+                {"const uint32_t oui = 1;"}
+              </Typography>
+              <Typography variant="caption">
+                {`const uint16_t device_id = ${device.seq_id};`}
+              </Typography>
+              <Typography variant="caption">
+                {`const uint8_t preshared_key[16] = {${device.key}};`}
+              </Typography>
+            </div>
             <FormControl>
               <InputLabel htmlFor="select">Connect Channel</InputLabel>
               <Select
@@ -109,20 +119,6 @@ class DeviceShow extends Component {
               false && <UserCan action="create" itemType="event">
                 <RandomEventButton device_id={device.id} />
               </UserCan>
-            }
-            {
-              !showPairDetails && <Button
-                size="small"
-                color="primary"
-                onClick={() => this.setState({ showPairDetails: true })}
-              >
-                Pair Device
-              </Button>
-            }
-            {
-              showPairDetails && <Typography component="p" style={{ paddingBottom: 10 }}>
-                Pairing: {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
-              </Typography>
             }
           </CardActions>
         </Card>
@@ -177,6 +173,7 @@ const query = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       ...DeviceFragment
+      key
       channels {
         name
         id
