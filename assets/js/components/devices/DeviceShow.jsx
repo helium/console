@@ -9,7 +9,6 @@ import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
-import { get } from '../../util/rest'
 import UserCan from '../common/UserCan'
 import { setDeviceChannel } from '../../actions/device'
 import { DEVICE_FRAGMENT } from '../../graphql/devices'
@@ -35,30 +34,25 @@ class DeviceShow extends Component {
     super(props)
     this.state = {
       showPairDetails: false,
-      channels: [],
       channelSelected: "",
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
   }
 
-  componentDidMount() {
-    get("/api/channels")
-      .then(({ data }) => {
-        this.setState({ channels: data })
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }
-
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value})
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.data.loading && !this.props.data.loading) {
+      this.setState({ channelSelected: this.props.data.device.channels[0].id})
+    }
+  }
+
   render() {
-    const { showPairDetails, channels, channelSelected } = this.state
-    const { loading, device } = this.props.data
+    const { showPairDetails, channelSelected } = this.state
+    const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
 
@@ -173,9 +167,20 @@ const query = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       ...DeviceFragment
+      channels {
+        name
+        id
+      }
       groups {
         name
       }
+    },
+    organizationChannels {
+      name,
+      type,
+      type_name,
+      id,
+      active
     }
   }
   ${DEVICE_FRAGMENT}

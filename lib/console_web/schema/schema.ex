@@ -8,6 +8,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :mac, :string
     field :inserted_at, :naive_datetime
+    field :channels, list_of(:channel)
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2
     end
@@ -134,6 +135,11 @@ defmodule ConsoleWeb.Schema do
     @desc "Get paginated channels"
     paginated field :channels, :paginated_channels do
       resolve(&Console.Channels.ChannelResolver.paginate/2)
+    end
+
+    @desc "Get all channels under current organization"
+    field :organization_channels, list_of(:channel) do
+      resolve &Console.Channels.ChannelResolver.all/2
     end
 
     @desc "Get a single channel"

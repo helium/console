@@ -118,7 +118,7 @@ const ResultsTable = (props) => {
         <React.Fragment key={r.name}>
           <header style={styles.header}>
             <Typography variant="headline" component="h3">
-              Organization: {r.name}
+              Project: {r.name}
             </Typography>
 
             <UserCan action="create">
