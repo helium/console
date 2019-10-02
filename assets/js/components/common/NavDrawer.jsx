@@ -90,7 +90,7 @@ const OrganizationalNavItems = (props) => (
       <ListItemIcon>
         <BillingIcon />
       </ListItemIcon>
-      <ListItemText primary="Billing" />
+      <ListItemText primary="Data Credits" />
     </ListItem>
 
     <ListItem button component={Link} to="/reports">
