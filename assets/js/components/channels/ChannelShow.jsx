@@ -31,6 +31,16 @@ const query = gql`
   query ChannelShowQuery ($id: ID!) {
     channel(id: $id) {
       ...ChannelFragment
+      method
+      endpoint
+      inbound_token
+      devices {
+        name
+        team_id
+        team {
+          name
+        }
+      }
       groups {
         name
       }
@@ -75,6 +85,23 @@ class ChannelShow extends Component {
         </Card>
 
         {channel.type === "http" && <HttpDetails channel={channel} />}
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Devices Piped
+            </Typography>
+            {
+              channel.devices.map(d => (
+                <React.Fragment key={d.name}>
+                  <Typography component="p">
+                    {d.team.name}: {d.name}
+                  </Typography>
+                </React.Fragment>
+              ))
+            }
+          </CardContent>
+        </Card>
 
         <Card style={{marginTop: 24}}>
           <CardContent>

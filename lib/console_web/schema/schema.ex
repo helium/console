@@ -9,6 +9,8 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :key, :string
     field :mac, :string
+    field :team_id, :id
+    field :team, :team
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
     field :groups, list_of(:group) do
@@ -21,7 +23,11 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :type, :string
     field :type_name, :string
+    field :endpoint, :string
+    field :method, :string
+    field :inbound_token, :string
     field :active, :boolean
+    field :devices, list_of(:device)
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2
     end
