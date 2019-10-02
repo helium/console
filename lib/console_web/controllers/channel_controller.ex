@@ -3,6 +3,7 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Channels
   alias Console.Channels.Channel
+  alias Console.Teams.Organizations
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -54,7 +55,7 @@ defmodule ConsoleWeb.ChannelController do
   def delete(conn, %{"id" => id}) do
     current_user = conn.assigns.current_user
     channel = Channels.get_channel!(id)
-    
+
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel, "delete")
 

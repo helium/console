@@ -7,6 +7,8 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
+  alias Console.Devices.DevicesChannels
+  alias Console.Channels.Channel
 
   @doc """
   Returns the list of devices.
@@ -106,5 +108,11 @@ defmodule Console.Devices do
   """
   def change_device(%Device{} = device) do
     Device.changeset(device, %{})
+  end
+
+  def set_device_channel(%Device{} = device, %Channel{} = channel) do
+    %DevicesChannels{}
+      |> DevicesChannels.join_changeset(device, channel)
+      |> Repo.insert()
   end
 end

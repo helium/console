@@ -1,4 +1,4 @@
-defmodule Console.Groups.DevicesChannels do
+defmodule Console.Devices.DevicesChannels do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
@@ -17,7 +17,7 @@ defmodule Console.Groups.DevicesChannels do
     devices_channel
     |> cast(attrs, [:device_id, :channel_id])
     |> validate_required([:device_id, :channel_id])
-    |> unique_constraint(:device_id, name: :device_channel_unique_index)
+    |> unique_constraint(:device_id, name: :device_channel_unique_index, message: "Device already set to channel")
   end
 
   def join_changeset(devices_channel, device, channel) do

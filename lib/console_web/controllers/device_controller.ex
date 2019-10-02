@@ -2,7 +2,9 @@ defmodule ConsoleWeb.DeviceController do
   use ConsoleWeb, :controller
 
   alias Console.Devices
+  alias Console.Channels
   alias Console.Devices.Device
+  alias Console.Devices.DevicesChannels
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -61,6 +63,19 @@ defmodule ConsoleWeb.DeviceController do
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")
+    end
+  end
+
+  def set_channel(conn, %{"channel" => %{"id" => channel_id}, "device_id" => id}) do
+    device = Devices.get_device!(id)
+    channel = Channels.get_channel!(channel_id)
+
+    with {:ok, %DevicesChannels{}} <- Devices.set_device_channel(device, channel) do
+      # broadcast something
+
+      conn
+      |> put_resp_header("message", "#{device.name} updated channel successfully")
+      |> render("show.json", device: device)
     end
   end
 

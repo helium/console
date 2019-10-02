@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import pick from 'lodash/pick'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import EventsTable from '../events/EventsTable'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
+import { get } from '../../util/rest'
 import UserCan from '../common/UserCan'
+import { setDeviceChannel } from '../../actions/device'
 import { DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
@@ -20,17 +24,40 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
+@connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showPairDetails: false
+      showPairDetails: false,
+      channels: [],
+      channelSelected: "",
     }
+
+    this.handleInputUpdate = this.handleInputUpdate.bind(this);
+  }
+
+  componentDidMount() {
+    get("/api/channels")
+      .then(({ data }) => {
+        this.setState({ channels: data })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  handleInputUpdate(e) {
+    this.setState({ [e.target.name]: e.target.value})
   }
 
   render() {
-    const { showPairDetails } = this.state
+    const { showPairDetails, channels, channelSelected } = this.state
     const { loading, device } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -48,9 +75,32 @@ class DeviceShow extends Component {
             <Typography component="p">
               MAC: {device.mac}
             </Typography>
+            <FormControl>
+              <InputLabel htmlFor="select">Choose a Channel</InputLabel>
+              <Select
+                value={channelSelected}
+                onChange={this.handleInputUpdate}
+                inputProps={{
+                  name: 'channelSelected',
+                }}
+                style={{ width: 200 }}
+              >
+                {channels.map(c => (
+                  <MenuItem value={c.id} key={c.id}>{c.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              size="small"
+              color="primary"
+              style={{ marginLeft: 5 }}
+              onClick={() => this.props.setDeviceChannel(device.id, { id: channelSelected })}
+            >
+              Save
+            </Button>
             {
               showPairDetails && <Typography component="p" style={{ marginTop: 10 }}>
-                Pairing: {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
+                {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
               </Typography>
             }
           </CardContent>
@@ -130,6 +180,10 @@ const query = gql`
   }
   ${DEVICE_FRAGMENT}
 `
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setDeviceChannel }, dispatch)
+}
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
 

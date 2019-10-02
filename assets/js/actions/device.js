@@ -10,6 +10,15 @@ export const createDevice = (params) => {
   }
 }
 
+export const setDeviceChannel = (id, params) => {
+  return (dispatch) => {
+    rest.post(`/api/devices/${id}/channel`, {
+      channel: params
+    })
+    .then(response => {})
+  }
+}
+
 export const updateDevice = (id, params) => {
   return (dispatch) => {
     rest.put(`/api/devices/${id}`, {
