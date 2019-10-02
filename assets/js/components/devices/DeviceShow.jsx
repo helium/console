@@ -4,6 +4,7 @@ import pick from 'lodash/pick'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsTable from '../events/EventsTable'
+import SmallChip from '../common/SmallChip'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
@@ -38,16 +39,18 @@ class DeviceShow extends Component {
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleAddChannel = this.handleAddChannel.bind(this);
   }
 
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.data.loading && !this.props.data.loading) {
-      this.setState({ channelSelected: this.props.data.device.channels[0].id})
-    }
+  handleAddChannel() {
+    const { channelSelected } = this.state
+    const { device } = this.props.data
+    this.props.setDeviceChannel(device.id, { id: channelSelected })
+    this.setState({ channelSelected: "" })
   }
 
   render() {
@@ -70,7 +73,7 @@ class DeviceShow extends Component {
               MAC: {device.mac}
             </Typography>
             <FormControl>
-              <InputLabel htmlFor="select">Choose a Channel</InputLabel>
+              <InputLabel htmlFor="select">Connect Channel</InputLabel>
               <Select
                 value={channelSelected}
                 onChange={this.handleInputUpdate}
@@ -88,15 +91,17 @@ class DeviceShow extends Component {
               size="small"
               color="primary"
               style={{ marginLeft: 5 }}
-              onClick={() => this.props.setDeviceChannel(device.id, { id: channelSelected })}
+              onClick={this.handleAddChannel}
             >
-              Save
+              Add
             </Button>
-            {
-              showPairDetails && <Typography component="p" style={{ marginTop: 10 }}>
-                {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
-              </Typography>
-            }
+            <div style={{ marginTop: 10 }}>
+              {
+                device.channels.map(c => (
+                  <SmallChip key={c.id} label={c.name} />
+                ))
+              }
+            </div>
           </CardContent>
 
           <CardActions>
@@ -113,6 +118,11 @@ class DeviceShow extends Component {
               >
                 Pair Device
               </Button>
+            }
+            {
+              showPairDetails && <Typography component="p" style={{ paddingBottom: 10 }}>
+                Pairing: {JSON.stringify({ OUI: "Helium", id: device.id, key: "Secret Key" })}
+              </Typography>
             }
           </CardActions>
         </Card>
