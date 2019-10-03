@@ -33,6 +33,17 @@ class ChannelsTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
+          {
+            !props.row.default && <UserCan action="update" itemType="channel" item={props.row}>
+              <Button
+                color="primary"
+                onClick={() => {}}
+                size="small"
+              >
+                Set Default
+              </Button>
+            </UserCan>
+          }
           <UserCan action="delete" itemType="channel" item={props.row}>
             <Button
               color="secondary"

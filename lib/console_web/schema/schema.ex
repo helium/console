@@ -27,6 +27,7 @@ defmodule ConsoleWeb.Schema do
     field :method, :string
     field :inbound_token, :string
     field :active, :boolean
+    field :default, :boolean
     field :devices, list_of(:device)
     field :groups, list_of(:group) do
       resolve &Console.Groups.GroupResolver.find/2

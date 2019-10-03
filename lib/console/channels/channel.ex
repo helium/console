@@ -16,6 +16,7 @@ defmodule Console.Channels.Channel do
   @foreign_key_type :binary_id
   schema "channels" do
     field :active, :boolean, default: true
+    field :default, :boolean, default: false
     field :credentials, Cloak.EncryptedMapField
     field :encryption_version, :binary
     field :name, :string
@@ -33,8 +34,8 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs \\ %{}) do
     channel
-    |> cast(attrs, ~w(name type active credentials organization_id))
-    |> validate_required([:name, :type, :active, :credentials, :organization_id])
+    |> cast(attrs, ~w(name type active credentials organization_id default))
+    |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
     |> put_change(:encryption_version, Cloak.version)
     |> filter_credentials()
     |> put_type_name()

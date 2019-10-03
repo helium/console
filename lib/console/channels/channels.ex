@@ -54,6 +54,11 @@ defmodule Console.Channels do
 
   """
   def create_channel(attrs \\ %{}) do
+    attrs =
+      case list_channels() do
+        [] -> Map.put(attrs, "default", true)
+        _ -> attrs
+      end
     %Channel{}
     |> Channel.create_changeset(attrs)
     |> Repo.insert()

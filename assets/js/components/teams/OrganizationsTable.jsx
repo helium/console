@@ -45,7 +45,7 @@ class OrganizationsTable extends Component {
         numeric: true,
         Cell: props => <span>
           {
-            currentTeamId !== props.row.id ? (
+            currentTeamId !== props.row.id && (
               <Button
                 color="primary"
                 onClick={() => switchTeam(props.row.id)}
@@ -53,8 +53,6 @@ class OrganizationsTable extends Component {
               >
                 VIEW
               </Button>
-            ) : (
-              <span>CURRENT</span>
             )
           }
         </span>
