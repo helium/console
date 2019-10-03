@@ -52,7 +52,6 @@ const query = gql`
 @graphql(query, queryOptions)
 class ChannelShow extends Component {
   render() {
-    const { deleteChannel, updateChannel } = this.props
     const { loading, channel } = this.props.data
 
     if (loading) return <DashboardLayout />

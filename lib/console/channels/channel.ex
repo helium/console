@@ -48,14 +48,8 @@ defmodule Console.Channels.Channel do
   end
 
   def update_changeset(channel, attrs \\ %{}) do
-    channel = channel |> Channels.fetch_assoc([:groups])
-
-    changeset =
-      channel
-      |> changeset(attrs)
-
-    changeset
-    |> put_assoc(:groups, parse_groups(changeset, attrs))
+    channel
+    |> changeset(attrs)
   end
 
   defp put_http_filtered_headers(changeset) do

@@ -8,7 +8,7 @@ import BlankSlate from '../common/BlankSlate'
 // redux
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { deleteChannel } from '../../actions/channel'
+import { deleteChannel, updateChannel } from '../../actions/channel'
 
 // MUI
 import Button from '@material-ui/core/Button';
@@ -17,7 +17,7 @@ import Button from '@material-ui/core/Button';
 class ChannelsTable extends Component {
 
   render() {
-    const { deleteChannel } = this.props
+    const { deleteChannel, updateChannel } = this.props
 
     const columns = [
       {
@@ -37,7 +37,7 @@ class ChannelsTable extends Component {
             !props.row.default && <UserCan action="update" itemType="channel" item={props.row}>
               <Button
                 color="primary"
-                onClick={() => {}}
+                onClick={() => updateChannel(props.row.id, { default: true })}
                 size="small"
               >
                 Set Default
@@ -70,7 +70,7 @@ class ChannelsTable extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteChannel }, dispatch);
+  return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
 }
 
 export default ChannelsTable
