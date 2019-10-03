@@ -29,8 +29,8 @@ class EventsTable extends Component {
         Cell: props => <span> {formatDatetime(props.value)} </span>
       },
       {
-        Header: 'Response',
-        accessor: 'status',
+        Header: 'Cost',
+        accessor: 'dc',
         Cell: props => <EventStatus status={props.value} />
       },
     ]

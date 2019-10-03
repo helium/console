@@ -52,10 +52,6 @@ class Profile extends Component {
             </Button>
           </CardActions>
         </Card>
-
-        <Card style={{marginTop: 24}}>
-          <AuditTable userId={this.props.userId}/>
-        </Card>
       </DashboardLayout>
     );
   }

@@ -20,7 +20,7 @@ defmodule ConsoleWeb.ChannelView do
       type_name: channel.type_name,
       credentials: channel.credentials,
       active: channel.active,
-      team_id: channel.team_id
+      organization_id: channel.organization_id
     }
     |> append_events(channel.events)
     |> GroupView.append_group_names(channel.groups)

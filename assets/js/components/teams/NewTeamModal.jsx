@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { createTeam } from '../../actions/team'
+import { createTeamUnderOrg } from '../../actions/team'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -43,14 +43,15 @@ class NewTeamModal extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { name } = this.state;
+    const { organizationId } = this.props
 
-    this.props.createTeam(name);
+    this.props.createTeamUnderOrg(organizationId, name);
 
     this.props.onClose()
   }
 
   render() {
-    const { open, onClose, classes } = this.props
+    const { open, onClose, classes, organizationName } = this.props
 
     return (
       <Modal
@@ -59,7 +60,7 @@ class NewTeamModal extends Component {
       >
         <Paper className={classes.paper}>
           <Typography variant="title">
-            New Team
+            Organization: {organizationName}
           </Typography>
 
           <Typography variant="subheading">
@@ -98,7 +99,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createTeam }, dispatch)
+  return bindActionCreators({ createTeamUnderOrg }, dispatch)
 }
 
 export default NewTeamModal

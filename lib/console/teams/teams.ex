@@ -7,6 +7,8 @@ defmodule Console.Teams do
   alias Console.Repo
 
   alias Console.Teams.Team
+  alias Console.Teams.Organization
+  alias Console.Teams.Organizations
   alias Console.Teams.Membership
   alias Console.Teams.Invitation
   alias Console.Auth
@@ -52,7 +54,23 @@ defmodule Console.Teams do
     count > 0
   end
 
-  def create_team(%User{} = user, attrs \\ %{}) do
+  def create_team(%User{} = user, attrs, organization) do
+    team_changeset =
+      %Team{}
+      |> Team.create_changeset(attrs, organization)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:team, team_changeset)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{team: team}} -> {:ok, team}
+      {:error, :team, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
+  def create_team(%User{} = user, attrs) do
     team_changeset =
       %Team{}
       |> Team.create_changeset(attrs)
@@ -89,13 +107,18 @@ defmodule Console.Teams do
     Repo.preload(team, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team]) do
+  def fetch_assoc_membership(%Membership{} = team, assoc \\ [:user, :team, :organization]) do
     Repo.preload(team, assoc)
   end
 
   def current_team_for(%User{} = user) do
-    # TODO: use a timestamp on membership to track the last-viewed team
-    List.last(Auth.fetch_assoc(user).teams)
+    case Auth.fetch_assoc(user).organizations do
+      [] -> List.last(Auth.fetch_assoc(user).teams)
+      _ ->
+        organization = List.last(Auth.fetch_assoc(user).organizations)
+        Organizations.fetch_assoc(organization).teams
+        |> List.last()
+    end
   end
 
   def create_invitation(%User{} = inviter, %Team{} = team, attrs) do

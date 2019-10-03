@@ -33,15 +33,6 @@ class ChannelsTable extends Component {
         Header: '',
         numeric: true,
         Cell: props => <span>
-          <Button
-            color="primary"
-            component={Link}
-            to={`/channels/${props.row.id}`}
-            size="small"
-          >
-            View
-          </Button>
-
           <UserCan action="delete" itemType="channel" item={props.row}>
             <Button
               color="secondary"
@@ -60,7 +51,7 @@ class ChannelsTable extends Component {
         columns={columns}
         query={PAGINATED_CHANNELS}
         subscription={CHANNEL_SUBSCRIPTION}
-        EmptyComponent={ props => <BlankSlate title="No channels" subheading="To create a new channel, click the red button in the corner" /> }
+        EmptyComponent={ props => <BlankSlate title="No channels" subheading="" /> }
         variables={{pageSize: 5}}
       />
     )

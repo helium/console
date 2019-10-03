@@ -37,10 +37,6 @@ class MembersTable extends Component {
         Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
       },
       {
-        Header: 'Last Login',
-        Cell: props => <span>{moment([2018, random(0, 4), random(1, 28)]).fromNow()}</span>
-      },
-      {
         Header: 'Two Factor',
         Cell: props => (props.row.two_factor_enabled ? <SuccessChip label="Enabled"/> : <SmallChip label="Disabled"/>)
       },

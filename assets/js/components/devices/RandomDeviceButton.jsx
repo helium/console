@@ -12,7 +12,6 @@ class RandomDeviceButton extends Component {
     this.props.createDevice({
       name: randomName(),
       mac: randomMac(),
-      public_key: "some public key"
     })
   }
 

@@ -11,6 +11,7 @@ defmodule Console.Auth do
   alias Console.Teams.Invitation
   alias Console.Teams.Invitation
   alias Console.Teams.Team
+  alias Console.Teams.Organizations
   alias Console.Helpers
 
   def get_user_by_id!(id) do
@@ -37,6 +38,29 @@ defmodule Console.Auth do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def create_org_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
+    user_changeset =
+      %User{}
+      |> User.registration_changeset(user_attrs)
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:user, user_changeset)
+      |> Ecto.Multi.run(:organization, fn %{user: user} ->
+        Console.Teams.Organizations.create_organization(user, organization_attrs)
+      end)
+      |> Ecto.Multi.run(:team, fn %{user: user, organization: organization} ->
+        Console.Teams.create_team(user, team_attrs, organization)
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{user: user, team: team, organization: organization}} -> {:ok, user, team, organization}
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+    end
+  end
+
   def create_user(user_attrs \\ %{}, team_attrs \\ %{}) do
     user_changeset =
       %User{}
@@ -200,7 +224,7 @@ defmodule Console.Auth do
     :pot.valid_totp(code, secret2fa)
   end
 
-  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams]) do
+  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams, :organizations]) do
     Repo.preload(user, assoc)
   end
 
@@ -210,7 +234,14 @@ defmodule Console.Auth do
   end
 
   def generate_session_token(%User{} = user, %Team{} = current_team) do
-    claims = %{team: current_team.id}
+    claims =
+      case current_team.organization_id do
+        nil -> %{team: current_team.id}
+        org_id ->
+          organization = Organizations.get_organization!(org_id)
+          %{team: current_team.id, organization: org_id, organization_name: organization.name}
+      end
+
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
     token
   end

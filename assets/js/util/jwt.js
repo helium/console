@@ -6,6 +6,14 @@ export const getTeamId = (apikey) => {
   return parseJwt(apikey).team
 }
 
+export const getOrganizationId = (apikey) => {
+  return parseJwt(apikey).organization
+}
+
+export const getOrganizationName = (apikey) => {
+  return parseJwt(apikey).organization_name
+}
+
 export const percentOfTimeLeft = (apikey) => {
   const timeToExpiration = getTimeToExpiration(apikey)
   const timeToLive = getTimeToLive(apikey)

@@ -11,9 +11,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
-// Icons
-import HelpIcon from '@material-ui/icons/Help';
-
 const styles = theme => ({
   content: {
     padding: theme.spacing.unit * 3,
@@ -79,11 +76,6 @@ class ContentLayout extends Component {
             <Typography variant="display1" color="inherit" style={{flex: 1}}>
               {title}
             </Typography>
-
-            <IconButton onClick={() => alert('oh hai')} color="inherit">
-              <HelpIcon />
-            </IconButton>
-
           </Toolbar>
         </AppBar>
 

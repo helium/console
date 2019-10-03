@@ -1,0 +1,3 @@
+<p>
+  You've been added to the <%= @organization_name %> team on Helium. Sign in to start collaborating.
+</p>

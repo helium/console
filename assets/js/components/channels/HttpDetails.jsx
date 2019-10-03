@@ -8,9 +8,9 @@ import CardContent from '@material-ui/core/CardContent';
 
 const HttpDetails = (props) => {
   const { channel } = props
-  const { credentials } = channel
+  const { endpoint } = channel
 
-  if (credentials === undefined) return <div />
+  if (endpoint === undefined) return <div />
 
   return (
     <Card style={{marginTop: 24}}>
@@ -19,15 +19,15 @@ const HttpDetails = (props) => {
           HTTP Details
         </Typography>
         <Typography component="p">
-          Method: {credentials.method}
+          Method: {channel.method}
         </Typography>
         <Typography component="p">
-          endpoint: {credentials.endpoint}
+          Endpoint: {channel.endpoint}
         </Typography>
         <Typography component="div">
-          Inbound:
+          {"Inbound: "}
           <TextField
-            value={`https://router.helium.com/http/${credentials.inbound_token}`}
+            value={`https://router.helium.com/http/${channel.inbound_token}`}
             readOnly
             style={{width: 400}}
           />

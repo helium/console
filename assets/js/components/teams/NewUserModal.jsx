@@ -6,6 +6,10 @@ import RoleControl from './RoleControl'
 
 // MUI
 import Typography from '@material-ui/core/Typography'
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Modal from '@material-ui/core/Modal'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
@@ -42,10 +46,14 @@ class NewUserModal extends Component {
 
     this.state = {
       email: "",
+      organization: "",
+      team: "",
       role: "viewer"
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleTeamUpdate = this.handleTeamUpdate.bind(this);
+    this.handleOrganizationUpdate = this.handleOrganizationUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -53,19 +61,27 @@ class NewUserModal extends Component {
     this.setState({ [e.target.name]: e.target.value})
   }
 
+  handleOrganizationUpdate(e) {
+    this.setState({ organization: e.target.value, team: "" })
+  }
+
+  handleTeamUpdate(e) {
+    this.setState({ team: e.target.value, organization: "" })
+  }
+
   handleSubmit(e) {
     e.preventDefault();
-    const { email, role } = this.state;
+    const { email, role, organization, team } = this.state;
 
-    this.props.inviteUser({ email, role });
+    this.props.inviteUser({ email, role, organization, team });
 
-    this.setState({ email: '' })
+    this.setState({ email: '', organization: '', team: '' })
 
     this.props.onClose()
   }
 
   render() {
-    const { open, onClose, classes } = this.props
+    const { open, onClose, classes, teams, organization } = this.props
 
     return (
       <Modal
@@ -93,6 +109,42 @@ class NewUserModal extends Component {
               fullWidth
             />
 
+            {
+              organization.id && teams.length > 0 && (
+                <React.Fragment>
+                <FormControl>
+                  <InputLabel htmlFor="select">Invite to Organization</InputLabel>
+                  <Select
+                    value={this.state.organization}
+                    onChange={this.handleOrganizationUpdate}
+                    inputProps={{
+                      name: 'organization',
+                    }}
+                    style={{ width: 200 }}
+                  >
+                    <MenuItem value={organization.id} key={organization.id}>{organization.name}</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <InputLabel htmlFor="select" style={{ marginLeft: 20 }}>Invite to Team Only</InputLabel>
+                  <Select
+                    value={this.state.team}
+                    onChange={this.handleTeamUpdate}
+                    inputProps={{
+                      name: 'team',
+                    }}
+                    style={{ width: 200, marginLeft: 20 }}
+                  >
+                    {teams.map((t) => (
+                      <MenuItem value={t.id} key={t.id}>{t.name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                </React.Fragment>
+              )
+            }
+
             <RoleControl
               value={this.state.role}
               onChange={this.handleInputUpdate}
@@ -119,6 +171,11 @@ class NewUserModal extends Component {
 
 function mapStateToProps(state) {
   return {
+    teams: Object.values(state.entities.teams),
+    organization: {
+      id: state.auth.currentOrganizationId,
+      name: state.auth.currentOrganizationName,
+    }
   }
 }
 

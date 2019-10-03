@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import pick from 'lodash/pick'
-import { deleteDevice, updateDevice } from '../../actions/device'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import EventsTable from '../events/EventsTable'
+import SmallChip from '../common/SmallChip'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import userCan from '../../util/abilities'
 import UserCan from '../common/UserCan'
+import { setDeviceChannel } from '../../actions/device'
 import { DEVICE_FRAGMENT } from '../../graphql/devices'
 
 // GraphQL
@@ -23,11 +24,37 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
+@connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      channelSelected: "",
+    }
+
+    this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleAddChannel = this.handleAddChannel.bind(this);
+  }
+
+  handleInputUpdate(e) {
+    this.setState({ [e.target.name]: e.target.value})
+  }
+
+  handleAddChannel() {
+    const { channelSelected } = this.state
+    const { device } = this.props.data
+    this.props.setDeviceChannel(device.id, { id: channelSelected })
+    this.setState({ channelSelected: "" })
+  }
+
   render() {
-    const { deleteDevice, updateDevice } = this.props
-    const { loading, device } = this.props.data
+    const { channelSelected } = this.state
+    const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
 
@@ -38,42 +65,61 @@ class DeviceShow extends Component {
             <Typography variant="headline" component="h3">
               Device Details
             </Typography>
-
-            <div style={{display: 'flex'}}>
-              <div style={{width: '50%'}}>
-                <Typography component="p">
-                  ID: {device.id}
-                </Typography>
-                <Typography component="p">
-                  Name: {device.name}
-                </Typography>
-                <Typography component="p">
-                  MAC: {device.mac}
-                </Typography>
-              </div>
-              <div style={{width: '50%'}}>
-                <GroupsControl
-                  groups={device.groups.map(e => e.name)}
-                  handleUpdate={(groups) => updateDevice(device.id, {groups: groups})}
-                  editable={userCan('update', 'device', device)}
-                />
-              </div>
+            <Typography component="p">
+              Name: {device.name}
+            </Typography>
+            <Typography component="p">
+              MAC: {device.mac}
+            </Typography>
+            <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
+              <Typography variant="caption">
+                {"const uint32_t oui = 1;"}
+              </Typography>
+              <Typography variant="caption">
+                {`const uint16_t device_id = ${device.seq_id};`}
+              </Typography>
+              <Typography variant="caption">
+                {`const uint8_t preshared_key[16] = {${device.key}};`}
+              </Typography>
+            </div>
+            <FormControl>
+              <InputLabel htmlFor="select">Connect Channel</InputLabel>
+              <Select
+                value={channelSelected}
+                onChange={this.handleInputUpdate}
+                inputProps={{
+                  name: 'channelSelected',
+                }}
+                style={{ width: 200 }}
+              >
+                {channels.map(c => (
+                  <MenuItem value={c.id} key={c.id}>{c.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              size="small"
+              color="primary"
+              style={{ marginLeft: 5 }}
+              onClick={this.handleAddChannel}
+            >
+              Add
+            </Button>
+            <div style={{ marginTop: 10 }}>
+              {
+                device.channels.map(c => (
+                  <SmallChip key={c.id} label={c.name} />
+                ))
+              }
             </div>
           </CardContent>
 
           <CardActions>
-            <UserCan action="create" itemType="event">
-              <RandomEventButton device_id={device.id} />
-            </UserCan>
-            <UserCan action="delete" itemType="device" item={device}>
-              <Button
-                size="small"
-                color="secondary"
-                onClick={() => deleteDevice(device.id, true)}
-              >
-                Delete Device
-              </Button>
-            </UserCan>
+            {
+              false && <UserCan action="create" itemType="event">
+                <RandomEventButton device_id={device.id} />
+              </UserCan>
+            }
           </CardActions>
         </Card>
 
@@ -115,14 +161,6 @@ class DeviceShow extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {}
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice, updateDevice }, dispatch);
-}
-
 const queryOptions = {
   options: props => ({
     variables: {
@@ -135,14 +173,30 @@ const query = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       ...DeviceFragment
+      key
+      channels {
+        name
+        id
+      }
       groups {
         name
       }
+    },
+    organizationChannels {
+      name,
+      type,
+      type_name,
+      id,
+      active
     }
   }
   ${DEVICE_FRAGMENT}
 `
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setDeviceChannel }, dispatch)
+}
+
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceShowWithData);
+export default DeviceShowWithData;

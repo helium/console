@@ -24,7 +24,6 @@ defmodule ConsoleWeb.MembershipController do
       broadcast(membership, "update")
 
       updatedUser = Map.merge(membership.user, %{role: membership.role})
-      AuditTrails.create_audit_trail("team_membership", "update", conn.assigns.current_user, conn.assigns.current_team, "users", updatedUser)
 
       conn
       |> put_resp_header("message", "User role updated successfully")
@@ -39,7 +38,6 @@ defmodule ConsoleWeb.MembershipController do
       broadcast(membership, "delete")
 
       updatedUser = Auth.get_user_by_id!(membership.user_id)
-      AuditTrails.create_audit_trail("team_membership", "delete", conn.assigns.current_user, conn.assigns.current_team, "users", updatedUser)
       conn
       |> put_resp_header("message", "User removed from team")
       |> send_resp(:no_content, "")
@@ -48,8 +46,12 @@ defmodule ConsoleWeb.MembershipController do
 
   def broadcast(%Membership{} = membership, _) do
     membership = membership |> Teams.fetch_assoc_membership()
-
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.team.id}/membership_added")
+    cond do
+      membership.team == nil ->
+        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.organization.id}/membership_added")
+      membership.organization == nil ->
+        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.team.id}/membership_added")
+    end
   end
 
   def put_auth_item(conn, _) do
