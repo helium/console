@@ -27,18 +27,6 @@ defmodule ConsoleWeb.SessionController do
     end
   end
 
-  def create(conn, %{"session" => session_params, "from_cli" => _}) do
-    with {:ok, %User{} = user} <- Auth.authenticate(session_params),
-         current_team <- Teams.current_team_for(user),
-         jwt <- Auth.generate_session_token(user, current_team) do
-      # AuditTrails.create_audit_trail("user_account", "login", user)
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", user: user, jwt: jwt, skip2fa: true)
-    end
-  end
-
   def refresh(conn, %{"jwt" => jwt}) do
     with {:ok, {newToken, _claims}} <- Auth.refresh_session_token(jwt) do
       conn
