@@ -19,6 +19,7 @@ defmodule Console.Devices.Device do
     field :name, :string
     field :key, :string
     field :seq_id, :integer
+    field :oui, :integer
 
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
@@ -35,7 +36,8 @@ defmodule Console.Devices.Device do
     changeset =
       device
       |> cast(attrs, [:name, :mac, :key, :team_id, :seq_id])
-      |> validate_required([:name, :mac, :key, :team_id, :seq_id])
+      |> put_change(:oui, Application.fetch_env!(:console, :oui))
+      |> validate_required([:name, :mac, :key, :team_id, :seq_id, :oui])
       |> unique_constraint(:mac)
   end
 end
