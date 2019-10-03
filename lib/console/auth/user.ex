@@ -15,6 +15,7 @@ defmodule Console.Auth.User do
     has_one :twofactor, Console.Auth.TwoFactor
     has_many :memberships, Console.Teams.Membership
     many_to_many :teams, Console.Teams.Team, join_through: "memberships"
+    many_to_many :organizations, Console.Teams.Organization, join_through: "memberships"
 
     timestamps()
   end

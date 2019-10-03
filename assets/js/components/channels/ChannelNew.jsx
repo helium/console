@@ -106,7 +106,7 @@ class ChannelNew extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createChannel }, dispatch);
 }
 

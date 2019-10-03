@@ -13,7 +13,6 @@ defmodule ConsoleWeb.SessionController do
          {:ok, %User{} = user} <- Auth.authenticate(session_params),
          current_team <- Teams.current_team_for(user),
          jwt <- Auth.generate_session_token(user, current_team) do
-      AuditTrails.create_audit_trail("user_account", "login", user)
 
       if user.twofactor do
         conn
@@ -25,6 +24,17 @@ defmodule ConsoleWeb.SessionController do
         |> render("show.json", user: user, jwt: jwt, skip2fa: !Auth.should_skip_2fa_prompt?(user.last_2fa_skipped_at))
         # TODO: why jwt if twofactor?
       end
+    end
+  end
+
+  def create(conn, %{"session" => session_params, "from_cli" => _}) do
+    with {:ok, %User{} = user} <- Auth.authenticate(session_params),
+         current_team <- Teams.current_team_for(user),
+         jwt <- Auth.generate_session_token(user, current_team) do
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", user: user, jwt: jwt, skip2fa: true)
     end
   end
 

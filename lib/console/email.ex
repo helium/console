@@ -5,6 +5,7 @@ defmodule Console.Email do
   alias Console.Teams.Invitation
   alias Console.Teams.Membership
   alias Console.Teams.Team
+  alias Console.Teams.Organization
 
   def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()
@@ -36,6 +37,14 @@ defmodule Console.Email do
     |> subject("You've been added to the #{team_name} team on Helium")
     |> assign(:team_name, team_name)
     |> render(:joined_team_email)
+  end
+
+  def joined_organization_email(%Membership{user: %User{email: email}, organization: %Organization{name: organization_name}}) do
+    base_email()
+    |> to(email)
+    |> subject("You've been added to the #{organization_name} team on Helium")
+    |> assign(:organization_name, organization_name)
+    |> render(:joined_organization_email)
   end
 
   defp base_email do

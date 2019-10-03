@@ -34,7 +34,9 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
-    resources "/devices", DeviceController, except: [:new, :edit]
+    resources "/devices", DeviceController, except: [:new, :edit] do
+      post "/channel", DeviceController, :set_channel, as: :set_channel
+    end
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]

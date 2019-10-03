@@ -21,7 +21,8 @@ defmodule ConsoleWeb.TeamView do
   def render("team.json", %{team: team}) do
     %{
       id: team.id,
-      name: team.name
+      name: team.name,
+      organization_id: team.organization_id
     }
     |> MembershipView.append_memberships(team.memberships)
     |> InvitationView.append_invitations(team.invitations)

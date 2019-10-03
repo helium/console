@@ -11,6 +11,7 @@ defmodule Console.Teams.Invitation do
     field :pending, :boolean, default: true
     belongs_to :team, Console.Teams.Team
     belongs_to :inviter, Console.Auth.User
+    belongs_to :organization, Console.Teams.Organization
 
     timestamps()
   end

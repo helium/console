@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
-import { getTeamId } from '../util/jwt'
+import { getTeamId, getOrganizationId, getOrganizationName } from '../util/jwt'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -96,7 +96,7 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, email, password, passwordConfirm, recaptcha, invitationToken) => {
+export const register = (teamName, organizationName, email, password, passwordConfirm, recaptcha, invitationToken) => {
   let params = {
     recaptcha,
     user: {
@@ -113,6 +113,13 @@ export const register = (teamName, email, password, passwordConfirm, recaptcha, 
       }
     })
   } else {
+    if (organizationName !== "") {
+      params = Object.assign(params, {
+        organization: {
+          name: organizationName
+        }
+      })
+    }
     params = Object.assign(params, {
       team: {
         name: teamName
@@ -178,7 +185,9 @@ export const refreshedToken = (apikey) => {
   return {
     type: REFRESHED_TOKEN,
     apikey,
-    currentTeamId: getTeamId(apikey)
+    currentTeamId: getTeamId(apikey),
+    currentOrganizationId: getOrganizationId(apikey),
+    currentOrganizationName: getOrganizationName(apikey)
   }
 }
 
@@ -219,7 +228,9 @@ const loggedIn = (apikey) => {
   return {
     type: LOGGED_IN,
     apikey,
-    currentTeamId: getTeamId(apikey)
+    currentTeamId: getTeamId(apikey),
+    currentOrganizationId: getOrganizationId(apikey),
+    currentOrganizationName: getOrganizationName(apikey)
   }
 }
 

@@ -133,10 +133,6 @@ class TeamShow extends Component {
       label: "Access View",
       content: accessView,
       path: "/teams/access",
-    }, {
-      label: "Activity View",
-      content: activityView,
-      path: "/teams/activity",
     }]
 
     return (

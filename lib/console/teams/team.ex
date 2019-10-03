@@ -15,10 +15,10 @@ defmodule Console.Teams.Team do
     has_many :memberships, Console.Teams.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
     has_many :invitations, Console.Teams.Invitation, on_delete: :delete_all
+    belongs_to :organization, Console.Teams.Organization
 
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
     has_many :gateways, Console.Gateways.Gateway, on_delete: :delete_all
-    has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :audit_trails, Console.AuditTrails.AuditTrail, on_delete: :delete_all
     has_many :notifications, Console.Notifications.Notification, on_delete: :delete_all
 
@@ -31,6 +31,14 @@ defmodule Console.Teams.Team do
     |> cast(attrs, [:name])
     |> validate_required(:name, message: "Team Name is required")
     |> validate_length(:name, min: 3, message: "Team Name must be at least 3 letters")
+  end
+
+  def create_changeset(team, attrs, organization) do
+    team
+    |> changeset(attrs)
+    |> put_keys()
+    |> put_change(:organization_id, organization.id)
+    |> put_change(:encryption_version, Cloak.version)
   end
 
   @doc false

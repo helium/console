@@ -3,7 +3,7 @@ import { LOGGED_OUT } from '../actions/auth.js';
 
 const initialState = {
   email: null,
-  role: null
+  role: null,
 }
 
 const user = (state = initialState, action) => {

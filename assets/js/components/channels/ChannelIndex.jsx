@@ -32,10 +32,6 @@ class ChannelIndex extends Component {
         <Paper style={{marginTop: 24}}>
           <ChannelsTable />
         </Paper>
-
-        <UserCan action="create" itemType="channel">
-          <RandomChannelButton />
-        </UserCan>
       </DashboardLayout>
     )
   }

@@ -20,6 +20,6 @@ const receiveUser = (user) => {
   return {
     type: RECEIVE_USER,
     email: user.email,
-    role: user.role
+    role: user.role,
   };
 }
