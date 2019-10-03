@@ -14,13 +14,17 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   defp show_device(conn, device) do
     device = device |> Devices.fetch_assoc([:channels])
-    case device.channels do
-      [] ->
-        default_channel = Channels.get_default_channel()
-        if default_channel != nil do
-          device = Map.put(device, :channels, [default_channel])
-        end
-    end
+    device =
+      case device.channels do
+        [] ->
+          default_channel = Channels.get_default_channel()
+          if default_channel != nil do
+            Map.put(device, :channels, [default_channel])
+          else
+            device
+          end
+        _ -> device
+      end
     conn
     |> render("show.json", device: device)
   end
