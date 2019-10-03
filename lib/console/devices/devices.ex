@@ -40,7 +40,7 @@ defmodule Console.Devices do
   def get_device!(id), do: Repo.get!(Device, id)
   def get_device(id), do: Repo.get(Device, id)
   def get_by_mac(mac), do: Repo.get_by(Device, mac: mac)
-  def get_by_seq_id(seq_id), do: Repo.get_by(Device, seq_id: seq_id)
+  def get_by_seq_id(seq_id, oui), do: Repo.get_by(Device, [seq_id: seq_id, oui: oui])
 
   def fetch_assoc(%Device{} = device, assoc \\ [:events, :team]) do
     Repo.preload(device, assoc)

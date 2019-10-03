@@ -6,8 +6,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
 
-  def show(conn, %{"id" => id}) do
-    with %Device{} = device <- Devices.get_by_seq_id(id) do
+  def show(conn, %{"id" => id, "oui" => oui}) do
+    with %Device{} = device <- Devices.get_by_seq_id(id, oui) do
       conn |> show_device(device)
     end
   end
