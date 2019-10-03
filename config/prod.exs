@@ -30,6 +30,7 @@ config :console, Console.Repo,
   ssl: true
 
 config :console, recaptcha_secret: System.get_env("RECAPTCHA_SECRET")
+config :console, oui: String.to_integer(System.get_env("OUI"))
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,

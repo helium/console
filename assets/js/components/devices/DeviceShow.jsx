@@ -68,12 +68,9 @@ class DeviceShow extends Component {
             <Typography component="p">
               Name: {device.name}
             </Typography>
-            <Typography component="p">
-              MAC: {device.mac}
-            </Typography>
             <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
               <Typography variant="caption">
-                {"const uint32_t oui = 1;"}
+                {`const uint32_t oui = ${device.oui};`}
               </Typography>
               <Typography variant="caption">
                 {`const uint16_t device_id = ${device.seq_id};`}
@@ -174,6 +171,7 @@ const query = gql`
     device(id: $id) {
       ...DeviceFragment
       key
+      oui
       channels {
         name
         id

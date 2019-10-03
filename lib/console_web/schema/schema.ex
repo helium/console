@@ -9,6 +9,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :key, :string
     field :mac, :string
+    field :oui, :integer
     field :team_id, :id
     field :team, :team
     field :inserted_at, :naive_datetime
