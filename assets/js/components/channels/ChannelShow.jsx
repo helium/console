@@ -52,7 +52,6 @@ const query = gql`
 @graphql(query, queryOptions)
 class ChannelShow extends Component {
   render() {
-    const { deleteChannel, updateChannel } = this.props
     const { loading, channel } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -102,40 +101,43 @@ class ChannelShow extends Component {
             }
           </CardContent>
         </Card>
+        {
+          false && <Card style={{marginTop: 24}}>
+            <CardContent>
+              <Typography variant="headline" component="h3">
+                Event Log
+              </Typography>
+              <EventsTable contextId={channel.id} contextName="channels"/>
+            </CardContent>
+          </Card>
+        }
 
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Event Log
-            </Typography>
-            <EventsTable contextId={channel.id} contextName="channels"/>
-          </CardContent>
-        </Card>
-
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Real Time Packets
-            </Typography>
-            <div className="chart-legend left">
-              <div className="chart-legend-bulb red"></div>
-              <Typography component="p">
-                Live Data
+        {
+          false && <Card style={{marginTop: 24}}>
+            <CardContent>
+              <Typography variant="headline" component="h3">
+                Real Time Packets
               </Typography>
-            </div>
-            <div className="chart-legend right">
-              <div className="chart-legend-bulb blue"></div>
-              <Typography component="p">
-                From Device
-              </Typography>
-              <div className="chart-legend-bulb green"></div>
-              <Typography component="p">
-                To Device
-              </Typography>
-            </div>
-            <PacketGraph contextId={channel.id} contextName="channels"/>
-          </CardContent>
-        </Card>
+              <div className="chart-legend left">
+                <div className="chart-legend-bulb red"></div>
+                <Typography component="p">
+                  Live Data
+                </Typography>
+              </div>
+              <div className="chart-legend right">
+                <div className="chart-legend-bulb blue"></div>
+                <Typography component="p">
+                  From Device
+                </Typography>
+                <div className="chart-legend-bulb green"></div>
+                <Typography component="p">
+                  To Device
+                </Typography>
+              </div>
+              <PacketGraph contextId={channel.id} contextName="channels"/>
+            </CardContent>
+          </Card>
+        }
       </DashboardLayout>
     )
   }
