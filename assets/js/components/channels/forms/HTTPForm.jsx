@@ -51,7 +51,8 @@ class HTTPForm extends Component {
     [index, input] = e.target.name.split('-')
 
     const updatedEntry = Object.assign({}, this.state.headers[index], { [input]: e.target.value })
-    const newHeadersArray = this.state.headers.slice(0, index).concat(updatedEntry, this.state.headers.slice(index + 1))
+    const newHeadersArray = this.state.headers
+    newHeadersArray[index] = updatedEntry
 
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
@@ -59,11 +60,15 @@ class HTTPForm extends Component {
   validateInput() {
     const { method, endpoint, headers } = this.state
     if (method.length > 0 && endpoint.length > 0) {
-      // check header validation, if pass
+      const parsedHeaders = headers.reduce((a, h) => {
+        if (h.header !== "" && h.value !== "") a[h.header] = h.value
+        return a
+      }, {})
+
       this.props.onValidInput({
         method,
         endpoint,
-        headers
+        headers: parsedHeaders,
       })
     }
   }
