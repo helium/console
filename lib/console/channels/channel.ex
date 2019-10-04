@@ -44,27 +44,11 @@ defmodule Console.Channels.Channel do
   def create_changeset(channel, attrs \\ %{}) do
     channel
     |> changeset(attrs)
-    |> put_http_filtered_headers()
   end
 
   def update_changeset(channel, attrs \\ %{}) do
     channel
     |> changeset(attrs)
-  end
-
-  defp put_http_filtered_headers(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
-        if creds["headers"] do
-          filtered_headers = Enum.reject(creds["headers"], fn(h) -> h["header"] == "" end)
-          creds = Map.merge(creds, %{ "headers" => filtered_headers })
-
-          put_change(changeset, :credentials, creds)
-        else
-          changeset
-        end
-      _ -> changeset
-    end
   end
 
   defp put_type_name(changeset) do
