@@ -109,7 +109,7 @@ class Register extends Component {
 
         <form onSubmit={this.handleSubmit} noValidate>
           <TextField
-            label="Organization Name (Optional)"
+            label="Organization Name"
             name="organizationName"
             value={this.state.organizationName}
             onChange={this.handleInputUpdate}

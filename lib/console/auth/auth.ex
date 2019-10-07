@@ -39,7 +39,7 @@ defmodule Console.Auth do
 
   """
 
-  def create_org_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
+  def create_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
     user_changeset =
       %User{}
       |> User.registration_changeset(user_attrs)
@@ -57,25 +57,6 @@ defmodule Console.Auth do
 
     case result do
       {:ok, %{user: user, team: team, organization: organization}} -> {:ok, user, team, organization}
-      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
-    end
-  end
-
-  def create_user(user_attrs \\ %{}, team_attrs \\ %{}) do
-    user_changeset =
-      %User{}
-      |> User.registration_changeset(user_attrs)
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:team, fn %{user: user} ->
-        Console.Teams.create_team(user, team_attrs)
-      end)
-      |> Repo.transaction()
-
-    case result do
-      {:ok, %{user: user, team: team}} -> {:ok, user, team}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end

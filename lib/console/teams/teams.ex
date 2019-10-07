@@ -117,7 +117,7 @@ defmodule Console.Teams do
       _ ->
         organization = List.last(Auth.fetch_assoc(user).organizations)
         Organizations.fetch_assoc(organization).teams
-        |> List.last()
+        |> List.first()
     end
   end
 

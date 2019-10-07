@@ -113,16 +113,12 @@ export const register = (teamName, organizationName, email, password, passwordCo
       }
     })
   } else {
-    if (organizationName !== "") {
-      params = Object.assign(params, {
-        organization: {
-          name: organizationName
-        }
-      })
-    }
     params = Object.assign(params, {
       team: {
         name: teamName
+      },
+      organization: {
+        name: organizationName
       }
     })
   }
