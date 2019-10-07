@@ -16,12 +16,25 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 class EventsTable extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      rows: []
+    }
+  }
+
+  addEvent(event) {
+    this.setState({
+      rows: [event].concat(this.state.rows)
+    })
+  }
+
   render() {
     const { contextId, contextName, fetchPolicy } = this.props
 
     const columns = [
       {
-        Header: 'ID',
+        Header: 'Device ID',
         accessor: 'id',
       },
       {
@@ -58,10 +71,14 @@ class EventsTable extends Component {
     ]
 
     return(
-      <Subscription variables={{ contextId, contextName }} subscription={EVENTS_SUBSCRIPTION} onSubscriptionData={data => {console.log(data)}}>
+      <Subscription
+        variables={{ contextId, contextName }}
+        subscription={EVENTS_SUBSCRIPTION}
+        onSubscriptionData={({ subscriptionData }) => { this.addEvent(subscriptionData.data.eventAdded) }}
+      >
         {({ data }) => (
           <QueryResults
-            data={data}
+            rows={this.state.rows}
             columns={columns}
           />
         )}
@@ -71,14 +88,10 @@ class EventsTable extends Component {
 }
 
 class QueryResults extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
-    const { data, columns } = this.props
+    const { rows, columns } = this.props
 
-    if (!data) {
+    if (rows.length === 0) {
       return (
         <Typography component="p">
           No events yet
@@ -88,7 +101,7 @@ class QueryResults extends Component {
 
     return (
       <ResultsTable
-        results={data.eventAdded}
+        rows={rows}
         columns={columns}
       />
     )
@@ -96,8 +109,7 @@ class QueryResults extends Component {
 }
 
 const ResultsTable = (props) => {
-  const rows = [props.results]
-  const { columns} = props
+  const { columns, rows } = props
 
   return (
     <Table>
@@ -115,8 +127,8 @@ const ResultsTable = (props) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {rows.map(row =>
-          <PaginatedRow key={row.id} row={row} columns={columns} />
+        {rows.map((row, index) =>
+          <PaginatedRow key={index} row={row} columns={columns} />
         )}
       </TableBody>
     </Table>
