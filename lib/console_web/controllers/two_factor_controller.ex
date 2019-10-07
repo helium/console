@@ -5,6 +5,7 @@ defmodule ConsoleWeb.TwoFactorController do
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
   alias Console.Teams
+  alias Console.Teams.Organizations
   alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
@@ -38,8 +39,8 @@ defmodule ConsoleWeb.TwoFactorController do
       userTwoFactor = loadedUser.twofactor
 
       if Auth.verify_2fa_and_backup_codes(code, userTwoFactor) do
-        with current_team <- Teams.current_team_for(user),
-                      jwt <- Auth.generate_session_token(user, current_team),
+        with current_organization <- Organizations.current_organization_for(user),
+                      jwt <- Auth.generate_session_token(user, current_organization),
                       {:ok, _} <- Auth.update_2fa_last_verification(userTwoFactor) do
 
           conn

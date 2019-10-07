@@ -107,7 +107,7 @@ defmodule Console.Teams.Organizations do
 
   def current_organization_for(%User{} = user) do
     # TODO: use a timestamp on membership to track the last-viewed organization
-    List.last(Auth.fetch_assoc(user).organizations)
+    List.first(Auth.fetch_assoc(user).organizations)
   end
 
   def create_invitation(%User{} = inviter, %Organization{} = organization, attrs) do

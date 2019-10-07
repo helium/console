@@ -14,20 +14,11 @@ defmodule ConsoleWeb.Plug.GraphqlContext do
   Return the current user context based on the authorization header
   """
   def build_context(conn) do
-    case Map.get(conn.assigns, :current_organization) do
-      nil ->
-        %{
-          current_user: conn.assigns.current_user,
-          current_team: conn.assigns.current_team,
-          current_membership: conn.assigns.current_membership
-        }
-      _ ->
-        %{
-          current_user: conn.assigns.current_user,
-          current_team: conn.assigns.current_team,
-          current_organization: conn.assigns.current_organization,
-          current_membership: conn.assigns.current_membership
-        }
-    end
+    %{
+      current_user: conn.assigns.current_user,
+      current_team: conn.assigns.current_team,
+      current_organization: conn.assigns.current_organization,
+      current_membership: conn.assigns.current_membership
+    }
   end
 end

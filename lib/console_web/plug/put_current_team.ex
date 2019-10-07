@@ -12,12 +12,6 @@ defmodule ConsoleWeb.Plug.PutCurrentTeam do
         current_user = conn.assigns.current_user
 
         cond do
-          current_team = Teams.get_team(current_user, team_id) ->
-            current_membership = Teams.get_membership!(current_user, current_team)
-
-            conn
-            |> assign(:current_team, current_team)
-            |> assign(:current_membership, current_membership)
           { current_team, current_organization } = Organizations.get_organization_team(current_user, team_id) ->
             current_membership = Organizations.get_membership!(current_user, current_organization)
 
