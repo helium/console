@@ -113,7 +113,7 @@ defmodule Console.Teams do
 
   def current_team_for(%User{} = user) do
     case Auth.fetch_assoc(user).organizations do
-      [] -> List.last(Auth.fetch_assoc(user).teams)
+      [] -> List.first(Auth.fetch_assoc(user).teams)
       _ ->
         organization = List.last(Auth.fetch_assoc(user).organizations)
         Organizations.fetch_assoc(organization).teams
