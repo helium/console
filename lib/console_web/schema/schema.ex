@@ -48,12 +48,13 @@ defmodule ConsoleWeb.Schema do
   # creates 2 obects: :paginated_event and :paginated_events
   paginated object :event do
     field :id, :id
-    field :description, :string
     field :payload_size, :integer
-    field :rssi, :float
-    field :reported_at, :naive_datetime
+    field :rssi, :string
+    field :reported_at, :string
+    field :delivered_at, :string
     field :status, :string
-    field :direction, :string
+    field :channel_name, :string
+    field :hotspot_name, :string
   end
 
   paginated object :audit_trail do

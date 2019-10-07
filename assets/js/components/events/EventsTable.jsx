@@ -11,11 +11,23 @@ class EventsTable extends Component {
 
     const columns = [
       {
-        Header: 'Type',
-        accessor: 'description',
+        Header: 'ID',
+        accessor: 'id',
       },
       {
-        Header: 'size',
+        Header: 'Hotspot Name',
+        accessor: 'hotspot_name',
+      },
+      {
+        Header: 'Channel',
+        accessor: 'channel_name',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+      },
+      {
+        Header: 'Size',
         accessor: 'payload_size',
         Cell: props => <EventPayloadSize size={props.value} />
       },
@@ -24,14 +36,14 @@ class EventsTable extends Component {
         accessor: 'rssi',
       },
       {
-        Header: 'Time',
+        Header: 'Reported At',
         accessor: 'reported_at',
         Cell: props => <span> {formatDatetime(props.value)} </span>
       },
       {
-        Header: 'Cost',
-        accessor: 'dc',
-        Cell: props => <EventStatus status={props.value} />
+        Header: 'Delivered At',
+        accessor: 'delivered_at',
+        Cell: props => <span> {formatDatetime(props.value)} </span>
       },
     ]
 
