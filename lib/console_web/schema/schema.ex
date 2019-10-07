@@ -185,13 +185,6 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Teams.OrganizationResolver.all/2)
     end
 
-    @desc "Get recent events for a context (packet graph)"
-    field :recent_events, list_of(:event) do
-      arg :context_id, :string
-      arg :context_name, :string
-      resolve &Console.Events.EventResolver.recent/2
-    end
-
     @desc "Search for devices, gateways and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string

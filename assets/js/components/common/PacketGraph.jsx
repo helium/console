@@ -1,10 +1,5 @@
 import React, { Component } from 'react'
 import { Bubble } from 'react-chartjs-2'
-import { EVENTS_SUBSCRIPTION, EVENT_FRAGMENT } from '../../graphql/events'
-
-// GraphQL
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 
 class PacketGraph extends Component {
   constructor(props) {
@@ -32,8 +27,8 @@ class PacketGraph extends Component {
           offset: true,
           ticks: {
             beginAtZero: true,
-            min: 0,
-            max: 100
+            min: -120,
+            max: 0
           },
           scaleLabel: {
             display: true,
@@ -87,32 +82,14 @@ class PacketGraph extends Component {
     }
   }
 
-  componentDidMount() {
-    const { subscribeToMore } = this.props.data
-    const { contextId, contextName } = this.props
-
-    subscribeToMore({
-      document: EVENTS_SUBSCRIPTION,
-      variables: {contextId, contextName},
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-
-        const newEvent = subscriptionData.data.eventAdded
-        return Object.assign({}, prev, {
-          recentEvents: [newEvent, ...prev.recentEvents],
-        })
-      }
-    })
-  }
-
   componentDidUpdate(prevProps) {
-    const { recentEvents } = this.props.data
+    const { events } = this.props
 
-    if ((!prevProps.data.recentEvents && recentEvents) || (prevProps.data.recentEvents && recentEvents) && (prevProps.data.recentEvents.length !== recentEvents.length)) {
+    if (prevProps.events.length !== events.length) {
       clearInterval(this.chartUpdateInterval)
-      this.updateChart(recentEvents)
+      this.updateChart(events)
       this.chartUpdateInterval = setInterval(() => {
-        this.updateChart(recentEvents)
+        this.updateChart(events)
       }, 5000)
     }
   }
@@ -122,23 +99,23 @@ class PacketGraph extends Component {
   }
 
   updateChart(events) {
-    const inbound = []
-    const outbound = []
+    const success = []
+    const failure = []
     events.forEach(event => {
       const currentTime = Date.now() / 1000
-      const eventTime =  Date.parse(event.reported_at + 'Z') / 1000 //fix time issue here appending Z when backend is fixed
+      const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
       if ( timeDiff < 300 ) {
-        if (event.direction == 'inbound') {
-          inbound.push({
+        if (event.status == 'success') {
+          success.push({
             x: timeDiff,
-            y: event.rssi,
+            y: parseFloat(event.rssi),
             r: event.payload_size / 2
           })
-        } else if (event.direction == 'outbound') {
-          outbound.push({
+        } else if (event.status == 'failure') {
+          failure.push({
             x: timeDiff,
-            y: event.rssi,
+            y: parseFloat(event.rssi),
             r: event.payload_size / 2
           })
         }
@@ -149,14 +126,14 @@ class PacketGraph extends Component {
       data: {
         datasets: [
           {
-            label: 'Inbound',
-            data: inbound,
+            label: 'Success',
+            data: success,
             backgroundColor: 'rgba(33, 150, 243, 0.5)'
           },
           {
-            label: 'Outbound',
-            data: outbound,
-            backgroundColor: 'rgba(105, 240, 174, 0.6)'
+            label: 'Failure',
+            data: failure,
+            backgroundColor: 'rgba(255, 165, 0, 0.5)'
           }
         ]
       }
@@ -168,24 +145,4 @@ class PacketGraph extends Component {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      contextId: props.contextId,
-      contextName: props.contextName
-    }
-  })
-}
-
-const query = gql`
-  query RecentEventsQuery ($contextId: String, $contextName: String) {
-    recentEvents(contextId: $contextId, contextName: $contextName) {
-      ...EventFragment
-    }
-  }
-  ${EVENT_FRAGMENT}
-`
-
-const PacketGraphWithData = graphql(query, queryOptions)(PacketGraph)
-
-export default PacketGraphWithData
+export default PacketGraph

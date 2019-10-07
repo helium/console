@@ -3,13 +3,10 @@ import { Link } from 'react-router-dom'
 import pick from 'lodash/pick'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import EventsTable from '../events/EventsTable'
+import EventsDashboard from '../events/EventsDashboard'
 import SmallChip from '../common/SmallChip'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
-import GroupsControl from '../common/GroupsControl'
-import PacketGraph from '../common/PacketGraph'
-import userCan from '../../util/abilities'
 import UserCan from '../common/UserCan'
 import { setDeviceChannel } from '../../actions/device'
 import { DEVICE_FRAGMENT } from '../../graphql/devices'
@@ -120,39 +117,7 @@ class DeviceShow extends Component {
           </CardActions>
         </Card>
 
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Real Time Packets
-            </Typography>
-            <div className="chart-legend left">
-              <div className="chart-legend-bulb red"></div>
-              <Typography component="p">
-                Live Data
-              </Typography>
-            </div>
-            <div className="chart-legend right">
-              <div className="chart-legend-bulb blue"></div>
-              <Typography component="p">
-                From Device
-              </Typography>
-              <div className="chart-legend-bulb green"></div>
-              <Typography component="p">
-                To Device
-              </Typography>
-            </div>
-            <PacketGraph contextName="devices" contextId={device.id} />
-          </CardContent>
-        </Card>
-
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Event Log
-            </Typography>
-            <EventsTable contextName="devices" contextId={device.id} />
-          </CardContent>
-        </Card>
+        <EventsDashboard contextName="devices" contextId={device.id} />
       </DashboardLayout>
     )
   }
