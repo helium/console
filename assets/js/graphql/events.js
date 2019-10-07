@@ -20,18 +20,3 @@ export const EVENTS_SUBSCRIPTION = gql`
   }
   ${EVENT_FRAGMENT}
 `
-
-export const PAGINATED_EVENTS = gql`
-  query PaginatedEventsQuery ($contextId: String, $contextName: String, $page: Int, $pageSize: Int) {
-    events(contextId: $contextId, contextName: $contextName, page: $page, pageSize: $pageSize) {
-      entries {
-        ...EventFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-  ${EVENT_FRAGMENT}
-`

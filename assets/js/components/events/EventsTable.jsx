@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
-import { formatDatetime } from '../../util/time'
-import PaginatedTable from '../common/PaginatedTable'
-import { EVENTS_SUBSCRIPTION, PAGINATED_EVENTS } from '../../graphql/events'
+import { formatUnixDatetime } from '../../util/time'
+import merge from 'lodash/merge'
+import PaginatedTable, { PaginatedRow, PaginatedCell } from '../common/PaginatedTable'
+import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
+
+// GraphQL
+import { Subscription } from 'react-apollo';
 
 // MUI
+import Typography from '@material-ui/core/Typography';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 
 class EventsTable extends Component {
   render() {
-    const { contextId, contextName } = this.props
+    const { contextId, contextName, fetchPolicy } = this.props
 
     const columns = [
       {
@@ -38,36 +48,79 @@ class EventsTable extends Component {
       {
         Header: 'Reported At',
         accessor: 'reported_at',
-        Cell: props => <span> {formatDatetime(props.value)} </span>
+        Cell: props => <span> {formatUnixDatetime(props.value)} </span>
       },
       {
         Header: 'Delivered At',
         accessor: 'delivered_at',
-        Cell: props => <span> {formatDatetime(props.value)} </span>
+        Cell: props => <span> {formatUnixDatetime(props.value)} </span>
       },
     ]
 
+    return(
+      <Subscription variables={{ contextId, contextName }} subscription={EVENTS_SUBSCRIPTION} onSubscriptionData={data => {console.log(data)}}>
+        {({ data }) => (
+          <QueryResults
+            data={data}
+            columns={columns}
+          />
+        )}
+      </Subscription>
+    )
+  }
+}
+
+class QueryResults extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    const { data, columns } = this.props
+
+    if (!data) {
+      return (
+        <Typography component="p">
+          No events yet
+        </Typography>
+      )
+    }
+
     return (
-      <PaginatedTable
+      <ResultsTable
+        results={data.eventAdded}
         columns={columns}
-        query={PAGINATED_EVENTS}
-        subscription={EVENTS_SUBSCRIPTION}
-        variables={{ pageSize: 5, contextId, contextName }}
-        subscriptionVariables={{ contextId, contextName }}
       />
     )
   }
 }
 
-const EventStatus = (props) => {
-  switch(props.status) {
-    case "success":
-      return <span>OK</span>
-    case "error":
-      return <span>ERROR</span>
-    default:
-      return <span>{props.status}</span>
-  }
+const ResultsTable = (props) => {
+  const rows = [props.results]
+  const { columns} = props
+
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          {columns.map((column, i) =>
+            <TableCell
+              key={`header-${i}`}
+              numeric={column.numeric}
+              padding={column.padding}
+            >
+              {column.Header}
+            </TableCell>
+          )}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map(row =>
+          <PaginatedRow key={row.id} row={row} columns={columns} />
+        )}
+      </TableBody>
+    </Table>
+  )
 }
 
 const EventPayloadSize = (props) => {

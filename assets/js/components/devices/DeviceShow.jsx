@@ -123,15 +123,6 @@ class DeviceShow extends Component {
         <Card style={{marginTop: 24}}>
           <CardContent>
             <Typography variant="headline" component="h3">
-              Event Log
-            </Typography>
-            <EventsTable contextName="devices" contextId={device.id} />
-          </CardContent>
-        </Card>
-
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
               Real Time Packets
             </Typography>
             <div className="chart-legend left">
@@ -151,6 +142,15 @@ class DeviceShow extends Component {
               </Typography>
             </div>
             <PacketGraph contextName="devices" contextId={device.id} />
+          </CardContent>
+        </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            <Typography variant="headline" component="h3">
+              Event Log
+            </Typography>
+            <EventsTable contextName="devices" contextId={device.id} />
           </CardContent>
         </Card>
       </DashboardLayout>
