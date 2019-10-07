@@ -41,9 +41,6 @@ const query = gql`
           name
         }
       }
-      groups {
-        name
-      }
     }
   }
   ${CHANNEL_FRAGMENT}

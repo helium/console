@@ -30,9 +30,6 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :default, :boolean
     field :devices, list_of(:device)
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
   end
 
   paginated object :gateway do

@@ -8,9 +8,6 @@ defmodule Console.Channels.Channel do
   alias Console.Channels
   alias Console.Devices.Device
   alias Console.Devices.DevicesChannels
-  alias Console.Groups
-  alias Console.Groups.Group
-  alias Console.Groups.ChannelsGroups
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -24,9 +21,7 @@ defmodule Console.Channels.Channel do
     field :type_name, :string
 
     belongs_to :organization, Organization
-    has_many :events, Event, on_delete: :delete_all
     many_to_many :devices, Device, join_through: DevicesChannels, on_delete: :delete_all
-    many_to_many :groups, Group, join_through: ChannelsGroups, on_replace: :delete
 
     timestamps()
   end
@@ -80,13 +75,5 @@ defmodule Console.Channels.Channel do
     :crypto.strong_rand_bytes(length)
     |> Base.url_encode64
     |> binary_part(0, length)
-  end
-
-  defp parse_groups(changeset, attrs) do
-    (attrs["groups"] || "")
-    |> String.split(",")
-    |> Enum.map(&String.trim/1)
-    |> Enum.reject(& &1 == "")
-    |> Groups.insert_and_get_all_by_names(changeset.data.team_id)
   end
 end
