@@ -20,7 +20,6 @@ defmodule ConsoleWeb.DeviceView do
       team_id: device.team_id
     }
     |> append_events(device.events)
-    |> GroupView.append_group_names(device.groups)
   end
 
   defp append_events(json, events) do

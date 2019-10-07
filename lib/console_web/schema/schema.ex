@@ -14,9 +14,6 @@ defmodule ConsoleWeb.Schema do
     field :team, :team
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
   end
 
   paginated object :channel do
