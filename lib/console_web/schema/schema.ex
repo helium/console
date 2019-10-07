@@ -45,17 +45,6 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
-  # creates 2 obects: :paginated_event and :paginated_events
-  paginated object :event do
-    field :id, :id
-    field :description, :string
-    field :payload_size, :integer
-    field :rssi, :float
-    field :reported_at, :naive_datetime
-    field :status, :string
-    field :direction, :string
-  end
-
   paginated object :audit_trail do
     field :id, :id
     field :user_email, :string
@@ -97,6 +86,17 @@ defmodule ConsoleWeb.Schema do
     field :teams, list_of(:team) do
       resolve &Console.Teams.OrganizationResolver.get_teams/2
     end
+  end
+
+  object :event do
+    field :id, :id
+    field :payload_size, :integer
+    field :rssi, :string
+    field :reported_at, :string
+    field :delivered_at, :string
+    field :status, :string
+    field :channel_name, :string
+    field :hotspot_name, :string
   end
 
   object :group do
@@ -158,13 +158,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Channels.ChannelResolver.find/2
     end
 
-    @desc "Get paginated events"
-    paginated field :events, :paginated_events do
-      arg :context_id, :string
-      arg :context_name, :string
-      resolve &Console.Events.EventResolver.paginate/2
-    end
-
     @desc "Get paginated memberships"
     paginated field :memberships, :paginated_memberships do
       resolve(&Console.Teams.MembershipResolver.paginate/2)
@@ -190,13 +183,6 @@ defmodule ConsoleWeb.Schema do
     @desc "Get all organizations"
     field :organizations, list_of(:organization) do
       resolve(&Console.Teams.OrganizationResolver.all/2)
-    end
-
-    @desc "Get recent events for a context (packet graph)"
-    field :recent_events, list_of(:event) do
-      arg :context_id, :string
-      arg :context_name, :string
-      resolve &Console.Events.EventResolver.recent/2
     end
 
     @desc "Search for devices, gateways and channels"

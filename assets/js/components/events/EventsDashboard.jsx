@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { formatUnixDatetime } from '../../util/time'
 import merge from 'lodash/merge'
 import PaginatedTable, { PaginatedRow, PaginatedCell } from '../common/PaginatedTable'
+import PacketGraph from '../common/PacketGraph'
 import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
 
 // GraphQL
@@ -9,13 +10,15 @@ import { Subscription } from 'react-apollo';
 
 // MUI
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-class EventsTable extends Component {
+class EventsDashboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -77,10 +80,34 @@ class EventsTable extends Component {
         onSubscriptionData={({ subscriptionData }) => { this.addEvent(subscriptionData.data.eventAdded) }}
       >
         {({ data }) => (
-          <QueryResults
-            rows={this.state.rows}
-            columns={columns}
-          />
+          <React.Fragment>
+            <Card style={{marginTop: 24}}>
+              <CardContent>
+                <Typography variant="headline" component="h3">
+                  Real Time Packets
+                </Typography>
+                <div className="chart-legend left">
+                  <div className="chart-legend-bulb red"></div>
+                  <Typography component="p">
+                    Live Data
+                  </Typography>
+                </div>
+                <div className="chart-legend right" />
+                <PacketGraph events={this.state.rows} />
+              </CardContent>
+            </Card>
+            <Card style={{marginTop: 24}}>
+              <CardContent>
+                <Typography variant="headline" component="h3">
+                  Event Log
+                </Typography>
+                <QueryResults
+                  rows={this.state.rows}
+                  columns={columns}
+                />
+              </CardContent>
+            </Card>
+          </React.Fragment>
         )}
       </Subscription>
     )
@@ -140,4 +167,4 @@ const EventPayloadSize = (props) => {
   return <span>{props.size} bytes</span>
 }
 
-export default EventsTable
+export default EventsDashboard

@@ -157,7 +157,7 @@ const ResultsTable = (props) => {
   )
 }
 
-const PaginatedRow = (props) => {
+export const PaginatedRow = (props) => {
   const { row, columns } = props
   return (
     <TableRow>
@@ -168,7 +168,7 @@ const PaginatedRow = (props) => {
   )
 }
 
-const PaginatedCell = (props) => {
+export const PaginatedCell = (props) => {
   const { row, column } = props
   const { Cell } = column
   const value = row[column.accessor]

@@ -12,6 +12,19 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
+  def show_event(conn, %{"device_id" => device_id} = event) do
+    case Devices.get_device(device_id) do
+      nil ->
+        conn
+        |> send_resp(404, "")
+      %Device{} ->
+        event = for {key, val} <- event, into: %{}, do: {String.to_atom(key), val}
+        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+        conn
+        |> send_resp(200, "")
+    end
+  end
+
   defp show_device(conn, device) do
     device = device |> Devices.fetch_assoc([:channels])
     device =

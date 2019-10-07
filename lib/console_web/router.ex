@@ -67,7 +67,9 @@ defmodule ConsoleWeb.Router do
   scope "/api/router", ConsoleWeb.Router do
     pipe_through ConsoleWeb.RouterApiPipeline
 
-    resources "/devices", DeviceController, only: [:show]
+    resources "/devices", DeviceController, only: [:show] do
+      post "/event", DeviceController, :show_event, as: :show_device_event
+    end
     post "/gateways/register", GatewayController, :register
     post "/gateways/verify", GatewayController, :verify
   end
