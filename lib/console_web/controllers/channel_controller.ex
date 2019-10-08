@@ -45,6 +45,7 @@ defmodule ConsoleWeb.ChannelController do
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, channel_params) do
+      broadcast(channel, "update")
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
