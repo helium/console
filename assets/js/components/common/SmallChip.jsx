@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles'
 const styles = theme => ({
   chip: {
     textTransform: 'uppercase',
-    height: '24px',
+    height: '26px',
   },
   label: {
     fontSize: '0.7rem',

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
 import pick from 'lodash/pick'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
@@ -36,9 +37,6 @@ const query = gql`
       devices {
         name
         team_id
-        team {
-          name
-        }
       }
     }
   }
@@ -46,6 +44,7 @@ const query = gql`
 `
 
 @graphql(query, queryOptions)
+@connect(mapStateToProps, null)
 class ChannelShow extends Component {
   render() {
     const { loading, channel } = this.props.data
@@ -90,7 +89,7 @@ class ChannelShow extends Component {
               channel.devices.map(d => (
                 <React.Fragment key={d.name}>
                   <Typography component="p">
-                    {d.team.name}: {d.name}
+                    {this.props.teams[d.team_id].name}: {d.name}
                   </Typography>
                 </React.Fragment>
               ))
@@ -146,6 +145,12 @@ class ChannelShow extends Component {
         }
       </DashboardLayout>
     )
+  }
+}
+
+function mapStateToProps(state) {
+  return {
+    teams: state.entities.teams
   }
 }
 

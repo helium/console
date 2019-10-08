@@ -8,7 +8,7 @@ import SmallChip from '../common/SmallChip'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import { setDeviceChannel } from '../../actions/device'
+import { setDeviceChannel, deleteDeviceChannel } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_CHANNEL_SUBSCRIPTION } from '../../graphql/devices'
 
 // GraphQL
@@ -36,6 +36,7 @@ class DeviceShow extends Component {
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleAddChannel = this.handleAddChannel.bind(this);
+    this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +64,11 @@ class DeviceShow extends Component {
     const { device } = this.props.data
     this.props.setDeviceChannel(device.id, { id: channelSelected })
     this.setState({ channelSelected: "" })
+  }
+
+  handleDeleteChannel(channel_id) {
+    const { device } = this.props.data
+    this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
   render() {
@@ -118,7 +124,7 @@ class DeviceShow extends Component {
             <div style={{ marginTop: 10 }}>
               {
                 device.channels.map(c => (
-                  <SmallChip key={c.id} label={c.name} />
+                  <SmallChip key={c.id} label={c.name} onDelete={() => this.handleDeleteChannel(c.id)} style={{ marginRight: 5 }} />
                 ))
               }
             </div>
@@ -170,7 +176,7 @@ const query = gql`
 `
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ setDeviceChannel }, dispatch)
+  return bindActionCreators({ setDeviceChannel, deleteDeviceChannel }, dispatch)
 }
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)

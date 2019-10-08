@@ -61,4 +61,9 @@ defmodule Console.Devices do
       |> DevicesChannels.join_changeset(device, channel)
       |> Repo.insert()
   end
+
+  def delete_device_channel(%Device{} = device, channel_id) do
+    Repo.get_by(DevicesChannels, [device_id: device.id, channel_id: channel_id])
+    |> Repo.delete()
+  end
 end

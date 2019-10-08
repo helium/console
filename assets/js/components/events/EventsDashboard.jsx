@@ -24,12 +24,22 @@ class EventsDashboard extends Component {
     this.state = {
       rows: []
     }
+
+    this.addEvent = this.addEvent.bind(this)
   }
 
   addEvent(event) {
-    this.setState({
-      rows: [event].concat(this.state.rows)
-    })
+    const { rows } = this.state
+    if (rows.length > 100) {
+      truncated = rows.pop()
+      this.setState({
+        rows: [event].concat(truncated)
+      })
+    } else {
+      this.setState({
+        rows: [event].concat(rows)
+      })
+    }
   }
 
   render() {

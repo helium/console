@@ -83,6 +83,19 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def delete_channel(conn, %{"channel_id" => channel_id, "device_id" => id}) do
+    device = Devices.get_device!(id)
+    current_team = conn.assigns.current_team
+
+    with {:ok, %DevicesChannels{} = device_channel} <- Devices.delete_device_channel(device, channel_id) do
+      broadcast(device_channel, current_team)
+
+      conn
+      |> put_resp_header("message", "#{device.name} deleted channel successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   defp broadcast(%Device{} = device, current_organization,_) do
     device = Devices.fetch_assoc(device, [:team])
 
