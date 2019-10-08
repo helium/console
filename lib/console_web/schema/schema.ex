@@ -198,8 +198,8 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :device_added, :device do
-      config fn _, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/device_added"}
+      config fn _, %{context: %{ current_team_id: team_id, current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{team_id}/device_added"}
       end
     end
 

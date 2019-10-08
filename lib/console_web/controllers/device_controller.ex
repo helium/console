@@ -21,10 +21,11 @@ defmodule ConsoleWeb.DeviceController do
   def create(conn, %{"device" => device_params}) do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
+    current_organization = conn.assigns.current_organization
     device_params = Map.merge(device_params, %{"team_id" => current_team.id})
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
-      broadcast(device, "new")
+      broadcast(device, current_organization, "new")
 
       conn
       |> put_status(:created)
@@ -56,10 +57,11 @@ defmodule ConsoleWeb.DeviceController do
   def delete(conn, %{"id" => id}) do
     current_user = conn.assigns.current_user
     current_team = conn.assigns.current_team
+    current_organization = conn.assigns.current_organization
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
-      broadcast(device, "delete")
+      broadcast(device, current_organization, "delete")
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")
@@ -79,9 +81,9 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  defp broadcast(%Device{} = device, _) do
+  defp broadcast(%Device{} = device, current_organization,_) do
     device = Devices.fetch_assoc(device, [:team])
 
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.team.id}/device_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{current_organization.id}/#{device.team.id}/device_added")
   end
 end
