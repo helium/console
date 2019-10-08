@@ -203,6 +203,14 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :device_channel_added, :channel do
+      arg :device_id, :string
+
+      config fn args, %{context: %{ current_team_id: team_id }} ->
+        {:ok, topic: "#{team_id}/#{args.device_id}/device_channel_added"}
+      end
+    end
+
     field :gateway_added, :gateway do
       config fn _, %{context: %{ current_team_id: team_id }} ->
         {:ok, topic: "#{team_id}/gateway_added"}

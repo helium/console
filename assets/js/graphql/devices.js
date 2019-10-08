@@ -19,6 +19,15 @@ export const DEVICE_SUBSCRIPTION = gql`
   ${DEVICE_FRAGMENT}
 `
 
+export const DEVICE_CHANNEL_SUBSCRIPTION = gql`
+  subscription onDeviceChannelAdded($deviceId: String) {
+    deviceChannelAdded(deviceId: $deviceId) {
+      name,
+      id
+    }
+  }
+`
+
 export const PAGINATED_DEVICES = gql`
   query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
     devices(page: $page, pageSize: $pageSize) {

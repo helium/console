@@ -3,6 +3,7 @@ defmodule ConsoleWeb.DeviceController do
 
   alias Console.Devices
   alias Console.Channels
+  alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Devices.DevicesChannels
 
@@ -71,9 +72,10 @@ defmodule ConsoleWeb.DeviceController do
   def set_channel(conn, %{"channel" => %{"id" => channel_id}, "device_id" => id}) do
     device = Devices.get_device!(id)
     channel = Channels.get_channel!(channel_id)
+    current_team = conn.assigns.current_team
 
-    with {:ok, %DevicesChannels{}} <- Devices.set_device_channel(device, channel) do
-      # broadcast something
+    with {:ok, %DevicesChannels{} = device_channel} <- Devices.set_device_channel(device, channel) do
+      broadcast(device_channel, current_team)
 
       conn
       |> put_resp_header("message", "#{device.name} updated channel successfully")
@@ -85,5 +87,11 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.fetch_assoc(device, [:team])
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{current_organization.id}/#{device.team.id}/device_added")
+  end
+
+  defp broadcast(%DevicesChannels{} = device_channel, current_team) do
+    channel = Channels.get_channel!(device_channel.channel_id)
+
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, device_channel_added: "#{current_team.id}/#{device_channel.device_id}/device_channel_added")
   end
 end
