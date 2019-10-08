@@ -27,7 +27,7 @@ class PaginatedTable extends Component {
     const variables = merge({}, defaultVariables, this.props.variables)
 
     return(
-      <Query query={query} variables={variables} fetchPolicy={fetchPolicy || 'cache-first'}>
+      <Query query={query} variables={variables} fetchPolicy={fetchPolicy || 'cache-and-network'}>
         {({ loading, error, data, fetchMore, subscribeToMore }) => (
           <QueryResults
             loading={loading}

@@ -60,7 +60,7 @@ class OrganizationsTable extends Component {
     ]
 
     return (
-      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-first'}>
+      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'}>
         {({ loading, error, data, fetchMore, subscribeToMore }) => (
           <QueryResults
             loading={loading}

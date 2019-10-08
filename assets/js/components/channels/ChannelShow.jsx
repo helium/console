@@ -95,6 +95,16 @@ class ChannelShow extends Component {
                 </React.Fragment>
               ))
             }
+            {
+              channel.default && <Typography component="p">
+                Default Channel for New Devices
+              </Typography>
+            }
+            {
+              !channel.default && channel.devices.length === 0 && <Typography component="p">
+                0 Connected Devices
+              </Typography>
+            }
           </CardContent>
         </Card>
         {
