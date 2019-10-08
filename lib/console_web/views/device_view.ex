@@ -2,7 +2,6 @@ defmodule ConsoleWeb.DeviceView do
   use ConsoleWeb, :view
   alias ConsoleWeb.DeviceView
   alias ConsoleWeb.EventView
-  alias ConsoleWeb.GroupView
 
   def render("index.json", %{devices: devices}) do
     render_many(devices, DeviceView, "device.json")

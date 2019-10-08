@@ -93,11 +93,6 @@ defmodule ConsoleWeb.Schema do
     field :hotspot_name, :string
   end
 
-  object :group do
-    field :id, :id
-    field :name, :string
-  end
-
   object :team do
     field :id, :id
     field :name, :string

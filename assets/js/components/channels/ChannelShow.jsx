@@ -4,7 +4,6 @@ import pick from 'lodash/pick'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
-import GroupsControl from '../common/GroupsControl'
 import PacketGraph from '../common/PacketGraph'
 import { CHANNEL_FRAGMENT } from '../../graphql/channels'
 

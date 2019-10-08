@@ -4,10 +4,7 @@ defmodule Console.Devices.Device do
 
   alias Console.Teams.Team
   alias Console.Events.Event
-  alias Console.Groups
-  alias Console.Groups.Group
   alias Console.Channels.Channel
-  alias Console.Groups.DevicesGroups
   alias Console.Devices
   alias Console.Devices.DevicesChannels
 
