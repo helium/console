@@ -10,7 +10,7 @@ import { switchTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
+import { ALL_ORGANIZATIONS, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -61,13 +61,16 @@ class OrganizationsTable extends Component {
 
     return (
       <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-first'}>
-        {({ loading, error, data }) => (
+        {({ loading, error, data, fetchMore, subscribeToMore }) => (
           <QueryResults
             loading={loading}
             error={error}
             data={data}
             columns={columns}
+            fetchMore={fetchMore}
+            subscribeToMore={subscribeToMore}
             EmptyComponent={ props => <BlankSlate title="Loading..." /> }
+            subscription={TEAM_SUBSCRIPTION}
             {...this.props}
           />
         )}
@@ -78,6 +81,20 @@ class OrganizationsTable extends Component {
 
 
 class QueryResults extends Component {
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+  }
+
   render() {
     const { loading, error, data, EmptyComponent, columns, openTeamModal } = this.props
 

@@ -13,6 +13,16 @@ export const ORGANIZATION_FRAGMENT = gql`
   }
 `
 
+export const TEAM_SUBSCRIPTION = gql`
+  subscription onTeamAdded {
+    teamAdded {
+      id,
+      name,
+      inserted_at
+    }
+  }
+`
+
 export const ALL_ORGANIZATIONS = gql`
   query OrganizationsQuery {
     organizations {

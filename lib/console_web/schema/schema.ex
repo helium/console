@@ -182,6 +182,12 @@ defmodule ConsoleWeb.Schema do
   end
 
   subscription do
+    field :team_added, :team do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/team_added"}
+      end
+    end
+
     field :event_added, :event do
       arg :context_id, :string
       arg :context_name, :string

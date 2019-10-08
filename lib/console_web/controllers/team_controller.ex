@@ -27,6 +27,7 @@ defmodule ConsoleWeb.TeamController do
   def create(conn, %{"team" => team_attrs, "organization" => %{ "id" => id } }) do
     with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id),
       {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs, organization) do
+      broadcast(team, "create")
 
       conn
       |> put_status(:created)
@@ -41,5 +42,9 @@ defmodule ConsoleWeb.TeamController do
       jwt = Auth.generate_session_token(conn.assigns.current_user, current_organization, team)
       render(conn, "switch.json", jwt: jwt)
     end
+  end
+
+  defp broadcast(%Team{} = team, _) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, team, team_added: "#{team.organization_id}/team_added")
   end
 end
