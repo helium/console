@@ -26,17 +26,7 @@ defmodule ConsoleWeb.UserController do
   # Registration via signing up with org name
   def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha, "organization" => organization_params}) do
     with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} <- Auth.create_org_user(user_params, team_params, organization_params) do
-
-        conn
-        |> handle_created(user)
-    end
-  end
-
-  # Registration via signing up with just team name
-  def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha}) do
-    with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user, %Team{} = team} <- Auth.create_user(user_params, team_params) do
+      {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} <- Auth.create_user(user_params, team_params, organization_params) do
 
         conn
         |> handle_created(user)

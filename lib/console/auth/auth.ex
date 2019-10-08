@@ -10,8 +10,9 @@ defmodule Console.Auth do
   alias Console.Auth.TwoFactor
   alias Console.Teams.Invitation
   alias Console.Teams.Invitation
-  alias Console.Teams.Team
+  alias Console.Teams.Organization
   alias Console.Teams.Organizations
+  alias Console.Teams.Team
   alias Console.Helpers
 
   def get_user_by_id!(id) do
@@ -26,20 +27,7 @@ defmodule Console.Auth do
     end
   end
 
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-
-  def create_org_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
+  def create_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
     user_changeset =
       %User{}
       |> User.registration_changeset(user_attrs)
@@ -57,25 +45,6 @@ defmodule Console.Auth do
 
     case result do
       {:ok, %{user: user, team: team, organization: organization}} -> {:ok, user, team, organization}
-      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
-    end
-  end
-
-  def create_user(user_attrs \\ %{}, team_attrs \\ %{}) do
-    user_changeset =
-      %User{}
-      |> User.registration_changeset(user_attrs)
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:team, fn %{user: user} ->
-        Console.Teams.create_team(user, team_attrs)
-      end)
-      |> Repo.transaction()
-
-    case result do
-      {:ok, %{user: user, team: team}} -> {:ok, user, team}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
@@ -224,30 +193,23 @@ defmodule Console.Auth do
     :pot.valid_totp(code, secret2fa)
   end
 
-  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :teams, :organizations]) do
+  def fetch_assoc(%User{} = user, assoc \\ [:twofactor, :organizations]) do
     Repo.preload(user, assoc)
   end
 
-  def generate_session_token(user) do
-    current_team = List.last(fetch_assoc(user).teams)
-    generate_session_token(user, current_team)
-  end
-
-  def generate_session_token(%User{} = user, %Team{} = current_team) do
-    claims =
-      case current_team.organization_id do
-        nil -> %{team: current_team.id}
-        org_id ->
-          organization = Organizations.get_organization!(org_id)
-          %{team: current_team.id, organization: org_id, organization_name: organization.name}
-      end
+  def generate_session_token(%User{} = user, %Organization{} = current_organization) do
+    current_teams = Organizations.fetch_assoc(current_organization, [:teams]).teams
+    current_team = current_teams |> List.first()
+    claims = %{team: current_team.id, organization: current_organization.id, organization_name: current_organization.name}
 
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
     token
   end
 
-  def generate_session_token(%User{} = user, nil) do
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{}, ttl: { 1, :day })
+  def generate_session_token(%User{} = user, %Organization{} = current_organization, %Team{} = team) do
+    claims = %{team: team.id, organization: current_organization.id, organization_name: current_organization.name}
+
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
     token
   end
 

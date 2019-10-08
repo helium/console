@@ -2,7 +2,6 @@ defmodule ConsoleWeb.DeviceView do
   use ConsoleWeb, :view
   alias ConsoleWeb.DeviceView
   alias ConsoleWeb.EventView
-  alias ConsoleWeb.GroupView
 
   def render("index.json", %{devices: devices}) do
     render_many(devices, DeviceView, "device.json")
@@ -20,7 +19,6 @@ defmodule ConsoleWeb.DeviceView do
       team_id: device.team_id
     }
     |> append_events(device.events)
-    |> GroupView.append_group_names(device.groups)
   end
 
   defp append_events(json, events) do

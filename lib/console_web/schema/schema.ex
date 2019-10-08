@@ -14,9 +14,6 @@ defmodule ConsoleWeb.Schema do
     field :team, :team
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
   end
 
   paginated object :channel do
@@ -30,9 +27,6 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :default, :boolean
     field :devices, list_of(:device)
-    field :groups, list_of(:group) do
-      resolve &Console.Groups.GroupResolver.find/2
-    end
   end
 
   paginated object :gateway do
@@ -97,11 +91,6 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
     field :channel_name, :string
     field :hotspot_name, :string
-  end
-
-  object :group do
-    field :id, :id
-    field :name, :string
   end
 
   object :team do

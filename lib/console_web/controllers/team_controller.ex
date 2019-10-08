@@ -12,15 +12,10 @@ defmodule ConsoleWeb.TeamController do
 
   def index(conn, _params) do
     current_user = conn.assigns.current_user |> Console.Auth.fetch_assoc()
-    case current_user.organizations do
-      [] ->
-        render(conn, "index.json", teams: current_user.teams)
-      _ ->
-        teams = current_user.organizations
-          |> Enum.map(fn o -> Organizations.fetch_assoc(o).teams end)
-          |> List.flatten()
-        render(conn, "index.json", teams: teams)
-    end
+    teams = current_user.organizations
+      |> Enum.map(fn o -> Organizations.fetch_assoc(o).teams end)
+      |> List.flatten()
+    render(conn, "index.json", teams: teams)
   end
 
   def show(conn, %{"id" => id}) do
@@ -39,27 +34,12 @@ defmodule ConsoleWeb.TeamController do
     end
   end
 
-  def create(conn, %{"team" => team_attrs}) do
-    with {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs) do
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", team: team)
-    end
-  end
-
   def switch(conn, %{"team_id" => team_id}) do
     current_organization = Map.get(conn.assigns, :current_organization)
-    team =
-      case current_organization do
-        nil ->
-          Teams.get_team!(conn.assigns.current_user, team_id)
-        _ ->
-          { current_team, _ } = Organizations.get_organization_team(conn.assigns.current_user, team_id)
-          current_team
-      end
-
-    jwt = Auth.generate_session_token(conn.assigns.current_user, team)
-    render(conn, "switch.json", jwt: jwt)
+    team = Teams.get_team!(team_id)
+    with true <- team.organization_id == current_organization.id do
+      jwt = Auth.generate_session_token(conn.assigns.current_user, current_organization, team)
+      render(conn, "switch.json", jwt: jwt)
+    end
   end
 end

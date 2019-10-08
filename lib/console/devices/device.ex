@@ -4,10 +4,7 @@ defmodule Console.Devices.Device do
 
   alias Console.Teams.Team
   alias Console.Events.Event
-  alias Console.Groups
-  alias Console.Groups.Group
   alias Console.Channels.Channel
-  alias Console.Groups.DevicesGroups
   alias Console.Devices
   alias Console.Devices.DevicesChannels
 
@@ -24,15 +21,12 @@ defmodule Console.Devices.Device do
     belongs_to :team, Team
     has_many :events, Event, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: DevicesChannels, on_delete: :delete_all
-    many_to_many :groups, Group, join_through: DevicesGroups, on_replace: :delete
 
     timestamps()
   end
 
   @doc false
   def changeset(device, attrs) do
-    device = device |> Devices.fetch_assoc([:groups])
-
     changeset =
       device
       |> cast(attrs, [:name, :mac, :key, :team_id, :seq_id])

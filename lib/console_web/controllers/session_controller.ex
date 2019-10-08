@@ -3,7 +3,7 @@ defmodule ConsoleWeb.SessionController do
 
   alias Console.Auth
   alias Console.Auth.User
-  alias Console.Teams
+  alias Console.Teams.Organizations
   alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
@@ -11,8 +11,8 @@ defmodule ConsoleWeb.SessionController do
   def create(conn, %{"session" => session_params, "recaptcha" => recaptcha}) do
     with true <- Auth.verify_captcha(recaptcha),
          {:ok, %User{} = user} <- Auth.authenticate(session_params),
-         current_team <- Teams.current_team_for(user),
-         jwt <- Auth.generate_session_token(user, current_team) do
+         current_organization <- Organizations.current_organization_for(user),
+         jwt <- Auth.generate_session_token(user, current_organization) do
 
       if user.twofactor do
         conn

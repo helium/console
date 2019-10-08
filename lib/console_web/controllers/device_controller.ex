@@ -13,7 +13,7 @@ defmodule ConsoleWeb.DeviceController do
   def index(conn, _params) do
     current_team =
       conn.assigns.current_team
-      |> Console.Teams.fetch_assoc([devices: :groups])
+      |> Console.Teams.fetch_assoc([:devices])
 
     render(conn, "index.json", devices: current_team.devices)
   end
@@ -36,7 +36,7 @@ defmodule ConsoleWeb.DeviceController do
   def show(conn, %{"id" => id}) do
     device =
       Devices.get_device!(id)
-      |> Devices.fetch_assoc([:events, :groups])
+      |> Devices.fetch_assoc([:events])
     render(conn, "show.json", device: device)
   end
 

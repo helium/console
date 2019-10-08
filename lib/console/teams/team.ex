@@ -12,9 +12,6 @@ defmodule Console.Teams.Team do
     field :address, :binary
     field :address_b58, :string
 
-    has_many :memberships, Console.Teams.Membership, on_delete: :delete_all
-    many_to_many :users, Console.Auth.User, join_through: "memberships"
-    has_many :invitations, Console.Teams.Invitation, on_delete: :delete_all
     belongs_to :organization, Console.Teams.Organization
 
     has_many :devices, Console.Devices.Device, on_delete: :delete_all

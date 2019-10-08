@@ -141,9 +141,6 @@ const query = gql`
         name
         id
       }
-      groups {
-        name
-      }
     },
     organizationChannels {
       name,
