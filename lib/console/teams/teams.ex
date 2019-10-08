@@ -7,10 +7,6 @@ defmodule Console.Teams do
   alias Console.Repo
 
   alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
-  alias Console.Teams.Membership
-  alias Console.Teams.Invitation
   alias Console.Auth
   alias Console.Auth.User
 
