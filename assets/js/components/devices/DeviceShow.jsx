@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import pick from 'lodash/pick'
+import find from 'lodash/find'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
@@ -127,6 +128,11 @@ class DeviceShow extends Component {
                   <SmallChip key={c.id} label={c.name} onDelete={() => this.handleDeleteChannel(c.id)} style={{ marginRight: 5 }} />
                 ))
               }
+              {
+                device.channels.length === 0 && channels.length > 0 && (
+                  <SmallChip label={`Default: ${find(channels, c => c.default).name}`} />
+                )
+              }
             </div>
           </CardContent>
 
@@ -149,7 +155,8 @@ const queryOptions = {
   options: props => ({
     variables: {
       id: props.match.params.id
-    }
+    },
+    fetchPolicy: 'cache-and-network',
   })
 }
 
@@ -169,7 +176,8 @@ const query = gql`
       type,
       type_name,
       id,
-      active
+      active,
+      default
     }
   }
   ${DEVICE_FRAGMENT}
