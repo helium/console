@@ -32,6 +32,20 @@ class AzureForm extends Component {
   }
 
   render() {
+    return (
+      <Card style={{marginTop: 24}}>
+        <CardContent>
+          <Typography variant="headline">
+            Step 2
+          </Typography>
+
+          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+            Connection coming soon...
+          </Typography>
+        </CardContent>
+      </Card>
+    )
+    
     return(
       <Card style={{marginTop: 24}}>
         <CardContent>
