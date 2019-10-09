@@ -16,10 +16,10 @@ const styles = theme => ({
   createRow: {
     display: 'flex',
     marginTop: theme.spacing.unit,
-    flexWrap: 'wrap'
+    justifyContent: 'space-between'
   },
   button: {
-    width: '20%',
+    width: '19%',
     textTransform: 'none',
     textAlign: 'center',
     minWidth: 120
@@ -46,10 +46,10 @@ const channelTypes2 = [
 
 const channelTypes = [
   { name: "HTTP", link: "/channels/new/http", img: `url('${Http}')` },
-  { name: "Azure IoT - Coming Soon", link: "/channels/new/azure", img: `url('${Azure}')` },
-  { name: "AWS IoT - Coming Soon", link: "/channels/new/aws", img: `url('${Aws}')` },
-  { name: "Google IoT - Coming Soon", link: "/channels/new/google", img: `url('${Google}')` },
-  { name: "MQTT - Coming Soon", link: "/channels/new/mqtt", img: `url('${Mqtt}')` },
+  { name: "Azure IoT - Coming Soon", link: "/channels/new/azure", img: `url('${Azure}')`, inactive: true },
+  { name: "AWS IoT - Coming Soon", link: "/channels/new/aws", img: `url('${Aws}')`, inactive: true },
+  { name: "Google IoT - Coming Soon", link: "/channels/new/google", img: `url('${Google}')`, inactive: true },
+  { name: "MQTT - Coming Soon", link: "/channels/new/mqtt", img: `url('${Mqtt}')`, inactive: true },
 ]
 
 @withStyles(styles)
@@ -61,7 +61,7 @@ class ChannelCreateRow extends Component {
       <div className={classes.createRow}>
         {
           channelTypes.map(channel => (
-            <ButtonBase key={channel.name} component={Link} to={channel.link} className={classes.button}>
+            <ButtonBase key={channel.name} component={Link} to={channel.link} className={classes.button} style={{ backgroundColor: channel.inactive && '#CFCFCF' }}>
               <div className={classes.tile}>
                 <div className={classes.icon} style={{backgroundImage: channel.img}}></div>
                 <Typography component="p" style={{marginTop: 12}}>

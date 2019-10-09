@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { formatUnixDatetime } from '../../util/time'
+import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import merge from 'lodash/merge'
 import PaginatedTable, { PaginatedRow, PaginatedCell } from '../common/PaginatedTable'
 import PacketGraph from '../common/PacketGraph'
@@ -30,7 +30,8 @@ class EventsDashboard extends Component {
 
   addEvent(event) {
     const { rows } = this.state
-    if (rows.length > 100) {
+    const lastEvent = rows[rows.length - 1]
+    if (rows.length > 100 && getDiffInSeconds(lastEvent.reported_at) > 300) {
       truncated = rows.pop()
       this.setState({
         rows: [event].concat(truncated)
