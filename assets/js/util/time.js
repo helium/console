@@ -11,3 +11,7 @@ export const formatUnixDatetime = (datetime, format = 'LLL') => (
 export const formatDatetimeAgo = (datetime) => (
   moment.utc(datetime).utcOffset(moment().utcOffset()).fromNow()
 )
+
+export const getDiffInSeconds = (datetime) => (
+  moment().diff(moment.unix(datetime), 'seconds')
+)
