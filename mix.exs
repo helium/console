@@ -5,7 +5,7 @@ defmodule Console.Mixfile do
     [
       app: :console,
       version: "0.0.1",
-      elixir: "~> 1.7.4",
+      elixir: "~> 1.9.0",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
@@ -53,7 +53,7 @@ defmodule Console.Mixfile do
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_phoenix, "~> 1.4"},
-      {:libp2p, github: "helium/erlang-libp2p", branch: "master"}
+      {:libp2p_crypto, "1.0.1"}
     ]
   end
 
