@@ -27,10 +27,6 @@ class DevicesTable extends Component {
         Cell: props => <Link to={`/devices/${props.row.id}`}>{props.value}</Link>
       },
       {
-        Header: 'MAC',
-        accessor: 'mac'
-      },
-      {
         Header: 'Created',
         accessor: 'inserted_at',
         Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>

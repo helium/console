@@ -48,6 +48,7 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
+      broadcast("update", device, current_team)
 
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
@@ -106,5 +107,11 @@ defmodule ConsoleWeb.DeviceController do
     channel = Channels.get_channel!(device_channel.channel_id)
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, device_channel_added: "#{current_team.id}/#{device_channel.device_id}/device_channel_added")
+  end
+
+  defp broadcast("update" = update, %Device{} = device, current_team) do
+    channel = Devices.fetch_assoc(device, [:channels]).channels |> List.first()
+
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, device_channel_added: "#{current_team.id}/#{device.id}/device_channel_added")
   end
 end

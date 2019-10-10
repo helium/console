@@ -9,7 +9,7 @@ import SmallChip from '../common/SmallChip'
 import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import { setDeviceChannel, deleteDeviceChannel } from '../../actions/device'
+import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_CHANNEL_SUBSCRIPTION } from '../../graphql/devices'
 
 // GraphQL
@@ -17,6 +17,7 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 // MUI
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -33,11 +34,13 @@ class DeviceShow extends Component {
     super(props)
     this.state = {
       channelSelected: "",
+      newName: "",
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleAddChannel = this.handleAddChannel.bind(this);
     this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
+    this.handleDeviceUpdate = this.handleDeviceUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -72,8 +75,16 @@ class DeviceShow extends Component {
     this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
+  handleDeviceUpdate(id) {
+    const { newName } = this.state
+    if (newName !== "") {
+      this.props.updateDevice(id, { name: this.state.newName })
+      this.setState({ newName: "" })
+    }
+  }
+
   render() {
-    const { channelSelected } = this.state
+    const { channelSelected, newName } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -88,6 +99,21 @@ class DeviceShow extends Component {
             <Typography component="p">
               Name: {device.name}
             </Typography>
+            <div>
+              <TextField
+                name="newName"
+                value={this.state.newName}
+                onChange={this.handleInputUpdate}
+              />
+              <Button
+                size="small"
+                color="primary"
+                style={{ marginLeft: 5 }}
+                onClick={() => this.handleDeviceUpdate(device.id)}
+              >
+                Update
+              </Button>
+            </div>
             <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
               <Typography variant="caption">
                 {`const uint32_t oui = ${device.oui};`}
@@ -184,7 +210,7 @@ const query = gql`
 `
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ setDeviceChannel, deleteDeviceChannel }, dispatch)
+  return bindActionCreators({ setDeviceChannel, deleteDeviceChannel, updateDevice }, dispatch)
 }
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)

@@ -31,7 +31,7 @@ class EventsDashboard extends Component {
   addEvent(event) {
     const { rows } = this.state
     const lastEvent = rows[rows.length - 1]
-    if (rows.length > 100 && getDiffInSeconds(lastEvent.reported_at) > 300) {
+    if (rows.length > 100 && getDiffInSeconds(lastEvent.delivered_at) > 300) {
       truncated = rows.pop()
       this.setState({
         rows: [event].concat(truncated)
@@ -71,11 +71,6 @@ class EventsDashboard extends Component {
       {
         Header: 'RSSI',
         accessor: 'rssi',
-      },
-      {
-        Header: 'Reported At',
-        accessor: 'reported_at',
-        Cell: props => <span> {formatUnixDatetime(props.value)} </span>
       },
       {
         Header: 'Delivered At',
