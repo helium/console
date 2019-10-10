@@ -93,15 +93,17 @@ class TeamShow extends Component {
           />
         </Paper>
 
-        <Paper className={classes.paper}>
-          <header className={classes.header}>
-            <Typography variant="headline" component="h3">
-              Invitations
-            </Typography>
-          </header>
+        {
+          false && <Paper className={classes.paper}>
+            <header className={classes.header}>
+              <Typography variant="headline" component="h3">
+                Invitations
+              </Typography>
+            </header>
 
-          <InvitationsTable />
-        </Paper>
+            <InvitationsTable />
+          </Paper>
+        }
 
         <NewUserModal
           open={this.state.newUserOpen}

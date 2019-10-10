@@ -11,11 +11,17 @@ import BillingIcon from '@material-ui/icons/CreditCard';
 class Billing extends Component {
   render() {
     return (
-      <DashboardLayout title="Billing">
+      <DashboardLayout title="Data Credits">
         <Paper style={{textAlign: 'center', padding: '5em'}}>
           <BillingIcon style={{width: 80, height: 80, color: "#e0e0e0"}} />
-          <Typography variant="display1" style={{color: "#e0e0e0"}}>
-            Billing goes here
+          <Typography variant="subheading" style={{color: "#363636"}}>
+            Purchase Data Credits from Helium to send device data.
+          </Typography>
+          <Typography variant="subheading" style={{color: "#363636"}}>
+            The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC).
+          </Typography>
+          <Typography variant="subheading" style={{color: "#363636", marginTop: 20 }}>
+            During the Beta, the cost to send packets is 0 DC.
           </Typography>
         </Paper>
       </DashboardLayout>
