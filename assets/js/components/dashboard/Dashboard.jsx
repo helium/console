@@ -46,6 +46,12 @@ class Dashboard extends Component {
     return (
       <DashboardLayout title="Dashboard">
         <Paper className={classes.paper}>
+          <Typography variant="headline" component="h3">
+            All Organizations
+          </Typography>
+        </Paper>
+
+        <Paper className={classes.paper}>
           <OrganizationsTable openTeamModal={this.openTeamModal} />
         </Paper>
 

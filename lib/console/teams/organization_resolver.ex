@@ -2,11 +2,11 @@ defmodule Console.Teams.OrganizationResolver do
   alias Console.Repo
   alias Console.Teams.Membership
 
-  def all(_, %{context: %{current_user: current_user}}) do
-    organizations =
+  def find(%{id: id}, %{context: %{current_user: current_user}}) do
+    organization =
       Ecto.assoc(current_user, :organizations)
-      |> Repo.all()
-    {:ok, organizations}
+      |> Repo.get!(id)
+    {:ok, organization}
   end
 
   def get_teams(_, %{source: resource}) do

@@ -23,9 +23,9 @@ export const TEAM_SUBSCRIPTION = gql`
   }
 `
 
-export const ALL_ORGANIZATIONS = gql`
-  query OrganizationsQuery {
-    organizations {
+export const CURRENT_ORGANIZATION = gql`
+  query currentOrganizationQuery($Id: String) {
+    organization(Id: $Id) {
       ...OrganizationFragment
     }
   }

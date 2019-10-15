@@ -10,7 +10,7 @@ import { switchTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { ALL_ORGANIZATIONS, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
+import { CURRENT_ORGANIZATION, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -29,7 +29,7 @@ import SuccessChip from '../common/SuccessChip'
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationsTable extends Component {
   render() {
-    const { switchTeam, currentTeamId } = this.props
+    const { switchTeam, currentTeamId, currentOrganizationId } = this.props
     const columns = [
       {
         Header: 'Team',
@@ -60,8 +60,8 @@ class OrganizationsTable extends Component {
     ]
 
     return (
-      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'}>
-        {({ loading, error, data, fetchMore, subscribeToMore }) => (
+      <Query query={CURRENT_ORGANIZATION} fetchPolicy={'cache-and-network'} variables={{ Id: currentOrganizationId }}>
+        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
             error={error}
@@ -69,6 +69,7 @@ class OrganizationsTable extends Component {
             columns={columns}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
+            variables={variables}
             EmptyComponent={ props => <BlankSlate title="Loading..." /> }
             subscription={TEAM_SUBSCRIPTION}
             {...this.props}
@@ -82,10 +83,11 @@ class OrganizationsTable extends Component {
 
 class QueryResults extends Component {
   componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore } = this.props
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
 
     subscription && subscribeToMore({
       document: subscription,
+      variables,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         fetchMore({
@@ -112,6 +114,7 @@ class QueryResults extends Component {
         results={results}
         columns={columns}
         openTeamModal={openTeamModal}
+        {... this.props}
       />
     )
   }
@@ -125,48 +128,44 @@ const styles = {
 }
 
 const ResultsTable = (props) => {
-  const { columns, results: rows } = props
+  const { columns, results: organization, currentOrganizationName } = props
 
   return (
     <div>
-      {rows.map(r => (
-        <React.Fragment key={r.name}>
-          <header style={styles.header}>
-            <Typography variant="headline" component="h3">
-              Project: {r.name}
-            </Typography>
+      <header style={styles.header}>
+        <Typography variant="headline" component="h3">
+          All Teams in {currentOrganizationName}
+        </Typography>
 
-            <UserCan action="create">
-              <Button
-                color="primary"
-                onClick={() => props.openTeamModal(r.id, r.name)}
+        <UserCan action="create">
+          <Button
+            color="primary"
+            onClick={() => props.openTeamModal(organization.id, organization.name)}
+          >
+            New Team
+          </Button>
+        </UserCan>
+      </header>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {columns.map((column, i) =>
+              <TableCell
+                key={`header-${i}`}
+                numeric={column.numeric}
+                padding={column.padding}
               >
-                New Team
-              </Button>
-            </UserCan>
-          </header>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columns.map((column, i) =>
-                  <TableCell
-                    key={`header-${i}`}
-                    numeric={column.numeric}
-                    padding={column.padding}
-                  >
-                    {column.Header}
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {r.teams.map(t =>
-                <PaginatedRow key={t.id} row={t} columns={columns} />
-              )}
-            </TableBody>
-          </Table>
-        </React.Fragment>
-      ))}
+                {column.Header}
+              </TableCell>
+            )}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {organization.teams.map(t =>
+            <PaginatedRow key={t.id} row={t} columns={columns} />
+          )}
+        </TableBody>
+      </Table>
     </div>
   )
 }
@@ -202,7 +201,9 @@ const PaginatedCell = (props) => {
 
 function mapStateToProps(state) {
   return {
-    currentTeamId: state.auth.currentTeamId
+    currentTeamId: state.auth.currentTeamId,
+    currentOrganizationId: state.auth.currentOrganizationId,
+    currentOrganizationName: state.auth.currentOrganizationName
   }
 }
 
