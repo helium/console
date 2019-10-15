@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import OrganizationsTable from '../teams/OrganizationsTable'
+import OrganizationTeamsTable from '../teams/OrganizationTeamsTable'
 import NewTeamModal from '../teams/NewTeamModal'
 
 // MUI
@@ -46,13 +47,11 @@ class Dashboard extends Component {
     return (
       <DashboardLayout title="Dashboard">
         <Paper className={classes.paper}>
-          <Typography variant="headline" component="h3">
-            All Organizations
-          </Typography>
+          <OrganizationsTable />
         </Paper>
 
         <Paper className={classes.paper}>
-          <OrganizationsTable openTeamModal={this.openTeamModal} />
+          <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
         </Paper>
 
         <NewTeamModal

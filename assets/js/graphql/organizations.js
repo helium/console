@@ -31,3 +31,12 @@ export const CURRENT_ORGANIZATION = gql`
   }
   ${ORGANIZATION_FRAGMENT}
 `
+
+export const ALL_ORGANIZATIONS = gql`
+  query allOrganizationsQuery {
+    organizations {
+      ...OrganizationFragment
+    }
+  }
+  ${ORGANIZATION_FRAGMENT}
+`

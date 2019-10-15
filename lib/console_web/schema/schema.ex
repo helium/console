@@ -175,6 +175,11 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Teams.OrganizationResolver.find/2)
     end
 
+    @desc "Get all organizations"
+    field :organizations, list_of(:organization) do
+      resolve(&Console.Teams.OrganizationResolver.all/2)
+    end
+
     @desc "Search for devices, gateways and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string

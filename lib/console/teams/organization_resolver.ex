@@ -9,6 +9,13 @@ defmodule Console.Teams.OrganizationResolver do
     {:ok, organization}
   end
 
+  def all(_, %{context: %{current_user: current_user}}) do
+    organizations =
+      Ecto.assoc(current_user, :organizations)
+      |> Repo.all()
+    {:ok, organizations}
+  end
+
   def get_teams(_, %{source: resource}) do
     teams =
       Ecto.assoc(resource, :teams)
