@@ -169,6 +169,12 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Notifications.NotificationResolver.paginate/2)
     end
 
+    @desc "Get a single organization"
+    field :organization, :organization do
+      arg :id, non_null(:id)
+      resolve(&Console.Teams.OrganizationResolver.find/2)
+    end
+
     @desc "Get all organizations"
     field :organizations, list_of(:organization) do
       resolve(&Console.Teams.OrganizationResolver.all/2)

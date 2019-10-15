@@ -61,6 +61,32 @@ export const createTeamUnderOrg = (orgId, name) => {
   }
 }
 
+export const createOrganization = (name, teamName) => {
+  return (dispatch) => {
+    rest.post('/api/teams', {
+        organization: {
+          name
+        },
+        team: {
+          name: teamName
+        }
+      })
+      .then(response => {
+        dispatch(receivedTeam(response.data))
+      })
+  }
+}
+
+export const switchOrganization = (id) => {
+  return (dispatch) => {
+    rest.post(`/api/teams/${id}/switch_org`)
+      .then(response => {
+        dispatch(switchedTeam(response.data.jwt))
+        window.location.reload(true)
+      })
+  }
+}
+
 export const createTeam = (name, afterSwitchPath) => {
   return (dispatch) => {
     rest.post('/api/teams', {

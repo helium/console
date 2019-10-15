@@ -56,7 +56,7 @@ defmodule Console.Teams.Team do
   defp put_keys(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
-        {private_key, public_key} = generate_keypair()
+        {public_key, private_key} = generate_keypair()
         address = public_key_to_address(public_key)
         address_b58 = public_key_to_b58(public_key)
 
@@ -70,7 +70,8 @@ defmodule Console.Teams.Team do
   end
 
   defp generate_keypair() do
-    {private_key, public_key} = :libp2p_crypto.generate_keys(:ed25519)
+    %{public: public_key, secret: private_key} = :libp2p_crypto.generate_keys(:ed25519)
+    {public_key, private_key}
   end
 
   defp public_key_to_address(public_key) do

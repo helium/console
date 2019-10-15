@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
+import random from 'lodash/random'
 import find from 'lodash/find'
-import { switchOrganization } from '../../actions/team'
+import get from 'lodash/get'
+import merge from 'lodash/merge'
+import { switchTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
+import { CURRENT_ORGANIZATION, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -20,14 +23,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
+import SmallChip from '../common/SmallChip'
+import SuccessChip from '../common/SuccessChip'
 
 @connect(mapStateToProps, mapDispatchToProps)
-class OrganizationsTable extends Component {
+class OrganizationTeamsTable extends Component {
   render() {
-    const { currentOrganizationId, switchOrganization } = this.props
+    const { switchTeam, currentTeamId, currentOrganizationId } = this.props
     const columns = [
       {
-        Header: 'Organization',
+        Header: 'Team',
         accessor: 'name'
       },
       {
@@ -40,10 +45,10 @@ class OrganizationsTable extends Component {
         numeric: true,
         Cell: props => <span>
           {
-            currentOrganizationId !== props.row.id && (
+            currentTeamId !== props.row.id && (
               <Button
                 color="primary"
-                onClick={() => switchOrganization(props.row.id)}
+                onClick={() => switchTeam(props.row.id)}
                 size="small"
               >
                 VIEW
@@ -55,14 +60,18 @@ class OrganizationsTable extends Component {
     ]
 
     return (
-      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'}>
-        {({ loading, error, data }) => (
+      <Query query={CURRENT_ORGANIZATION} fetchPolicy={'cache-and-network'} variables={{ Id: currentOrganizationId }}>
+        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
             error={error}
             data={data}
             columns={columns}
+            fetchMore={fetchMore}
+            subscribeToMore={subscribeToMore}
+            variables={variables}
             EmptyComponent={ props => <BlankSlate title="Loading..." /> }
+            subscription={TEAM_SUBSCRIPTION}
             {...this.props}
           />
         )}
@@ -73,8 +82,23 @@ class OrganizationsTable extends Component {
 
 
 class QueryResults extends Component {
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+  }
+
   render() {
-    const { loading, error, data, EmptyComponent, columns, openOrganizationModal } = this.props
+    const { loading, error, data, EmptyComponent, columns, openTeamModal } = this.props
 
     if (loading) return null;
     if (error) return `Error!: ${error}`;
@@ -89,8 +113,8 @@ class QueryResults extends Component {
       <ResultsTable
         results={results}
         columns={columns}
-        openTeamModal={openOrganizationModal}
-        {...this.props}
+        openTeamModal={openTeamModal}
+        {... this.props}
       />
     )
   }
@@ -104,21 +128,21 @@ const styles = {
 }
 
 const ResultsTable = (props) => {
-  const { columns, results: organizations } = props
+  const { columns, results: organization, currentOrganizationName } = props
 
   return (
     <div>
       <header style={styles.header}>
         <Typography variant="headline" component="h3">
-          All Organizations
+          All Teams in {currentOrganizationName}
         </Typography>
 
         <UserCan action="create">
           <Button
             color="primary"
-            onClick={props.openOrganizationModal}
+            onClick={() => props.openTeamModal(organization.id, organization.name)}
           >
-            New Organization
+            New Team
           </Button>
         </UserCan>
       </header>
@@ -137,7 +161,7 @@ const ResultsTable = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {organizations.map(t =>
+          {organization.teams.map(t =>
             <PaginatedRow key={t.id} row={t} columns={columns} />
           )}
         </TableBody>
@@ -177,12 +201,14 @@ const PaginatedCell = (props) => {
 
 function mapStateToProps(state) {
   return {
+    currentTeamId: state.auth.currentTeamId,
     currentOrganizationId: state.auth.currentOrganizationId,
+    currentOrganizationName: state.auth.currentOrganizationName
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ switchOrganization }, dispatch);
+  return bindActionCreators({ switchTeam }, dispatch);
 }
 
-export default OrganizationsTable
+export default OrganizationTeamsTable

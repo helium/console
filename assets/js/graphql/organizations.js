@@ -23,8 +23,17 @@ export const TEAM_SUBSCRIPTION = gql`
   }
 `
 
+export const CURRENT_ORGANIZATION = gql`
+  query currentOrganizationQuery($Id: String) {
+    organization(Id: $Id) {
+      ...OrganizationFragment
+    }
+  }
+  ${ORGANIZATION_FRAGMENT}
+`
+
 export const ALL_ORGANIZATIONS = gql`
-  query OrganizationsQuery {
+  query allOrganizationsQuery {
     organizations {
       ...OrganizationFragment
     }

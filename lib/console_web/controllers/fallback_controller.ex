@@ -24,6 +24,12 @@ defmodule ConsoleWeb.FallbackController do
     |> render(ConsoleWeb.ErrorView, "error.json", error: error)
   end
 
+  def call(conn, {:error, :unprocessable_entity, error}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> render(ConsoleWeb.ErrorView, "error.json", error: error)
+  end
+
   def call(conn, {:error, :unauthorized, error}) do
     conn
     |> put_status(:unauthorized)

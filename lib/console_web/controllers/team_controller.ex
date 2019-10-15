@@ -35,8 +35,30 @@ defmodule ConsoleWeb.TeamController do
     end
   end
 
+  def create(conn, %{"team" => team_attrs, "organization" => %{ "name" => organization_name } }) do
+    case team_attrs["name"] do
+      "" ->
+        {:error, :unprocessable_entity, "Team Name is required"}
+      _ ->
+        with {:ok, %Organization{} = organization} <- Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }),
+          {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs, organization) do
+
+          conn
+          |> put_status(:created)
+          |> render("show.json", team: team)
+        end
+    end
+  end
+
+  def switch_org(conn, %{"team_id" => id}) do
+    with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id) do
+      jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
+      render(conn, "switch.json", jwt: jwt)
+    end
+  end
+
   def switch(conn, %{"team_id" => team_id}) do
-    current_organization = Map.get(conn.assigns, :current_organization)
+    current_organization = conn.assigns.current_organization
     team = Teams.get_team!(team_id)
     with true <- team.organization_id == current_organization.id do
       jwt = Auth.generate_session_token(conn.assigns.current_user, current_organization, team)
