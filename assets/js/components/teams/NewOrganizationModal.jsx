@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { createTeamUnderOrg } from '../../actions/team'
+import { createOrganization } from '../../actions/team'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +47,7 @@ class NewOrganizationModal extends Component {
     e.preventDefault();
     const { name, teamName } = this.state;
 
-    // this.props.createTeamUnderOrg(organizationId, name);
+    this.props.createOrganization(name, teamName)
 
     this.props.onClose()
   }
@@ -105,7 +105,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createTeamUnderOrg }, dispatch)
+  return bindActionCreators({ createOrganization }, dispatch)
 }
 
 export default NewOrganizationModal

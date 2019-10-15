@@ -61,6 +61,20 @@ export const createTeamUnderOrg = (orgId, name) => {
   }
 }
 
+export const createOrganization = (name, teamName) => {
+  return (dispatch) => {
+    rest.post('/api/teams', {
+        organization: {
+          name
+        },
+        team: {
+          name: teamName
+        }
+      })
+      .then(() => {})
+  }
+}
+
 export const createTeam = (name, afterSwitchPath) => {
   return (dispatch) => {
     rest.post('/api/teams', {
