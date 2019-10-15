@@ -11,6 +11,7 @@ defmodule Console.Auth.User do
     field :confirmation_token, :string
     field :confirmed_at, :naive_datetime
     field :last_2fa_skipped_at, :naive_datetime
+    field :super, :boolean
 
     has_one :twofactor, Console.Auth.TwoFactor
     has_many :memberships, Console.Teams.Membership
