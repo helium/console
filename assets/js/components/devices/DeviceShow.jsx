@@ -10,7 +10,7 @@ import RandomEventButton from '../events/RandomEventButton'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
-import { DEVICE_FRAGMENT, DEVICE_CHANNEL_SUBSCRIPTION } from '../../graphql/devices'
+import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -48,7 +48,7 @@ class DeviceShow extends Component {
     const deviceId = this.props.match.params.id
 
     subscribeToMore({
-      document: DEVICE_CHANNEL_SUBSCRIPTION,
+      document: DEVICE_UPDATE_SUBSCRIPTION,
       variables: { deviceId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev

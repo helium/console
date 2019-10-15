@@ -209,11 +209,11 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
-    field :device_channel_added, :channel do
+    field :device_updated, :device do
       arg :device_id, :string
 
       config fn args, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/#{args.device_id}/device_channel_added"}
+        {:ok, topic: "#{team_id}/#{args.device_id}/device_updated"}
       end
     end
 

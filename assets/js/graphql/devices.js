@@ -19,11 +19,11 @@ export const DEVICE_SUBSCRIPTION = gql`
   ${DEVICE_FRAGMENT}
 `
 
-export const DEVICE_CHANNEL_SUBSCRIPTION = gql`
-  subscription onDeviceChannelAdded($deviceId: String) {
-    deviceChannelAdded(deviceId: $deviceId) {
+export const DEVICE_UPDATE_SUBSCRIPTION = gql`
+  subscription onDeviceUpdated($deviceId: String) {
+    deviceUpdated(deviceId: $deviceId) {
       name,
-      id
+      seq_id
     }
   }
 `
