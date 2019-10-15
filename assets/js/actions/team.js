@@ -71,7 +71,19 @@ export const createOrganization = (name, teamName) => {
           name: teamName
         }
       })
-      .then(() => {})
+      .then(response => {
+        dispatch(receivedTeam(response.data))
+      })
+  }
+}
+
+export const switchOrganization = (id) => {
+  return (dispatch) => {
+    rest.post(`/api/teams/${id}/switch_org`)
+      .then(response => {
+        dispatch(switchedTeam(response.data.jwt))
+        window.location.reload(true)
+      })
   }
 }
 

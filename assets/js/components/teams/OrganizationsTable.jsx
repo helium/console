@@ -3,11 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import find from 'lodash/find'
-import { switchTeam } from '../../actions/team'
+import { switchOrganization } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
+import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationsTable extends Component {
   render() {
-    const { currentOrganizationId } = this.props
+    const { currentOrganizationId, switchOrganization } = this.props
     const columns = [
       {
         Header: 'Organization',
@@ -43,7 +43,7 @@ class OrganizationsTable extends Component {
             currentOrganizationId !== props.row.id && (
               <Button
                 color="primary"
-                onClick={() => {}}
+                onClick={() => switchOrganization(props.row.id)}
                 size="small"
               >
                 VIEW
@@ -56,16 +56,13 @@ class OrganizationsTable extends Component {
 
     return (
       <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'}>
-        {({ loading, error, data, fetchMore, subscribeToMore }) => (
+        {({ loading, error, data }) => (
           <QueryResults
             loading={loading}
             error={error}
             data={data}
             columns={columns}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
             EmptyComponent={ props => <BlankSlate title="Loading..." /> }
-            subscription={ORGANIZATION_SUBSCRIPTION}
             {...this.props}
           />
         )}
@@ -76,20 +73,6 @@ class OrganizationsTable extends Component {
 
 
 class QueryResults extends Component {
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
-    })
-  }
-
   render() {
     const { loading, error, data, EmptyComponent, columns, openOrganizationModal } = this.props
 
@@ -199,7 +182,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ switchTeam }, dispatch);
+  return bindActionCreators({ switchOrganization }, dispatch);
 }
 
 export default OrganizationsTable
