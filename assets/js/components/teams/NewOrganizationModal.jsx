@@ -26,12 +26,13 @@ const styles = theme => ({
 
 @withStyles(styles)
 @connect(mapStateToProps, mapDispatchToProps)
-class NewTeamModal extends Component {
+class NewOrganizationModal extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      name: ""
+      name: "",
+      teamName: "",
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -44,16 +45,15 @@ class NewTeamModal extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { name } = this.state;
-    const { organizationId } = this.props
+    const { name, teamName } = this.state;
 
-    this.props.createTeamUnderOrg(organizationId, name);
+    // this.props.createTeamUnderOrg(organizationId, name);
 
     this.props.onClose()
   }
 
   render() {
-    const { open, onClose, classes, organizationName } = this.props
+    const { open, onClose, classes } = this.props
 
     return (
       <Modal
@@ -62,18 +62,23 @@ class NewTeamModal extends Component {
       >
         <Paper className={classes.paper}>
           <Typography variant="title">
-            Organization: {organizationName}
-          </Typography>
-
-          <Typography variant="subheading">
-            Create a new team
+            Create a new organization and team
           </Typography>
 
           <form onSubmit={this.handleSubmit}>
             <TextField
-              label="New Team Name"
+              label="New Organization Name"
               name="name"
               value={this.state.name}
+              onChange={this.handleInputUpdate}
+              className={classes.input}
+              fullWidth
+            />
+
+            <TextField
+              label="New Team in Organization"
+              name="teamName"
+              value={this.state.teamName}
               onChange={this.handleInputUpdate}
               className={classes.input}
               fullWidth
@@ -86,7 +91,7 @@ class NewTeamModal extends Component {
               size="large"
               className={classes.formButton}
             >
-              Create Team
+              Create Organization
             </Button>
           </form>
         </Paper>
@@ -96,12 +101,11 @@ class NewTeamModal extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-  }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createTeamUnderOrg }, dispatch)
 }
 
-export default NewTeamModal
+export default NewOrganizationModal

@@ -107,6 +107,7 @@ class QueryResults extends Component {
         results={results}
         columns={columns}
         openTeamModal={openOrganizationModal}
+        {...this.props}
       />
     )
   }
@@ -132,7 +133,7 @@ const ResultsTable = (props) => {
         <UserCan action="create">
           <Button
             color="primary"
-            onClick={() => props.openOrganizationModal(organization.id, organization.name)}
+            onClick={props.openOrganizationModal}
           >
             New Organization
           </Button>
