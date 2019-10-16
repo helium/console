@@ -129,22 +129,11 @@ class TeamShow extends Component {
       </Paper>
     )
 
-    const tabs = [{
-      label: "Access View",
-      content: accessView,
-      path: "/teams/access",
-    }]
-
     return (
       <div>
-        <UserCannot action="view" itemType="auditTrails">
-          <DashboardLayout title="Team Access">
-            {accessView}
-          </DashboardLayout>
-        </UserCannot>
-        <UserCan action="view" itemType="auditTrails">
-          <DashboardLayout title="Team Access" tabs={tabs} />
-        </UserCan>
+        <DashboardLayout title="Team Access">
+          {accessView}
+        </DashboardLayout>
       </div>
     )
   }
