@@ -12,6 +12,8 @@ import { withStyles } from '@material-ui/core/styles'
 const styles = theme => ({
   paper: {
     margin: 'auto',
+    marginTop: '10%',
+    width: '50%',
     padding: theme.spacing.unit * 4,
     width: 700,
   },

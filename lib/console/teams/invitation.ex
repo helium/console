@@ -9,7 +9,6 @@ defmodule Console.Teams.Invitation do
     field :role, :string
     field :token, :string
     field :pending, :boolean, default: true
-    belongs_to :team, Console.Teams.Team
     belongs_to :inviter, Console.Auth.User
     belongs_to :organization, Console.Teams.Organization
 
@@ -19,8 +18,8 @@ defmodule Console.Teams.Invitation do
   @doc false
   def changeset(invitation, attrs \\ %{}) do
     invitation
-    |> cast(attrs, [:email, :role, :team_id, :inviter_id])
-    |> validate_required([:team_id])
+    |> cast(attrs, [:email, :role, :organization_id, :inviter_id])
+    |> validate_required([:organization_id])
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")

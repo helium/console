@@ -31,14 +31,6 @@ defmodule Console.Email do
     |> render(:invitation_email)
   end
 
-  def joined_team_email(%Membership{user: %User{email: email}, team: %Team{name: team_name}}) do
-    base_email()
-    |> to(email)
-    |> subject("You've been added to the #{team_name} team on Helium")
-    |> assign(:team_name, team_name)
-    |> render(:joined_team_email)
-  end
-
   def joined_organization_email(%Membership{user: %User{email: email}, organization: %Organization{name: organization_name}}) do
     base_email()
     |> to(email)

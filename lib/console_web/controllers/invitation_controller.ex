@@ -14,87 +14,54 @@ defmodule ConsoleWeb.InvitationController do
   action_fallback(ConsoleWeb.FallbackController)
 
   def index(conn, _params) do
-    current_team = conn.assigns.current_team |> Teams.fetch_assoc([:invitations])
-    render(conn, "index.json", invitations: current_team.invitations)
+    current_organization = conn.assigns.current_organization |> Organizations.fetch_assoc([:invitations])
+    render(conn, "index.json", invitations: current_organization.invitations)
   end
 
   def create(conn, %{"invitation" => attrs}) do
     current_user = conn.assigns.current_user
-    current_team = conn.assigns.current_team
-    current_organization = conn.assigns.current_organization
+    organization = Organizations.get_organization!(attrs["organization"])
 
     case current_user.email != attrs["email"] and Auth.user_exists?(attrs["email"]) do
       {true, existing_user} ->
-        cond do
-          attrs["organization"] == "" and attrs["team"] == "" ->
-            with {:ok, %Membership{} = membership} <-
-                   Teams.join_team(existing_user, current_team, attrs["role"]) do
-              membership = membership |> Teams.fetch_assoc_membership()
-              Email.joined_team_email(membership) |> Mailer.deliver_later()
-              ConsoleWeb.MembershipController.broadcast(membership, "new")
 
-              conn
-              |> put_status(:created)
-              |> put_resp_header("message", "User added to team")
-              |> put_view(ConsoleWeb.MembershipView)
-              |> render("show.json", membership: membership)
-            end
-          attrs["organization"] == "" ->
-            team = Teams.get_team!(attrs["team"])
-            with {:ok, %Membership{} = membership} <-
-                   Teams.join_team(existing_user, team, attrs["role"]) do
-              membership = membership |> Teams.fetch_assoc_membership()
-              Email.joined_team_email(membership) |> Mailer.deliver_later()
-              ConsoleWeb.MembershipController.broadcast(membership, "new")
+        with {:ok, %Membership{} = membership} <-
+               Organizations.join_organization(existing_user, organization, attrs["role"]) do
+          membership = membership |> Organizations.fetch_assoc_membership()
+          Email.joined_organization_email(membership) |> Mailer.deliver_later()
+          ConsoleWeb.MembershipController.broadcast(membership, "new")
 
-              conn
-              |> put_status(:created)
-              |> put_resp_header("message", "User added to team")
-              |> put_view(ConsoleWeb.MembershipView)
-              |> render("show.json", membership: membership)
-            end
-          attrs["team"] == "" ->
-            organization = Organizations.get_organization!(attrs["organization"])
-            with {:ok, %Membership{} = membership} <-
-                   Organizations.join_organization(existing_user, organization, attrs["role"]) do
-              membership = membership |> Teams.fetch_assoc_membership()
-              Email.joined_organization_email(membership) |> Mailer.deliver_later()
-              ConsoleWeb.MembershipController.broadcast(membership, "new")
-
-              conn
-              |> put_status(:created)
-              |> put_resp_header("message", "User added to team")
-              |> put_view(ConsoleWeb.MembershipView)
-              |> render("show.json", membership: membership)
-            end
+          conn
+          |> put_status(:created)
+          |> put_resp_header("message", "User added to team")
+          |> put_view(ConsoleWeb.MembershipView)
+          |> render("show.json", membership: membership)
         end
-
-
       false ->
-        # with {:ok, %Invitation{} = invitation} <-
-        #        Teams.create_invitation(current_user, current_team, attrs) do
-        #   Email.invitation_email(invitation) |> Mailer.deliver_later()
-        #   broadcast(invitation, "new")
-        #
-        #   conn
-        #   |> put_status(:created)
-        #   |> put_resp_header("message", "Invitation sent")
-        #   |> render("show.json", invitation: invitation)
-        # end
+        with {:ok, %Invitation{} = invitation} <-
+               Organizations.create_invitation(current_user, organization, attrs) do
+          Email.invitation_email(invitation) |> Mailer.deliver_later()
+          broadcast(invitation, "new")
+
+          conn
+          |> put_status(:created)
+          |> put_resp_header("message", "Invitation sent")
+          |> render("show.json", invitation: invitation)
+        end
     end
   end
 
   def accept(conn, %{"token" => token}) do
-    with {true, %Invitation{} = inv} <- Teams.valid_invitation_token?(token) do
-      inv = Teams.fetch_assoc_invitation(inv)
-      team = inv.team
-      team_name = URI.encode(team.name)
+    with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
+      inv = Organizations.fetch_assoc_invitation(inv)
+      organization = inv.organization
+      organization_name = URI.encode(organization.name)
       inviter = inv.inviter
       inviter_email = URI.encode(inviter.email)
 
       conn
       |> redirect(
-        to: "/register?invitation=#{token}&team_name=#{team_name}&inviter=#{inviter_email}"
+        to: "/register?invitation=#{token}&organization_name=#{organization_name}&inviter=#{inviter_email}"
       )
     else
       {false, _} ->
@@ -106,12 +73,10 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
-    current_team = conn.assigns.current_team
-    invitation = Teams.get_invitation!(id)
+    invitation = Organizations.get_invitation!(id)
 
     if invitation.pending do
-      with {:ok, %Invitation{}} <- Teams.delete_invitation(invitation) do
+      with {:ok, %Invitation{}} <- Organizations.delete_invitation(invitation) do
         broadcast(invitation, "delete")
 
         conn
@@ -124,8 +89,8 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def broadcast(%Invitation{} = invitation, _) do
-    invitation = invitation |> Teams.fetch_assoc_invitation()
+    invitation = invitation |> Organizations.fetch_assoc_invitation()
 
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_added: "#{invitation.team.id}/invitation_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_added: "#{invitation.organization.id}/invitation_added")
   end
 end

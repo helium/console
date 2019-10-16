@@ -20,6 +20,8 @@ import { withStyles } from '@material-ui/core/styles'
 const styles = theme => ({
   paper: {
     margin: 'auto',
+    marginTop: '10%',
+    width: '50%',
     padding: theme.spacing.unit * 4,
     width: 700,
   },
@@ -47,12 +49,10 @@ class NewUserModal extends Component {
     this.state = {
       email: "",
       organization: "",
-      team: "",
       role: "viewer"
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleTeamUpdate = this.handleTeamUpdate.bind(this);
     this.handleOrganizationUpdate = this.handleOrganizationUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -62,20 +62,16 @@ class NewUserModal extends Component {
   }
 
   handleOrganizationUpdate(e) {
-    this.setState({ organization: e.target.value, team: "" })
-  }
-
-  handleTeamUpdate(e) {
-    this.setState({ team: e.target.value, organization: "" })
+    this.setState({ organization: e.target.value })
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, role, organization, team } = this.state;
+    const { email, role, organization } = this.state;
 
-    this.props.inviteUser({ email, role, organization, team });
+    this.props.inviteUser({ email, role, organization });
 
-    this.setState({ email: '', organization: '', team: '' })
+    this.setState({ email: '', organization: '' })
 
     this.props.onClose()
   }
@@ -98,6 +94,20 @@ class NewUserModal extends Component {
           </Typography>
 
           <form onSubmit={this.handleSubmit}>
+            <FormControl>
+              <InputLabel htmlFor="select">Invite to Organization</InputLabel>
+              <Select
+                value={this.state.organization}
+                onChange={this.handleOrganizationUpdate}
+                inputProps={{
+                  name: 'organization',
+                }}
+                style={{ width: 200 }}
+              >
+                <MenuItem value={organization.id} key={organization.id}>{organization.name}</MenuItem>
+              </Select>
+            </FormControl>
+
             <TextField
               label="Email"
               name="email"
@@ -105,45 +115,8 @@ class NewUserModal extends Component {
               onChange={this.handleInputUpdate}
               className={classes.input}
               placeholder="alice@example.com"
-              autoFocus
               fullWidth
             />
-
-            {
-              organization.id && teams.length > 0 && (
-                <React.Fragment>
-                <FormControl>
-                  <InputLabel htmlFor="select">Invite to Organization</InputLabel>
-                  <Select
-                    value={this.state.organization}
-                    onChange={this.handleOrganizationUpdate}
-                    inputProps={{
-                      name: 'organization',
-                    }}
-                    style={{ width: 200 }}
-                  >
-                    <MenuItem value={organization.id} key={organization.id}>{organization.name}</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <FormControl>
-                  <InputLabel htmlFor="select" style={{ marginLeft: 20 }}>Invite to Team Only</InputLabel>
-                  <Select
-                    value={this.state.team}
-                    onChange={this.handleTeamUpdate}
-                    inputProps={{
-                      name: 'team',
-                    }}
-                    style={{ width: 200, marginLeft: 20 }}
-                  >
-                    {teams.map((t) => (
-                      <MenuItem value={t.id} key={t.id}>{t.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                </React.Fragment>
-              )
-            }
 
             <RoleControl
               value={this.state.role}
