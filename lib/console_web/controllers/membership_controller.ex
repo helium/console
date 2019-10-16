@@ -41,7 +41,6 @@ defmodule ConsoleWeb.MembershipController do
   end
 
   def broadcast(%Membership{} = membership, _) do
-    membership = membership |> Organizations.fetch_assoc_membership()
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_added: "#{membership.organization.id}/membership_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_updated: "#{membership.organization_id}/membership_updated")
   end
 end

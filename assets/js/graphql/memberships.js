@@ -26,8 +26,8 @@ export const PAGINATED_MEMBERSHIPS = gql`
 `
 
 export const MEMBERSHIP_SUBSCRIPTION = gql`
-  subscription onMembershipAdded {
-    membershipAdded {
+  subscription onMembershipUpdated {
+    membershipUpdated {
       ...MembershipFragment
     }
   }

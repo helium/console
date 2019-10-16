@@ -24,8 +24,8 @@ export const PAGINATED_INVITATIONS = gql`
   ${INVITATION_FRAGMENT}
 `
 export const INVITATION_SUBSCRIPTION = gql`
-  subscription onInvitationAdded {
-    invitationAdded {
+  subscription onInvitationUpdated {
+    invitationUpdated {
       ...InvitationFragment
     }
   }

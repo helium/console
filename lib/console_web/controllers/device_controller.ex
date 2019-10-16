@@ -30,7 +30,7 @@ defmodule ConsoleWeb.DeviceController do
 
       conn
       |> put_status(:created)
-      |> put_resp_header("location", device_path(conn, :show, device))
+      |> put_resp_header("message",  "#{device.name} created successfully")
       |> render("show.json", device: device)
     end
   end

@@ -50,7 +50,7 @@ defmodule Console.Auth do
   end
 
   def create_user_via_invitation(%Invitation{} = inv, user_attrs \\ %{}) do
-    team = Console.Teams.get_team!(inv.team_id)
+    organization = Organizations.get_organization!(inv.organization_id)
 
     user_changeset =
       %User{}
@@ -60,8 +60,8 @@ defmodule Console.Auth do
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
       |> Ecto.Multi.run(:invitation, fn %{user: user} ->
-        Console.Teams.join_team(user, team, inv.role)
-        Console.Teams.mark_invitation_used(inv)
+        Organizations.join_organization(user, organization, inv.role)
+        Organizations.mark_invitation_used(inv)
       end)
       |> Repo.transaction()
 

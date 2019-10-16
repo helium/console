@@ -62,8 +62,8 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.updateScrollPosition, true)
     this.props.fetchUser()
+    window.addEventListener('scroll', this.updateScrollPosition, true)
   }
 
   componentWillUnmount() {

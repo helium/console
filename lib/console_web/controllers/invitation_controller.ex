@@ -91,6 +91,6 @@ defmodule ConsoleWeb.InvitationController do
   def broadcast(%Invitation{} = invitation, _) do
     invitation = invitation |> Organizations.fetch_assoc_invitation()
 
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_added: "#{invitation.organization.id}/invitation_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_updated: "#{invitation.organization_id}/invitation_updated")
   end
 end

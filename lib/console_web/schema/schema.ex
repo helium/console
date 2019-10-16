@@ -229,15 +229,15 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
-    field :membership_added, :membership do
-      config fn _, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/membership_added"}
+    field :membership_updated, :membership do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/membership_updated"}
       end
     end
 
-    field :invitation_added, :invitation do
-      config fn _, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/invitation_added"}
+    field :invitation_updated, :invitation do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/invitation_updated"}
       end
     end
 

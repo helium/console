@@ -36,16 +36,13 @@ defmodule ConsoleWeb.UserController do
   # Registration via accepting invitation to team
   def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
     with true <- Auth.verify_captcha(recaptcha),
-      {true, invitation} <- Teams.valid_invitation_token?(invitation_token),
+      {true, invitation} <- Organizations.valid_invitation_token?(invitation_token),
       {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
-        inviter = Auth.get_user_by_id!(invitation.inviter_id)
-        team = Teams.get_team!(invitation.team_id)
+        organization = Organizations.get_organization!(invitation.organization_id)
 
-        # notify clients that the invitation has been used
-        Teams.get_invitation!(invitation.id)
+        Organizations.get_invitation!(invitation.id)
         |> ConsoleWeb.InvitationController.broadcast("update")
 
-        # notify clients of the new membership
         user = user |> Auth.fetch_assoc([:memberships])
         List.last(user.memberships)
         |> ConsoleWeb.MembershipController.broadcast("new")
