@@ -13,6 +13,8 @@ import TermsRaw from './TermsRaw.jsx';
 const styles = theme => ({
   card: {
     marginBottom: theme.spacing.unit * 4,
+    marginLeft: '15%',
+    marginRight: '15%',
   },
   terms: {
     boxShadow: 'inset 0 0 10px #9E9E9E',

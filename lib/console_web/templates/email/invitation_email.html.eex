@@ -1,6 +1,6 @@
 <p>
-  You've been invited to collaborate on a team at Helium.
+  You've been invited to collaborate on an organization at Helium.
   <a href="<%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %>">
-    Click here to join the team
+    Click here to join the organization
   </a>.
 </p>

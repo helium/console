@@ -10,7 +10,7 @@ defmodule Console.Email do
   def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()
     |> to(email)
-    |> subject("Your Sign In Link")
+    |> subject("Confirm your Helium Console account")
     |> assign(:token, token)
     |> render(:confirm_email)
   end
@@ -18,7 +18,7 @@ defmodule Console.Email do
   def password_reset_email(%User{email: email}, token) do
     base_email()
     |> to(email)
-    |> subject("Your Password Reset Link")
+    |> subject("Your Helium Password Reset Link")
     |> assign(:token, token)
     |> render(:reset_password)
   end
@@ -34,7 +34,7 @@ defmodule Console.Email do
   def joined_organization_email(%Membership{user: %User{email: email}, organization: %Organization{name: organization_name}}) do
     base_email()
     |> to(email)
-    |> subject("You've been added to the #{organization_name} team on Helium")
+    |> subject("You've been added to #{organization_name} on Helium")
     |> assign(:organization_name, organization_name)
     |> render(:joined_organization_email)
   end
@@ -43,8 +43,8 @@ defmodule Console.Email do
     # This will use the "email.html.eex" file as a layout when rendering html emails.
     # Plain text emails will not use a layout unless you use `put_text_layout`
     new_email()
-    |> from("Helium <dashboard@helium.com>")
-    |> put_header("Reply-To", "dashboard@helium.com")
+    |> from("Helium <console@helium.com>")
+    |> put_header("Reply-To", "console@helium.com")
     |> put_html_layout({ConsoleWeb.LayoutView, "email.html"})
   end
 end

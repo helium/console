@@ -33,9 +33,6 @@ class ConfirmEmailPrompt extends Component {
             <Typography component="p">
               Please check your inbox for a confirmation email
             </Typography>
-            <Typography component="p">
-              In Development: Visit <a href="/sent_emails">/sent_emails</a> to see the email
-            </Typography>
           </CardContent>
         </Card>
       </AuthLayout>

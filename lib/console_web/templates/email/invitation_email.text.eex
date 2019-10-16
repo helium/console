@@ -1,2 +1,2 @@
-You've been invited to collaborate on a team at Helium.
-Visit <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %> to join the team
+You've been invited to collaborate on an organization at Helium.
+Visit <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %> to join the organization
