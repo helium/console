@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -9,7 +9,7 @@ import { routerReducer, routerMiddleware } from 'react-router-redux';
 import reducers from '../reducers';
 
 // Create a history of your choosing (we're using a browser history in this case)
-export const history = createHistory();
+export const history = createBrowserHistory();
 
 // Build the middleware for intercepting and dispatching navigation actions
 // TODO: if ENV is dev, use logger, else do not use

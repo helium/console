@@ -12,9 +12,16 @@ defmodule ConsoleWeb.TeamController do
 
   def index(conn, _params) do
     current_user = conn.assigns.current_user |> Console.Auth.fetch_assoc()
-    teams = current_user.organizations
-      |> Enum.map(fn o -> Organizations.fetch_assoc(o).teams end)
-      |> List.flatten()
+    teams =
+      case current_user.super do
+        true ->
+          Teams.list_teams()
+        _ ->
+          teams = current_user.organizations
+            |> Enum.map(fn o -> Organizations.fetch_assoc(o).teams end)
+            |> List.flatten()
+      end
+
     render(conn, "index.json", teams: teams)
   end
 
