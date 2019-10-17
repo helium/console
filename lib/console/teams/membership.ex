@@ -24,9 +24,9 @@ defmodule Console.Teams.Membership do
   def changeset(membership, attrs) do
     membership
     |> cast(attrs, [:role, :user_id, :organization_id])
-    |> validate_required([:role, :user_id])
+    |> validate_required([:role, :user_id, :organization_id])
     |> validate_inclusion(:role, ~w(admin developer analyst viewer))
-    |> unique_constraint(:unique_member, name: :memberships_user_id_team_id_index, message: "That email is already part of this team")
+    |> unique_constraint(:unique_member, name: :memberships_user_id_organization_id_index, message: "That email is already part of this organization")
   end
 
   def join_org_changeset(membership, user, organization, role \\ "admin") do

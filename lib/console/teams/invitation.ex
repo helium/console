@@ -19,11 +19,11 @@ defmodule Console.Teams.Invitation do
   def changeset(invitation, attrs \\ %{}) do
     invitation
     |> cast(attrs, [:email, :role, :organization_id, :inviter_id])
-    |> validate_required([:organization_id])
+    |> validate_required([:organization_id, :inviter_id])
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")
-    |> unique_constraint(:email, name: :invitations_email_team_id_index, message: "That email has already been invited to this team")
+    |> unique_constraint(:email, name: :invitations_email_organization_id_index, message: "That email has already been invited to this organization")
   end
 
   def create_changeset(invitation, attrs) do
