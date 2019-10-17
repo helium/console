@@ -24,14 +24,18 @@ const HttpDetails = (props) => {
         <Typography component="p">
           Endpoint: {channel.endpoint}
         </Typography>
-        <Typography component="div">
-          {"Inbound: "}
-          <TextField
-            value={`https://router.helium.com/http/${channel.inbound_token}`}
-            readOnly
-            style={{width: 400}}
-          />
-        </Typography>
+        {
+          false && (
+            <Typography component="div">
+              {"Inbound: "}
+              <TextField
+                value={`https://router.helium.com/http/${channel.inbound_token}`}
+                readOnly
+                style={{width: 400}}
+              />
+            </Typography>
+          )
+        }
       </CardContent>
     </Card>
   )
