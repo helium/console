@@ -86,6 +86,7 @@ class DeviceShow extends Component {
   render() {
     const { channelSelected, newName } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
+    console.log(loading, device, channels)
 
     if (loading) return <DashboardLayout />
 
