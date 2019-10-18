@@ -86,9 +86,10 @@ class DeviceShow extends Component {
   render() {
     const { channelSelected, newName } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
-    console.log(loading, device, channels)
 
     if (loading) return <DashboardLayout />
+
+    const defaultChannel = find(channels, c => c.default)
 
     return(
       <DashboardLayout title={device.name}>
@@ -156,8 +157,8 @@ class DeviceShow extends Component {
                 ))
               }
               {
-                device.channels.length === 0 && channels.length > 0 && (
-                  <SmallChip label={`Default: ${find(channels, c => c.default).name}`} />
+                device.channels.length === 0 && channels.length > 0 && defaultChannel && (
+                  <SmallChip label={`Default: ${defaultChannel.name}`} />
                 )
               }
             </div>
