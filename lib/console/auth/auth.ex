@@ -252,7 +252,7 @@ defmodule Console.Auth do
   end
 
   defp verify_password(password, pw_hash) do
-    Comeonin.Bcrypt.checkpw(password, pw_hash)
+    Bcrypt.verify_pass(password, pw_hash)
   end
 
   defp mark_email_confirmed(user) do
@@ -279,7 +279,7 @@ defmodule Console.Auth do
 
   defp verify_backup_code(code, backupCodes) do
     Enum.reduce(backupCodes, {false, "not found"}, fn(hash, acc) ->
-      if Comeonin.Bcrypt.checkpw(code, hash) do
+      if Bcrypt.verify_pass(code, hash) do
         {true, hash}
       else
         acc
