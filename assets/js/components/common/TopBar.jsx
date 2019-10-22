@@ -108,9 +108,6 @@ class TopBar extends Component {
 
           <div style={{flex: 1}} />
 
-          <SearchBar />
-          <NotificationsBar />
-
           <div>
             <IconButton onClick={this.openAccountMenu} color="inherit">
               <AccountCircle />

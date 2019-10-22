@@ -7,6 +7,7 @@ defmodule Console.DevicesTest do
 
   describe "devices" do
     alias Console.Devices.Device
+    alias Console.Devices.DevicesChannels
 
     @valid_attrs %{"mac" => "some mac", "name" => "some name"}
     @update_attrs %{"mac" => "some updated mac", "name" => "some updated name"}
@@ -62,6 +63,27 @@ defmodule Console.DevicesTest do
       device = device_fixture()
       assert {:ok, %Device{}} = Devices.delete_device(device)
       assert_raise Ecto.NoResultsError, fn -> Devices.get_device!(device.id) end
+    end
+
+    test "set_device_channel/2 sets a channel on the device" do
+      device = device_fixture()
+      channel = insert(:channel)
+      assert {:ok, %DevicesChannels{} = dc} = Devices.set_device_channel(device, channel)
+      assert dc.device_id == device.id
+      assert dc.channel_id == channel.id
+      device = Devices.fetch_assoc(device)
+      assert List.first(device.channels).id == channel.id
+    end
+
+    test "delete_device_channel/2 deletes a channel on the device" do
+      device = device_fixture()
+      channel = insert(:channel)
+      assert {:ok, %DevicesChannels{} = dc} = Devices.set_device_channel(device, channel)
+      assert dc.device_id == device.id
+      assert dc.channel_id == channel.id
+      assert {:ok, %DevicesChannels{}} = Devices.delete_device_channel(device, channel.id)
+      device = Devices.fetch_assoc(device)
+      assert device.channels == []
     end
   end
 end

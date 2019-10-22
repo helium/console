@@ -46,6 +46,15 @@ defmodule Console.ChannelsTest do
       assert channel.organization_id == organization.id
     end
 
+    test "create_channel/1 first channel is default" do
+      organization = insert(:organization)
+      attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
+      assert channel.default == true
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
+      assert channel.default == false
+    end
+
     test "create_channel/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Channels.create_channel(@invalid_attrs)
     end
@@ -58,6 +67,20 @@ defmodule Console.ChannelsTest do
       assert channel.credentials == @updated_creds
       assert channel.name == "some updated name"
       assert channel.type == "mqtt"
+    end
+
+    test "update_channel/2 changes default channel if default provided" do
+      organization = insert(:organization)
+      attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
+      assert {:ok, %Channel{} = channel1} = Channels.create_channel(attrs)
+      assert {:ok, %Channel{} = channel2} = Channels.create_channel(attrs)
+      assert channel1.default == true
+      assert channel2.default == false
+      assert {:ok, %Channel{}} = Channels.update_channel(channel2, %{ "default" => true })
+      updated_channel1 = Channels.get_channel!(channel1.id)
+      updated_channel2 = Channels.get_channel!(channel2.id)
+      assert updated_channel1.default == false
+      assert updated_channel2.default == true
     end
 
     test "update_channel/2 with invalid data returns error changeset" do
