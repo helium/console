@@ -40,6 +40,7 @@ defmodule Console.Channels do
           |> Channel.update_changeset(%{ "default" => false })
           |> Repo.update()
         end
+      _ -> nil    
     end
 
     channel

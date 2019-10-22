@@ -3,6 +3,7 @@ defmodule Console.TeamsTest do
 
   alias Console.Teams
   alias Console.Teams.Team
+  alias Console.Teams.Organizations
   alias Console.Teams.Invitation
 
   import Console.Factory
@@ -11,29 +12,20 @@ defmodule Console.TeamsTest do
   describe "teams" do
     test "create_team/2 with valid data creates a team" do
       user = insert(:user)
+      organization = insert(:organization)
       attrs = params_for(:team)
-      assert {:ok, %Team{} = team} = Teams.create_team(user, attrs)
+      assert {:ok, %Team{} = team} = Teams.create_team(user, attrs, organization)
       assert team.name == attrs.name
 
-      team = Teams.fetch_assoc(team)
-      assert List.first(team.users).id == user.id
+      organization = Organizations.fetch_assoc(organization)
+      assert List.first(organization.teams).name == attrs.name
     end
 
     test "create_user/2 with invalid data returns error changeset" do
       user = insert(:user)
-      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{})
-      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{name: "s"})
-    end
-  end
-
-  describe "invitations" do
-    test "create_invitation/3 with valid data creates an invitation" do
-      user = insert(:user)
-      team = insert(:team)
-      attrs = %{"email" => "test@example.com", "role" => "admin"}
-      assert {:ok, %Invitation{} = invitation} = Teams.create_invitation(user, team, attrs)
-      invitation = invitation |> Teams.fetch_assoc_invitation()
-      assert invitation.inviter.email == user.email
+      organization = insert(:organization)
+      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{}, organization)
+      assert {:error, %Ecto.Changeset{}} = Teams.create_team(user, %{name: "s"}, organization)
     end
   end
 end

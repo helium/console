@@ -6,6 +6,7 @@ defmodule Console.Factory do
   alias Console.Devices.Device
   alias Console.Events.Event
   alias Console.Teams.Team
+  alias Console.Teams.Organization
   alias Console.Teams.Invitation
   alias Console.Gateways.Gateway
 
@@ -70,6 +71,12 @@ defmodule Console.Factory do
   def team_factory do
     %Team{
       name: sequence(:name, &"Team #{&1}")
+    }
+  end
+
+  def organization_factory do
+    %Organization{
+      name: sequence(:name, &"Organization #{&1}")
     }
   end
 

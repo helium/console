@@ -42,7 +42,7 @@ defmodule Console.Teams do
     end
   end
 
-  def fetch_assoc(%Team{} = team, assoc \\ [:devices, :gateways, :channels]) do
+  def fetch_assoc(%Team{} = team, assoc \\ [:devices]) do
     Repo.preload(team, assoc)
   end
 
