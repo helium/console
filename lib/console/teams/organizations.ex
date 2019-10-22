@@ -69,7 +69,7 @@ defmodule Console.Teams.Organizations do
       %Organization{}
       |> Organization.create_changeset(attrs)
 
-    membership_fn = fn %{organization: organization} ->
+    membership_fn = fn _repo, %{organization: organization} ->
       %Membership{}
       |> Membership.join_org_changeset(user, organization)
       |> Repo.insert()

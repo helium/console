@@ -19,7 +19,7 @@ defmodule Console.Auth.TwoFactor do
     |> cast(attrs, [:secret, :user_id])
     |> put_change(:backup_codes, attrs.codes)
     |> put_change(:encryption_version, Cloak.version)
-    |> put_change(:last_verified, NaiveDateTime.utc_now())
+    |> put_change(:last_verified, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
     |> validate_required([:secret, :user_id, :backup_codes, :last_verified])
   end
 
@@ -33,7 +33,7 @@ defmodule Console.Auth.TwoFactor do
   def update_last_verification_changeset(twoFactor, attrs \\ %{}) do
     twoFactor
     |> cast(attrs, [:secret, :user_id])
-    |> put_change(:last_verified, NaiveDateTime.utc_now())
+    |> put_change(:last_verified, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
     |> validate_required([:secret, :user_id, :backup_codes, :last_verified])
   end
 end

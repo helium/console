@@ -33,7 +33,7 @@ defmodule Console.Auth.User do
   def registration_changeset(user, attrs \\ :empty) do
     user
     |> changeset(attrs)
-    |> cast(attrs, ~w(password))
+    |> cast(attrs, [:password])
     |> validate_required(:password, message: "Password needs to not be blank")
     |> validate_length(:password, min: 6, message: "Password needs to be 6 characters minimum")
     |> validate_confirmation(:password, message: "Password and password confirmation do not match")
@@ -44,13 +44,13 @@ defmodule Console.Auth.User do
   def confirm_email_changeset(user) do
     user
     |> changeset()
-    |> put_change(:confirmed_at, NaiveDateTime.utc_now())
+    |> put_change(:confirmed_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
     |> put_change(:confirmation_token, "Verified")
   end
 
   def change_password_changeset(user, attrs) do
     user
-    |> cast(attrs, ~w(password))
+    |> cast(attrs, [:password])
     |> validate_required(:password, message: "Password needs to not be blank")
     |> validate_length(:password, min: 6, message: "Password needs to be 6 characters minimum")
     |> validate_confirmation(:password, message: "Password and password confirmation do not match")
@@ -66,13 +66,13 @@ defmodule Console.Auth.User do
   def update_2fa_last_skipped_changeset(user) do
     user
     |> changeset()
-    |> put_change(:last_2fa_skipped_at, NaiveDateTime.utc_now())
+    |> put_change(:last_2fa_skipped_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
   end
 
   defp put_password_hash(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
-        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
+        put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(pass))
       _ -> changeset
     end
   end

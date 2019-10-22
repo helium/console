@@ -35,10 +35,10 @@ defmodule Console.Auth do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:organization, fn %{user: user} ->
+      |> Ecto.Multi.run(:organization, fn _repo, %{user: user} ->
         Console.Teams.Organizations.create_organization(user, organization_attrs)
       end)
-      |> Ecto.Multi.run(:team, fn %{user: user, organization: organization} ->
+      |> Ecto.Multi.run(:team, fn _repo, %{user: user, organization: organization} ->
         Console.Teams.create_team(user, team_attrs, organization)
       end)
       |> Repo.transaction()
@@ -59,7 +59,7 @@ defmodule Console.Auth do
     result =
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:invitation, fn %{user: user} ->
+      |> Ecto.Multi.run(:invitation, fn _repo, %{user: user} ->
         Organizations.join_organization(user, organization, inv.role)
         Organizations.mark_invitation_used(inv)
       end)
@@ -274,7 +274,7 @@ defmodule Console.Auth do
   end
 
   defp hash_backup_codes(codes) do
-    Enum.map(codes, fn(code) -> Comeonin.Bcrypt.hashpwsalt(code) end)
+    Enum.map(codes, fn(code) -> Bcrypt.hash_pwd_salt(code) end)
   end
 
   defp verify_backup_code(code, backupCodes) do

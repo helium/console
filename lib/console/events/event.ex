@@ -50,7 +50,7 @@ defmodule Console.Events.Event do
     if Map.has_key?(changeset.changes, :reported_at) do
       changeset
     else
-      put_change(changeset, :reported_at, NaiveDateTime.utc_now())
+      put_change(changeset, :reported_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
     end
   end
 end
