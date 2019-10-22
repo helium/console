@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import throttle from 'lodash/throttle'
 import startCase from 'lodash/startCase'
 import { logOut } from '../../actions/auth'
-import { fetchUser } from '../../actions/user';
 import SearchBar from '../search/SearchBar'
 import NotificationsBar from '../notifications/NotificationsBar'
 
@@ -62,7 +61,6 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchUser()
     window.addEventListener('scroll', this.updateScrollPosition, true)
   }
 
@@ -158,7 +156,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, fetchUser }, dispatch);
+  return bindActionCreators({ logOut }, dispatch);
 }
 
 export default TopBar
