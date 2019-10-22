@@ -20,13 +20,13 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       team_attrs = %{name: "Test Team"}
-      conn = post conn, user_path(conn, :create), user: @create_attrs, team: team_attrs, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :create), user: @create_attrs, team: team_attrs
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       team_attrs = %{name: "Test"}
-      conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -36,7 +36,7 @@ defmodule ConsoleWeb.UserControllerTest do
       user = insert(:user)
       team = insert(:team)
       invitation = insert(:invitation, team_id: team.id, inviter_id: user.id)
-      conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
   end
@@ -46,16 +46,16 @@ defmodule ConsoleWeb.UserControllerTest do
       user = insert(:unconfirmedUser)
       team = insert(:team)
       Teams.join_team(user, team, "admin")
-      conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :resend_verification), email: user.email
       assert json_response(conn, 202)
     end
 
     test "renders error when user does not exist or is already confirmed", %{conn: conn} do
       user = insert(:user)
-      conn = post conn, user_path(conn, :resend_verification), email: user.email, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :resend_verification), email: user.email
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
 
-      conn = post conn, user_path(conn, :resend_verification), email: @create_attrs.email, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :resend_verification), email: @create_attrs.email
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
     end
   end
@@ -65,13 +65,13 @@ defmodule ConsoleWeb.UserControllerTest do
       user = insert(:user)
       team = insert(:team)
       Teams.join_team(user, team, "developer")
-      conn = post conn, user_path(conn, :forgot_password), email: user.email, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :forgot_password), email: user.email
 
       assert json_response(conn, 202)
     end
 
     test "renders error when user does not exist", %{conn: conn} do
-      conn = post conn, user_path(conn, :forgot_password), email: @create_attrs.email, recaptcha: "recaptcha"
+      conn = post conn, user_path(conn, :forgot_password), email: @create_attrs.email
       assert %{"error" => ["The email address you have entered is not valid"]} =  json_response(conn, 404)["errors"]
     end
   end

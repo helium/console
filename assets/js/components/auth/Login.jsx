@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth';
-import config from '../../config/common';
-import Recaptcha from './Recaptcha';
 import TwoFactorForm from './TwoFactorForm'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
@@ -47,23 +45,16 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      recaptcha: "",
       loginPage: "login"
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
-    this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
     this.loginForm = this.loginForm.bind(this);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.auth.shouldResetCaptcha) {
-      this.recaptchaInstance.reset()
-      this.props.hasResetCaptcha()
-    }
-
     if (this.props.auth.user !== prevProps.auth.user && this.props.auth.user.twoFactorEnabled) {
       this.setState({ loginPage: "2fa" })
     }
@@ -75,13 +66,9 @@ class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, password, recaptcha } = this.state;
+    const { email, password } = this.state;
 
-    this.props.checkCredentials(email, password, recaptcha);
-  }
-
-  verifyRecaptcha(recaptcha) {
-    this.setState({ recaptcha })
+    this.props.checkCredentials(email, password);
   }
 
   handleTwoFactorSubmit(code) {
@@ -123,13 +110,6 @@ class Login extends Component {
               <Typography component="p" className={classes.forgot}>
                 <Link to="/forgot_password">Forgot password?</Link>
               </Typography>
-
-              <Recaptcha
-                ref={e => this.recaptchaInstance = e}
-                sitekey={config.recaptcha.sitekey}
-                verifyCallback={this.verifyRecaptcha}
-                style={{marginTop: 24}}
-              />
 
               <div>
                 <Button

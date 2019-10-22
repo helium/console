@@ -24,9 +24,8 @@ defmodule ConsoleWeb.UserController do
   end
 
   # Registration via signing up with org name
-  def create(conn, %{"user" => user_params, "team" => team_params, "recaptcha" => recaptcha, "organization" => organization_params}) do
-    with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} <- Auth.create_user(user_params, team_params, organization_params) do
+  def create(conn, %{"user" => user_params, "team" => team_params, "organization" => organization_params}) do
+    with {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} <- Auth.create_user(user_params, team_params, organization_params) do
 
         conn
         |> handle_created(user)
@@ -34,9 +33,8 @@ defmodule ConsoleWeb.UserController do
   end
 
   # Registration via accepting invitation to team
-  def create(conn, %{"user" => user_params, "recaptcha" => recaptcha, "invitation" => %{"token" => invitation_token}}) do
-    with true <- Auth.verify_captcha(recaptcha),
-      {true, invitation} <- Organizations.valid_invitation_token?(invitation_token),
+  def create(conn, %{"user" => user_params, "invitation" => %{"token" => invitation_token}}) do
+    with {true, invitation} <- Organizations.valid_invitation_token?(invitation_token),
       {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
         organization = Organizations.get_organization!(invitation.organization_id)
 
@@ -77,9 +75,8 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
-  def resend_verification(conn, %{"email" => email, "recaptcha" => recaptcha}) do
-    with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
+  def resend_verification(conn, %{"email" => email}) do
+    with {:ok, %User{} = user} <-  Auth.get_user_for_resend_verification(email) do
         Email.confirm_email(user) |> Mailer.deliver_later()
 
         conn
@@ -88,9 +85,8 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
-  def forgot_password(conn, %{"email" => email, "recaptcha" => recaptcha}) do
-    with true <- Auth.verify_captcha(recaptcha),
-      {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
+  def forgot_password(conn, %{"email" => email}) do
+    with {:ok, %User{} = user} <-  Auth.get_user_for_password_reset(email) do
         {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
         Email.password_reset_email(user, token) |> Mailer.deliver_later()
 

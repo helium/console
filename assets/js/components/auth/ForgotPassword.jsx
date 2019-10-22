@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { forgotPassword, hasResetCaptcha } from '../../actions/auth.js';
-import config from '../../config/common.js';
-import Recaptcha from './Recaptcha.jsx';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
 
@@ -38,19 +36,10 @@ class ForgotPassword extends Component {
 
     this.state = {
       email: "",
-      recaptcha: ""
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.auth.shouldResetCaptcha) {
-      this.recaptchaInstance.reset()
-      this.props.hasResetCaptcha()
-    }
   }
 
   handleInputUpdate(e) {
@@ -59,13 +48,9 @@ class ForgotPassword extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { email, recaptcha } = this.state;
+    const { email } = this.state;
 
-    this.props.forgotPassword(email, recaptcha);
-  }
-
-  verifyRecaptcha(recaptcha) {
-    this.setState({ recaptcha })
+    this.props.forgotPassword(email);
   }
 
   render() {
@@ -89,12 +74,6 @@ class ForgotPassword extends Component {
                 onChange={this.handleInputUpdate}
                 fullWidth
                 style={{marginBottom: 16}}
-              />
-
-              <Recaptcha
-                ref={e => this.recaptchaInstance = e}
-                sitekey={config.recaptcha.sitekey}
-                verifyCallback={this.verifyRecaptcha}
               />
 
               <Button

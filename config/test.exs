@@ -21,7 +21,6 @@ config :console, Console.Repo,
 config :console, Console.Mailer,
   adapter: Bamboo.TestAdapter
 
-config :console, recaptcha_secret: "6Lew200UAAAAAA-Z2uxdyuC2RrdCjCpuncsXzCh3"
 config :console, env: Mix.env
 
 config :cloak, Cloak.AES.CTR,

@@ -132,39 +132,39 @@ defmodule Console.Auth do
     end
   end
 
-  def verify_captcha(recaptcha) do
-    if Application.get_env(:console, :env) === :test do
-      true
-    else
-      body =
-        {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
-
-      case HTTPoison.post("https://www.google.com/recaptcha/api/siteverify", body) do
-        {:ok, response} ->
-          case response.status_code do
-            200 ->
-              responseBody = Poison.decode!(response.body)
-
-              case responseBody["success"] do
-                true ->
-                  true
-
-                # if recaptcha does not process correctly or is a robot
-                _ ->
-                  {:error, :unauthorized, "Your Captcha code is invalid, please try again"}
-              end
-
-            # if google fails to respond correctly
-            _ ->
-              {:error, :unauthorized, "An unexpected error has occurred, please try again"}
-          end
-
-        # if poison fails to send the request
-        _ ->
-          {:error, :unauthorized, "An unexpected error has occured, please try again"}
-      end
-    end
-  end
+  # def verify_captcha(recaptcha) do
+  #   if Application.get_env(:console, :env) === :test do
+  #     true
+  #   else
+  #     body =
+  #       {:form, [secret: Application.get_env(:console, :recaptcha_secret), response: recaptcha]}
+  #
+  #     case HTTPoison.post("https://www.google.com/recaptcha/api/siteverify", body) do
+  #       {:ok, response} ->
+  #         case response.status_code do
+  #           200 ->
+  #             responseBody = Poison.decode!(response.body)
+  #
+  #             case responseBody["success"] do
+  #               true ->
+  #                 true
+  #
+  #               # if recaptcha does not process correctly or is a robot
+  #               _ ->
+  #                 {:error, :unauthorized, "Your Captcha code is invalid, please try again"}
+  #             end
+  #
+  #           # if google fails to respond correctly
+  #           _ ->
+  #             {:error, :unauthorized, "An unexpected error has occurred, please try again"}
+  #         end
+  #
+  #       # if poison fails to send the request
+  #       _ ->
+  #         {:error, :unauthorized, "An unexpected error has occured, please try again"}
+  #     end
+  #   end
+  # end
 
   def generate_backup_codes() do
     Enum.reduce(1..10, [], fn(_, list) -> [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16) | list] end)

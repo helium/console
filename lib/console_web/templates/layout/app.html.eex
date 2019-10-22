@@ -11,7 +11,6 @@
     <link rel="icon" href="<%= static_path(@conn, "/favicon.png") %>" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
   </head>
 
   <body>

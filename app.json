@@ -12,9 +12,6 @@
     "POOL_SIZE": {
       "required": true
     },
-    "RECAPTCHA_SECRET": {
-      "required": true
-    },
     "ROUTER_SECRETS": {
       "required": true
     },

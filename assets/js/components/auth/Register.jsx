@@ -4,8 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { parse } from 'query-string'
 import { register, hasResetCaptcha } from '../../actions/auth.js';
-import config from '../../config/common.js';
-import Recaptcha from './Recaptcha.jsx';
 import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
 import DocumentLayout from '../common/DocumentLayout'
@@ -48,27 +46,16 @@ class Register extends Component {
       email: "",
       password: "",
       passwordConfirm: "",
-      recaptcha: "",
       showTerms: false
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.registerUser = this.registerUser.bind(this);
-    this.verifyRecaptcha = this.verifyRecaptcha.bind(this);
 
     this.registerContent = this.registerContent.bind(this)
     this.joinContent = this.joinContent.bind(this)
     this.commonFields = this.commonFields.bind(this)
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.auth.shouldResetCaptcha) {
-      this.setState({ showTerms: false }, () => {
-        this.recaptchaInstance.reset()
-        this.props.hasResetCaptcha()
-      })
-    }
   }
 
   handleInputUpdate(e) {
@@ -82,7 +69,7 @@ class Register extends Component {
 
   registerUser(e) {
     e.preventDefault();
-    const { teamName, email, password, passwordConfirm, recaptcha, organizationName } = this.state;
+    const { teamName, email, password, passwordConfirm, organizationName } = this.state;
     const { register, invitationToken } = this.props
     register(
       teamName,
@@ -90,13 +77,8 @@ class Register extends Component {
       email,
       password,
       passwordConfirm,
-      recaptcha,
       invitationToken
     );
-  }
-
-  verifyRecaptcha(recaptcha) {
-    this.setState({ recaptcha })
   }
 
   registerContent() {
@@ -219,13 +201,6 @@ class Register extends Component {
           className={classes.input}
           fullWidth
           style={{marginBottom: 16}}
-        />
-
-        <Recaptcha
-          ref={e => this.recaptchaInstance = e}
-          sitekey={config.recaptcha.sitekey}
-          verifyCallback={this.verifyRecaptcha}
-          style={{marginTop: 24}}
         />
       </div>
     )

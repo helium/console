@@ -8,9 +8,8 @@ defmodule ConsoleWeb.SessionController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def create(conn, %{"session" => session_params, "recaptcha" => recaptcha}) do
-    with true <- Auth.verify_captcha(recaptcha),
-         {:ok, %User{} = user} <- Auth.authenticate(session_params),
+  def create(conn, %{"session" => session_params}) do
+    with {:ok, %User{} = user} <- Auth.authenticate(session_params),
          current_organization <- Organizations.current_organization_for(user),
          jwt <- Auth.generate_session_token(user, current_organization) do
 

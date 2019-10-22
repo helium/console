@@ -15,10 +15,9 @@ export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
 export const CLEAR_TWO_FACTOR_BACKUP_CODES = "CLEAR_TWO_FACTOR_BACKUP_CODES";
 
-export const checkCredentials = (email, password, recaptcha) => {
+export const checkCredentials = (email, password) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
-        recaptcha,
         session: {
           email,
           password
@@ -96,9 +95,8 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, organizationName, email, password, passwordConfirm, recaptcha, invitationToken) => {
+export const register = (teamName, organizationName, email, password, passwordConfirm, invitationToken) => {
   let params = {
-    recaptcha,
     user: {
       email,
       password,
@@ -133,10 +131,9 @@ export const register = (teamName, organizationName, email, password, passwordCo
   }
 }
 
-export const forgotPassword = (email, recaptcha) => {
+export const forgotPassword = (email) => {
   return (dispatch) => {
     rest.post('/api/users/forgot_password', {
-        recaptcha,
         email
       })
       .then(response => {
@@ -163,10 +160,9 @@ export const changePassword = (password, passwordConfirm, token) => {
   }
 }
 
-export const resendVerification = (email, recaptcha) => {
+export const resendVerification = (email) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
-        recaptcha,
         email
       })
       .then(response => {

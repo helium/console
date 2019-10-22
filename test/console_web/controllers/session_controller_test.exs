@@ -10,14 +10,14 @@ defmodule ConsoleWeb.SessionControllerTest do
 
     test "User with no two factor gets correct response", %{conn: conn, user: user} do
       session_params = %{email: user.email, password: "pa$$word ha$h"}
-      conn = post conn, session_path(conn, :create), session: session_params, recaptcha: "recaptcha"
+      conn = post conn, session_path(conn, :create), session: session_params
 
       assert json_response(conn, 201)["jwt"] !== nil
       assert json_response(conn, 201)["skip2fa"] === false
       assert json_response(conn, 201)["user"]["twoFactorEnabled"] === false
 
       Auth.update_2fa_last_skipped(user)
-      conn = post conn, session_path(conn, :create), session: session_params, recaptcha: "recaptcha"
+      conn = post conn, session_path(conn, :create), session: session_params
 
       assert json_response(conn, 201)["jwt"] !== nil
       assert json_response(conn, 201)["skip2fa"] === true
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.SessionControllerTest do
       Auth.enable_2fa(user, "1234567890", [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)])
 
       session_params = %{email: user.email, password: "pa$$word ha$h"}
-      conn = post conn, session_path(conn, :create), session: session_params, recaptcha: "recaptcha"
+      conn = post conn, session_path(conn, :create), session: session_params
       assert json_response(conn, 201)["jwt"] === nil
       assert json_response(conn, 201)["skip2fa"] === nil
       assert json_response(conn, 201)["user"]["twoFactorEnabled"] === true
