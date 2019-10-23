@@ -1,7 +1,20 @@
 language: elixir
 elixir:
-  - '1.7.4'
+  - '1.9.0'
 otp_release:
   - '21.1'
 addons:
   postgresql: '9.5'
+install:
+  - wget https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz
+  - tar -zxvf libsodium-1.0.18.tar.gz
+  - cd libsodium-1.0.18/
+  - ./configure
+  - make && make check
+  - sudo make install
+  - sudo mv -v /usr/local/include/* /usr/include/
+  - sudo ldconfig
+  - cd $TRAVIS_BUILD_DIR
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
