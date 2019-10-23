@@ -9,7 +9,8 @@ defmodule ConsoleWeb.SessionControllerTest do
     setup [:unauthenticated_user]
 
     test "User with no two factor gets correct response", %{conn: conn, user: user} do
-      session_params = %{email: user.email, password: "pa$$word ha$h"}
+      Auth.mark_email_confirmed(user)
+      session_params = %{email: user.email, password: "password"}
       conn = post conn, session_path(conn, :create), session: session_params
 
       assert json_response(conn, 201)["jwt"] !== nil
@@ -29,9 +30,10 @@ defmodule ConsoleWeb.SessionControllerTest do
     setup [:authenticate_user]
 
     test "User with enabled two factor gets correct response", %{conn: conn, user: user} do
+      Auth.mark_email_confirmed(user)
       Auth.enable_2fa(user, "1234567890", [:crypto.strong_rand_bytes(16) |> Base.encode32 |> binary_part(0, 16)])
 
-      session_params = %{email: user.email, password: "pa$$word ha$h"}
+      session_params = %{email: user.email, password: "password"}
       conn = post conn, session_path(conn, :create), session: session_params
       assert json_response(conn, 201)["jwt"] === nil
       assert json_response(conn, 201)["skip2fa"] === nil

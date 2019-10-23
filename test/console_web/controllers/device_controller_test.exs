@@ -12,19 +12,16 @@ defmodule ConsoleWeb.DeviceControllerTest do
     setup [:authenticate_user]
 
     test "lists all devices for a team", %{conn: conn, team: team} do
-      device = create_device_for_team(team)
+      create_device_for_team(team)
+      create_device_for_team(team)
       another_team = insert(:team)
-      create_device_for_team(another_team)
+      another_device = create_device_for_team(another_team)
       conn = get conn, device_path(conn, :index)
       ids = for d <- json_response(conn, 200), do: d["id"]
-      assert ids == [device.id]
+      assert not Enum.member?(ids, another_device.id)
     end
-  end
 
-  describe "create device" do
-    setup [:authenticate_user]
-
-    test "renders device when data is valid", %{conn: conn, team: team} do
+    test "creates device when data is valid", %{conn: conn, team: team} do
       conn = post conn, device_path(conn, :create), device: @create_attrs
       %{"id" => id} = json_response(conn, 201)
       assert json_response(conn, 201) == %{
@@ -32,20 +29,15 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "mac" => "some mac",
         "name" => "some name",
         "team_id" => team.id,
-        "groups" => []
       }
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
+    test "renders create errors when data is invalid", %{conn: conn} do
       conn = post conn, device_path(conn, :create), device: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
-  end
 
-  describe "show device" do
-    setup [:authenticate_user]
-
-    test "renders device", %{conn: conn, team: team} do
+    test "renders show device", %{conn: conn, team: team} do
       device = create_device_for_team(team)
       conn = get conn, device_path(conn, :show, device.id)
       assert json_response(conn, 200) == %{
@@ -54,15 +46,10 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "name" => device.name,
         "team_id" => team.id,
         "events" => [],
-        "groups" => []
       }
     end
-  end
 
-  describe "update device" do
-    setup [:authenticate_user]
-
-    test "renders device when data is valid", %{conn: conn, team: team} do
+    test "renders update device when data is valid", %{conn: conn, team: team} do
       device = create_device_for_team(team)
       conn = put conn, device_path(conn, :update, device.id), device: @update_attrs
       assert json_response(conn, 200) == %{
@@ -70,19 +57,14 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "mac" => "some updated mac",
         "name" => "some updated name",
         "team_id" => team.id,
-        "groups" => []
       }
     end
 
-    test "renders errors when data is invalid", %{conn: conn, team: team} do
+    test "renders update errors when data is invalid", %{conn: conn, team: team} do
       device = create_device_for_team(team)
       conn = put conn, device_path(conn, :update, device.id), device: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
-  end
-
-  describe "delete device" do
-    setup [:authenticate_user]
 
     test "deletes chosen device", %{conn: conn, team: team} do
       device = create_device_for_team(team)

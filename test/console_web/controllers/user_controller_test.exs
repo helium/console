@@ -20,13 +20,15 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
       team_attrs = %{name: "Test Team"}
-      conn = post conn, user_path(conn, :create), user: @create_attrs, team: team_attrs
+      org_attrs = %{name: "Test Organization"}
+      conn = post conn, user_path(conn, :create), user: @create_attrs, team: team_attrs, organization: org_attrs
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       team_attrs = %{name: "Test"}
-      conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs
+      org_attrs = %{name: "Test Org"}
+      conn = post conn, user_path(conn, :create), user: @invalid_attrs, team: team_attrs, organization: org_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -34,8 +36,8 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "create user via invitation" do
     test "renders user when data is valid", %{conn: conn} do
       user = insert(:user)
-      team = insert(:team)
-      invitation = insert(:invitation, team_id: team.id, inviter_id: user.id)
+      organization = insert(:organization)
+      invitation = insert(:invitation, organization_id: organization.id, inviter_id: user.id)
       conn = post conn, user_path(conn, :create), user: @create_attrs, invitation: %{token: invitation.token}
       assert %{"email" => "test@hello.com"} = json_response(conn, 201)["data"]
     end
@@ -44,8 +46,6 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "resend verification email" do
     test "renders accepted when user has not been confirmed", %{conn: conn} do
       user = insert(:unconfirmedUser)
-      team = insert(:team)
-      Teams.join_team(user, team, "admin")
       conn = post conn, user_path(conn, :resend_verification), email: user.email
       assert json_response(conn, 202)
     end
@@ -63,8 +63,6 @@ defmodule ConsoleWeb.UserControllerTest do
   describe "forgot password email generation" do
     test "renders accepted when valid email is supplied", %{conn: conn} do
       user = insert(:user)
-      team = insert(:team)
-      Teams.join_team(user, team, "developer")
       conn = post conn, user_path(conn, :forgot_password), email: user.email
 
       assert json_response(conn, 202)
@@ -88,8 +86,6 @@ defmodule ConsoleWeb.UserControllerTest do
 
     test "redirects to reset_password/:token when token is valid" do
       user = insert(:user)
-      team = insert(:team)
-      Teams.join_team(user, team, "analyst")
       {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{email: user.email}, token_type: "reset_password", ttl: {1, :hour}, secret: user.password_hash)
       conn = get build_conn(), "/users/reset_password/#{token}"
 

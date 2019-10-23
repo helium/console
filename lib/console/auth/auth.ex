@@ -255,7 +255,7 @@ defmodule Console.Auth do
     Bcrypt.verify_pass(password, pw_hash)
   end
 
-  defp mark_email_confirmed(user) do
+  def mark_email_confirmed(user) do
     user
     |> User.confirm_email_changeset()
     |> Repo.update()

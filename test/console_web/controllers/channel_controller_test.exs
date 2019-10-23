@@ -8,23 +8,20 @@ defmodule ConsoleWeb.ChannelControllerTest do
   @update_attrs %{active: false, credentials: %{"a" => "c"}, name: "some updated name", type: "mqtt", type_name: "MQTT"}
   @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
-  describe "index" do
+  describe "channels" do
     setup [:authenticate_user]
 
-    test "lists all channels", %{conn: conn, team: team} do
-      channel = create_channel_for_team(team)
-      another_team = insert(:team)
-      create_channel_for_team(another_team)
+    test "lists all channels", %{conn: conn, organization: organization} do
+      create_channel_for_organization(organization)
+      create_channel_for_organization(organization)
+      another_organization = insert(:organization)
+      channel = create_channel_for_organization(another_organization)
       conn = get conn, channel_path(conn, :index)
       ids = for d <- json_response(conn, 200), do: d["id"]
-      assert ids == [channel.id]
+      assert not Enum.member?(ids, channel.id)
     end
-  end
 
-  describe "create channel" do
-    setup [:authenticate_user]
-
-    test "renders channel when data is valid", %{conn: conn, team: team} do
+    test "creates channel when data is valid", %{conn: conn} do
       conn = post conn, channel_path(conn, :create), channel: @create_attrs
       created_channel = json_response(conn, 201)
       assert created_channel["name"] == @create_attrs.name
@@ -33,17 +30,13 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert created_channel["type"] == @create_attrs.type
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
+    test "renders create errors when data is invalid", %{conn: conn} do
       conn = post conn, channel_path(conn, :create), channel: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
-  end
 
-  describe "update channel" do
-    setup [:authenticate_user]
-
-    test "renders channel when data is valid", %{conn: conn, team: team} do
-      channel = create_channel_for_team(team)
+    test "updates channel when data is valid", %{conn: conn, organization: organization} do
+      channel = create_channel_for_organization(organization)
       conn = put conn, channel_path(conn, :update, channel), channel: @update_attrs
       updated_channel = json_response(conn, 200)
       assert updated_channel["name"] == @update_attrs.name
@@ -52,18 +45,14 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert updated_channel["type"] == @update_attrs.type
     end
 
-    test "renders errors when data is invalid", %{conn: conn, team: team} do
-      channel = create_channel_for_team(team)
+    test "renders update errors when data is invalid", %{conn: conn, organization: organization} do
+      channel = create_channel_for_organization(organization)
       conn = put conn, channel_path(conn, :update, channel), channel: @invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
-  end
 
-  describe "delete channel" do
-    setup [:authenticate_user]
-
-    test "deletes chosen channel", %{conn: conn, team: team} do
-      channel = create_channel_for_team(team)
+    test "deletes chosen channel", %{conn: conn, organization: organization} do
+      channel = create_channel_for_organization(organization)
       conn = delete conn, channel_path(conn, :delete, channel)
       assert response(conn, 204)
     end
