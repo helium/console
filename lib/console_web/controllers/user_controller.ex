@@ -17,10 +17,15 @@ defmodule ConsoleWeb.UserController do
 
   def current(conn, _params) do
     user = conn.assigns.current_user
-    membership = conn.assigns.current_membership
-
-    conn
-      |> render("current.json", user: user, membership: membership)
+    membership = Map.get(conn.assigns, :current_membership)
+    case membership do
+      nil ->
+        conn
+          |> render("current.json", user: user)
+      _ ->
+        conn
+          |> render("current.json", user: user, membership: membership)
+    end
   end
 
   # Registration via signing up with org name

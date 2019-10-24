@@ -197,6 +197,11 @@ defmodule Console.Auth do
     Repo.preload(user, assoc)
   end
 
+  def generate_session_token(%User{} = user, nil) do
+    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, %{}, ttl: { 1, :day })
+    token
+  end
+
   def generate_session_token(%User{} = user, %Organization{} = current_organization) do
     current_teams = Organizations.fetch_assoc(current_organization, [:teams]).teams
     current_team = current_teams |> List.first()

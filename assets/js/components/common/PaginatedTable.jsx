@@ -7,13 +7,13 @@ import merge from 'lodash/merge'
 import { Query } from 'react-apollo';
 
 // MUI
+import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooterPagination from './TableFooterPagination'
-
 
 const defaultVariables = {
   page: 1,
@@ -102,7 +102,9 @@ class QueryResults extends Component {
     const { loading, error, data, EmptyComponent } = this.props
 
     if (loading) return null;
-    if (error) return `Error!: ${error}`;
+    if (error) return (
+      <Typography variant="subheading">Data failed to load, please reload the page and try again</Typography>
+    )
 
     const results = find(data, d => d.entries !== undefined)
 

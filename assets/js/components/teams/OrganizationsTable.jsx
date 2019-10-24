@@ -77,7 +77,9 @@ class QueryResults extends Component {
     const { loading, error, data, EmptyComponent, columns, openOrganizationModal } = this.props
 
     if (loading) return null;
-    if (error) return `Error!: ${error}`;
+    if (error) return (
+      <Typography variant="subheading">Data failed to load, please reload the page and try again</Typography>
+    )
 
     const results = find(data, d => d !== undefined)
 

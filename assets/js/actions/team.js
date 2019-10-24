@@ -61,7 +61,7 @@ export const createTeamUnderOrg = (orgId, name) => {
   }
 }
 
-export const createOrganization = (name, teamName) => {
+export const createOrganization = (name, teamName, getToken) => {
   return (dispatch) => {
     rest.post('/api/teams', {
         organization: {
@@ -72,7 +72,8 @@ export const createOrganization = (name, teamName) => {
         }
       })
       .then(response => {
-        dispatch(receivedTeam(response.data))
+        if (getToken) { dispatch(switchedTeam(response.data.jwt)) }
+        else dispatch(receivedTeam(response.data))
       })
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { createTeam } from '../../actions/team'
+import { createOrganization } from '../../actions/team'
 import { logOut } from '../../actions/auth'
 import AuthLayout from '../common/AuthLayout'
 
@@ -42,7 +42,8 @@ class NoTeamPrompt extends Component {
     super(props)
 
     this.state = {
-      name: ""
+      name: "",
+      teamName: "",
     }
 
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -52,11 +53,11 @@ class NoTeamPrompt extends Component {
   handleSubmit(e) {
     e.preventDefault()
 
-    this.props.createTeam(this.state.name, '/devices')
+    this.props.createOrganization(this.state.name, this.state.teamName, true)
   }
 
   handleInputUpdate(e) {
-    this.setState({ name: e.target.value})
+    this.setState({ [e.target.name]: e.target.value})
   }
 
   render() {
@@ -67,17 +68,25 @@ class NoTeamPrompt extends Component {
         <Card>
           <CardContent>
             <Typography variant="headline" className={classes.title}>
-              You don't have any teams
+              You aren't part of an organization
             </Typography>
             <Typography variant="subheading" className={classes.title}>
-              Create a new team to get started
+              Create a new organization to get started
             </Typography>
 
             <form onSubmit={this.handleSubmit}>
               <TextField
-                label="Team Name"
+                label="Organization Name"
                 name="name"
                 value={this.state.name}
+                onChange={this.handleInputUpdate}
+                className={classes.input}
+                fullWidth
+              />
+              <TextField
+                label="Team Name"
+                name="teamName"
+                value={this.state.teamName}
                 onChange={this.handleInputUpdate}
                 className={classes.input}
                 fullWidth
@@ -90,7 +99,7 @@ class NoTeamPrompt extends Component {
                 fullWidth
                 className={classes.formButton}
               >
-                Create Team
+                Create
               </Button>
             </form>
           </CardContent>
@@ -111,11 +120,11 @@ class NoTeamPrompt extends Component {
 }
 
 function mapStateToProps(state) {
-  return { }
+  return {}
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createTeam, logOut }, dispatch);
+  return bindActionCreators({ createOrganization, logOut }, dispatch);
 }
 
 export default NoTeamPrompt

@@ -38,6 +38,7 @@ defmodule ConsoleWeb.TeamController do
 
       conn
       |> put_status(:created)
+      |> put_resp_header("message",  "#{team.name} created successfully")
       |> render("show.json", team: team)
     end
   end
@@ -50,9 +51,17 @@ defmodule ConsoleWeb.TeamController do
         with {:ok, %Organization{} = organization} <- Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }),
           {:ok, %Team{} = team} <- Teams.create_team(conn.assigns.current_user, team_attrs, organization) do
 
-          conn
-          |> put_status(:created)
-          |> render("show.json", team: team)
+          organizations = Organizations.get_organizations(conn.assigns.current_user)
+          case Enum.count(organizations) do
+            1 ->
+              jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
+              render(conn, "switch.json", jwt: jwt)
+            _ ->
+              conn
+              |> put_status(:created)
+              |> put_resp_header("message",  "#{organization.name} created successfully")
+              |> render("show.json", team: team)
+          end
         end
     end
   end
