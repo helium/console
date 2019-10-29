@@ -11,7 +11,7 @@ defmodule Console.Teams.Organization do
     has_many :memberships, Console.Teams.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
     has_many :invitations, Console.Teams.Invitation, on_delete: :delete_all
-    has_many :teams, Console.Teams.Team
+    has_many :teams, Console.Teams.Team, on_delete: :delete_all
 
     timestamps()
   end

@@ -57,6 +57,8 @@ defmodule ConsoleWeb.TeamController do
               jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
               render(conn, "switch.json", jwt: jwt)
             _ ->
+              broadcast(organization, conn.assigns.current_user, "create")
+
               conn
               |> put_status(:created)
               |> put_resp_header("message",  "#{organization.name} created successfully")
@@ -91,5 +93,9 @@ defmodule ConsoleWeb.TeamController do
 
   defp broadcast(%Team{} = team, _) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, team, team_added: "#{team.organization_id}/team_added")
+  end
+
+  defp broadcast(%Organization{} = organization, current_user, _) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
   end
 end

@@ -7,7 +7,7 @@ import { switchOrganization } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
+import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationsTable extends Component {
   render() {
-    const { currentOrganizationId, switchOrganization } = this.props
+    const { currentOrganizationId, switchOrganization, userId } = this.props
     const columns = [
       {
         Header: 'Organization',
@@ -55,13 +55,17 @@ class OrganizationsTable extends Component {
     ]
 
     return (
-      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'}>
-        {({ loading, error, data }) => (
+      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'} variables={{ userId: userId }}>
+        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
             error={error}
             data={data}
             columns={columns}
+            fetchMore={fetchMore}
+            subscribeToMore={subscribeToMore}
+            subscription={ORGANIZATION_SUBSCRIPTION}
+            variables={variables}
             EmptyComponent={ props => <BlankSlate title="Loading..." /> }
             {...this.props}
           />
@@ -73,6 +77,21 @@ class OrganizationsTable extends Component {
 
 
 class QueryResults extends Component {
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+  }
+
   render() {
     const { loading, error, data, EmptyComponent, columns, openOrganizationModal } = this.props
 
@@ -180,6 +199,7 @@ const PaginatedCell = (props) => {
 function mapStateToProps(state) {
   return {
     currentOrganizationId: state.auth.currentOrganizationId,
+    userId: state.auth.user.id,
   }
 }
 

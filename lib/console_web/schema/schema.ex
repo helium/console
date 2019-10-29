@@ -194,6 +194,14 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :organization_added, :organization do
+      arg :user_id, :string
+
+      config fn args, _ ->
+        {:ok, topic: "#{args.user_id}/organization_added"}
+      end
+    end
+
     field :event_added, :event do
       arg :context_id, :string
       arg :context_name, :string

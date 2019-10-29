@@ -10,7 +10,7 @@ import { switchTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
-import { CURRENT_ORGANIZATION, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
+import { CURRENT_ORGANIZATION_TEAMS, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -60,7 +60,7 @@ class OrganizationTeamsTable extends Component {
     ]
 
     return (
-      <Query query={CURRENT_ORGANIZATION} fetchPolicy={'cache-and-network'} variables={{ Id: currentOrganizationId }}>
+      <Query query={CURRENT_ORGANIZATION_TEAMS} fetchPolicy={'cache-and-network'} variables={{ Id: currentOrganizationId }}>
         {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
