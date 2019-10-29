@@ -45,6 +45,8 @@ defmodule ConsoleWeb.Router do
       post "/switch", TeamController, :switch
       post "/switch_org", TeamController, :switch_org
     end
+    delete "/organizations/:id", TeamController, :delete_organization, as: :delete_organization
+
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
     resources "/notifications", NotificationController, only: [:create] do

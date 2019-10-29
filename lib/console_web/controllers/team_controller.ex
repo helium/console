@@ -103,6 +103,19 @@ defmodule ConsoleWeb.TeamController do
     end
   end
 
+  def delete_organization(conn, %{"id" => id}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, id)
+    teams = Organizations.fetch_assoc(organization, [:teams]).teams
+    with {:ok, %Organization{} = organization} <- Organizations.delete_organization(organization) do
+      broadcast(organization, conn.assigns.current_user, "delete")
+
+      conn
+      |> put_status(:accepted)
+      |> put_resp_header("message",  "#{organization.name} deleted successfully")
+      |> render("index.json", teams: teams)
+    end
+  end
+
   defp broadcast(%Team{} = team, _) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, team, team_added: "#{team.organization_id}/team_added")
   end

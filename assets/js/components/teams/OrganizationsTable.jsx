@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import find from 'lodash/find'
-import { switchOrganization } from '../../actions/team'
+import { switchOrganization, deleteOrganization } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationsTable extends Component {
   render() {
-    const { currentOrganizationId, switchOrganization, userId } = this.props
+    const { currentOrganizationId, switchOrganization, userId, deleteOrganization } = this.props
     const columns = [
       {
         Header: 'Organization',
@@ -41,13 +41,24 @@ class OrganizationsTable extends Component {
         Cell: props => <span>
           {
             currentOrganizationId !== props.row.id && (
-              <Button
-                color="primary"
-                onClick={() => switchOrganization(props.row.id)}
-                size="small"
-              >
-                VIEW
-              </Button>
+              <span>
+                <Button
+                  color="primary"
+                  onClick={() => switchOrganization(props.row.id)}
+                  size="small"
+                >
+                  VIEW
+                </Button>
+                <UserCan action="delete" itemType="organization" item={props.row}>
+                  <Button
+                    color="secondary"
+                    onClick={() => deleteOrganization(props.row.id)}
+                    size="small"
+                  >
+                    Delete
+                  </Button>
+                </UserCan>
+              </span>
             )
           }
         </span>
@@ -204,7 +215,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ switchOrganization }, dispatch);
+  return bindActionCreators({ switchOrganization, deleteOrganization }, dispatch);
 }
 
 export default OrganizationsTable

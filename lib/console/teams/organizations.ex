@@ -144,4 +144,8 @@ defmodule Console.Teams.Organizations do
   def delete_membership(%Membership{} = membership) do
     Repo.delete(membership)
   end
+
+  def delete_organization(%Organization{} = organization) do
+    Repo.delete(organization)
+  end
 end

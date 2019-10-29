@@ -117,6 +117,17 @@ export const switchTeam = (id, afterSwitchPath) => {
   }
 }
 
+export const deleteOrganization = (id) => {
+  return (dispatch) => {
+    rest.destroy(`/api/organizations/${id}`)
+      .then(response => {
+        response.data.forEach(team => {
+          dispatch(deletedTeam(team))
+        })
+      })
+  }
+}
+
 export const deleteTeam = (id) => {
   return (dispatch) => {
     rest.destroy(`/api/teams/${id}`)
