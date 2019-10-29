@@ -6,7 +6,7 @@ import random from 'lodash/random'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
-import { switchTeam } from '../../actions/team'
+import { switchTeam, deleteTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
@@ -29,7 +29,7 @@ import SuccessChip from '../common/SuccessChip'
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationTeamsTable extends Component {
   render() {
-    const { switchTeam, currentTeamId, currentOrganizationId } = this.props
+    const { switchTeam, currentTeamId, currentOrganizationId, deleteTeam } = this.props
     const columns = [
       {
         Header: 'Team',
@@ -46,13 +46,24 @@ class OrganizationTeamsTable extends Component {
         Cell: props => <span>
           {
             currentTeamId !== props.row.id && (
-              <Button
-                color="primary"
-                onClick={() => switchTeam(props.row.id)}
-                size="small"
-              >
-                VIEW
-              </Button>
+              <span>
+                <Button
+                  color="primary"
+                  onClick={() => switchTeam(props.row.id)}
+                  size="small"
+                >
+                  VIEW
+                </Button>
+                <UserCan action="delete" itemType="team" item={props.row}>
+                  <Button
+                    color="secondary"
+                    onClick={() => deleteTeam(props.row.id)}
+                    size="small"
+                  >
+                    Delete
+                  </Button>
+                </UserCan>
+              </span>
             )
           }
         </span>
@@ -210,7 +221,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ switchTeam }, dispatch);
+  return bindActionCreators({ switchTeam, deleteTeam }, dispatch);
 }
 
 export default OrganizationTeamsTable

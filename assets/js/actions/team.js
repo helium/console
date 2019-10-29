@@ -8,6 +8,7 @@ export const RECEIVED_TEAMS = 'RECEIVED_TEAMS'
 export const FETCH_TEAM = 'FETCH_TEAM'
 export const RECEIVED_TEAM = 'RECEIVED_TEAM'
 export const SWITCHED_TEAM = 'SWITCHED_TEAM'
+export const DELETED_TEAM = 'DELETED_TEAM'
 
 export const fetchTeams = () => {
   return (dispatch) => {
@@ -113,6 +114,22 @@ export const switchTeam = (id, afterSwitchPath) => {
           dispatch(push(afterSwitchPath))
         }
       })
+  }
+}
+
+export const deleteTeam = (id) => {
+  return (dispatch) => {
+    rest.destroy(`/api/teams/${id}`)
+      .then(response => {
+        dispatch(deletedTeam(response.data))
+      })
+  }
+}
+
+export const deletedTeam = (team) => {
+  return {
+    type: DELETED_TEAM,
+    team,
   }
 }
 
