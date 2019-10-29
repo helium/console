@@ -1,6 +1,8 @@
 defmodule Console.OrganizationsTest do
   use Console.DataCase
 
+  alias Console.Teams
+  alias Console.Channels
   alias Console.Teams.Organizations
   alias Console.Teams.Organization
   alias Console.Teams.Membership
@@ -12,6 +14,8 @@ defmodule Console.OrganizationsTest do
   @invalid_attrs %{"name" => nil}
   @invalid_attrs2 %{"name" => ""}
   @invalid_attrs3 %{"name" => "a"}
+  @channel_creds %{"a field" => "a value"}
+  @channel_attrs %{"active" => true, "credentials" => @channel_creds, "name" => "some name", "type" => "http", "type_name" => "HTTP"}
 
   describe "organizations" do
     test "create_organization/2 with valid data creates an org" do
@@ -92,6 +96,23 @@ defmodule Console.OrganizationsTest do
       assert {:ok, %Invitation{}} = Organizations.delete_invitation(invitation)
       assert_raise Ecto.NoResultsError, fn -> Organizations.get_invitation!(invitation.id) end
       {:ok, %Invitation{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "analyst"})
+    end
+
+    test "delete_organization/1 deletes the org and all related teams and resources" do
+      user = insert(:user)
+      assert {:ok, %Organization{} = organization} = Organizations.create_organization(user, @valid_attrs)
+      attrs = params_for(:team)
+      assert {:ok, team} = Teams.create_team(user, attrs, organization)
+      attrs = params_for(:team)
+      assert {:ok, team} = Teams.create_team(user, attrs, organization)
+      assert {:ok, channel} = Channels.create_channel(Map.put(@channel_attrs, "organization_id", organization.id))
+      organization = Organizations.fetch_assoc(organization)
+      assert 2 == organization.teams |> Enum.count()
+      assert 1 == organization.channels |> Enum.count()
+      Organizations.delete_organization(organization)
+
+      assert [] == Teams.list_teams()
+      assert [] == Channels.list_channels()
     end
   end
 end
