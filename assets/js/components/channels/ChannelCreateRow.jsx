@@ -36,20 +36,12 @@ const styles = theme => ({
   }
 })
 
-const channelTypes2 = [
-  { name: "HTTP", link: "/channels/new/http", img: `url('${Http}')` },
-  { name: "Azure IoT Hub", link: "/channels/new/azure", img: `url('${Azure}')` },
-  { name: "AWS IoT", link: "/channels/new/aws", img: `url('${Aws}')` },
-  { name: "Google Cloud IoT Core", link: "/channels/new/google", img: `url('${Google}')` },
-  { name: "MQTT", link: "/channels/new/mqtt", img: `url('${Mqtt}')` },
-]
-
 const channelTypes = [
   { name: "HTTP", link: "/channels/new/http", img: `url('${Http}')` },
+  { name: "MQTT", link: "/channels/new/mqtt", img: `url('${Mqtt}')` },
   { name: "Azure IoT - Coming Soon", link: "/channels/new/azure", img: `url('${Azure}')`, inactive: true },
   { name: "AWS IoT - Coming Soon", link: "/channels/new/aws", img: `url('${Aws}')`, inactive: true },
   { name: "Google IoT - Coming Soon", link: "/channels/new/google", img: `url('${Google}')`, inactive: true },
-  { name: "MQTT - Coming Soon", link: "/channels/new/mqtt", img: `url('${Mqtt}')`, inactive: true },
 ]
 
 @withStyles(styles)
