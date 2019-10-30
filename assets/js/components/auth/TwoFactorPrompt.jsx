@@ -101,7 +101,7 @@ class TwoFactorPrompt extends Component {
   renderQRCode() {
     const { user } = this.props.auth
     if (user.secret2fa) {
-      const secret2fa = "otpauth://totp/BEAMCoin?secret=" + user.secret2fa + "&issuer=Helium%20Inc"
+      const secret2fa = "otpauth://totp/Helium Console?secret=" + user.secret2fa + "&issuer=Helium%20Inc"
       return <QRCode value={secret2fa} />
     }
   }
