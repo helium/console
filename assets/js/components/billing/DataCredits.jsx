@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 // Icons
 import BillingIcon from '@material-ui/icons/CreditCard';
 
-class Billing extends Component {
+class DataCredits extends Component {
   render() {
     return (
       <DashboardLayout title="Data Credits">
@@ -29,4 +29,4 @@ class Billing extends Component {
   }
 }
 
-export default Billing
+export default DataCredits

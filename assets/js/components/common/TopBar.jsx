@@ -112,6 +112,7 @@ class TopBar extends Component {
           </Slide>
 
           <div style={{flex: 1}} />
+          <SearchBar />
 
           <div>
             <IconButton onClick={this.openAccountMenu} color="inherit">

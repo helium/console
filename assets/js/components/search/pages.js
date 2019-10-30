@@ -19,22 +19,6 @@ const pages = [
     synonyms: ""
   },
   {
-    title: "Gateways",
-    description: "View and manage gateways",
-    url: "/gateways",
-    id: "/gateways",
-    category: "gateways",
-    synonyms: ""
-  },
-  {
-    title: "Gateway Map",
-    description: "View a map of gateway locations",
-    url: "/gateways/map",
-    id: "/gateways/map",
-    category: "map",
-    synonyms: ""
-  },
-  {
     title: "Channels",
     description: "View and manage channels",
     url: "/channels",
@@ -99,29 +83,29 @@ const pages = [
     synonyms: "account"
   },
   {
-    title: "Billing",
-    description: "Set up and manage billing",
-    url: "/billing",
-    id: "/billing",
-    category: "billing",
+    title: "Data Credits",
+    description: "Manage your data credits",
+    url: "/datacredits",
+    id: "/datacredits",
+    category: "datacredits",
     synonyms: ""
   },
-  {
-    title: "Reports",
-    description: "View and export enterprise reports",
-    url: "/reports",
-    id: "/reports",
-    category: "reports",
-    synonyms: ""
-  },
-  {
-    title: "Notifications",
-    description: "View all active and past notifications",
-    url: "/notifications",
-    id: "/notifications",
-    category: "notifications",
-    synonyms: ""
-  },
+  // {
+  //   title: "Reports",
+  //   description: "View and export enterprise reports",
+  //   url: "/reports",
+  //   id: "/reports",
+  //   category: "reports",
+  //   synonyms: ""
+  // },
+  // {
+  //   title: "Notifications",
+  //   description: "View all active and past notifications",
+  //   url: "/notifications",
+  //   id: "/notifications",
+  //   category: "notifications",
+  //   synonyms: ""
+  // },
 ]
 
 const fuseOpts = {

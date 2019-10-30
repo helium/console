@@ -86,7 +86,7 @@ const OrganizationalNavItems = (props) => (
       <ListItemText primary="Access" />
     </ListItem>
 
-    <ListItem button component={Link} to="/billing">
+    <ListItem button component={Link} to="/datacredits">
       <ListItemIcon>
         <BillingIcon />
       </ListItemIcon>
