@@ -24,19 +24,18 @@ class SearchResults extends Component {
         <Portal container={this.container}>
           <Paper id="searchResults">
             <List component="nav" dense>
-              {pageResultsLength > 0 &&
-                <SearchResultsSection
-                  title="PAGES"
-                  results={pageResults}
-                  selectedResult={selectedResult}
-                  gotoResult={gotoResult}
-                />
-              }
-
               {searchResultsLength > 0 &&
                 <SearchResultsSection
                   title="SEARCH RESULTS"
                   results={searchResults}
+                  selectedResult={selectedResult}
+                  gotoResult={gotoResult}
+                />
+              }
+              {pageResultsLength > 0 &&
+                <SearchResultsSection
+                  title="PAGES"
+                  results={pageResults}
                   selectedResult={selectedResult}
                   gotoResult={gotoResult}
                 />

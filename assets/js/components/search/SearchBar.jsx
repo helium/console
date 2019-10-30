@@ -85,7 +85,7 @@ class SearchBar extends Component {
     // update page results state
     const { searchResults } = this.state
     const pageResults = searchPages(newQuery)
-    const flatResults = pageResults.concat(searchResults)
+    const flatResults = searchResults.concat(pageResults)
     const selectedResult = flatResults[0]
 
     this.setState({
@@ -103,7 +103,7 @@ class SearchBar extends Component {
         // update searchResults state
         const { searchResults } = fetchMoreResult
         const { pageResults } = this.state
-        const flatResults = pageResults.concat(searchResults)
+        const flatResults = searchResults.concat(pageResults)
         const selectedResult = flatResults[0]
 
         this.setState({
