@@ -127,6 +127,10 @@ class NavDrawer extends Component {
           <Divider />
           <OrganizationalNavItems />
           <Divider />
+          <div style={{ margin: 24 }}>
+            <Typography style={{ marginBottom: 12 }}>Please note that this is a beta version of Helium Console.</Typography>
+            <Typography>This website is still undergoing final testing before its official release.</Typography>
+          </div>
         </Drawer>
       </MuiThemeProvider>
     )
