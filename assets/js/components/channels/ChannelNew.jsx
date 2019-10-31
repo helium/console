@@ -99,7 +99,12 @@ class ChannelNew extends Component {
           </CardContent>
         </Card>
 
-        {this.renderForm()}
+        <Card style={{ marginTop: 24 }}>
+          <CardContent>
+            {this.renderForm()}
+          </CardContent>
+        </Card>
+
         {this.renderStep3()}
       </DashboardLayout>
     )

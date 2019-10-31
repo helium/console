@@ -74,78 +74,78 @@ class HTTPForm extends Component {
   }
 
   render() {
+    const { type } = this.props
+
     return(
-      <Card style={{marginTop: 24}}>
-        <CardContent>
-          <Typography variant="headline">
-            Step 2
-          </Typography>
+      <div>
+        <Typography variant="headline">
+          {type === "update" ? "Update Channel" : "Step 2"}
+        </Typography>
 
-          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-            Enter your HTTP Connection Details
-          </Typography>
+        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+          {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
+        </Typography>
 
-          <div style={{width: '50%'}}>
-            <Select
-              value={this.state.method}
-              onChange={this.handleInputUpdate}
-              inputProps={{
-                name: 'method',
-                id: 'httpMethod',
-              }}
-              style={{width: 100}}
-            >
-              <MenuItem value="post">POST</MenuItem>
-              <MenuItem value="get">GET</MenuItem>
-              <MenuItem value="put">PUT</MenuItem>
-              <MenuItem value="patch">PATCH</MenuItem>
-            </Select>
+        <div style={{width: '50%'}}>
+          <Select
+            value={this.state.method}
+            onChange={this.handleInputUpdate}
+            inputProps={{
+              name: 'method',
+              id: 'httpMethod',
+            }}
+            style={{width: 100}}
+          >
+            <MenuItem value="post">POST</MenuItem>
+            <MenuItem value="get">GET</MenuItem>
+            <MenuItem value="put">PUT</MenuItem>
+            <MenuItem value="patch">PATCH</MenuItem>
+          </Select>
 
-            <TextField
-              type="text"
-              label="Endpoint"
-              name="endpoint"
-              value={this.state.endpoint}
-              onChange={this.handleInputUpdate}
-              style={{width: "calc(100% - 112px)", marginLeft: 12}}
-            />
-          </div>
+          <TextField
+            type="text"
+            label="Endpoint"
+            name="endpoint"
+            value={this.state.endpoint}
+            onChange={this.handleInputUpdate}
+            style={{width: "calc(100% - 112px)", marginLeft: 12}}
+          />
+        </div>
 
-          {
-            this.state.headers.map((obj, i) => (
-              <div key={i} style={{width: '50%'}}>
-                <TextField
-                  type="text"
-                  label="HTTP Header"
-                  name={`${i}-header`}
-                  value={obj.header}
-                  onChange={this.handleHttpHeaderUpdate}
-                />
+        {
+          this.state.headers.map((obj, i) => (
+            <div key={i} style={{width: '50%'}}>
+              <TextField
+                type="text"
+                label="HTTP Header"
+                name={`${i}-header`}
+                value={obj.header}
+                onChange={this.handleHttpHeaderUpdate}
+              />
 
-                <TextField
-                  type="text"
-                  label="Value"
-                  name={`${i}-value`}
-                  value={obj.value}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{marginLeft: 12}}
-                />
+              <TextField
+                type="text"
+                label="Value"
+                name={`${i}-value`}
+                value={obj.value}
+                onChange={this.handleHttpHeaderUpdate}
+                style={{marginLeft: 12}}
+              />
 
-                {
-                  (i > 1) &&
-                    <Button variant="fab" mini onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}>
-                      <ClearIcon />
-                    </Button>
-                }
-              </div>
-            ))
-          }
+              {
+                (i > 1) &&
+                  <Button variant="fab" mini onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}>
+                    <ClearIcon />
+                  </Button>
+              }
+            </div>
+          ))
+        }
 
-          <Button variant="fab" mini onClick={this.addHeaderRow} style={{marginTop: 12}}>
-            <AddIcon />
-          </Button>
-        </CardContent>
-      </Card>
+        <Button variant="fab" mini onClick={this.addHeaderRow} style={{marginTop: 12}}>
+          <AddIcon />
+        </Button>
+      </div>
     );
   }
 }

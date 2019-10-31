@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import pick from 'lodash/pick'
 import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
 import PacketGraph from '../common/PacketGraph'
+import AzureForm from './forms/AzureForm.jsx'
+import AWSForm from './forms/AWSForm.jsx'
+import GoogleForm from './forms/GoogleForm.jsx'
+import MQTTForm from './forms/MQTTForm.jsx'
+import HTTPForm from './forms/HTTPForm.jsx'
+import { updateChannel } from '../../actions/channel'
 import { CHANNEL_FRAGMENT } from '../../graphql/channels'
 
 // GraphQL
@@ -13,6 +20,7 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
 // MUI
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -44,8 +52,60 @@ const query = gql`
 `
 
 @graphql(query, queryOptions)
-@connect(mapStateToProps, null)
+@connect(mapStateToProps, mapDispatchToProps)
 class ChannelShow extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      newName: "",
+      credentials: {}
+    }
+
+    this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleUpdateDetailsInput = this.handleUpdateDetailsInput.bind(this);
+    this.handleUpdateDetailsChange = this.handleUpdateDetailsChange.bind(this);
+  }
+
+  handleInputUpdate(e) {
+    this.setState({ [e.target.name]: e.target.value})
+  }
+
+  handleUpdateDetailsInput(credentials) {
+    this.setState({ credentials })
+  }
+
+  handleNameChange() {
+    const { channel } = this.props.data
+    this.props.updateChannel(channel.id, { name: this.state.newName })
+    this.setState({ newName: ""})
+  }
+
+  handleUpdateDetailsChange() {
+    const { channel } = this.props.data
+    const { credentials } = this.state
+    this.props.updateChannel(channel.id, { credentials })
+    this.setState({ credentials: {} })
+  }
+
+  renderForm() {
+    const { channel } = this.props.data
+
+    switch (channel.type) {
+      case "aws":
+        return <AWSForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+      case "google":
+        return <GoogleForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+      case "mqtt":
+        return <MQTTForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+      case "http":
+        return <HTTPForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+      default:
+        return <AzureForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+    }
+  }
+
   render() {
     const { loading, channel } = this.props.data
 
@@ -59,21 +119,35 @@ class ChannelShow extends Component {
               Channel Details
             </Typography>
 
-            <div style={{display: 'flex'}}>
-              <div style={{width: '50%'}}>
-                <Typography component="p">
-                  ID: {channel.id}
-                </Typography>
-                <Typography component="p">
-                  Name: {channel.name}
-                </Typography>
-                <Typography component="p">
-                  Type: {channel.type_name}
-                </Typography>
-                <Typography component="p">
-                  Active: {channel.active ? "Yes" : "No"}
-                </Typography>
-              </div>
+            <div>
+              <Typography component="p">
+                Type: {channel.type_name}
+              </Typography>
+              <Typography component="p">
+                Active: {channel.active ? "Yes" : "No"}
+              </Typography>
+              <Typography component="p">
+                ID: {channel.id}
+              </Typography>
+              <Typography component="p" style={{ marginTop: 12 }}>
+                Name: {channel.name}
+              </Typography>
+            </div>
+
+            <div>
+              <TextField
+                name="newName"
+                value={this.state.newName}
+                onChange={this.handleInputUpdate}
+              />
+              <Button
+                size="small"
+                color="primary"
+                style={{ marginLeft: 5 }}
+                onClick={this.handleNameChange}
+              >
+                Update
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -106,6 +180,21 @@ class ChannelShow extends Component {
             }
           </CardContent>
         </Card>
+
+        <Card style={{marginTop: 24}}>
+          <CardContent>
+            {this.renderForm()}
+            <Button
+              size="small"
+              color="primary"
+              style={{ marginTop: 24 }}
+              onClick={this.handleUpdateDetailsChange}
+            >
+              Update Details
+            </Button>
+          </CardContent>
+        </Card>
+
         {
           false && <Card style={{marginTop: 24}}>
             <CardContent>
@@ -152,6 +241,10 @@ function mapStateToProps(state) {
   return {
     teams: state.entities.teams
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateChannel }, dispatch);
 }
 
 export default ChannelShow

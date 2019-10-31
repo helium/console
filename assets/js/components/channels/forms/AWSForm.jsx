@@ -33,61 +33,59 @@ class AWSForm extends Component {
   }
 
   render() {
-    return (
-      <Card style={{marginTop: 24}}>
-        <CardContent>
-          <Typography variant="headline">
-            Step 2
-          </Typography>
+    const { type } = this.props
 
-          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-            Connection coming soon...
-          </Typography>
-        </CardContent>
-      </Card>
+    return (
+      <div>
+        <Typography variant="headline">
+          Step 2
+        </Typography>
+
+        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+          Connection coming soon...
+        </Typography>
+      </div>
     )
 
     return(
-      <Card style={{marginTop: 24}}>
-        <CardContent>
-          <Typography variant="headline">
-            Step 2
-          </Typography>
+      <div>
+        <Typography variant="headline">
+          {type === "update" ? "Update Channel" : "Step 2"}
+        </Typography>
 
-          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-            Enter your AWS Connection Details
-          </Typography>
+        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+          {type === "update" ? "Update your AWS Connection Details" : "Enter your AWS Connection Details"}
+        </Typography>
 
-          <div style={{width: '50%'}}>
-            <TextField
-              type="text"
-              label="Access Key ID"
-              name="accessKeyId"
-              value={this.state.accessKeyId}
-              onChange={this.handleInputUpdate}
-              fullWidth
-            />
+        <div style={{width: '50%'}}>
+          <TextField
+            type="text"
+            label="Access Key ID"
+            name="accessKeyId"
+            value={this.state.accessKeyId}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
 
-            <TextField
-              type="text"
-              label="Secret Access Key"
-              name="secretAccessKey"
-              value={this.state.secretAccessKey}
-              onChange={this.handleInputUpdate}
-              fullWidth
-            />
+          <TextField
+            type="text"
+            label="Secret Access Key"
+            name="secretAccessKey"
+            value={this.state.secretAccessKey}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
 
-            <TextField
-              type="text"
-              label="Region"
-              name="region"
-              value={this.state.region}
-              onChange={this.handleInputUpdate}
-              fullWidth
-            />
-          </div>
-        </CardContent>
-      </Card>
+          <TextField
+            type="text"
+            label="Region"
+            name="region"
+            value={this.state.region}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
+        </div>
+      </div>
     );
   }
 }

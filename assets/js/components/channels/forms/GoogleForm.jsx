@@ -33,61 +33,59 @@ class GoogleForm extends Component {
   }
 
   render() {
+    const { type } = this.props
+
     return (
-      <Card style={{marginTop: 24}}>
-        <CardContent>
-          <Typography variant="headline">
-            Step 2
-          </Typography>
+      <div>
+        <Typography variant="headline">
+          Step 2
+        </Typography>
 
-          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-            Connection coming soon...
-          </Typography>
-        </CardContent>
-      </Card>
+        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+          Connection coming soon...
+        </Typography>
+      </div>
     )
-    
+
     return(
-      <Card style={{marginTop: 24}}>
-        <CardContent>
-          <Typography variant="headline">
-            Step 2
-          </Typography>
+      <div>
+        <Typography variant="headline">
+          {type === "update" ? "Update Channel" : "Step 2"}
+        </Typography>
 
-          <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-            Enter your Google Details
-          </Typography>
+        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+          {type === "update" ? "Update your Google Connection Details" : "Enter your Google Connection Details"}
+        </Typography>
 
-          <div style={{width: '50%'}}>
-            <TextField
-              type="text"
-              label="Registry ID"
-              name="registryId"
-              value={this.state.registryId}
-              onChange={this.handleInputUpdate}
-              fullWidth
-            />
-
-            <TextField
-              type="text"
-              label="Region"
-              name="region"
-              value={this.state.region}
-              onChange={this.handleInputUpdate}
-              fullWidth
-            />
-          </div>
-
+        <div style={{width: '50%'}}>
           <TextField
             type="text"
-            label="JSON Private Key"
-            name="privateKey"
-            value={this.state.privateKey}
+            label="Registry ID"
+            name="registryId"
+            value={this.state.registryId}
             onChange={this.handleInputUpdate}
             fullWidth
           />
-        </CardContent>
-      </Card>
+
+          <TextField
+            type="text"
+            label="Region"
+            name="region"
+            value={this.state.region}
+            onChange={this.handleInputUpdate}
+            fullWidth
+          />
+        </div>
+
+        <TextField
+          type="text"
+          label="JSON Private Key"
+          name="privateKey"
+          value={this.state.privateKey}
+          onChange={this.handleInputUpdate}
+          fullWidth
+        />
+      </div>
     );
   }
 }
