@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { resendVerification, hasResetCaptcha } from '../../actions/auth.js';
+import { resendVerification } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
 
@@ -107,7 +107,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ resendVerification, hasResetCaptcha }, dispatch);
+  return bindActionCreators({ resendVerification }, dispatch);
 }
 
 export default ResendVerification

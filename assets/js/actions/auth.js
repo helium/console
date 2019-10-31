@@ -10,8 +10,6 @@ export const REGISTERED = 'REGISTERED';
 export const SENT_PASSWORD = 'SENT_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
-export const SHOULD_RESET_CAPTCHA = "SHOULD_RESET_CAPTCHA";
-export const HAS_RESET_CAPTCHA = "HAS_RESET_CAPTCHA";
 export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
 export const CLEAR_TWO_FACTOR_BACKUP_CODES = "CLEAR_TWO_FACTOR_BACKUP_CODES";
 
@@ -32,7 +30,6 @@ export const checkCredentials = (email, password) => {
           }
         }
       })
-      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -127,7 +124,6 @@ export const register = (teamName, organizationName, email, password, passwordCo
         return dispatch(registered())
       })
       .then(() => dispatch(push('/confirm_email')))
-      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -140,7 +136,6 @@ export const forgotPassword = (email) => {
         return dispatch(sentPassword())
       })
       .then(() => dispatch(push('/login')))
-      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -169,7 +164,6 @@ export const resendVerification = (email) => {
         return dispatch(sentVerification())
       })
       .then(() => dispatch(push('/login')))
-      .catch(() => dispatch(shouldResetCaptcha()))
   }
 }
 
@@ -201,18 +195,6 @@ export const new2faSecret = (secret) => {
   return {
     type: NEW_2FA_SECRET,
     secret2fa: secret
-  }
-}
-
-export const hasResetCaptcha = () => {
-  return {
-    type: HAS_RESET_CAPTCHA
-  }
-}
-
-export const shouldResetCaptcha = () => {
-  return {
-    type: SHOULD_RESET_CAPTCHA
   }
 }
 

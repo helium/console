@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { checkCredentials, hasResetCaptcha, verify2fa } from '../../actions/auth';
+import { checkCredentials, verify2fa } from '../../actions/auth';
 import TwoFactorForm from './TwoFactorForm'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
@@ -166,7 +166,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ checkCredentials, hasResetCaptcha, verify2fa }, dispatch);
+  return bindActionCreators({ checkCredentials, verify2fa }, dispatch);
 }
 
 export default Login

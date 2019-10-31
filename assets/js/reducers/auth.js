@@ -1,8 +1,6 @@
 import {
   LOGGED_IN,
   LOGGED_OUT,
-  HAS_RESET_CAPTCHA,
-  SHOULD_RESET_CAPTCHA,
   IS_VALID_USER,
   NEW_2FA_SECRET,
   CLEAR_TWO_FACTOR_BACKUP_CODES,
@@ -14,7 +12,6 @@ import { SWITCHED_TEAM } from '../actions/team.js';
 const initialState = {
   isLoggedIn: false,
   apikey : null,
-  shouldResetCaptcha: false,
   user: null,
   currentTeamId: null,
   currentOrganizationId: null,
@@ -37,10 +34,6 @@ const auth = (state = initialState, action) => {
       return { ...state, isLoggedIn: false, apikey: null, user: null, currentTeamId: null, currentOrganizationId: null, currentOrganizationName: null };
     case REFRESHED_TOKEN:
       return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
-    case HAS_RESET_CAPTCHA:
-      return { ...state, shouldResetCaptcha: false };
-    case SHOULD_RESET_CAPTCHA:
-      return { ...state, shouldResetCaptcha: true };
     case SWITCHED_TEAM:
       return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     default:

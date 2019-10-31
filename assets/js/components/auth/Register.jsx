@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { parse } from 'query-string'
-import { register, hasResetCaptcha } from '../../actions/auth.js';
+import { register } from '../../actions/auth.js';
 import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
 import DocumentLayout from '../common/DocumentLayout'
@@ -247,7 +247,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ register, hasResetCaptcha }, dispatch);
+  return bindActionCreators({ register }, dispatch);
 }
 
 export default Register
