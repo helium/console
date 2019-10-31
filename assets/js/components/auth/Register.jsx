@@ -67,8 +67,7 @@ class Register extends Component {
     this.setState({ showTerms: true })
   }
 
-  registerUser(e) {
-    e.preventDefault();
+  registerUser() {
     const { teamName, email, password, passwordConfirm, organizationName } = this.state;
     const { register, invitationToken } = this.props
     register(

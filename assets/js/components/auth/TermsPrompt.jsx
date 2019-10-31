@@ -41,9 +41,11 @@ class TermsPrompt extends Component {
     super(props);
 
     this.state = {
-      scrolledToBottom: false
+      scrolledToBottom: false,
+      submitted: false,
     }
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -61,6 +63,12 @@ class TermsPrompt extends Component {
     }
   }
 
+  handleSubmit(e) {
+    e.preventDefault()
+    this.setState({ submitted: true })
+    this.props.handleSubmit()
+  }
+
   render() {
     const { classes } = this.props
 
@@ -71,11 +79,11 @@ class TermsPrompt extends Component {
             <TermsRaw />
           </div>
 
-          <form onSubmit={this.props.handleSubmit} noValidate>
+          <form onSubmit={this.handleSubmit} noValidate>
             <Button
               type="submit"
               variant="raised"
-              disabled={!this.state.scrolledToBottom}
+              disabled={!this.state.scrolledToBottom || this.state.submitted}
               color="primary"
               size="large"
               fullWidth
