@@ -16,7 +16,8 @@ defmodule ConsoleWeb.Router.DeviceView do
       id: device.id,
       name: device.name,
       mac: device.mac,
-      team_id: device.team_id
+      team_id: device.team_id,
+      key: device.key
     }
     |> ChannelView.append_channels(device.channels)
   end
