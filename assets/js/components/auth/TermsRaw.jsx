@@ -117,9 +117,9 @@ class TermsRaw extends Component {
       If you have any questions or concerns about this Privacy Policy, the practices of this Site, or your dealings with this Site, please contact our privacy and data protection office us at:
     </p>
     <p>Helium<br/>
-    1663 Mission Street, Suite 250<br/>
+    51 Federal St #100<br/>
     San Francisco<br/>
-    CA 94103<br/>
+    CA 94107<br/>
     dpo@helium.com</p>
     <p>
       We welcome your questions, comments, and feedback, and will take steps to respond to you as soon as reasonably possible.  If you have an unresolved privacy or personal information collection, use , or disclosure concern that we have not satisfactorily addressed, you also have the right to contact and lodge a complaint with a data protection supervisory authority.
