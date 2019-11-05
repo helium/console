@@ -13,6 +13,13 @@ defmodule Console.Devices.DeviceResolver do
 
   def find(%{id: id}, %{context: %{current_team: current_team}}) do
     device = Ecto.assoc(current_team, :devices) |> Repo.get!(id) |> Repo.preload([:channels])
+    key = device.key
+      |> :base64.decode
+      |> :erlang.binary_to_list()
+      |> Enum.map(fn b -> :io_lib.format("0x~.16B", [b]) |> to_string() end)
+      |> Enum.join(", ")
+
+    device = Map.put(device, :key, key)
     {:ok, device}
   end
 end

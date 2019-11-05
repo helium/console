@@ -33,9 +33,7 @@ defmodule Console.Devices do
       end
 
     key = :crypto.strong_rand_bytes(16)
-      |> :binary.bin_to_list()
-      |> Enum.map(fn b -> :io_lib.format("0x~.16B", [b]) |> to_string() end)
-      |> Enum.join(", ")
+      |> :base64.encode
 
     attrs = attrs
       |> Map.put_new("seq_id", seq_id)
