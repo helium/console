@@ -48,7 +48,7 @@ defmodule Console.FactoryHelper do
   def create_channel_for_organization(organization, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{organization_id: organization.id})
     attrs = for {key, val} <- params_for(:channel, attrs), into: %{}, do: {Atom.to_string(key), val}
-    {:ok, channel} = Console.Channels.create_channel(attrs)
+    {:ok, channel} = Console.Channels.create_channel(organization, attrs)
     channel
   end
 end

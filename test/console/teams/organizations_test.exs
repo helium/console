@@ -105,7 +105,7 @@ defmodule Console.OrganizationsTest do
       assert {:ok, team} = Teams.create_team(user, attrs, organization)
       attrs = params_for(:team)
       assert {:ok, team} = Teams.create_team(user, attrs, organization)
-      assert {:ok, channel} = Channels.create_channel(Map.put(@channel_attrs, "organization_id", organization.id))
+      assert {:ok, channel} = Channels.create_channel(organization, Map.put(@channel_attrs, "organization_id", organization.id))
       organization = Organizations.fetch_assoc(organization)
       assert 2 == organization.teams |> Enum.count()
       assert 1 == organization.channels |> Enum.count()

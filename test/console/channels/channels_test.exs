@@ -16,29 +16,28 @@ defmodule Console.ChannelsTest do
 
     def channel_fixture(attrs \\ %{}) do
       organization = insert(:organization)
-      {:ok, channel} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Enum.into(%{ "organization_id" => organization.id})
-        |> Channels.create_channel()
+      attrs = attrs
+      |> Enum.into(@valid_attrs)
+      |> Enum.into(%{ "organization_id" => organization.id})
 
-      channel
+      {:ok, channel} = Channels.create_channel(organization, attrs)
+      { channel, organization }
     end
 
     test "list_channels/0 returns all channels" do
-      channel = channel_fixture()
+      { channel, _ } = channel_fixture()
       assert Channels.list_channels() == [channel]
     end
 
     test "get_channel!/1 returns the channel with given id" do
-      channel = channel_fixture()
+      { channel, _ } = channel_fixture()
       assert Channels.get_channel!(channel.id) == channel
     end
 
     test "create_channel/1 with valid data creates a channel" do
       organization = insert(:organization)
       attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
-      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(organization, attrs)
       assert channel.active == true
       assert channel.credentials["a field"] == @valid_creds["a field"]
       assert channel.name == "some name"
@@ -49,19 +48,20 @@ defmodule Console.ChannelsTest do
     test "create_channel/1 first channel is default" do
       organization = insert(:organization)
       attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
-      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(organization, attrs)
       assert channel.default == true
-      assert {:ok, %Channel{} = channel} = Channels.create_channel(attrs)
+      assert {:ok, %Channel{} = channel} = Channels.create_channel(organization, attrs)
       assert channel.default == false
     end
 
     test "create_channel/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Channels.create_channel(@invalid_attrs)
+      organization = insert(:organization)
+      assert {:error, %Ecto.Changeset{}} = Channels.create_channel(organization, @invalid_attrs)
     end
 
     test "update_channel/2 with valid data updates the channel" do
-      channel = channel_fixture()
-      assert {:ok, channel} = Channels.update_channel(channel, @update_attrs)
+      { channel, organization } = channel_fixture()
+      assert {:ok, channel} = Channels.update_channel(channel, organization, @update_attrs)
       assert %Channel{} = channel
       assert channel.active == false
       assert channel.credentials == @updated_creds
@@ -72,11 +72,11 @@ defmodule Console.ChannelsTest do
     test "update_channel/2 changes default channel if default provided" do
       organization = insert(:organization)
       attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
-      assert {:ok, %Channel{} = channel1} = Channels.create_channel(attrs)
-      assert {:ok, %Channel{} = channel2} = Channels.create_channel(attrs)
+      assert {:ok, %Channel{} = channel1} = Channels.create_channel(organization, attrs)
+      assert {:ok, %Channel{} = channel2} = Channels.create_channel(organization, attrs)
       assert channel1.default == true
       assert channel2.default == false
-      assert {:ok, %Channel{}} = Channels.update_channel(channel2, %{ "default" => true })
+      assert {:ok, %Channel{}} = Channels.update_channel(channel2, organization, %{ "default" => true })
       updated_channel1 = Channels.get_channel!(channel1.id)
       updated_channel2 = Channels.get_channel!(channel2.id)
       assert updated_channel1.default == false
@@ -84,13 +84,13 @@ defmodule Console.ChannelsTest do
     end
 
     test "update_channel/2 with invalid data returns error changeset" do
-      channel = channel_fixture()
-      assert {:error, %Ecto.Changeset{}} = Channels.update_channel(channel, @invalid_attrs)
+      { channel, organization } = channel_fixture()
+      assert {:error, %Ecto.Changeset{}} = Channels.update_channel(channel, organization, @invalid_attrs)
       assert channel == Channels.get_channel!(channel.id)
     end
 
     test "delete_channel/1 deletes the channel" do
-      channel = channel_fixture()
+      { channel, organization } = channel_fixture()
       assert {:ok, %Channel{}} = Channels.delete_channel(channel)
       assert_raise Ecto.NoResultsError, fn -> Channels.get_channel!(channel.id) end
     end
