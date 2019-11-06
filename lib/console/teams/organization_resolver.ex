@@ -4,15 +4,8 @@ defmodule Console.Teams.OrganizationResolver do
   alias Console.Teams.Organizations
 
   def find(%{id: id}, %{context: %{current_user: current_user}}) do
-    if current_user.super do
-      organization = Organizations.get_organization!(id)
-      {:ok, organization}
-    else
-      organization =
-        Ecto.assoc(current_user, :organizations)
-        |> Repo.get!(id)
-      {:ok, organization}
-    end
+    organization = Organizations.get_organization!(current_user, id)
+    {:ok, organization}
   end
 
   def all(_, %{context: %{current_user: current_user}}) do
@@ -20,9 +13,7 @@ defmodule Console.Teams.OrganizationResolver do
       organizations = Organizations.list_organizations
       {:ok, organizations}
     else
-      organizations =
-        Ecto.assoc(current_user, :organizations)
-        |> Repo.all()
+      organizations = Organizations.get_organizations(current_user)
       {:ok, organizations}
     end
   end

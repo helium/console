@@ -69,16 +69,9 @@ defmodule ConsoleWeb.TeamController do
   end
 
   def switch_org(conn, %{"team_id" => id}) do
-    if conn.assigns.current_user.super do
-      with %Organization{} = organization <- Organizations.get_organization!(id) do
-        jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
-        render(conn, "switch.json", jwt: jwt)
-      end
-    else
-      with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id) do
-        jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
-        render(conn, "switch.json", jwt: jwt)
-      end
+    with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id) do
+      jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
+      render(conn, "switch.json", jwt: jwt)
     end
   end
 

@@ -17,22 +17,37 @@ defmodule Console.Teams.Organizations do
     Repo.all(Organization)
   end
 
-  def get_organization!(%User{} = current_user, id) do
-    Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
-  end
-
   def get_organizations(%User{} = current_user) do
     Ecto.assoc(current_user, :organizations) |> Repo.all()
   end
 
+  def get_organization!(%User{} = current_user, id) do
+    if current_user.super do
+      Repo.get!(Organization, id)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
+    end
+
+  end
+
   def get_organization(%User{} = current_user, id) do
-    Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+    if current_user.super do
+      Repo.get(Organization, id)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+    end
   end
 
   def get_organization_team(%User{} = current_user, team_id) do
     current_team = Teams.get_team!(team_id)
-    with %Organization{} = current_organization <- Ecto.assoc(current_user, :organizations) |> Repo.get(current_team.organization_id) do
-      { current_team, current_organization }
+
+    if current_user.super do
+      current_organization = Repo.get!(Organization, current_team.organization_id)
+      {current_team, current_organization}
+    else
+      with %Organization{} = current_organization <- Ecto.assoc(current_user, :organizations) |> Repo.get(current_team.organization_id) do
+        { current_team, current_organization }
+      end
     end
   end
 
