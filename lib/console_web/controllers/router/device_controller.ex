@@ -3,6 +3,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   import ConsoleWeb.AuthErrorHandler
 
   alias Console.Devices
+  alias Console.Teams
+  alias Console.Teams.Organizations
   alias Console.Devices.Device
   alias Console.Channels
 
@@ -30,7 +32,10 @@ defmodule ConsoleWeb.Router.DeviceController do
     device =
       case device.channels do
         [] ->
-          default_channel = Channels.get_default_channel()
+          team = Teams.get_team!(device.team_id)
+          organization = Organizations.get_organization!(team.organization_id)
+
+          default_channel = Channels.get_default_channel(organization)
           if default_channel != nil do
             Map.put(device, :channels, [default_channel])
           else
