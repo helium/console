@@ -73,6 +73,10 @@ class EventsDashboard extends Component {
         accessor: 'rssi',
       },
       {
+        Header: 'SNR',
+        accessor: 'snr',
+      },
+      {
         Header: 'Delivered At',
         accessor: 'delivered_at',
         Cell: props => <span> {formatUnixDatetime(props.value)} </span>
