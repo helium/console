@@ -8,9 +8,9 @@ defmodule ConsoleWeb.TeamController do
   alias Console.Auth
   alias Console.AuditTrails
 
-  plug ConsoleWeb.Plug.AuthorizeAction
+  plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete_organization]
 
-  action_fallback ConsoleWeb.FallbackControllerau
+  action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
     current_user = conn.assigns.current_user |> Console.Auth.fetch_assoc()

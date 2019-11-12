@@ -57,7 +57,7 @@ defmodule Console.OrganizationsTest do
       assert {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com"})
       assert {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"email" => "test", "role" => "admin"})
       assert {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"role" => "admin"})
-      assert {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "viewer"})
+      assert {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "manager"})
     end
 
     test "mark_invitation_used/1 turns invitations to used" do
@@ -73,9 +73,9 @@ defmodule Console.OrganizationsTest do
       user = insert(:user)
       organization = insert(:organization)
       {:ok, %Membership{} = membership} = Organizations.join_organization(user, organization)
-      assert membership.role == "viewer"
+      assert membership.role == "manager"
       {:ok, %Membership{} = membership} = Organizations.update_membership(membership, %{"role" => "admin"})
-      assert membership.role != "viewer"
+      assert membership.role != "manager"
       assert membership.role == "admin"
     end
 
@@ -95,7 +95,7 @@ defmodule Console.OrganizationsTest do
       {:error, %Ecto.Changeset{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "admin"})
       assert {:ok, %Invitation{}} = Organizations.delete_invitation(invitation)
       assert_raise Ecto.NoResultsError, fn -> Organizations.get_invitation!(invitation.id) end
-      {:ok, %Invitation{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "analyst"})
+      {:ok, %Invitation{}} = Organizations.create_invitation(user, organization, %{"email" => "test@test.com", "role" => "manager"})
     end
 
     test "delete_organization/1 deletes the org and all related teams and resources" do

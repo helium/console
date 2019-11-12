@@ -49,7 +49,7 @@ class NewUserModal extends Component {
     this.state = {
       email: "",
       organization: "",
-      role: "viewer"
+      role: "manager"
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
