@@ -15,22 +15,12 @@ const roles = [
   {
     value: "admin",
     name: "Administrator",
-    description: "Best for business owners and company administrators"
+    description: "Administrators have access to all actions."
   },
   {
-    value: "developer",
-    name: "Developer",
-    description: "Best for developers or people primarily using the API"
-  },
-  {
-    value: "analyst",
-    name: "Analyst",
-    description: "Best for people who need full access to data and billing settings but don't need to update business settings"
-  },
-  {
-    value: "viewer",
-    name: "View Only",
-    description: "Best for people who need to view data, but don't need to make any updates"
+    value: "manager",
+    name: "Manager",
+    description: "Managers can modify teams and channels only."
   },
 ]
 

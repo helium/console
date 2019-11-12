@@ -6,9 +6,8 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import SmallChip from '../common/SmallChip'
-import RandomEventButton from '../events/RandomEventButton'
-import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
+import DashboardLayout from '../common/DashboardLayout'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 
@@ -101,21 +100,23 @@ class DeviceShow extends Component {
             <Typography component="p">
               Name: {device.name}
             </Typography>
-            <div>
-              <TextField
-                name="newName"
-                value={this.state.newName}
-                onChange={this.handleInputUpdate}
-              />
-              <Button
-                size="small"
-                color="primary"
-                style={{ marginLeft: 5 }}
-                onClick={() => this.handleDeviceUpdate(device.id)}
-              >
-                Update
-              </Button>
-            </div>
+            <UserCan action="update" itemType="device">
+              <div>
+                <TextField
+                  name="newName"
+                  value={this.state.newName}
+                  onChange={this.handleInputUpdate}
+                />
+                <Button
+                  size="small"
+                  color="primary"
+                  style={{ marginLeft: 5 }}
+                  onClick={() => this.handleDeviceUpdate(device.id)}
+                >
+                  Update
+                </Button>
+              </div>
+            </UserCan>
             <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
               <Typography variant="caption">
                 {`const uint32_t oui = ${device.oui};`}
@@ -163,14 +164,6 @@ class DeviceShow extends Component {
               }
             </div>
           </CardContent>
-
-          <CardActions>
-            {
-              false && <UserCan action="create" itemType="event">
-                <RandomEventButton device_id={device.id} />
-              </UserCan>
-            }
-          </CardActions>
         </Card>
 
         <EventsDashboard contextName="devices" contextId={device.id} />

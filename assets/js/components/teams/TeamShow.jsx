@@ -8,7 +8,6 @@ import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import UserCan from '../common/UserCan'
-import UserCannot from '../common/UserCannot'
 import AuditTable from '../audit_trails/AuditTable'
 
 // MUI

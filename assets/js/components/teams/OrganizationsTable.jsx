@@ -145,7 +145,7 @@ const ResultsTable = (props) => {
           All Organizations
         </Typography>
 
-        <UserCan action="create">
+        <UserCan action="create" itemType="organization">
           <Button
             color="primary"
             onClick={props.openOrganizationModal}

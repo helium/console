@@ -150,7 +150,7 @@ const ResultsTable = (props) => {
           All Teams in {currentOrganizationName}
         </Typography>
 
-        <UserCan action="create">
+        <UserCan action="create" itemType="team">
           <Button
             color="primary"
             onClick={() => props.openTeamModal(organization.id, organization.name)}

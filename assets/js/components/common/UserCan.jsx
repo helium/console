@@ -20,15 +20,13 @@ function mapStateToProps(state) {
 }
 
 export const userCan = (props) => {
-  const { user, action, itemType, item } = props
+  const { user, itemType, item } = props
   const { email, role } = user
 
   if (itemType === 'membership' && item && email === item.email) return false
-  if (itemType === 'auditTrails' && role !== 'admin') return false
-
+  if (itemType === 'channel' && role === 'manager') return true
+  if (itemType === 'team' && role === 'manager') return true
   if (role === 'admin') return true
-  if (role === 'developer') return true
-  if (role === 'analyst') return true
 
   return false
 }

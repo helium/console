@@ -7,9 +7,9 @@ defmodule ConsoleWeb.Plug.AuthorizeAction do
   def call(conn, _default) do
     current_membership = conn.assigns.current_membership
     action = conn.private.phoenix_action
-    item = conn.assigns[:auth_item]
+    controller = conn.private.phoenix_controller
 
-    if can?(current_membership, action, item) do
+    if can?(current_membership, action, controller) do
       conn
     else
       conn

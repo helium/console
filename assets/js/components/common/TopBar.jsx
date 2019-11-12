@@ -31,12 +31,8 @@ const roleText = (role) => {
   switch(role) {
     case "admin":
       return "Administrator"
-    case "developer":
-      return "Developer"
-    case "analyst":
-      return "Analyst"
-    case "viewer":
-      return "View Only"
+    case "manager":
+      return "Manager"
   }
 }
 

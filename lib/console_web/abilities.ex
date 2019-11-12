@@ -1,17 +1,19 @@
 defmodule ConsoleWeb.Abilities do
   alias Console.Teams.Membership
 
-  def can?(%Membership{id: editor_id}, action, %Membership{id: editing_id})
-      when editor_id == editing_id and action in [:update, :delete],
-      do: false
+  def can?(%Membership{role: "admin"}, action, controller) do
+    true
+  end
 
-  def can?(%Membership{role: "admin"}, _action, _item), do: true
+  def can?(%Membership{role: "manager"}, action, controller) do
+    cond do
+      controller == ConsoleWeb.DeviceController and action in [:create, :update, :delete] -> false
+      controller == ConsoleWeb.InvitationController and action in [:create, :delete] -> false
+      controller == ConsoleWeb.MembershipController and action in [:update, :delete] -> false
+      controller == ConsoleWeb.TeamController and action in [:delete_organization] -> false
+      true -> true
+    end
+  end
 
-  def can?(%Membership{role: "developer"}, _action, _item), do: true
-
-  def can?(%Membership{role: "analyst"}, _action, _item), do: true
-
-  def can?(%Membership{role: "viewer"}, action, _item) when action in [:index, :show], do: true
-
-  def can?(_membership, _action, _item), do: false
+  def can?(_membership, _action, _controller), do: false
 end
