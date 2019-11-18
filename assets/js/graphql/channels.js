@@ -12,8 +12,8 @@ export const CHANNEL_FRAGMENT = gql`
 `
 
 export const CHANNEL_SUBSCRIPTION = gql`
-  subscription onChannelAdded {
-    channelAdded {
+  subscription onChannelUpdated {
+    channelUpdated {
       ...ChannelFragment
     }
   }

@@ -19,9 +19,7 @@ export const updateChannel = (id, params) => {
     rest.put(`/api/channels/${id}`, {
       channel: params
     })
-    .then(response => {
-      window.location.reload(true)
-    })
+    .then(() => {})
   }
 }
 

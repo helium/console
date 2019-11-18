@@ -13,7 +13,7 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import { CHANNEL_FRAGMENT } from '../../graphql/channels'
+import { CHANNEL_FRAGMENT, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -31,7 +31,8 @@ const queryOptions = {
   options: props => ({
     variables: {
       id: props.match.params.id
-    }
+    },
+    fetchPolicy: 'cache-and-network',
   })
 }
 
@@ -66,6 +67,22 @@ class ChannelShow extends Component {
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleUpdateDetailsInput = this.handleUpdateDetailsInput.bind(this);
     this.handleUpdateDetailsChange = this.handleUpdateDetailsChange.bind(this);
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, fetchMore } = this.props.data
+    const channelId = this.props.match.params.id
+
+    subscribeToMore({
+      document: CHANNEL_SUBSCRIPTION,
+      variables: { channelId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
   }
 
   handleInputUpdate(e) {
