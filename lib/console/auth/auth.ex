@@ -15,6 +15,10 @@ defmodule Console.Auth do
   alias Console.Teams.Team
   alias Console.Helpers
 
+  def list_users() do
+    Repo.all(User)
+  end
+
   def get_user_by_id!(id) do
     Repo.get!(User, id)
   end

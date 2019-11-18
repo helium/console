@@ -29,6 +29,7 @@ defmodule ConsoleWeb.Router do
     post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
     post "/2fa/verify", TwoFactorController, :verify
+    get "/stats", StatsController, :show
   end
 
   scope "/api", ConsoleWeb do
