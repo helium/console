@@ -147,7 +147,7 @@ const ResultsTable = (props) => {
     <div>
       <header style={styles.header}>
         <Typography variant="headline" component="h3">
-          All Teams in {currentOrganizationName}
+          Teams in {currentOrganizationName}
         </Typography>
 
         <UserCan action="create" itemType="team">
@@ -155,7 +155,7 @@ const ResultsTable = (props) => {
             color="primary"
             onClick={() => props.openTeamModal(organization.id, organization.name)}
           >
-            New Team
+            + New
           </Button>
         </UserCan>
       </header>

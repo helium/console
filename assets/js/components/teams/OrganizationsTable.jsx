@@ -142,7 +142,7 @@ const ResultsTable = (props) => {
     <div>
       <header style={styles.header}>
         <Typography variant="headline" component="h3">
-          All Organizations
+          Organizations
         </Typography>
 
         <UserCan action="create" itemType="organization">
@@ -150,7 +150,7 @@ const ResultsTable = (props) => {
             color="primary"
             onClick={props.openOrganizationModal}
           >
-            New Organization
+            + New
           </Button>
         </UserCan>
       </header>

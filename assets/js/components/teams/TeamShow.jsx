@@ -82,7 +82,7 @@ class TeamShow extends Component {
                 color="primary"
                 onClick={this.openNewUserModal}
               >
-                New User
+                + New
               </Button>
             </UserCan>
           </header>
