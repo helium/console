@@ -20,7 +20,7 @@ const ConsoleIcon = (props) => {
       return <GatewaysIcon style={{color: '#616161'}} />
     case "channels":
       return <ChannelsIcon style={{color: '#616161'}} />
-    case "access":
+    case "users":
       return <AccessIcon style={{color: '#616161'}} />
     case "dashboard":
       return <DashboardIcon style={{color: '#616161'}} />

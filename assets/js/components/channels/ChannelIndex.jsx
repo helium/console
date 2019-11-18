@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 class ChannelIndex extends Component {
   render() {
     return(
-      <DashboardLayout title="All Channels">
+      <DashboardLayout title="Channels">
         <UserCan action="create" itemType="channel">
           <Card>
             <CardContent>

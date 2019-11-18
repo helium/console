@@ -79,11 +79,11 @@ const HardwareNavItems = (props) => (
 
 const OrganizationalNavItems = (props) => (
   <List>
-    <ListItem button component={Link} to="/teams/access">
+    <ListItem button component={Link} to="/teams/users">
       <ListItemIcon>
         <AccessIcon />
       </ListItemIcon>
-      <ListItemText primary="Access" />
+      <ListItemText primary="Users" />
     </ListItem>
 
     <ListItem button component={Link} to="/datacredits">
@@ -128,8 +128,7 @@ class NavDrawer extends Component {
           <OrganizationalNavItems />
           <Divider />
           <div style={{ margin: 24 }}>
-            <Typography style={{ marginBottom: 12 }}>Please note that this is a beta version of Helium Console.</Typography>
-            <Typography>This website is still undergoing final testing before its official release.</Typography>
+            <Typography>Helium Console Beta</Typography>
           </div>
         </Drawer>
       </MuiThemeProvider>

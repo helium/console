@@ -130,7 +130,7 @@ class TeamShow extends Component {
 
     return (
       <div>
-        <DashboardLayout title="Team Access">
+        <DashboardLayout title="Users">
           {accessView}
         </DashboardLayout>
       </div>

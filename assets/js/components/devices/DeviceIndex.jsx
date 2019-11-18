@@ -25,7 +25,7 @@ class DeviceIndex extends Component {
   render() {
     const { showModal } = this.state
     return(
-      <DashboardLayout title="All Devices">
+      <DashboardLayout title="Devices">
         <Paper>
           <DevicesTable />
         </Paper>

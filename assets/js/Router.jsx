@@ -67,7 +67,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
                   <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
-                  <PrivateRoute exact path="/teams/access" component={TeamShow} />
+                  <PrivateRoute exact path="/teams/users" component={TeamShow} />
                   { false && <PrivateRoute exact path="/teams/activity" component={TeamShow} />}
                   <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />

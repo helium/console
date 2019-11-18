@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import DevicesIcon from '@material-ui/icons/Memory';
 import GatewaysIcon from '@material-ui/icons/Router';
 import ChannelsIcon from '@material-ui/icons/CompareArrows';
-import AccessIcon from '@material-ui/icons/People';
+import UsersIcon from '@material-ui/icons/People';
 import BillingIcon from '@material-ui/icons/CreditCard';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ReportsIcon from '@material-ui/icons/TrackChanges';
@@ -69,8 +69,8 @@ const SearchResultIcon = (props) => {
       return <GatewaysIcon style={{color: '#616161'}} />
     case "channels":
       return <ChannelsIcon style={{color: '#616161'}} />
-    case "access":
-      return <AccessIcon style={{color: '#616161'}} />
+    case "users":
+      return <UsersIcon style={{color: '#616161'}} />
     case "dashboard":
       return <DashboardIcon style={{color: '#616161'}} />
     case "profile":
