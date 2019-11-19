@@ -46,6 +46,9 @@ config :cloak, Cloak.AES.CTR,
 config :console,
   router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
 
+config :console,
+  stats_secrets: System.get_env("STATS_SECRETS")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

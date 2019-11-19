@@ -29,7 +29,6 @@ defmodule ConsoleWeb.Router do
     post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
     post "/2fa/verify", TwoFactorController, :verify
-    get "/stats", StatsController, :show
   end
 
   scope "/api", ConsoleWeb do
@@ -77,6 +76,12 @@ defmodule ConsoleWeb.Router do
     end
     post "/gateways/register", GatewayController, :register
     post "/gateways/verify", GatewayController, :verify
+  end
+
+  scope "/api/stats", ConsoleWeb do
+    pipe_through ConsoleWeb.StatsApiPipeline
+
+    get "/", StatsController, :show
   end
 
   if Mix.env == :dev do
