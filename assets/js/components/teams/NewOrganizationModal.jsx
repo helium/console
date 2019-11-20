@@ -47,6 +47,7 @@ class NewOrganizationModal extends Component {
     e.preventDefault();
     const { name, teamName } = this.state;
 
+    console.log("ACTION_CREATE_ORG", name, teamName)
     this.props.createOrganization(name, teamName)
 
     this.props.onClose()

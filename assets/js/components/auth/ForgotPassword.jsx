@@ -49,6 +49,7 @@ class ForgotPassword extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email } = this.state;
+    console.log("ACTION_FORGOT_PASSWORD", email)
 
     this.props.forgotPassword(email);
   }

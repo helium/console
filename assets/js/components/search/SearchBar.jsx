@@ -200,6 +200,7 @@ class SearchBar extends Component {
   }
 
   gotoResult(result) {
+    console.log("ACTION_SEARCH", this.state.query, result.title)
     this.clearResults()
     this.props.history.push(result.url)
   }

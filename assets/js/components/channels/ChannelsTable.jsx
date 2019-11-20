@@ -37,7 +37,10 @@ class ChannelsTable extends Component {
             !props.row.default && <UserCan action="update" itemType="channel" item={props.row}>
               <Button
                 color="primary"
-                onClick={() => updateChannel(props.row.id, { default: true })}
+                onClick={() => {
+                  console.log("ACTION_SET_DEFAULT_CHANNEL", props.row.id)
+                  updateChannel(props.row.id, { default: true })
+                }}
                 size="small"
               >
                 Set Default
@@ -47,7 +50,10 @@ class ChannelsTable extends Component {
           <UserCan action="delete" itemType="channel" item={props.row}>
             <Button
               color="secondary"
-              onClick={() => deleteChannel(props.row.id)}
+              onClick={() => {
+                console.log("ACTION_DELETE_CHANNEL", props.row.id)
+                deleteChannel(props.row.id)
+              }}
               size="small"
             >
               Delete

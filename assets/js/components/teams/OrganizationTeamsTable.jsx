@@ -49,7 +49,10 @@ class OrganizationTeamsTable extends Component {
               <span>
                 <Button
                   color="primary"
-                  onClick={() => switchTeam(props.row.id)}
+                  onClick={() => {
+                    console.log("ACTION_SWITCH_TEAM", props.row.id)
+                    switchTeam(props.row.id)
+                  }}
                   size="small"
                 >
                   VIEW
@@ -57,7 +60,10 @@ class OrganizationTeamsTable extends Component {
                 <UserCan action="delete" itemType="team" item={props.row}>
                   <Button
                     color="secondary"
-                    onClick={() => deleteTeam(props.row.id)}
+                    onClick={() => {
+                      console.log("ACTION_DELETE_TEAM", props.row.id)
+                      deleteTeam(props.row.id)
+                    }}
                     size="small"
                   >
                     Delete
@@ -153,7 +159,10 @@ const ResultsTable = (props) => {
         <UserCan action="create" itemType="team">
           <Button
             color="primary"
-            onClick={() => props.openTeamModal(organization.id, organization.name)}
+            onClick={() => {
+              console.log("ACTION_NEW_TEAM")
+              props.openTeamModal(organization.id, organization.name)
+            }}
           >
             + New
           </Button>

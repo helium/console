@@ -15,6 +15,10 @@ import CardContent from '@material-ui/core/CardContent';
 
 @connect(mapStateToProps, mapDispatchToProps)
 class Profile extends Component {
+  componentDidMount() {
+    console.log("ACTION_NAV_PROFILE")
+  }
+
   render() {
     const { email } = this.props.user;
     const { logOut, apikey } = this.props
@@ -37,7 +41,10 @@ class Profile extends Component {
             <Button
               size="small"
               color="secondary"
-              onClick={() => logOut()}
+              onClick={() => {
+                console.log("ACTION_LOGOUT", email)
+                logOut()
+              }}
             >
               Log Out
             </Button>

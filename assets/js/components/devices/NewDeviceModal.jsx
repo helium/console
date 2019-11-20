@@ -47,6 +47,7 @@ class NewDeviceModal extends Component {
     e.preventDefault();
     const { name } = this.state;
 
+    console.log("ACTION_CREATE_DEVICE", name)
     this.props.createDevice({ name, mac: randomMac() })
 
     this.props.onClose()

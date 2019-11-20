@@ -81,12 +81,14 @@ class TwoFactorPrompt extends Component {
   handleSubmit(e) {
     e.preventDefault()
     const { user } = this.props.auth
+    console.log("ACTION_ENABLE_2FA", user.id)
     this.props.enable2fa(this.state.twoFactorCode, user.id, user.secret2fa)
   }
 
   handleSkip() {
     const { user } = this.props.auth
     this.props.skip2fa(user.id)
+    console.log("ACTION_SKIP_2FA", user.id)
     this.props.history.replace("/dashboard")
   }
 

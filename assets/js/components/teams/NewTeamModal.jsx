@@ -47,6 +47,7 @@ class NewTeamModal extends Component {
     const { name } = this.state;
     const { organizationId } = this.props
 
+    console.log("ACTION_CREATE_TEAM", organizationId, name)
     this.props.createTeamUnderOrg(organizationId, name);
 
     this.props.onClose()

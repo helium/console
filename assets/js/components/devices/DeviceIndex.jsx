@@ -33,6 +33,10 @@ class DeviceIndex extends Component {
     this.handleClose = this.handleClose.bind(this)
   }
 
+  componentDidMount() {
+    console.log("ACTION_NAV_DEVICES_INDEX")
+  }
+
   handleClose() {
     this.setState({ showModal: false })
   }
@@ -51,7 +55,10 @@ class DeviceIndex extends Component {
             <UserCan action="create" itemType="device">
               <Button
                 color="primary"
-                onClick={() => this.setState({ showModal: true })}
+                onClick={() => {
+                  console.log("ACTION_NEW_DEVICE")
+                  this.setState({ showModal: true })
+                }}
               >
                 + New
               </Button>

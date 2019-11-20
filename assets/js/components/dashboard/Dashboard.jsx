@@ -37,6 +37,10 @@ class Dashboard extends Component {
     this.closeOrganizationModal = this.closeOrganizationModal.bind(this)
   }
 
+  componentDidMount() {
+    console.log("ACTION_NAV_DASHBOARD")
+  }
+
   openTeamModal(organizationId, organizationName) {
     this.setState({ showTeamModal: true, organizationId, organizationName })
   }

@@ -37,7 +37,10 @@ class InvitationsTable extends Component {
         Cell: props => <span>
           <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
-              onClick={() => deleteInvitation(props.row)}
+              onClick={() => {
+                console.log("ACTION_DELETE_INVITATION", props.row.email)
+                deleteInvitation(props.row)
+              }}
               color="secondary"
               size="small"
               >

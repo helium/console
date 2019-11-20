@@ -69,6 +69,7 @@ class NewUserModal extends Component {
     e.preventDefault();
     const { email, role, organization } = this.state;
 
+    console.log("ACTION_CREATE_NEW_MEMBERSHIP", organization, email, role)
     this.props.inviteUser({ email, role, organization });
 
     this.setState({ email: '', organization: '' })

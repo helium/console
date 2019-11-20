@@ -47,6 +47,10 @@ class TeamShow extends Component {
     this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
   }
 
+  componentDidMount() {
+    console.log("ACTION_NAV_ORG_USERS")
+  }
+
   openNewUserModal() {
     this.setState({newUserOpen: true})
   }
@@ -80,7 +84,10 @@ class TeamShow extends Component {
             <UserCan action="create" itemType="membership">
               <Button
                 color="primary"
-                onClick={this.openNewUserModal}
+                onClick={() => {
+                  console.log("ACTION_CREATE_NEW_MEMBERSHIP")
+                  this.openNewUserModal()
+                }}
               >
                 + New
               </Button>

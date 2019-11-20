@@ -46,7 +46,10 @@ class MembersTable extends Component {
         Cell: props => <span>
           <UserCan action="update" itemType="membership" item={props.row}>
             <Button
-              onClick={() => openEditMembershipModal(props.row)}
+              onClick={() => {
+                console.log("ACTION_OPEN_EDIT_MEMBERSHIP", props.row.email)
+                openEditMembershipModal(props.row)
+              }}
               size="small"
             >
               Edit
@@ -56,7 +59,10 @@ class MembersTable extends Component {
           <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
               color="secondary"
-              onClick={() => deleteMembership(props.row)}
+              onClick={() => {
+                console.log("ACTION_DELETE_MEMBERSHIP", props.row.email)
+                deleteMembership(props.row)
+              }}
               size="small"
             >
               Remove

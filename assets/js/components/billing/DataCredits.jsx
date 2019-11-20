@@ -9,6 +9,10 @@ import Paper from '@material-ui/core/Paper';
 import BillingIcon from '@material-ui/icons/CreditCard';
 
 class DataCredits extends Component {
+  componentDidMount() {
+    console.log("ACTION_NAV_DATA_CREDITS")
+  }
+
   render() {
     return (
       <DashboardLayout title="Data Credits">

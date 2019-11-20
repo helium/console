@@ -49,6 +49,7 @@ class ResendVerification extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email } = this.state;
+    console.log("ACTION_RESEND_VERIFICATION", email)
 
     this.props.resendVerification(email);
   }

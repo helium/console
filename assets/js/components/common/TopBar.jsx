@@ -136,7 +136,12 @@ class TopBar extends Component {
                 <ListItemText primary={email} secondary={roleText(role)}/>
               </ListItem>
               <MenuItem component={Link} to="/profile">Profile</MenuItem>
-              <MenuItem onClick={logOut}>Log Out</MenuItem>
+              <MenuItem onClick={() => {
+                console.log("ACTION_LOGOUT", email)
+                logOut()
+              }}>
+                Log Out
+              </MenuItem>
             </Menu>
           </div>
         </Toolbar>

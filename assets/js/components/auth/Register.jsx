@@ -70,6 +70,7 @@ class Register extends Component {
   registerUser() {
     const { teamName, email, password, passwordConfirm, organizationName } = this.state;
     const { register, invitationToken } = this.props
+    console.log("ACTION_REGISTER", email)
     register(
       teamName,
       organizationName,

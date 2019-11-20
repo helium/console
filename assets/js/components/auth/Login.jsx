@@ -67,7 +67,7 @@ class Login extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email, password } = this.state;
-
+    console.log("ACTION_LOGIN", email)
     this.props.checkCredentials(email, password);
   }
 

@@ -46,6 +46,8 @@ class DeviceShow extends Component {
     const { subscribeToMore, fetchMore } = this.props.data
     const deviceId = this.props.match.params.id
 
+    console.log("ACTION_NAV_DEVICE_SHOW", deviceId)
+
     subscribeToMore({
       document: DEVICE_UPDATE_SUBSCRIPTION,
       variables: { deviceId },
@@ -66,11 +68,13 @@ class DeviceShow extends Component {
     const { channelSelected } = this.state
     const { device } = this.props.data
     this.props.setDeviceChannel(device.id, { id: channelSelected })
+    console.log("ACTION_ADD_DEVICE_CHANNEL", device.id)
     this.setState({ channelSelected: "" })
   }
 
   handleDeleteChannel(channel_id) {
     const { device } = this.props.data
+    console.log("ACTION_DELETE_DEVICE_CHANNEL", device.id)
     this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
@@ -78,6 +82,7 @@ class DeviceShow extends Component {
     const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
+      console.log("ACTION_RENAME_DEVICE", id, newName)
       this.setState({ newName: "" })
     }
   }

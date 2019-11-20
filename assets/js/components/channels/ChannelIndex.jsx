@@ -26,6 +26,10 @@ const styles = theme => ({
 
 @withStyles(styles)
 class ChannelIndex extends Component {
+  componentDidMount() {
+    console.log("ACTION_NAV_CHANNELS_INDEX")
+  }
+
   render() {
     const { classes } = this.props
     return(

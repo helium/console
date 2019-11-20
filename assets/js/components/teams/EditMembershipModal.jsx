@@ -61,7 +61,7 @@ class EditMembershipModal extends Component {
 
     const { membership, updateMembership, onClose } = this.props
     const { role } = this.state;
-
+    console.log("ACTION_UPDATE_MEMBERSHIP", membership.email, role)
     updateMembership( membership.id, role );
 
     this.setState({ role: '' })

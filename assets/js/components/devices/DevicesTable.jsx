@@ -42,7 +42,10 @@ class DevicesTable extends Component {
           <UserCan action="delete" itemType="device" item={props.row}>
             <Button
               color="secondary"
-              onClick={() => deleteDevice(props.row.id)}
+              onClick={() => {
+                console.log("ACTION_DELETE_DEVICE", props.row.id)
+                deleteDevice(props.row.id)
+              }}
               size="small"
             >
               Delete

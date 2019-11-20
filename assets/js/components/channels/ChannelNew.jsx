@@ -55,6 +55,7 @@ class ChannelNew extends Component {
   handleStep3Submit(e) {
     e.preventDefault()
     const { channelName, type, credentials } = this.state
+    console.log("ACTION_CREATE_CHANNEL", channelName, type)
     this.props.createChannel({
       name: channelName,
       type,
