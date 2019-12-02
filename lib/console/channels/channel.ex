@@ -33,6 +33,7 @@ defmodule Console.Channels.Channel do
     |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
     |> put_change(:encryption_version, Cloak.version)
     |> filter_credentials()
+    |> check_credentials()
     |> put_type_name()
   end
 
@@ -67,6 +68,20 @@ defmodule Console.Channels.Channel do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
         put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+      _ -> changeset
+    end
+  end
+
+  defp check_credentials(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
+        uri = URI.parse(creds["endpoint"])
+        case uri do
+          %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
+          %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
+          %URI{path: nil} -> add_error(changeset, :message, "URL path is invalid")
+          uri -> changeset
+        end
       _ -> changeset
     end
   end
