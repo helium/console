@@ -6,6 +6,7 @@ import { checkCredentials, verify2fa } from '../../actions/auth';
 import TwoFactorForm from './TwoFactorForm'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -67,7 +68,7 @@ class Login extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email, password } = this.state;
-    console.log("ACTION_LOGIN", email)
+    analyticsLogger.logEvent("ACTION_LOGIN", { "email": email })
     this.props.checkCredentials(email, password);
   }
 

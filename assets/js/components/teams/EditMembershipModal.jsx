@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import RoleControl from './RoleControl'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography'
@@ -61,7 +62,7 @@ class EditMembershipModal extends Component {
 
     const { membership, updateMembership, onClose } = this.props
     const { role } = this.state;
-    console.log("ACTION_UPDATE_MEMBERSHIP", membership.email, role)
+    analyticsLogger.logEvent("ACTION_UPDATE_MEMBERSHIP", {"email": membership.email, "role": role })
     updateMembership( membership.id, role );
 
     this.setState({ role: '' })

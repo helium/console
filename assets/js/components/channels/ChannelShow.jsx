@@ -14,6 +14,7 @@ import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
 import { CHANNEL_FRAGMENT, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -72,7 +73,7 @@ class ChannelShow extends Component {
   componentDidMount() {
     const { subscribeToMore, fetchMore } = this.props.data
     const channelId = this.props.match.params.id
-    console.log("ACTION_NAV_CHANNEL_SHOW", channelId)
+    analyticsLogger.logEvent("ACTION_NAV_CHANNEL_SHOW", {"id": channelId})
 
     subscribeToMore({
       document: CHANNEL_SUBSCRIPTION,
@@ -96,7 +97,7 @@ class ChannelShow extends Component {
 
   handleNameChange() {
     const { channel } = this.props.data
-    console.log("ACTION_UPDATE_CHANNEL_NAME", channel.id, this.state.newName)
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_NAME", { "id": channel.id, "name": this.state.newName})
     this.props.updateChannel(channel.id, { name: this.state.newName })
     this.setState({ newName: ""})
   }
@@ -104,7 +105,7 @@ class ChannelShow extends Component {
   handleUpdateDetailsChange() {
     const { channel } = this.props.data
     const { credentials } = this.state
-    console.log("ACTION_UPDATE_CHANNEL_DETAILS", channel.id)
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", { "id": channel.id})
     this.props.updateChannel(channel.id, { credentials })
     this.setState({ credentials: {} })
   }

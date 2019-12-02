@@ -1,6 +1,7 @@
 import { push } from 'react-router-redux';
 import * as rest from '../util/rest';
 import { getTeamId, getOrganizationId, getOrganizationName } from '../util/jwt'
+import analyticsLogger from '../util/analyticsLogger'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -22,6 +23,7 @@ export const checkCredentials = (email, password) => {
         }
       })
       .then(response => {
+        analyticsLogger.setUserId(response.data.user.id)
         dispatch(isValidUser(response.data.user))
         if (!response.data.user.twoFactorEnabled) {
           dispatch(logIn(response.data.jwt))
@@ -87,6 +89,7 @@ export const logIn = (apikey) => {
 }
 
 export const logOut = () => {
+  analyticsLogger.setUserId(null)
   return (dispatch) => {
     dispatch(loggedOut())
   }

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createOrganization } from '../../actions/team'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +48,7 @@ class NewOrganizationModal extends Component {
     e.preventDefault();
     const { name, teamName } = this.state;
 
-    console.log("ACTION_CREATE_ORG", name, teamName)
+    analyticsLogger.logEvent("ACTION_CREATE_ORG", {"name": name, "teamName": teamName})
     this.props.createOrganization(name, teamName)
 
     this.props.onClose()

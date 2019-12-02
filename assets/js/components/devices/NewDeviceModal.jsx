@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createDevice } from '../../actions/device'
 import { randomMac } from '../../util/random'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +48,7 @@ class NewDeviceModal extends Component {
     e.preventDefault();
     const { name } = this.state;
 
-    console.log("ACTION_CREATE_DEVICE", name)
+    analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name})
     this.props.createDevice({ name, mac: randomMac() })
 
     this.props.onClose()

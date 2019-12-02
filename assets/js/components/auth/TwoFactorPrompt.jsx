@@ -5,6 +5,7 @@ import { enable2fa, getNew2fa, clear2faBackupCodes, skip2fa } from '../../action
 import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 import AuthLayout from '../common/AuthLayout'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -81,14 +82,14 @@ class TwoFactorPrompt extends Component {
   handleSubmit(e) {
     e.preventDefault()
     const { user } = this.props.auth
-    console.log("ACTION_ENABLE_2FA", user.id)
+    analyticsLogger.logEvent("ACTION_ENABLE_2FA", { "id": user.id })
     this.props.enable2fa(this.state.twoFactorCode, user.id, user.secret2fa)
   }
 
   handleSkip() {
     const { user } = this.props.auth
     this.props.skip2fa(user.id)
-    console.log("ACTION_SKIP_2FA", user.id)
+    analyticsLogger.logEvent("ACTION_SKIP_2FA", { "id": user.id})
     this.props.history.replace("/dashboard")
   }
 

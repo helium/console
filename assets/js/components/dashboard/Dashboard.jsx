@@ -4,6 +4,7 @@ import OrganizationsTable from '../teams/OrganizationsTable'
 import OrganizationTeamsTable from '../teams/OrganizationTeamsTable'
 import NewTeamModal from '../teams/NewTeamModal'
 import NewOrganizationModal from '../teams/NewOrganizationModal'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -38,7 +39,7 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    console.log("ACTION_NAV_DASHBOARD")
+    analyticsLogger.logEvent("ACTION_NAV_DASHBOARD")
   }
 
   openTeamModal(organizationId, organizationName) {

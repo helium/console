@@ -5,6 +5,7 @@ import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import BlankSlate from '../common/BlankSlate'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -43,7 +44,7 @@ class DevicesTable extends Component {
             <Button
               color="secondary"
               onClick={() => {
-                console.log("ACTION_DELETE_DEVICE", props.row.id)
+                analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": props.row.id })
                 deleteDevice(props.row.id)
               }}
               size="small"

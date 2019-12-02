@@ -7,6 +7,7 @@ import { deleteInvitation } from '../../actions/invitation'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Button from '@material-ui/core/Button';
@@ -38,7 +39,7 @@ class InvitationsTable extends Component {
           <UserCan action="delete" itemType="membership" item={props.row}>
             <Button
               onClick={() => {
-                console.log("ACTION_DELETE_INVITATION", props.row.email)
+                analyticsLogger.logEvent("ACTION_DELETE_INVITATION", { "email": props.row.email })
                 deleteInvitation(props.row)
               }}
               color="secondary"

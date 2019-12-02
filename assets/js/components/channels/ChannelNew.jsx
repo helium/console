@@ -11,6 +11,7 @@ import HTTPForm from './forms/HTTPForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import { createChannel } from '../../actions/channel'
+import analyticsLogger from '../../util/analyticsLogger'
 
 //MUI
 import Card from '@material-ui/core/Card';
@@ -55,7 +56,7 @@ class ChannelNew extends Component {
   handleStep3Submit(e) {
     e.preventDefault()
     const { channelName, type, credentials } = this.state
-    console.log("ACTION_CREATE_CHANNEL", channelName, type)
+    analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     this.props.createChannel({
       name: channelName,
       type,

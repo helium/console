@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
 import AuditTable from './audit_trails/AuditTable'
+import analyticsLogger from '../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -16,7 +17,7 @@ import CardContent from '@material-ui/core/CardContent';
 @connect(mapStateToProps, mapDispatchToProps)
 class Profile extends Component {
   componentDidMount() {
-    console.log("ACTION_NAV_PROFILE")
+    analyticsLogger.logEvent("ACTION_NAV_PROFILE")
   }
 
   render() {
@@ -42,7 +43,7 @@ class Profile extends Component {
               size="small"
               color="secondary"
               onClick={() => {
-                console.log("ACTION_LOGOUT", email)
+                analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
                 logOut()
               }}
             >

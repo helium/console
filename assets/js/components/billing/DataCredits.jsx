@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +11,7 @@ import BillingIcon from '@material-ui/icons/CreditCard';
 
 class DataCredits extends Component {
   componentDidMount() {
-    console.log("ACTION_NAV_DATA_CREDITS")
+    analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS")
   }
 
   render() {

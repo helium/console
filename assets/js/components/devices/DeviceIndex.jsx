@@ -3,6 +3,7 @@ import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
 import UserCan from '../common/UserCan'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Paper from '@material-ui/core/Paper';
@@ -34,7 +35,7 @@ class DeviceIndex extends Component {
   }
 
   componentDidMount() {
-    console.log("ACTION_NAV_DEVICES_INDEX")
+    analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
   }
 
   handleClose() {
@@ -56,7 +57,7 @@ class DeviceIndex extends Component {
               <Button
                 color="primary"
                 onClick={() => {
-                  console.log("ACTION_NEW_DEVICE")
+                  analyticsLogger.logEvent("ACTION_NEW_DEVICE")
                   this.setState({ showModal: true })
                 }}
               >

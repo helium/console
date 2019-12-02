@@ -3,6 +3,7 @@ import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'
+import analyticsLogger from '../../util/analyticsLogger'
 
 
 //MUI
@@ -27,7 +28,7 @@ const styles = theme => ({
 @withStyles(styles)
 class ChannelIndex extends Component {
   componentDidMount() {
-    console.log("ACTION_NAV_CHANNELS_INDEX")
+    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX")
   }
 
   render() {

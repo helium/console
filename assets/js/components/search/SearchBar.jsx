@@ -5,6 +5,7 @@ import flatten from 'lodash/flatten'
 import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // GraphQL
 import { graphql } from 'react-apollo';
@@ -200,7 +201,7 @@ class SearchBar extends Component {
   }
 
   gotoResult(result) {
-    console.log("ACTION_SEARCH", this.state.query, result.title)
+    analyticsLogger.logEvent("ACTION_SEARCH", { "query": this.state.query, "title": result.title })
     this.clearResults()
     this.props.history.push(result.url)
   }

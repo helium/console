@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { inviteUser } from '../../actions/team'
 import RoleControl from './RoleControl'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography'
@@ -69,7 +70,7 @@ class NewUserModal extends Component {
     e.preventDefault();
     const { email, role, organization } = this.state;
 
-    console.log("ACTION_CREATE_NEW_MEMBERSHIP", organization, email, role)
+    analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP", { "organization": organization, "email": email, "role": role })
     this.props.inviteUser({ email, role, organization });
 
     this.setState({ email: '', organization: '' })

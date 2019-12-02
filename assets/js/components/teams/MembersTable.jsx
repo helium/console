@@ -8,6 +8,7 @@ import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Button from '@material-ui/core/Button';
@@ -47,7 +48,7 @@ class MembersTable extends Component {
           <UserCan action="update" itemType="membership" item={props.row}>
             <Button
               onClick={() => {
-                console.log("ACTION_OPEN_EDIT_MEMBERSHIP", props.row.email)
+                analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": props.row.email})
                 openEditMembershipModal(props.row)
               }}
               size="small"
@@ -60,7 +61,7 @@ class MembersTable extends Component {
             <Button
               color="secondary"
               onClick={() => {
-                console.log("ACTION_DELETE_MEMBERSHIP", props.row.email)
+                analyticsLogger.logEvent("ACTION_DELETE_MEMBERSHIP", {"email": props.row.email})
                 deleteMembership(props.row)
               }}
               size="small"

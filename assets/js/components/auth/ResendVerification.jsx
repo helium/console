@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { resendVerification } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/logo-horizontal.svg'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -49,7 +50,7 @@ class ResendVerification extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email } = this.state;
-    console.log("ACTION_RESEND_VERIFICATION", email)
+    analyticsLogger.logEvent("ACTION_RESEND_VERIFICATION", { "email": email })
 
     this.props.resendVerification(email);
   }

@@ -8,6 +8,7 @@ import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
 import DocumentLayout from '../common/DocumentLayout'
 import Logo from '../../../img/logo-horizontal.svg'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
@@ -70,7 +71,7 @@ class Register extends Component {
   registerUser() {
     const { teamName, email, password, passwordConfirm, organizationName } = this.state;
     const { register, invitationToken } = this.props
-    console.log("ACTION_REGISTER", email)
+    analyticsLogger.logEvent("ACTION_REGISTER", { "email": email })
     register(
       teamName,
       organizationName,

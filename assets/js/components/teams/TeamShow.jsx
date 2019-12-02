@@ -9,6 +9,7 @@ import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import UserCan from '../common/UserCan'
 import AuditTable from '../audit_trails/AuditTable'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Paper from '@material-ui/core/Paper';
@@ -48,7 +49,7 @@ class TeamShow extends Component {
   }
 
   componentDidMount() {
-    console.log("ACTION_NAV_ORG_USERS")
+    analyticsLogger.logEvent("ACTION_NAV_ORG_USERS")
   }
 
   openNewUserModal() {
@@ -85,7 +86,7 @@ class TeamShow extends Component {
               <Button
                 color="primary"
                 onClick={() => {
-                  console.log("ACTION_CREATE_NEW_MEMBERSHIP")
+                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
                   this.openNewUserModal()
                 }}
               >

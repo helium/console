@@ -11,6 +11,7 @@ import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
 import { CURRENT_ORGANIZATION_TEAMS, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -50,7 +51,7 @@ class OrganizationTeamsTable extends Component {
                 <Button
                   color="primary"
                   onClick={() => {
-                    console.log("ACTION_SWITCH_TEAM", props.row.id)
+                    analyticsLogger.logEvent("ACTION_SWITCH_TEAM", {"id": props.row.id })
                     switchTeam(props.row.id)
                   }}
                   size="small"
@@ -61,7 +62,7 @@ class OrganizationTeamsTable extends Component {
                   <Button
                     color="secondary"
                     onClick={() => {
-                      console.log("ACTION_DELETE_TEAM", props.row.id)
+                      analyticsLogger.logEvent("ACTION_DELETE_TEAM", {"id": props.row.id})
                       deleteTeam(props.row.id)
                     }}
                     size="small"
@@ -160,7 +161,7 @@ const ResultsTable = (props) => {
           <Button
             color="primary"
             onClick={() => {
-              console.log("ACTION_NEW_TEAM")
+              analyticsLogger.logEvent("ACTION_NEW_TEAM")
               props.openTeamModal(organization.id, organization.name)
             }}
           >

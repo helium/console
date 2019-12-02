@@ -8,6 +8,7 @@ import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import BlankSlate from '../common/BlankSlate'
 import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // GraphQL
 import { Query } from 'react-apollo';
@@ -45,7 +46,7 @@ class OrganizationsTable extends Component {
                 <Button
                   color="primary"
                   onClick={() => {
-                    console.log("ACTION_SWITCH_ORG", props.row.id)
+                    analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": props.row.id })
                     switchOrganization(props.row.id)
                   }}
                   size="small"
@@ -56,7 +57,7 @@ class OrganizationsTable extends Component {
                   <Button
                     color="secondary"
                     onClick={() => {
-                      console.log("ACTION_DELETE_ORG", props.row.id)
+                      analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": props.row.id })
                       deleteOrganization(props.row.id)
                     }}
                     size="small"
@@ -155,7 +156,7 @@ const ResultsTable = (props) => {
           <Button
             color="primary"
             onClick={() => {
-              console.log("ACTION_NEW_ORG")
+              analyticsLogger.logEvent("ACTION_NEW_ORG")
               props.openOrganizationModal()
             }}
           >

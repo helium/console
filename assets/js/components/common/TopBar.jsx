@@ -7,6 +7,7 @@ import startCase from 'lodash/startCase'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import NotificationsBar from '../notifications/NotificationsBar'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import List from '@material-ui/core/List'
@@ -137,7 +138,7 @@ class TopBar extends Component {
               </ListItem>
               <MenuItem component={Link} to="/profile">Profile</MenuItem>
               <MenuItem onClick={() => {
-                console.log("ACTION_LOGOUT", email)
+                analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email })
                 logOut()
               }}>
                 Log Out

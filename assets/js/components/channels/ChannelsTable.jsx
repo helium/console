@@ -4,6 +4,7 @@ import UserCan from '../common/UserCan'
 import PaginatedTable from '../common/PaginatedTable'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import BlankSlate from '../common/BlankSlate'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // redux
 import { bindActionCreators } from 'redux';
@@ -38,7 +39,7 @@ class ChannelsTable extends Component {
               <Button
                 color="primary"
                 onClick={() => {
-                  console.log("ACTION_SET_DEFAULT_CHANNEL", props.row.id)
+                  analyticsLogger.logEvent("ACTION_SET_DEFAULT_CHANNEL", {"id": props.row.id})
                   updateChannel(props.row.id, { default: true })
                 }}
                 size="small"
@@ -51,7 +52,7 @@ class ChannelsTable extends Component {
             <Button
               color="secondary"
               onClick={() => {
-                console.log("ACTION_DELETE_CHANNEL", props.row.id)
+                analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": props.row.id})
                 deleteChannel(props.row.id)
               }}
               size="small"

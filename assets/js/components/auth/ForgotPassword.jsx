@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { forgotPassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
+import analyticsLogger from '../../util/analyticsLogger'
 import Logo from '../../../img/logo-horizontal.svg'
 
 // MUI
@@ -49,7 +50,7 @@ class ForgotPassword extends Component {
   handleSubmit(e) {
     e.preventDefault();
     const { email } = this.state;
-    console.log("ACTION_FORGOT_PASSWORD", email)
+    analyticsLogger.logEvent("ACTION_FORGOT_PASSWORD", { "email": email })
 
     this.props.forgotPassword(email);
   }

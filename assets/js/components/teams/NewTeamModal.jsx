@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createTeamUnderOrg } from '../../actions/team'
+import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +48,7 @@ class NewTeamModal extends Component {
     const { name } = this.state;
     const { organizationId } = this.props
 
-    console.log("ACTION_CREATE_TEAM", organizationId, name)
+    analyticsLogger.logEvent("ACTION_CREATE_TEAM", {"id": organizationId, "teamName": name})
     this.props.createTeamUnderOrg(organizationId, name);
 
     this.props.onClose()
