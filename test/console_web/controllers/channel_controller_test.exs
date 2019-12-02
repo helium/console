@@ -4,8 +4,8 @@ defmodule ConsoleWeb.ChannelControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{active: true, credentials: %{"a" => "b"}, name: "some name", type: "http", type_name: "HTTP"}
-  @update_attrs %{active: false, credentials: %{"a" => "c"}, name: "some updated name", type: "mqtt", type_name: "MQTT"}
+  @create_attrs %{active: true, credentials: %{"a" => "b", "endpoint" => "http://test.com/api"}, name: "some name", type: "http", type_name: "HTTP"}
+  @update_attrs %{active: false, credentials: %{"a" => "c", "endpoint" => "http://test.com/api"}, name: "some updated name", type: "mqtt", type_name: "MQTT"}
   @invalid_attrs %{active: nil, credentials: nil, name: nil, type: nil}
 
   describe "channels" do

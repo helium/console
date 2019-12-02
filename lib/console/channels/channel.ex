@@ -44,7 +44,9 @@ defmodule Console.Channels.Channel do
 
   def update_changeset(channel, attrs \\ %{}) do
     channel
-    |> changeset(attrs)
+    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default])
+    |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
+    |> check_credentials_update(channel.type)
   end
 
   defp put_type_name(changeset) do
@@ -79,10 +81,27 @@ defmodule Console.Channels.Channel do
         case uri do
           %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
           %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
-          %URI{path: nil} -> add_error(changeset, :message, "URL path is invalid")
           uri -> changeset
         end
       _ -> changeset
+    end
+  end
+
+  defp check_credentials_update(changeset, type) do
+    if type == "http" do
+      case changeset do
+        %Ecto.Changeset{valid?: true, changes: %{credentials: creds}} ->
+          uri = URI.parse(creds["endpoint"])
+          IO.inspect uri
+          case uri do
+            %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
+            %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
+            uri -> put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+          end
+        _ -> changeset
+      end
+    else
+      changeset
     end
   end
 

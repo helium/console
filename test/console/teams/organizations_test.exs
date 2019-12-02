@@ -14,7 +14,7 @@ defmodule Console.OrganizationsTest do
   @invalid_attrs %{"name" => nil}
   @invalid_attrs2 %{"name" => ""}
   @invalid_attrs3 %{"name" => "a"}
-  @channel_creds %{"a field" => "a value"}
+  @channel_creds %{"a field" => "a value", "endpoint" => "http://test.com/api"}
   @channel_attrs %{"active" => true, "credentials" => @channel_creds, "name" => "some name", "type" => "http", "type_name" => "HTTP"}
 
   describe "organizations" do

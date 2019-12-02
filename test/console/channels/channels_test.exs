@@ -8,8 +8,8 @@ defmodule Console.ChannelsTest do
   describe "channels" do
     alias Console.Channels.Channel
 
-    @valid_creds %{"a field" => "a value"}
-    @updated_creds %{"a field" => "a value", "another field" => "another value"}
+    @valid_creds %{"a field" => "a value", "endpoint" => "http://test.com/api"}
+    @updated_creds %{"a field" => "a value", "another field" => "another value", "endpoint" => "http://test.com/api"}
     @valid_attrs %{"active" => true, "credentials" => @valid_creds, "name" => "some name", "type" => "http", "type_name" => "HTTP"}
     @update_attrs %{"active" => false, "credentials" => @updated_creds, "name" => "some updated name", "type" => "mqtt", "type_name" => "MQTT"}
     @invalid_attrs %{"active" => nil, "credentials" => nil, "name" => nil, "type" => nil}
@@ -64,7 +64,7 @@ defmodule Console.ChannelsTest do
       assert {:ok, channel} = Channels.update_channel(channel, organization, @update_attrs)
       assert %Channel{} = channel
       assert channel.active == false
-      assert channel.credentials == @updated_creds
+      assert channel.credentials["endpoint"] == @updated_creds["endpoint"]
       assert channel.name == "some updated name"
       assert channel.type == "mqtt"
     end
