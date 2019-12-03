@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom"
-import { Link } from 'react-router-dom';
 
-// MUI
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,25 +9,14 @@ import TermsRaw from './TermsRaw.jsx';
 const styles = theme => ({
   card: {
     marginBottom: theme.spacing.unit * 4,
-    marginLeft: '15%',
-    marginRight: '15%',
+    marginLeft: '10%',
+    marginRight: '10%',
   },
   terms: {
     boxShadow: 'inset 0 0 10px #9E9E9E',
     padding: '20px',
-    height: '80vh',
+    height: '90vh',
     overflowY: 'scroll'
-  },
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2,
-  },
-  extraLinks: {
-    marginTop: theme.spacing.unit * 2,
-    textAlign: 'center'
   },
 });
 
@@ -39,34 +24,6 @@ const styles = theme => ({
 class TermsPrompt extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      scrolledToBottom: false,
-      submitted: false,
-    }
-    this.handleScroll = this.handleScroll.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
-
-  componentDidMount() {
-    ReactDOM.findDOMNode(this.termsContainer).addEventListener("scroll", this.handleScroll)
-  }
-
-  componentWillUnmount() {
-    ReactDOM.findDOMNode(this.termsContainer).removeEventListener("scroll", this.handleScroll)
-  }
-
-  handleScroll(e) {
-    const scrolledToBottom = (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 5)
-    if (scrolledToBottom) {
-      this.setState({ scrolledToBottom })
-    }
-  }
-
-  handleSubmit(e) {
-    e.preventDefault()
-    this.setState({ submitted: true })
-    this.props.handleSubmit()
   }
 
   render() {
@@ -75,29 +32,9 @@ class TermsPrompt extends Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <div className={classes.terms} ref={elem => (this.termsContainer = elem)}>
+          <div className={classes.terms}>
             <TermsRaw />
           </div>
-
-          <form onSubmit={this.handleSubmit} noValidate>
-            <Button
-              type="submit"
-              variant="raised"
-              disabled={!this.state.scrolledToBottom || this.state.submitted}
-              color="primary"
-              size="large"
-              fullWidth
-              className={classes.formButton}
-              >
-              I Agree
-            </Button>
-          </form>
-
-          <Typography component="p" className={classes.extraLinks}>
-            <Link to="/">
-              I do not agree, take me back to homepage
-            </Link>
-          </Typography>
         </CardContent>
       </Card>
     )

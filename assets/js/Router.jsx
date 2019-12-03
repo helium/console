@@ -15,6 +15,7 @@ import PrivateRoute from './components/routes/PrivateRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import UserTeamProvider from './components/UserTeamProvider'
 import Login from './components/auth/Login.jsx';
+import Terms from './components/auth/Terms.jsx';
 import Register from './components/auth/Register.jsx';
 import ResendVerification from './components/auth/ResendVerification.jsx';
 import ForgotPassword from './components/auth/ForgotPassword.jsx';
@@ -51,6 +52,7 @@ class Router extends React.Component {
                 <Switch>
                   <Redirect exact from="/" to="/login" />
                   <PublicRoute path="/login" component={Login}/>
+                  <PublicRoute path="/terms" component={Terms}/>
                   <PublicRoute path="/resend_verification" component={ResendVerification}/>
                   <PublicRoute path="/forgot_password" component={ForgotPassword}/>
                   <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
