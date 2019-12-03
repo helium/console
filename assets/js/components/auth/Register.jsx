@@ -12,6 +12,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 
 // MUI
 import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -33,6 +34,9 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
     textAlign: 'center'
   },
+  text: {
+    fontSize: 12,
+  }
 });
 
 @withStyles(styles)
@@ -46,7 +50,8 @@ class Register extends Component {
       organizationName: "",
       email: "",
       password: "",
-      showOrgCreation: false
+      showOrgCreation: false,
+      acceptedTerms: false,
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -83,16 +88,21 @@ class Register extends Component {
 
   registerContent() {
     const { classes } = this.props
-    const { showOrgCreation } = this.state
+    const { showOrgCreation, acceptedTerms } = this.state
     return (
       <CardContent>
         <Typography variant="headline" className={classes.title}>
           Register
         </Typography>
-
         {
           showOrgCreation ? (
             <form onSubmit={this.registerUser} noValidate>
+              <Typography style={{ marginBottom: 16, fontSize: 12 }}>
+                To easily manage devices, Console provides a logical structure with Organizations, Teams, and devices. Define an Organization name as the top level of your structure, (usually your company name). Organizations can contain Teams, and Teams can contain devices.
+              </Typography>
+              <Typography style={{ fontSize: 12, marginBottom: 16 }}>
+                The Organization name is used when inviting other users to your Console. Teams make managing multiple devices easier by providing a way to easily segment and identify owners of devices.
+              </Typography>
               <TextField
                 label="Organization Name"
                 name="organizationName"
@@ -141,6 +151,7 @@ class Register extends Component {
                 color="primary"
                 size="large"
                 fullWidth
+                disabled={!acceptedTerms}
                 className={classes.formButton}
               >
                 Register
@@ -164,6 +175,7 @@ class Register extends Component {
 
   joinContent() {
     const { classes, organizationName, inviter } = this.props
+    const { acceptedTerms } = this.state
 
     return (
       <CardContent>
@@ -184,6 +196,7 @@ class Register extends Component {
             color="primary"
             size="large"
             fullWidth
+            disabled={!acceptedTerms}
             className={classes.formButton}
           >
             Join Organization
@@ -195,6 +208,7 @@ class Register extends Component {
 
   commonFields() {
     const { classes } = this.props
+    const { acceptedTerms } = this.state
     return (
       <div>
         <TextField
@@ -217,6 +231,19 @@ class Register extends Component {
           fullWidth
           style={{marginBottom: 16}}
         />
+
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Checkbox
+            checked={acceptedTerms}
+            onChange={() => this.setState({ acceptedTerms: !acceptedTerms })}
+            color="primary"
+            style={{ marginLeft: -12, marginRight: -8 }}
+          />
+
+          <Typography className={classes.text}>
+            I accept and have read the <Link to="/terms" target="_blank">Helium Privacy Statement</Link>.
+          </Typography>
+        </div>
       </div>
     )
   }

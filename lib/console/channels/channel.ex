@@ -92,7 +92,6 @@ defmodule Console.Channels.Channel do
       case changeset do
         %Ecto.Changeset{valid?: true, changes: %{credentials: creds}} ->
           uri = URI.parse(creds["endpoint"])
-          IO.inspect uri
           case uri do
             %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
             %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
