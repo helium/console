@@ -95,12 +95,11 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, organizationName, email, password, passwordConfirm, invitationToken) => {
+export const register = (teamName, organizationName, email, password, invitationToken) => {
   let params = {
     user: {
       email,
       password,
-      password_confirmation: passwordConfirm
     }
   }
 

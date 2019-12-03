@@ -46,8 +46,7 @@ class Register extends Component {
       organizationName: "",
       email: "",
       password: "",
-      passwordConfirm: "",
-      showTerms: false
+      showOrgCreation: false
     };
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -65,11 +64,12 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ showTerms: true })
+    this.setState({ showOrgCreation: true })
   }
 
-  registerUser() {
-    const { teamName, email, password, passwordConfirm, organizationName } = this.state;
+  registerUser(e) {
+    e.preventDefault()
+    const { teamName, email, password, organizationName } = this.state;
     const { register, invitationToken } = this.props
     analyticsLogger.logEvent("ACTION_REGISTER", { "email": email })
     register(
@@ -77,81 +77,105 @@ class Register extends Component {
       organizationName,
       email,
       password,
-      passwordConfirm,
       invitationToken
     );
   }
 
   registerContent() {
     const { classes } = this.props
+    const { showOrgCreation } = this.state
     return (
       <CardContent>
         <Typography variant="headline" className={classes.title}>
           Register
         </Typography>
 
-        <form onSubmit={this.handleSubmit} noValidate>
-          <TextField
-            label="Organization Name"
-            name="organizationName"
-            value={this.state.organizationName}
-            onChange={this.handleInputUpdate}
-            className={classes.input}
-            fullWidth
-          />
+        {
+          showOrgCreation ? (
+            <form onSubmit={this.registerUser} noValidate>
+              <TextField
+                label="Organization Name"
+                name="organizationName"
+                value={this.state.organizationName}
+                onChange={this.handleInputUpdate}
+                className={classes.input}
+                fullWidth
+              />
 
-          <TextField
-            label="Team Name"
-            name="teamName"
-            value={this.state.teamName}
-            onChange={this.handleInputUpdate}
-            className={classes.input}
-            fullWidth
-          />
+              <TextField
+                label="Team Name"
+                name="teamName"
+                value={this.state.teamName}
+                onChange={this.handleInputUpdate}
+                className={classes.input}
+                fullWidth
+              />
 
-          {this.commonFields()}
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                fullWidth
+                className={classes.formButton}
+              >
+                Register
+              </Button>
 
-          <Button
-            type="submit"
-            variant="raised"
-            color="primary"
-            size="large"
-            fullWidth
-            className={classes.formButton}
-          >
-            Register
-          </Button>
+              <Button
+                size="large"
+                className={classes.formButton}
+                fullWidth
+                onClick={() => this.setState({ showOrgCreation: false })}
+              >
+                Go Back
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={this.handleSubmit} noValidate>
+              {this.commonFields()}
 
+              <Button
+                type="submit"
+                variant="raised"
+                color="primary"
+                size="large"
+                fullWidth
+                className={classes.formButton}
+              >
+                Register
+              </Button>
 
-          <Button
-            size="large"
-            className={classes.formButton}
-            component={Link}
-            fullWidth
-            to="/login"
-          >
-            Log In
-          </Button>
-
-        </form>
+              <Button
+                size="large"
+                className={classes.formButton}
+                component={Link}
+                fullWidth
+                to="/login"
+              >
+                Log In
+              </Button>
+            </form>
+          )
+        }
       </CardContent>
     )
   }
 
   joinContent() {
-    const { classes, teamName, inviter } = this.props
+    const { classes, organizationName, inviter } = this.props
 
     return (
       <CardContent>
         <Typography variant="headline">
-          Join {teamName}
+          Register to join {organizationName}
         </Typography>
 
         <Typography variant="subheading" className={classes.title}>
-          Invited by {inviter}
+          You are invited by {inviter}
         </Typography>
 
-        <form onSubmit={this.handleSubmit} noValidate>
+        <form onSubmit={this.registerUser} noValidate>
           {this.commonFields()}
 
           <Button
@@ -162,7 +186,7 @@ class Register extends Component {
             fullWidth
             className={classes.formButton}
           >
-            Join Team
+            Join Organization
           </Button>
         </form>
       </CardContent>
@@ -191,16 +215,6 @@ class Register extends Component {
           onChange={this.handleInputUpdate}
           className={classes.input}
           fullWidth
-        />
-
-        <TextField
-          type="password"
-          label="Confirm Password"
-          name="passwordConfirm"
-          value={this.state.passwordConfirm}
-          onChange={this.handleInputUpdate}
-          className={classes.input}
-          fullWidth
           style={{marginBottom: 16}}
         />
       </div>
@@ -209,24 +223,15 @@ class Register extends Component {
 
   render() {
     const { version } = this.props
-    const { showTerms } = this.state
 
-    if (showTerms) {
-      return(
-        <DocumentLayout>
-          <TermsPrompt handleSubmit={this.registerUser}/>
-        </DocumentLayout>
-      );
-    } else {
-      return(
-        <AuthLayout>
-          <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
-          <Card>
-            {version === "register" ? this.registerContent() : this.joinContent()}
-          </Card>
-        </AuthLayout>
-      );
-    }
+    return(
+      <AuthLayout>
+        <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
+        <Card>
+          {version === "register" ? this.registerContent() : this.joinContent()}
+        </Card>
+      </AuthLayout>
+    )
   }
 }
 
@@ -237,7 +242,7 @@ function mapStateToProps(state, ownProps) {
       auth: state.auth,
       version: "join",
       invitationToken: queryParams.invitation,
-      teamName: queryParams.team_name,
+      organizationName: queryParams.organization_name,
       inviter: queryParams.inviter
     }
   }

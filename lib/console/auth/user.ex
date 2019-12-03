@@ -35,7 +35,6 @@ defmodule Console.Auth.User do
     |> cast(attrs, [:password])
     |> validate_required(:password, message: "Password needs to not be blank")
     |> validate_length(:password, min: 6, message: "Password needs to be 6 characters minimum")
-    |> validate_confirmation(:password, message: "Password and password confirmation do not match")
     |> put_password_hash
     |> put_confirmation_token
   end
