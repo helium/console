@@ -10,10 +10,16 @@ defmodule Console.Channels.ChannelResolver do
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(id) |> Repo.preload([:devices])
-    channel = channel
-      |> Map.put(:endpoint, channel.credentials["endpoint"])
-      |> Map.put(:method, channel.credentials["method"])
-      |> Map.put(:inbound_token, channel.credentials["inbound_token"])
+
+    channel =
+      case channel.type do
+        "http" ->
+          channel
+          |> Map.put(:endpoint, channel.credentials["endpoint"])
+          |> Map.put(:method, channel.credentials["method"])
+          |> Map.put(:inbound_token, channel.credentials["inbound_token"])
+        _ -> channel
+      end
 
     {:ok, channel}
   end

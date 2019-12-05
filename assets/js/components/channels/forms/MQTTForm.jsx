@@ -33,18 +33,6 @@ class MQTTForm extends Component {
   render() {
     const { type } = this.props
 
-    return (
-      <div>
-        <Typography variant="headline">
-          Step 2
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-          Connection coming soon...
-        </Typography>
-      </div>
-    )
-
     return(
       <div>
         <Typography variant="headline">
