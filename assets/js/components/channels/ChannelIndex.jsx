@@ -3,6 +3,7 @@ import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'
+import ChannelCargoRow from './ChannelCargoRow'
 import analyticsLogger from '../../util/analyticsLogger'
 
 
@@ -39,6 +40,12 @@ class ChannelIndex extends Component {
           <Card>
             <CardContent>
               <Typography variant="headline" component="h3">
+                Use Helium Cargo
+              </Typography>
+
+              <ChannelCargoRow />
+
+              <Typography variant="headline" component="h3" style={{ marginTop: 12 }}>
                 Create New Channel
               </Typography>
 

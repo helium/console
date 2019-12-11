@@ -8,8 +8,10 @@ import AWSForm from './forms/AWSForm.jsx'
 import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
+import CargoForm from './forms/CargoForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
+import ChannelCargoRow from './ChannelCargoRow'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 
@@ -59,7 +61,7 @@ class ChannelNew extends Component {
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     this.props.createChannel({
       name: channelName,
-      type,
+      type: type == 'cargo' ? 'http' : type,
       credentials
     })
   }
@@ -74,8 +76,10 @@ class ChannelNew extends Component {
         return <MQTTForm onValidInput={this.handleStep2Input}/>
       case "http":
         return <HTTPForm onValidInput={this.handleStep2Input}/>
-      default:
+      case "azure":
         return <AzureForm onValidInput={this.handleStep2Input}/>
+      default:
+        return <CargoForm onValidInput={this.handleStep2Input}/>
     }
   }
 
@@ -92,6 +96,12 @@ class ChannelNew extends Component {
             <Typography variant="headline">
               Step 1
             </Typography>
+
+            <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+              Use Helium Cargo
+            </Typography>
+
+            <ChannelCargoRow />
 
             <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
               Select a channel

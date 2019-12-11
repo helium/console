@@ -6,10 +6,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/Button';
 
-import Azure from '../../../img/azure-channel.png'
-import Aws from '../../../img/aws-channel.png'
-import Google from '../../../img/google-channel.svg'
-import Mqtt from '../../../img/mqtt-channel.png'
 import Http from '../../../img/http-channel.png'
 
 const styles = theme => ({
@@ -37,15 +33,11 @@ const styles = theme => ({
 })
 
 const channelTypes = [
-  { name: "HTTP", link: "/channels/new/http", img: `url('${Http}')` },
-  { name: "MQTT", link: "/channels/new/mqtt", img: `url('${Mqtt}')` },
-  { name: "Azure IoT - Coming Soon", link: "/channels/new/azure", img: `url('${Azure}')`, inactive: true },
-  { name: "AWS IoT - Coming Soon", link: "/channels/new/aws", img: `url('${Aws}')`, inactive: true },
-  { name: "Google IoT - Coming Soon", link: "/channels/new/google", img: `url('${Google}')`, inactive: true },
+  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `url('${Http}')` },
 ]
 
 @withStyles(styles)
-class ChannelCreateRow extends Component {
+class ChannelCargoRow extends Component {
   render() {
     const { channels, classes } = this.props
 
@@ -68,4 +60,4 @@ class ChannelCreateRow extends Component {
   }
 }
 
-export default ChannelCreateRow
+export default ChannelCargoRow
