@@ -99,7 +99,7 @@ class EventsDashboard extends Component {
                   Real Time Packets
                 </Typography>
                 <div className="chart-legend left">
-                  <FormControlLabel control={<Checkbox value="showDupe" style={{ marginRight: -8 }} disabled checked />} label="Show Duplicate Packets" />
+                  { false && <FormControlLabel control={<Checkbox value="showDupe" style={{ marginRight: -8 }} disabled checked />} label="Show Duplicate Packets" />}
                   <div style={{ flexGrow: 1 }} />
                   <div className="chart-legend-bulb red"></div>
                   <Typography component="p">
