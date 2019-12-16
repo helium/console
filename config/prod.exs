@@ -49,6 +49,9 @@ config :console,
 config :console,
   stats_secrets: System.get_env("STATS_SECRETS")
 
+config :console,
+  mailerlite_api_key: System.get_env("MAILERLITE_KEY")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

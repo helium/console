@@ -67,6 +67,7 @@ defmodule ConsoleWeb.UserController do
 
   def confirm_email(conn, %{"token" => token}) do
     with {:ok, %User{} = user} <- Auth.confirm_email(token) do
+      ConsoleWeb.Mailerlite.subscribe(user.email)
 
       conn
       |> put_flash(:info, "Email confirmed, you may now log in")
