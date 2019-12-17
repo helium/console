@@ -2,14 +2,6 @@ defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: ConsoleWeb.Schema
 
-  ## Channels
-  channel("event:*", ConsoleWeb.EventChannel)
-  channel("device:*", ConsoleWeb.DeviceChannel)
-  channel("gateway:*", ConsoleWeb.GatewayChannel)
-  channel("channel:*", ConsoleWeb.ChannelChannel)
-  channel("membership:*", ConsoleWeb.MembershipChannel)
-  channel("invitation:*", ConsoleWeb.InvitationChannel)
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into

@@ -5,6 +5,9 @@ defmodule ConsoleWeb.Endpoint do
   socket "/socket", ConsoleWeb.UserSocket,
     websocket: [timeout: 45_000]
 
+  socket "/socket/router", ConsoleWeb.RouterSocket,
+    websocket: [timeout: 45_000]
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phoenix.digest
