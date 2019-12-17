@@ -11,8 +11,6 @@ import { Subscription } from 'react-apollo';
 // MUI
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import CardContent from '@material-ui/core/CardContent';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';

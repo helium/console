@@ -27,6 +27,8 @@ import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const queryOptions = {
   options: props => ({
@@ -199,6 +201,7 @@ class ChannelShow extends Component {
                 0 Connected Devices
               </Typography>
             }
+            <FormControlLabel control={<Checkbox value="showDupe" style={{ marginRight: -8 }} />} label="Show Duplicate Packets" />
           </CardContent>
         </Card>
 
