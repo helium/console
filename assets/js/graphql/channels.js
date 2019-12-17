@@ -7,7 +7,8 @@ export const CHANNEL_FRAGMENT = gql`
     type_name,
     id,
     active,
-    default
+    default,
+    show_dupes
   }
 `
 

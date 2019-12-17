@@ -19,6 +19,7 @@ defmodule Console.Channels.Channel do
     field :name, :string
     field :type, :string
     field :type_name, :string
+    field :show_dupes, :boolean, default: false
 
     belongs_to :organization, Organization
     many_to_many :devices, Device, join_through: DevicesChannels, on_delete: :delete_all
@@ -44,8 +45,8 @@ defmodule Console.Channels.Channel do
 
   def update_changeset(channel, attrs \\ %{}) do
     channel
-    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default])
-    |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
+    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])
+    |> validate_required([:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])
     |> check_credentials_update(channel.type)
   end
 

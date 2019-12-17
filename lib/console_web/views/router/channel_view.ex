@@ -17,7 +17,8 @@ defmodule ConsoleWeb.Router.ChannelView do
       type: channel.type,
       credentials: channel.credentials,
       active: channel.active,
-      organization_id: channel.organization_id
+      organization_id: channel.organization_id,
+      show_dupes: channel.show_dupes,
     }
   end
 

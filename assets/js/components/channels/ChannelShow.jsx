@@ -67,6 +67,7 @@ class ChannelShow extends Component {
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleShowDupesUpdate = this.handleShowDupesUpdate.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleUpdateDetailsInput = this.handleUpdateDetailsInput.bind(this);
     this.handleUpdateDetailsChange = this.handleUpdateDetailsChange.bind(this);
@@ -102,6 +103,12 @@ class ChannelShow extends Component {
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_NAME", { "id": channel.id, "name": this.state.newName})
     this.props.updateChannel(channel.id, { name: this.state.newName })
     this.setState({ newName: ""})
+  }
+
+  handleShowDupesUpdate() {
+    const { channel } = this.props.data
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DUPLICATES_FLAG", { "id": channel.id, "show_dupes": !channel.show_dupes })
+    this.props.updateChannel(channel.id, { show_dupes: !channel.show_dupes })
   }
 
   handleUpdateDetailsChange() {
@@ -201,7 +208,17 @@ class ChannelShow extends Component {
                 0 Connected Devices
               </Typography>
             }
-            <FormControlLabel control={<Checkbox value="showDupe" style={{ marginRight: -8 }} />} label="Show Duplicate Packets" />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  style={{ marginRight: -8 }}
+                  color="primary"
+                  checked={channel.show_dupes}
+                  onChange={this.handleShowDupesUpdate}
+                />
+              }
+              label="Show Duplicate Packets"
+            />
           </CardContent>
         </Card>
 

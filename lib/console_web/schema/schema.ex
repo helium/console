@@ -26,6 +26,7 @@ defmodule ConsoleWeb.Schema do
     field :inbound_token, :string
     field :active, :boolean
     field :default, :boolean
+    field :show_dupes, :boolean
     field :devices, list_of(:device)
   end
 
