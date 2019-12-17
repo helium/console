@@ -13,7 +13,7 @@ class CargoForm extends Component {
       method: "post",
       endpoint: "https://cargo.helium.com/api/payloads",
       headers: [
-        { header: "", value: "" }
+        { header: "Content-Type", value: "application/json" }
       ]
     }
 
