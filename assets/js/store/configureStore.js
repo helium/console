@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { routerReducer, routerMiddleware } from 'react-router-redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 import reducers from '../reducers';
 
 // Create a history of your choosing (we're using a browser history in this case)
@@ -19,7 +19,7 @@ const composedEnhancers = composeEnhancers(applyMiddleware(...middleware));
 
 const rootReducer = combineReducers({
   ...reducers,
-  router: routerReducer
+  router: connectRouter(history)
 });
 
 const persistConfig = {

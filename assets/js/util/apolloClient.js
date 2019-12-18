@@ -5,7 +5,7 @@ import { onError } from 'apollo-link-error'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { store } from '../store/configureStore';
-import { replace } from 'react-router-redux';
+import { replace } from 'connected-react-router';
 
 import {ApolloLink} from "apollo-link";
 import {hasSubscription} from "@jumpn/utils-graphql";

@@ -1,5 +1,5 @@
 import * as rest from '../util/rest';
-import { replace } from 'react-router-redux';
+import { replace } from 'connected-react-router';
 
 export const RECEIVE_USER = 'RECEIVE_USER';
 

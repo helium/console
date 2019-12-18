@@ -8,7 +8,7 @@ import apolloClient from './util/apolloClient'
 
 // Routes
 import { Provider } from 'react-redux';
-import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './components/routes/PrivateRoute.jsx';

@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import * as rest from '../util/rest';
 import { getTeamId, getOrganizationId, getOrganizationName } from '../util/jwt';
 import { normalizeTeam, normalizeTeams } from '../schemas/team'

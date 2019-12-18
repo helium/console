@@ -1,5 +1,5 @@
 import * as rest from '../util/rest';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 export const createNotification = (params) => {
   return (dispatch) => {
