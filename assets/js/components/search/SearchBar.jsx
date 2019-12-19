@@ -6,13 +6,10 @@ import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Icon } from 'antd'
 
-// GraphQL
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-
-// Icons
-import SearchIcon from '@material-ui/icons/Search'
 
 const queryOptions = {
   options: props => ({
@@ -212,8 +209,8 @@ class SearchBar extends Component {
 
     return (
       <div>
-        <div onClick={this.focusSearchBar} id="searchBar">
-          <SearchIcon />
+        <div onClick={this.focusSearchBar} id="searchBar" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Icon type="search" style={{ color: 'white', fontSize: 18 }} />
           <input
             ref={this.searchBarInput}
             value={query}

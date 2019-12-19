@@ -76,7 +76,7 @@ a
 {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  padding: 4px 36px 4px 20px;
+  padding: 4px 16px 4px 16px;
   display: flex;
   margin-right: 4px;
   position: relative;
@@ -88,20 +88,6 @@ a
   background: rgba(255, 255, 255, 0.2);
 }
 
-#searchBar::after
-{
-  content: '/';
-  position: absolute;
-  right: 8px;
-  border: 0.5px solid #ffffff57;
-  padding: 1px 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
-  top: 6px;
-  color: #ffffffa6;
-}
-
 #searchBar input
 {
   background: none;
@@ -110,7 +96,7 @@ a
   font-size: 16px;
   line-height: 24px;
   margin-left: 20px;
-  width: 130px;
+  width: 100px;
   /* background: rgba(255, 0, 0, 0.2); */
 
   transition: all 0.2s ease 0s;
@@ -118,7 +104,7 @@ a
 
 #searchBar input:focus
 {
-  width: 200px;
+  width: 100px;
 }
 
 #searchResults

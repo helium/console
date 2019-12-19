@@ -21,7 +21,7 @@ class TopBar extends Component {
     const { logOut, currentOrganizationName, currentTeam } = this.props
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <div>
           {
             currentOrganizationName && <Text style={{ color: 'white' }}>Organization: {currentOrganizationName}</Text>
