@@ -7,17 +7,24 @@
 /* This file is for your main application css. */
 body {
   overscroll-behavior: none;
+  height: 100%;
+}
+
+.mainContainer {
+  height: 100%;
+}
+
+main {
+  height: 100%;
+}
+
+#react-root {
+  height: 100%;
 }
 
 :focus
 {
   outline: none;
-}
-
-a
-{
-  text-decoration: none;
-  color: #2C98F0;
 }
 
 

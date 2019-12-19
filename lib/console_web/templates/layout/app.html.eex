@@ -18,7 +18,7 @@
       window.flashInfo = "<%= get_flash(@conn, :info) %>"
       window.flashError = "<%= get_flash(@conn, :error) %>"
     </script>
-    <div class="container">
+    <div class="mainContainer">
       <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
