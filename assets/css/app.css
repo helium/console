@@ -2,6 +2,7 @@
 @import '~noty/lib/noty.css';
 @import './mapbox.css';
 @import './chartjs.css';
+@import '~antd/dist/antd.css';
 
 /* This file is for your main application css. */
 body {
