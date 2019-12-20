@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
-import find from 'lodash/find'
+import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization } from '../../actions/team'
 import UserCan from '../common/UserCan'
 import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
@@ -107,7 +107,7 @@ class QueryResults extends Component {
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
-    const organizations = find(data, d => d !== undefined).map(r => { r.key = r.id; return r })
+    const organizations = filter(data.organizations, d => d !== undefined).map(r => { r.key = r.id; return r })
 
     if (organizations.length === 0) return (
       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
