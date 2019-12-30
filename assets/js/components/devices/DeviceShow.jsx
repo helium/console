@@ -69,13 +69,13 @@ class DeviceShow extends Component {
     const { channelSelected } = this.state
     const { device } = this.props.data
     this.props.setDeviceChannel(device.id, { id: channelSelected })
-    analyticsLogger.logEvent("ACTION_ADD_DEVICE_CHANNEL", {"id": deviceId})
+    analyticsLogger.logEvent("ACTION_ADD_DEVICE_CHANNEL", {"id": device.id})
     this.setState({ channelSelected: "" })
   }
 
   handleDeleteChannel(channel_id) {
     const { device } = this.props.data
-    analyticsLogger.logEvent("ACTION_DELETE_DEVICE_CHANNEL", {"id": deviceId})
+    analyticsLogger.logEvent("ACTION_DELETE_DEVICE_CHANNEL", {"id": device.id})
     this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
@@ -83,7 +83,7 @@ class DeviceShow extends Component {
     const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": deviceId, "name": newName })
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "name": newName })
       this.setState({ newName: "" })
     }
   }
