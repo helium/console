@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
-
-// MUI
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-
-// Icons
-import BillingIcon from '@material-ui/icons/CreditCard';
+import { Icon, Typography } from 'antd';
+const { Text } = Typography
 
 class DataCredits extends Component {
   componentDidMount() {
@@ -17,18 +12,21 @@ class DataCredits extends Component {
   render() {
     return (
       <DashboardLayout title="Data Credits">
-        <Paper style={{textAlign: 'center', padding: '5em'}}>
-          <BillingIcon style={{width: 80, height: 80, color: "#e0e0e0"}} />
-          <Typography variant="subheading" style={{color: "#363636"}}>
+        <div style={{textAlign: 'center', padding: 5 }}>
+          <Icon type="wallet" style={{ fontSize: 32 }}/>
+          <br />
+          <Text>
             Purchase Data Credits from Helium to send device data.
-          </Typography>
-          <Typography variant="subheading" style={{color: "#363636"}}>
+          </Text>
+          <br />
+          <Text>
             The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC).
-          </Typography>
-          <Typography variant="subheading" style={{color: "#363636", marginTop: 20 }}>
+          </Text>
+          <br />
+          <Text>
             During the Beta, the cost to send packets is 0 DC.
-          </Typography>
-        </Paper>
+          </Text>
+        </div>
       </DashboardLayout>
     )
   }
