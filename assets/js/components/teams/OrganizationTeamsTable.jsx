@@ -125,7 +125,7 @@ class QueryResults extends Component {
             New Team
           </Button>
         </div>
-        <Table columns={columns} dataSource={teams} />
+        <Table columns={columns} dataSource={teams} pagination={false} />
       </div>
     )
   }

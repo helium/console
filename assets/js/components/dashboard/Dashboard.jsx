@@ -46,6 +46,7 @@ class Dashboard extends Component {
     return (
       <DashboardLayout title="Dashboard">
         <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
+        <br />
         <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
 
         <NewTeamModal

@@ -100,7 +100,7 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data, EmptyComponent, columns, openOrganizationModal } = this.props
+    const { loading, error, data, columns, openOrganizationModal } = this.props
 
     if (loading) return null;
     if (error) return (
@@ -125,7 +125,7 @@ class QueryResults extends Component {
             New Organization
           </Button>
         </div>
-        <Table columns={columns} dataSource={organizations} />
+        <Table columns={columns} dataSource={organizations} pagination={false} />
       </div>
     )
   }

@@ -4,26 +4,15 @@ import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Button } from 'antd';
 
-// MUI
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles'
-
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing.unit * 3,
-    paddingTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 3
-  },
+const styles = {
   header: {
     display: 'flex',
-    justifyContent: 'space-between'
-  },
-})
+    justifyContent: 'flex-end'
+  }
+}
 
-@withStyles(styles)
 class DeviceIndex extends Component {
   constructor(props) {
     super(props)
@@ -47,27 +36,20 @@ class DeviceIndex extends Component {
     const { classes } = this.props
     return(
       <DashboardLayout title="Devices">
-        <Paper className={classes.paper}>
-          <header className={classes.header}>
-            <Typography variant="headline" component="h3">
-              Devices
-            </Typography>
+        <header style={styles.header}>
+          <UserCan action="create" itemType="device">
+            <Button
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_NEW_DEVICE")
+                this.setState({ showModal: true })
+              }}
+            >
+              New Device
+            </Button>
+          </UserCan>
+        </header>
 
-            <UserCan action="create" itemType="device">
-              <Button
-                color="primary"
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_NEW_DEVICE")
-                  this.setState({ showModal: true })
-                }}
-              >
-                + New
-              </Button>
-            </UserCan>
-          </header>
-
-          <DevicesTable />
-        </Paper>
+        <DevicesTable />
 
         <NewDeviceModal open={showModal} onClose={this.handleClose}/>
       </DashboardLayout>
