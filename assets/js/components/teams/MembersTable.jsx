@@ -2,18 +2,19 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { deleteMembership } from '../../actions/membership'
+import find from 'lodash/find'
+import get from 'lodash/get'
 import moment from 'moment'
-import random from 'lodash/random'
 import UserCan from '../common/UserCan'
-import PaginatedTable from '../common/PaginatedTable'
-import BlankSlate from '../common/BlankSlate'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Query } from 'react-apollo';
+import { Table, Button, Empty, Pagination, Tag } from 'antd';
 
-// MUI
-import Button from '@material-ui/core/Button';
-import SmallChip from '../common/SmallChip'
-import SuccessChip from '../common/SuccessChip'
+const defaultVariables = {
+  page: 1,
+  pageSize: 10
+}
 
 @connect(null, mapDispatchToProps)
 class MembersTable extends Component {
@@ -24,62 +25,158 @@ class MembersTable extends Component {
 
     const columns = [
       {
-        Header: 'User',
-        accessor: 'email'
+        title: 'User',
+        dataIndex: 'email'
       },
       {
-        Header: 'Role',
-        accessor: 'role',
-        Cell: props => <Role role={props.row.role} />
+        title: 'Role',
+        dataIndex: 'role',
+        render: text => <Role role={text} />
       },
       {
-        Header: 'Joined',
-        accessor: 'inserted_at',
-        Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
+        title: 'Two-Factor',
+        dataIndex: 'two_factor_enabled',
+        render: data => data ? <Tag color="blue">Enabled</Tag> : <Tag color="red">Disabled</Tag>
       },
       {
-        Header: 'Two Factor',
-        Cell: props => (props.row.two_factor_enabled ? <SuccessChip label="Enabled"/> : <SmallChip label="Disabled"/>)
+        title: 'Joined',
+        dataIndex: 'inserted_at',
+        render: data => moment(data).format('LL')
       },
       {
-        Header: '',
-        numeric: true,
-        Cell: props => <span>
-          <UserCan action="update" itemType="membership" item={props.row}>
-            <Button
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": props.row.email})
-                openEditMembershipModal(props.row)
-              }}
-              size="small"
-            >
-              Edit
-            </Button>
-          </UserCan>
+        title: '',
+        key: 'action',
+        render: (text, record) => (
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <UserCan action="update" itemType="membership" item={record}>
+              <Button
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
+                  openEditMembershipModal(record)
+                }}
+                type="primary"
+              >
+                Edit
+              </Button>
+            </UserCan>
 
-          <UserCan action="delete" itemType="membership" item={props.row}>
-            <Button
-              color="secondary"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_DELETE_MEMBERSHIP", {"email": props.row.email})
-                deleteMembership(props.row)
-              }}
-              size="small"
-            >
-              Remove
-            </Button>
-          </UserCan>
-        </span>
+            <UserCan action="delete" itemType="membership" item={record}>
+              <Button
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_DELETE_MEMBERSHIP", {"email": record.email})
+                  deleteMembership(record)
+                }}
+                type="danger"
+              >
+                Remove
+              </Button>
+            </UserCan>
+          </div>
+        )
       },
     ]
 
     return (
-      <PaginatedTable
-        columns={columns}
-        query={PAGINATED_MEMBERSHIPS}
-        subscription={MEMBERSHIP_SUBSCRIPTION}
-        EmptyComponent={ props => <BlankSlate title="Loading..." /> }
+      <Query query={PAGINATED_MEMBERSHIPS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
+        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
+          <QueryResults
+            loading={loading}
+            error={error}
+            data={data}
+            columns={columns}
+            fetchMore={fetchMore}
+            subscribeToMore={subscribeToMore}
+            subscription={MEMBERSHIP_SUBSCRIPTION}
+            variables={variables}
+            {...this.props}
+          />
+        )}
+      </Query>
+    )
+  }
+}
+
+class QueryResults extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      page: 1,
+      pageSize: get(props, ['variables', 'pageSize']) || 10
+    }
+
+    this.handleChangePage = this.handleChangePage.bind(this)
+    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
+    this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleChangePage(page) {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleSubscriptionAdded() {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries(page, pageSize) {
+    const { fetchMore } = this.props
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  render() {
+    const { loading, error, data, columns } = this.props
+
+    if (loading) return null;
+    if (error) return (
+      <Text>Data failed to load, please reload the page and try again</Text>
+    )
+
+    const results = find(data, d => d.entries !== undefined)
+
+    if (results.entries.length === 0) return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<span>No Members</span>}
       />
+    )
+
+    return (
+      <div>
+        <Table
+          columns={columns}
+          dataSource={results.entries}
+          rowKey={record => record.id}
+          pagination={false}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+          <Pagination
+            current={results.pageNumber}
+            pageSize={results.pageSize}
+            total={results.totalEntries}
+            onChange={page => this.handleChangePage(page)}
+          />
+        </div>
+      </div>
     )
   }
 }
