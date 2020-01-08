@@ -145,7 +145,10 @@ class QueryResults extends Component {
     const results = find(data, d => d.entries !== undefined)
 
     if (results.entries.length === 0) return (
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<span>No Channels</span>}
+      />
     )
 
     return (

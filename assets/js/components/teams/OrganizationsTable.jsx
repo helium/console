@@ -110,7 +110,10 @@ class QueryResults extends Component {
     const organizations = filter(data.organizations, d => d !== undefined).map(r => { r.key = r.id; return r })
 
     if (organizations.length === 0) return (
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      <Empty 
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<span>No Organizations</span>}
+      />
     )
 
     return (

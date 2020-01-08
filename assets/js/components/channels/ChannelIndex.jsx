@@ -25,7 +25,7 @@ class ChannelIndex extends Component {
 
   render() {
     const { classes } = this.props
-    return(
+    return (
       <DashboardLayout title="Channels">
         <UserCan action="create" itemType="channel">
           <Text style={styles.title}>
