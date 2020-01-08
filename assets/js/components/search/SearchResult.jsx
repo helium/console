@@ -1,52 +1,31 @@
 import React, { Component } from 'react'
+import { Icon, Typography } from 'antd';
+const { Text } = Typography
 
-// MUI
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import { withStyles } from '@material-ui/core/styles';
-
-// Icons
-import DevicesIcon from '@material-ui/icons/Memory';
-import GatewaysIcon from '@material-ui/icons/Router';
-import ChannelsIcon from '@material-ui/icons/CompareArrows';
-import UsersIcon from '@material-ui/icons/People';
-import BillingIcon from '@material-ui/icons/CreditCard';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ReportsIcon from '@material-ui/icons/TrackChanges';
-import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import NotificationsIcon from '@material-ui/icons/Notifications'
-import MapIcon from '@material-ui/icons/MyLocation'
-
-const styles = theme => ({
-  selected: {
-    backgroundColor: "#E3F2FD !important"
-  }
-})
-
-@withStyles(styles)
 class SearchResult extends Component {
-
   render() {
-    const { selected, result, classes, gotoResult } = this.props
-
+    const { selected, result, gotoResult } = this.props
     return (
-      <MenuItem
-        button
-        onClick={() => gotoResult(result)}
-        selected={selected}
-        classes={{selected: classes.selected}}
+      <div
+        onClick={e => {
+          console.log(e)
+        }}
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          cursor: 'pointer',
+          backgroundColor: selected ? '#E3F2FD' : 'white',
+        }}
       >
-        <ListItemIcon>
-          <SearchResultIcon category={result.category} />
-        </ListItemIcon>
-        <ListItemText
-          primary={result.title}
-          secondary={result.description}
-        />
+        <SearchResultIcon category={result.category} />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Text strong>{result.title}</Text>
+          <Text type="secondary">{result.description}</Text>
+        </div>
+        <div style={{ flexGrow: 1 }} />
         <JumpTo show={selected} />
-      </MenuItem>
+      </div>
     )
   }
 }
@@ -55,7 +34,7 @@ const JumpTo = (props) => (
   <span className="jumpto">
     {props.show &&
       <span className="jumpto--inner">
-        Jump to <KeyboardReturnIcon />
+        Jump to <Icon type="enter" style={{ fontSize: 18 }}/>
       </span>
     }
   </span>
@@ -64,27 +43,19 @@ const JumpTo = (props) => (
 const SearchResultIcon = (props) => {
   switch (props.category) {
     case "devices":
-      return <DevicesIcon style={{color: '#616161'}} />
-    case "gateways":
-      return <GatewaysIcon style={{color: '#616161'}} />
+      return <Icon type="api" style={{ fontSize: 18 }}/>
     case "channels":
-      return <ChannelsIcon style={{color: '#616161'}} />
+      return <Icon type="cloud-upload" style={{ fontSize: 18 }}/>
     case "users":
-      return <UsersIcon style={{color: '#616161'}} />
+      return <Icon type="user" style={{ fontSize: 18 }}/>
     case "dashboard":
-      return <DashboardIcon style={{color: '#616161'}} />
+      return <Icon type="dashboard" style={{ fontSize: 18 }}/>
     case "profile":
-      return <AccountCircle style={{color: '#616161'}} />
-    case "map":
-      return <MapIcon style={{color: '#616161'}} />
-    case "billing":
-      return <BillingIcon style={{color: '#616161'}} />
-    case "reports":
-      return <ReportsIcon style={{color: '#616161'}} />
-    case "notifications":
-      return <NotificationsIcon style={{color: '#616161'}} />
+      return <Icon type="profile" style={{ fontSize: 18 }}/>
+    case "datacredits":
+      return <Icon type="wallet" style={{ fontSize: 18 }}/>
     default:
-      return <DevicesIcon style={{color: '#616161'}} />
+      return <Icon type="caret-right" style={{ fontSize: 18 }}/>
   }
 }
 

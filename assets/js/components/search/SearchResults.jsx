@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
+import ReactDOM from "react-dom"
 import SearchResultsSection from './SearchResultsSection'
 import sample from 'lodash/sample'
+import { Typography } from 'antd';
+const { Text } = Typography
 
-// MUI
-import Portal from '@material-ui/core/Portal';
-import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography'
+const appRoot = document.getElementById('react-root');
 
 class SearchResults extends Component {
   constructor(props) {
     super(props)
-    this.container = null
+    this.el = document.createElement('div')
+  }
+
+  componentDidMount() {
+    appRoot.appendChild(this.el)
   }
 
   render() {
@@ -20,42 +23,37 @@ class SearchResults extends Component {
     const searchResultsLength = searchResults ? searchResults.length : 0
 
     if ((pageResultsLength + searchResultsLength) > 0) {
-      return(
-        <Portal container={this.container}>
-          <Paper id="searchResults">
-            <List component="nav" dense>
-              {searchResultsLength > 0 &&
-                <SearchResultsSection
-                  title="SEARCH RESULTS"
-                  results={searchResults}
-                  selectedResult={selectedResult}
-                  gotoResult={gotoResult}
-                />
-              }
-              {pageResultsLength > 0 &&
-                <SearchResultsSection
-                  title="PAGES"
-                  results={pageResults}
-                  selectedResult={selectedResult}
-                  gotoResult={gotoResult}
-                />
-              }
-            </List>
-          </Paper>
-        </Portal>
+      return ReactDOM.createPortal(
+        <div style={{ backgroundColor: 'white', zIndex: 10 }} id="searchResults">
+          {searchResultsLength > 0 &&
+            <SearchResultsSection
+              title="SEARCH RESULTS"
+              results={searchResults}
+              selectedResult={selectedResult}
+              gotoResult={gotoResult}
+            />
+          }
+          {pageResultsLength > 0 &&
+            <SearchResultsSection
+              title="PAGES"
+              results={pageResults}
+              selectedResult={selectedResult}
+              gotoResult={gotoResult}
+            />
+          }
+        </div>,
+        this.el
       )
     } else {
-      return(
-        <Portal container={this.container}>
-          <Paper id="searchResults">
-            <Typography style={{textAlign: 'center', padding: 20, color: "#6a6a6a"}}>
-              no results {reactionFace()}
-            </Typography>
-          </Paper>
-        </Portal>
+      return ReactDOM.createPortal(
+        <div style={{ backgroundColor: 'white', paddingLeft: 20, paddingTop: 10, paddingBottom: 10 }} id="searchResults">
+          <Text>
+            No Results Found {reactionFace()}
+          </Text>
+        </div>,
+        this.el
       )
     }
-
   }
 }
 

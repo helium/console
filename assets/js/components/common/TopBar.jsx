@@ -34,10 +34,10 @@ class TopBar extends Component {
         <SearchBar />
         <div style={{ width: 20 }}/>
         <Dropdown overlay={menu(this.handleClick)}>
-          <a className="ant-dropdown-link" href="#">
+          <Text style={{ color: 'white', cursor: 'pointer' }}>
             Account <Icon type="down" />
-          </a>
-        </Dropdown>,
+          </Text>
+        </Dropdown>
       </div>
     )
   }

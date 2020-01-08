@@ -88,7 +88,7 @@ const pages = [
     url: "/datacredits",
     id: "/datacredits",
     category: "datacredits",
-    synonyms: ""
+    synonyms: "billing"
   },
   // {
   //   title: "Reports",
