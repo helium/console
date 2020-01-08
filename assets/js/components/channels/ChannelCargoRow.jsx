@@ -1,17 +1,12 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { withStyles } from '@material-ui/core/styles';
-
-//MUI
-import Typography from '@material-ui/core/Typography';
-import ButtonBase from '@material-ui/core/Button';
-
+import { Typography } from 'antd';
+const { Text } = Typography
 import Http from '../../../img/http-channel.png'
 
-const styles = theme => ({
+const styles = {
   createRow: {
     display: 'flex',
-    marginTop: theme.spacing.unit,
     justifyContent: 'space-between'
   },
   button: {
@@ -28,31 +23,31 @@ const styles = theme => ({
   icon: {
     height: 100,
     width: 100,
-    backgroundSize: 'cover'
   }
-})
+}
 
 const channelTypes = [
-  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `url('${Http}')` },
+  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `${Http}` },
 ]
 
-@withStyles(styles)
 class ChannelCargoRow extends Component {
   render() {
-    const { channels, classes } = this.props
+    const { channels } = this.props
 
     return(
-      <div className={classes.createRow}>
+      <div style={styles.createRow}>
         {
           channelTypes.map(channel => (
-            <ButtonBase key={channel.name} component={Link} to={channel.link} className={classes.button} style={{ backgroundColor: channel.inactive && '#CFCFCF' }}>
-              <div className={classes.tile}>
-                <div className={classes.icon} style={{backgroundImage: channel.img}}></div>
-                <Typography component="p" style={{marginTop: 12}}>
-                  {channel.name}
-                </Typography>
-              </div>
-            </ButtonBase>
+            <div style={{ ...styles.button, backgroundColor: channel.inactive && '#CFCFCF' }} key={channel.name}>
+              <Link to={channel.link}>
+                <div style={styles.tile}>
+                  <img style={styles.icon} src={channel.img} />
+                  <Text>
+                    {channel.name}
+                  </Text>
+                </div>
+              </Link>
+            </div>
           ))
         }
       </div>

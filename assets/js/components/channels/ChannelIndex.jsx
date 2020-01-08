@@ -5,28 +5,19 @@ import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelCargoRow from './ChannelCargoRow'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Typography } from 'antd';
+const { Text } = Typography
 
-
-//MUI
-import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles'
-
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing.unit * 3,
-    paddingTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 3
-  },
+const styles = {
   header: {
     display: 'flex',
     justifyContent: 'space-between'
   },
-})
+  title: {
+    fontWeight: 'bold'
+  }
+}
 
-@withStyles(styles)
 class ChannelIndex extends Component {
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX")
@@ -37,32 +28,21 @@ class ChannelIndex extends Component {
     return(
       <DashboardLayout title="Channels">
         <UserCan action="create" itemType="channel">
-          <Card>
-            <CardContent>
-              <Typography variant="headline" component="h3">
-                Use Helium Cargo
-              </Typography>
+          <Text style={styles.title}>
+            Use Helium Cargo
+          </Text>
 
-              <ChannelCargoRow />
+          <ChannelCargoRow />
 
-              <Typography variant="headline" component="h3" style={{ marginTop: 12 }}>
-                Create New Channel
-              </Typography>
+          <Text style={styles.title}>
+            Create New Channel
+          </Text>
 
-              <ChannelCreateRow />
-            </CardContent>
-          </Card>
+          <ChannelCreateRow />
         </UserCan>
+        <br />
 
-        <Paper style={{marginTop: 24}} className={classes.paper}>
-          <header className={classes.header}>
-            <Typography variant="headline" component="h3">
-              Channels
-            </Typography>
-          </header>
-
-          <ChannelsTable />
-        </Paper>
+        <ChannelsTable />
       </DashboardLayout>
     )
   }
