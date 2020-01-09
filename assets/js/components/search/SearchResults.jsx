@@ -5,7 +5,7 @@ import sample from 'lodash/sample'
 import { Typography } from 'antd';
 const { Text } = Typography
 
-const appRoot = document.getElementById('react-root');
+const searchRoot = document.getElementById('search-root');
 
 class SearchResults extends Component {
   constructor(props) {
@@ -14,7 +14,11 @@ class SearchResults extends Component {
   }
 
   componentDidMount() {
-    appRoot.appendChild(this.el)
+    searchRoot.appendChild(this.el)
+  }
+
+  componentWillUnmount() {
+    searchRoot.removeChild(this.el)
   }
 
   render() {

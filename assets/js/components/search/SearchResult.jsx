@@ -7,9 +7,7 @@ class SearchResult extends Component {
     const { selected, result, gotoResult } = this.props
     return (
       <div
-        onClick={e => {
-          console.log(e)
-        }}
+        onClick={() => gotoResult(result)}
         style={{
           display: 'flex',
           flexDirection: 'row',
