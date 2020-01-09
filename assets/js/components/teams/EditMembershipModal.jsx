@@ -1,44 +1,15 @@
 import React, { Component } from 'react'
 import RoleControl from './RoleControl'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Modal, Button, Typography, Input } from 'antd';
+const { Text } = Typography
 
-// MUI
-import Typography from '@material-ui/core/Typography'
-import Modal from '@material-ui/core/Modal'
-import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
-import { withStyles } from '@material-ui/core/styles'
-
-const styles = theme => ({
-  paper: {
-    margin: 'auto',
-    marginTop: '10%',
-    width: '50%',
-    padding: theme.spacing.unit * 4,
-    width: 700,
-  },
-  input: {
-    marginBottom: theme.spacing.unit * 2,
-  },
-  table: {
-    marginTop: theme.spacing.unit * 2
-  },
-  actions: {
-    textAlign: "right"
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2
-  },
-})
-
-@withStyles(styles)
 class EditMembershipModal extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      role: ""
+      role: "manager"
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -65,50 +36,36 @@ class EditMembershipModal extends Component {
     analyticsLogger.logEvent("ACTION_UPDATE_MEMBERSHIP", {"email": membership.email, "role": role })
     updateMembership( membership.id, role );
 
-    this.setState({ role: '' })
-
     onClose()
   }
 
   render() {
-    const { open, onClose, classes, membership } = this.props
+    const { open, onClose, membership } = this.props
 
     if (membership === null) return <div />
 
     return (
       <Modal
-        open={open}
-        onClose={onClose}
+        title="Edit user role"
+        visible={open}
+        onCancel={onClose}
+        onOk={this.handleSubmit}
+        footer={[
+          <Button key="back" onClick={onClose}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={this.handleSubmit}>
+            Submit
+          </Button>,
+        ]}
       >
-        <Paper className={classes.paper}>
-          <Typography variant="title">
-            Edit user
-          </Typography>
-
-          <Typography variant="subheading" style={{marginTop: 16}}>
-            Select a new role for {membership.email}
-          </Typography>
-
-          <form onSubmit={this.handleSubmit}>
-            <RoleControl
-              value={this.state.role}
-              onChange={this.handleInputUpdate}
-              classes={classes}
-            />
-
-            <div className={classes.actions}>
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                className={classes.formButton}
-              >
-                Update User
-              </Button>
-            </div>
-          </form>
-        </Paper>
+        <Text>
+          Select a new role for {membership.email}
+        </Text>
+        <RoleControl
+          value={this.state.role}
+          onChange={this.handleInputUpdate}
+        />
       </Modal>
     )
   }
