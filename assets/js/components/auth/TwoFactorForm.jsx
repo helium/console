@@ -1,36 +1,8 @@
 import React, { Component } from 'react';
 import AuthLayout from '../common/AuthLayout'
+import { Typography, Button, Input, Form } from 'antd';
+const { Text } = Typography
 
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  input: {
-    marginBottom: theme.spacing.unit * 2,
-  },
-  forgot: {
-    textAlign: 'right',
-    marginBottom: theme.spacing.unit * 2,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2,
-  },
-  extraLinks: {
-    marginTop: theme.spacing.unit * 2,
-    textAlign: 'center'
-  }
-});
-
-@withStyles(styles)
 class TwoFactorForm extends Component {
   constructor(props) {
     super(props)
@@ -54,37 +26,24 @@ class TwoFactorForm extends Component {
   }
 
   render() {
-    const { classes } = this.props
-
     return(
       <AuthLayout>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" className={classes.title}>
-              Enter Two Factor Code
-            </Typography>
+        <Text strong>
+          Enter Two Factor Code
+        </Text>
 
-            <form onSubmit={this.handleSubmit}>
-              <TextField
-                label="Two Factor Code"
-                name="twoFactorCode"
-                value={this.state.twoFactorCode}
-                onChange={this.handleInputUpdate}
-                className={classes.input}
-                fullWidth
-              />
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                className={classes.formButton}
-              >
-                Confirm
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item>
+            <Input
+              name="twoFactorCode"
+              value={this.state.twoFactorCode}
+              onChange={this.handleInputUpdate}
+            />
+          </Form.Item>
+          <Button htmlType="submit" type="primary">
+            Confirm
+          </Button>
+        </Form>
       </AuthLayout>
     )
   }

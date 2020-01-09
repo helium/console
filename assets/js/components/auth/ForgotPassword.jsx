@@ -6,30 +6,9 @@ import { forgotPassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import Logo from '../../../img/logo-horizontal.svg'
+import { Typography, Button, Input, Form } from 'antd';
+const { Text } = Typography
 
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2,
-  },
-  extraLinks: {
-    marginTop: theme.spacing.unit * 2,
-    textAlign: 'center'
-  }
-});
-
-@withStyles(styles)
 @connect(mapStateToProps, mapDispatchToProps)
 class ForgotPassword extends Component {
   constructor(props) {
@@ -56,46 +35,36 @@ class ForgotPassword extends Component {
   }
 
   render() {
-    const { classes } = this.props
-
     return(
       <AuthLayout>
-        <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
-        <Card>
-          <CardContent>
-            <Typography variant="headline" className={classes.title}>
-              Reset your password
-            </Typography>
+        <img src={Logo} style={{width: 150, margin: "auto", display: "block"}} />
 
-            <form onSubmit={this.handleSubmit}>
-              <TextField
-                type="email"
-                label="Email"
-                name="email"
-                value={this.state.email}
-                onChange={this.handleInputUpdate}
-                fullWidth
-                style={{marginBottom: 16}}
-              />
+        <Text strong>
+          Reset your password
+        </Text>
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                className={classes.formButton}
-              >
-                Send Email
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item>
+            <Input
+              placeholder="Email"
+              name="email"
+              value={this.state.email}
+              onChange={this.handleInputUpdate}
+            />
+          </Form.Item>
 
-        <Typography component="p" className={classes.extraLinks}>
-          <Link to="/login">
-            Login page
-          </Link>
-        </Typography>
+          <div>
+            <Button type="primary" htmlType="submit">
+              Send Email
+            </Button>
+          </div>
+
+          <Text>
+            <Link to="/login">
+               Back to Login
+            </Link>
+          </Text>
+        </Form>
       </AuthLayout>
     );
   }

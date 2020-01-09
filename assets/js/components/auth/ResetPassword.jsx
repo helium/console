@@ -4,31 +4,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { changePassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
+import { Typography, Button, Input, Form } from 'antd';
+const { Text } = Typography
 
-//MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2,
-  },
-  extraLinks: {
-    marginTop: theme.spacing.unit * 2,
-    textAlign: 'center'
-  }
-});
-
-@withStyles(styles)
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 class ResetPassword extends Component {
   constructor(props) {
     super(props);
@@ -59,58 +38,42 @@ class ResetPassword extends Component {
 
     return(
       <AuthLayout>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" className={classes.title}>
-              Reset your password
-            </Typography>
+        <Text strong>
+          Reset your password
+        </Text>
 
-            <form onSubmit={this.handleSubmit}>
-              <TextField
-                type="password"
-                label="New Password"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleInputUpdate}
-                fullWidth
-                style={{marginBottom: 16}}
-              />
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item>
+            <Input
+              placeholder="New password"
+              type="password"
+              name="password"
+              value={this.state.password}
+              onChange={this.handleInputUpdate}
+            />
+          </Form.Item>
 
-              <TextField
-                type="password"
-                label="Confirm Password"
-                name="passwordConfirm"
-                value={this.state.passwordConfirm}
-                onChange={this.handleInputUpdate}
-                fullWidth
-                style={{marginBottom: 16}}
-              />
+          <Form.Item>
+            <Input
+              placeholder="Confirm Password"
+              type="password"
+              name="passwordConfirm"
+              value={this.state.passwordConfirm}
+              onChange={this.handleInputUpdate}
+            />
+          </Form.Item>
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                className={classes.formButton}
-              >
-                Reset Password
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Typography component="p" className={classes.extraLinks}>
-          <Link to="/login">
-            Login page
-          </Link>
-        </Typography>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+          <br />
+          <Text>
+            <Link to="/login">Back to Login</Link>
+          </Text>
+        </Form>
       </AuthLayout>
     );
   }
-}
-
-function mapStateToProps(state) {
-  return {}
 }
 
 function mapDispatchToProps(dispatch) {

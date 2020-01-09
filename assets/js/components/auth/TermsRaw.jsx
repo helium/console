@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import Typography from '@material-ui/core/Typography';
+import { Typography, Button, Input, Form } from 'antd';
+const { Text } = Typography
 
 class TermsRaw extends Component {
   render() {
-    return <Typography component="div">
+    return <Text>
     <h3>Privacy Policy</h3>
     <p>
       This Privacy Policy governs the manner in which Helium Inc. ("Helium") collect, use, maintain and disclose information collected from users (each, a "User" or "you") on the www.helium.com website and all products and services offered by Helium ("Site").
@@ -126,7 +127,7 @@ class TermsRaw extends Component {
     </p>
     <h5>Last Revised:</h5>
     <p>05/09/2018</p>
-    </Typography>
+    </Text>
   }
 }
 

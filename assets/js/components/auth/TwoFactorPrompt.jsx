@@ -6,49 +6,10 @@ import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 import AuthLayout from '../common/AuthLayout'
 import analyticsLogger from '../../util/analyticsLogger'
-
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  instructions: {
-    marginBottom: theme.spacing.unit,
-  },
-  input: {
-    marginBottom: theme.spacing.unit * 2,
-  },
-  qrCode: {
-    textAlign: 'center',
-    marginBottom: theme.spacing.unit * 2,
-    marginTop: theme.spacing.unit * 2,
-  },
-  backupCodes: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    listStyle: 'none',
-    border: '1px solid #efefef',
-    borderRadius: 6,
-    padding: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
-  },
-  backupCode: {
-    width: '50%',
-    textAlign: 'center',
-    fontFamily: '"Courier New", Courier, monospace',
-  }
-})
+import { Typography, Button, Input, Form } from 'antd';
+const { Text } = Typography
 
 @withRouter
-@withStyles(styles)
 @connect(mapStateToProps, mapDispatchToProps)
 class TwoFactorPrompt extends Component {
   constructor(props) {
@@ -110,86 +71,69 @@ class TwoFactorPrompt extends Component {
   }
 
   renderForm() {
-    const { classes } = this.props
-
     return(
       <AuthLayout>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" className={classes.title}>
-              Set up multi-factor auth
-            </Typography>
-            <Typography component="p" className={classes.instructions}>
-              Set up multi-factor authentication by scanning the QR code below, we highly recommend it.
-            </Typography>
+        <Text strong>
+          Set up multi-factor auth
+        </Text>
+        <br />
+        <Text>
+          Set up multi-factor authentication by scanning the QR code below, we highly recommend it.
+        </Text>
 
-            <div className={classes.qrCode}>
-              {this.renderQRCode()}
-            </div>
+        <div>
+          {this.renderQRCode()}
+        </div>
 
-            <form onSubmit={this.handleSubmit}>
-              <TextField
-                label="2FA Code"
-                name="twoFactorCode"
-                value={this.state.twoFactorCode}
-                onChange={this.handleInputUpdate}
-                className={classes.input}
-                fullWidth
-              />
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item>
+            <Input
+              placeholder="2FA Code"
+              name="twoFactorCode"
+              value={this.state.twoFactorCode}
+              onChange={this.handleInputUpdate}
+            />
+          </Form.Item>
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-              >
-                Enable 2FA
-              </Button>
-              <Button
-                onClick={this.handleSkip}
-                size="large"
-                style={{marginLeft: 16}}
-              >
-                Skip for now
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Button type="primary" htmlType="submit">
+              Enable 2FA
+            </Button>
+
+            <Button onClick={this.handleSkip}>
+              Skip for now
+            </Button>
+          </div>
+        </Form>
       </AuthLayout>
     )
   }
 
   renderBackupCodes() {
     const { user } = this.props.auth
-    const { classes } = this.props
 
     return(
       <AuthLayout>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" className={classes.title}>
-              Copy backup codes
-            </Typography>
-            <Typography component="p" className={classes.instructions}>
-              These are your backup codes. You can use them in place of a 2FA code when signing in. This is the last time they will be displayed!
-            </Typography>
+        <Text strong>
+          Copy backup codes
+        </Text>
+        <br />
+        <Text>
+          These are your backup codes. You can use them in place of a 2FA code when signing in. This is the last time they will be displayed!
+        </Text>
+        <br />
+        { user.backup_codes.map(code =>
+          <span key={code}>
+            <Text>{code}</Text><br />
+          </span>
+        )}
 
-            <Typography component="ul" className={classes.backupCodes}>
-            { user.backup_codes.map(code =>
-              <li key={code} className={classes.backupCode}>{code}</li>
-            )}
-            </Typography>
-
-              <Button
-                onClick={this.handleContinue}
-                variant="raised"
-                color="primary"
-                size="large"
-              >
-                I've copied my backup codes
-              </Button>
-          </CardContent>
-        </Card>
+        <Button
+          onClick={this.handleContinue}
+          type="primary"
+        >
+          I've copied my backup codes
+        </Button>
       </AuthLayout>
     )
   }
