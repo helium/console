@@ -5,7 +5,6 @@ import find from 'lodash/find'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
-import SmallChip from '../common/SmallChip'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
@@ -27,6 +26,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+
+//smallchip issue
 
 @connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
@@ -160,12 +161,12 @@ class DeviceShow extends Component {
             <div style={{ marginTop: 10 }}>
               {
                 device.channels.map(c => (
-                  <SmallChip key={c.id} label={c.name} onDelete={() => this.handleDeleteChannel(c.id)} style={{ marginRight: 5 }} />
+                  <div key={c.id} label={c.name} onDelete={() => this.handleDeleteChannel(c.id)} style={{ marginRight: 5 }} />
                 ))
               }
               {
                 device.channels.length === 0 && channels.length > 0 && defaultChannel && (
-                  <SmallChip label={`Default: ${defaultChannel.name}`} />
+                  <div label={`Default: ${defaultChannel.name}`} />
                 )
               }
             </div>

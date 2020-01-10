@@ -13,7 +13,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableFooterPagination from './TableFooterPagination'
 
 const defaultVariables = {
   page: 1,
@@ -148,13 +147,6 @@ const ResultsTable = (props) => {
           <PaginatedRow key={row.id} row={row} columns={columns} />
         )}
       </TableBody>
-      <TableFooterPagination
-        totalEntries={totalEntries}
-        page={pageNumber}
-        pageSize={pageSize}
-        handleChangePage={handleChangePage}
-        handleChangeRowsPerPage={handleChangeRowsPerPage}
-      />
     </Table>
   )
 }
