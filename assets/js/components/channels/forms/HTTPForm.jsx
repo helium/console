@@ -1,23 +1,14 @@
 import React, { Component } from 'react';
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-
-//icons
-import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
+import { Typography, Button, Input, Form, Select } from 'antd';
+const { Text } = Typography
+const { Option } = Select
 
 class HTTPForm extends Component {
   constructor(props) {
     super(props);
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this)
+    this.handleMethodUpdate = this.handleMethodUpdate.bind(this)
     this.handleHttpHeaderUpdate = this.handleHttpHeaderUpdate.bind(this)
     this.addHeaderRow = this.addHeaderRow.bind(this)
     this.removeHeaderRow = this.removeHeaderRow.bind(this)
@@ -44,6 +35,10 @@ class HTTPForm extends Component {
 
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value}, this.validateInput)
+  }
+
+  handleMethodUpdate(method) {
+    this.setState({ method }, this.validateInput)
   }
 
   handleHttpHeaderUpdate(e) {
@@ -78,73 +73,67 @@ class HTTPForm extends Component {
 
     return(
       <div>
-        <Typography variant="headline">
+        <Text strong>
           {type === "update" ? "Update Channel" : "Step 2"}
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
-        </Typography>
+        </Text>
 
-        <div style={{width: '50%'}}>
+        <div style={{ display: 'flex', flexDirection: 'row'}}>
           <Select
-            value={this.state.method}
-            onChange={this.handleInputUpdate}
-            inputProps={{
-              name: 'method',
-              id: 'httpMethod',
-            }}
-            style={{width: 100}}
+            defaultValue={this.state.method}
+            onChange={this.handleMethodUpdate}
+            style={{ width: '15%'}}
           >
-            <MenuItem value="post">POST</MenuItem>
-            <MenuItem value="get">GET</MenuItem>
-            <MenuItem value="put">PUT</MenuItem>
-            <MenuItem value="patch">PATCH</MenuItem>
+            <Option value="post">POST</Option>
+            <Option value="get">GET</Option>
+            <Option value="put">PUT</Option>
+            <Option value="patch">PATCH</Option>
           </Select>
 
-          <TextField
-            type="text"
-            label="Endpoint"
+          <Input
+            placeholder="Endpoint"
             name="endpoint"
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
-            style={{width: "calc(100% - 112px)", marginLeft: 12}}
+            style={{ width: '65%'}}
           />
         </div>
 
         {
           this.state.headers.map((obj, i) => (
-            <div key={i} style={{width: '50%'}}>
-              <TextField
-                type="text"
-                label="HTTP Header"
+            <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
+              <Input
+                placeholder="HTTP Header"
                 name={`${i}-header`}
                 value={obj.header}
                 onChange={this.handleHttpHeaderUpdate}
+                style={{ width: '40%'}}
               />
 
-              <TextField
-                type="text"
-                label="Value"
+              <Input
+                placeholder="Value"
                 name={`${i}-value`}
                 value={obj.value}
                 onChange={this.handleHttpHeaderUpdate}
-                style={{marginLeft: 12}}
+                style={{ width: '40%'}}
               />
 
               {
                 (i > 1) &&
-                  <Button variant="fab" mini onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}>
-                    <ClearIcon />
-                  </Button>
+                  <Button
+                    onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}
+                    icon="close"
+                    shape="circle"
+                  />
               }
             </div>
           ))
         }
 
-        <Button variant="fab" mini onClick={this.addHeaderRow} style={{marginTop: 12}}>
-          <AddIcon />
-        </Button>
+        <Button icon="plus" type="primary" shape="circle" onClick={this.addHeaderRow} />
       </div>
     );
   }

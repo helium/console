@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+import { Typography, Input } from 'antd';
+const { Text } = Typography
 
 class AWSForm extends Component {
   constructor(props) {
@@ -37,52 +33,46 @@ class AWSForm extends Component {
 
     return (
       <div>
-        <Typography variant="headline">
+        <Text strong>
           Step 2
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           Connection coming soon...
-        </Typography>
+        </Text>
       </div>
     )
 
     return(
       <div>
-        <Typography variant="headline">
+        <Text strong>
           {type === "update" ? "Update Channel" : "Step 2"}
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           {type === "update" ? "Update your AWS Connection Details" : "Enter your AWS Connection Details"}
-        </Typography>
+        </Text>
 
-        <div style={{width: '50%'}}>
-          <TextField
-            type="text"
-            label="Access Key ID"
+        <div>
+          <Input
+            placeholder="Access Key ID"
             name="accessKeyId"
             value={this.state.accessKeyId}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
 
-          <TextField
-            type="text"
-            label="Secret Access Key"
+          <Input
+            placeholder="Secret Access Key"
             name="secretAccessKey"
             value={this.state.secretAccessKey}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
 
-          <TextField
-            type="text"
-            label="Region"
+          <Input
+            placeholder="Region"
             name="region"
             value={this.state.region}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
         </div>
       </div>

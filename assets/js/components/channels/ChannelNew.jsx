@@ -14,11 +14,8 @@ import ChannelCreateRow from './ChannelCreateRow'
 import ChannelCargoRow from './ChannelCargoRow'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
+import { Typography } from 'antd';
+const { Text } = Typography
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
@@ -90,32 +87,24 @@ class ChannelNew extends Component {
 
   render() {
     return(
-      <DashboardLayout title="Channel" current="channels">
-        <Card>
-          <CardContent>
-            <Typography variant="headline">
-              Step 1
-            </Typography>
+      <DashboardLayout title="Create New Channel">
+        <Text strong>
+          Step 1
+        </Text>
+        <br />
+        <Text strong>
+          Use Helium Cargo
+        </Text>
 
-            <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-              Use Helium Cargo
-            </Typography>
+        <ChannelCargoRow />
 
-            <ChannelCargoRow />
+        <Text strong>
+          Select a channel
+        </Text>
 
-            <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-              Select a channel
-            </Typography>
+        <ChannelCreateRow />
 
-            <ChannelCreateRow />
-          </CardContent>
-        </Card>
-
-        <Card style={{ marginTop: 24 }}>
-          <CardContent>
-            {this.renderForm()}
-          </CardContent>
-        </Card>
+        {this.renderForm()}
 
         {this.renderStep3()}
       </DashboardLayout>

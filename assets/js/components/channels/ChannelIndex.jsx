@@ -13,9 +13,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between'
   },
-  title: {
-    fontWeight: 'bold'
-  }
 }
 
 class ChannelIndex extends Component {
@@ -28,13 +25,13 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="Channels">
         <UserCan action="create" itemType="channel">
-          <Text style={styles.title}>
+          <Text strong>
             Use Helium Cargo
           </Text>
 
           <ChannelCargoRow />
 
-          <Text style={styles.title}>
+          <Text strong>
             Create New Channel
           </Text>
 
