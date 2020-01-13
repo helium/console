@@ -1,36 +1,25 @@
 import React, { Component } from 'react'
 
-import { withStyles } from '@material-ui/core/styles';
-import withTheme from './withTheme.jsx'
-
-const styles = theme => ({
+const styles = {
   root: {
-    flexGrow: 1,
     height: '100vh',
+    width: '100%',
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
     display: 'flex',
-    width: '100%',
-    backgroundColor: theme.palette.background.default,
+    justifyContent: 'center',
   },
   main: {
-    flexGrow: 1,
     maxWidth: 400,
-    margin: 'auto',
   },
+}
 
-});
-
-@withTheme
-@withStyles(styles)
 class AuthLayout extends Component {
   render() {
-    const { classes, title } = this.props;
-
     return (
-      <div className={classes.root}>
-        <main className={classes.main}>
+      <div style={styles.root}>
+        <main style={styles.main}>
           {this.props.children}
         </main>
       </div>

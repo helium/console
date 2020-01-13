@@ -4,15 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
-import AuditTable from './audit_trails/AuditTable'
 import analyticsLogger from '../util/analyticsLogger'
-
-// MUI
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import { Typography, Button } from 'antd';
+const { Text } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class Profile extends Component {
@@ -26,31 +20,27 @@ class Profile extends Component {
 
     return(
       <DashboardLayout title="Profile">
-        <Card>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Profile Details
-            </Typography>
-            <Typography component="p">
-              Your email is: {email}
-            </Typography>
-            <Typography component="p">
-              Token: <input defaultValue={apikey} />
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              size="small"
-              color="secondary"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
-                logOut()
-              }}
-            >
-              Log Out
-            </Button>
-          </CardActions>
-        </Card>
+        <Text style={{ fontWeight: 'bold' }}>
+          Profile Details
+        </Text>
+        <br />
+        <Text>
+          Your email is: {email}
+        </Text>
+        <br />
+        <Text>
+          Auth token: <input defaultValue={apikey} />
+        </Text>
+        <br />
+        <Button
+          type="danger"
+          onClick={() => {
+            analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
+            logOut()
+          }}
+        >
+          Log Out
+        </Button>
       </DashboardLayout>
     );
   }

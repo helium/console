@@ -4,42 +4,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { parse } from 'query-string'
 import { register } from '../../actions/auth.js';
-import TermsPrompt from './TermsPrompt.jsx'
 import AuthLayout from '../common/AuthLayout'
-import DocumentLayout from '../common/DocumentLayout'
 import Logo from '../../../img/logo-horizontal.svg'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Typography, Button, Input, Form, Checkbox } from 'antd';
+const { Text } = Typography
 
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import { withStyles } from '@material-ui/core/styles';
-
-const styles = theme => ({
-  title: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
-  input: {
-    marginBottom: theme.spacing.unit * 2,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit * 2,
-  },
-  extraLinks: {
-    marginTop: theme.spacing.unit * 2,
-    textAlign: 'center'
-  },
-  text: {
-    fontSize: 12,
-  }
-});
-
-@withStyles(styles)
 @connect(mapStateToProps, mapDispatchToProps)
 class Register extends Component {
   constructor(props) {
@@ -69,7 +39,7 @@ class Register extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ showOrgCreation: true })
+    if (this.state.acceptedTerms) this.setState({ showOrgCreation: true })
   }
 
   registerUser(e) {
@@ -90,86 +60,66 @@ class Register extends Component {
     const { classes } = this.props
     const { showOrgCreation, acceptedTerms } = this.state
     return (
-      <CardContent>
-        <Typography variant="headline" className={classes.title}>
+      <div>
+        <Text strong>
           Register
-        </Typography>
+        </Text>
         {
           showOrgCreation ? (
-            <form onSubmit={this.registerUser} noValidate>
-              <Typography style={{ marginBottom: 16, fontSize: 12 }}>
+            <Form onSubmit={this.registerUser}>
+              <Text>
                 To easily manage devices, Console provides a logical structure with Organizations, Teams, and devices. Define an Organization name as the top level of your structure, (usually your company name). Organizations can contain Teams, and Teams can contain devices.
-              </Typography>
-              <Typography style={{ fontSize: 12, marginBottom: 16 }}>
+              </Text>
+              <br />
+              <Text>
                 The Organization name is used when inviting other users to your Console. Teams make managing multiple devices easier by providing a way to easily segment and identify owners of devices.
-              </Typography>
-              <TextField
-                label="Organization Name"
-                name="organizationName"
-                value={this.state.organizationName}
-                onChange={this.handleInputUpdate}
-                className={classes.input}
-                fullWidth
-              />
+              </Text>
 
-              <TextField
-                label="Team Name"
-                name="teamName"
-                value={this.state.teamName}
-                onChange={this.handleInputUpdate}
-                className={classes.input}
-                fullWidth
-              />
+              <Form.Item>
+                <Input
+                  placeholder="Organization Name"
+                  name="organizationName"
+                  value={this.state.organizationName}
+                  onChange={this.handleInputUpdate}
+                />
+              </Form.Item>
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                fullWidth
-                className={classes.formButton}
-              >
-                Register
-              </Button>
+              <Form.Item>
+                <Input
+                  placeholder="Team Name"
+                  name="teamName"
+                  value={this.state.teamName}
+                  onChange={this.handleInputUpdate}
+                />
+              </Form.Item>
 
-              <Button
-                size="large"
-                className={classes.formButton}
-                fullWidth
-                onClick={() => this.setState({ showOrgCreation: false })}
-              >
-                Go Back
-              </Button>
-            </form>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Button type="primary" htmlType="submit">
+                  Register
+                </Button>
+
+                <Button onClick={() => this.setState({ showOrgCreation: false })}>
+                  Back
+                </Button>
+              </div>
+            </Form>
           ) : (
-            <form onSubmit={this.handleSubmit} noValidate>
+            <Form onSubmit={this.handleSubmit}>
               {this.commonFields()}
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                size="large"
-                fullWidth
-                disabled={!acceptedTerms}
-                className={classes.formButton}
-              >
-                Register
-              </Button>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Button type="primary" htmlType="submit" disabled={!acceptedTerms}>
+                  Register
+                </Button>
 
-              <Button
-                size="large"
-                className={classes.formButton}
-                component={Link}
-                fullWidth
-                to="/login"
-              >
-                Log In
-              </Button>
-            </form>
+                <Button onClick={() => this.props.history.push('/login')}>
+                  Login
+                </Button>
+              </div>
+            </Form>
           )
         }
-      </CardContent>
+      </div>
     )
   }
 
@@ -178,31 +128,23 @@ class Register extends Component {
     const { acceptedTerms } = this.state
 
     return (
-      <CardContent>
-        <Typography variant="headline">
+      <div>
+        <Text strong>
           Register to join {organizationName}
-        </Typography>
-
-        <Typography variant="subheading" className={classes.title}>
+        </Text>
+        <br />
+        <Text>
           You are invited by {inviter}
-        </Typography>
+        </Text>
 
-        <form onSubmit={this.registerUser} noValidate>
+        <Form onSubmit={this.registerUser}>
           {this.commonFields()}
 
-          <Button
-            type="submit"
-            variant="raised"
-            color="primary"
-            size="large"
-            fullWidth
-            disabled={!acceptedTerms}
-            className={classes.formButton}
-          >
-            Join Organization
+          <Button type="primary" htmlType="submit" disabled={!acceptedTerms}>
+            Join
           </Button>
-        </form>
-      </CardContent>
+        </Form>
+      </div>
     )
   }
 
@@ -211,39 +153,29 @@ class Register extends Component {
     const { acceptedTerms } = this.state
     return (
       <div>
-        <TextField
-          type="email"
-          label="Email"
-          name="email"
-          value={this.state.email}
-          onChange={this.handleInputUpdate}
-          className={classes.input}
-          fullWidth
-        />
-
-        <TextField
-          type="password"
-          label="Password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handleInputUpdate}
-          className={classes.input}
-          fullWidth
-          style={{marginBottom: 16}}
-        />
-
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Checkbox
-            checked={acceptedTerms}
-            onChange={() => this.setState({ acceptedTerms: !acceptedTerms })}
-            color="primary"
-            style={{ marginLeft: -12, marginRight: -8 }}
+        <Form.Item>
+          <Input
+            placeholder="Email"
+            type="email"
+            name="email"
+            value={this.state.email}
+            onChange={this.handleInputUpdate}
           />
+        </Form.Item>
 
-          <Typography className={classes.text}>
-            I accept and have read the <Link to="/terms" target="_blank">Helium Privacy Statement</Link>.
-          </Typography>
-        </div>
+        <Form.Item>
+          <Input
+            placeholder="Password"
+            type="password"
+            name="password"
+            value={this.state.password}
+            onChange={this.handleInputUpdate}
+          />
+        </Form.Item>
+
+        <Checkbox checked={acceptedTerms} onChange={() => this.setState({ acceptedTerms: !acceptedTerms })}>
+          I accept and have read the <Link to="/terms" target="_blank">Helium Privacy Statement</Link>.
+        </Checkbox>
       </div>
     )
   }
@@ -253,10 +185,8 @@ class Register extends Component {
 
     return(
       <AuthLayout>
-        <img src={Logo} style={{width: "33%", margin: "0 auto 20px", display: "block"}} />
-        <Card>
-          {version === "register" ? this.registerContent() : this.joinContent()}
-        </Card>
+        <img src={Logo} style={{width: 150, margin: "auto", display: "block"}} />
+        {version === "register" ? this.registerContent() : this.joinContent()}
       </AuthLayout>
     )
   }

@@ -2,21 +2,29 @@
 @import '~noty/lib/noty.css';
 @import './mapbox.css';
 @import './chartjs.css';
+@import '~antd/dist/antd.css';
 
 /* This file is for your main application css. */
 body {
   overscroll-behavior: none;
+  height: 100%;
+}
+
+.mainContainer {
+  height: 100%;
+}
+
+main {
+  height: 100%;
+}
+
+#react-root {
+  height: 100%;
 }
 
 :focus
 {
   outline: none;
-}
-
-a
-{
-  text-decoration: none;
-  color: #2C98F0;
 }
 
 
@@ -75,7 +83,7 @@ a
 {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  padding: 4px 36px 4px 20px;
+  padding: 4px 16px 4px 16px;
   display: flex;
   margin-right: 4px;
   position: relative;
@@ -87,20 +95,6 @@ a
   background: rgba(255, 255, 255, 0.2);
 }
 
-#searchBar::after
-{
-  content: '/';
-  position: absolute;
-  right: 8px;
-  border: 0.5px solid #ffffff57;
-  padding: 1px 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
-  top: 6px;
-  color: #ffffffa6;
-}
-
 #searchBar input
 {
   background: none;
@@ -109,7 +103,7 @@ a
   font-size: 16px;
   line-height: 24px;
   margin-left: 20px;
-  width: 130px;
+  width: 100px;
   /* background: rgba(255, 0, 0, 0.2); */
 
   transition: all 0.2s ease 0s;
@@ -117,7 +111,7 @@ a
 
 #searchBar input:focus
 {
-  width: 200px;
+  width: 100px;
 }
 
 #searchResults
@@ -125,7 +119,7 @@ a
   position: absolute;
   top: 48px;
   z-index: 100;
-  right: 100px;
+  right: 130px;
   width: 360px;
 }
 
@@ -143,4 +137,8 @@ a
 #searchResults .jumpto svg
 {
   font-size: 16px;
+}
+
+#RoleTable td {
+  border-bottom: 0px;
 }

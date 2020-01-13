@@ -2,30 +2,14 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
-import random from 'lodash/random'
-import find from 'lodash/find'
-import get from 'lodash/get'
-import merge from 'lodash/merge'
+import filter from 'lodash/filter'
 import { switchTeam, deleteTeam } from '../../actions/team'
 import UserCan from '../common/UserCan'
-import PaginatedTable from '../common/PaginatedTable'
-import BlankSlate from '../common/BlankSlate'
 import { CURRENT_ORGANIZATION_TEAMS, TEAM_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
-
-// GraphQL
+import { Table, Typography, Button, Empty } from 'antd';
+const { Text } = Typography
 import { Query } from 'react-apollo';
-
-// MUI
-import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
-import SmallChip from '../common/SmallChip'
-import SuccessChip from '../common/SuccessChip'
 
 @connect(mapStateToProps, mapDispatchToProps)
 class OrganizationTeamsTable extends Component {
@@ -33,47 +17,47 @@ class OrganizationTeamsTable extends Component {
     const { switchTeam, currentTeamId, currentOrganizationId, deleteTeam } = this.props
     const columns = [
       {
-        Header: 'Team',
-        accessor: 'name'
+        title: 'Team',
+        dataIndex: 'name',
       },
       {
-        Header: 'Created',
-        accessor: 'inserted_at',
-        Cell: props => <span>{moment(props.row.inserted_at).format('LL')}</span>
+        title: 'Created',
+        dataIndex: 'inserted_at',
+        render: data => moment(data).format('LL')
       },
       {
-        Header: '',
-        numeric: true,
-        Cell: props => <span>
-          {
-            currentTeamId !== props.row.id && (
-              <span>
+        title: '',
+        key: 'action',
+        render: (text, record) => (
+          currentTeamId !== record.id ? (
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_SWITCH_TEAM", {"id": record.id })
+                  switchTeam(record.id)
+                }}
+              >
+                Switch
+              </Button>
+               <UserCan action="delete" itemType="team" item={record}>
                 <Button
-                  color="primary"
+                  type="danger"
                   onClick={() => {
-                    analyticsLogger.logEvent("ACTION_SWITCH_TEAM", {"id": props.row.id })
-                    switchTeam(props.row.id)
+                    analyticsLogger.logEvent("ACTION_DELETE_TEAM", {"id": record.id})
+                    deleteTeam(record.id)
                   }}
-                  size="small"
                 >
-                  VIEW
+                  Delete
                 </Button>
-                <UserCan action="delete" itemType="team" item={props.row}>
-                  <Button
-                    color="secondary"
-                    onClick={() => {
-                      analyticsLogger.logEvent("ACTION_DELETE_TEAM", {"id": props.row.id})
-                      deleteTeam(props.row.id)
-                    }}
-                    size="small"
-                  >
-                    Delete
-                  </Button>
-                </UserCan>
-              </span>
-            )
-          }
-        </span>
+              </UserCan>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Text>Current</Text>
+            </div>
+          )
+        ),
       },
     ]
 
@@ -88,7 +72,6 @@ class OrganizationTeamsTable extends Component {
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
             variables={variables}
-            EmptyComponent={ props => <BlankSlate title="Loading..." /> }
             subscription={TEAM_SUBSCRIPTION}
             {...this.props}
           />
@@ -116,117 +99,45 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data, EmptyComponent, columns, openTeamModal } = this.props
+    const { loading, error, data, columns, openTeamModal } = this.props
 
     if (loading) return null;
     if (error) return (
-      <Typography variant="subheading">Data failed to load, please reload the page and try again</Typography>
+      <Text>Data failed to load, please reload the page and try again</Text>
     )
 
-    const results = find(data, d => d !== undefined)
+    const { organization } = data
+    const teams = filter(data.organization.teams, d => d !== undefined).map(r => { r.key = r.id; return r })
 
-    if (results.length === 0 && EmptyComponent) return (
-      <EmptyComponent />
+    if (teams.length === 0) return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={<span>No Teams</span>}
+      />
     )
 
     return (
-      <ResultsTable
-        results={results}
-        columns={columns}
-        openTeamModal={openTeamModal}
-        {... this.props}
-      />
-    )
-  }
-}
-
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between'
-  }
-}
-
-const ResultsTable = (props) => {
-  const { columns, results: organization, currentOrganizationName } = props
-
-  return (
-    <div>
-      <header style={styles.header}>
-        <Typography variant="headline" component="h3">
-          Teams in {currentOrganizationName}
-        </Typography>
-
-        <UserCan action="create" itemType="team">
+      <div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <Button
-            color="primary"
             onClick={() => {
               analyticsLogger.logEvent("ACTION_NEW_TEAM")
-              props.openTeamModal(organization.id, organization.name)
+              openTeamModal(organization.id, organization.name)
             }}
           >
-            + New
+            New Team
           </Button>
-        </UserCan>
-      </header>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {columns.map((column, i) =>
-              <TableCell
-                key={`header-${i}`}
-                numeric={column.numeric}
-                padding={column.padding}
-              >
-                {column.Header}
-              </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {organization.teams.map(t =>
-            <PaginatedRow key={t.id} row={t} columns={columns} />
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  )
-}
-
-const PaginatedRow = (props) => {
-  const { row, columns } = props
-  return (
-    <TableRow>
-      {columns.map((column, i) =>
-        <PaginatedCell key={`${row.id}-${i}`} row={row} column={column} />
-      )}
-    </TableRow>
-  )
-}
-
-const PaginatedCell = (props) => {
-  const { row, column } = props
-  const { Cell } = column
-  const value = row[column.accessor]
-
-  if (Cell) return (
-    <TableCell numeric={column.numeric} padding={column.padding}>
-      <Cell row={row} value={value} />
-    </TableCell>
-  )
-
-  return (
-    <TableCell numeric={column.numeric} padding={column.padding}>
-      {value}
-    </TableCell>
-  )
+        </div>
+        <Table columns={columns} dataSource={teams} pagination={false} />
+      </div>
+    )
+  }
 }
 
 function mapStateToProps(state) {
   return {
     currentTeamId: state.auth.currentTeamId,
     currentOrganizationId: state.auth.currentOrganizationId,
-    currentOrganizationName: state.auth.currentOrganizationName
   }
 }
 

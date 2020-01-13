@@ -1,48 +1,34 @@
 import React from 'react';
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import { Typography, Input, Button, Form } from 'antd';
+const { Text } = Typography
 
 const ChannelNameForm = (props) => (
   <div>
-    <Card style={{marginTop: 24}}>
-      <CardContent>
-        <Typography variant="headline">
-          Step 3
-        </Typography>
+    <Text strong>
+      Step 3
+    </Text>
+    <br />
+    <Text>
+      Name your Channel
+    </Text>
 
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
-          Name your Channel
-        </Typography>
+    <Form onSubmit={props.onSubmit}>
+      <Form.Item>
+        <Input
+          placeholder="Channel Name"
+          name="channelName"
+          value={props.channelName}
+          onChange={props.onInputUpdate}
+        />
+      </Form.Item>
 
-        <div style={{width: '50%'}}>
-          <form onSubmit={props.onSubmit}>
-            <TextField
-              type="text"
-              label="Channel Name"
-              name="channelName"
-              value={props.channelName}
-              onChange={props.onInputUpdate}
-              fullWidth
-            />
-
-            <Button
-              type="submit"
-              variant="raised"
-              color="primary"
-              size="large"
-              style={{marginTop: 24}}
-            >
-              Create Channel
-            </Button>
-          </form>
-        </div>
-      </CardContent>
-    </Card>
+      <Button
+        type="primary"
+        htmlType="submit"
+      >
+        Create Channel
+      </Button>
+    </Form>
   </div>
 )
 

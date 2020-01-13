@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-
-//MUI
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import { Typography, Input, Button } from 'antd';
+const { Text } = Typography
 
 class CargoForm extends Component {
   constructor(props) {
@@ -39,28 +36,25 @@ class CargoForm extends Component {
   render() {
     return(
       <div>
-        <Typography variant="headline">
+        <Text strong>
           Step 2
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12 }}>
+        </Text>
+        <br />
+        <Text>
           You are opting to test your devices on the Helium Cargo HTTP channel endpoint.
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12 }}>
+        </Text>
+        <br />
+        <Text>
           Helium Cargo is an evaluation tool and the data collected is available to all developers.
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12 }}>
+        </Text>
+        <br />
+        <Text>
           Please do not share any sensitive information. Use as your own discretion.
-        </Typography>
-
+        </Text>
+        <br />
         <Button
           onClick={this.validateInput}
-          variant="raised"
-          color="primary"
-          size="large"
-          style={{marginTop: 24}}
+          type="primary"
         >
           I AGREE
         </Button>

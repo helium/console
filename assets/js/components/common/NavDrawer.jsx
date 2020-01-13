@@ -1,145 +1,43 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import RandomNotificationButton from '../notifications/RandomNotificationButton'
+import { withRouter } from 'react-router-dom'
 import Logo from '../../../img/logo-horizontalwhite.svg'
+import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Menu, Icon } from 'antd'
+const { SubMenu } = Menu
 
-// MUI
-import Drawer from '@material-ui/core/Drawer';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import { withStyles } from '@material-ui/core/styles';
-
-// Icons
-import DevicesIcon from '@material-ui/icons/Memory';
-import GatewaysIcon from '@material-ui/icons/Router';
-import ChannelsIcon from '@material-ui/icons/CompareArrows';
-import AccessIcon from '@material-ui/icons/People';
-import BillingIcon from '@material-ui/icons/CreditCard';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ReportsIcon from '@material-ui/icons/TrackChanges';
-
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-    background: {
-      default: "#ff0000"
-    }
-  },
-});
-
-const drawerWidth = 240;
-const styles = theme => ({
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth,
-    // backgroundColor: theme.palette.background.default,
-    backgroundColor: "#27303D",
-  },
-  logo: {
-    display: 'block',
-    width: '100%',
-  },
-})
-
-const HardwareNavItems = (props) => (
-  <List>
-    {
-      props.displayDashboard && (
-        <ListItem button component={Link} to="/dashboard">
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
-      )
-    }
-
-    <ListItem button component={Link} to="/devices">
-      <ListItemIcon>
-        <DevicesIcon />
-      </ListItemIcon>
-      <ListItemText primary="Devices" />
-    </ListItem>
-
-    <ListItem button component={Link} to="/channels">
-      <ListItemIcon>
-        <ChannelsIcon />
-      </ListItemIcon>
-      <ListItemText primary="Channels" />
-    </ListItem>
-  </List>
-)
-
-const OrganizationalNavItems = (props) => (
-  <List>
-    <ListItem button component={Link} to="/teams/users">
-      <ListItemIcon>
-        <AccessIcon />
-      </ListItemIcon>
-      <ListItemText primary="Users" />
-    </ListItem>
-
-    <ListItem button component={Link} to="/datacredits">
-      <ListItemIcon>
-        <BillingIcon />
-      </ListItemIcon>
-      <ListItemText primary="Data Credits" />
-    </ListItem>
-
-    {
-      false && <ListItem button component={Link} to="/reports">
-        <ListItemIcon>
-          <ReportsIcon />
-        </ListItemIcon>
-        <ListItemText primary="Reports" />
-      </ListItem>
-    }
-  </List>
-)
-
-@withStyles(styles)
-@connect(mapStateToProps, null)
+@withRouter
+@connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
-  render() {
-    const { classes, displayDashboard } = this.props
-    // const drawerPaper = Object.assign({}, classes.drawerPaper, {backgroundColor: '#ff0000'})
+  handleClick = e => {
+    this.props.push(e.key)
+  }
 
+  render() {
+    const { history } = this.props
     return (
-      <MuiThemeProvider theme={theme}>
-        <Drawer
-          variant="permanent"
-          classes={{ paper: classes.drawerPaper }}
-        >
-          <Toolbar style={{minHeight: 48}}>
-            <Link to="/" className={classes.logo}>
-              <img src={Logo} style={{width: "45%"}} />
-            </Link>
-          </Toolbar>
-          <Divider />
-          <HardwareNavItems displayDashboard={displayDashboard} />
-          <Divider />
-          <OrganizationalNavItems />
-          <Divider />
-          <div style={{ margin: 24 }}>
-            <Typography>Helium Console Beta</Typography>
-          </div>
-        </Drawer>
-      </MuiThemeProvider>
+      <Menu
+        mode="inline"
+        theme="dark"
+        onClick={this.handleClick}
+      >
+        <Menu.ItemGroup>
+          <img src={Logo} />
+        </Menu.ItemGroup>
+        <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard">Dashboard</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices">Devices</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/channels"} key="/channels">Channels</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/teams/users"} key="/teams/users">Users</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits">Data Credits</Menu.Item>
+        <Menu.ItemGroup title="Helium Console Beta"/>
+      </Menu>
     )
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    displayDashboard: state.auth.currentOrganizationId
-  }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ push }, dispatch)
 }
 
 export default NavDrawer

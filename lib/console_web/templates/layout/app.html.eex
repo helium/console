@@ -10,7 +10,6 @@
     <title>Helium:Console</title>
     <link rel="icon" href="<%= static_path(@conn, "/favicon.png") %>" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   </head>
 
   <body>
@@ -18,7 +17,7 @@
       window.flashInfo = "<%= get_flash(@conn, :info) %>"
       window.flashError = "<%= get_flash(@conn, :error) %>"
     </script>
-    <div class="container">
+    <div class="mainContainer">
       <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>

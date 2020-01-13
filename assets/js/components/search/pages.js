@@ -88,24 +88,8 @@ const pages = [
     url: "/datacredits",
     id: "/datacredits",
     category: "datacredits",
-    synonyms: ""
+    synonyms: "billing"
   },
-  // {
-  //   title: "Reports",
-  //   description: "View and export enterprise reports",
-  //   url: "/reports",
-  //   id: "/reports",
-  //   category: "reports",
-  //   synonyms: ""
-  // },
-  // {
-  //   title: "Notifications",
-  //   description: "View all active and past notifications",
-  //   url: "/notifications",
-  //   id: "/notifications",
-  //   category: "notifications",
-  //   synonyms: ""
-  // },
 ]
 
 const fuseOpts = {

@@ -1,15 +1,5 @@
 import React, { Component } from 'react'
-
-// MUI
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-
-// Icons
-import InfoOutlineIcon from '@material-ui/icons/InfoOutline'
+import { Radio, Table } from 'antd';
 
 const roles = [
   {
@@ -25,30 +15,38 @@ const roles = [
 ]
 
 const RoleControl = (props) => {
-  const { classes, value, onChange } = props
-
+  const { value, onChange } = props
+  const columns = [
+    {
+      title: 'Role',
+      dataIndex: 'name',
+      render: (text, record) => (
+        <Radio
+          key={record.value}
+          onChange={onChange}
+          checked={value === record.value}
+          name="role"
+          value={record.value}
+        >
+          {record.name}
+        </Radio>
+      )
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+    },
+  ]
   return (
-    <Table className={classes.table}>
-      <TableBody>
-        {roles.map(role => (
-          <TableRow key={role.value}>
-            <TableCell padding="checkbox">
-              <Radio
-                checked={value === role.value}
-                onChange={onChange}
-                value={role.value}
-                name="role"
-              />
-            </TableCell>
-            <TableCell nowrap="true">{role.name}</TableCell>
-            <TableCell>{role.description}</TableCell>
-            <TableCell padding="checkbox" style={{color: '#90A4AE'}}>
-              <InfoOutlineIcon />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <Table
+      columns={columns}
+      dataSource={roles}
+      pagination={false}
+      rowKey="name"
+      bordered={false}
+      showHeader={false}
+      id="RoleTable"
+    />
   )
 }
 

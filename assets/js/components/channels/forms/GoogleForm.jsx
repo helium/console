@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+import { Typography, Input } from 'antd';
+const { Text } = Typography
 
 class GoogleForm extends Component {
   constructor(props) {
@@ -37,54 +33,48 @@ class GoogleForm extends Component {
 
     return (
       <div>
-        <Typography variant="headline">
+        <Text strong>
           Step 2
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           Connection coming soon...
-        </Typography>
+        </Text>
       </div>
     )
 
     return(
       <div>
-        <Typography variant="headline">
+        <Text strong>
           {type === "update" ? "Update Channel" : "Step 2"}
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           {type === "update" ? "Update your Google Connection Details" : "Enter your Google Connection Details"}
-        </Typography>
+        </Text>
 
-        <div style={{width: '50%'}}>
-          <TextField
-            type="text"
-            label="Registry ID"
+        <div>
+          <Input
+            placeholder="Registry ID"
             name="registryId"
             value={this.state.registryId}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
 
-          <TextField
-            type="text"
-            label="Region"
+          <Input
+            placeholder="Region"
             name="region"
             value={this.state.region}
             onChange={this.handleInputUpdate}
-            fullWidth
+          />
+
+          <Input
+            placeholder="JSON Private Key"
+            name="privateKey"
+            value={this.state.privateKey}
+            onChange={this.handleInputUpdate}
           />
         </div>
-
-        <TextField
-          type="text"
-          label="JSON Private Key"
-          name="privateKey"
-          value={this.state.privateKey}
-          onChange={this.handleInputUpdate}
-          fullWidth
-        />
       </div>
     );
   }

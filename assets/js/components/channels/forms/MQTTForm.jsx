@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-
-//MUI
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+import { Typography, Input } from 'antd';
+const { Text } = Typography
 
 class MQTTForm extends Component {
   constructor(props) {
@@ -35,43 +31,39 @@ class MQTTForm extends Component {
 
     return (
       <div>
-        <Typography variant="headline">
+        <Text strong>
           Step 2
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           Connection coming soon...
-        </Typography>
+        </Text>
       </div>
     )
 
     return(
       <div>
-        <Typography variant="headline">
+        <Text strong>
           {type === "update" ? "Update Channel" : "Step 2"}
-        </Typography>
-
-        <Typography component="p" style={{marginTop: 12, fontWeight: '500'}}>
+        </Text>
+        <br />
+        <Text>
           {type === "update" ? "Update your MQTT Connection Details" : "Enter your MQTT Connection Details"}
-        </Typography>
+        </Text>
 
-        <div style={{width: '50%'}}>
-          <TextField
-            type="text"
-            label="Endpoint"
+        <div>
+          <Input
+            placeholder="Endpoint"
             name="endpoint"
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
 
-          <TextField
-            type="text"
-            label="Topic"
+          <Input
+            placeholder="Topic"
             name="topic"
             value={this.state.topic}
             onChange={this.handleInputUpdate}
-            fullWidth
           />
         </div>
       </div>

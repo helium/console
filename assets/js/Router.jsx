@@ -26,19 +26,12 @@ import TwoFactorPrompt from './components/auth/TwoFactorPrompt.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
-import GatewayIndex from './components/gateways/GatewayIndex'
-import GatewayNew from './components/gateways/GatewayNew'
-import GatewayShow from './components/gateways/GatewayShow'
 import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import TeamShow from './components/teams/TeamShow'
-import NoTeamPrompt from './components/teams/NoTeamPrompt'
 import Dashboard from './components/dashboard/Dashboard'
 import DataCredits from './components/billing/DataCredits'
-import Reports from './components/reports/Reports'
-import Notifications from './components/notifications/Notifications'
-
 
 class Router extends React.Component {
   render() {
@@ -62,20 +55,12 @@ class Router extends React.Component {
                   <PrivateRoute path="/profile" component={Profile}/>
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
-                  { false && <PrivateRoute exact path="/gateways" component={GatewayIndex} />}
-                  { false && <PrivateRoute exact path="/gateways/new" component={GatewayNew} />}
-                  { false && <PrivateRoute exact path="/gateways/map" component={GatewayIndex} />}
-                  { false && <PrivateRoute exact path="/gateways/:id" component={GatewayShow} />}
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
                   <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
                   <PrivateRoute exact path="/teams/users" component={TeamShow} />
-                  { false && <PrivateRoute exact path="/teams/activity" component={TeamShow} />}
-                  <PrivateRoute exact path="/teams/none" component={NoTeamPrompt} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />
-                  { false && <PrivateRoute exact path="/reports" component={Reports} />}
-                  { false && <PrivateRoute exact path="/notifications" component={Notifications} />}
                 </Switch>
               </ConnectedRouter>
             </UserTeamProvider>

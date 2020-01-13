@@ -6,13 +6,10 @@ import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Icon } from 'antd'
 
-// GraphQL
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-
-// Icons
-import SearchIcon from '@material-ui/icons/Search'
 
 const queryOptions = {
   options: props => ({
@@ -59,19 +56,19 @@ class SearchBar extends Component {
     this.clearResults = this.clearResults.bind(this)
     this.gotoResult = this.gotoResult.bind(this)
     this.handleFocus = this.handleFocus.bind(this)
-    this.handleBlur = this.handleBlur.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeydown)
     this.searchBarInput.current.addEventListener('focus', this.handleFocus)
-    this.searchBarInput.current.addEventListener('blur', this.handleBlur)
+    window.addEventListener('click', this.handleClick)
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeydown)
     this.searchBarInput.current.removeEventListener('focus', this.handleFocus)
-    this.searchBarInput.current.removeEventListener('blur', this.handleBlur)
+    window.removeEventListener('click', this.handleClick)
   }
 
   handleUpdateQuery(e) {
@@ -120,17 +117,16 @@ class SearchBar extends Component {
 
   handleFocus(e) {
     const { query } = this.state
-
     this.setState({
       open: query.length > 0
     })
   }
 
-  handleBlur(e) {
-    // if user is clicking on a search result, don't close the results
-    const results = document.getElementById("searchResults")
-    if (results && results.contains(e.relatedTarget)) return
-
+  handleClick(e) {
+    const clickPath = e.composedPath().map(p => p.id)
+    if (findIndex(clickPath, el => el === 'searchResults') > -1) return
+    if (findIndex(clickPath, el => el === 'searchBar') > -1) return
+    if (!this.state.open) return
     this.setState({
       open: false
     })
@@ -212,8 +208,8 @@ class SearchBar extends Component {
 
     return (
       <div>
-        <div onClick={this.focusSearchBar} id="searchBar">
-          <SearchIcon />
+        <div onClick={this.focusSearchBar} id="searchBar" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Icon type="search" style={{ color: 'white', fontSize: 18 }} />
           <input
             ref={this.searchBarInput}
             value={query}
