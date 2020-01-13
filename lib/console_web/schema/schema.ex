@@ -87,6 +87,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :payload_size, :integer
     field :rssi, :string
+    field :snr, :string
     field :reported_at, :string
     field :delivered_at, :string
     field :status, :string

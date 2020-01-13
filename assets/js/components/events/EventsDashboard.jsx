@@ -68,7 +68,7 @@ class EventsDashboard extends Component {
       {
         title: 'Delivered At',
         dataIndex: 'delivered_at',
-        Cell: data => <span>{formatUnixDatetime(data)}</span>
+        render: data => <span>{formatUnixDatetime(data)}</span>
       },
     ]
 

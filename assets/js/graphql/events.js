@@ -4,6 +4,7 @@ export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
     id,
     rssi,
+    snr,
     payload_size,
     reported_at,
     delivered_at
