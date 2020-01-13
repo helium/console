@@ -29,18 +29,6 @@ class MQTTForm extends Component {
   render() {
     const { type } = this.props
 
-    return (
-      <div>
-        <Text strong>
-          Step 2
-        </Text>
-        <br />
-        <Text>
-          Connection coming soon...
-        </Text>
-      </div>
-    )
-
     return(
       <div>
         <Text strong>
