@@ -32,8 +32,6 @@ import ChannelNew from './components/channels/ChannelNew'
 import TeamShow from './components/teams/TeamShow'
 import Dashboard from './components/dashboard/Dashboard'
 import DataCredits from './components/billing/DataCredits'
-import Notifications from './components/notifications/Notifications'
-
 
 class Router extends React.Component {
   render() {

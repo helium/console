@@ -1,22 +1,11 @@
 import React, { Component } from 'react'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import merge from 'lodash/merge'
-import PaginatedTable, { PaginatedRow, PaginatedCell } from '../common/PaginatedTable'
 import PacketGraph from '../common/PacketGraph'
 import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
-
-// GraphQL
 import { Subscription } from 'react-apollo';
-
-// MUI
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import { Typography, Table } from 'antd';
+const { Text } = Typography
 
 class EventsDashboard extends Component {
   constructor(props) {
@@ -48,38 +37,38 @@ class EventsDashboard extends Component {
 
     const columns = [
       {
-        Header: 'Device ID',
-        accessor: 'id',
+        title: 'Device ID',
+        dataIndex: 'id',
       },
       {
-        Header: 'Hotspot Name',
-        accessor: 'hotspot_name',
+        title: 'Hotspot Name',
+        dataIndex: 'hotspot_name',
       },
       {
-        Header: 'Channel',
-        accessor: 'channel_name',
+        title: 'Channel',
+        dataIndex: 'channel_name',
       },
       {
-        Header: 'Status',
-        accessor: 'status',
+        title: 'Status',
+        dataIndex: 'status',
       },
       {
-        Header: 'Size',
-        accessor: 'payload_size',
-        Cell: props => <EventPayloadSize size={props.value} />
+        title: 'Size',
+        dataIndex: 'payload_size',
+        render: data => <span>{data} bytes</span>
       },
       {
-        Header: 'RSSI',
-        accessor: 'rssi',
+        title: 'RSSI',
+        dataIndex: 'rssi',
       },
       {
-        Header: 'SNR',
-        accessor: 'snr',
+        title: 'SNR',
+        dataIndex: 'snr',
       },
       {
-        Header: 'Delivered At',
-        accessor: 'delivered_at',
-        Cell: props => <span> {formatUnixDatetime(props.value)} </span>
+        title: 'Delivered At',
+        dataIndex: 'delivered_at',
+        Cell: data => <span>{formatUnixDatetime(data)}</span>
       },
     ]
 
@@ -91,31 +80,25 @@ class EventsDashboard extends Component {
       >
         {({ data }) => (
           <React.Fragment>
-            <Card style={{marginTop: 24}}>
-              <CardContent>
-                <Typography variant="headline" component="h3">
-                  Real Time Packets
-                </Typography>
-                <div className="chart-legend left">
-                  <div className="chart-legend-bulb red"></div>
-                  <Typography component="p">
-                    Live Data
-                  </Typography>
-                </div>
-                <PacketGraph events={this.state.rows} />
-              </CardContent>
-            </Card>
-            <Card style={{marginTop: 24}}>
-              <CardContent>
-                <Typography variant="headline" component="h3">
-                  Event Log
-                </Typography>
-                <QueryResults
-                  rows={this.state.rows}
-                  columns={columns}
-                />
-              </CardContent>
-            </Card>
+            <Text strong>
+              Real Time Packets
+            </Text>
+            <div className="chart-legend left">
+              <div className="chart-legend-bulb red"></div>
+              <Text>
+                Live Data
+              </Text>
+            </div>
+            <PacketGraph events={this.state.rows} />
+
+            <Text strong>
+              Event Log
+            </Text>
+            <br />
+            <QueryResults
+              rows={this.state.rows}
+              columns={columns}
+            />
           </React.Fragment>
         )}
       </Subscription>
@@ -129,51 +112,20 @@ class QueryResults extends Component {
 
     if (rows.length === 0) {
       return (
-        <Typography component="p">
+        <Text component="p">
           No events yet
-        </Typography>
+        </Text>
       )
     }
 
     return (
-      <ResultsTable
-        rows={rows}
+      <Table
+        dataSource={rows}
         columns={columns}
+        pagination={false}
       />
     )
   }
-}
-
-const ResultsTable = (props) => {
-  const { columns, rows } = props
-
-  return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          {columns.map((column, i) =>
-            <TableCell
-              key={`header-${i}`}
-              numeric={column.numeric}
-              padding={column.padding}
-            >
-              {column.Header}
-            </TableCell>
-          )}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((row, index) =>
-          <PaginatedRow key={index} row={row} columns={columns} />
-        )}
-      </TableBody>
-    </Table>
-  )
-}
-
-const EventPayloadSize = (props) => {
-  if (!props.size) return <span />
-  return <span>{props.size} bytes</span>
 }
 
 export default EventsDashboard

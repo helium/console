@@ -3,10 +3,8 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import pick from 'lodash/pick'
-import EventsTable from '../events/EventsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import HttpDetails from './HttpDetails'
-import PacketGraph from '../common/PacketGraph'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
 import GoogleForm from './forms/GoogleForm.jsx'
@@ -235,44 +233,6 @@ class ChannelShow extends Component {
             </Button>
           </CardContent>
         </Card>
-
-        {
-          false && <Card style={{marginTop: 24}}>
-            <CardContent>
-              <Typography variant="headline" component="h3">
-                Event Log
-              </Typography>
-              <EventsTable contextId={channel.id} contextName="channels"/>
-            </CardContent>
-          </Card>
-        }
-
-        {
-          false && <Card style={{marginTop: 24}}>
-            <CardContent>
-              <Typography variant="headline" component="h3">
-                Real Time Packets
-              </Typography>
-              <div className="chart-legend left">
-                <div className="chart-legend-bulb red"></div>
-                <Typography component="p">
-                  Live Data
-                </Typography>
-              </div>
-              <div className="chart-legend right">
-                <div className="chart-legend-bulb blue"></div>
-                <Typography component="p">
-                  From Device
-                </Typography>
-                <div className="chart-legend-bulb green"></div>
-                <Typography component="p">
-                  To Device
-                </Typography>
-              </div>
-              <PacketGraph contextId={channel.id} contextName="channels"/>
-            </CardContent>
-          </Card>
-        }
       </DashboardLayout>
     )
   }

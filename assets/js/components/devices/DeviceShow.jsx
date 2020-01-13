@@ -10,24 +10,11 @@ import DashboardLayout from '../common/DashboardLayout'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
-
-// GraphQL
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-
-//smallchip issue
+import { Typography, Button, Input, Form, Select, Tag } from 'antd';
+const { Text } = Typography
+const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
@@ -39,6 +26,7 @@ class DeviceShow extends Component {
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
+    this.handleSelectUpdate = this.handleSelectUpdate.bind(this);
     this.handleAddChannel = this.handleAddChannel.bind(this);
     this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
     this.handleDeviceUpdate = this.handleDeviceUpdate.bind(this);
@@ -64,6 +52,10 @@ class DeviceShow extends Component {
 
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value})
+  }
+
+  handleSelectUpdate(channelSelected) {
+    this.setState({ channelSelected })
   }
 
   handleAddChannel() {
@@ -98,81 +90,73 @@ class DeviceShow extends Component {
     const defaultChannel = find(channels, c => c.default)
 
     return(
-      <DashboardLayout title={device.name}>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Device Details
-            </Typography>
-            <Typography component="p">
-              Name: {device.name}
-            </Typography>
-            <UserCan action="update" itemType="device">
-              <div>
-                <TextField
-                  name="newName"
-                  value={this.state.newName}
-                  onChange={this.handleInputUpdate}
-                />
-                <Button
-                  size="small"
-                  color="primary"
-                  style={{ marginLeft: 5 }}
-                  onClick={() => this.handleDeviceUpdate(device.id)}
-                >
-                  Update
-                </Button>
-              </div>
-            </UserCan>
-            <div style={{ padding: 10, backgroundColor: '#F0F0F0', marginTop: 10, borderRadius: 5, boxShadow: 'inset 1px 1px 3px #999' }}>
-              <Typography variant="caption">
-                {`const uint32_t oui = ${device.oui};`}
-              </Typography>
-              <Typography variant="caption">
-                {`const uint16_t device_id = ${device.seq_id};`}
-              </Typography>
-              <Typography variant="caption">
-                {`const uint8_t preshared_key[16] = {${device.key}};`}
-              </Typography>
-            </div>
-            <FormControl>
-              <InputLabel htmlFor="select">Connect Channel</InputLabel>
-              <Select
-                value={channelSelected}
-                onChange={this.handleInputUpdate}
-                inputProps={{
-                  name: 'channelSelected',
-                }}
-                style={{ width: 200 }}
-              >
-                {channels.map(c => (
-                  <MenuItem value={c.id} key={c.id}>{c.name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              size="small"
-              color="primary"
-              style={{ marginLeft: 5 }}
-              onClick={this.handleAddChannel}
-            >
-              Add
-            </Button>
-            <div style={{ marginTop: 10 }}>
-              {
-                device.channels.map(c => (
-                  <div key={c.id} label={c.name} onDelete={() => this.handleDeleteChannel(c.id)} style={{ marginRight: 5 }} />
-                ))
-              }
-              {
-                device.channels.length === 0 && channels.length > 0 && defaultChannel && (
-                  <div label={`Default: ${defaultChannel.name}`} />
-                )
-              }
-            </div>
-          </CardContent>
-        </Card>
+      <DashboardLayout title={`Device: ${device.name}`}>
+        <Text strong>
+          Device Details
+        </Text>
+        <br />
+        <UserCan action="update" itemType="device">
+          <Input
+            name="newName"
+            placeholder={device.name}
+            value={this.state.newName}
+            onChange={this.handleInputUpdate}
+            style={{ width: 150 }}
+          />
+          <Button
+            type="primary"
+            onClick={() => this.handleDeviceUpdate(device.id)}
+          >
+            Update
+          </Button>
+        </UserCan>
+        <div>
+          <Text code>
+            {`const uint32_t oui = ${device.oui};`}
+          </Text>
+          <br />
+          <Text code>
+            {`const uint16_t device_id = ${device.seq_id};`}
+          </Text>
+          <br />
+          <Text code>
+            {`const uint8_t preshared_key[16] = {${device.key}};`}
+          </Text>
+        </div>
 
+        <Text strong>
+          Device Channels
+        </Text>
+        <br />
+        <Select
+          placeholder="Select Channel"
+          onChange={this.handleSelectUpdate}
+          style={{ width: 150 }}
+        >
+          {channels.map(c => (
+            <Option value={c.id} key={c.id}>{c.name}</Option>
+          ))}
+        </Select>
+
+        <Button
+          type="primary"
+          onClick={this.handleAddChannel}
+        >
+          Add
+        </Button>
+
+        <div>
+          {
+            device.channels.map(c => (
+              <Tag key={c.id} closable onClose={() => this.handleDeleteChannel(c.id)}>{`Channel: ${c.name}`}</Tag>
+            ))
+          }
+          {
+            device.channels.length === 0 && channels.length > 0 && defaultChannel && (
+              <Tag>{`Default Channel: ${defaultChannel.name}`}</Tag>
+            )
+          }
+        </div>
         <EventsDashboard contextName="devices" contextId={device.id} />
       </DashboardLayout>
     )
