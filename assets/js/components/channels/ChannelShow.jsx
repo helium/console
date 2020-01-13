@@ -13,20 +13,10 @@ import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
 import { CHANNEL_FRAGMENT, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
-
-// GraphQL
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-
-// MUI
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import { Typography, Button, Input, Form, Tag, Checkbox } from 'antd';
+const { Text } = Typography
 
 const queryOptions = {
   options: props => ({
@@ -140,99 +130,76 @@ class ChannelShow extends Component {
     if (loading) return <DashboardLayout />
 
     return(
-      <DashboardLayout title={channel.name}>
-        <Card>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Channel Details
-            </Typography>
+      <DashboardLayout title={`Channel: ${channel.name}`}>
+        <Text strong>
+          Channel Details
+        </Text>
+        <br />
+        <Input
+          name="newName"
+          placeholder={channel.name}
+          value={this.state.newName}
+          onChange={this.handleInputUpdate}
+          style={{ width: 150 }}
+        />
+        <Button
+          type="primary"
+          onClick={this.handleNameChange}
+        >
+          Update
+        </Button>
+        <br />
+        <Text>
+          Type: {channel.type_name}
+        </Text>
+        <br />
+        <Text>
+          Active: {channel.active ? "Yes" : "No"}
+        </Text>
+        <br />
+        <Text>
+          ID: {channel.id}
+        </Text>
 
-            <div>
-              <Typography component="p">
-                Type: {channel.type_name}
-              </Typography>
-              <Typography component="p">
-                Active: {channel.active ? "Yes" : "No"}
-              </Typography>
-              <Typography component="p">
-                ID: {channel.id}
-              </Typography>
-              <Typography component="p" style={{ marginTop: 12 }}>
-                Name: {channel.name}
-              </Typography>
-            </div>
+        <div>
+          {channel.type === "http" && <HttpDetails channel={channel} />}
+        </div>
 
-            <div>
-              <TextField
-                name="newName"
-                value={this.state.newName}
-                onChange={this.handleInputUpdate}
-              />
-              <Button
-                size="small"
-                color="primary"
-                style={{ marginLeft: 5 }}
-                onClick={this.handleNameChange}
-              >
-                Update
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
-        {channel.type === "http" && <HttpDetails channel={channel} />}
+        <Text strong>
+          Devices Piped
+        </Text>
+        <br />
+        {
+          channel.devices.map(d => (
+            <Tag key={d.name}>
+              {this.props.teams[d.team_id].name}: {d.name}
+            </Tag>
+          ))
+        }
+        <br />
+        {
+          channel.default && <Text>
+            Default Channel for New Devices
+          </Text>
+        }
+        <br />
+        {
+          !channel.default && channel.devices.length === 0 && <Text>
+            0 Connected Devices
+          </Text>
+        }
+        <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
+          Show Duplicate Packets
+        </Checkbox>
 
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            <Typography variant="headline" component="h3">
-              Devices Piped
-            </Typography>
-            {
-              channel.devices.map(d => (
-                <React.Fragment key={d.name}>
-                  <Typography component="p">
-                    {this.props.teams[d.team_id].name}: {d.name}
-                  </Typography>
-                </React.Fragment>
-              ))
-            }
-            {
-              channel.default && <Typography component="p">
-                Default Channel for New Devices
-              </Typography>
-            }
-            {
-              !channel.default && channel.devices.length === 0 && <Typography component="p">
-                0 Connected Devices
-              </Typography>
-            }
-            <FormControlLabel
-              control={
-                <Checkbox
-                  style={{ marginRight: -8 }}
-                  color="primary"
-                  checked={channel.show_dupes}
-                  onChange={this.handleShowDupesUpdate}
-                />
-              }
-              label="Show Duplicate Packets"
-            />
-          </CardContent>
-        </Card>
-
-        <Card style={{marginTop: 24}}>
-          <CardContent>
-            {this.renderForm()}
-            <Button
-              size="small"
-              color="primary"
-              style={{ marginTop: 24 }}
-              onClick={this.handleUpdateDetailsChange}
-            >
-              Update Details
-            </Button>
-          </CardContent>
-        </Card>
+        {this.renderForm()}
+        <Button
+          type="primary"
+          onClick={this.handleUpdateDetailsChange}
+        >
+          Update Details
+        </Button>
       </DashboardLayout>
     )
   }
