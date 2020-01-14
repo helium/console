@@ -33,7 +33,6 @@ defmodule Console.Channels.Channel do
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default])
     |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
     |> put_change(:encryption_version, Cloak.version)
-    |> filter_credentials()
     |> check_credentials()
     |> put_type_name()
   end
@@ -67,41 +66,44 @@ defmodule Console.Channels.Channel do
     end
   end
 
-  defp filter_credentials(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
-        put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
-      _ -> changeset
-    end
-  end
-
   defp check_credentials(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http", credentials: creds}} ->
-        uri = URI.parse(creds["endpoint"])
-        case uri do
-          %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
-          %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
-          uri -> changeset
-        end
+        check_http_creds(changeset, creds)
+      %Ecto.Changeset{valid?: true, changes: %{type: "mqtt", credentials: creds}} ->
+        check_mqtt_creds(changeset, creds)
       _ -> changeset
     end
   end
 
   defp check_credentials_update(changeset, type) do
-    if type == "http" do
-      case changeset do
-        %Ecto.Changeset{valid?: true, changes: %{credentials: creds}} ->
-          uri = URI.parse(creds["endpoint"])
-          case uri do
-            %URI{scheme: nil} -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
-            %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
-            uri -> put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
-          end
-        _ -> changeset
-      end
-    else
-      changeset
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{credentials: creds}} ->
+        case type do
+          "http" -> check_http_creds(changeset, creds)
+          "mqtt" -> check_mqtt_creds(changeset, creds)
+          _ -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_http_creds(changeset, creds) do
+    uri = URI.parse(creds["endpoint"])
+    case uri do
+      %URI{scheme: scheme} when scheme != "http" and scheme != "https" -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
+      %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
+      uri -> put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+    end
+  end
+
+  defp check_mqtt_creds(changeset, creds) do
+    uri = URI.parse(creds["endpoint"])
+    case uri do
+      %URI{scheme: scheme} when scheme != "mqtt" and scheme != "mqtts" -> add_error(changeset, :message, "Endpoint scheme is invalid (ex: mqtt/mqtts)")
+      %URI{host: nil} -> add_error(changeset, :message, "Endpoint host is invalid (ex: m1.helium.com)")
+      %URI{userinfo: nil} -> add_error(changeset, :message, "Endpoint user info is invalid (ex: username:password)")
+      _ -> changeset
     end
   end
 
