@@ -124,8 +124,10 @@ class QueryResults extends Component {
               analyticsLogger.logEvent("ACTION_NEW_ORG")
               openOrganizationModal()
             }}
+                        type="primary"
+
           >
-            New Organization
+            Create New Organization
           </Button>
         </div>
         <Table columns={columns} dataSource={organizations} pagination={false} />

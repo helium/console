@@ -10,18 +10,23 @@ class DashboardLayout extends Component {
     const { classes, title } = this.props;
 
     return (
+      <Layout style={{width: '100%'}}>
+      <Header>
+            <TopBar />
+          </Header>
+
       <Layout style={{ height: '100vh' }}>
+
         <Sider>
           <NavDrawer />
         </Sider>
         <Layout>
-          <Header>
-            <TopBar />
-          </Header>
+          
           <Content><ContentLayout title={title}>
             {this.props.children}
           </ContentLayout></Content>
         </Layout>
+      </Layout>
       </Layout>
     )
   }

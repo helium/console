@@ -5,6 +5,8 @@ import OrganizationTeamsTable from '../teams/OrganizationTeamsTable'
 import NewTeamModal from '../teams/NewTeamModal'
 import NewOrganizationModal from '../teams/NewOrganizationModal'
 import analyticsLogger from '../../util/analyticsLogger'
+import { Card } from 'antd';
+
 
 class Dashboard extends Component {
   constructor(props) {
@@ -45,10 +47,13 @@ class Dashboard extends Component {
     const { showTeamModal, showOrganizationModal, organizationName, organizationId } = this.state
     return (
       <DashboardLayout title="Dashboard">
-        <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
-        <br />
-        <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
+      <Card title="Organizations">
 
+        <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
+        </Card>
+        <Card title="Teams" >
+        <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
+        </Card>
         <NewTeamModal
           open={showTeamModal}
           organizationName={organizationName}

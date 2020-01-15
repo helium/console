@@ -8,7 +8,7 @@ class ContentLayout extends Component {
     const { title } = this.props
 
     return (
-      <div>
+      <div style={{padding: 30}}>
         <PageHeader
           backIcon={false}
           title={title}

@@ -124,8 +124,10 @@ class QueryResults extends Component {
               analyticsLogger.logEvent("ACTION_NEW_TEAM")
               openTeamModal(organization.id, organization.name)
             }}
+            type="primary"
+
           >
-            New Team
+            Create New Team
           </Button>
         </div>
         <Table columns={columns} dataSource={teams} pagination={false} />

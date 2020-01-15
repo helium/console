@@ -7,6 +7,8 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Menu, Dropdown, Icon, Typography } from 'antd';
 const { Text } = Typography
+import Logo from '../../../img/logo-horizontalwhite.svg'
+
 
 @connect(mapStateToProps, mapDispatchToProps)
 class TopBar extends Component {
@@ -22,12 +24,15 @@ class TopBar extends Component {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <div style={{width: 210}}>
+                <img src={Logo} style={{height:30}}/>
+                </div>
         <div>
           {
-            currentOrganizationName && <Text style={{ color: 'white' }}>Organization: {currentOrganizationName}</Text>
+            currentOrganizationName && <Text style={{ color: '#38A2FF', marginRight: 20 }}><span style={{fontWeight:500, color:'white'}}>Organization:</span> {currentOrganizationName}</Text>
           }
           {
-            currentTeam && <Text style={{ color: 'white' }}> - Team: {this.props.currentTeam.name}</Text>
+            currentTeam && <Text style={{ color: '#38A2FF' }}> <span style={{fontWeight:500, color:'white'}}>Team:</span> {this.props.currentTeam.name}</Text>
           }
         </div>
         <div style={{ flexGrow: 1 }}/>

@@ -22,9 +22,6 @@ class NavDrawer extends Component {
         theme="dark"
         onClick={this.handleClick}
       >
-        <Menu.ItemGroup>
-          <img src={Logo} />
-        </Menu.ItemGroup>
         <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard">Dashboard</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices">Devices</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/channels"} key="/channels">Channels</Menu.Item>

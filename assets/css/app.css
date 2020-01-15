@@ -142,3 +142,30 @@ main {
 #RoleTable td {
   border-bottom: 0px;
 }
+
+.ant-card {
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.ant-card-body {
+  padding: 0;
+  padding-top: 20px;
+}
+.ant-card-body button.ant-btn {
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
+.ant-page-header {
+  padding-left: 3px;
+  padding-bottom: 40px;
+}
+
+.ant-layout-header {
+  padding: 0 25px;
+}
+
+.ant-page-header-heading-title {
+  font-size: 30px;
+}
