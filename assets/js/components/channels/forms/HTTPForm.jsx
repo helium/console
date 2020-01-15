@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Typography, Button, Input, Form, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
+import { Row, Col } from 'antd';
 
 class HTTPForm extends Component {
   constructor(props) {
@@ -73,53 +74,58 @@ class HTTPForm extends Component {
 
     return(
       <div>
-        <Text strong>
-          {type === "update" ? "Update Channel" : "Step 2"}
-        </Text>
-        <br />
+       
         <Text>
           {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
         </Text>
 
-        <div style={{ display: 'flex', flexDirection: 'row'}}>
+        <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
+        <Col sm={12}>
           <Select
             defaultValue={this.state.method}
             onChange={this.handleMethodUpdate}
-            style={{ width: '15%'}}
+            style={{ width: '100%'}}
           >
             <Option value="post">POST</Option>
             <Option value="get">GET</Option>
             <Option value="put">PUT</Option>
             <Option value="patch">PATCH</Option>
           </Select>
+          </Col>
 
+          <Col sm={12}>
           <Input
             placeholder="Endpoint"
             name="endpoint"
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
-            style={{ width: '65%'}}
+            style={{ width: '100%'}}
           />
-        </div>
+          </Col>
+        </Row>
 
         {
           this.state.headers.map((obj, i) => (
+            <Row gutter={16} style={{marginBottom: 16}}>
             <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
+            <Col sm={12}>
               <Input
                 placeholder="HTTP Header"
                 name={`${i}-header`}
                 value={obj.header}
                 onChange={this.handleHttpHeaderUpdate}
-                style={{ width: '40%'}}
+                style={{ width: '100%'}}
               />
-
+              </Col>
+              <Col sm={12}>
               <Input
                 placeholder="Value"
                 name={`${i}-value`}
                 value={obj.value}
                 onChange={this.handleHttpHeaderUpdate}
-                style={{ width: '40%'}}
+                style={{ width: '100%'}}
               />
+              </Col>
 
               {
                 (i > 1) &&
@@ -130,10 +136,12 @@ class HTTPForm extends Component {
                   />
               }
             </div>
+                          </Row>
+
           ))
         }
 
-        <Button icon="plus" type="primary" shape="circle" onClick={this.addHeaderRow} />
+        <Button icon="plus" type="primary" onClick={this.addHeaderRow} >Submit</Button>
       </div>
     );
   }

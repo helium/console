@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Typography, Input } from 'antd';
 const { Text } = Typography
+import { Row, Col } from 'antd';
+
 
 class MQTTForm extends Component {
   constructor(props) {
@@ -31,29 +33,28 @@ class MQTTForm extends Component {
 
     return(
       <div>
-        <Text strong>
-          {type === "update" ? "Update Channel" : "Step 2"}
-        </Text>
-        <br />
-        <Text>
+          <Text>
           {type === "update" ? "Update your MQTT Connection Details" : "Enter your MQTT Connection Details"}
         </Text>
 
-        <div>
+        <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
+        <Col sm={12}>
           <Input
             placeholder="Endpoint"
             name="endpoint"
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
           />
-
+          </Col>
+          <Col sm={12}>
           <Input
             placeholder="Topic"
             name="topic"
             value={this.state.topic}
             onChange={this.handleInputUpdate}
           />
-        </div>
+          </Col>
+          </Row>
       </div>
     );
   }

@@ -6,6 +6,7 @@ import ChannelCreateRow from './ChannelCreateRow'
 import ChannelCargoRow from './ChannelCargoRow'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography } from 'antd';
+import { Card } from 'antd';
 const { Text } = Typography
 
 const styles = {
@@ -25,21 +26,18 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="Channels">
         <UserCan action="create" itemType="channel">
-          <Text strong>
-            Use Helium Cargo
-          </Text>
+              <Card title="Use Helium Cargo">
 
           <ChannelCargoRow />
-
-          <Text strong>
-            Create New Channel
-          </Text>
-
+          </Card>
+         
+          <Card title="Create Own Channel">
           <ChannelCreateRow />
+          </Card>
         </UserCan>
-        <br />
-
+        <Card title="My Channels">
         <ChannelsTable />
+        </Card>
       </DashboardLayout>
     )
   }

@@ -153,8 +153,12 @@ main {
   padding-top: 20px;
 }
 .ant-card-body button.ant-btn {
-  margin-right: 20px;
+  margin-right: 16px;
   margin-bottom: 20px;
+}
+
+.ant-card-head {
+  padding: 0 16px;
 }
 
 .ant-table-tbody button.ant-btn {

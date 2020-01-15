@@ -27,6 +27,7 @@ const styles = {
   icon: {
     height: 100,
     width: 100,
+    marginBottom: 10
   }
 }
 
@@ -46,7 +47,7 @@ class ChannelCreateRow extends Component {
       <div style={styles.createRow}>
         {
           channelTypes.map(channel => (
-            <div style={{ ...styles.button, backgroundColor: channel.inactive && '#CFCFCF' }} key={channel.name}>
+            <div style={{ ...styles.button, opacity: channel.inactive && '0.3', webkitFilter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
               <Link to={channel.link}>
                 <div style={styles.tile}>
                   <img style={styles.icon} src={channel.img} />
