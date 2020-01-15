@@ -5,6 +5,7 @@ import NewDeviceModal from './NewDeviceModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
+import { Card } from 'antd';
 
 const styles = {
   header: {
@@ -36,15 +37,18 @@ class DeviceIndex extends Component {
     const { classes } = this.props
     return(
       <DashboardLayout title="Devices">
+      <Card title="Device List" bodyStyle={{padding: 0, paddingTop: 20}}>
         <header style={styles.header}>
           <UserCan action="create" itemType="device">
             <Button
+            icon="plus"
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_NEW_DEVICE")
                 this.setState({ showModal: true })
               }}
+              type="primary"
             >
-              New Device
+              Add New Device
             </Button>
           </UserCan>
         </header>
@@ -52,6 +56,7 @@ class DeviceIndex extends Component {
         <DevicesTable />
 
         <NewDeviceModal open={showModal} onClose={this.handleClose}/>
+        </Card>
       </DashboardLayout>
     )
   }

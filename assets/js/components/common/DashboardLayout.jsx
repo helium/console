@@ -15,7 +15,7 @@ class DashboardLayout extends Component {
             <TopBar />
           </Header>
 
-      <Layout style={{ height: '100vh' }}>
+      <Layout style={{ height: 'calc(100vh - 64px)' }}>
 
         <Sider>
           <NavDrawer />

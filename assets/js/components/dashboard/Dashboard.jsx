@@ -47,11 +47,11 @@ class Dashboard extends Component {
     const { showTeamModal, showOrganizationModal, organizationName, organizationId } = this.state
     return (
       <DashboardLayout title="Dashboard">
-      <Card title="Organizations">
+      <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20}}>
 
         <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
         </Card>
-        <Card title="Teams" >
+        <Card title="Teams" bodyStyle={{padding:'0', paddingTop: 20}}>
         <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
         </Card>
         <NewTeamModal

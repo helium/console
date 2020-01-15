@@ -148,7 +148,7 @@ main {
   margin-bottom: 20px;
 }
 
-.ant-card-body {
+.no-padding-card {
   padding: 0;
   padding-top: 20px;
 }
@@ -156,6 +156,10 @@ main {
   margin-right: 20px;
   margin-bottom: 20px;
 }
+
+.ant-table-tbody button.ant-btn {
+  margin: 0;
+  }
 
 .ant-page-header {
   padding-left: 3px;
@@ -168,4 +172,13 @@ main {
 
 .ant-page-header-heading-title {
   font-size: 30px;
+}
+
+.ant-empty-image {
+  height: 60px;
+}
+
+.ant-pagination {
+  margin-top: 20px;
+  margin-right: 20px;
 }

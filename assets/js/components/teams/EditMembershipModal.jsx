@@ -49,6 +49,7 @@ class EditMembershipModal extends Component {
         title="Edit user role"
         visible={open}
         onCancel={onClose}
+        centered
         onOk={this.handleSubmit}
         footer={[
           <Button key="back" onClick={onClose}>

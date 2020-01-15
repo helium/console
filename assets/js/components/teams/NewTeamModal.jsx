@@ -41,6 +41,7 @@ class NewTeamModal extends Component {
       <Modal
         title={`Create a new team under organization: ${organizationName}`}
         visible={open}
+        centered
         onCancel={onClose}
         onOk={this.handleSubmit}
         footer={[

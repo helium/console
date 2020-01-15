@@ -13,6 +13,8 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Typography, Button, Input, Form, Select, Tag } from 'antd';
+import { Card } from 'antd';
+
 const { Text } = Typography
 const { Option } = Select
 
@@ -91,10 +93,9 @@ class DeviceShow extends Component {
 
     return(
       <DashboardLayout title={`Device: ${device.name}`}>
-        <Text strong>
-          Device Details
-        </Text>
-        <br />
+              <Card title="Device Details">
+
+     
         <UserCan action="update" itemType="device">
           <Input
             name="newName"
@@ -123,10 +124,9 @@ class DeviceShow extends Component {
             {`const uint8_t preshared_key[16] = {${device.key}};`}
           </Text>
         </div>
-
-        <Text strong>
-          Device Channels
-        </Text>
+        </Card>
+        <Card title="Device Channels">
+        
         <br />
         <Select
           placeholder="Select Channel"
@@ -144,7 +144,8 @@ class DeviceShow extends Component {
         >
           Add
         </Button>
-
+                </Card>
+<Card title="Real Time Packets">
         <div>
           {
             device.channels.map(c => (
@@ -158,6 +159,7 @@ class DeviceShow extends Component {
           }
         </div>
         <EventsDashboard contextName="devices" contextId={device.id} />
+        </Card>
       </DashboardLayout>
     )
   }

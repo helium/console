@@ -11,6 +11,10 @@ import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
 import { Table, Button, Empty, Pagination } from 'antd';
+import EmptyImg from '../../../img/emptydevice.svg'
+import { Card } from 'antd';
+
+
 
 const defaultVariables = {
   page: 1,
@@ -45,7 +49,9 @@ class DevicesTable extends Component {
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
             <UserCan action="delete" itemType="device" item={record}>
+
               <Button
+              icon="delete"
                 type="danger"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
@@ -139,7 +145,7 @@ class QueryResults extends Component {
 
     if (results.entries.length === 0) return (
       <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        image={EmptyImg}
         description={<span>No Devices</span>}
       />
     )
@@ -152,7 +158,7 @@ class QueryResults extends Component {
           rowKey={record => record.id}
           pagination={false}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 20}}>
           <Pagination
             current={results.pageNumber}
             pageSize={results.pageSize}

@@ -32,6 +32,7 @@ class OrganizationTeamsTable extends Component {
           currentTeamId !== record.id ? (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
               <Button
+              icon="swap"
                 type="primary"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_SWITCH_TEAM", {"id": record.id })
@@ -42,6 +43,7 @@ class OrganizationTeamsTable extends Component {
               </Button>
                <UserCan action="delete" itemType="team" item={record}>
                 <Button
+                icon="delete"
                   type="danger"
                   onClick={() => {
                     analyticsLogger.logEvent("ACTION_DELETE_TEAM", {"id": record.id})
@@ -120,6 +122,7 @@ class QueryResults extends Component {
       <div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <Button
+          icon="plus"
             onClick={() => {
               analyticsLogger.logEvent("ACTION_NEW_TEAM")
               openTeamModal(organization.id, organization.name)

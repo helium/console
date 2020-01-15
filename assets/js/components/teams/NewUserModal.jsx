@@ -44,6 +44,7 @@ class NewUserModal extends Component {
         title={`Invite new user to: ${organization.name}`}
         visible={open}
         onCancel={onClose}
+        centered
         onOk={this.handleSubmit}
         footer={[
           <Button key="back" onClick={onClose}>
