@@ -43,6 +43,7 @@ class OrganizationsTable extends Component {
               </Button>
               <UserCan action="delete" itemType="organization" item={record}>
                 <Button
+                icon="delete"
                   type="danger"
                   onClick={() => {
                     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
@@ -118,14 +119,17 @@ class QueryResults extends Component {
 
     return (
       <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
           <Button
+          icon="plus"
             onClick={() => {
               analyticsLogger.logEvent("ACTION_NEW_ORG")
               openOrganizationModal()
             }}
+                        type="primary"
+
           >
-            New Organization
+            Create New Organization
           </Button>
         </div>
         <Table columns={columns} dataSource={organizations} pagination={false} />

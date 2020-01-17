@@ -15,6 +15,8 @@ import ChannelCargoRow from './ChannelCargoRow'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography } from 'antd';
+import { Card } from 'antd';
+
 const { Text } = Typography
 
 @connect(null, mapDispatchToProps)
@@ -88,24 +90,21 @@ class ChannelNew extends Component {
   render() {
     return(
       <DashboardLayout title="Create New Channel">
-        <Text strong>
-          Step 1
-        </Text>
-        <br />
-        <Text strong>
-          Use Helium Cargo
-        </Text>
 
+      <Card title="Step 1 – Choose a Channel Type">
+        
+        <Card size="small" title="Use Helium Cargo">
         <ChannelCargoRow />
+        </Card>
 
-        <Text strong>
-          Select a channel
-        </Text>
-
+        <Card size="small" title="Use a Custom Channel">
         <ChannelCreateRow />
+        </Card>
 
+        </Card>
+        <Card title="Step 2 - Enter Details">
         {this.renderForm()}
-
+        </Card>
         {this.renderStep3()}
       </DashboardLayout>
     )

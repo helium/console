@@ -1,17 +1,13 @@
 import React from 'react';
 import { Typography, Input, Button, Form } from 'antd';
 const { Text } = Typography
+import { Card } from 'antd';
+
 
 const ChannelNameForm = (props) => (
   <div>
-    <Text strong>
-      Step 3
-    </Text>
-    <br />
-    <Text>
-      Name your Channel
-    </Text>
-
+    <Card title="Step 3 - Name your Channel">
+   
     <Form onSubmit={props.onSubmit}>
       <Form.Item>
         <Input
@@ -29,6 +25,7 @@ const ChannelNameForm = (props) => (
         Create Channel
       </Button>
     </Form>
+    </Card>
   </div>
 )
 

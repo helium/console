@@ -8,10 +8,17 @@ const styles = {
     overflow: 'hidden',
     position: 'relative',
     display: 'flex',
+    background: '#F0F2F5',
     justifyContent: 'center',
   },
   main: {
-    maxWidth: 400,
+    maxWidth: 500,
+    position: 'absolute',
+    top: '47%',
+    left: '50%',
+    transform: 'translate(-50% , -50%)',
+    height: 'auto',
+
   },
 }
 

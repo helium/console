@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { logOut } from '../actions/auth';
 import DashboardLayout from './common/DashboardLayout'
 import analyticsLogger from '../util/analyticsLogger'
-import { Typography, Button } from 'antd';
-const { Text } = Typography
+import { Typography, Button, Card, Descriptions, Divider } from 'antd';
+const { Text, Title, Paragraph } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class Profile extends Component {
@@ -20,18 +20,12 @@ class Profile extends Component {
 
     return(
       <DashboardLayout title="Profile">
-        <Text style={{ fontWeight: 'bold' }}>
-          Profile Details
-        </Text>
-        <br />
-        <Text>
-          Your email is: {email}
-        </Text>
-        <br />
-        <Text>
-          Auth token: <input defaultValue={apikey} />
-        </Text>
-        <br />
+       <Card title="Profile Details">
+       <Descriptions bordered column={4}>
+       <Descriptions.Item span ={4} label="Your Email is">{email}</Descriptions.Item>
+       <Descriptions.Item span ={4}  label="Auth token: "><Text copyable>{apikey}</Text></Descriptions.Item>
+        </Descriptions>
+       <Divider />
         <Button
           type="danger"
           onClick={() => {
@@ -41,6 +35,7 @@ class Profile extends Component {
         >
           Log Out
         </Button>
+        </Card>
       </DashboardLayout>
     );
   }

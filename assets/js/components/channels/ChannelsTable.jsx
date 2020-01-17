@@ -10,6 +10,8 @@ import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
 import { Table, Button, Empty, Pagination } from 'antd';
+import EmptyImg from '../../../img/emptydevice.svg'
+
 
 const defaultVariables = {
   page: 1,
@@ -146,7 +148,7 @@ class QueryResults extends Component {
 
     if (results.entries.length === 0) return (
       <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        image={EmptyImg}
         description={<span>No Channels</span>}
       />
     )

@@ -3,11 +3,13 @@
 @import './mapbox.css';
 @import './chartjs.css';
 @import '~antd/dist/antd.css';
+@import url("https://use.typekit.net/qfu3tzp.css");
 
 /* This file is for your main application css. */
 body {
   overscroll-behavior: none;
   height: 100%;
+  font-family: soleil, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';;
 }
 
 .mainContainer {
@@ -16,6 +18,10 @@ body {
 
 main {
   height: 100%;
+}
+
+h1 {
+  letter-spacing: -1px;
 }
 
 #react-root {
@@ -29,7 +35,7 @@ main {
 
 
 .noty_theme__mui.noty_bar {
-  font-family: Roboto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-weight: 100;
   margin: 4px 0;
   overflow: hidden;
@@ -100,9 +106,9 @@ main {
   background: none;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
-  margin-left: 20px;
+  margin-left: 10px;
   width: 100px;
   /* background: rgba(255, 0, 0, 0.2); */
 
@@ -111,7 +117,7 @@ main {
 
 #searchBar input:focus
 {
-  width: 100px;
+  width: 200px;
 }
 
 #searchResults
@@ -130,7 +136,7 @@ main {
   align-items: center;
   font-size: 10px;
   color: #949494;
-  width: 60px;
+  width: 35px;
   margin-left: 14px;
 }
 
@@ -139,6 +145,60 @@ main {
   font-size: 16px;
 }
 
+
 #RoleTable td {
   border-bottom: 0px;
+}
+
+.ant-card {
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.ant-menu-inline {
+  margin-top: 40px;
+}
+
+.ant-layout-header {
+  background: #00274c;
+}
+
+.no-padding-card {
+  padding: 0;
+  padding-top: 20px;
+}
+.ant-card-body button.ant-btn {
+  margin-right: 16px;
+  margin-bottom: 0px;
+}
+
+.ant-card-head {
+  padding: 0 16px;
+}
+
+.ant-table-tbody button.ant-btn {
+  margin: 0;
+  }
+
+.ant-page-header {
+  padding-left: 3px;
+  padding-bottom: 40px;
+}
+
+.ant-layout-header {
+  padding: 0 25px;
+}
+
+.ant-page-header-heading-title {
+  font-size: 30px;
+}
+
+.ant-empty-image {
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.ant-pagination {
+  margin-top: 20px;
+  margin-right: 20px;
 }

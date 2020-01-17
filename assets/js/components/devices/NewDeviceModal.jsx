@@ -41,6 +41,7 @@ class NewDeviceModal extends Component {
       <Modal
         title="Create a new device"
         visible={open}
+        centered
         onCancel={onClose}
         onOk={this.handleSubmit}
         footer={[

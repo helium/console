@@ -22,15 +22,11 @@ class NavDrawer extends Component {
         theme="dark"
         onClick={this.handleClick}
       >
-        <Menu.ItemGroup>
-          <img src={Logo} />
-        </Menu.ItemGroup>
-        <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard">Dashboard</Menu.Item>
-        <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices">Devices</Menu.Item>
-        <Menu.Item disabled={history.location.pathname === "/channels"} key="/channels">Channels</Menu.Item>
-        <Menu.Item disabled={history.location.pathname === "/teams/users"} key="/teams/users">Users</Menu.Item>
-        <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits">Data Credits</Menu.Item>
-        <Menu.ItemGroup title="Helium Console Beta"/>
+        <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard"><Icon type="dashboard"/>Dashboard</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices"><Icon type="appstore" />Devices</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/channels"} key="/channels"><Icon type="api" />Channels</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/teams/users"} key="/teams/users"><Icon type="user" />Users</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits"><Icon type="wallet" />Data Credits</Menu.Item>
       </Menu>
     )
   }

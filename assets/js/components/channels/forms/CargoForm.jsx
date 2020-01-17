@@ -36,10 +36,6 @@ class CargoForm extends Component {
   render() {
     return(
       <div>
-        <Text strong>
-          Step 2
-        </Text>
-        <br />
         <Text>
           You are opting to test your devices on the Helium Cargo HTTP channel endpoint.
         </Text>
@@ -55,6 +51,7 @@ class CargoForm extends Component {
         <Button
           onClick={this.validateInput}
           type="primary"
+          style={{marginTop: 20}}
         >
           I AGREE
         </Button>

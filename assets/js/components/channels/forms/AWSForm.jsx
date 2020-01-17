@@ -33,10 +33,6 @@ class AWSForm extends Component {
 
     return (
       <div>
-        <Text strong>
-          Step 2
-        </Text>
-        <br />
         <Text>
           Connection coming soon...
         </Text>

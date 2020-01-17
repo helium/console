@@ -59,7 +59,7 @@
     "webpack-cli": "^3.1.2"
   },
   "engines": {
-    "node": "10.x",
+    "node": "13.x",
     "yarn": "1.x"
   }
 }

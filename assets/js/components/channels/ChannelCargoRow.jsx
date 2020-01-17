@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Typography } from 'antd';
 const { Text } = Typography
-import Http from '../../../img/http-channel.png'
+import Cargo from '../../../img/heliumcargo.png'
 
 const styles = {
   createRow: {
@@ -23,11 +23,12 @@ const styles = {
   icon: {
     height: 100,
     width: 100,
+    marginBottom: 10
   }
 }
 
 const channelTypes = [
-  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `${Http}` },
+  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `${Cargo}` },
 ]
 
 class ChannelCargoRow extends Component {
@@ -38,7 +39,7 @@ class ChannelCargoRow extends Component {
       <div style={styles.createRow}>
         {
           channelTypes.map(channel => (
-            <div style={{ ...styles.button, backgroundColor: channel.inactive && '#CFCFCF' }} key={channel.name}>
+            <div style={{ ...styles.button, opacity: channel.inactive && '0.3', webkitFilter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
               <Link to={channel.link}>
                 <div style={styles.tile}>
                   <img style={styles.icon} src={channel.img} />

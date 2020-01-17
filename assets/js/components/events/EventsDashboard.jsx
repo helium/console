@@ -80,9 +80,7 @@ class EventsDashboard extends Component {
       >
         {({ data }) => (
           <React.Fragment>
-            <Text strong>
-              Real Time Packets
-            </Text>
+           
             <div className="chart-legend left">
               <div className="chart-legend-bulb red"></div>
               <Text>

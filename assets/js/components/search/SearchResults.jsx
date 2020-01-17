@@ -28,7 +28,7 @@ class SearchResults extends Component {
 
     if ((pageResultsLength + searchResultsLength) > 0) {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', zIndex: 10 }} id="searchResults">
+        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: '#FFFFFF', boxShadow: '0 52px 64px -50px #001529' }} id="searchResults">
           {searchResultsLength > 0 &&
             <SearchResultsSection
               title="SEARCH RESULTS"
@@ -36,7 +36,9 @@ class SearchResults extends Component {
               selectedResult={selectedResult}
               gotoResult={gotoResult}
             />
+
           }
+          <hr style={{border: 'none', borderTop: '1px solid #cdcdcd'}}/>
           {pageResultsLength > 0 &&
             <SearchResultsSection
               title="PAGES"
@@ -50,7 +52,7 @@ class SearchResults extends Component {
       )
     } else {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', paddingLeft: 20, paddingTop: 10, paddingBottom: 10 }} id="searchResults">
+        <div style={{ backgroundColor: 'white', paddingLeft: 20, paddingTop: 10, paddingBottom: 10,  }} id="searchResults">
           <Text>
             No Results Found {reactionFace()}
           </Text>

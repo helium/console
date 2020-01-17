@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Icon, Typography } from 'antd';
-const { Text } = Typography
+import { Icon, Typography, Card, Badge } from 'antd';
+const { Text, Title } = Typography
 
 class DataCredits extends Component {
   componentDidMount() {
@@ -12,12 +12,11 @@ class DataCredits extends Component {
   render() {
     return (
       <DashboardLayout title="Data Credits">
-        <div style={{textAlign: 'center', padding: 5 }}>
-          <Icon type="wallet" style={{ fontSize: 32 }}/>
-          <br />
-          <Text>
+      <Card>
+        
+          <Title level={3}>
             Purchase Data Credits from Helium to send device data.
-          </Text>
+          </Title>
           <br />
           <Text>
             The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC).
@@ -26,7 +25,8 @@ class DataCredits extends Component {
           <Text>
             During the Beta, the cost to send packets is 0 DC.
           </Text>
-        </div>
+      
+        </Card>
       </DashboardLayout>
     )
   }

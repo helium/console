@@ -42,6 +42,7 @@ class NewOrganizationModal extends Component {
         title="Create a new organization and team"
         visible={open}
         onCancel={onClose}
+        centered
         onOk={this.handleSubmit}
         footer={[
           <Button key="back" onClick={onClose}>

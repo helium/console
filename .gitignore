@@ -28,5 +28,6 @@ npm-debug.log
 /config/*.secret.exs
 
 *.log
+*.DS_Store
 
 .elixir_ls
