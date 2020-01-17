@@ -20,6 +20,10 @@ main {
   height: 100%;
 }
 
+h1 {
+  letter-spacing: -1px;
+}
+
 #react-root {
   height: 100%;
 }
