@@ -67,7 +67,7 @@ class TeamShow extends Component {
 
     return (
       <DashboardLayout title="Users">
-      <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 20}}>
+      <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 0}}>
         <header style={styles.header}>
           <UserCan action="create" itemType="membership">
             <Button
@@ -89,9 +89,9 @@ class TeamShow extends Component {
           openEditMembershipModal={this.openEditMembershipModal}
         />
         </Card> 
-              <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 20}}>
+              <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0}}>
 
-        <header style={{ ...styles.header, marginTop: 20 }}>
+        <header style={{ ...styles.header, marginTop: 1 }}>
         </header>
 
         <InvitationsTable />

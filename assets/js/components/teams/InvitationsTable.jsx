@@ -155,6 +155,9 @@ class QueryResults extends Component {
             pageSize={results.pageSize}
             total={results.totalEntries}
             onChange={page => this.handleChangePage(page)}
+            hideOnSinglePage={true}
+            style={{marginBottom: 20}}
+            
           />
         </div>
       </div>
