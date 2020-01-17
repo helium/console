@@ -3,11 +3,13 @@
 @import './mapbox.css';
 @import './chartjs.css';
 @import '~antd/dist/antd.css';
+@import url("https://use.typekit.net/qfu3tzp.css");
 
 /* This file is for your main application css. */
 body {
   overscroll-behavior: none;
   height: 100%;
+  font-family: soleil, sans-serif;
 }
 
 .mainContainer {
@@ -29,7 +31,7 @@ main {
 
 
 .noty_theme__mui.noty_bar {
-  font-family: Roboto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-weight: 100;
   margin: 4px 0;
   overflow: hidden;
