@@ -145,6 +145,7 @@ class QueryResults extends Component {
 
     if (results.entries.length === 0) return (
       <Empty
+      style={{marginBottom: 70}}
         image={EmptyImg}
         description={<span>No Devices</span>}
       />

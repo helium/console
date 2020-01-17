@@ -179,7 +179,8 @@ main {
 }
 
 .ant-empty-image {
-  height: 60px;
+  height: 80px;
+  margin-bottom: 10px;
 }
 
 .ant-pagination {
