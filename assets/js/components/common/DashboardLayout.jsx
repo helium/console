@@ -21,7 +21,6 @@ class DashboardLayout extends Component {
           <NavDrawer />
         </Sider>
         <Layout>
-          
           <Content><ContentLayout title={title}>
             {this.props.children}
           </ContentLayout></Content>

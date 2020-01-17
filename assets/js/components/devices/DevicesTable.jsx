@@ -158,12 +158,14 @@ class QueryResults extends Component {
           rowKey={record => record.id}
           pagination={false}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 20}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={results.pageNumber}
             pageSize={results.pageSize}
             total={results.totalEntries}
             onChange={page => this.handleChangePage(page)}
+            hideOnSinglePage={true}
+            style={{marginBottom: 20}}
           />
         </div>
       </div>
