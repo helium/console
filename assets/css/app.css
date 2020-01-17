@@ -100,9 +100,9 @@ main {
   background: none;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
-  margin-left: 20px;
+  margin-left: 10px;
   width: 100px;
   /* background: rgba(255, 0, 0, 0.2); */
 
@@ -111,7 +111,7 @@ main {
 
 #searchBar input:focus
 {
-  width: 100px;
+  width: 200px;
 }
 
 #searchResults
@@ -130,7 +130,7 @@ main {
   align-items: center;
   font-size: 10px;
   color: #949494;
-  width: 60px;
+  width: 35px;
   margin-left: 14px;
 }
 

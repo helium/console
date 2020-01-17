@@ -14,6 +14,8 @@ class SearchResult extends Component {
           alignItems: 'center',
           cursor: 'pointer',
           backgroundColor: selected ? '#E3F2FD' : 'white',
+          padding: 16,
+          borderRadius: 4,
         }}
       >
         <SearchResultIcon category={result.category} />
@@ -32,7 +34,7 @@ const JumpTo = (props) => (
   <span className="jumpto">
     {props.show &&
       <span className="jumpto--inner">
-        Jump to <Icon type="enter" style={{ fontSize: 18 }}/>
+        Go <Icon type="enter" style={{ fontSize: 18 }}/>
       </span>
     }
   </span>
@@ -41,19 +43,19 @@ const JumpTo = (props) => (
 const SearchResultIcon = (props) => {
   switch (props.category) {
     case "devices":
-      return <Icon type="api" style={{ fontSize: 18 }}/>
+      return <Icon type="appstore" style={{ fontSize: 18, marginRight: 20 }}/>
     case "channels":
-      return <Icon type="cloud-upload" style={{ fontSize: 18 }}/>
+      return <Icon type="api" style={{ fontSize: 18, marginRight: 20 }}/>
     case "users":
-      return <Icon type="user" style={{ fontSize: 18 }}/>
+      return <Icon type="user" style={{ fontSize: 18, marginRight: 20 }}/>
     case "dashboard":
-      return <Icon type="dashboard" style={{ fontSize: 18 }}/>
+      return <Icon type="dashboard" style={{ fontSize: 18, marginRight: 20 }}/>
     case "profile":
-      return <Icon type="profile" style={{ fontSize: 18 }}/>
+      return <Icon type="profile" style={{ fontSize: 18, marginRight: 20 }}/>
     case "datacredits":
-      return <Icon type="wallet" style={{ fontSize: 18 }}/>
+      return <Icon type="wallet" style={{ fontSize: 18, marginRight: 20 }}/>
     default:
-      return <Icon type="caret-right" style={{ fontSize: 18 }}/>
+      return <Icon type="caret-right" style={{ fontSize: 18, marginRight: 20 }}/>
   }
 }
 

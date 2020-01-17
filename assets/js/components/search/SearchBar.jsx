@@ -214,6 +214,7 @@ class SearchBar extends Component {
             ref={this.searchBarInput}
             value={query}
             onChange={this.handleUpdateQuery}
+            placeholder="Search..."
           />
         </div>
 
