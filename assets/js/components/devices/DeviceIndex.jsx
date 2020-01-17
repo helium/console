@@ -39,9 +39,10 @@ class DeviceIndex extends Component {
       <DashboardLayout title="Devices">
       <Card title="Device List" bodyStyle={{padding: 0, paddingTop: 20}}>
         <header style={styles.header}>
-          <UserCan action="create" itemType="device">
+          <UserCan action="create" itemType="device" >
             <Button
             icon="plus"
+            style={{marginBottom: 20}}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_NEW_DEVICE")
                 this.setState({ showModal: true })

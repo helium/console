@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Radio, Table } from 'antd';
+import { Radio, Table, Text } from 'antd';
 
 const roles = [
   {

@@ -9,13 +9,15 @@ import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Typography, Button } from 'antd';
+import { Typography, Button, Card } from 'antd';
+
 const { Text } = Typography
+
 
 const styles = {
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center'
   },
 }
@@ -65,10 +67,13 @@ class TeamShow extends Component {
 
     return (
       <DashboardLayout title="Users">
+      <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 20}}>
         <header style={styles.header}>
-          <Text style={{ fontWeight: 'bold' }}>Members</Text>
           <UserCan action="create" itemType="membership">
             <Button
+            type="primary"
+            icon="plus"
+            style={{marginBottom: 20}}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
                 this.openNewUserModal()
@@ -79,15 +84,18 @@ class TeamShow extends Component {
           </UserCan>
         </header>
 
+
         <MembersTable
           openEditMembershipModal={this.openEditMembershipModal}
         />
+        </Card> 
+              <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 20}}>
 
         <header style={{ ...styles.header, marginTop: 20 }}>
-          <Text style={{ fontWeight: 'bold' }}>Invites</Text>
         </header>
 
         <InvitationsTable />
+        </Card>
 
         <NewUserModal
           open={this.state.newUserOpen}

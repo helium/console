@@ -154,7 +154,7 @@ main {
 }
 .ant-card-body button.ant-btn {
   margin-right: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 
 .ant-card-head {

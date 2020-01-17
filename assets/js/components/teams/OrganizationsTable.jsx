@@ -119,7 +119,7 @@ class QueryResults extends Component {
 
     return (
       <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
           <Button
           icon="plus"
             onClick={() => {

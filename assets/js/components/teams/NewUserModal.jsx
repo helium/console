@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { inviteUser } from '../../actions/team'
 import RoleControl from './RoleControl'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button, Typography, Input } from 'antd';
+import { Modal, Button, Typography, Input, Card } from 'antd';
 const { Text } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -55,6 +55,7 @@ class NewUserModal extends Component {
           </Button>,
         ]}
       >
+      <Card size="small" title="Enter Email" >
         <Text>
           Enter the email address of the user you'd like to invite, and choose the role they should have.
         </Text>
@@ -65,10 +66,14 @@ class NewUserModal extends Component {
           onChange={this.handleInputUpdate}
           style={{ marginTop: 20 }}
         />
+        </Card>
+              <Card size="small" title="Choose Role">
+
         <RoleControl
           value={this.state.role}
           onChange={this.handleInputUpdate}
         />
+        </Card>
       </Modal>
     )
   }
