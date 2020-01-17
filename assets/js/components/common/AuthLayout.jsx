@@ -14,7 +14,7 @@ const styles = {
   main: {
     maxWidth: 500,
     position: 'absolute',
-    top: '45%',
+    top: '47%',
     left: '50%',
     transform: 'translate(-50% , -50%)',
     height: 'auto',
