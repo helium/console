@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
 import ContentLayout from './ContentLayout'
-import { Layout } from 'antd';
+import { Layout, Tag, Icon } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
@@ -19,6 +19,7 @@ class DashboardLayout extends Component {
 
         <Sider>
           <NavDrawer />
+          <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Beta v0.1</Tag>
         </Sider>
         <Layout>
           <Content><ContentLayout title={title}>

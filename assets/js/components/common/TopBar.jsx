@@ -51,10 +51,10 @@ class TopBar extends Component {
 const menu = handleClick => (
   <Menu onClick={handleClick}>
     <Menu.Item key="/profile">
-      Profile
+      <Icon type="profile" /> Profile
     </Menu.Item>
     <Menu.Item key="logout">
-      Log Out
+      <Icon type="logout" /> Log Out
     </Menu.Item>
   </Menu>
 )

@@ -27,7 +27,6 @@ class NavDrawer extends Component {
         <Menu.Item disabled={history.location.pathname === "/channels"} key="/channels"><Icon type="api" />Channels</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/teams/users"} key="/teams/users"><Icon type="user" />Users</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits"><Icon type="wallet" />Data Credits</Menu.Item>
-        <Menu.ItemGroup title="Helium Console Beta"/>
       </Menu>
     )
   }

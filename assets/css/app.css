@@ -148,6 +148,14 @@ main {
   margin-bottom: 20px;
 }
 
+.ant-menu-inline {
+  margin-top: 40px;
+}
+
+.ant-layout-header {
+  background: #00274c;
+}
+
 .no-padding-card {
   padding: 0;
   padding-top: 20px;

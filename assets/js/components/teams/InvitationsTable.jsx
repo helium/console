@@ -10,6 +10,8 @@ import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/in
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
+import EmptyImg from '../../../img/emptydevice.svg'
+
 
 const defaultVariables = {
   page: 1,
@@ -136,7 +138,8 @@ class QueryResults extends Component {
 
     if (results.entries.length === 0) return (
       <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        image={EmptyImg}
+        style={{margin: '40px 0'}}
         description={<span>No Invites</span>}
       />
     )
