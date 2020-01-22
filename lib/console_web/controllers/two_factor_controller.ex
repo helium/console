@@ -6,7 +6,6 @@ defmodule ConsoleWeb.TwoFactorController do
   alias Console.Auth.TwoFactor
   alias Console.Teams
   alias Console.Teams.Organizations
-  alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
 

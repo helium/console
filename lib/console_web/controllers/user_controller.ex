@@ -8,7 +8,6 @@ defmodule ConsoleWeb.UserController do
   alias Console.Teams.Organization
   alias Console.Teams.Organizations
   alias Console.Teams.Invitation
-  alias Console.AuditTrails
 
   alias Console.Email
   alias Console.Mailer

@@ -4,7 +4,6 @@ defmodule ConsoleWeb.SessionController do
   alias Console.Auth
   alias Console.Auth.User
   alias Console.Teams.Organizations
-  alias Console.AuditTrails
 
   action_fallback(ConsoleWeb.FallbackController)
 

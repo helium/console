@@ -40,15 +40,6 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
   end
 
-  paginated object :audit_trail do
-    field :id, :id
-    field :user_email, :string
-    field :object, :string
-    field :action, :string
-    field :description, :string
-    field :updated_at, :naive_datetime
-  end
-
   paginated object :membership do
     field :id, :id
     field :email, :string
@@ -157,12 +148,6 @@ defmodule ConsoleWeb.Schema do
     @desc "Get paginated invitations"
     paginated field :invitations, :paginated_invitations do
       resolve(&Console.Teams.InvitationResolver.paginate/2)
-    end
-
-    @desc "Get paginated audit trails"
-    paginated field :audit_trails, :paginated_audit_trails do
-      arg :user_id, :string
-      resolve(&Console.AuditTrails.AuditResolver.paginate/2)
     end
 
     @desc "Get paginated notifications"

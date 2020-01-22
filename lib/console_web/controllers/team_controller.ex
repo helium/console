@@ -6,7 +6,6 @@ defmodule ConsoleWeb.TeamController do
   alias Console.Teams.Organization
   alias Console.Teams.Organizations
   alias Console.Auth
-  alias Console.AuditTrails
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete_organization]
 

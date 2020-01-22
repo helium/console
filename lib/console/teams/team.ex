@@ -16,7 +16,6 @@ defmodule Console.Teams.Team do
 
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
     has_many :gateways, Console.Gateways.Gateway, on_delete: :delete_all
-    has_many :audit_trails, Console.AuditTrails.AuditTrail, on_delete: :delete_all
     has_many :notifications, Console.Notifications.Notification, on_delete: :delete_all
 
     timestamps()
