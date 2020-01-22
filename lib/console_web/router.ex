@@ -49,10 +49,6 @@ defmodule ConsoleWeb.Router do
 
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
-    resources "/notifications", NotificationController, only: [:create] do
-      post "/view", NotificationController, :view, as: :view
-    end
-    post "/notifications/clear", NotificationController, :clear, as: :clear_notifications
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create

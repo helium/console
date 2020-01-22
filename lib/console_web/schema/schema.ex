@@ -55,16 +55,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
-  paginated object :notification do
-    field :id, :id
-    field :title, :string
-    field :body, :string
-    field :url, :string
-    field :category, :string
-    field :active, :boolean
-    field :inserted_at, :naive_datetime
-  end
-
   object :organization do
     field :id, :id
     field :name, :string
@@ -150,12 +140,6 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Teams.InvitationResolver.paginate/2)
     end
 
-    @desc "Get paginated notifications"
-    paginated field :notifications, :paginated_notifications do
-      arg :active, :boolean
-      resolve(&Console.Notifications.NotificationResolver.paginate/2)
-    end
-
     @desc "Get a single organization"
     field :organization, :organization do
       arg :id, non_null(:id)
@@ -233,12 +217,6 @@ defmodule ConsoleWeb.Schema do
     field :invitation_updated, :invitation do
       config fn _, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/invitation_updated"}
-      end
-    end
-
-    field :notification_update, :notification do
-      config fn _, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/notification_update"}
       end
     end
   end
