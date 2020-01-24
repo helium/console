@@ -16,8 +16,7 @@ defmodule Console.Devices.DeviceResolver do
     key = device.key
       |> :base64.decode
       |> :erlang.binary_to_list()
-      |> Enum.map(fn b -> :io_lib.format("0x~.16B", [b]) |> to_string() end)
-      |> Enum.join(", ")
+      |> Enum.map(fn b -> :io_lib.format("~2.16.0B", [b]) |> to_string() end)
 
     device = Map.put(device, :key, key)
     {:ok, device}
