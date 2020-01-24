@@ -91,42 +91,46 @@ class DeviceShow extends Component {
 
     const defaultChannel = find(channels, c => c.default)
 
-    return(
-      <DashboardLayout title={`Device: ${device.name}`}>
-              <Card title="Device Details">
+    const oui = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8);
+    const devId = ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
 
-     
-        <UserCan action="update" itemType="device">
-          <Input
-            name="newName"
-            placeholder={device.name}
-            value={this.state.newName}
-            onChange={this.handleInputUpdate}
-            style={{ width: 150 }}
-          />
-          <Button
-            type="primary"
-            onClick={() => this.handleDeviceUpdate(device.id)}
-          >
-            Update
-          </Button>
-        </UserCan>
-        <div>
-          <Text code>
-            {`const uint32_t oui = ${device.oui};`}
-          </Text>
-          <br />
-          <Text code>
-            {`const uint16_t device_id = ${device.seq_id};`}
-          </Text>
-          <br />
-          <Text code>
-            {`const uint8_t preshared_key[16] = {${device.key}};`}
-          </Text>
-        </div>
+    return(
+      <DashboardLayout title={`${device.name}`}>
+        <Card title="Device Details">     
+          {/*<UserCan action="update" itemType="device">
+            <Input
+              name="newName"
+              placeholder={device.name}
+              value={this.state.newName}
+              onChange={this.handleInputUpdate}
+              style={{ width: 150 }}
+            />
+            <Button
+              type="primary"
+              onClick={() => this.handleDeviceUpdate(device.id)}
+            >
+              Update
+            </Button>
+          </UserCan>*/}
+          <table>
+            <tbody>
+              <tr>
+                <td><Text strong>App EUI</Text></td>
+                <td>{`${oui}${devId}`}</td>
+              </tr>
+              <tr>
+                <td><Text strong>App Key</Text></td>
+                <td>{`${device.key}`}</td>
+              </tr>
+              <tr>
+                <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
+                <td><Tag color="blue">OTAA</Tag></td>
+              </tr>
+            </tbody>
+          </table>
         </Card>
-        <Card title="Device Channels">
-        
+
+        <Card title="Device Channels">        
         <br />
         <Select
           placeholder="Select Channel"
