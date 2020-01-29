@@ -7,13 +7,10 @@ import {
   REFRESHED_TOKEN
 } from '../actions/auth.js';
 
-import { SWITCHED_TEAM } from '../actions/team.js';
-
 const initialState = {
   isLoggedIn: false,
   apikey : null,
   user: null,
-  currentTeamId: null,
   currentOrganizationId: null,
   currentOrganizationName: null,
 }
@@ -29,13 +26,11 @@ const auth = (state = initialState, action) => {
       const updatedUser = { id: state.user.id, twoFactorEnabled: state.user.twoFactorEnabled }
       return { ...state, user: updatedUser };
     case LOGGED_IN:
-      return { ...state, isLoggedIn: true, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
+      return { ...state, isLoggedIn: true, apikey: action.apikey, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     case LOGGED_OUT:
-      return { ...state, isLoggedIn: false, apikey: null, user: null, currentTeamId: null, currentOrganizationId: null, currentOrganizationName: null };
+      return { ...state, isLoggedIn: false, apikey: null, user: null, currentOrganizationId: null, currentOrganizationName: null };
     case REFRESHED_TOKEN:
-      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
-    case SWITCHED_TEAM:
-      return { ...state, apikey: action.apikey, currentTeamId: action.currentTeamId, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
+      return { ...state, apikey: action.apikey, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     default:
       return state;
   }

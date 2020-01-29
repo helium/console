@@ -36,7 +36,6 @@ const query = gql`
       inbound_token
       devices {
         name
-        team_id
       }
     }
   }
@@ -44,7 +43,7 @@ const query = gql`
 `
 
 @graphql(query, queryOptions)
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
   constructor(props) {
     super(props)
@@ -173,7 +172,7 @@ class ChannelShow extends Component {
         {
           channel.devices.map(d => (
             <Tag key={d.name}>
-              {this.props.teams[d.team_id].name}: {d.name}
+              {d.name}
             </Tag>
           ))
         }
@@ -202,12 +201,6 @@ class ChannelShow extends Component {
         </Button>
       </DashboardLayout>
     )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    teams: state.entities.teams
   }
 }
 

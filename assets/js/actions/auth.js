@@ -1,6 +1,6 @@
 import { push } from 'connected-react-router';
 import * as rest from '../util/rest';
-import { getTeamId, getOrganizationId, getOrganizationName } from '../util/jwt'
+import { getOrganizationId, getOrganizationName } from '../util/jwt'
 import analyticsLogger from '../util/analyticsLogger'
 
 export const LOGGED_IN = 'LOGGED_IN';
@@ -95,7 +95,7 @@ export const logOut = () => {
   }
 }
 
-export const register = (teamName, organizationName, email, password, invitationToken) => {
+export const register = (organizationName, email, password, invitationToken) => {
   let params = {
     user: {
       email,
@@ -111,9 +111,6 @@ export const register = (teamName, organizationName, email, password, invitation
     })
   } else {
     params = Object.assign(params, {
-      team: {
-        name: teamName
-      },
       organization: {
         name: organizationName
       }
@@ -173,7 +170,6 @@ export const refreshedToken = (apikey) => {
   return {
     type: REFRESHED_TOKEN,
     apikey,
-    currentTeamId: getTeamId(apikey),
     currentOrganizationId: getOrganizationId(apikey),
     currentOrganizationName: getOrganizationName(apikey)
   }
@@ -204,7 +200,6 @@ const loggedIn = (apikey) => {
   return {
     type: LOGGED_IN,
     apikey,
-    currentTeamId: getTeamId(apikey),
     currentOrganizationId: getOrganizationId(apikey),
     currentOrganizationName: getOrganizationName(apikey)
   }

@@ -13,7 +13,6 @@ class NewOrganizationModal extends Component {
 
     this.state = {
       name: "",
-      teamName: "",
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -26,10 +25,10 @@ class NewOrganizationModal extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { name, teamName } = this.state;
+    const { name } = this.state;
 
-    analyticsLogger.logEvent("ACTION_CREATE_ORG", {"name": name, "teamName": teamName})
-    this.props.createOrganization(name, teamName)
+    analyticsLogger.logEvent("ACTION_CREATE_ORG", {"name": name})
+    this.props.createOrganization(name)
 
     this.props.onClose()
   }
@@ -39,7 +38,7 @@ class NewOrganizationModal extends Component {
 
     return (
       <Modal
-        title="Create a new organization and team"
+        title="Create a new organization"
         visible={open}
         onCancel={onClose}
         centered
@@ -59,13 +58,6 @@ class NewOrganizationModal extends Component {
           value={this.state.name}
           onChange={this.handleInputUpdate}
           style={{ marginBottom: 20 }}
-        />
-
-        <Input
-          placeholder="New Team in Organization"
-          name="teamName"
-          value={this.state.teamName}
-          onChange={this.handleInputUpdate}
         />
       </Modal>
     )

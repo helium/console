@@ -10,7 +10,7 @@ const roles = [
   {
     value: "manager",
     name: "Manager",
-    description: "Managers can modify teams and channels only."
+    description: "Managers can modify channels only."
   },
 ]
 

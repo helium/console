@@ -20,7 +20,7 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, currentTeam } = this.props
+    const { logOut, currentOrganizationName } = this.props
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -30,9 +30,6 @@ class TopBar extends Component {
         <div>
           {
             currentOrganizationName && <Text style={{ color: '#38A2FF', marginRight: 20 }}><span style={{fontWeight:500, color:'white'}}>Organization:</span> {currentOrganizationName}</Text>
-          }
-          {
-            currentTeam && <Text style={{ color: '#38A2FF' }}> <span style={{fontWeight:500, color:'white'}}>Team:</span> {this.props.currentTeam.name}</Text>
           }
         </div>
         <div style={{ flexGrow: 1 }}/>
@@ -63,7 +60,6 @@ function mapStateToProps(state, ownProps) {
   return {
     email: state.user.email,
     currentOrganizationName: state.auth.currentOrganizationName,
-    currentTeam: state.entities.teams[state.auth.currentTeamId],
   }
 }
 
