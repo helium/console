@@ -8,11 +8,9 @@ defmodule Console.Auth do
 
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
-  alias Console.Teams.Invitation
-  alias Console.Teams.Invitation
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
-  alias Console.Teams.Team
+  alias Console.Organizations.Invitation
+  alias Console.Organizations.Organization
+  alias Console.Organizations
   alias Console.Helpers
 
   def list_users() do
@@ -31,7 +29,7 @@ defmodule Console.Auth do
     end
   end
 
-  def create_user(user_attrs \\ %{}, team_attrs \\ %{}, organization_attrs \\ %{}) do
+  def create_user(user_attrs \\ %{}, organization_attrs \\ %{}) do
     user_changeset =
       %User{}
       |> User.registration_changeset(user_attrs)
@@ -40,15 +38,12 @@ defmodule Console.Auth do
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
       |> Ecto.Multi.run(:organization, fn _repo, %{user: user} ->
-        Console.Teams.Organizations.create_organization(user, organization_attrs)
-      end)
-      |> Ecto.Multi.run(:team, fn _repo, %{user: user, organization: organization} ->
-        Console.Teams.create_team(user, team_attrs, organization)
+        Console.Organizations.create_organization(user, organization_attrs)
       end)
       |> Repo.transaction()
 
     case result do
-      {:ok, %{user: user, team: team, organization: organization}} -> {:ok, user, team, organization}
+      {:ok, %{user: user, organization: organization}} -> {:ok, user, organization}
       {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
@@ -173,16 +168,7 @@ defmodule Console.Auth do
   end
 
   def generate_session_token(%User{} = user, %Organization{} = current_organization) do
-    current_teams = Organizations.fetch_assoc(current_organization, [:teams]).teams
-    current_team = current_teams |> List.first()
-    claims = %{team: current_team.id, organization: current_organization.id, organization_name: current_organization.name}
-
-    {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
-    token
-  end
-
-  def generate_session_token(%User{} = user, %Organization{} = current_organization, %Team{} = team) do
-    claims = %{team: team.id, organization: current_organization.id, organization_name: current_organization.name}
+    claims = %{organization: current_organization.id, organization_name: current_organization.name}
 
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
     token

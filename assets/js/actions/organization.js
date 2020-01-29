@@ -4,19 +4,18 @@ import { getOrganizationId, getOrganizationName } from '../util/jwt';
 
 export const createOrganization = (name, getToken) => {
   return (dispatch) => {
-    rest.post('/api/teams', {
+    rest.post('/api/organizations', {
         organization: {
           name
         },
       })
-      .then(response => {
-      })
+      .then(response => {})
   }
 }
 
 export const switchOrganization = (id) => {
   return (dispatch) => {
-    rest.post(`/api/teams/${id}/switch_org`)
+    rest.post(`/api/organizations/${id}/switch_org`)
       .then(response => {
         window.location.reload(true)
       })

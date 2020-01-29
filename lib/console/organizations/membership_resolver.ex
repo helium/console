@@ -1,6 +1,6 @@
-defmodule Console.Teams.MembershipResolver do
+defmodule Console.Organizations.MembershipResolver do
   alias Console.Repo
-  alias Console.Teams.Membership
+  alias Console.Organizations.Membership
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     memberships =

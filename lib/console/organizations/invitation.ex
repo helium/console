@@ -1,4 +1,4 @@
-defmodule Console.Teams.Invitation do
+defmodule Console.Organizations.Invitation do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,7 +10,7 @@ defmodule Console.Teams.Invitation do
     field :token, :string
     field :pending, :boolean, default: true
     belongs_to :inviter, Console.Auth.User
-    belongs_to :organization, Console.Teams.Organization
+    belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
   end

@@ -1,4 +1,4 @@
-defmodule Console.Teams.InvitationResolver do
+defmodule Console.Organizations.InvitationResolver do
   alias Console.Repo
   import Ecto.Query
 

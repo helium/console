@@ -3,11 +3,9 @@ defmodule ConsoleWeb.UserController do
 
   alias Console.Auth
   alias Console.Auth.User
-  alias Console.Teams
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
-  alias Console.Teams.Invitation
+  alias Console.Organizations
+  alias Console.Organizations.Organization
+  alias Console.Organizations.Invitation
 
   alias Console.Email
   alias Console.Mailer
@@ -28,15 +26,15 @@ defmodule ConsoleWeb.UserController do
   end
 
   # Registration via signing up with org name
-  def create(conn, %{"user" => user_params, "team" => team_params, "organization" => organization_params}) do
-    with {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} <- Auth.create_user(user_params, team_params, organization_params) do
+  def create(conn, %{"user" => user_params, "organization" => organization_params}) do
+    with {:ok, %User{} = user, %Organization{} = organization} <- Auth.create_user(user_params, organization_params) do
 
         conn
         |> handle_created(user)
     end
   end
 
-  # Registration via accepting invitation to team
+  # Registration via accepting invitation
   def create(conn, %{"user" => user_params, "invitation" => %{"token" => invitation_token}}) do
     with {true, invitation} <- Organizations.valid_invitation_token?(invitation_token),
       {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do

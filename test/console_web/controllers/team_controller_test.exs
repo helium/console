@@ -1,9 +1,9 @@
-defmodule ConsoleWeb.TeamControllerTest do
+defmodule ConsoleWeb.OrganizationControllerTest do
   use ConsoleWeb.ConnCase
 
   import Console.FactoryHelper
   import Console.Factory
-  alias Console.Teams.Organizations
+  alias Console.Organizations
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

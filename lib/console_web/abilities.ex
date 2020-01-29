@@ -1,5 +1,5 @@
 defmodule ConsoleWeb.Abilities do
-  alias Console.Teams.Membership
+  alias Console.Organizations.Membership
 
   def can?(%Membership{role: "admin"}, action, controller) do
     true
@@ -10,7 +10,7 @@ defmodule ConsoleWeb.Abilities do
       controller == ConsoleWeb.DeviceController and action in [:create, :update, :delete] -> false
       controller == ConsoleWeb.InvitationController and action in [:create, :delete] -> false
       controller == ConsoleWeb.MembershipController and action in [:update, :delete] -> false
-      controller == ConsoleWeb.TeamController and action in [:delete_organization] -> false
+      controller == ConsoleWeb.OrganizationController and action in [:delete_organization] -> false
       true -> true
     end
   end

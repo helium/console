@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { createOrganization } from '../../actions/team'
+import { createOrganization } from '../../actions/organization'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography

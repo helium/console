@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
-import OrganizationsTable from '../teams/OrganizationsTable'
-import NewOrganizationModal from '../teams/NewOrganizationModal'
+import OrganizationsTable from '../organizations/OrganizationsTable'
+import NewOrganizationModal from '../organizations/NewOrganizationModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card } from 'antd';
 

@@ -11,7 +11,7 @@ defmodule Console.Gateways do
 
   def get_gateway!(id), do: Repo.get!(Gateway, id)
 
-  def fetch_assoc(%Gateway{} = gateway, assoc \\ [:events, :team]) do
+  def fetch_assoc(%Gateway{} = gateway, assoc \\ [:events, :organization]) do
     Repo.preload(gateway, assoc)
   end
 

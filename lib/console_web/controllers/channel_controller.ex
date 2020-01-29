@@ -3,7 +3,7 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Channels
   alias Console.Channels.Channel
-  alias Console.Teams.Organizations
+  alias Console.Organizations
 
   plug ConsoleWeb.Plug.AuthorizeAction
 

@@ -1,12 +1,12 @@
 defmodule Console.OrganizationsTest do
   use Console.DataCase
 
-  alias Console.Teams
+  alias Console.Organizations
   alias Console.Channels
-  alias Console.Teams.Organizations
-  alias Console.Teams.Organization
-  alias Console.Teams.Membership
-  alias Console.Teams.Invitation
+  alias Console.Organizations
+  alias Console.Organizations.Organization
+  alias Console.Organizations.Membership
+  alias Console.Organizations.Invitation
 
   import Console.Factory
 

@@ -1,4 +1,4 @@
-defmodule Console.Teams.Membership do
+defmodule Console.Organizations.Membership do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
@@ -12,7 +12,7 @@ defmodule Console.Teams.Membership do
     field :email, :string, virtual: true
     field :two_factor_enabled, :boolean, virtual: true
     belongs_to :user, Console.Auth.User
-    belongs_to :organization, Console.Teams.Organization
+    belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
   end

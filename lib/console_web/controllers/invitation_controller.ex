@@ -1,10 +1,10 @@
 defmodule ConsoleWeb.InvitationController do
   use ConsoleWeb, :controller
 
-  alias Console.Teams
-  alias Console.Teams.Organizations
-  alias Console.Teams.Invitation
-  alias Console.Teams.Membership
+  alias Console.Organizations
+  alias Console.Organizations
+  alias Console.Organizations.Invitation
+  alias Console.Organizations.Membership
   alias Console.Auth
   alias Console.Email
   alias Console.Mailer
@@ -33,7 +33,7 @@ defmodule ConsoleWeb.InvitationController do
 
           conn
           |> put_status(:created)
-          |> put_resp_header("message", "User added to team")
+          |> put_resp_header("message", "User added to organization")
           |> put_view(ConsoleWeb.MembershipView)
           |> render("show.json", membership: membership)
         end

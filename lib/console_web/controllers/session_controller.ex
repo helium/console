@@ -3,7 +3,7 @@ defmodule ConsoleWeb.SessionController do
 
   alias Console.Auth
   alias Console.Auth.User
-  alias Console.Teams.Organizations
+  alias Console.Organizations
 
   action_fallback(ConsoleWeb.FallbackController)
 

@@ -7,8 +7,8 @@ defmodule Console.Channels do
   alias Console.Repo
 
   alias Console.Channels.Channel
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
+  alias Console.Organizations.Organization
+  alias Console.Organizations
 
   def list_channels do
     Repo.all(Channel)

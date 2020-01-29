@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import filter from 'lodash/filter'
-import { switchOrganization, deleteOrganization } from '../../actions/team'
+import { switchOrganization, deleteOrganization } from '../../actions/organization'
 import UserCan from '../common/UserCan'
 import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -111,7 +111,7 @@ class QueryResults extends Component {
     const organizations = filter(data.organizations, d => d !== undefined).map(r => { r.key = r.id; return r })
 
     if (organizations.length === 0) return (
-      <Empty 
+      <Empty
         image={Empty.PRESENTED_IMAGE_SIMPLE}
         description={<span>No Organizations</span>}
       />

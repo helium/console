@@ -1,11 +1,11 @@
-defmodule Console.TeamsTest do
+defmodule Console.OrganizationsTest do
   use Console.DataCase
 
-  alias Console.Teams
+  alias Console.Organizations
   alias Console.Devices
-  alias Console.Teams.Team
-  alias Console.Teams.Organizations
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Team
+  alias Console.Organizations
+  alias Console.Organizations.Invitation
 
   import Console.Factory
 

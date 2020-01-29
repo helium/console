@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { inviteUser } from '../../actions/team'
+import { inviteUser } from '../../actions/organization'
 import RoleControl from './RoleControl'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Card } from 'antd';

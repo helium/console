@@ -2,8 +2,7 @@ defmodule Console.Channels.Channel do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
+  alias Console.Organizations.Organization
   alias Console.Events.Event
   alias Console.Channels
   alias Console.Devices.Device

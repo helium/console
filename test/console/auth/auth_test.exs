@@ -2,10 +2,10 @@ defmodule Console.AuthTest do
   use Console.DataCase
 
   alias Console.Auth
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Team
+  alias Console.Organizations.Organization
+  alias Console.Organizations
+  alias Console.Organizations.Invitation
   alias Console.Auth.TwoFactor
 
   import Console.Factory

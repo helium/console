@@ -10,8 +10,8 @@ defmodule ConsoleWeb.Schema do
     field :key, :string
     field :mac, :string
     field :oui, :integer
-    field :team_id, :id
-    field :team, :team
+    field :organization_id, :id
+    field :organization, :organization
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
   end
@@ -59,9 +59,6 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
-    field :teams, list_of(:team) do
-      resolve &Console.Teams.OrganizationResolver.get_teams/2
-    end
   end
 
   object :event do
@@ -74,12 +71,6 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
     field :channel_name, :string
     field :hotspot_name, :string
-  end
-
-  object :team do
-    field :id, :id
-    field :name, :string
-    field :inserted_at, :naive_datetime
   end
 
   object :search_result do
@@ -132,23 +123,23 @@ defmodule ConsoleWeb.Schema do
 
     @desc "Get paginated memberships"
     paginated field :memberships, :paginated_memberships do
-      resolve(&Console.Teams.MembershipResolver.paginate/2)
+      resolve(&Console.Organizations.MembershipResolver.paginate/2)
     end
 
     @desc "Get paginated invitations"
     paginated field :invitations, :paginated_invitations do
-      resolve(&Console.Teams.InvitationResolver.paginate/2)
+      resolve(&Console.Organizations.InvitationResolver.paginate/2)
     end
 
     @desc "Get a single organization"
     field :organization, :organization do
       arg :id, non_null(:id)
-      resolve(&Console.Teams.OrganizationResolver.find/2)
+      resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
     @desc "Get all organizations"
     field :organizations, list_of(:organization) do
-      resolve(&Console.Teams.OrganizationResolver.all/2)
+      resolve(&Console.Organizations.OrganizationResolver.all/2)
     end
 
     @desc "Search for devices, gateways and channels"
@@ -159,12 +150,6 @@ defmodule ConsoleWeb.Schema do
   end
 
   subscription do
-    field :team_added, :team do
-      config fn _, %{context: %{ current_organization_id: organization_id }} ->
-        {:ok, topic: "#{organization_id}/team_added"}
-      end
-    end
-
     field :organization_added, :organization do
       arg :user_id, :string
 
@@ -183,22 +168,22 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :device_added, :device do
-      config fn _, %{context: %{ current_team_id: team_id, current_organization_id: organization_id }} ->
-        {:ok, topic: "#{organization_id}/#{team_id}/device_added"}
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/device_added"}
       end
     end
 
     field :device_updated, :device do
       arg :device_id, :string
 
-      config fn args, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/#{args.device_id}/device_updated"}
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.device_id}/device_updated"}
       end
     end
 
     field :gateway_added, :gateway do
-      config fn _, %{context: %{ current_team_id: team_id }} ->
-        {:ok, topic: "#{team_id}/gateway_added"}
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/gateway_added"}
       end
     end
 

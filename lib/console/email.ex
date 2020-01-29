@@ -2,10 +2,9 @@ defmodule Console.Email do
   use Bamboo.Phoenix, view: ConsoleWeb.EmailView
 
   alias Console.Auth.User
-  alias Console.Teams.Invitation
-  alias Console.Teams.Membership
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
+  alias Console.Organizations.Invitation
+  alias Console.Organizations.Membership
+  alias Console.Organizations.Organization
 
   def confirm_email(%User{email: email, confirmation_token: token}) do
     base_email()

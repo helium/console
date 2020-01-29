@@ -5,9 +5,9 @@ defmodule Console.Factory do
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Events.Event
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Team
+  alias Console.Organizations.Organization
+  alias Console.Organizations.Invitation
   alias Console.Gateways.Gateway
 
   def user_factory do

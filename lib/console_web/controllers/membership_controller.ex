@@ -1,9 +1,9 @@
 defmodule ConsoleWeb.MembershipController do
   use ConsoleWeb, :controller
 
-  alias Console.Teams
-  alias Console.Teams.Organizations
-  alias Console.Teams.Membership
+  alias Console.Organizations
+  alias Console.Organizations
+  alias Console.Organizations.Membership
   alias Console.Auth
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -35,7 +35,7 @@ defmodule ConsoleWeb.MembershipController do
       broadcast(membership, "delete")
 
       conn
-      |> put_resp_header("message", "User removed from team")
+      |> put_resp_header("message", "User removed from organization")
       |> send_resp(:no_content, "")
     end
   end

@@ -10,7 +10,7 @@ defmodule ConsoleWeb.GatewayController do
 
   def index(conn, _params) do
     current_team = conn.assigns.current_team
-                   |> Console.Teams.fetch_assoc([:gateways])
+                   |> Console.Organizations.fetch_assoc([:gateways])
     render(conn, "index.json", gateways: current_team.gateways)
   end
 

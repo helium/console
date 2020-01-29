@@ -13,7 +13,7 @@ import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PrivateRoute from './components/routes/PrivateRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
-import UserTeamProvider from './components/UserTeamProvider'
+import UserOrgProvider from './components/UserOrgProvider'
 import Login from './components/auth/Login.jsx';
 import Terms from './components/auth/Terms.jsx';
 import Register from './components/auth/Register.jsx';
@@ -29,7 +29,7 @@ import DeviceShow from './components/devices/DeviceShow';
 import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
-import TeamShow from './components/teams/TeamShow'
+import OrganizationShow from './components/organizations/OrganizationShow'
 import Dashboard from './components/dashboard/Dashboard'
 import DataCredits from './components/billing/DataCredits'
 
@@ -39,7 +39,7 @@ class Router extends React.Component {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ApolloProvider client={apolloClient}>
-            <UserTeamProvider>
+            <UserOrgProvider>
               { /* ConnectedRouter will use the store from Provider automatically */ }
               <ConnectedRouter history={history}>
                 <Switch>
@@ -58,12 +58,12 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/channels" component={ChannelIndex} />
                   <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
-                  <PrivateRoute exact path="/teams/users" component={TeamShow} />
+                  <PrivateRoute exact path="/users" component={OrganizationShow} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />
                 </Switch>
               </ConnectedRouter>
-            </UserTeamProvider>
+            </UserOrgProvider>
           </ApolloProvider>
         </PersistGate>
       </Provider>

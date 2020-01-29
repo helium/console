@@ -2,7 +2,7 @@ defmodule Console.Devices.Device do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Teams.Team
+  alias Console.Organizations.Organization
   alias Console.Events.Event
   alias Console.Channels.Channel
   alias Console.Devices
@@ -18,7 +18,7 @@ defmodule Console.Devices.Device do
     field :seq_id, :integer
     field :oui, :integer
 
-    belongs_to :team, Team
+    belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: DevicesChannels, on_delete: :delete_all
 
@@ -29,9 +29,9 @@ defmodule Console.Devices.Device do
   def changeset(device, attrs) do
     changeset =
       device
-      |> cast(attrs, [:name, :mac, :key, :team_id, :seq_id])
+      |> cast(attrs, [:name, :mac, :key, :organization_id, :seq_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
-      |> validate_required([:name, :mac, :key, :team_id, :seq_id, :oui])
+      |> validate_required([:name, :mac, :key, :organization_id, :seq_id, :oui])
       |> unique_constraint(:mac)
   end
 end

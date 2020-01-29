@@ -16,7 +16,6 @@ defmodule ConsoleWeb.DeviceView do
       id: device.id,
       name: device.name,
       mac: device.mac,
-      team_id: device.team_id
     }
     |> append_events(device.events)
   end

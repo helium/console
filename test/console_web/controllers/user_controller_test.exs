@@ -2,7 +2,7 @@ defmodule ConsoleWeb.UserControllerTest do
   use ConsoleWeb.ConnCase
 
   alias Console.Auth
-  alias Console.Teams
+  alias Console.Organizations
   import Console.Factory
 
   @create_attrs %{email: "test@hello.com", password: "some password"}
