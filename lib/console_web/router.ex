@@ -44,7 +44,6 @@ defmodule ConsoleWeb.Router do
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
     end
-    delete "/organizations/:id", OrganizationController, :delete_organization, as: :delete_organization
 
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]

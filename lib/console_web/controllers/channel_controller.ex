@@ -18,7 +18,6 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def create(conn, %{"channel" => channel_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
@@ -32,15 +31,12 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def show(conn, %{"id" => id}) do
-    channel =
-      Channels.get_channel!(id)
-      |> Channels.fetch_assoc([:events])
+    channel = Channels.get_channel!(id)
 
     render(conn, "show.json", channel: channel)
   end
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(id)
 
@@ -54,13 +50,14 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel, "delete")
 
-      send_resp(conn, :no_content, "")
+      conn
+      |> put_resp_header("message", "#{channel.name} deleted successfully")
+      |> render("show.json", channel: channel)
     end
   end
 

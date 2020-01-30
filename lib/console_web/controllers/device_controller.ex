@@ -20,7 +20,6 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def create(conn, %{"device" => device_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
 
@@ -35,14 +34,12 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    device =
-      Devices.get_device!(id)
-      |> Devices.fetch_assoc([:events])
+    device = Devices.get_device!(id)
+
     render(conn, "show.json", device: device)
   end
 
   def update(conn, %{"id" => id, "device" => device_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(id)
 
@@ -56,12 +53,12 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device, current_organization, "delete")
+      
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")

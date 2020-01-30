@@ -41,9 +41,4 @@ defmodule ConsoleWeb.Router.SessionController do
       |> render("show.json", jwt: newToken)
     end
   end
-
-  def secret(conn, _params) do
-    conn
-    |> render("secret.json", %{})
-  end
 end
