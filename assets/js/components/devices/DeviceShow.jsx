@@ -12,11 +12,19 @@ import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devic
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Typography, Button, Input, Form, Select, Tag } from 'antd';
+import { Typography, Button, Input, Icon, Select, Tag } from 'antd';
 import { Card } from 'antd';
+import DeviceCredentials from './DeviceCredentials'
 
 const { Text } = Typography
 const { Option } = Select
+
+
+function chunkArray(array, chunkSize) {
+  return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, index) =>
+    array.slice(index * chunkSize, (index + 1) * chunkSize),
+  )
+}
 
 @connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
@@ -27,6 +35,7 @@ class DeviceShow extends Component {
       newName: "",
       showDeviceEditButton: false,
       showDeviceEditFields: false,
+      msb: true,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -101,10 +110,9 @@ class DeviceShow extends Component {
 
     if (loading) return <DashboardLayout />
 
-    const defaultChannel = find(channels, c => c.default)    
+    const defaultChannel = find(channels, c => c.default)
 
-    const oui = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8);
-    const devId = ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
+    let appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
 
     return(
       <DashboardLayout title={`${device.name}`}>
@@ -135,17 +143,19 @@ class DeviceShow extends Component {
                   }
                   {!showDeviceEditFields && `${device.name}`} &nbsp; 
                   {showDeviceEditButton && !showDeviceEditFields && 
-                    <Button type="primary" size="small" onClick={() => this.toggleDeviceEditInput()}>Edit</Button>
+                    <Tag color="blue" size="small" onClick={() => this.toggleDeviceEditInput()}>
+                      <Icon type="edit"></Icon>
+                    </Tag>
                   }
                 </td>
               </tr>
               <tr>
                 <td><Text strong>App EUI</Text></td>
-                <td>{`${oui}${devId}`}</td>
+                <td><DeviceCredentials data={appEUI} isBytes={true}></DeviceCredentials></td>
               </tr>
               <tr>
                 <td><Text strong>App Key</Text></td>
-                <td>{`${device.key}`}</td>
+                <td><DeviceCredentials data={device.key} isBytes={true}></DeviceCredentials></td>
               </tr>
               <tr>
                 <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
@@ -232,4 +242,4 @@ function mapDispatchToProps(dispatch) {
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
 
-export default DeviceShowWithData;
+export default DeviceShowWithData
