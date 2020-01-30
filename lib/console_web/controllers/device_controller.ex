@@ -24,7 +24,7 @@ defmodule ConsoleWeb.DeviceController do
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
-      broadcast(device, current_organization, "new")
+      broadcast(device)
 
       conn
       |> put_status(:created)
@@ -44,7 +44,7 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-      broadcast(device, current_organization)
+      broadcast(device, device.id)
 
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
@@ -57,8 +57,8 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(id)
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
-      broadcast(device, current_organization, "delete")
-      
+      broadcast(device)
+
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")
@@ -71,7 +71,7 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, %DevicesChannels{} = device_channel} <- Devices.set_device_channel(device, channel) do
-      broadcast(device_channel, current_organization)
+      broadcast(device, device.id)
 
       conn
       |> put_resp_header("message", "#{device.name} updated channel successfully")
@@ -84,7 +84,7 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, %DevicesChannels{} = device_channel} <- Devices.delete_device_channel(device, channel_id) do
-      broadcast(device_channel, current_organization)
+      broadcast(device, device.id)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted channel successfully")
@@ -92,19 +92,11 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  defp broadcast(%Device{} = device, current_organization,_) do
-    device = Devices.fetch_assoc(device, [:organization])
-
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{current_organization.id}/device_added")
+  defp broadcast(%Device{} = device) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end
 
-  defp broadcast(%DevicesChannels{} = device_channel, current_organization) do
-    device = Devices.get_device!(device_channel.device_id)
-
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{current_organization.id}/#{device.id}/device_updated")
-  end
-
-  defp broadcast(%Device{} = device, current_organization) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{current_organization.id}/#{device.id}/device_updated")
+  defp broadcast(%Device{} = device, id) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
   end
 end
