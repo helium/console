@@ -94,7 +94,7 @@ defmodule Console.Organizations do
     |> Repo.insert()
   end
 
-  def fetch_assoc(%Organization{} = organization, assoc \\ [:channels, :users]) do
+  def fetch_assoc(%Organization{} = organization, assoc \\ [:channels, :users, :devices]) do
     Repo.preload(organization, assoc)
   end
 

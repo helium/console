@@ -16,8 +16,8 @@ defmodule ConsoleWeb.DeviceView do
       id: device.id,
       name: device.name,
       mac: device.mac,
+      organization_id: device.organization_id,
     }
-    |> append_events(device.events)
   end
 
   defp append_events(json, events) do
