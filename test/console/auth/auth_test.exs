@@ -2,10 +2,9 @@ defmodule Console.AuthTest do
   use Console.DataCase
 
   alias Console.Auth
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Organizations
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Organization
+  alias Console.Organizations
+  alias Console.Organizations.Invitation
   alias Console.Auth.TwoFactor
 
   import Console.Factory
@@ -28,14 +27,12 @@ defmodule Console.AuthTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      team_attrs = %{name: "Test Team"}
       org_attrs = %{name: "Test Organization"}
-      assert {:ok, %User{} = user, %Team{}, %Organization{}} = Auth.create_user(@valid_attrs, team_attrs, org_attrs)
+      assert {:ok, %User{} = user, %Organization{}} = Auth.create_user(@valid_attrs, org_attrs)
       assert user.email == "test@hello.com"
       user = Auth.fetch_assoc(user)
       organization = List.first(user.organizations) |> Organizations.fetch_assoc()
       assert organization.name == org_attrs.name
-      assert List.first(organization.teams).name == team_attrs.name
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -44,13 +41,11 @@ defmodule Console.AuthTest do
     end
 
     test "generate_session_token/1 encodes the current organization in the token" do
-      team_attrs = %{name: "Test Team"}
       org_attrs = %{name: "Test Organization"}
-      assert {:ok, %User{} = user, %Team{} = team, %Organization{} = organization} = Auth.create_user(@valid_attrs, team_attrs, org_attrs)
+      assert {:ok, %User{} = user, %Organization{} = organization} = Auth.create_user(@valid_attrs, org_attrs)
       token = Auth.generate_session_token(user, organization)
       {:ok, claims} = ConsoleWeb.Guardian.decode_and_verify(token)
       assert claims["organization"] == organization.id
-      assert claims["team"] == team.id
     end
 
     test "get_user_for_resend_verification/1 returns the proper data depending on user email" do

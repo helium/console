@@ -41,11 +41,9 @@ defmodule ConsoleWeb.Router do
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
-    resources "/teams", TeamController, except: [:new, :edit] do
-      post "/switch", TeamController, :switch
-      post "/switch_org", TeamController, :switch_org
+    resources "/organizations", OrganizationController, except: [:new, :edit] do
+      post "/switch", OrganizationController, :switch
     end
-    delete "/organizations/:id", TeamController, :delete_organization, as: :delete_organization
 
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]

@@ -4,8 +4,8 @@ defmodule ConsoleWeb.TwoFactorController do
   alias Console.Auth
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
-  alias Console.Teams
-  alias Console.Teams.Organizations
+  alias Console.Organizations
+  alias Console.Organizations
 
   action_fallback(ConsoleWeb.FallbackController)
 

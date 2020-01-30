@@ -74,7 +74,7 @@ class HTTPForm extends Component {
 
     return(
       <div>
-       
+
         <Text>
           {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
         </Text>
@@ -106,7 +106,7 @@ class HTTPForm extends Component {
 
         {
           this.state.headers.map((obj, i) => (
-            <Row gutter={16} style={{marginBottom: 16}}>
+            <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
             <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
             <Col sm={12}>
               <Input
@@ -141,7 +141,7 @@ class HTTPForm extends Component {
           ))
         }
 
-        <Button icon="plus" type="primary" onClick={this.addHeaderRow} >Submit</Button>
+        <Button icon="plus" type="primary" onClick={this.addHeaderRow} >Add</Button>
       </div>
     );
   }

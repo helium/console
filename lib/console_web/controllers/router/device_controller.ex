@@ -3,8 +3,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   import ConsoleWeb.AuthErrorHandler
 
   alias Console.Devices
-  alias Console.Teams
-  alias Console.Teams.Organizations
+  alias Console.Organizations
+  alias Console.Organizations
   alias Console.Devices.Device
   alias Console.Channels
 
@@ -32,8 +32,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     device =
       case device.channels do
         [] ->
-          team = Teams.get_team!(device.team_id)
-          organization = Organizations.get_organization!(team.organization_id)
+          organization = Organizations.get_organization!(device.organization_id)
 
           default_channel = Channels.get_default_channel(organization)
           if default_channel != nil do

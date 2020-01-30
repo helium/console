@@ -3,7 +3,7 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Channels
   alias Console.Channels.Channel
-  alias Console.Teams.Organizations
+  alias Console.Organizations
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -18,35 +18,30 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def create(conn, %{"channel" => channel_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      broadcast(channel, "new")
+      broadcast(channel)
 
       conn
       |> put_status(:created)
-      |> put_resp_header("location", channel_path(conn, :show, channel))
       |> render("show.json", channel: channel)
     end
   end
 
   def show(conn, %{"id" => id}) do
-    channel =
-      Channels.get_channel!(id)
-      |> Channels.fetch_assoc([:events])
+    channel = Channels.get_channel!(id)
 
     render(conn, "show.json", channel: channel)
   end
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
-      broadcast(channel, "update")
+      broadcast(channel, channel.id)
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
@@ -55,17 +50,22 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
-      broadcast(channel, "delete")
+      broadcast(channel)
 
-      send_resp(conn, :no_content, "")
+      conn
+      |> put_resp_header("message", "#{channel.name} deleted successfully")
+      |> render("show.json", channel: channel)
     end
   end
 
-  defp broadcast(%Channel{} = channel, _) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/channel_updated")
+  defp broadcast(%Channel{} = channel) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.organization_id}/channel_added")
+  end
+
+  defp broadcast(%Channel{} = channel, id) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/#{id}/channel_updated")
   end
 end

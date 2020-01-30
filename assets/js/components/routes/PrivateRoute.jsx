@@ -8,20 +8,12 @@ class PrivateRoute extends Component {
     const Component = this.props.component
 
     return(
-      <Route path={path} render={(p) => {
+      <Route path={path} render={props => {
         if (!isLoggedIn) {
           return <Redirect to='/login' />
         }
 
-        if (!currentOrganizationId && path !== '/teams/none') {
-          return <Redirect to='/teams/none' />
-        }
-
-        if (currentOrganizationId && path === '/teams/none') {
-          return <Redirect to='/dashboard' />
-        }
-
-        return <Component {...p} />
+        return <Component {...props} />
       }} />
     )
   }

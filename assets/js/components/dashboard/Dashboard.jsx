@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
-import OrganizationsTable from '../teams/OrganizationsTable'
-import OrganizationTeamsTable from '../teams/OrganizationTeamsTable'
-import NewTeamModal from '../teams/NewTeamModal'
-import NewOrganizationModal from '../teams/NewOrganizationModal'
+import OrganizationsTable from '../organizations/OrganizationsTable'
+import NewOrganizationModal from '../organizations/NewOrganizationModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card } from 'antd';
 
@@ -12,13 +10,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showTeamModal: false,
       showOrganizationModal: false,
-      organizationId: null,
-      organizationName: "",
     }
-    this.openTeamModal = this.openTeamModal.bind(this)
-    this.closeTeamModal = this.closeTeamModal.bind(this)
     this.openOrganizationModal = this.openOrganizationModal.bind(this)
     this.closeOrganizationModal = this.closeOrganizationModal.bind(this)
   }
@@ -27,16 +20,8 @@ class Dashboard extends Component {
     analyticsLogger.logEvent("ACTION_NAV_DASHBOARD")
   }
 
-  openTeamModal(organizationId, organizationName) {
-    this.setState({ showTeamModal: true, organizationId, organizationName })
-  }
-
   openOrganizationModal() {
     this.setState({ showOrganizationModal: true })
-  }
-
-  closeTeamModal() {
-    this.setState({ showTeamModal: false, organizationId: null, organizationName: "" })
   }
 
   closeOrganizationModal() {
@@ -44,22 +29,13 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { showTeamModal, showOrganizationModal, organizationName, organizationId } = this.state
+    const { showOrganizationModal } = this.state
     return (
       <DashboardLayout title="Dashboard">
       <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20}}>
 
         <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
         </Card>
-        <Card title="Teams" bodyStyle={{padding:'0', paddingTop: 20}}>
-        <OrganizationTeamsTable openTeamModal={this.openTeamModal} />
-        </Card>
-        <NewTeamModal
-          open={showTeamModal}
-          organizationName={organizationName}
-          organizationId={organizationId}
-          onClose={this.closeTeamModal}
-        />
 
         <NewOrganizationModal
           open={showOrganizationModal}

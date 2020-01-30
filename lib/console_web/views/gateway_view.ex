@@ -18,7 +18,6 @@ defmodule ConsoleWeb.GatewayView do
       mac: gateway.mac,
       latitude: gateway.latitude,
       longitude: gateway.longitude,
-      team_id: gateway.team_id
     }
     |> append_events(gateway.events)
   end

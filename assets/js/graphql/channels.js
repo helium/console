@@ -13,12 +13,20 @@ export const CHANNEL_FRAGMENT = gql`
 `
 
 export const CHANNEL_SUBSCRIPTION = gql`
-  subscription onChannelUpdated {
-    channelUpdated {
+  subscription onChannelAdded {
+    channelAdded {
       ...ChannelFragment
     }
   }
   ${CHANNEL_FRAGMENT}
+`
+
+export const CHANNEL_UPDATE_SUBSCRIPTION = gql`
+  subscription onChannelUpdated($channelId: String) {
+    channelUpdated(channelId: $channelId) {
+      name
+    }
+  }
 `
 
 export const PAGINATED_CHANNELS = gql`

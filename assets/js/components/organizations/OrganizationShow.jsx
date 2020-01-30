@@ -23,7 +23,7 @@ const styles = {
 }
 
 @connect(null, mapDispatchToProps)
-class TeamShow extends Component {
+class OrganizationShow extends Component {
   constructor(props) {
     super(props)
 
@@ -88,7 +88,7 @@ class TeamShow extends Component {
         <MembersTable
           openEditMembershipModal={this.openEditMembershipModal}
         />
-        </Card> 
+        </Card>
               <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0}}>
 
         <header style={{ ...styles.header, marginTop: 1 }}>
@@ -119,4 +119,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default TeamShow
+export default OrganizationShow

@@ -5,9 +5,8 @@ defmodule Console.Factory do
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Events.Event
-  alias Console.Teams.Team
-  alias Console.Teams.Organization
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Organization
+  alias Console.Organizations.Invitation
   alias Console.Gateways.Gateway
 
   def user_factory do
@@ -65,12 +64,6 @@ defmodule Console.Factory do
       rssi: 120.5,
       signal_strength: 42,
       status: "some status"
-    }
-  end
-
-  def team_factory do
-    %Team{
-      name: sequence(:name, &"Team #{&1}")
     }
   end
 

@@ -68,11 +68,11 @@ const pages = [
   },
   {
     title: "Users",
-    description: "Manage team member access",
-    url: "/teams/users",
-    id: "/teams/users",
+    description: "Manage organization member access",
+    url: "/users",
+    id: "/users",
     category: "users",
-    synonyms: "team"
+    synonyms: "organization"
   },
   {
     title: "Profile",

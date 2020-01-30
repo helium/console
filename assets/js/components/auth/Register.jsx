@@ -16,7 +16,6 @@ class Register extends Component {
     super(props);
 
     this.state = {
-      teamName: "",
       organizationName: "",
       email: "",
       password: "",
@@ -44,11 +43,10 @@ class Register extends Component {
 
   registerUser(e) {
     e.preventDefault()
-    const { teamName, email, password, organizationName } = this.state;
+    const { email, password, organizationName } = this.state;
     const { register, invitationToken } = this.props
     analyticsLogger.logEvent("ACTION_REGISTER", { "email": email })
     register(
-      teamName,
       organizationName,
       email,
       password,
@@ -73,11 +71,11 @@ class Register extends Component {
           showOrgCreation ? (
             <Form onSubmit={this.registerUser}>
               <Text>
-                To easily manage devices, Console provides a logical structure with Organizations, Teams, and devices. Define an Organization name as the top level of your structure, (usually your company name). Organizations can contain Teams, and Teams can contain devices.
+                To easily manage devices, Console provides a logical structure with Organizations and Devices. Define an Organization name as the top level of your structure, (usually your company name).
               </Text>
               <br />
               <Text>
-                The Organization name is used when inviting other users to your Console. Teams make managing multiple devices easier by providing a way to easily segment and identify owners of devices.
+                The Organization name is used when inviting other users to your Console.
               </Text>
 
               <Form.Item>
@@ -85,15 +83,6 @@ class Register extends Component {
                   placeholder="Organization Name"
                   name="organizationName"
                   value={this.state.organizationName}
-                  onChange={this.handleInputUpdate}
-                />
-              </Form.Item>
-
-              <Form.Item>
-                <Input
-                  placeholder="Team Name"
-                  name="teamName"
-                  value={this.state.teamName}
                   onChange={this.handleInputUpdate}
                 />
               </Form.Item>

@@ -16,8 +16,8 @@ defmodule Console.DatabaseSeeder do
   alias Console.Devices.Device
   alias Console.Gateways.Gateway
   alias Console.Channels.Channel
-  alias Console.Teams
-  alias Console.Teams.Team
+  alias Console.Organizations
+  alias Console.Organizations.Team
 
   def insert_device(index, %Team{} = team) do
     Repo.insert! %Device{

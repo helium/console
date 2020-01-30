@@ -6,23 +6,18 @@ import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
 
 @connect(mapStateToProps, mapDispatchToProps)
-class UserTeamProvider extends Component {
+class UserOrgProvider extends Component {
   componentDidMount() {
-    if (this.props.isLoggedIn && this.props.currentTeamId) {
+    if (this.props.isLoggedIn && this.props.currentOrganizationId) {
       this.props.fetchIndices()
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { isLoggedIn, currentTeamId, apikey, fetchIndices } = this.props
+    const { isLoggedIn, currentOrganizationId, apikey, fetchIndices } = this.props
 
     // if the user has just logged in...
-    if (!prevProps.isLoggedIn && isLoggedIn && currentTeamId) {
-      return fetchIndices()
-    }
-
-    // if the user has switched teams or refreshed their api key...
-    if (prevProps.apikey !== apikey && isLoggedIn) {
+    if (!prevProps.isLoggedIn && isLoggedIn && currentOrganizationId) {
       return fetchIndices()
     }
   }
@@ -40,7 +35,7 @@ function mapStateToProps(state, ownProps) {
   return {
     isLoggedIn: state.auth.isLoggedIn,
     apikey: state.auth.apikey,
-    currentTeamId: state.auth.currentTeamId
+    currentOrganizationId: state.auth.currentOrganizationId
   }
 }
 
@@ -50,4 +45,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default UserTeamProvider
+export default UserOrgProvider

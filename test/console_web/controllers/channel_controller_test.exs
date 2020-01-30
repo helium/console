@@ -54,7 +54,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "deletes chosen channel", %{conn: conn, organization: organization} do
       channel = create_channel_for_organization(organization)
       conn = delete conn, channel_path(conn, :delete, channel)
-      assert response(conn, 204)
+      assert response(conn, 200)
     end
   end
 end

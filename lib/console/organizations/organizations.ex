@@ -1,15 +1,11 @@
-defmodule Console.Teams.Organizations do
-  @moduledoc """
-  The Teams context.
-  """
-
+defmodule Console.Organizations do
   import Ecto.Query, warn: false
   alias Console.Repo
 
-  alias Console.Teams.Organization
-  alias Console.Teams
-  alias Console.Teams.Membership
-  alias Console.Teams.Invitation
+  alias Console.Organizations.Organization
+  alias Console.Organizations
+  alias Console.Organizations.Membership
+  alias Console.Organizations.Invitation
   alias Console.Auth
   alias Console.Auth.User
 
@@ -18,7 +14,11 @@ defmodule Console.Teams.Organizations do
   end
 
   def get_organizations(%User{} = current_user) do
-    Ecto.assoc(current_user, :organizations) |> Repo.all()
+    if current_user.super do
+      Repo.all(Organization)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.all()
+    end
   end
 
   def get_organization!(%User{} = current_user, id) do
@@ -27,7 +27,6 @@ defmodule Console.Teams.Organizations do
     else
       Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
     end
-
   end
 
   def get_organization(%User{} = current_user, id) do
@@ -35,19 +34,6 @@ defmodule Console.Teams.Organizations do
       Repo.get(Organization, id)
     else
       Ecto.assoc(current_user, :organizations) |> Repo.get(id)
-    end
-  end
-
-  def get_organization_team(%User{} = current_user, team_id) do
-    current_team = Teams.get_team!(team_id)
-
-    if current_user.super do
-      current_organization = Repo.get!(Organization, current_team.organization_id)
-      {current_team, current_organization}
-    else
-      with %Organization{} = current_organization <- Ecto.assoc(current_user, :organizations) |> Repo.get(current_team.organization_id) do
-        { current_team, current_organization }
-      end
     end
   end
 
@@ -108,16 +94,16 @@ defmodule Console.Teams.Organizations do
     |> Repo.insert()
   end
 
-  def fetch_assoc(%Organization{} = organization, assoc \\ [:teams, :channels, :users]) do
+  def fetch_assoc(%Organization{} = organization, assoc \\ [:channels, :users, :devices]) do
     Repo.preload(organization, assoc)
   end
 
-  def fetch_assoc_invitation(%Invitation{} = organization, assoc \\ [:inviter, :organization]) do
-    Repo.preload(organization, assoc)
+  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:inviter, :organization]) do
+    Repo.preload(invitation, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = organization, assoc \\ [:user, :organization]) do
-    Repo.preload(organization, assoc)
+  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:user, :organization]) do
+    Repo.preload(membership, assoc)
   end
 
   def current_organization_for(%User{} = user) do

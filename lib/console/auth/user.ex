@@ -14,8 +14,8 @@ defmodule Console.Auth.User do
     field :super, :boolean
 
     has_one :twofactor, Console.Auth.TwoFactor
-    has_many :memberships, Console.Teams.Membership
-    many_to_many :organizations, Console.Teams.Organization, join_through: "memberships"
+    has_many :memberships, Console.Organizations.Membership
+    many_to_many :organizations, Console.Organizations.Organization, join_through: "memberships"
 
     timestamps()
   end

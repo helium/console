@@ -25,7 +25,6 @@ export const userCan = (props) => {
 
   if (itemType === 'membership' && item && email === item.email) return false
   if (itemType === 'channel' && role === 'manager') return true
-  if (itemType === 'team' && role === 'manager') return true
   if (role === 'admin') return true
 
   return false

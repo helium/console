@@ -35,7 +35,7 @@ axios.interceptors.response.use(
       displayError()
     }
 
-    if (error.response.data.type === "forbidden_team") {
+    if (error.response.data.type === "forbidden_organization") {
       store.dispatch(logOut())
     }
 

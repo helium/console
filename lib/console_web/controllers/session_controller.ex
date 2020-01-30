@@ -3,7 +3,7 @@ defmodule ConsoleWeb.SessionController do
 
   alias Console.Auth
   alias Console.Auth.User
-  alias Console.Teams.Organizations
+  alias Console.Organizations
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -20,7 +20,6 @@ defmodule ConsoleWeb.SessionController do
         conn
         |> put_status(:created)
         |> render("show.json", user: user, jwt: jwt, skip2fa: !Auth.should_skip_2fa_prompt?(user.last_2fa_skipped_at))
-        # TODO: why jwt if twofactor?
       end
     end
   end

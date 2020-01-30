@@ -16,7 +16,6 @@ defmodule ConsoleWeb.Plug.GraphqlContext do
   def build_context(conn) do
     %{
       current_user: conn.assigns.current_user,
-      current_team: conn.assigns.current_team,
       current_organization: conn.assigns.current_organization,
       current_membership: conn.assigns.current_membership
     }

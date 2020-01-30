@@ -17,7 +17,6 @@ defmodule ConsoleWeb.UserSocket do
     case Guardian.Phoenix.Socket.authenticate(socket, ConsoleWeb.Guardian, token) do
       {:ok, authed_socket} ->
         authed_socket = Absinthe.Phoenix.Socket.put_options(authed_socket, context: %{
-          current_team_id: authed_socket.assigns.guardian_default_claims["team"],
           current_organization_id: authed_socket.assigns.guardian_default_claims["organization"]
         })
         {:ok, authed_socket}

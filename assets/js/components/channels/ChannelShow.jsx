@@ -11,7 +11,7 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import { CHANNEL_FRAGMENT, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
+import { CHANNEL_FRAGMENT, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -36,7 +36,6 @@ const query = gql`
       inbound_token
       devices {
         name
-        team_id
       }
     }
   }
@@ -44,7 +43,7 @@ const query = gql`
 `
 
 @graphql(query, queryOptions)
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
   constructor(props) {
     super(props)
@@ -67,7 +66,7 @@ class ChannelShow extends Component {
     analyticsLogger.logEvent("ACTION_NAV_CHANNEL_SHOW", {"id": channelId})
 
     subscribeToMore({
-      document: CHANNEL_SUBSCRIPTION,
+      document: CHANNEL_UPDATE_SUBSCRIPTION,
       variables: { channelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
@@ -173,7 +172,7 @@ class ChannelShow extends Component {
         {
           channel.devices.map(d => (
             <Tag key={d.name}>
-              {this.props.teams[d.team_id].name}: {d.name}
+              {d.name}
             </Tag>
           ))
         }
@@ -202,12 +201,6 @@ class ChannelShow extends Component {
         </Button>
       </DashboardLayout>
     )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    teams: state.entities.teams
   }
 }
 

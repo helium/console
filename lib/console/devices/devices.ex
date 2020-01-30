@@ -20,7 +20,7 @@ defmodule Console.Devices do
      Repo.get_by(Device, [seq_id: seq_id, oui: oui])
   end
 
-  def fetch_assoc(%Device{} = device, assoc \\ [:events, :team, :channels]) do
+  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
     Repo.preload(device, assoc)
   end
 

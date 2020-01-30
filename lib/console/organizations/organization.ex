@@ -1,4 +1,4 @@
-defmodule Console.Teams.Organization do
+defmodule Console.Organizations.Organization do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -8,10 +8,10 @@ defmodule Console.Teams.Organization do
     field :name, :string
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
-    has_many :memberships, Console.Teams.Membership, on_delete: :delete_all
+    has_many :devices, Console.Devices.Device, on_delete: :delete_all
+    has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
-    has_many :invitations, Console.Teams.Invitation, on_delete: :delete_all
-    has_many :teams, Console.Teams.Team, on_delete: :delete_all
+    has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all
 
     timestamps()
   end

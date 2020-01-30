@@ -2,10 +2,6 @@ export const isJwtExpired = (apikey) => {
   return getTimeToExpiration(apikey) <= 0
 }
 
-export const getTeamId = (apikey) => {
-  return parseJwt(apikey).team
-}
-
 export const getOrganizationId = (apikey) => {
   return parseJwt(apikey).organization
 }

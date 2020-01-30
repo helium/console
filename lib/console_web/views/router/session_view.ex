@@ -6,10 +6,4 @@ defmodule ConsoleWeb.Router.SessionView do
       jwt: jwt
     }
   end
-
-  def render("secret.json", _params) do
-    %{
-      secret: "this is a secret"
-    }
-  end
 end
