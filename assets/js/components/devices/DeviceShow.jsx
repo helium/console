@@ -35,7 +35,6 @@ class DeviceShow extends Component {
       newName: "",
       showDeviceEditButton: false,
       showDeviceEditFields: false,
-      msb: true,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -110,7 +109,10 @@ class DeviceShow extends Component {
 
     if (loading) return <DashboardLayout />
 
-    const defaultChannel = find(channels, c => c.default)
+    const defaultChannel = find(channels, c => c.default)    
+
+    const oui = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8);
+    const devId = ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
 
     let appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
 
