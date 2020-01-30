@@ -15,7 +15,7 @@ export const createOrganization = (name, getToken) => {
 
 export const switchOrganization = (id) => {
   return (dispatch) => {
-    rest.post(`/api/organizations/${id}/switch_org`)
+    rest.post(`/api/organizations/${id}/switch`)
       .then(response => {
         window.location.reload(true)
       })

@@ -39,7 +39,7 @@ class ChannelCargoRow extends Component {
       <div style={styles.createRow}>
         {
           channelTypes.map(channel => (
-            <div style={{ ...styles.button, opacity: channel.inactive && '0.3', webkitFilter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
+            <div style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
               <Link to={channel.link}>
                 <div style={styles.tile}>
                   <img style={styles.icon} src={channel.img} />

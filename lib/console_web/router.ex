@@ -43,7 +43,6 @@ defmodule ConsoleWeb.Router do
     resources "/events", EventController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
-      post "/switch_org", OrganizationController, :switch_org
     end
     delete "/organizations/:id", OrganizationController, :delete_organization, as: :delete_organization
 

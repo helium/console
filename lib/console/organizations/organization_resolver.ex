@@ -9,12 +9,7 @@ defmodule Console.Organizations.OrganizationResolver do
   end
 
   def all(_, %{context: %{current_user: current_user}}) do
-    if current_user.super do
-      organizations = Organizations.list_organizations
-      {:ok, organizations}
-    else
-      organizations = Organizations.get_organizations(current_user)
-      {:ok, organizations}
-    end
+    organizations = Organizations.get_organizations(current_user)
+    {:ok, organizations}
   end
 end

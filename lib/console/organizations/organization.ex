@@ -8,6 +8,7 @@ defmodule Console.Organizations.Organization do
     field :name, :string
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
+    has_many :devices, Console.Devices.Device, on_delete: :delete_all
     has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
     has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all

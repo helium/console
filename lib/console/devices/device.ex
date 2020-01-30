@@ -8,7 +8,6 @@ defmodule Console.Devices.Device do
   alias Console.Devices
   alias Console.Devices.DevicesChannels
 
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "devices" do
