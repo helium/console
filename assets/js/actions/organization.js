@@ -33,13 +33,6 @@ export const deleteOrganization = (id) => {
   }
 }
 
-export const inviteUser = (invitation) => {
-  return (dispatch) => {
-    rest.post(`/api/invitations`, { invitation })
-    .then(response => {})
-  }
-}
-
 export const switchedOrganization = (apikey) => {
   return {
     type: SWITCHED_ORGANIZATION,

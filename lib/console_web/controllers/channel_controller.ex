@@ -27,7 +27,6 @@ defmodule ConsoleWeb.ChannelController do
 
       conn
       |> put_status(:created)
-      |> put_resp_header("location", channel_path(conn, :show, channel))
       |> render("show.json", channel: channel)
     end
   end
