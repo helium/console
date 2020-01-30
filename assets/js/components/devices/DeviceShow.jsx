@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import OutsideClick from 'react-outside-click-handler';
 import pick from 'lodash/pick'
 import find from 'lodash/find'
 import { connect } from 'react-redux'
@@ -19,13 +20,6 @@ import DeviceCredentials from './DeviceCredentials'
 const { Text } = Typography
 const { Option } = Select
 
-
-function chunkArray(array, chunkSize) {
-  return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, index) =>
-    array.slice(index * chunkSize, (index + 1) * chunkSize),
-  )
-}
-
 @connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
   constructor(props) {
@@ -33,8 +27,7 @@ class DeviceShow extends Component {
     this.state = {
       channelSelected: "",
       newName: "",
-      showDeviceEditButton: false,
-      showDeviceEditFields: false,
+      showNameInput: false,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
@@ -42,6 +35,7 @@ class DeviceShow extends Component {
     this.handleAddChannel = this.handleAddChannel.bind(this);
     this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
     this.handleDeviceUpdate = this.handleDeviceUpdate.bind(this);
+    this.toggleNameInput = this.toggleNameInput.bind(this);
   }
 
   componentDidMount() {
@@ -85,79 +79,75 @@ class DeviceShow extends Component {
   }
 
   handleDeviceUpdate(id) {
-    const { newName, showDeviceEditFields, showDeviceEditButton } = this.state
+    const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
       analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "name": newName })
-      this.setState({ newName: "", showDeviceEditFields: !showDeviceEditFields, showDeviceEditButton: !showDeviceEditButton })
     }
+    this.setState({ newName: "", showNameInput: false })
   }
 
-  toggleDeviceEditInput() {
-    const newValue = !this.state.showDeviceEditFields
-    this.setState({ showDeviceEditFields: newValue })
-  }
-
-  toggleEditButton() {
-    const newValue = !this.state.showDeviceEditButton
-    this.setState({ showDeviceEditButton: newValue })
+  toggleNameInput() {
+    const { showNameInput } = this.state
+    this.setState({ showNameInput: !showNameInput })
   }
 
   render() {
-    const { channelSelected, newName, showDeviceEditButton, showDeviceEditFields } = this.state
+    const { channelSelected, newName, showNameInput } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
 
-    const defaultChannel = find(channels, c => c.default)    
+    const appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8)
 
-    const oui = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8);
-    const devId = ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
-
-    let appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8);
+    const defaultChannel = find(channels, c => c.default)
 
     return(
       <DashboardLayout title={`${device.name}`}>
-        <Card title="Device Details">     
-          
+        <Card title="Device Details">
+
           <table>
             <tbody>
               <tr  style={{height: '30px'}}>
                 <td><Text strong>Name</Text></td>
-                <td onMouseEnter={() => this.toggleEditButton()} onMouseLeave={() => this.toggleEditButton()}>
-                  {showDeviceEditFields &&
+                <td>
+                  {showNameInput ? (
                     <UserCan action="update" itemType="device">
-                    <Input
-                      name="newName"
-                      placeholder={device.name}
-                      value={this.state.newName}
-                      onChange={this.handleInputUpdate}
-                      style={{ width: 150 }}
-                    />
-                    <Button
-                      type="primary"
-                      onClick={() => this.handleDeviceUpdate(device.id)}
-                      style={{marginLeft: '5px'}}
-                    >
-                      Update
-                    </Button>
-                  </UserCan>
-                  }
-                  {!showDeviceEditFields && `${device.name}`} &nbsp; 
-                  {showDeviceEditButton && !showDeviceEditFields && 
-                    <Tag color="blue" size="small" onClick={() => this.toggleDeviceEditInput()}>
-                      <Icon type="edit"></Icon>
-                    </Tag>
-                  }
+                      <OutsideClick
+                        onOutsideClick={this.toggleNameInput}
+                      >
+                        <Input
+                          name="newName"
+                          placeholder={device.name}
+                          value={this.state.newName}
+                          onChange={this.handleInputUpdate}
+                          style={{ width: 150 }}
+                        />
+                        <Button
+                          type="primary"
+                          onClick={() => this.handleDeviceUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    </UserCan>
+                  ) : (
+                    <React.Fragment>
+                      <Text strong>{device.name} </Text>
+                      <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                        <Icon type="edit"></Icon>
+                      </Tag>
+                    </React.Fragment>
+                  )}
                 </td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td><Text strong>App EUI</Text></td>
-                <td><DeviceCredentials data={appEUI} isBytes={true}></DeviceCredentials></td>
+                <td><DeviceCredentials data={appEUI} /></td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td><Text strong>App Key</Text></td>
-                <td><DeviceCredentials data={device.key} isBytes={true}></DeviceCredentials></td>
+                <td><DeviceCredentials data={device.key} /></td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
@@ -167,7 +157,7 @@ class DeviceShow extends Component {
           </table>
         </Card>
 
-        <Card title="Device Channels">        
+        <Card title="Device Channels">
         <br />
         <Select
           placeholder="Select Channel"
