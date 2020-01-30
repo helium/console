@@ -22,7 +22,7 @@ defmodule ConsoleWeb.OrganizationController do
           conn
           |> put_status(:created)
           |> put_resp_header("message",  "#{organization.name} created successfully")
-          |> render("show.json")
+          |> render("show.json", organization: organization)
       end
     end
   end
@@ -34,7 +34,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def delete_organization(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     with {:ok, %Organization{} = organization} <- Organizations.delete_organization(organization) do
       broadcast(organization, conn.assigns.current_user, "delete")
@@ -42,7 +42,7 @@ defmodule ConsoleWeb.OrganizationController do
       conn
       |> put_status(:accepted)
       |> put_resp_header("message",  "#{organization.name} deleted successfully")
-      |> render("index.json")
+      |> render("show.json", organization: organization)
     end
   end
 

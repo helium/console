@@ -20,7 +20,6 @@ defmodule ConsoleWeb.OrganizationView do
     %{
       id: organization.id,
       name: organization.name,
-      organization_id: organization.organization_id
     }
   end
 
