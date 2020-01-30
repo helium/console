@@ -20,11 +20,6 @@ class UserOrgProvider extends Component {
     if (!prevProps.isLoggedIn && isLoggedIn && currentOrganizationId) {
       return fetchIndices()
     }
-
-    // if the user has switched orgs or refreshed their api key...
-    if (prevProps.apikey !== apikey && isLoggedIn) {
-      return fetchIndices()
-    }
   }
 
   render() {

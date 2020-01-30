@@ -13,9 +13,9 @@ class PublicRoute extends Component {
     const Component = this.props.component;
 
     return(
-      <Route path={path} render={(p) => (
+      <Route path={path} render={props => (
         isLoggedIn === false
-          ? <Component {...p} />
+          ? <Component {...props} />
         : <Redirect to='/dashboard' />
       )} />
     )

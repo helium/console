@@ -20,7 +20,6 @@ import Register from './components/auth/Register.jsx';
 import ResendVerification from './components/auth/ResendVerification.jsx';
 import ForgotPassword from './components/auth/ForgotPassword.jsx';
 import ResetPassword from './components/auth/ResetPassword.jsx';
-import Home from './components/Home.jsx';
 import Profile from './components/Profile.jsx';
 import TwoFactorPrompt from './components/auth/TwoFactorPrompt.jsx';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';

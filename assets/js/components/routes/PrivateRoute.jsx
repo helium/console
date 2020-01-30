@@ -8,12 +8,12 @@ class PrivateRoute extends Component {
     const Component = this.props.component
 
     return(
-      <Route path={path} render={(p) => {
+      <Route path={path} render={props => {
         if (!isLoggedIn) {
           return <Redirect to='/login' />
         }
 
-        return <Component {...p} />
+        return <Component {...props} />
       }} />
     )
   }
