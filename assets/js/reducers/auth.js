@@ -6,6 +6,7 @@ import {
   CLEAR_TWO_FACTOR_BACKUP_CODES,
   REFRESHED_TOKEN
 } from '../actions/auth.js';
+import { SWITCHED_ORGANIZATION } from '../actions/organization.js';
 
 const initialState = {
   isLoggedIn: false,
@@ -30,6 +31,7 @@ const auth = (state = initialState, action) => {
     case LOGGED_OUT:
       return { ...state, isLoggedIn: false, apikey: null, user: null, currentOrganizationId: null, currentOrganizationName: null };
     case REFRESHED_TOKEN:
+    case SWITCHED_ORGANIZATION:
       return { ...state, apikey: action.apikey, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     default:
       return state;
