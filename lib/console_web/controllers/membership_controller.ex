@@ -20,7 +20,7 @@ defmodule ConsoleWeb.MembershipController do
 
     with {:ok, %Membership{} = membership} <- Organizations.update_membership(membership, attrs) do
       membership = membership |> Organizations.fetch_assoc_membership()
-      broadcast(membership, "update")
+      broadcast(membership)
 
       conn
       |> put_resp_header("message", "User role updated successfully")
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.MembershipController do
     membership = Organizations.get_membership!(id)
 
     with {:ok, %Membership{}} <- Organizations.delete_membership(membership) do
-      broadcast(membership, "delete")
+      broadcast(membership)
 
       conn
       |> put_resp_header("message", "User removed from organization")
@@ -40,7 +40,7 @@ defmodule ConsoleWeb.MembershipController do
     end
   end
 
-  def broadcast(%Membership{} = membership, _) do
+  def broadcast(%Membership{} = membership) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_updated: "#{membership.organization_id}/membership_updated")
   end
 end

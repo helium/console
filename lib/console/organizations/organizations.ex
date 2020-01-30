@@ -86,12 +86,12 @@ defmodule Console.Organizations do
     Repo.preload(organization, assoc)
   end
 
-  def fetch_assoc_invitation(%Invitation{} = organization, assoc \\ [:inviter, :organization]) do
-    Repo.preload(organization, assoc)
+  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:inviter, :organization]) do
+    Repo.preload(invitation, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = organization, assoc \\ [:user, :organization]) do
-    Repo.preload(organization, assoc)
+  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:user, :organization]) do
+    Repo.preload(membership, assoc)
   end
 
   def current_organization_for(%User{} = user) do

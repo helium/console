@@ -29,7 +29,7 @@ defmodule ConsoleWeb.InvitationController do
                Organizations.join_organization(existing_user, organization, attrs["role"]) do
           membership = membership |> Organizations.fetch_assoc_membership()
           Email.joined_organization_email(membership) |> Mailer.deliver_later()
-          ConsoleWeb.MembershipController.broadcast(membership, "new")
+          ConsoleWeb.MembershipController.broadcast(membership)
 
           conn
           |> put_status(:created)
@@ -41,7 +41,7 @@ defmodule ConsoleWeb.InvitationController do
         with {:ok, %Invitation{} = invitation} <-
                Organizations.create_invitation(current_user, organization, attrs) do
           Email.invitation_email(invitation) |> Mailer.deliver_later()
-          broadcast(invitation, "new")
+          broadcast(invitation)
 
           conn
           |> put_status(:created)
@@ -77,7 +77,7 @@ defmodule ConsoleWeb.InvitationController do
 
     if invitation.pending do
       with {:ok, %Invitation{}} <- Organizations.delete_invitation(invitation) do
-        broadcast(invitation, "delete")
+        broadcast(invitation)
 
         conn
         |> put_resp_header("message", "Invitation removed")
@@ -88,7 +88,7 @@ defmodule ConsoleWeb.InvitationController do
     end
   end
 
-  def broadcast(%Invitation{} = invitation, _) do
+  def broadcast(%Invitation{} = invitation) do
     invitation = invitation |> Organizations.fetch_assoc_invitation()
 
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_updated: "#{invitation.organization_id}/invitation_updated")
