@@ -11,7 +11,7 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import { CHANNEL_FRAGMENT, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
+import { CHANNEL_FRAGMENT, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -66,7 +66,7 @@ class ChannelShow extends Component {
     analyticsLogger.logEvent("ACTION_NAV_CHANNEL_SHOW", {"id": channelId})
 
     subscribeToMore({
-      document: CHANNEL_SUBSCRIPTION,
+      document: CHANNEL_UPDATE_SUBSCRIPTION,
       variables: { channelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev

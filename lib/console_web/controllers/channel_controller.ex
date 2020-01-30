@@ -41,7 +41,7 @@ defmodule ConsoleWeb.ChannelController do
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
-      broadcast(channel)
+      broadcast(channel, channel.id)
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
@@ -62,6 +62,10 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   defp broadcast(%Channel{} = channel) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/channel_updated")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.organization_id}/channel_added")
+  end
+
+  defp broadcast(%Channel{} = channel, id) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/#{id}/channel_updated")
   end
 end

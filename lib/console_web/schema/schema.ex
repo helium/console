@@ -187,9 +187,17 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
-    field :channel_updated, :channel do
+    field :channel_added, :channel do
       config fn _, %{context: %{ current_organization_id: organization_id }} ->
-        {:ok, topic: "#{organization_id}/channel_updated"}
+        {:ok, topic: "#{organization_id}/channel_added"}
+      end
+    end
+
+    field :channel_updated, :channel do
+      arg :channel_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.channel_id}/channel_updated"}
       end
     end
 
