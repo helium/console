@@ -18,8 +18,8 @@ export const ALL_ORGANIZATIONS = gql`
 `
 
 export const ORGANIZATION_SUBSCRIPTION = gql`
-  subscription onOrganizationAdded($userId: String) {
-    organizationAdded(userId: $userId) {
+  subscription onOrganizationUpdated($userId: String) {
+    organizationUpdated(userId: $userId) {
       id,
       name,
       inserted_at,

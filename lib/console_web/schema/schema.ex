@@ -150,11 +150,11 @@ defmodule ConsoleWeb.Schema do
   end
 
   subscription do
-    field :organization_added, :organization do
+    field :organization_updated, :organization do
       arg :user_id, :string
 
       config fn args, _ ->
-        {:ok, topic: "#{args.user_id}/organization_added"}
+        {:ok, topic: "#{args.user_id}/organization_updated"}
       end
     end
 

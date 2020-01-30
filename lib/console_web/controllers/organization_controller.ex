@@ -17,7 +17,7 @@ defmodule ConsoleWeb.OrganizationController do
           jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
           render(conn, "switch.json", jwt: jwt)
         _ ->
-          broadcast(organization, conn.assigns.current_user, "create")
+          broadcast(organization, conn.assigns.current_user)
 
           conn
           |> put_status(:created)
@@ -37,7 +37,7 @@ defmodule ConsoleWeb.OrganizationController do
   def delete(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     with {:ok, %Organization{} = organization} <- Organizations.delete_organization(organization) do
-      broadcast(organization, conn.assigns.current_user, "delete")
+      broadcast(organization, conn.assigns.current_user)
 
       conn
       |> put_status(:accepted)
@@ -46,7 +46,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  defp broadcast(%Organization{} = organization, current_user, _) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
+  defp broadcast(%Organization{} = organization, current_user) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{current_user.id}/organization_updated")
   end
 end

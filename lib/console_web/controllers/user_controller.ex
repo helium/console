@@ -41,11 +41,11 @@ defmodule ConsoleWeb.UserController do
         organization = Organizations.get_organization!(invitation.organization_id)
 
         Organizations.get_invitation!(invitation.id)
-        |> ConsoleWeb.InvitationController.broadcast("update")
+        |> ConsoleWeb.InvitationController.broadcast()
 
         user = user |> Auth.fetch_assoc([:memberships])
         List.last(user.memberships)
-        |> ConsoleWeb.MembershipController.broadcast("new")
+        |> ConsoleWeb.MembershipController.broadcast()
 
         updatedUser = Map.merge(user, %{role: List.last(user.memberships).role})
 
