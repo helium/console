@@ -22,7 +22,7 @@ defmodule ConsoleWeb.ChannelController do
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      broadcast(channel, "new")
+      broadcast(channel)
 
       conn
       |> put_status(:created)
@@ -41,7 +41,7 @@ defmodule ConsoleWeb.ChannelController do
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
-      broadcast(channel, "update")
+      broadcast(channel)
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
@@ -53,7 +53,7 @@ defmodule ConsoleWeb.ChannelController do
     channel = Channels.get_channel!(id)
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
-      broadcast(channel, "delete")
+      broadcast(channel)
 
       conn
       |> put_resp_header("message", "#{channel.name} deleted successfully")
@@ -61,7 +61,7 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  defp broadcast(%Channel{} = channel, _) do
+  defp broadcast(%Channel{} = channel) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/channel_updated")
   end
 end
