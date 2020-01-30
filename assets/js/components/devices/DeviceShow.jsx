@@ -120,8 +120,8 @@ class DeviceShow extends Component {
           
           <table>
             <tbody>
-              <tr>
-                <td style={{height: '30px'}}><Text strong>Name</Text></td>
+              <tr  style={{height: '30px'}}>
+                <td><Text strong>Name</Text></td>
                 <td onMouseEnter={() => this.toggleEditButton()} onMouseLeave={() => this.toggleEditButton()}>
                   {showDeviceEditFields &&
                     <UserCan action="update" itemType="device">
@@ -149,15 +149,15 @@ class DeviceShow extends Component {
                   }
                 </td>
               </tr>
-              <tr>
+              <tr style={{height: '30px'}}>
                 <td><Text strong>App EUI</Text></td>
                 <td><DeviceCredentials data={appEUI} isBytes={true}></DeviceCredentials></td>
               </tr>
-              <tr>
+              <tr style={{height: '30px'}}>
                 <td><Text strong>App Key</Text></td>
                 <td><DeviceCredentials data={device.key} isBytes={true}></DeviceCredentials></td>
               </tr>
-              <tr>
+              <tr style={{height: '30px'}}>
                 <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
                 <td><Tag color="blue">OTAA</Tag></td>
               </tr>
