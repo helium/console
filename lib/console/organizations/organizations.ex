@@ -14,15 +14,27 @@ defmodule Console.Organizations do
   end
 
   def get_organizations(%User{} = current_user) do
-    Ecto.assoc(current_user, :organizations) |> Repo.all()
+    if current_user.super do
+      Repo.all(Organization)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.all()
+    end
   end
 
   def get_organization!(%User{} = current_user, id) do
-    Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
+    if current_user.super do
+      Repo.get!(Organization, id)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
+    end
   end
 
   def get_organization(%User{} = current_user, id) do
-    Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+    if current_user.super do
+      Repo.get(Organization, id)
+    else
+      Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+    end
   end
 
   def get_organization!(id) do
