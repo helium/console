@@ -1,8 +1,9 @@
 defmodule Console.Repo.Migrations.ChangeFormatOfDeviceKey do
   use Ecto.Migration
+  import Ecto.Query, only: [from: 2]
 
   def up do
-    devices = Console.Devices.list_devices()
+    devices = from(d in Console.Devices.Device, select: %{id: d.id, key: d.key}) |> Console.Repo.all
 
     Enum.each(devices, fn device ->
       key = device.key
@@ -17,7 +18,7 @@ defmodule Console.Repo.Migrations.ChangeFormatOfDeviceKey do
   end
 
   def down do
-    devices = Console.Devices.list_devices()
+    devices = from(d in Console.Devices.Device, select: %{id: d.id, key: d.key}) |> Console.Repo.all
 
     Enum.each(devices, fn device ->
       key = device.key
