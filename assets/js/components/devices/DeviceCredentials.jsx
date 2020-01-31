@@ -8,10 +8,19 @@ class DeviceCredentials extends Component {
       this.state = {
         display: 'default'
       }
+
+      this.toggleDefault = this.toggleDefault.bind(this)
+      this.toggleType = this.toggleType.bind(this)
     }
 
-    updateDisplay(display) {
-      this.setState({ display })
+    toggleDefault() {
+      const { display } = this.state
+      this.setState({ display: display === 'default' ? 'msb' : 'default' })
+    }
+
+    toggleType() {
+      const { display } = this.state
+      this.setState({ display: display === 'msb' ? 'lsb' : 'msb' })
     }
 
     render() {
@@ -24,10 +33,10 @@ class DeviceCredentials extends Component {
 
       return(
         <span>
-          <Tag color={display == 'default' ? 'blue' : ''} onClick={() => this.updateDisplay('default')}>default</Tag>
-          <Tag color={display == 'msb' ? 'blue' : ''} onClick={() => this.updateDisplay('msb')}>msb</Tag>
-          <Tag color={display == 'lsb' ? 'blue' : ''} onClick={() => this.updateDisplay('lsb')}>lsb</Tag>
-          <br />
+          <Tag color={display !== 'default' ? 'blue' : ''} onClick={this.toggleDefault}><Icon type="arrows-alt" /></Tag>
+
+          { display !== 'default' && <Tag color="green" onClick={this.toggleType}><Icon type="swap" /></Tag> }
+          { display !== 'default' && <Tag>{display}</Tag> }
           { display == 'default' && <span>{data.toUpperCase()}</span>}
           { display == 'msb' &&  <span>{msb.map(chunk => `0x${chunk.join('')}`).join(', ')}</span> }
           { display == 'lsb' &&  <span>{lsb.map(chunk => `0x${chunk.join('')}`).join(', ')}</span> }
