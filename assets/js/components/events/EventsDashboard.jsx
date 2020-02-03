@@ -55,7 +55,7 @@ class EventsDashboard extends Component {
       {
         title: 'Size',
         dataIndex: 'payload_size',
-        render: data => <span>{data} bytes</span>
+        render: data => <span>{data + data ? "bytes" : ""} </span>
       },
       {
         title: 'RSSI',
