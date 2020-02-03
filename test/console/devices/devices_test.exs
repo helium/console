@@ -9,7 +9,7 @@ defmodule Console.DevicesTest do
     alias Console.Devices.Device
     alias Console.Devices.DevicesChannels
 
-    @valid_attrs %{"mac" => "some mac", "name" => "some name"}
+    @valid_attrs %{"mac" => "some mac", "name" => "some name", "dev_eui" => "randomeui"}
     @update_attrs %{"mac" => "some updated mac", "name" => "some updated name"}
     @invalid_attrs %{"mac" => nil, "name" => nil}
 

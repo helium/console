@@ -4,7 +4,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{mac: "some mac", name: "some name", public_key: "some public_key"}
+  @create_attrs %{mac: "some mac", name: "some name", public_key: "some public_key", dev_eui: "randomeui"}
   @update_attrs %{mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
   @invalid_attrs %{mac: nil, name: nil, public_key: nil}
 

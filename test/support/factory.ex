@@ -39,7 +39,8 @@ defmodule Console.Factory do
     %Device{
       name: "My Device",
       mac: sequence(:mac, &"mac address #{&1}"),
-      key: "my public key"
+      key: "my public key",
+      dev_eui: "randomeui"
     }
   end
 
