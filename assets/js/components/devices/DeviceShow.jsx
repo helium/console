@@ -153,6 +153,10 @@ class DeviceShow extends Component {
                 <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
                 <td><Tag color="blue">OTAA</Tag></td>
               </tr>
+              <tr style={{height: '30px'}}>
+                <td><Text strong>LoRaWAN US Channels</Text></td>
+                <td><Text>48-55 (sub-band 7)</Text></td>
+              </tr>
             </tbody>
           </table>
         </Card>
