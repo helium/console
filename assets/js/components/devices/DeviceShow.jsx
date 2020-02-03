@@ -108,8 +108,8 @@ class DeviceShow extends Component {
 
           <table>
             <tbody>
-              <tr  style={{height: '30px'}}>
-                <td><Text strong>Name</Text></td>
+              <tr style={{height: '30px'}}>
+                <td style={{width: '200px'}}><Text strong>Name</Text></td>
                 <td>
                   {showNameInput ? (
                     <UserCan action="update" itemType="device">
