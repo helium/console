@@ -11,6 +11,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
+import { displayInfo } from '../../util/messages'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Typography, Button, Input, Icon, Select, Tag } from 'antd';
@@ -27,15 +28,19 @@ class DeviceShow extends Component {
     this.state = {
       channelSelected: "",
       newName: "",
+      newDevEUI: "",
       showNameInput: false,
+      showDevEUIInput: false,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSelectUpdate = this.handleSelectUpdate.bind(this);
     this.handleAddChannel = this.handleAddChannel.bind(this);
     this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
-    this.handleDeviceUpdate = this.handleDeviceUpdate.bind(this);
+    this.handleDeviceNameUpdate = this.handleDeviceNameUpdate.bind(this);
+    this.handleDeviceEUIUpdate = this.handleDeviceEUIUpdate.bind(this);
     this.toggleNameInput = this.toggleNameInput.bind(this);
+    this.toggleDevEUIInput = this.toggleDevEUIInput.bind(this);
   }
 
   componentDidMount() {
@@ -78,7 +83,7 @@ class DeviceShow extends Component {
     this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
-  handleDeviceUpdate(id) {
+  handleDeviceNameUpdate(id) {
     const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
@@ -87,13 +92,32 @@ class DeviceShow extends Component {
     this.setState({ newName: "", showNameInput: false })
   }
 
+  handleDeviceEUIUpdate(id) {
+    const { newDevEUI } = this.state
+    if (newDevEUI.length === 16) {
+      this.props.updateDevice(id, { dev_eui: this.state.newDevEUI })
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "dev_eui": newDevEUI })
+      return this.setState({ newDevEUI: "", showDevEUIInput: false })
+    }
+    if (newDevEUI === "") {
+      this.setState({ newDevEUI: "", showDevEUIInput: false })
+    } else {
+      displayInfo(`Device EUI must be 8 bytes long`)
+    }
+  }
+
   toggleNameInput() {
     const { showNameInput } = this.state
     this.setState({ showNameInput: !showNameInput })
   }
 
+  toggleDevEUIInput() {
+    const { showDevEUIInput } = this.state
+    this.setState({ showDevEUIInput: !showDevEUIInput })
+  }
+
   render() {
-    const { channelSelected, newName, showNameInput } = this.state
+    const { channelSelected, newName, showNameInput, showDevEUIInput } = this.state
     const { loading, device, organizationChannels: channels } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -125,7 +149,7 @@ class DeviceShow extends Component {
                         />
                         <Button
                           type="primary"
-                          onClick={() => this.handleDeviceUpdate(device.id)}
+                          onClick={() => this.handleDeviceNameUpdate(device.id)}
                         >
                           Update
                         </Button>
@@ -135,6 +159,39 @@ class DeviceShow extends Component {
                     <React.Fragment>
                       <Text strong>{device.name} </Text>
                       <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                        <Icon type="edit"></Icon>
+                      </Tag>
+                    </React.Fragment>
+                  )}
+                </td>
+              </tr>
+              <tr style={{height: '30px'}}>
+                <td><Text strong>Device EUI</Text></td>
+                <td>
+                  {showDevEUIInput ? (
+                    <UserCan action="update" itemType="device">
+                      <OutsideClick
+                        onOutsideClick={this.toggleDevEUIInput}
+                      >
+                        <Input
+                          name="newDevEUI"
+                          placeholder={device.dev_eui}
+                          value={this.state.newDevEUI}
+                          onChange={this.handleInputUpdate}
+                          style={{ width: 150 }}
+                        />
+                        <Button
+                          type="primary"
+                          onClick={() => this.handleDeviceEUIUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    </UserCan>
+                  ) : (
+                    <React.Fragment>
+                      <Text strong>{device.dev_eui} </Text>
+                      <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
                     </React.Fragment>

@@ -7,6 +7,7 @@ export const DEVICE_FRAGMENT = gql`
     id,
     seq_id,
     inserted_at,
+    dev_eui,
   }
 `
 

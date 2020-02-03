@@ -9,8 +9,24 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Channels
 
   def show(conn, %{"id" => id, "oui" => oui}) do
-    with %Device{} = device <- Devices.get_by_seq_id(id, oui) do
-      conn |> show_device(device)
+    case Devices.get_by_seq_id(id, oui) do
+      nil ->
+        conn
+        |> send_resp(404, "")
+      device ->
+        conn
+        |> show_device(device)
+    end
+  end
+
+  def show(conn, %{"id" => id, "dev_eui" => dev_eui}) do
+    case Devices.get_by_dev_eui(id, dev_eui) do
+      nil ->
+        conn
+        |> send_resp(404, "")
+      device ->
+        conn
+        |> show_device(device)
     end
   end
 

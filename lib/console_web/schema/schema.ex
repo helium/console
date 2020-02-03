@@ -9,6 +9,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :key, :string
     field :mac, :string
+    field :dev_eui, :string
     field :oui, :integer
     field :organization_id, :id
     field :organization, :organization
