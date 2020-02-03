@@ -34,6 +34,7 @@ const query = gql`
       method
       endpoint
       inbound_token
+      headers
       devices {
         name
       }

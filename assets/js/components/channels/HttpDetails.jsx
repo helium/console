@@ -21,6 +21,10 @@ const HttpDetails = (props) => {
       <Text>
         Endpoint: {channel.endpoint}
       </Text>
+      <br />
+      <Text>
+        Headers: {channel.headers}
+      </Text>
     </React.Fragment>
   )
 }

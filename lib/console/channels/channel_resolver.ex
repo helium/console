@@ -18,6 +18,7 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:endpoint, channel.credentials["endpoint"])
           |> Map.put(:method, channel.credentials["method"])
           |> Map.put(:inbound_token, channel.credentials["inbound_token"])
+          |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
         _ -> channel
       end
 

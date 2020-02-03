@@ -24,6 +24,7 @@ defmodule ConsoleWeb.Schema do
     field :type_name, :string
     field :endpoint, :string
     field :method, :string
+    field :headers, :string
     field :inbound_token, :string
     field :active, :boolean
     field :default, :boolean
