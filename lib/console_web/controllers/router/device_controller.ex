@@ -19,15 +19,10 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  def show(conn, %{"id" => id, "dev_eui" => dev_eui}) do
-    case Devices.get_by_dev_eui(id, dev_eui) do
-      nil ->
-        conn
-        |> send_resp(404, "")
-      device ->
-        conn
-        |> show_device(device)
-    end
+  def show(conn, %{"id" => dev_eui}) do
+    devices = Devices.get_by_dev_eui(dev_eui)
+
+    render(conn, "index.json", devices: devices)
   end
 
   def show_event(conn, %{"device_id" => device_id} = event) do

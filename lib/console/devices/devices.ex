@@ -20,8 +20,9 @@ defmodule Console.Devices do
      Repo.get_by(Device, [seq_id: seq_id, oui: oui])
   end
 
-  def get_by_dev_eui(seq_id, dev_eui) do
-     Repo.get_by(Device, [seq_id: seq_id, dev_eui: dev_eui])
+  def get_by_dev_eui(dev_eui) do
+     from(d in Device, where: d.dev_eui == ^dev_eui)
+     |> Repo.all()
   end
 
   def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
