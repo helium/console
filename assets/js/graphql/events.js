@@ -9,6 +9,7 @@ export const EVENT_FRAGMENT = gql`
     reported_at,
     delivered_at
     status,
+    description,
     channel_name,
     hotspot_name,
   }

@@ -53,9 +53,13 @@ class EventsDashboard extends Component {
         dataIndex: 'status',
       },
       {
+        title: 'Description',
+        dataIndex: 'description',
+      },
+      {
         title: 'Size',
         dataIndex: 'payload_size',
-        render: data => <span>{data + data ? "bytes" : ""} </span>
+        render: data => <span>{data ? `${data} bytes` : ""} </span>
       },
       {
         title: 'RSSI',
@@ -80,7 +84,7 @@ class EventsDashboard extends Component {
       >
         {({ data }) => (
           <React.Fragment>
-           
+
             <div className="chart-legend left">
               <div className="chart-legend-bulb red"></div>
               <Text>

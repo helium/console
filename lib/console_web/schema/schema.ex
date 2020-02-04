@@ -71,6 +71,7 @@ defmodule ConsoleWeb.Schema do
     field :reported_at, :string
     field :delivered_at, :string
     field :status, :string
+    field :description, :string
     field :channel_name, :string
     field :hotspot_name, :string
   end
