@@ -14,10 +14,10 @@ defmodule Console.Devices.DeviceResolver do
     default_channel = Channels.get_default_channel(current_organization)
 
     entries = Enum.map(devices.entries, fn d ->
-      if length(d.channels) != 0 do
-        d
-      else
+      if length(d.channels) == 0 and default_channel do
         Map.put(d, :channels, [default_channel])
+      else
+        d
       end
     end)
 
