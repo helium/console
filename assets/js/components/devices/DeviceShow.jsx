@@ -11,7 +11,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
-import { displayInfo } from '../../util/messages'
+import { displayError } from '../../util/messages'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Typography, Button, Input, Icon, Select, Tag } from 'antd';
@@ -102,7 +102,7 @@ class DeviceShow extends Component {
     if (newDevEUI === "") {
       this.setState({ newDevEUI: "", showDevEUIInput: false })
     } else {
-      displayInfo(`Device EUI must be 8 bytes long`)
+      displayError(`Device EUI must be exactly 8 bytes long`)
     }
   }
 
@@ -178,6 +178,7 @@ class DeviceShow extends Component {
                           placeholder={device.dev_eui}
                           value={this.state.newDevEUI}
                           onChange={this.handleInputUpdate}
+                          maxLength={16}
                           style={{ width: 150 }}
                         />
                         <Button

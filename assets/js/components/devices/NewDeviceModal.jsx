@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createDevice } from '../../actions/device'
 import { randomMac } from '../../util/random'
-import { displayInfo } from '../../util/messages'
+import { displayError } from '../../util/messages'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
@@ -35,7 +35,7 @@ class NewDeviceModal extends Component {
 
       this.props.onClose()
     } else {
-      displayInfo(`Device EUI must be 8 bytes long`)
+      displayError(`Device EUI must be exactly 8 bytes long`)
     }
   }
 
@@ -71,6 +71,10 @@ class NewDeviceModal extends Component {
           value={this.state.devEUI}
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
+          maxLength={16}
+          suffix={
+            <Text type={this.state.devEUI.length !== 16 ? "danger" : ""}>{Math.floor(this.state.devEUI.length / 2)} / 8 Bytes</Text>
+          }
         />
       </Modal>
     )
