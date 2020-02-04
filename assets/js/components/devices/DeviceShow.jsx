@@ -95,7 +95,7 @@ class DeviceShow extends Component {
   handleDeviceEUIUpdate(id) {
     const { newDevEUI } = this.state
     if (newDevEUI.length === 16) {
-      this.props.updateDevice(id, { dev_eui: this.state.newDevEUI })
+      this.props.updateDevice(id, { dev_eui: this.state.newDevEUI.toUpperCase() })
       analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "dev_eui": newDevEUI })
       return this.setState({ newDevEUI: "", showDevEUIInput: false })
     }

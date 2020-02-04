@@ -10,7 +10,7 @@ import UserCan from '../common/UserCan'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
-import { Table, Button, Empty, Pagination } from 'antd';
+import { Table, Button, Empty, Pagination, Tag } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
 import { Card } from 'antd';
 
@@ -35,8 +35,19 @@ class DevicesTable extends Component {
         )
       },
       {
-        title: 'ID',
-        dataIndex: 'seq_id',
+        title: 'Device EUI',
+        dataIndex: 'dev_eui',
+      },
+      {
+        title: 'Channels',
+        dataIndex: 'channels',
+        render: data => {
+          return <React.Fragment>
+            {
+              data.map(d => <Tag key={d.id}>{d.name}</Tag>)
+            }
+          </React.Fragment>
+        }
       },
       {
         title: 'Created',
@@ -57,9 +68,7 @@ class DevicesTable extends Component {
                   analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
                   deleteDevice(record.id)
                 }}
-              >
-                Delete
-              </Button>
+              />
             </UserCan>
           </div>
         )

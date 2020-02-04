@@ -6,8 +6,12 @@ export const DEVICE_FRAGMENT = gql`
     mac,
     id,
     seq_id,
-    inserted_at,
     dev_eui,
+    inserted_at,
+    channels {
+      name,
+      id
+    }
   }
 `
 

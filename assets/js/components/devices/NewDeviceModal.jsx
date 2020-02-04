@@ -31,7 +31,7 @@ class NewDeviceModal extends Component {
     const { name, devEUI } = this.state;
     if (devEUI.length === 16) {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name, "devEUI": devEUI})
-      this.props.createDevice({ name, mac: randomMac(), dev_eui: devEUI })
+      this.props.createDevice({ name, mac: randomMac(), dev_eui: devEUI.toUpperCase() })
 
       this.props.onClose()
     } else {
