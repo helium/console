@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { updateMembership } from '../../actions/membership'
+import { updateMembership, deleteMembership } from '../../actions/membership'
+import { deleteInvitation } from '../../actions/invitation'
 import DashboardLayout from '../common/DashboardLayout'
 import MembersTable from './MembersTable'
 import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
 import EditMembershipModal from './EditMembershipModal'
+import DeleteUserModal from './DeleteUserModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Card } from 'antd';
@@ -23,13 +25,14 @@ const styles = {
 }
 
 @connect(null, mapDispatchToProps)
-class OrganizationShow extends Component {
+class UserIndex extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       newUserOpen: false,
       editMembershipOpen: false,
+      deleteUserOpen: false,
       editingMembership: null
     }
 
@@ -37,6 +40,8 @@ class OrganizationShow extends Component {
     this.closeNewUserModal = this.closeNewUserModal.bind(this)
     this.openEditMembershipModal = this.openEditMembershipModal.bind(this)
     this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
+    this.openDeleteUserModal = this.openDeleteUserModal.bind(this)
+    this.closeDeleteUserModal = this.closeDeleteUserModal.bind(this)
   }
 
   componentDidMount() {
@@ -62,39 +67,45 @@ class OrganizationShow extends Component {
     this.setState({editMembershipOpen: false})
   }
 
+  openDeleteUserModal(membership, type) {
+    this.setState({ deleteUserOpen: true, editingMembership: Object.assign({}, membership, { type }) })
+  }
+
+  closeDeleteUserModal() {
+    this.setState({deleteUserOpen: false})
+  }
+
   render() {
-    const { updateMembership } = this.props
+    const { updateMembership, deleteMembership, deleteInvitation } = this.props
 
     return (
       <DashboardLayout title="Users">
-      <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 0}}>
-        <header style={styles.header}>
-          <UserCan action="create" itemType="membership">
-            <Button
-            type="primary"
-            icon="plus"
-            style={{marginBottom: 20}}
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
-                this.openNewUserModal()
-              }}
-            >
-              Add User
-            </Button>
-          </UserCan>
-        </header>
+        <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 0}}>
+          <header style={styles.header}>
+            <UserCan action="create" itemType="membership">
+              <Button
+              type="primary"
+              icon="plus"
+              style={{marginBottom: 20}}
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
+                  this.openNewUserModal()
+                }}
+              >
+                Add User
+              </Button>
+            </UserCan>
+          </header>
 
-
-        <MembersTable
-          openEditMembershipModal={this.openEditMembershipModal}
-        />
+          <MembersTable
+            openEditMembershipModal={this.openEditMembershipModal}
+            openDeleteUserModal={this.openDeleteUserModal}
+          />
         </Card>
-              <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0}}>
 
-        <header style={{ ...styles.header, marginTop: 1 }}>
-        </header>
-
-        <InvitationsTable />
+        <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0}}>
+          <header style={{ ...styles.header, marginTop: 1 }} />
+          <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} />
         </Card>
 
         <NewUserModal
@@ -108,6 +119,14 @@ class OrganizationShow extends Component {
           membership={this.state.editingMembership}
           updateMembership={updateMembership}
         />
+
+        <DeleteUserModal
+          open={this.state.deleteUserOpen}
+          onClose={this.closeDeleteUserModal}
+          membership={this.state.editingMembership}
+          deleteMembership={deleteMembership}
+          deleteInvitation={deleteInvitation}
+        />
       </DashboardLayout>
     )
   }
@@ -115,8 +134,8 @@ class OrganizationShow extends Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    updateMembership
+    updateMembership, deleteMembership, deleteInvitation
   }, dispatch);
 }
 
-export default OrganizationShow
+export default UserIndex

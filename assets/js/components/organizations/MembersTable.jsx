@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { deleteMembership } from '../../actions/membership'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import moment from 'moment'
@@ -16,11 +13,11 @@ const defaultVariables = {
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class MembersTable extends Component {
   render() {
     const {
-       deleteMembership, openEditMembershipModal
+       openEditMembershipModal,
+       openDeleteUserModal
     } = this.props
 
     const columns = [
@@ -63,8 +60,8 @@ class MembersTable extends Component {
             <UserCan action="delete" itemType="membership" item={record}>
               <Button
                 onClick={() => {
-                  analyticsLogger.logEvent("ACTION_DELETE_MEMBERSHIP", {"email": record.email})
-                  deleteMembership(record)
+                  analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                  openDeleteUserModal(record, "membership")
                 }}
                 type="danger"
               >
@@ -192,12 +189,6 @@ const Role = (props) => {
     default:
       return <span>{props.role}</span>
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    deleteMembership
-  }, dispatch);
 }
 
 export default MembersTable

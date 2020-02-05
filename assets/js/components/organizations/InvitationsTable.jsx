@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import find from 'lodash/find'
 import get from 'lodash/get'
 import moment from 'moment'
 import UserCan from '../common/UserCan'
-import { deleteInvitation } from '../../actions/invitation'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
@@ -18,10 +15,9 @@ const defaultVariables = {
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class InvitationsTable extends Component {
   render() {
-    const { deleteInvitation } = this.props
+    const { openDeleteUserModal } = this.props
 
     const columns = [
       {
@@ -46,8 +42,8 @@ class InvitationsTable extends Component {
             <UserCan action="delete" itemType="membership" item={record}>
               <Button
                 onClick={() => {
-                  analyticsLogger.logEvent("ACTION_DELETE_INVITATION", { "email": record.email })
-                  deleteInvitation(record)
+                  analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                  openDeleteUserModal(record, "invitation")
                 }}
                 type="danger"
               >
@@ -160,7 +156,7 @@ class QueryResults extends Component {
             onChange={page => this.handleChangePage(page)}
             hideOnSinglePage={true}
             style={{marginBottom: 20}}
-            
+
           />
         </div>
       </div>
@@ -177,12 +173,6 @@ const Role = (props) => {
     default:
       return <span>{props.role}</span>
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({
-    deleteInvitation
-  }, dispatch);
 }
 
 export default InvitationsTable
