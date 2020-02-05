@@ -49,7 +49,7 @@ class DeviceIndex extends Component {
               }}
               type="primary"
             >
-              Add New Device
+              Add Device
             </Button>
           </UserCan>
         </header>

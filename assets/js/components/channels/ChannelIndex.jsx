@@ -30,8 +30,8 @@ class ChannelIndex extends Component {
 
           <ChannelCargoRow />
           </Card>
-         
-          <Card title="Create Own Channel">
+
+          <Card title="Add Channel">
           <ChannelCreateRow />
           </Card>
         </UserCan>

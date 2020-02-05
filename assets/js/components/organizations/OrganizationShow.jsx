@@ -79,7 +79,7 @@ class OrganizationShow extends Component {
                 this.openNewUserModal()
               }}
             >
-              New Member
+              Add User
             </Button>
           </UserCan>
         </header>

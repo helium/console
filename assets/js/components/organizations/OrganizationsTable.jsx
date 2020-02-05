@@ -129,7 +129,7 @@ class QueryResults extends Component {
                         type="primary"
 
           >
-            Create New Organization
+            Add Organization
           </Button>
         </div>
         <Table columns={columns} dataSource={organizations} pagination={false} />
