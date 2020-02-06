@@ -1,6 +1,7 @@
+<p>Hi,</p>
 <p>
-  You've been invited to collaborate on an organization at Helium.
+  <%= @inviter_email %> at <%= @organization_name %> has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> to Helium Console. Click
   <a href="<%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %>">
-    Click here to join the organization
-  </a>.
+    this link
+  </a> to complete registration of your account.
 </p>

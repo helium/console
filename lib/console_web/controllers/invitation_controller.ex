@@ -40,7 +40,7 @@ defmodule ConsoleWeb.InvitationController do
       false ->
         with {:ok, %Invitation{} = invitation} <-
                Organizations.create_invitation(current_user, organization, attrs) do
-          Email.invitation_email(invitation) |> Mailer.deliver_later()
+          Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
           broadcast(invitation)
 
           conn
@@ -61,7 +61,7 @@ defmodule ConsoleWeb.InvitationController do
 
       conn
       |> redirect(
-        to: "/register?invitation=#{token}&organization_name=#{organization_name}&inviter=#{inviter_email}"
+        to: "/register?invitation=#{token}&organization_name=#{organization_name}&inviter=#{inviter_email}&email=#{inv.email}"
       )
     else
       {false, _} ->

@@ -17,7 +17,7 @@ class Register extends Component {
 
     this.state = {
       organizationName: "",
-      email: "",
+      email: props.email || "",
       password: "",
       showOrgCreation: false,
       acceptedTerms: false,
@@ -204,7 +204,8 @@ function mapStateToProps(state, ownProps) {
       version: "join",
       invitationToken: queryParams.invitation,
       organizationName: queryParams.organization_name,
-      inviter: queryParams.inviter
+      inviter: queryParams.inviter,
+      email: queryParams.email,
     }
   }
 

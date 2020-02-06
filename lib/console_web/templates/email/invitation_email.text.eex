@@ -1,2 +1,2 @@
-You've been invited to collaborate on an organization at Helium.
-Visit <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %> to join the organization
+<%= @inviter_email %> at <%= @organization_name %> has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> to Helium Console.
+Visit <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %> to complete registration of your account.

@@ -22,11 +22,14 @@ defmodule Console.Email do
     |> render(:reset_password)
   end
 
-  def invitation_email(%Invitation{email: email, token: token}) do
+  def invitation_email(%Invitation{email: email, token: token, role: role}, %User{email: inviter_email}, %Organization{name: organization_name}) do
     base_email()
     |> to(email)
     |> subject("You've been invited to join Helium")
     |> assign(:token, token)
+    |> assign(:inviter_email, inviter_email)
+    |> assign(:role, role)
+    |> assign(:organization_name, organization_name)
     |> render(:invitation_email)
   end
 
