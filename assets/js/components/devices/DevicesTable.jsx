@@ -39,7 +39,7 @@ class DevicesTable extends Component {
         dataIndex: 'dev_eui',
       },
       {
-        title: 'Channels',
+        title: 'Integrations',
         dataIndex: 'channels',
         render: data => {
           return <React.Fragment>

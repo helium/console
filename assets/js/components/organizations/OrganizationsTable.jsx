@@ -34,6 +34,7 @@ class OrganizationsTable extends Component {
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
               <Button
                 type="primary"
+                style={{ marginRight: 5 }}
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": record.id })
                   switchOrganization(record.id)

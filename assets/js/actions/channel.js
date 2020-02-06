@@ -8,8 +8,8 @@ export const createChannel = (params) => {
         channel: params
       })
       .then(response => {
-        displayInfo(`Channel ${response.data.name} has been created`)
-        dispatch(replace(`/channels/${response.data.id}`))
+        displayInfo(`${response.data.name} has been created`)
+        dispatch(replace(`/integrations/${response.data.id}`))
       })
   }
 }

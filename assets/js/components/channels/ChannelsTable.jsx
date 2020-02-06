@@ -44,6 +44,7 @@ class ChannelsTable extends Component {
               !record.default && <UserCan action="update" itemType="channel" item={record}>
                 <Button
                   type="primary"
+                  style={{ marginRight: 5 }}
                   onClick={() => {
                     analyticsLogger.logEvent("ACTION_SET_DEFAULT_CHANNEL", {"id": record.id})
                     updateChannel(record.id, { default: true })

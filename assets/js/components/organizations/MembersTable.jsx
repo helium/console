@@ -51,6 +51,7 @@ class MembersTable extends Component {
                   analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
                   openEditMembershipModal(record)
                 }}
+                style={{ marginRight: 5 }}
                 type="primary"
               >
                 Edit
