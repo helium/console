@@ -157,10 +157,10 @@ class DeviceShow extends Component {
                     </UserCan>
                   ) : (
                     <React.Fragment>
+                      <Text strong style={{ marginRight: 5 }}>{device.name} </Text>
                       <Tag color="blue" size="small" onClick={this.toggleNameInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
-                      <Text strong>{device.name} </Text>
                     </React.Fragment>
                   )}
                 </td>
@@ -192,12 +192,12 @@ class DeviceShow extends Component {
                   )}
                   {!showDevEUIInput && (
                     <React.Fragment>
-                      <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
-                        <Icon type="edit"></Icon>
-                      </Tag>
                       {
                         device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text strong>Add a Device EUI</Text>
                       }
+                      <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
+                        <Icon type="edit"></Icon>
+                      </Tag>
                     </React.Fragment>
                   )}
                 </td>
