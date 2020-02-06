@@ -4,8 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { changePassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
-import { Typography, Button, Input, Form } from 'antd';
-const { Text } = Typography
+import Logo from '../../../img/symbol.svg'
+import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
+const { Text, Title } = Typography
 
 @connect(null, mapDispatchToProps)
 class ResetPassword extends Component {
@@ -38,39 +39,52 @@ class ResetPassword extends Component {
 
     return(
       <AuthLayout>
-        <Text strong>
-          Reset your password
-        </Text>
+        <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+          <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+          <div style={{textAlign: 'center', marginBottom: 30}}>
+            <Title>
+              Helium Console
+            </Title>
+            <Text style={{color:'#38A2FF'}}>Reset Your Password</Text>
+          </div>
 
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Item>
-            <Input
-              placeholder="New password"
-              type="password"
-              name="password"
-              value={this.state.password}
-              onChange={this.handleInputUpdate}
-            />
-          </Form.Item>
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Item style={{marginBottom: 10}}>
+              <Input
+                placeholder="New password"
+                type="password"
+                name="password"
+                value={this.state.password}
+                onChange={this.handleInputUpdate}
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              />
+            </Form.Item>
 
-          <Form.Item>
-            <Input
-              placeholder="Confirm Password"
-              type="password"
-              name="passwordConfirm"
-              value={this.state.passwordConfirm}
-              onChange={this.handleInputUpdate}
-            />
-          </Form.Item>
+            <Form.Item>
+              <Input
+                placeholder="Confirm Password"
+                type="password"
+                name="passwordConfirm"
+                value={this.state.passwordConfirm}
+                onChange={this.handleInputUpdate}
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              />
+            </Form.Item>
 
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <br />
-          <Text>
-            <Link to="/login">Back to Login</Link>
-          </Text>
-        </Form>
+            <Row gutter={16} style={{marginTop: 20}}>
+              <Col sm={12}>
+              <Button type="primary" htmlType="submit" style={{width: '100%'}}>
+                Submit
+              </Button>
+              </Col>
+              <Col sm={12}>
+              <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
+                Back to Login
+              </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
       </AuthLayout>
     );
   }

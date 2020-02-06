@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import AuthLayout from '../common/AuthLayout'
-import { Typography, Button, Input, Form } from 'antd';
-const { Text } = Typography
+import Logo from '../../../img/symbol.svg'
+import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
+const { Text, Title } = Typography
 
 class TwoFactorForm extends Component {
   constructor(props) {
@@ -28,22 +29,34 @@ class TwoFactorForm extends Component {
   render() {
     return(
       <AuthLayout>
-        <Text strong>
-          Enter Two Factor Code
-        </Text>
+        <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+          <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+          <div style={{textAlign: 'center', marginBottom: 30}}>
+            <Title>
+              Helium Console
+            </Title>
+            <Text style={{color:'#38A2FF'}}>Enter Two Factor Code</Text>
+          </div>
 
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Item>
-            <Input
-              name="twoFactorCode"
-              value={this.state.twoFactorCode}
-              onChange={this.handleInputUpdate}
-            />
-          </Form.Item>
-          <Button htmlType="submit" type="primary">
-            Confirm
-          </Button>
-        </Form>
+          <Form onSubmit={this.handleSubmit}>
+            <Form.Item>
+              <Input
+                name="twoFactorCode"
+                value={this.state.twoFactorCode}
+                onChange={this.handleInputUpdate}
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              />
+            </Form.Item>
+
+            <Row gutter={16} style={{marginTop: 20}}>
+              <Col sm={12}>
+                <Button type="primary" htmlType="submit" style={{width: '100%'}}>
+                  Confirm
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
       </AuthLayout>
     )
   }

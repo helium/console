@@ -129,21 +129,31 @@ class Register extends Component {
 
     return (
       <div>
-        <Text strong>
-          Register to join {organizationName}
-        </Text>
-        <br />
-        <Text>
-          You are invited by {inviter}
-        </Text>
+        <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+          <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+          <div style={{textAlign: 'center', marginBottom: 30}}>
+            <Title>
+              Register to join {organizationName}
+            </Title>
+            <Text style={{color:'#38A2FF'}}>You are invited by {inviter}</Text>
+          </div>
+          <Form onSubmit={this.registerUser}>
+            {this.commonFields()}
 
-        <Form onSubmit={this.registerUser}>
-          {this.commonFields()}
-
-          <Button type="primary" htmlType="submit" disabled={!acceptedTerms}>
-            Join
-          </Button>
-        </Form>
+            <Row gutter={16} style={{marginTop:10}}>
+              <Col sm={12}>
+                <Button type="primary" htmlType="submit" style={{width: '100%'}} disabled={!acceptedTerms}>
+                  Register
+                </Button>
+              </Col>
+              <Col sm={12}>
+              <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
+                I want to Login
+              </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
       </div>
     )
   }
