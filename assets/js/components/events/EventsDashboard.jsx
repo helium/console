@@ -68,7 +68,7 @@ class EventsDashboard extends Component {
       {
         title: 'SNR',
         dataIndex: 'snr',
-        render: data => <span>{data.toFixed(2)}</span>
+        render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span>
       },
       {
         title: 'Delivered At',
