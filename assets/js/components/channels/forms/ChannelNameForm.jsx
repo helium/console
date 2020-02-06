@@ -6,12 +6,12 @@ import { Card } from 'antd';
 
 const ChannelNameForm = (props) => (
   <div>
-    <Card title="Step 3 - Name your Channel">
-   
+    <Card title="Step 3 - Name your Integration">
+
     <Form onSubmit={props.onSubmit}>
       <Form.Item>
         <Input
-          placeholder="Channel Name"
+          placeholder="Integration Name"
           name="channelName"
           value={props.channelName}
           onChange={props.onInputUpdate}
@@ -22,7 +22,7 @@ const ChannelNameForm = (props) => (
         type="primary"
         htmlType="submit"
       >
-        Create Channel
+        Create Integration
       </Button>
     </Form>
     </Card>

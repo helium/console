@@ -28,7 +28,7 @@ const styles = {
 }
 
 const channelTypes = [
-  { name: "Helium Cargo (HTTP)", link: "/channels/new/cargo", img: `${Cargo}` },
+  { name: "Helium Cargo (HTTP)", link: "/integrations/new/cargo", img: `${Cargo}` },
 ]
 
 class ChannelCargoRow extends Component {

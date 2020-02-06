@@ -25,10 +25,10 @@ class ChannelsTable extends Component {
 
     const columns = [
       {
-        title: 'Channel Name',
+        title: 'Name',
         dataIndex: 'name',
         render: (text, record) => (
-          <Link to={`/channels/${record.id}`}>{text}</Link>
+          <Link to={`/integrations/${record.id}`}>{text}</Link>
         )
       },
       {

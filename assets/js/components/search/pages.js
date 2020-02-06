@@ -19,51 +19,51 @@ const pages = [
     synonyms: ""
   },
   {
-    title: "Channels",
-    description: "View and manage channels",
-    url: "/channels",
-    id: "/channels",
-    category: "channels",
+    title: "Integrations",
+    description: "View and manage integrations",
+    url: "/integrations",
+    id: "/integrations",
+    category: "integrations",
     synonyms: ""
   },
   {
     title: "New Azure IoT Hub",
-    description: "Create a new Azure channel",
-    url: "/channels/new/azure",
-    id: "/channels/new/azure",
-    category: "channels",
+    description: "Create a new Azure integration",
+    url: "/integrations/new/azure",
+    id: "/integrations/new/azure",
+    category: "integrations",
     synonyms: ""
   },
   {
     title: "New AWS IoT",
-    description: "Create a new AWS channel",
-    url: "/channels/new/aws",
-    id: "/channels/new/aws",
-    category: "channels",
+    description: "Create a new AWS integration",
+    url: "/integrations/new/aws",
+    id: "/integrations/new/aws",
+    category: "integrations",
     synonyms: ""
   },
   {
     title: "New Google Cloud IoT",
-    description: "Create a new Google channel",
-    url: "/channels/new/google",
-    id: "/channels/new/google",
-    category: "channels",
+    description: "Create a new Google integration",
+    url: "/integrations/new/google",
+    id: "/integrations/new/google",
+    category: "integrations",
     synonyms: ""
   },
   {
-    title: "New MQTT Channel",
-    description: "Create a new MQTT channel",
-    url: "/channels/new/mqtt",
-    id: "/channels/new/mqtt",
-    category: "channels",
+    title: "New MQTT",
+    description: "Create a new MQTT integration",
+    url: "/integrations/new/mqtt",
+    id: "/integrations/new/mqtt",
+    category: "integrations",
     synonyms: ""
   },
   {
-    title: "New HTTP Channel",
-    description: "Create a new HTTP channel",
-    url: "/channels/new/http",
-    id: "/channels/new/http",
-    category: "channels",
+    title: "New HTTP",
+    description: "Create a new HTTP integration",
+    url: "/integrations/new/http",
+    id: "/integrations/new/http",
+    category: "integrations",
     synonyms: ""
   },
   {

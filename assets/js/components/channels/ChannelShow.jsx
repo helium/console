@@ -130,9 +130,9 @@ class ChannelShow extends Component {
     if (loading) return <DashboardLayout />
 
     return(
-      <DashboardLayout title={`Channel: ${channel.name}`}>
+      <DashboardLayout title={`Integration: ${channel.name}`}>
         <Text strong>
-          Channel Details
+          Integration Details
         </Text>
         <br />
         <Input

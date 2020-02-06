@@ -54,9 +54,9 @@ class Router extends React.Component {
                   <PrivateRoute path="/profile" component={Profile}/>
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
-                  <PrivateRoute exact path="/channels" component={ChannelIndex} />
-                  <PrivateRoute exact path="/channels/new/:id?" component={ChannelNew} />
-                  <PrivateRoute exact path="/channels/:id" component={ChannelShow} />
+                  <PrivateRoute exact path="/integrations" component={ChannelIndex} />
+                  <PrivateRoute exact path="/integrations/new/:id?" component={ChannelNew} />
+                  <PrivateRoute exact path="/integrations/:id" component={ChannelShow} />
                   <PrivateRoute exact path="/users" component={UserIndex} />
                   <PrivateRoute exact path="/dashboard" component={Dashboard} />
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />

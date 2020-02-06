@@ -37,7 +37,7 @@ class CargoForm extends Component {
     return(
       <div>
         <Text>
-          You are opting to test your devices on the Helium Cargo HTTP channel endpoint.
+          You are opting to test your devices on the Helium Cargo HTTP integration endpoint.
         </Text>
         <br />
         <Text>

@@ -24,18 +24,18 @@ class ChannelIndex extends Component {
   render() {
     const { classes } = this.props
     return (
-      <DashboardLayout title="Channels">
+      <DashboardLayout title="Integrations">
         <UserCan action="create" itemType="channel">
               <Card title="Use Helium Cargo">
 
           <ChannelCargoRow />
           </Card>
 
-          <Card title="Add Channel">
+          <Card title="Add Integration">
           <ChannelCreateRow />
           </Card>
         </UserCan>
-        <Card title="My Channels">
+        <Card title="My Integrations">
         <ChannelsTable />
         </Card>
       </DashboardLayout>

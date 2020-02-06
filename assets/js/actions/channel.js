@@ -27,7 +27,7 @@ export const deleteChannel = (id) => {
   return (dispatch) => {
     rest.destroy(`/api/channels/${id}`)
       .then(response => {
-        dispatch(replace('/channels'))
+        dispatch(replace('/integrations'))
       })
   }
 }

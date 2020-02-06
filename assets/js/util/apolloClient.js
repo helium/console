@@ -33,7 +33,7 @@ const authErrorLink = onError(({ networkError, operation: { operationName }}) =>
         store.dispatch(replace("/devices"))
         break
       case "ChannelShowQuery":
-        store.dispatch(replace("/channels"))
+        store.dispatch(replace("/integrations"))
         break
       case "GatewayShowQuery":
         store.dispatch(replace("/gateways"))

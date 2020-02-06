@@ -32,11 +32,11 @@ const styles = {
 }
 
 const channelTypes = [
-  { name: "HTTP", link: "/channels/new/http", img: `${Http}` },
-  { name: "MQTT", link: "/channels/new/mqtt", img: `${Mqtt}` },
-  { name: "Azure IoT - Coming Soon", link: "/channels/new/azure", img: `${Azure}`, inactive: true },
-  { name: "AWS IoT - Coming Soon", link: "/channels/new/aws", img: `${Aws}`, inactive: true },
-  { name: "Google IoT - Coming Soon", link: "/channels/new/google", img: `${Google}`, inactive: true },
+  { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
+  { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
+  { name: "Azure IoT - Coming Soon", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
+  { name: "AWS IoT - Coming Soon", link: "/integrations/new/aws", img: `${Aws}`, inactive: true },
+  { name: "Google IoT - Coming Soon", link: "/integrations/new/google", img: `${Google}`, inactive: true },
 ]
 
 class ChannelCreateRow extends Component {

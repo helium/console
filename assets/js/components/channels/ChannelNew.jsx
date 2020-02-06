@@ -89,15 +89,15 @@ class ChannelNew extends Component {
 
   render() {
     return(
-      <DashboardLayout title="Create New Channel">
+      <DashboardLayout title="Create New Integration">
 
-      <Card title="Step 1 – Choose a Channel Type">
-        
+      <Card title="Step 1 – Choose an Integration Type">
+
         <Card size="small" title="Use Helium Cargo">
         <ChannelCargoRow />
         </Card>
 
-        <Card size="small" title="Use a Custom Channel">
+        <Card size="small" title="Use a Custom Integration">
         <ChannelCreateRow />
         </Card>
 
