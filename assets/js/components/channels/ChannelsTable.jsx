@@ -56,13 +56,12 @@ class ChannelsTable extends Component {
             <UserCan action="delete" itemType="channel" item={record}>
               <Button
                 type="danger"
+                icon="delete"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": record.id})
                   deleteChannel(record.id)
                 }}
-              >
-                Delete
-              </Button>
+              />
             </UserCan>
           </div>
         )

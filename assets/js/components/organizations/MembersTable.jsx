@@ -64,9 +64,8 @@ class MembersTable extends Component {
                   openDeleteUserModal(record, "membership")
                 }}
                 type="danger"
-              >
-                Remove
-              </Button>
+                icon="delete"
+              />
             </UserCan>
           </div>
         )

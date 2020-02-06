@@ -43,15 +43,13 @@ class OrganizationsTable extends Component {
               </Button>
               <UserCan action="delete" itemType="organization" item={record}>
                 <Button
-                icon="delete"
+                  icon="delete"
                   type="danger"
                   onClick={() => {
                     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
                     deleteOrganization(record.id)
                   }}
-                >
-                  Delete
-                </Button>
+                />
               </UserCan>
             </div>
           ) : (

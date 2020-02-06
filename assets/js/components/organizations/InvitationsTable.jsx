@@ -46,9 +46,8 @@ class InvitationsTable extends Component {
                   openDeleteUserModal(record, "invitation")
                 }}
                 type="danger"
-              >
-                Remove
-              </Button>
+                icon="delete"
+              />
             </UserCan>
           </div>
         )
