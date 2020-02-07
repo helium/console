@@ -23,6 +23,7 @@ class NavDrawer extends Component {
         onClick={this.handleClick}
       >
         <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard"><Icon type="dashboard"/>Dashboard</Menu.Item>
+        <Menu.Item disabled={history.location.pathname === "/labels"} key="/labels"><Icon type="tag" />Labels</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices"><Icon type="appstore" />Devices</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/integrations"} key="/integrations"><Icon type="api" />Integrations</Menu.Item>
         <Menu.Item disabled={history.location.pathname === "/users"} key="/users"><Icon type="user" />Users</Menu.Item>

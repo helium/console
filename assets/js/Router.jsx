@@ -30,6 +30,7 @@ import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import UserIndex from './components/organizations/UserIndex'
 import Dashboard from './components/dashboard/Dashboard'
+import LabelIndex from './components/labels/LabelIndex'
 import DataCredits from './components/billing/DataCredits'
 
 class Router extends React.Component {
@@ -53,6 +54,7 @@ class Router extends React.Component {
                   <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
                   <PrivateRoute path="/profile" component={Profile}/>
                   <PrivateRoute exact path="/devices" component={DeviceIndex} />
+                  <PrivateRoute exact path="/labels" component={LabelIndex} />
                   <PrivateRoute path="/devices/:id" component={DeviceShow}/>
                   <PrivateRoute exact path="/integrations" component={ChannelIndex} />
                   <PrivateRoute exact path="/integrations/new/:id?" component={ChannelNew} />
