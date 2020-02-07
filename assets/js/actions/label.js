@@ -10,3 +10,10 @@ export const createLabel = (name) => {
       .then(response => {})
   }
 }
+
+export const deleteLabel = (id) => {
+  return (dispatch) => {
+    rest.destroy(`/api/labels/${id}`)
+      .then(response => {})
+  }
+}

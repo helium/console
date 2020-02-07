@@ -1,9 +1,16 @@
 import React, { Component } from 'react'
+import { Query } from 'react-apollo';
+import { Link } from 'react-router-dom';
 import DashboardLayout from '../common/DashboardLayout'
 import CreateLabelModal from '../labels/CreateLabelModal'
+import { PAGINATED_LABELS } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Card, Button } from 'antd';
+import { Card, Button, Tag } from 'antd';
 
+const defaultVariables = {
+  page: 1,
+  pageSize: 10
+}
 
 class LabelIndex extends Component {
   constructor(props) {
@@ -40,6 +47,18 @@ class LabelIndex extends Component {
         >
           Create New Label
         </Button>
+
+        <Query query={PAGINATED_LABELS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
+          {({ data }) => {
+            return (
+              <div>
+                {data && data.labels.entries.map(l => (
+                  <p><Link to={`/labels/${l.id}`}>{l.name}</Link></p>
+                ))}
+              </div>
+            )
+          }}
+        </Query>
 
         <CreateLabelModal
           open={showCreateLabelModal}

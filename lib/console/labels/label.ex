@@ -18,6 +18,6 @@ defmodule Console.Labels.Label do
       device
       |> cast(attrs, [:name, :organization_id])
       |> validate_required([:name, :organization_id])
-      |> unique_constraint(:name, name: :labels_name_organization_id_index)
+      |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "Label already exists, please use another name.")
   end
 end
