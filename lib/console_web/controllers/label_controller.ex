@@ -33,16 +33,15 @@ defmodule ConsoleWeb.LabelController do
   #   end
   # end
   #
-  # def delete(conn, %{"id" => id}) do
-  #   current_organization = conn.assigns.current_organization
-  #   device = Devices.get_device!(id)
-  #
-  #   with {:ok, %Device{} = device} <- Devices.delete_device(device) do
-  #     broadcast(device)
-  #
-  #     conn
-  #     |> put_resp_header("message", "#{device.name} deleted successfully")
-  #     |> send_resp(:no_content, "")
-  #   end
-  # end
+  def delete(conn, %{"id" => id}) do
+    current_organization = conn.assigns.current_organization
+    label = Labels.get_label!(id)
+
+    with {:ok, %Label{} = label} <- Labels.delete_label(label) do
+
+      conn
+      |> put_resp_header("message", "#{label.name} deleted successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
 end

@@ -8,6 +8,15 @@ export const LABEL_FRAGMENT = gql`
   }
 `
 
+export const LABEL_SHOW = gql`
+  query LabelShowQuery ($id: ID!) {
+    label(id: $id) {
+      ...LabelFragment
+    },
+  }
+  ${LABEL_FRAGMENT}
+`
+
 export const PAGINATED_LABELS = gql`
   query PaginatedLabelsQuery ($page: Int, $pageSize: Int) {
     labels(page: $page, pageSize: $pageSize) {
