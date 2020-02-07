@@ -20,19 +20,18 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  # def update(conn, %{"id" => id, "device" => device_params}) do
-  #   current_organization = conn.assigns.current_organization
-  #   device = Devices.get_device!(id)
-  #
-  #   with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-  #     broadcast(device, device.id)
-  #
-  #     conn
-  #     |> put_resp_header("message", "#{device.name} updated successfully")
-  #     |> render("show.json", device: device)
-  #   end
-  # end
-  #
+  def update(conn, %{"id" => id, "label" => label_params}) do
+    current_organization = conn.assigns.current_organization
+    label = Labels.get_label!(id)
+
+    with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
+
+      conn
+      |> put_resp_header("message", "#{label.name} updated successfully")
+      |> render("show.json", label: label)
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(id)

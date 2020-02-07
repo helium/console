@@ -12,12 +12,12 @@ defmodule Console.Labels do
     |> Repo.insert()
   end
 
-  # def update_device(%Device{} = device, attrs) do
-  #   device
-  #   |> Device.changeset(attrs)
-  #   |> Repo.update()
-  # end
-  #
+  def update_label(%Label{} = label, attrs) do
+    label
+    |> Label.changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_label(%Label{} = label) do
     Repo.delete(label)
   end
