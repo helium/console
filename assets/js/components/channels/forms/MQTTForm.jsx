@@ -39,22 +39,24 @@ class MQTTForm extends Component {
 
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
         <Col sm={12}>
+          <Text>Endpoint</Text>
           <Input
-            placeholder="Endpoint"
+            placeholder="mqtt(s)://username:password@mqtt.example.com:1234"
             name="endpoint"
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
           />
           </Col>
-          <Col sm={12}>
+        <Col sm={12}>
+          <Text>Topic</Text>
           <Input
-            placeholder="Topic"
+            placeholder="helium/#"
             name="topic"
             value={this.state.topic}
             onChange={this.handleInputUpdate}
           />
-          </Col>
-          </Row>
+        </Col>
+        </Row>
       </div>
     );
   }
