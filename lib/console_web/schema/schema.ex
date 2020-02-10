@@ -21,6 +21,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
+    field :devices, list_of(:device)
   end
 
   paginated object :channel do

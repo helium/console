@@ -3,6 +3,8 @@ defmodule Console.Labels.Label do
   import Ecto.Changeset
 
   alias Console.Organizations.Organization
+  alias Console.Devices.Device
+  alias Console.Labels.DevicesLabels
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -10,6 +12,7 @@ defmodule Console.Labels.Label do
     field :name, :string
 
     belongs_to :organization, Organization
+    many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     timestamps()
   end
 

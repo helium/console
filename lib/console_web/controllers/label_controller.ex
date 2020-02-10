@@ -44,20 +44,23 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  def add_devices_to_labels(conn, %{"devices" => devices, "labels" => labels}) do
+  def add_devices_to_label(conn, %{"devices" => devices, "labels" => labels, "to_label" => to_label}) do
     current_organization = conn.assigns.current_organization
 
-    cond do
-      length(devices) == 0 ->
-        {:error, :bad_request, "Please select a device"}
-      length(labels) == 0 ->
-        {:error, :bad_request, "Please select a label"}
-      true ->
-        with {:ok, :ok} <- Labels.add_devices_to_labels(devices, labels, current_organization) do
-          conn
-          |> put_resp_header("message", "Devices added to labels successfully")
-          |> send_resp(:no_content, "")
-        end
+    if length(devices) == 0 and length(labels) == 0 do
+      {:error, :bad_request, "Please select a device or label"}
+    else
+      with {:ok, count} <- Labels.add_devices_to_label(devices, labels, to_label, current_organization) do
+        msg =
+          case count do
+            0 -> "All selected devices are already in label"
+            _ -> "#{count} Devices added to label successfully"
+          end
+
+        conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
+      end
     end
   end
 end

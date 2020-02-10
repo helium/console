@@ -30,11 +30,12 @@ export const deleteLabel = (id) => {
   }
 }
 
-export const addDevicesToLabels = (devices, labels) => {
+export const addDevicesToLabels = (devices, labels, toLabel) => {
   return (dispatch) => {
     rest.post(`/api/devices_labels`, {
       devices: Object.keys(devices),
-      labels: Object.keys(labels)
+      labels: Object.keys(labels),
+      to_label: toLabel
     })
     .then(response => {})
   }

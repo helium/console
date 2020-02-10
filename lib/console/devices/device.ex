@@ -7,6 +7,8 @@ defmodule Console.Devices.Device do
   alias Console.Channels.Channel
   alias Console.Devices
   alias Console.Devices.DevicesChannels
+  alias Console.Labels.DevicesLabels
+  alias Console.Labels.Label
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,6 +23,7 @@ defmodule Console.Devices.Device do
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: DevicesChannels, on_delete: :delete_all
+    many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
 
     timestamps()
   end

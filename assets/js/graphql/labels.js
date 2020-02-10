@@ -5,6 +5,10 @@ export const LABEL_FRAGMENT = gql`
     name,
     id,
     inserted_at,
+    devices{
+      name,
+      id
+    }
   }
 `
 
