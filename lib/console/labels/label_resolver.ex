@@ -16,4 +16,12 @@ defmodule Console.Labels.LabelResolver do
 
     {:ok, label}
   end
+
+  def all(_, %{context: %{current_organization: current_organization}}) do
+    labels = Label
+      |> where([l], l.organization_id == ^current_organization.id)
+      |> Repo.all()
+
+    {:ok, labels}
+  end
 end

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { updateLabel } from '../../actions/label'
 import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
 
@@ -56,10 +55,6 @@ class UpdateLabelModal extends Component {
       </Modal>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createLabel }, dispatch)
 }
 
 export default UpdateLabelModal

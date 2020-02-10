@@ -53,7 +53,7 @@ class LabelIndex extends Component {
             return (
               <div>
                 {data && data.labels.entries.map(l => (
-                  <p><Link to={`/labels/${l.id}`}>{l.name}</Link></p>
+                  <p key={l.id}><Link to={`/labels/${l.id}`}>{l.name}</Link></p>
                 ))}
               </div>
             )

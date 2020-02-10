@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import UpdateLabelModal from './UpdateLabelModal'
+import LabelAddDeviceModal from './LabelAddDeviceModal'
 import DashboardLayout from '../common/DashboardLayout'
 import { updateLabel, deleteLabel } from '../../actions/label'
 import { LABEL_SHOW } from '../../graphql/labels'
@@ -16,9 +17,12 @@ class LabelShow extends Component {
     super(props)
     this.state = {
       showUpdateLabelModal: false,
+      showLabelAddDeviceModal: false,
     }
     this.openUpdateLabelModal = this.openUpdateLabelModal.bind(this)
     this.closeUpdateLabelModal = this.closeUpdateLabelModal.bind(this)
+    this.openLabelAddDeviceModal = this.openLabelAddDeviceModal.bind(this)
+    this.closeLabelAddDeviceModal = this.closeLabelAddDeviceModal.bind(this)
     this.handleUpdateLabel = this.handleUpdateLabel.bind(this)
   }
 
@@ -33,6 +37,14 @@ class LabelShow extends Component {
 
   closeUpdateLabelModal() {
     this.setState({ showUpdateLabelModal: false })
+  }
+
+  openLabelAddDeviceModal() {
+    this.setState({ showLabelAddDeviceModal: true })
+  }
+
+  closeLabelAddDeviceModal() {
+    this.setState({ showLabelAddDeviceModal: false })
   }
 
   handleUpdateLabel(name) {
@@ -52,9 +64,17 @@ class LabelShow extends Component {
         <Button
           size="large"
           icon="setting"
-          onClick={() => this.setState({ showUpdateLabelModal: true })}
+          onClick={this.openUpdateLabelModal}
         >
           Label Settings
+        </Button>
+        <Button
+          size="large"
+          type="primary"
+          onClick={this.openLabelAddDeviceModal}
+          icon="tag"
+        >
+          Add this Label to a Device
         </Button>
         <Button
           size="large"
@@ -67,6 +87,12 @@ class LabelShow extends Component {
           handleUpdateLabel={this.handleUpdateLabel}
           open={this.state.showUpdateLabelModal}
           onClose={this.closeUpdateLabelModal}
+        />
+
+        <LabelAddDeviceModal
+          label={label}
+          open={this.state.showLabelAddDeviceModal}
+          onClose={this.closeLabelAddDeviceModal}
         />
       </DashboardLayout>
     )

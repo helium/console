@@ -34,4 +34,12 @@ defmodule Console.Devices.DeviceResolver do
     device = Map.put(device, :key, key)
     {:ok, device}
   end
+
+  def all(_, %{context: %{current_organization: current_organization}}) do
+    devices = Device
+      |> where([d], d.organization_id == ^current_organization.id)
+      |> Repo.all()
+
+    {:ok, devices}
+  end
 end

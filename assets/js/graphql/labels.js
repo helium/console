@@ -31,3 +31,16 @@ export const PAGINATED_LABELS = gql`
   }
   ${LABEL_FRAGMENT}
 `
+
+export const LABELS_DEVICES = gql`
+  query LabelsDevicesQuery {
+    allLabels {
+      id,
+      name,
+    }
+    allDevices {
+      id,
+      name,
+    }
+  }
+`

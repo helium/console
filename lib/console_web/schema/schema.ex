@@ -103,6 +103,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.find/2
     end
 
+    field :all_devices, list_of(:device) do
+      resolve &Console.Devices.DeviceResolver.all/2
+    end
+
     @desc "Get paginated labels"
     paginated field :labels, :paginated_labels do
       resolve(&Console.Labels.LabelResolver.paginate/2)
@@ -112,6 +116,10 @@ defmodule ConsoleWeb.Schema do
     field :label, :label do
       arg :id, non_null(:id)
       resolve &Console.Labels.LabelResolver.find/2
+    end
+
+    field :all_labels, list_of(:label) do
+      resolve &Console.Labels.LabelResolver.all/2
     end
 
     @desc "Get paginated gateways"
