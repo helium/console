@@ -29,3 +29,13 @@ export const deleteLabel = (id) => {
       })
   }
 }
+
+export const addDevicesToLabels = (devices, labels) => {
+  return (dispatch) => {
+    rest.post(`/api/devices_labels`, {
+      devices: Object.keys(devices),
+      labels: Object.keys(labels)
+    })
+    .then(response => {})
+  }
+}

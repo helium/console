@@ -46,6 +46,8 @@ defmodule ConsoleWeb.Router do
       post "/switch", OrganizationController, :switch
     end
 
+    post "/devices_labels", LabelController, :add_devices_to_labels
+
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
 

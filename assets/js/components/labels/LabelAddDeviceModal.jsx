@@ -22,6 +22,10 @@ class LabelAddDeviceModal extends Component {
   }
 
   handleSubmit() {
+    const { checkedDevices, checkedLabels } = this.state
+
+    this.props.addDevicesToLabels(checkedDevices, checkedLabels)
+    
     this.props.onClose()
   }
 

@@ -43,4 +43,21 @@ defmodule ConsoleWeb.LabelController do
       |> send_resp(:no_content, "")
     end
   end
+
+  def add_devices_to_labels(conn, %{"devices" => devices, "labels" => labels}) do
+    current_organization = conn.assigns.current_organization
+
+    cond do
+      length(devices) == 0 ->
+        {:error, :bad_request, "Please select a device"}
+      length(labels) == 0 ->
+        {:error, :bad_request, "Please select a label"}
+      true ->
+        with {:ok, :ok} <- Labels.add_devices_to_labels(devices, labels, current_organization) do
+          conn
+          |> put_resp_header("message", "Devices added to labels successfully")
+          |> send_resp(:no_content, "")
+        end
+    end
+  end
 end

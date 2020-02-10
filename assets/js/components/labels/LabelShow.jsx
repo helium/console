@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import UpdateLabelModal from './UpdateLabelModal'
 import LabelAddDeviceModal from './LabelAddDeviceModal'
 import DashboardLayout from '../common/DashboardLayout'
-import { updateLabel, deleteLabel } from '../../actions/label'
+import { updateLabel, deleteLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -91,6 +91,7 @@ class LabelShow extends Component {
 
         <LabelAddDeviceModal
           label={label}
+          addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
         />
@@ -109,7 +110,7 @@ const queryOptions = {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, deleteLabel }, dispatch)
+  return bindActionCreators({ updateLabel, deleteLabel, addDevicesToLabels }, dispatch)
 }
 
 const LabelShowWithData = graphql(LABEL_SHOW, queryOptions)(LabelShow)
