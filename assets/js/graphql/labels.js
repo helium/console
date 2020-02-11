@@ -49,3 +49,13 @@ export const LABELS_DEVICES = gql`
     }
   }
 `
+
+export const MENU_LABELS = gql`
+  query MenuLabelsQuery {
+    allLabels {
+      id,
+      name,
+      color
+    }
+  }
+`
