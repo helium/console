@@ -37,6 +37,7 @@ export const PAGINATED_LABELS = gql`
   ${LABEL_FRAGMENT}
 `
 
+// For LabelAddDeviceModal
 export const LABELS_DEVICES = gql`
   query LabelsDevicesQuery {
     allLabels {
@@ -50,6 +51,7 @@ export const LABELS_DEVICES = gql`
   }
 `
 
+// For NavDrawer
 export const MENU_LABELS = gql`
   query MenuLabelsQuery {
     allLabels {

@@ -47,3 +47,24 @@ export const PAGINATED_DEVICES = gql`
   }
   ${DEVICE_FRAGMENT}
 `
+
+// For LabelShowTable
+export const PAGINATED_DEVICES_BY_LABEL = gql`
+  query PaginatedDevicesByLabelQuery ($page: Int, $pageSize: Int, $labelId: String) {
+    devices_by_label(page: $page, pageSize: $pageSize, labelId: $labelId) {
+      entries {
+        name,
+        id,
+        inserted_at
+        labels {
+          name,
+          color
+        }
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`

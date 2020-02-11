@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { Link } from 'react-router-dom';
 import UpdateLabelModal from './UpdateLabelModal'
 import LabelAddDeviceModal from './LabelAddDeviceModal'
+import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
+import LabelTag from '../common/LabelTag'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
+const { Text } = Typography
 
 @connect(null, mapDispatchToProps)
 class LabelShow extends Component {
@@ -63,39 +67,57 @@ class LabelShow extends Component {
       return map
     }, {})
 
-    return(
-      <DashboardLayout title={`${label.name}`}>
-        <Button
-          size="large"
-          icon="setting"
-          onClick={this.openUpdateLabelModal}
+    return (
+      <div>
+        <DashboardLayout
+          breadCrumbs={
+            <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+              <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
+              <Text>&nbsp;&nbsp;{label.name}</Text>
+            </div>
+          }
+          title={`${label.name}`}
+          extra={
+            <span>
+              <Button
+                size="large"
+                icon="setting"
+                onClick={this.openUpdateLabelModal}
+              >
+                Label Settings
+              </Button>
+              <Button
+                size="large"
+                type="primary"
+                onClick={this.openLabelAddDeviceModal}
+                icon="tag"
+                style={{ marginLeft: 20 }}
+              >
+                Add this Label to a Device
+              </Button>
+            </span>
+          }
         >
-          Label Settings
-        </Button>
-        <Button
-          size="large"
-          type="primary"
-          onClick={this.openLabelAddDeviceModal}
-          icon="tag"
-        >
-          Add this Label to a Device
-        </Button>
+          <LabelTag text={label.name} color={label.color} style={{ position: 'relative', top: -30 }}/>
 
-        <UpdateLabelModal
-          handleUpdateLabel={this.handleUpdateLabel}
-          open={this.state.showUpdateLabelModal}
-          onClose={this.closeUpdateLabelModal}
-          label={label}
-        />
+          <LabelShowTable labelId={this.props.match.params.id}/>
 
-        <LabelAddDeviceModal
-          label={label}
-          labelNormalizedDevices={normalizedDevices}
-          addDevicesToLabels={this.props.addDevicesToLabels}
-          open={this.state.showLabelAddDeviceModal}
-          onClose={this.closeLabelAddDeviceModal}
-        />
-      </DashboardLayout>
+          <UpdateLabelModal
+            handleUpdateLabel={this.handleUpdateLabel}
+            open={this.state.showUpdateLabelModal}
+            onClose={this.closeUpdateLabelModal}
+            label={label}
+          />
+
+          <LabelAddDeviceModal
+            label={label}
+            labelNormalizedDevices={normalizedDevices}
+            addDevicesToLabels={this.props.addDevicesToLabels}
+            open={this.state.showLabelAddDeviceModal}
+            onClose={this.closeLabelAddDeviceModal}
+          />
+        </DashboardLayout>
+      </div>
     )
   }
 }

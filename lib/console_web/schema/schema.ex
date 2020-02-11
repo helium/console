@@ -15,6 +15,7 @@ defmodule ConsoleWeb.Schema do
     field :organization, :organization
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
+    field :labels, list_of(:label)
   end
 
   paginated object :label do
@@ -97,6 +98,12 @@ defmodule ConsoleWeb.Schema do
     @desc "Get paginated devices"
     paginated field :devices, :paginated_devices do
       resolve(&Console.Devices.DeviceResolver.paginate/2)
+    end
+
+    @desc "Get paginated devices for specified label ID"
+    paginated field :devices_by_label, :paginated_devices do
+      arg :label_id, non_null(:id)
+      resolve(&Console.Devices.DeviceResolver.paginate_by_label/2)
     end
 
     @desc "Get a single device"

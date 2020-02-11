@@ -22,7 +22,7 @@ class NavDrawer extends Component {
 
   render() {
     const { history, data } = this.props
-    console.log(data.allLabels)
+
     return (
       <div>
         <Menu
