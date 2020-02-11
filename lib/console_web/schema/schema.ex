@@ -20,6 +20,7 @@ defmodule ConsoleWeb.Schema do
   paginated object :label do
     field :id, :id
     field :name, :string
+    field :color, :string
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
   end

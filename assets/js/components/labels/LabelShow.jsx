@@ -47,9 +47,10 @@ class LabelShow extends Component {
     this.setState({ showLabelAddDeviceModal: false })
   }
 
-  handleUpdateLabel(name) {
+  handleUpdateLabel(name, color) {
     const labelId = this.props.match.params.id
-    this.props.updateLabel(labelId, { name })
+    const attrs = name ? { name, color } : { color }
+    this.props.updateLabel(labelId, attrs)
     // analyticsLogger.logEvent("ACTION_UPDATE_LABEL", {"name": name, "id": labelId})
   }
 
@@ -84,6 +85,7 @@ class LabelShow extends Component {
           handleUpdateLabel={this.handleUpdateLabel}
           open={this.state.showUpdateLabelModal}
           onClose={this.closeUpdateLabelModal}
+          label={label}
         />
 
         <LabelAddDeviceModal

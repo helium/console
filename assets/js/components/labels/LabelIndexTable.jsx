@@ -7,8 +7,9 @@ import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import { deleteLabel } from '../../actions/label'
+import LabelTag from '../common/LabelTag'
 import { PAGINATED_LABELS } from '../../graphql/labels'
-import { Card, Button, Tag, Typography, Table, Pagination } from 'antd';
+import { Card, Button, Typography, Table, Pagination } from 'antd';
 const { Text } = Typography
 
 const defaultVariables = {
@@ -23,6 +24,11 @@ class LabelIndexTable extends Component {
       {
         title: 'Labels',
         dataIndex: 'name',
+        render: (text, record) => (
+          <React.Fragment>
+            <Text>{text}</Text><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
+          </React.Fragment>
+        )
       },
       {
         title: 'No. of Devices',
@@ -32,7 +38,7 @@ class LabelIndexTable extends Component {
       {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
-        render: data => moment(data).format('lll')
+        render: data => moment.utc(data).local().format('lll')
       },
       {
         title: 'Action',

@@ -47,7 +47,7 @@ class CreateLabelModal extends Component {
           <Button key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button key="submit" onClick={this.handleSubmit}>
+          <Button key="submit" onClick={this.handleSubmit} type="primary">
             Create Label
           </Button>
         ]}

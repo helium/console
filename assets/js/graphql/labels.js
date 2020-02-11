@@ -4,6 +4,7 @@ export const LABEL_FRAGMENT = gql`
   fragment LabelFragment on Label {
     name,
     id,
+    color,
     inserted_at,
     devices{
       name,
