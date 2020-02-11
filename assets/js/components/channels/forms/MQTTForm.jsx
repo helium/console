@@ -38,6 +38,7 @@ class MQTTForm extends Component {
         </Text>
 
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
+
         <Col sm={12}>
           <Text>Endpoint</Text>
           <Input
@@ -50,11 +51,14 @@ class MQTTForm extends Component {
         <Col sm={12}>
           <Text>Topic</Text>
           <Input
-            placeholder="helium/#"
+            placeholder="See examples below"
             name="topic"
             value={this.state.topic}
             onChange={this.handleInputUpdate}
           />
+          <Text>{"Uplink: {topic_entry}/helium/{AppEui}/rx"}</Text>
+          <br />
+          <Text>{"Downlink: {topic_entry}/helium/{AppEui/tx"}</Text>
         </Col>
         </Row>
       </div>
