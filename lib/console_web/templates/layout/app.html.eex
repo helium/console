@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Helium:Console</title>
+    <title>Helium Console</title>
     <link rel="icon" href="<%= static_path(@conn, "/favicon.png") %>" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
   </head>
