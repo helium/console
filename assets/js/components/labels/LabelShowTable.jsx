@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
-import { deleteDevice } from '../../actions/device'
-import { removeDeviceFromLabels } from '../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
@@ -19,7 +15,6 @@ const defaultVariables = {
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class LabelShowTable extends Component {
   render() {
     const columns = [
@@ -50,9 +45,7 @@ class LabelShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            {false && <Link to="#" onClick={() => this.props.deleteDevice(record.id, false)}>Delete</Link>}
-            {false && <Text>{" | "}</Text>}
-            <Link to="#" onClick={() => this.props.removeDeviceFromLabels([record], this.props.labelId)}>Remove</Link>
+            <Link to="#" onClick={() => this.props.openRemoveLabelModal([record])}>Remove</Link>
             <Text>{" | "}</Text>
             <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
@@ -95,7 +88,7 @@ class QueryResults extends Component {
   }
 
   handleSelectOption() {
-    this.props.removeDeviceFromLabels(this.state.selectedRows, this.props.labelId)
+    this.props.openRemoveLabelModal(this.state.selectedRows)
   }
 
   render() {
@@ -153,10 +146,6 @@ class QueryResults extends Component {
       </Card>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice, removeDeviceFromLabels }, dispatch)
 }
 
 export default LabelShowTable

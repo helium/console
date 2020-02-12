@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
-import CreateLabelModal from '../labels/CreateLabelModal'
-import LabelIndexTable from '../labels/LabelIndexTable'
+import CreateLabelModal from './CreateLabelModal'
+import DeleteLabelModal from './DeleteLabelModal'
+import LabelIndexTable from './LabelIndexTable'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
 
@@ -10,9 +11,13 @@ class LabelIndex extends Component {
     super(props)
     this.state = {
       showCreateLabelModal: false,
+      showDeleteLabelModal: false,
+      labelId: null,
     }
     this.openCreateLabelModal = this.openCreateLabelModal.bind(this)
     this.closeCreateLabelModal = this.closeCreateLabelModal.bind(this)
+    this.openDeleteLabelModal = this.openDeleteLabelModal.bind(this)
+    this.closeDeleteLabelModal = this.closeDeleteLabelModal.bind(this)
   }
 
   componentDidMount() {
@@ -27,15 +32,32 @@ class LabelIndex extends Component {
     this.setState({ showCreateLabelModal: false })
   }
 
+  openDeleteLabelModal(labelId) {
+    this.setState({ showDeleteLabelModal: true, labelId })
+  }
+
+  closeDeleteLabelModal() {
+    this.setState({ showDeleteLabelModal: false })
+  }
+
   render() {
-    const { showCreateLabelModal } = this.state
+    const { showCreateLabelModal, showDeleteLabelModal } = this.state
     return (
       <DashboardLayout title="Labels">
-        <LabelIndexTable openCreateLabelModal={this.openCreateLabelModal}/>
+        <LabelIndexTable
+          openCreateLabelModal={this.openCreateLabelModal}
+          openDeleteLabelModal={this.openDeleteLabelModal}
+        />
 
         <CreateLabelModal
           open={showCreateLabelModal}
           onClose={this.closeCreateLabelModal}
+        />
+
+        <DeleteLabelModal
+          open={showDeleteLabelModal}
+          onClose={this.closeDeleteLabelModal}
+          labelId={this.state.labelId}
         />
       </DashboardLayout>
     )

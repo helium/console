@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import UpdateLabelModal from './UpdateLabelModal'
 import LabelAddDeviceModal from './LabelAddDeviceModal'
+import RemoveLabelModal from './RemoveLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
 import LabelTag from '../common/LabelTag'
@@ -22,17 +23,16 @@ class LabelShow extends Component {
     this.state = {
       showUpdateLabelModal: false,
       showLabelAddDeviceModal: false,
+      showRemoveLabelModal: false,
+      devicesToRemove: [],
     }
     this.openUpdateLabelModal = this.openUpdateLabelModal.bind(this)
     this.closeUpdateLabelModal = this.closeUpdateLabelModal.bind(this)
     this.openLabelAddDeviceModal = this.openLabelAddDeviceModal.bind(this)
     this.closeLabelAddDeviceModal = this.closeLabelAddDeviceModal.bind(this)
+    this.openRemoveLabelModal = this.openRemoveLabelModal.bind(this)
+    this.closeRemoveLabelModal = this.closeRemoveLabelModal.bind(this)
     this.handleUpdateLabel = this.handleUpdateLabel.bind(this)
-  }
-
-  componentDidMount() {
-    const labelId = this.props.match.params.id
-    // analyticsLogger.logEvent("ACTION_NAV_LABEL_SHOW", {"id": labelId})
   }
 
   openUpdateLabelModal() {
@@ -49,6 +49,14 @@ class LabelShow extends Component {
 
   closeLabelAddDeviceModal() {
     this.setState({ showLabelAddDeviceModal: false })
+  }
+
+  openRemoveLabelModal(devicesToRemove) {
+    this.setState({ showRemoveLabelModal: true, devicesToRemove })
+  }
+
+  closeRemoveLabelModal() {
+    this.setState({ showRemoveLabelModal: false })
   }
 
   handleUpdateLabel(name, color) {
@@ -100,7 +108,7 @@ class LabelShow extends Component {
         >
           <LabelTag text={label.name} color={label.color} style={{ position: 'relative', top: -30 }}/>
 
-          <LabelShowTable labelId={this.props.match.params.id}/>
+          <LabelShowTable labelId={this.props.match.params.id} openRemoveLabelModal={this.openRemoveLabelModal} />
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
@@ -115,6 +123,13 @@ class LabelShow extends Component {
             addDevicesToLabels={this.props.addDevicesToLabels}
             open={this.state.showLabelAddDeviceModal}
             onClose={this.closeLabelAddDeviceModal}
+          />
+
+          <RemoveLabelModal
+            label={label}
+            open={this.state.showRemoveLabelModal}
+            onClose={this.closeRemoveLabelModal}
+            devicesToRemove={this.state.devicesToRemove}
           />
         </DashboardLayout>
       </div>

@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
-import { deleteLabel } from '../../actions/label'
 import LabelTag from '../common/LabelTag'
 import { PAGINATED_LABELS } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination } from 'antd';
@@ -17,7 +14,6 @@ const defaultVariables = {
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class LabelIndexTable extends Component {
   render() {
     const columns = [
@@ -45,7 +41,7 @@ class LabelIndexTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.deleteLabel(record.id)}>Delete</Link>
+            <Link to="#" onClick={() => this.props.openDeleteLabelModal(record.id)}>Delete</Link>
             <Text>{" | "}</Text>
             <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
@@ -125,10 +121,6 @@ class QueryResults extends Component {
       </Card>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteLabel }, dispatch)
 }
 
 export default LabelIndexTable
