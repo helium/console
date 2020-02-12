@@ -92,18 +92,6 @@ class QueryResults extends Component {
 
     const results = find(data, d => d.entries !== undefined)
 
-    const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-
-      },
-      onSelect: (record, selected, selectedRows) => {
-
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-
-      },
-    }
-
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
@@ -124,7 +112,6 @@ class QueryResults extends Component {
           dataSource={results.entries}
           rowKey={record => record.id}
           pagination={false}
-          rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
