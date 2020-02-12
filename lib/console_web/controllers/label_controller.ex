@@ -65,10 +65,10 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  def delete_device_from_label(conn, %{"device_id" => device_id, "label_id" => label_id}) do
-    with {:ok, _} <- Labels.delete_device_label(device_id, label_id) do
+  def delete_devices_from_label(conn, %{"devices" => devices, "label_id" => label_id}) do
+    with {_, nil} <- Labels.delete_devices_labels(devices, label_id) do
       conn
-      |> put_resp_header("message", "Device successfully removed from label")
+      |> put_resp_header("message", "Device(s) successfully removed from label")
       |> send_resp(:no_content, "")
     end
   end

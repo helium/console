@@ -8,10 +8,11 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import { deleteDevice } from '../../actions/device'
-import { removeDeviceFromLabel } from '../../actions/label'
+import { removeDeviceFromLabels } from '../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
-import { Card, Button, Typography, Table, Pagination } from 'antd';
+import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
+const { Option } = Select
 
 const defaultVariables = {
   page: 1,
@@ -49,9 +50,9 @@ class LabelShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.deleteDevice(record.id, false)}>Delete</Link>
-            <Text>{" | "}</Text>
-            <Link to="#" onClick={() => this.props.removeDeviceFromLabel(record.id, this.props.labelId)}>Remove</Link>
+            {false && <Link to="#" onClick={() => this.props.deleteDevice(record.id, false)}>Delete</Link>}
+            {false && <Text>{" | "}</Text>}
+            <Link to="#" onClick={() => this.props.removeDeviceFromLabels([record], this.props.labelId)}>Remove</Link>
             <Text>{" | "}</Text>
             <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
@@ -86,8 +87,15 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10,
+      selectedRows: [],
     }
+
+    this.handleSelectOption = this.handleSelectOption.bind(this)
+  }
+
+  handleSelectOption() {
+    this.props.removeDeviceFromLabels(this.state.selectedRows, this.props.labelId)
   }
 
   render() {
@@ -101,14 +109,14 @@ class QueryResults extends Component {
     const results = find(data, d => d.entries !== undefined)
 
     const rowSelection = {
-      onChange: (selectedRowKeys, selectedRows) => {
-
+      onSelect: (record, selected) => {
+        const { selectedRows } = this.state
+        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
+        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
       },
-      onSelect: (record, selected, selectedRows) => {
-
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-
+      onSelectAll: (selected, selectedRows) => {
+        if (selected) this.setState({ selectedRows })
+        else this.setState({ selectedRows: [] })
       },
     }
 
@@ -116,6 +124,15 @@ class QueryResults extends Component {
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${results.entries.length} Devices`}
+        extra={
+          <Select
+            value="Quick Action"
+            style={{ width: 220 }}
+            onSelect={this.handleSelectOption}
+          >
+            <Option value="remove" style={{ color: '#F5222D' }}>Remove Devices from Label</Option>
+          </Select>
+        }
       >
         <Table
           columns={columns}
@@ -139,7 +156,7 @@ class QueryResults extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice, removeDeviceFromLabel }, dispatch)
+  return bindActionCreators({ deleteDevice, removeDeviceFromLabels }, dispatch)
 }
 
 export default LabelShowTable

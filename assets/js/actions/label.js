@@ -43,9 +43,12 @@ export const addDevicesToLabels = (devices, labels, toLabel) => {
   }
 }
 
-export const removeDeviceFromLabel = (device_id, label_id) => {
+export const removeDeviceFromLabels = (devices, label_id) => {
   return (dispatch) => {
-    rest.destroy(`/api/devices_labels?device_id=${device_id}&label_id=${label_id}`)
+    rest.post(`/api/devices_labels/delete`, {
+      devices: devices.map(d => d.id),
+      label_id,
+    })
     .then(response => {})
   }
 }

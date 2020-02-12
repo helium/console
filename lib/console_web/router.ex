@@ -47,7 +47,7 @@ defmodule ConsoleWeb.Router do
     end
 
     post "/devices_labels", LabelController, :add_devices_to_label
-    delete "/devices_labels", LabelController, :delete_device_from_label
+    post "/devices_labels/delete", LabelController, :delete_devices_from_label
 
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
