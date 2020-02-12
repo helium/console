@@ -85,10 +85,27 @@ class QueryResults extends Component {
     }
 
     this.handleSelectOption = this.handleSelectOption.bind(this)
+    this.handleChangePage = this.handleChangePage.bind(this)
+    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
   }
 
   handleSelectOption() {
     this.props.openRemoveLabelModal(this.state.selectedRows)
+  }
+
+  handleChangePage(page) {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries(page, pageSize) {
+    const { fetchMore } = this.props
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
   }
 
   render() {

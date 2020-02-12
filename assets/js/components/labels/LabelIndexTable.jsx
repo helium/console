@@ -76,6 +76,24 @@ class QueryResults extends Component {
       page: 1,
       pageSize: get(props, ['variables', 'pageSize']) || 10
     }
+
+    this.handleChangePage = this.handleChangePage.bind(this)
+    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
+  }
+
+  handleChangePage(page) {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries(page, pageSize) {
+    const { fetchMore } = this.props
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
   }
 
   render() {
