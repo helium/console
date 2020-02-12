@@ -1,7 +1,38 @@
-<p>Hi,</p>
-<p>
-  <%= @inviter_email %> at <%= @organization_name %> has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> to Helium Console. Click
-  <a href="<%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %>">
-    this link
-  </a> to complete registration of your account.
-</p>
+<div style="padding-top: 80px;">
+  <div style="margin: 0px auto; width: 59px;">
+    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-logo-gray.png") %>">
+  </div>
+</div>
+
+<div style="width: calc(55% + 188px); margin: 40px auto 0px;">
+  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-invite-header.png") %>" style="width: 100%;">
+</div>
+
+<div style="width: 55%; margin: 0px auto; background-color:white; padding: 20px 40px 40px 40px;">
+  <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size: 20px;'>
+    Hi there,
+  </p>
+  <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size: 20px;'>
+    <b style="color: black; text-decoration: none;"><%= @inviter_email %></b> at <b><%= @organization_name %></b> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> to the Helium Console.
+  </p>
+  <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size: 20px;'>
+    Click the button below to complete registration of your account.
+  </p>
+  <a href="<%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %>" style="text-decoration: none;">
+  <div style="background-color:#36CFC9; height: 56px; border-radius: 6px; margin-top: 40px;">
+    <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size: 20px; color: white; text-align: center; padding-top: 14px; height: 28px;'>
+      Join <%= @organization_name %> as <%= @role %>
+    </p>
+  </div>
+  </a>
+</div>
+
+<div style="width: calc(55% + 80px); margin: 0px auto;">
+  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-bottom-border.png") %>" style="width: 100%;">
+</div>
+
+<div style="margin-top: 60px; padding-bottom: 80px;">
+  <div style="margin: 0px auto; width: 247px;">
+    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-text-logo.png") %>" style="opacity: 50%; height: 30px;">
+  </div>
+</div>

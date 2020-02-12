@@ -1,2 +1,5 @@
-Welcome to Helium Console.
-Visit <%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %> to confirm your email.
+Welcome to Helium Console!
+
+Please confirm your account by visiting the link below. If you did not request an account, you can ignore this message.
+
+<%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %>

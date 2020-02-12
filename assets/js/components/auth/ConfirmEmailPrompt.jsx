@@ -21,7 +21,7 @@ class ConfirmEmailPrompt extends Component {
           <Text>
             Please check your inbox for a confirmation email
           </Text>
-          <Row gutter={16} style={{marginTop: 20}}>
+          <Row gutter={16} style={{marginTop: 20, display: 'flex', justifyContent: 'center' }}>
             <Col sm={12}>
             <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
               Go to Login

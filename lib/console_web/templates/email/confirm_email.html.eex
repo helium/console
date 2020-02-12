@@ -1,6 +1,35 @@
-<p>
-  Welcome to Helium Console.
-  <a href="<%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %>">
-    Click here to confirm your account
-  </a>.
-</p>
+<div style="padding-top: 80px;">
+  <div style="margin: 0px auto; width: 59px;">
+    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-logo-blue.png") %>">
+  </div>
+</div>
+
+<div style="width: calc(55% + 80px); margin: 60px auto 0px;">
+  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-dashboard.png") %>" style="width: 100%;">
+</div>
+
+<div style="width: 55%; margin: 0px auto; background-color:white; padding: 40px;">
+  <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size: 30px; margin-top: 0px;'>
+    Welcome to Helium Console!
+  </p>
+  <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size: 20px;'>
+    Please confirm your account by clicking the link below. If you did not request an account, you can ignore this message.
+  </p>
+  <a href="<%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %>" style="text-decoration: none;">
+  <div style="background-color:#4091F7; height: 56px; border-radius: 6px; margin-top: 40px;">
+    <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size: 20px; color: white; text-align: center; padding-top: 14px; height: 28px;'>
+      Confirm my Account
+    </p>
+  </div>
+  </a>
+</div>
+
+<div style="width: calc(55% + 80px); margin: 0px auto;">
+  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-bottom-border.png") %>" style="width: 100%;">
+</div>
+
+<div style="margin-top: 60px; padding-bottom: 80px;">
+  <div style="margin: 0px auto; width: 247px;">
+    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-text-logo.png") %>" style="opacity: 50%; height: 30px;">
+  </div>
+</div>

@@ -1,7 +1,7 @@
 <html>
   <head>
   </head>
-  <body>
+  <body style="background-color: #EFEFEF;">
     <%= render @view_module, @view_template, assigns %>
   </body>
 </html>

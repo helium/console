@@ -23,12 +23,14 @@ defmodule Console.Email do
   end
 
   def invitation_email(%Invitation{email: email, token: token, role: role}, %User{email: inviter_email}, %Organization{name: organization_name}) do
+    role_hash = %{ "admin" => "Administrator", "manager" => "Manager" }
+
     base_email()
     |> to(email)
     |> subject("You've been invited to join Helium")
     |> assign(:token, token)
     |> assign(:inviter_email, inviter_email)
-    |> assign(:role, role)
+    |> assign(:role, Map.fetch!(role_hash, role))
     |> assign(:organization_name, organization_name)
     |> render(:invitation_email)
   end
