@@ -37,11 +37,11 @@ export const updateDevice = (id, params) => {
   }
 }
 
-export const deleteDevice = (id) => {
+export const deleteDevice = (id, redirect = true) => {
   return (dispatch) => {
     rest.destroy(`/api/devices/${id}`)
       .then(response => {
-        dispatch(replace('/devices'))
+        if (redirect) dispatch(replace('/devices'))
       })
   }
 }

@@ -3,6 +3,7 @@ defmodule ConsoleWeb.LabelController do
 
   alias Console.Labels
   alias Console.Labels.Label
+  alias Console.Labels.DevicesLabels
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -61,6 +62,14 @@ defmodule ConsoleWeb.LabelController do
         |> put_resp_header("message", msg)
         |> send_resp(:no_content, "")
       end
+    end
+  end
+
+  def delete_device_from_label(conn, %{"device_id" => device_id, "label_id" => label_id}) do
+    with {:ok, _} <- Labels.delete_device_label(device_id, label_id) do
+      conn
+      |> put_resp_header("message", "Device successfully removed from label")
+      |> send_resp(:no_content, "")
     end
   end
 end

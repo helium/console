@@ -7,6 +7,8 @@ import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
+import { deleteDevice } from '../../actions/device'
+import { removeDeviceFromLabel } from '../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination } from 'antd';
 const { Text } = Typography
@@ -25,7 +27,7 @@ class LabelShowTable extends Component {
         dataIndex: 'name',
       },
       {
-        title: 'Device Name',
+        title: 'Labels',
         dataIndex: 'labels',
         render: (text, record) => (
           <span>
@@ -47,11 +49,11 @@ class LabelShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#">Delete</Link>
+            <Link to="#" onClick={() => this.props.deleteDevice(record.id, false)}>Delete</Link>
             <Text>{" | "}</Text>
-            <Link to="#">Remove</Link>
+            <Link to="#" onClick={() => this.props.removeDeviceFromLabel(record.id, this.props.labelId)}>Remove</Link>
             <Text>{" | "}</Text>
-            <Link to={`/labels/${record.id}`}>Show</Link>
+            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -137,7 +139,7 @@ class QueryResults extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch)
+  return bindActionCreators({ deleteDevice, removeDeviceFromLabel }, dispatch)
 }
 
 export default LabelShowTable

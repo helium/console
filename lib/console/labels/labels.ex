@@ -52,4 +52,9 @@ defmodule Console.Labels do
       {:ok, length(devices_labels)}
     end
   end
+
+  def delete_device_label(device_id, label_id) do
+    dl = Repo.get_by!(DevicesLabels, [device_id: device_id, label_id: label_id])
+    Repo.delete(dl)
+  end
 end

@@ -40,3 +40,10 @@ export const addDevicesToLabels = (devices, labels, toLabel) => {
     .then(response => {})
   }
 }
+
+export const removeDeviceFromLabel = (device_id, label_id) => {
+  return (dispatch) => {
+    rest.destroy(`/api/devices_labels?device_id=${device_id}&label_id=${label_id}`)
+    .then(response => {})
+  }
+}
