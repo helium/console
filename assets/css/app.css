@@ -193,6 +193,11 @@ h1 {
   font-size: 30px;
 }
 
+.ant-page-header-heading {
+  overflow: initial;
+  margin-bottom: 50px;
+}
+
 .ant-empty-image {
   height: 80px;
   margin-bottom: 10px;

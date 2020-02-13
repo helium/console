@@ -15,8 +15,8 @@ import { CHANNEL_FRAGMENT, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/cha
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Typography, Button, Input, Form, Tag, Checkbox } from 'antd';
-const { Text } = Typography
+import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
+const { Text, Paragraph } = Typography
 
 const queryOptions = {
   options: props => ({
@@ -131,16 +131,16 @@ class ChannelShow extends Component {
 
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>
-        <Text strong>
-          Integration Details
-        </Text>
-        <br />
+      <Card title="Integration Details" extra={<Tag type="secondary">
+            Default Channel for New Devices
+          </Tag>}>
+
         <Input
           name="newName"
           placeholder={channel.name}
           value={this.state.newName}
           onChange={this.handleInputUpdate}
-          style={{ width: 150 }}
+          style={{ width: 150, marginRight: 5 }}
         />
         <Button
           type="primary"
@@ -148,58 +148,53 @@ class ChannelShow extends Component {
         >
           Update
         </Button>
-        <br />
-        <Text>
-          Type: {channel.type_name}
-        </Text>
-        <br />
-        <Text>
-          Active: {channel.active ? "Yes" : "No"}
-        </Text>
-        <br />
-        <Text>
-          ID: {channel.id}
-        </Text>
+        <Divider />
+        <Row>
+          <Col span={12}>
+        <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
+                <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
+                <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
+                <Paragraph><Text strong> Devices Piped: </Text><Text>––</Text></Paragraph>
 
-        <div>
-          {channel.type === "http" && <HttpDetails channel={channel} />}
-        </div>
-
-
-        <Text strong>
-          Devices Piped
-        </Text>
-        <br />
-        {
+                {
           channel.devices.map(d => (
             <Tag key={d.name}>
               {d.name}
             </Tag>
           ))
         }
-        <br />
-        {
-          channel.default && <Text>
-            Default Channel for New Devices
-          </Text>
-        }
-        <br />
+
         {
           !channel.default && channel.devices.length === 0 && <Text>
             0 Connected Devices
           </Text>
         }
+
+
+        </Col>
+        <Col span={12}>
+        <Card size="small" title="HTTP Details">
+           {channel.type === "http" && <HttpDetails channel={channel} />}
+        </Card>
         <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
           Show Duplicate Packets
         </Checkbox>
+        </Col>
+
+
+        </Row>
+        </Card>
+<Card title="Update your Connection Details">
 
         {this.renderForm()}
+        <Divider />
         <Button
           type="primary"
           onClick={this.handleUpdateDetailsChange}
         >
           Update Details
         </Button>
+        </Card>
       </DashboardLayout>
     )
   }

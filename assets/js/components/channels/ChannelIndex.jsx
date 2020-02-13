@@ -26,16 +26,16 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="Integrations">
         <UserCan action="create" itemType="channel">
-              <Card title="Use Helium Cargo">
+              <Card title="Helium Integrations">
 
           <ChannelCargoRow />
           </Card>
 
-          <Card title="Add Integration">
+          <Card title="Create your own Integration">
           <ChannelCreateRow />
           </Card>
         </UserCan>
-        <Card title="My Integrations">
+        <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px'}}>
         <ChannelsTable />
         </Card>
       </DashboardLayout>

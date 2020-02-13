@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Typography, Input } from 'antd';
-const { Text } = Typography
+const { Text, Paragraph } = Typography
 
 const HttpDetails = (props) => {
   const { channel } = props
@@ -10,21 +10,10 @@ const HttpDetails = (props) => {
 
   return (
     <React.Fragment>
-      <Text strong>
-        HTTP Details
-      </Text>
-      <br />
-      <Text>
-        Method: {channel.method}
-      </Text>
-      <br />
-      <Text>
-        Endpoint: {channel.endpoint}
-      </Text>
-      <br />
-      <Text>
-        Headers: {channel.headers}
-      </Text>
+     
+      <Paragraph><Text strong>Method: </Text><Text>{channel.method}</Text></Paragraph>
+       <Paragraph><Text strong>Endpoint: </Text><Text>{channel.endpoint}</Text></Paragraph>
+             <Paragraph><Text strong>Headers: </Text><Text>{channel.headers}</Text></Paragraph>
     </React.Fragment>
   )
 }

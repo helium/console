@@ -50,7 +50,7 @@ class CargoForm extends Component {
         <br />
         <Button
           onClick={this.validateInput}
-          type="primary"
+          type="default"
           style={{marginTop: 20}}
         >
           I AGREE
