@@ -131,10 +131,10 @@ class ChannelShow extends Component {
 
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>
-      <Card title="Integration Details" extra={<Tag secondary>
+      <Card title="Integration Details" extra={<Tag type="secondary">
             Default Channel for New Devices
           </Tag>}>
-     
+
         <Input
           name="newName"
           placeholder={channel.name}
@@ -163,7 +163,7 @@ class ChannelShow extends Component {
             </Tag>
           ))
         }
-      
+
         {
           !channel.default && channel.devices.length === 0 && <Text>
             0 Connected Devices
@@ -185,7 +185,7 @@ class ChannelShow extends Component {
         </Row>
         </Card>
 <Card title="Update your Connection Details">
-           
+
         {this.renderForm()}
         <Divider />
         <Button
