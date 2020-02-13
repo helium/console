@@ -145,7 +145,7 @@ class DeviceShow extends Component {
                           placeholder={device.name}
                           value={this.state.newName}
                           onChange={this.handleInputUpdate}
-                          style={{ width: 150 }}
+                          style={{ width: 200, marginRight: 5 }}
                         />
                         <Button
                           type="primary"
@@ -157,7 +157,7 @@ class DeviceShow extends Component {
                     </UserCan>
                   ) : (
                     <React.Fragment>
-                      <Text strong style={{ marginRight: 5 }}>{device.name} </Text>
+                      <Text  style={{ marginRight: 5 }}>{device.name} </Text>
                       <Tag color="blue" size="small" onClick={this.toggleNameInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
@@ -179,7 +179,7 @@ class DeviceShow extends Component {
                           value={this.state.newDevEUI}
                           onChange={this.handleInputUpdate}
                           maxLength={16}
-                          style={{ width: 150 }}
+                          style={{ width: 150, marginRight: 5 }}
                         />
                         <Button
                           type="primary"
@@ -193,7 +193,7 @@ class DeviceShow extends Component {
                   {!showDevEUIInput && (
                     <React.Fragment>
                       {
-                        device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text strong>Add a Device EUI</Text>
+                        device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
                       }
                       <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
                         <Icon type="edit"></Icon>
@@ -222,12 +222,11 @@ class DeviceShow extends Component {
           </table>
         </Card>
 
-        <Card title="Device Channels">
-        <br />
+        <Card title="Device Integrations">
         <Select
-          placeholder="Select Channel"
+          placeholder="Select Integration"
           onChange={this.handleSelectUpdate}
-          style={{ width: 150 }}
+          style={{ width: 200, marginRight: 5 }}
         >
           {channels.map(c => (
             <Option value={c.id} key={c.id}>{c.name}</Option>

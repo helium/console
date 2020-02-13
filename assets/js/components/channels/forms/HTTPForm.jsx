@@ -141,7 +141,7 @@ class HTTPForm extends Component {
           ))
         }
 
-        <Button icon="plus" type="primary" onClick={this.addHeaderRow} >Add</Button>
+        <Button icon="plus" type="default" onClick={this.addHeaderRow} >Add</Button>
       </div>
     );
   }
