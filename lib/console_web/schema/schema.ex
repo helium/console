@@ -184,6 +184,18 @@ defmodule ConsoleWeb.Schema do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search/2
     end
+
+    @desc "Search for devices"
+    field :search_devices, list_of(:device) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_devices/2
+    end
+
+    @desc "Search for labels"
+    field :search_labels, list_of(:label) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_labels/2
+    end
   end
 
   subscription do

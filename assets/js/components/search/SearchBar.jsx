@@ -6,10 +6,9 @@ import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
+import { GENERAL_SEARCH } from '../../graphql/search'
 import { Icon } from 'antd'
-
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 
 const queryOptions = {
   options: props => ({
@@ -19,21 +18,8 @@ const queryOptions = {
   })
 }
 
-const query = gql`
-  query SearchQuery ($query: String) {
-    searchResults(query: $query) {
-      id,
-      title,
-      description,
-      category,
-      score,
-      url
-    }
-  }
-`
-
 @withRouter
-@graphql(query, queryOptions)
+@graphql(GENERAL_SEARCH, queryOptions)
 class SearchBar extends Component {
   constructor(props) {
     super(props)
