@@ -1,88 +1,71 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { deleteDevice } from '../../actions/device'
-import moment from 'moment'
-import find from 'lodash/find'
-import get from 'lodash/get'
-import UserCan from '../common/UserCan'
-import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
-import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
-import { Table, Button, Empty, Pagination, Tag } from 'antd';
-import EmptyImg from '../../../img/emptydevice.svg'
-import { Card } from 'antd';
-
-
+import { Link } from 'react-router-dom';
+import find from 'lodash/find'
+import moment from 'moment'
+import get from 'lodash/get'
+import LabelTag from '../common/LabelTag'
+import { PAGINATED_DEVICES_BY_LABEL, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
+import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
+const { Text } = Typography
+const { Option } = Select
 
 const defaultVariables = {
   page: 1,
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
-class DevicesTable extends Component {
+class LabelShowTable extends Component {
   render() {
-    const { deleteDevice } = this.props
-
     const columns = [
       {
         title: 'Device Name',
         dataIndex: 'name',
+      },
+      {
+        title: 'Labels',
+        dataIndex: 'labels',
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>{text}</Link>
+          <span>
+            {
+              record.labels.map(l => (
+                <LabelTag key={l.name} text={l.name} color={l.color} />
+              ))
+            }
+          </span>
         )
       },
       {
-        title: 'Device EUI',
-        dataIndex: 'dev_eui',
-      },
-      {
-        title: 'Integrations',
-        dataIndex: 'channels',
-        render: data => {
-          return <React.Fragment>
-            {
-              data.map(d => <Tag key={d.id}>{d.name}</Tag>)
-            }
-          </React.Fragment>
-        }
-      },
-      {
-        title: 'Created',
+        title: 'Date Activated',
         dataIndex: 'inserted_at',
-        render: data => moment(data).format('LL')
+        render: data => moment.utc(data).local().format('lll')
       },
       {
-        title: '',
+        title: 'Action',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <Button
-              icon="delete"
-              type="danger"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
-                deleteDevice(record.id)
-              }}
-            />
+          <div>
+            <Link to="#" onClick={() => this.props.openRemoveLabelModal([record])}>Remove</Link>
+            <Text>{" | "}</Text>
+            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
     ]
 
+    const variables = Object.assign({}, defaultVariables, { labelId: this.props.labelId })
+
     return (
-      <Query query={PAGINATED_DEVICES} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
+      <Query query={PAGINATED_DEVICES_BY_LABEL} fetchPolicy={'cache-and-network'} variables={variables}>
         {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
             error={error}
-            data={data}
             columns={columns}
+            data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
-            subscription={DEVICE_SUBSCRIPTION}
+            subscription={LABEL_UPDATE_SUBSCRIPTION}
             variables={variables}
             {...this.props}
           />
@@ -98,12 +81,13 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10,
+      selectedRows: [],
     }
 
+    this.handleSelectOption = this.handleSelectOption.bind(this)
     this.handleChangePage = this.handleChangePage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
-    this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
   }
 
   componentDidMount() {
@@ -119,15 +103,14 @@ class QueryResults extends Component {
     })
   }
 
+  handleSelectOption() {
+    this.props.openRemoveLabelModal(this.state.selectedRows)
+  }
+
   handleChangePage(page) {
     this.setState({ page })
 
     const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded() {
-    const { page, pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
@@ -149,21 +132,38 @@ class QueryResults extends Component {
 
     const results = find(data, d => d.entries !== undefined)
 
-    if (results.entries.length === 0) return (
-      <Empty
-      style={{marginBottom: 70}}
-        image={EmptyImg}
-        description={<span>No Devices</span>}
-      />
-    )
+    const rowSelection = {
+      onSelect: (record, selected) => {
+        const { selectedRows } = this.state
+        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
+        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
+      },
+      onSelectAll: (selected, selectedRows) => {
+        if (selected) this.setState({ selectedRows })
+        else this.setState({ selectedRows: [] })
+      },
+    }
 
     return (
-      <div>
+      <Card
+        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        title={`${results.entries.length} Devices`}
+        extra={
+          <Select
+            value="Quick Action"
+            style={{ width: 220 }}
+            onSelect={this.handleSelectOption}
+          >
+            <Option value="remove" style={{ color: '#F5222D' }}>Remove Devices from Label</Option>
+          </Select>
+        }
+      >
         <Table
           columns={columns}
           dataSource={results.entries}
           rowKey={record => record.id}
           pagination={false}
+          rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
@@ -171,17 +171,12 @@ class QueryResults extends Component {
             pageSize={results.pageSize}
             total={results.totalEntries}
             onChange={page => this.handleChangePage(page)}
-            hideOnSinglePage={true}
             style={{marginBottom: 20}}
           />
         </div>
-      </div>
+      </Card>
     )
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice }, dispatch);
-}
-
-export default DevicesTable
+export default LabelShowTable

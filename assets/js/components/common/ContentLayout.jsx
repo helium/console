@@ -5,14 +5,16 @@ import { PageHeader } from 'antd';
 @withRouter
 class ContentLayout extends Component {
   render() {
-    const { title } = this.props
+    const { title, extra, breadCrumbs } = this.props
 
     return (
       <div style={{padding: 30}}>
+        {breadCrumbs}
         <PageHeader
           backIcon={false}
           title={title}
           subTitle=""
+          extra={extra}
         />
         <div>
           {this.props.children}

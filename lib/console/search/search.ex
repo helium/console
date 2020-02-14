@@ -7,6 +7,14 @@ defmodule Console.Search do
     []
   end
 
+  def run_for_labels(query, _organization) when byte_size(query) == 0 do
+    []
+  end
+
+  def run_for_devices(query, _organization) when byte_size(query) == 0 do
+    []
+  end
+
   # When queries are 1-2 characters, we can't use trigram search so we check
   # if any items start with the query and assign them a score of 1.0, and then
   # we check if any items contain but don't start with the query and assign
@@ -91,8 +99,123 @@ defmodule Console.Search do
     to_json(result)
   end
 
+  def run_for_devices(query, %Organization{id: organization_id}) when byte_size(query) < 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+      SELECT * FROM
+      (
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name, 1.0::float AS score
+            FROM devices
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name, 0.5::float AS score
+            FROM devices
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) d ORDER BY id, score DESC)
+      ) a
+      ORDER BY score DESC
+      LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
+    to_json(result, "device")
+  end
+
+  def run_for_devices(query, %Organization{id: organization_id}) when byte_size(query) >= 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+    (
+      SELECT id, name, score
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM devices
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS d
+      WHERE score > $3
+    )
+    ORDER BY score DESC
+    LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
+    to_json(result, "device")
+  end
+
+  def run_for_labels(query, %Organization{id: organization_id}) when byte_size(query) < 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+      SELECT * FROM
+      (
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name, 1.0::float AS score
+            FROM labels
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name, 0.5::float AS score
+            FROM labels
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) d ORDER BY id, score DESC)
+      ) a
+      ORDER BY score DESC
+      LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
+    to_json(result, "label")
+  end
+
+  def run_for_labels(query, %Organization{id: organization_id}) when byte_size(query) >= 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+    (
+      SELECT id, name, score
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM labels
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS d
+      WHERE score > $3
+    )
+    ORDER BY score DESC
+    LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
+    to_json(result, "label")
+  end
+
   def to_json(%Postgrex.Result{rows: records}) do
     records |> Enum.map(&cast/1)
+  end
+
+  def to_json(%Postgrex.Result{rows: records}, _) do
+    records
+    |> Enum.map(
+      fn r ->
+        {:ok, id} = Ecto.UUID.cast(Enum.at(r, 0))
+        %{
+          id: id,
+          name: Enum.at(r, 1),
+        }
+      end
+    )
   end
 
   def cast(record) do

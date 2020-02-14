@@ -15,6 +15,15 @@ defmodule ConsoleWeb.Schema do
     field :organization, :organization
     field :inserted_at, :naive_datetime
     field :channels, list_of(:channel)
+    field :labels, list_of(:label)
+  end
+
+  paginated object :label do
+    field :id, :id
+    field :name, :string
+    field :color, :string
+    field :inserted_at, :naive_datetime
+    field :devices, list_of(:device)
   end
 
   paginated object :channel do
@@ -91,10 +100,35 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Devices.DeviceResolver.paginate/2)
     end
 
+    @desc "Get paginated devices for specified label ID"
+    paginated field :devices_by_label, :paginated_devices do
+      arg :label_id, non_null(:id)
+      resolve(&Console.Devices.DeviceResolver.paginate_by_label/2)
+    end
+
     @desc "Get a single device"
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    field :all_devices, list_of(:device) do
+      resolve &Console.Devices.DeviceResolver.all/2
+    end
+
+    @desc "Get paginated labels"
+    paginated field :labels, :paginated_labels do
+      resolve(&Console.Labels.LabelResolver.paginate/2)
+    end
+
+    @desc "Get a single label"
+    field :label, :label do
+      arg :id, non_null(:id)
+      resolve &Console.Labels.LabelResolver.find/2
+    end
+
+    field :all_labels, list_of(:label) do
+      resolve &Console.Labels.LabelResolver.all/2
     end
 
     @desc "Get paginated gateways"
@@ -150,6 +184,18 @@ defmodule ConsoleWeb.Schema do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search/2
     end
+
+    @desc "Search for devices"
+    field :search_devices, list_of(:device) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_devices/2
+    end
+
+    @desc "Search for labels"
+    field :search_labels, list_of(:label) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_labels/2
+    end
   end
 
   subscription do
@@ -167,6 +213,20 @@ defmodule ConsoleWeb.Schema do
 
       config fn args, _ ->
         {:ok, topic: "#{args.context_name}/#{args.context_id}"}
+      end
+    end
+
+    field :label_added, :label do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/label_added"}
+      end
+    end
+
+    field :label_updated, :label do
+      arg :id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.id}/label_updated"}
       end
     end
 

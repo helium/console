@@ -42,16 +42,15 @@ class OrganizationsTable extends Component {
               >
                 Switch
               </Button>
-              <UserCan action="delete" itemType="organization" item={record}>
-                <Button
-                  icon="delete"
-                  type="danger"
-                  onClick={() => {
-                    analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
-                    deleteOrganization(record.id)
-                  }}
-                />
-              </UserCan>
+              
+              <Button
+                icon="delete"
+                type="danger"
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
+                  deleteOrganization(record.id)
+                }}
+              />
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>

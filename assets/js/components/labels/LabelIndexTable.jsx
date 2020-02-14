@@ -1,84 +1,65 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { deleteChannel, updateChannel } from '../../actions/channel'
-import find from 'lodash/find'
-import get from 'lodash/get'
-import UserCan from '../common/UserCan'
-import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
-import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
-import { Table, Button, Empty, Pagination } from 'antd';
-import EmptyImg from '../../../img/emptydevice.svg'
-
+import { Link } from 'react-router-dom';
+import find from 'lodash/find'
+import moment from 'moment'
+import get from 'lodash/get'
+import LabelTag from '../common/LabelTag'
+import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
+import { Card, Button, Typography, Table, Pagination } from 'antd';
+const { Text } = Typography
 
 const defaultVariables = {
   page: 1,
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
-class ChannelsTable extends Component {
+class LabelIndexTable extends Component {
   render() {
-    const { deleteChannel, updateChannel } = this.props
-
     const columns = [
       {
-        title: 'Name',
+        title: 'Labels',
         dataIndex: 'name',
         render: (text, record) => (
-          <Link to={`/integrations/${record.id}`}>{text}</Link>
+          <React.Fragment>
+            <Text>{text}</Text><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
+          </React.Fragment>
         )
       },
       {
-        title: 'Type',
-        dataIndex: 'type_name'
+        title: 'No. of Devices',
+        dataIndex: 'devices',
+        render: (text, record) => <Text>{record.devices.length}</Text>
       },
       {
-        title: '',
+        title: 'Date Activated',
+        dataIndex: 'inserted_at',
+        render: data => moment.utc(data).local().format('lll')
+      },
+      {
+        title: 'Action',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            {
-              !record.default && (
-                <Button
-                  type="primary"
-                  style={{ marginRight: 5 }}
-                  onClick={() => {
-                    analyticsLogger.logEvent("ACTION_SET_DEFAULT_CHANNEL", {"id": record.id})
-                    updateChannel(record.id, { default: true })
-                  }}
-                >
-                  Set Default
-                </Button>
-              )
-            }
-
-            <Button
-              type="danger"
-              icon="delete"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": record.id})
-                deleteChannel(record.id)
-              }}
-            />
+          <div>
+            <Link to="#" onClick={() => this.props.openDeleteLabelModal(record.id)}>Delete</Link>
+            <Text>{" | "}</Text>
+            <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
         )
       },
     ]
 
     return (
-      <Query query={PAGINATED_CHANNELS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
+      <Query query={PAGINATED_LABELS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
         {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
           <QueryResults
             loading={loading}
             error={error}
-            data={data}
             columns={columns}
+            data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
-            subscription={CHANNEL_SUBSCRIPTION}
+            subscription={LABEL_SUBSCRIPTION}
             variables={variables}
             {...this.props}
           />
@@ -115,15 +96,15 @@ class QueryResults extends Component {
     })
   }
 
+  handleSubscriptionAdded() {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
   handleChangePage(page) {
     this.setState({ page })
 
     const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded() {
-    const { page, pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
@@ -145,36 +126,39 @@ class QueryResults extends Component {
 
     const results = find(data, d => d.entries !== undefined)
 
-    if (results.entries.length === 0) return (
-      <Empty
-        image={EmptyImg}
-        description={<span>No Channels</span>}
-      />
-    )
-
     return (
-      <div>
+      <Card
+        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        title={`${results.entries.length} Labels`}
+        extra={
+          <Button
+            type="primary"
+            size="large"
+            icon="tag"
+            onClick={this.props.openCreateLabelModal}
+          >
+            Create New Label
+          </Button>
+        }
+      >
         <Table
           columns={columns}
           dataSource={results.entries}
           rowKey={record => record.id}
           pagination={false}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={results.pageNumber}
             pageSize={results.pageSize}
             total={results.totalEntries}
             onChange={page => this.handleChangePage(page)}
+            style={{marginBottom: 20}}
           />
         </div>
-      </div>
+      </Card>
     )
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
-}
-
-export default ChannelsTable
+export default LabelIndexTable

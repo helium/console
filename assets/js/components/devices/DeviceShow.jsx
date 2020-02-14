@@ -136,25 +136,24 @@ class DeviceShow extends Component {
                 <td style={{width: '200px'}}><Text strong>Name</Text></td>
                 <td>
                   {showNameInput ? (
-                    <UserCan action="update" itemType="device">
-                      <OutsideClick
-                        onOutsideClick={this.toggleNameInput}
+                    <OutsideClick
+                      onOutsideClick={this.toggleNameInput}
+                    >
+                      <Input
+                        name="newName"
+                        placeholder={device.name}
+                        value={this.state.newName}
+                        onChange={this.handleInputUpdate}
+                        style={{ width: 200, marginRight: 5 }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => this.handleDeviceNameUpdate(device.id)}
                       >
-                        <Input
-                          name="newName"
-                          placeholder={device.name}
-                          value={this.state.newName}
-                          onChange={this.handleInputUpdate}
-                          style={{ width: 200, marginRight: 5 }}
-                        />
-                        <Button
-                          type="primary"
-                          onClick={() => this.handleDeviceNameUpdate(device.id)}
-                        >
-                          Update
-                        </Button>
-                      </OutsideClick>
-                    </UserCan>
+                        Update
+                      </Button>
+                    </OutsideClick>
+
                   ) : (
                     <React.Fragment>
                       <Text  style={{ marginRight: 5 }}>{device.name} </Text>
@@ -169,26 +168,24 @@ class DeviceShow extends Component {
                 <td><Text strong>Device EUI</Text></td>
                 <td>
                   {showDevEUIInput && (
-                    <UserCan action="update" itemType="device">
-                      <OutsideClick
-                        onOutsideClick={this.toggleDevEUIInput}
+                    <OutsideClick
+                      onOutsideClick={this.toggleDevEUIInput}
+                    >
+                      <Input
+                        name="newDevEUI"
+                        placeholder={device.dev_eui}
+                        value={this.state.newDevEUI}
+                        onChange={this.handleInputUpdate}
+                        maxLength={16}
+                        style={{ width: 150, marginRight: 5 }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => this.handleDeviceEUIUpdate(device.id)}
                       >
-                        <Input
-                          name="newDevEUI"
-                          placeholder={device.dev_eui}
-                          value={this.state.newDevEUI}
-                          onChange={this.handleInputUpdate}
-                          maxLength={16}
-                          style={{ width: 150, marginRight: 5 }}
-                        />
-                        <Button
-                          type="primary"
-                          onClick={() => this.handleDeviceEUIUpdate(device.id)}
-                        >
-                          Update
-                        </Button>
-                      </OutsideClick>
-                    </UserCan>
+                        Update
+                      </Button>
+                    </OutsideClick>
                   )}
                   {!showDevEUIInput && (
                     <React.Fragment>

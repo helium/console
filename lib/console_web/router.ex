@@ -38,12 +38,16 @@ defmodule ConsoleWeb.Router do
       post "/channel", DeviceController, :set_channel
       delete "/channel", DeviceController, :delete_channel
     end
+    resources "/labels", LabelController, only: [:create, :update, :delete]
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
     end
+
+    post "/devices_labels", LabelController, :add_devices_to_label
+    post "/devices_labels/delete", LabelController, :delete_devices_from_label
 
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
