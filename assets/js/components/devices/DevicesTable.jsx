@@ -59,17 +59,14 @@ class DevicesTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <UserCan action="delete" itemType="device" item={record}>
-
-              <Button
+            <Button
               icon="delete"
-                type="danger"
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
-                  deleteDevice(record.id)
-                }}
-              />
-            </UserCan>
+              type="danger"
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
+                deleteDevice(record.id)
+              }}
+            />
           </div>
         )
       },

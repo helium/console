@@ -41,7 +41,7 @@ class ChannelsTable extends Component {
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
             {
-              !record.default && <UserCan action="update" itemType="channel" item={record}>
+              !record.default && (
                 <Button
                   type="primary"
                   style={{ marginRight: 5 }}
@@ -52,18 +52,17 @@ class ChannelsTable extends Component {
                 >
                   Set Default
                 </Button>
-              </UserCan>
+              )
             }
-            <UserCan action="delete" itemType="channel" item={record}>
-              <Button
-                type="danger"
-                icon="delete"
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": record.id})
-                  deleteChannel(record.id)
-                }}
-              />
-            </UserCan>
+
+            <Button
+              type="danger"
+              icon="delete"
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": record.id})
+                deleteChannel(record.id)
+              }}
+            />
           </div>
         )
       },

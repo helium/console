@@ -25,18 +25,16 @@ class ChannelIndex extends Component {
     const { classes } = this.props
     return (
       <DashboardLayout title="Integrations">
-        <UserCan action="create" itemType="channel">
-              <Card title="Helium Integrations">
-
+        <Card title="Helium Integrations">
           <ChannelCargoRow />
-          </Card>
+        </Card>
 
-          <Card title="Create your own Integration">
+        <Card title="Create your own Integration">
           <ChannelCreateRow />
-          </Card>
-        </UserCan>
+        </Card>
+        
         <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px'}}>
-        <ChannelsTable />
+          <ChannelsTable />
         </Card>
       </DashboardLayout>
     )

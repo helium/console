@@ -39,16 +39,14 @@ class InvitationsTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <UserCan action="delete" itemType="membership" item={record}>
-              <Button
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
-                  openDeleteUserModal(record, "invitation")
-                }}
-                type="danger"
-                icon="delete"
-              />
-            </UserCan>
+            <Button
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                openDeleteUserModal(record, "invitation")
+              }}
+              type="danger"
+              icon="delete"
+            />
           </div>
         )
       },

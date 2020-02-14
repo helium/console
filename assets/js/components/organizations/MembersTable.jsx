@@ -45,29 +45,25 @@ class MembersTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <UserCan action="update" itemType="membership" item={record}>
-              <Button
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
-                  openEditMembershipModal(record)
-                }}
-                style={{ marginRight: 5 }}
-                type="primary"
-              >
-                Edit
-              </Button>
-            </UserCan>
+            <Button
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
+                openEditMembershipModal(record)
+              }}
+              style={{ marginRight: 5 }}
+              type="primary"
+            >
+              Edit
+            </Button>
 
-            <UserCan action="delete" itemType="membership" item={record}>
-              <Button
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
-                  openDeleteUserModal(record, "membership")
-                }}
-                type="danger"
-                icon="delete"
-              />
-            </UserCan>
+            <Button
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                openDeleteUserModal(record, "membership")
+              }}
+              type="danger"
+              icon="delete"
+            />
           </div>
         )
       },
