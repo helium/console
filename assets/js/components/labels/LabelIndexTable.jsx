@@ -5,7 +5,7 @@ import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
-import { PAGINATED_LABELS } from '../../graphql/labels'
+import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination } from 'antd';
 const { Text } = Typography
 
@@ -59,6 +59,7 @@ class LabelIndexTable extends Component {
             data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
+            subscription={LABEL_SUBSCRIPTION}
             variables={variables}
             {...this.props}
           />
@@ -79,6 +80,25 @@ class QueryResults extends Component {
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
+    this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleSubscriptionAdded() {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
   }
 
   handleChangePage(page) {

@@ -37,6 +37,25 @@ export const PAGINATED_LABELS = gql`
   ${LABEL_FRAGMENT}
 `
 
+export const LABEL_SUBSCRIPTION = gql`
+  subscription onLabelAdded {
+    labelAdded {
+      name,
+      id
+    }
+  }
+  ${LABEL_FRAGMENT}
+`
+
+export const LABEL_UPDATE_SUBSCRIPTION = gql`
+  subscription onLabelUpdated($id: String) {
+    labelUpdated(id: $id) {
+      name,
+      id
+    }
+  }
+`
+
 // For LabelAddDeviceModal
 export const LABELS_DEVICES = gql`
   query LabelsDevicesQuery {

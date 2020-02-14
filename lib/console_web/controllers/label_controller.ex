@@ -14,6 +14,8 @@ defmodule ConsoleWeb.LabelController do
     label_params = Map.merge(label_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
+      broadcast(label)
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "#{label.name} created successfully")
@@ -26,7 +28,7 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(id)
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
-
+      broadcast(label, label.id)
       conn
       |> put_resp_header("message", "#{label.name} updated successfully")
       |> render("show.json", label: label)
@@ -38,6 +40,7 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(id)
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
+      broadcast(label)
 
       conn
       |> put_resp_header("message", "#{label.name} deleted successfully")
@@ -58,6 +61,9 @@ defmodule ConsoleWeb.LabelController do
             _ -> "#{count} Devices added to label successfully"
           end
 
+        label = Labels.get_label!(to_label)
+        broadcast(label, label.id)
+
         conn
         |> put_resp_header("message", msg)
         |> send_resp(:no_content, "")
@@ -67,9 +73,20 @@ defmodule ConsoleWeb.LabelController do
 
   def delete_devices_from_label(conn, %{"devices" => devices, "label_id" => label_id}) do
     with {_, nil} <- Labels.delete_devices_labels(devices, label_id) do
+      label = Labels.get_label!(label_id)
+      broadcast(label, label.id)
+
       conn
       |> put_resp_header("message", "Device(s) successfully removed from label")
       |> send_resp(:no_content, "")
     end
+  end
+
+  defp broadcast(%Label{} = label) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_added: "#{label.organization_id}/label_added")
+  end
+
+  defp broadcast(%Label{} = label, id) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
   end
 end

@@ -5,7 +5,7 @@ import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
-import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
+import { PAGINATED_DEVICES_BY_LABEL, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -65,6 +65,7 @@ class LabelShowTable extends Component {
             data={data}
             fetchMore={fetchMore}
             subscribeToMore={subscribeToMore}
+            subscription={LABEL_UPDATE_SUBSCRIPTION}
             variables={variables}
             {...this.props}
           />
@@ -87,6 +88,19 @@ class QueryResults extends Component {
     this.handleSelectOption = this.handleSelectOption.bind(this)
     this.handleChangePage = this.handleChangePage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, subscription, fetchMore, variables } = this.props
+
+    subscription && subscribeToMore({
+      document: subscription,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
   }
 
   handleSelectOption() {

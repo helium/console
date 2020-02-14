@@ -9,7 +9,7 @@ import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
 import LabelTag from '../common/LabelTag'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
-import { LABEL_SHOW } from '../../graphql/labels'
+import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -33,6 +33,23 @@ class LabelShow extends Component {
     this.openRemoveLabelModal = this.openRemoveLabelModal.bind(this)
     this.closeRemoveLabelModal = this.closeRemoveLabelModal.bind(this)
     this.handleUpdateLabel = this.handleUpdateLabel.bind(this)
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, fetchMore } = this.props.data
+    const variables = { id: this.props.match.params.id }
+
+    subscribeToMore({
+      document: LABEL_UPDATE_SUBSCRIPTION,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          variables,
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
   }
 
   openUpdateLabelModal() {

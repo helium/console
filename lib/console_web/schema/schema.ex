@@ -216,6 +216,20 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :label_added, :label do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/label_added"}
+      end
+    end
+
+    field :label_updated, :label do
+      arg :id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.id}/label_updated"}
+      end
+    end
+
     field :device_added, :device do
       config fn _, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/device_added"}
