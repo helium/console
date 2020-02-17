@@ -1,14 +1,14 @@
 <div style="padding-top: 80px;">
   <div style="margin: 0px auto; width: 59px;">
-    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-logo-blue.png") %>">
+    <img style='width:100%' src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-logo-blue.png") %>">
   </div>
 </div>
 
-<div style="width: calc(55% + 80px); margin: 60px auto 0px;">
+<div style="width: 560px; margin: 60px auto 0px;">
   <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-dashboard.png") %>" style="width: 100%;">
 </div>
 
-<div style="width: 55%; margin: 0px auto; background-color:white; padding: 40px;">
+<div style="width: 560px; box-sizing: border-box; margin: 0px auto; background-color:white; padding: 40px 60px;">
   <p style='font-family: avenir,apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; font-size: 30px; margin-top: 0px;'>
     Welcome to Helium Console!
   </p>
@@ -24,12 +24,12 @@
   </a>
 </div>
 
-<div style="width: calc(55% + 80px); margin: 0px auto;">
+<div style="width: 560px; margin: 0px auto;">
   <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-bottom-border.png") %>" style="width: 100%;">
 </div>
 
 <div style="margin-top: 60px; padding-bottom: 80px;">
   <div style="margin: 0px auto; width: 247px;">
-    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-text-logo.png") %>" style="opacity: 50%; height: 30px;">
+    <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/helium-email-text-logo-grey.png") %>" style="opacity: 50%; height: 30px;">
   </div>
 </div>
