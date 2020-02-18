@@ -21,6 +21,7 @@ defmodule Console.Labels.Label do
     changeset =
       device
       |> cast(attrs, [:name, :organization_id, :color])
+      |> put_change(:name, String.upcase(attrs["name"]))
       |> validate_required([:name, :organization_id])
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "Label already exists, please use another name.")
   end
