@@ -65,6 +65,20 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def delete(conn, %{"devices" => devices}) do
+    current_organization = conn.assigns.current_organization
+    device = Devices.get_device!(List.first(devices))
+    length = length(devices)
+    
+    with {length, nil} <- Devices.delete_devices(devices) do
+      broadcast(device)
+
+      conn
+      |> put_resp_header("message", "Devices deleted successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   def set_channel(conn, %{"channel" => %{"id" => channel_id}, "device_id" => id}) do
     device = Devices.get_device!(id)
     channel = Channels.get_channel!(channel_id)

@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Router do
       post "/channel", DeviceController, :set_channel
       delete "/channel", DeviceController, :delete_channel
     end
+    post "/devices/delete", DeviceController, :delete
     resources "/labels", LabelController, only: [:create, :update, :delete]
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]

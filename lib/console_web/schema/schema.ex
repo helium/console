@@ -14,7 +14,6 @@ defmodule ConsoleWeb.Schema do
     field :organization_id, :id
     field :organization, :organization
     field :inserted_at, :naive_datetime
-    field :channels, list_of(:channel)
     field :labels, list_of(:label)
   end
 

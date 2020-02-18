@@ -55,6 +55,11 @@ defmodule Console.Devices do
     |> Repo.update()
   end
 
+  def delete_devices(device_ids) do
+    from(d in Device, where: d.id in ^device_ids)
+    |> Repo.delete_all()
+  end
+
   def delete_device(%Device{} = device) do
     Repo.delete(device)
   end

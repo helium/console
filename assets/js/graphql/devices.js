@@ -8,9 +8,10 @@ export const DEVICE_FRAGMENT = gql`
     seq_id,
     dev_eui,
     inserted_at,
-    channels {
+    labels {
       name,
-      id
+      id,
+      color,
     }
   }
 `
