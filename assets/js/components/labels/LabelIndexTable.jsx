@@ -6,8 +6,9 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
-import { Card, Button, Typography, Table, Pagination } from 'antd';
+import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
+const { Option } = Select
 
 const defaultVariables = {
   page: 1,
@@ -75,12 +76,14 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10,
+      selectedRows: [],
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
     this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
+    this.handleSelectOption = this.handleSelectOption.bind(this)
   }
 
   componentDidMount() {
@@ -94,6 +97,10 @@ class QueryResults extends Component {
         this.handleSubscriptionAdded()
       }
     })
+  }
+
+  handleSelectOption() {
+    this.props.openDeleteLabelModal(this.state.selectedRows)
   }
 
   handleSubscriptionAdded() {
@@ -126,19 +133,39 @@ class QueryResults extends Component {
 
     const results = find(data, d => d.entries !== undefined)
 
+    const rowSelection = {
+      onSelect: (record, selected) => {
+        const { selectedRows } = this.state
+        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
+        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
+      },
+      onSelectAll: (selected, selectedRows) => {
+        if (selected) this.setState({ selectedRows })
+        else this.setState({ selectedRows: [] })
+      },
+    }
+
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${results.entries.length} Labels`}
         extra={
-          <Button
-            type="primary"
-            size="large"
-            icon="tag"
-            onClick={this.props.openCreateLabelModal}
-          >
-            Create New Label
-          </Button>
+          <React.Fragment>
+            <Select
+              value="Quick Action"
+              style={{ width: 220, marginRight: 10 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="remove" style={{ color: '#F5222D' }}>Delete Selected Labels</Option>
+            </Select>
+            <Button
+              type="primary"
+              icon="tag"
+              onClick={this.props.openCreateLabelModal}
+            >
+              Create New Label
+            </Button>
+          </React.Fragment>
         }
       >
         <Table
@@ -146,6 +173,7 @@ class QueryResults extends Component {
           dataSource={results.entries}
           rowKey={record => record.id}
           pagination={false}
+          rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

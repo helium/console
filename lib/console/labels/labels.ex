@@ -10,6 +10,8 @@ defmodule Console.Labels do
 
   def get_label!(id), do: Repo.get!(Label, id)
 
+  def get_label_by_name(name), do: Repo.get_by(Label, name: name)
+
   def create_label(attrs \\ %{}) do
     %Label{}
     |> Label.changeset(attrs)
@@ -26,6 +28,11 @@ defmodule Console.Labels do
     Repo.delete(label)
   end
 
+  def delete_labels(label_ids) do
+    from(l in Label, where: l.id in ^label_ids)
+    |> Repo.delete_all()
+  end
+
   def add_devices_to_label(devices, labels, to_label, organization) do
     labels_query = from(l in Label, preload: [:devices], where: l.id in ^labels and l.organization_id == ^organization.id, select: l)
     label_devices = Repo.all(labels_query) |> Enum.flat_map(fn %Label{ devices: devices } -> devices end)
@@ -34,6 +41,28 @@ defmodule Console.Labels do
     other_devices = Repo.all(devices_query)
 
     all_devices = Enum.concat(label_devices, other_devices) |> Enum.uniq()
+
+    devices_labels = Enum.reduce(all_devices, [], fn device, acc ->
+      if Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label) == nil do
+        acc ++ [%{ device_id: device.id, label_id: to_label }]
+      else
+        acc
+      end
+    end)
+
+    with {:ok, :ok} <- Repo.transaction(fn ->
+        Enum.each(devices_labels, fn attrs ->
+          Repo.insert!(DevicesLabels.changeset(%DevicesLabels{}, attrs))
+        end)
+      end)
+    do
+      {:ok, length(devices_labels)}
+    end
+  end
+
+  def add_devices_to_label(devices, to_label, organization) do
+    devices_query = from(d in Device, where: d.id in ^devices and d.organization_id == ^organization.id, select: d)
+    all_devices = Repo.all(devices_query)
 
     devices_labels = Enum.reduce(all_devices, [], fn device, acc ->
       if Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label) == nil do

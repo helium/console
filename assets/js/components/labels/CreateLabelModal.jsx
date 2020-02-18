@@ -20,7 +20,7 @@ class CreateLabelModal extends Component {
   }
 
   handleInputUpdate(e) {
-    this.setState({ [e.target.name]: e.target.value.toUpperCase() })
+    this.setState({ [e.target.name]: e.target.value })
   }
 
   handleSubmit(e, redirect = false) {

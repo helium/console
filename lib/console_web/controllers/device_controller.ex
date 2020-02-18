@@ -69,7 +69,7 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(List.first(devices))
     length = length(devices)
-    
+
     with {length, nil} <- Devices.delete_devices(devices) do
       broadcast(device)
 
@@ -106,7 +106,7 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  defp broadcast(%Device{} = device) do
+  def broadcast(%Device{} = device) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end
 

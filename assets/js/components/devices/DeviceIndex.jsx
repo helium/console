@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
+import DeviceAddLabelsModal from './DeviceAddLabelsModal'
 import DeleteDeviceModal from './DeleteDeviceModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -14,12 +15,15 @@ class DeviceIndex extends Component {
     this.state = {
       showCreateDeviceModal: false,
       showDeleteDeviceModal: false,
-      devicesToDelete: null,
+      showDeviceAddLabelsModal: false,
+      devicesSelected: null,
     }
     this.openCreateDeviceModal = this.openCreateDeviceModal.bind(this)
     this.closeCreateDeviceModal = this.closeCreateDeviceModal.bind(this)
     this.openDeleteDeviceModal = this.openDeleteDeviceModal.bind(this)
     this.closeDeleteDeviceModal = this.closeDeleteDeviceModal.bind(this)
+    this.openDeviceAddLabelsModal = this.openDeviceAddLabelsModal.bind(this)
+    this.closeDeviceAddLabelsModal = this.closeDeviceAddLabelsModal.bind(this)
   }
 
   componentDidMount() {
@@ -34,8 +38,16 @@ class DeviceIndex extends Component {
     this.setState({ showCreateDeviceModal: false })
   }
 
-  openDeleteDeviceModal(devicesToDelete) {
-    this.setState({ showDeleteDeviceModal: true, devicesToDelete })
+  openDeviceAddLabelsModal(devicesSelected) {
+    this.setState({ showDeviceAddLabelsModal: true, devicesSelected })
+  }
+
+  closeDeviceAddLabelsModal() {
+    this.setState({ showDeviceAddLabelsModal: false })
+  }
+
+  openDeleteDeviceModal(devicesSelected) {
+    this.setState({ showDeleteDeviceModal: true, devicesSelected })
   }
 
   closeDeleteDeviceModal() {
@@ -43,20 +55,27 @@ class DeviceIndex extends Component {
   }
 
   render() {
-    const { showCreateDeviceModal, showDeleteDeviceModal } = this.state
+    const { showCreateDeviceModal, showDeleteDeviceModal, showDeviceAddLabelsModal } = this.state
     return(
       <DashboardLayout title="Devices">
         <DevicesTable
           openCreateDeviceModal={this.openCreateDeviceModal}
           openDeleteDeviceModal={this.openDeleteDeviceModal}
+          openDeviceAddLabelsModal={this.openDeviceAddLabelsModal}
         />
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
+        <DeviceAddLabelsModal
+          open={showDeviceAddLabelsModal}
+          onClose={this.closeDeviceAddLabelsModal}
+          devicesToUpdate={this.state.devicesSelected}
+        />
+
         <DeleteDeviceModal
           open={showDeleteDeviceModal}
           onClose={this.closeDeleteDeviceModal}
-          devicesToDelete={this.state.devicesToDelete}
+          devicesToDelete={this.state.devicesSelected}
         />
       </DashboardLayout>
     )

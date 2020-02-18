@@ -32,12 +32,41 @@ export const deleteLabel = (id) => {
   }
 }
 
+export const deleteLabels = (labels) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/delete`, {
+      labels: labels.map(l => l.id)
+    })
+    .then(response => {})
+  }
+}
+
 export const addDevicesToLabels = (devices, labels, toLabel) => {
   return (dispatch) => {
     rest.post(`/api/devices_labels`, {
       devices: Object.keys(devices),
       labels: Object.keys(labels),
       to_label: toLabel
+    })
+    .then(response => {})
+  }
+}
+
+export const addDevicesToLabel = (devices, toLabel) => {
+  return (dispatch) => {
+    rest.post(`/api/devices_labels`, {
+      devices,
+      to_label: toLabel
+    })
+    .then(response => {})
+  }
+}
+
+export const addDevicesToNewLabel = (devices, labelName) => {
+  return (dispatch) => {
+    rest.post(`/api/devices_labels`, {
+      devices,
+      new_label: labelName,
     })
     .then(response => {})
   }

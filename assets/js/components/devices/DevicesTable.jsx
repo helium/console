@@ -108,8 +108,12 @@ class QueryResults extends Component {
     })
   }
 
-  handleSelectOption() {
-    this.props.openDeleteDeviceModal(this.state.selectedRows)
+  handleSelectOption(value) {
+    if (value === 'addLabel') {
+      this.props.openDeviceAddLabelsModal(this.state.selectedRows)
+    } else {
+      this.props.openDeleteDeviceModal(this.state.selectedRows)
+    }
   }
 
   handleChangePage(page) {
@@ -173,7 +177,8 @@ class QueryResults extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: '#F5222D' }}>Delete Selected Devices</Option>
+              <Option value="addLabel">Add Label to Selected Devices</Option>
+              <Option value="delete" style={{ color: '#F5222D' }}>Delete Selected Devices</Option>
             </Select>
             <Button
               type="primary"

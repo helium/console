@@ -40,6 +40,7 @@ defmodule ConsoleWeb.Router do
     end
     post "/devices/delete", DeviceController, :delete
     resources "/labels", LabelController, only: [:create, :update, :delete]
+    post "/labels/delete", LabelController, :delete
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/events", EventController, except: [:new, :edit]
