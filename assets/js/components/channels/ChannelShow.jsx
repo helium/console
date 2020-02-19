@@ -11,6 +11,7 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
+import LabelTag from '../common/LabelTag'
 import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -154,16 +155,28 @@ class ChannelShow extends Component {
 
         </Row>
         </Card>
-<Card title="Update your Connection Details">
+        <Card title="Update your Connection Details">
+          {this.renderForm()}
+          <Divider />
+          <Button
+            type="primary"
+            onClick={this.handleUpdateDetailsChange}
+          >
+            Update Details
+          </Button>
+        </Card>
 
-        {this.renderForm()}
-        <Divider />
-        <Button
-          type="primary"
-          onClick={this.handleUpdateDetailsChange}
-        >
-          Update Details
-        </Button>
+        <Card title="Integration Labels and Devices">
+          {
+            channel.labels.map(l => (
+              <LabelTag key={l.id} text={l.name} color={l.color} />
+            ))
+          }
+          {
+            channel.devices.map(d => (
+              <Text>{d.name}</Text>
+            ))
+          }
         </Card>
       </DashboardLayout>
     )

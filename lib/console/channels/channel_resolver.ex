@@ -28,8 +28,17 @@ defmodule Console.Channels.ChannelResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(id)
+    channel = Channel
+      |> where([c], c.id == ^id and c.organization_id == ^current_organization.id)
+      |> preload([:labels])
+      |> Repo.one!()
 
+    devices =
+      case length(channel.labels) do
+        0 -> []
+        _ -> Ecto.assoc(channel.labels, :devices) |> Repo.all() |> Enum.uniq()
+      end
+      
     channel =
       case channel.type do
         "http" ->
@@ -38,7 +47,10 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:method, channel.credentials["method"])
           |> Map.put(:inbound_token, channel.credentials["inbound_token"])
           |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
-        _ -> channel
+          |> Map.put(:devices, devices)
+        _ ->
+          channel
+          |> Map.put(:devices, devices)
       end
 
     {:ok, channel}

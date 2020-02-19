@@ -20,6 +20,14 @@ export const CHANNEL_SHOW = gql`
       endpoint
       inbound_token
       headers
+      labels {
+        name,
+        id
+      }
+      devices {
+        name,
+        id
+      }
     }
   }
   ${CHANNEL_FRAGMENT}
