@@ -50,6 +50,11 @@ class ChannelsTable extends Component {
         )
       },
       {
+        title: 'Devices',
+        dataIndex: 'device_count',
+        render: text => text ? text : 0
+      },
+      {
         title: '',
         key: 'action',
         render: (text, record) => (

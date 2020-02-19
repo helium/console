@@ -49,8 +49,10 @@ export const PAGINATED_CHANNELS = gql`
         ...ChannelFragment
         labels {
           name,
-          id
-        }
+          id,
+          color
+        },
+        device_count
       },
       totalEntries,
       totalPages,
