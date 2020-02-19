@@ -3,11 +3,11 @@ import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { removeDeviceFromLabels } from '../../actions/label'
+import { removeDevicesFromLabel } from '../../actions/label'
 import { displayError } from '../../util/messages'
 
 @connect(null, mapDispatchToProps)
-class RemoveLabelModal extends Component {
+class RemoveDevicesFromLabelModal extends Component {
   constructor(props) {
     super(props);
 
@@ -16,10 +16,10 @@ class RemoveLabelModal extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { devicesToRemove, removeDeviceFromLabels, label, onClose } = this.props
+    const { devicesToRemove, removeDevicesFromLabel, label, onClose } = this.props
 
     if (devicesToRemove.length === 0) displayError("No devices are selected for removal")
-    else removeDeviceFromLabels(devicesToRemove, label.id)
+    else removeDevicesFromLabel(devicesToRemove, label.id)
 
     onClose()
   }
@@ -65,7 +65,7 @@ class RemoveLabelModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ removeDeviceFromLabels }, dispatch)
+  return bindActionCreators({ removeDevicesFromLabel }, dispatch)
 }
 
-export default RemoveLabelModal
+export default RemoveDevicesFromLabelModal

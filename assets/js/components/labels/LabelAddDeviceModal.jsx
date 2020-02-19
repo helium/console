@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo';
 import debounce from 'lodash/debounce'
 import gql from 'graphql-tag';
 import omit from 'lodash/omit'
-import { LABELS_DEVICES } from '../../graphql/labels'
+import { ALL_LABELS_DEVICES } from '../../graphql/labels'
 import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete } from 'antd';
 import LabelAddDeviceSelect from './LabelAddDeviceSelect'
 import LabelAddLabelSelect from './LabelAddLabelSelect'
@@ -144,6 +144,6 @@ const queryOptions = {
   })
 }
 
-const ModalWithData = graphql(LABELS_DEVICES, queryOptions)(LabelAddDeviceModal)
+const ModalWithData = graphql(ALL_LABELS_DEVICES, queryOptions)(LabelAddDeviceModal)
 
 export default ModalWithData

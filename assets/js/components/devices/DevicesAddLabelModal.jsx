@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
-import { LABELS_DEVICES } from '../../graphql/labels'
+import { ALL_LABELS } from '../../graphql/labels'
 import { addDevicesToLabel, addDevicesToNewLabel } from '../../actions/label'
 import LabelTag from '../common/LabelTag'
 import { Modal, Button, Typography, Input, Select } from 'antd';
@@ -11,7 +10,7 @@ const { Text } = Typography
 const { Option } = Select
 
 @connect(null, mapDispatchToProps)
-class DeviceAddLabelsModal extends Component {
+class DevicesAddLabelModal extends Component {
   constructor(props) {
     super(props);
 
@@ -116,4 +115,4 @@ const queryOptions = {
   })
 }
 
-export default graphql(LABELS_DEVICES, queryOptions)(DeviceAddLabelsModal)
+export default graphql(ALL_LABELS, queryOptions)(DevicesAddLabelModal)

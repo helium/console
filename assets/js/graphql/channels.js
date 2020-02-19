@@ -47,6 +47,10 @@ export const PAGINATED_CHANNELS = gql`
     channels(page: $page, pageSize: $pageSize) {
       entries {
         ...ChannelFragment
+        labels {
+          name,
+          id
+        }
       },
       totalEntries,
       totalPages,

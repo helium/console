@@ -37,6 +37,7 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :default, :boolean
     field :show_dupes, :boolean
+    field :labels, list_of(:label)
     field :devices, list_of(:device)
   end
 

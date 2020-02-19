@@ -72,7 +72,7 @@ export const addDevicesToNewLabel = (devices, labelName) => {
   }
 }
 
-export const removeDeviceFromLabels = (devices, label_id) => {
+export const removeDevicesFromLabel = (devices, label_id) => {
   return (dispatch) => {
     rest.post(`/api/devices_labels/delete`, {
       devices: devices.map(d => d.id),

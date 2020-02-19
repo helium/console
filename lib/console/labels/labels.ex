@@ -5,6 +5,7 @@ defmodule Console.Labels do
 
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
+  alias Console.Labels.ChannelsLabels
   alias Console.Devices.Device
   alias Console.Organizations
 
@@ -87,5 +88,20 @@ defmodule Console.Labels do
   def delete_devices_labels(devices, label_id) do
     query = from(dl in DevicesLabels, where: dl.device_id in ^devices and dl.label_id == ^label_id)
     Repo.delete_all(query)
+  end
+
+  def add_labels_to_channel(labels, channel, organization) do
+    labels_query = from(l in Label, where: l.id in ^labels and l.organization_id == ^organization.id, select: l)
+    all_labels = Repo.all(labels_query)
+
+    channels_labels = Enum.reduce(all_labels, [], fn label, acc ->
+      acc ++ [%{ channel_id: channel.id, label_id: label.id }]
+    end)
+
+    Repo.transaction(fn ->
+      Enum.each(channels_labels, fn attrs ->
+        Repo.insert!(ChannelsLabels.changeset(%ChannelsLabels{}, attrs))
+      end)
+    end)
   end
 end
