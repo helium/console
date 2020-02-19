@@ -45,3 +45,12 @@ export const deleteDevice = (id, redirect = true) => {
       })
   }
 }
+
+export const deleteDevices = (devices) => {
+  return (dispatch) => {
+    rest.post(`/api/devices/delete`, {
+      devices: devices.map(d => d.id)
+    })
+    .then(response => {})
+  }
+}

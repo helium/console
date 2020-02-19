@@ -9,21 +9,11 @@ defmodule Console.Devices.DeviceResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
-      |> preload([:channels])
+      |> preload([:labels])
       |> order_by(asc: :seq_id)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    default_channel = Channels.get_default_channel(current_organization)
-
-    entries = Enum.map(devices.entries, fn d ->
-      if length(d.channels) == 0 and default_channel do
-        Map.put(d, :channels, [default_channel])
-      else
-        d
-      end
-    end)
-
-    {:ok, Map.put(devices, :entries, entries)}
+    {:ok, devices}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do

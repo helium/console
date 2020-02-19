@@ -65,6 +65,20 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def delete(conn, %{"devices" => devices}) do
+    current_organization = conn.assigns.current_organization
+    device = Devices.get_device!(List.first(devices))
+    length = length(devices)
+
+    with {:ok, _} <- Devices.delete_devices(devices) do
+      broadcast(device)
+
+      conn
+      |> put_resp_header("message", "Devices deleted successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   def set_channel(conn, %{"channel" => %{"id" => channel_id}, "device_id" => id}) do
     device = Devices.get_device!(id)
     channel = Channels.get_channel!(channel_id)
@@ -92,7 +106,7 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  defp broadcast(%Device{} = device) do
+  def broadcast(%Device{} = device) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end
 

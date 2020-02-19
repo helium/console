@@ -12,7 +12,7 @@ class LabelIndex extends Component {
     this.state = {
       showCreateLabelModal: false,
       showDeleteLabelModal: false,
-      labelId: null,
+      labelsToDelete: null,
     }
     this.openCreateLabelModal = this.openCreateLabelModal.bind(this)
     this.closeCreateLabelModal = this.closeCreateLabelModal.bind(this)
@@ -32,8 +32,8 @@ class LabelIndex extends Component {
     this.setState({ showCreateLabelModal: false })
   }
 
-  openDeleteLabelModal(labelId) {
-    this.setState({ showDeleteLabelModal: true, labelId })
+  openDeleteLabelModal(labelsToDelete) {
+    this.setState({ showDeleteLabelModal: true, labelsToDelete })
   }
 
   closeDeleteLabelModal() {
@@ -57,7 +57,7 @@ class LabelIndex extends Component {
         <DeleteLabelModal
           open={showDeleteLabelModal}
           onClose={this.closeDeleteLabelModal}
-          labelId={this.state.labelId}
+          labelsToDelete={this.state.labelsToDelete}
         />
       </DashboardLayout>
     )

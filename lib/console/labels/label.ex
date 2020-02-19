@@ -17,9 +17,15 @@ defmodule Console.Labels.Label do
     timestamps()
   end
 
-  def changeset(device, attrs) do
+  def changeset(label, attrs) do
+    attrs =
+      case attrs["name"] do
+        nil -> attrs
+        _ -> Map.put(attrs, "name", String.upcase(attrs["name"]))
+      end
+
     changeset =
-      device
+      label
       |> cast(attrs, [:name, :organization_id, :color])
       |> validate_required([:name, :organization_id])
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "Label already exists, please use another name.")

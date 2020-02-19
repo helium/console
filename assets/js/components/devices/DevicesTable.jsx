@@ -1,72 +1,59 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { deleteDevice } from '../../actions/device'
 import moment from 'moment'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import UserCan from '../common/UserCan'
+import LabelTag from '../common/LabelTag'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
-import { Table, Button, Empty, Pagination, Tag } from 'antd';
+import { Table, Button, Empty, Pagination, Tag, Typography, Select } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
 import { Card } from 'antd';
-
-
+const { Text } = Typography
+const { Option } = Select
 
 const defaultVariables = {
   page: 1,
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class DevicesTable extends Component {
   render() {
-    const { deleteDevice } = this.props
-
     const columns = [
       {
         title: 'Device Name',
         dataIndex: 'name',
-        render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>{text}</Link>
-        )
       },
       {
         title: 'Device EUI',
         dataIndex: 'dev_eui',
       },
       {
-        title: 'Integrations',
-        dataIndex: 'channels',
-        render: data => {
+        title: 'Labels',
+        dataIndex: 'labels',
+        render: labels => {
           return <React.Fragment>
             {
-              data.map(d => <Tag key={d.id}>{d.name}</Tag>)
+              labels.map(l => <LabelTag key={l.name} text={l.name} color={l.color} />)
             }
           </React.Fragment>
         }
       },
       {
-        title: 'Created',
+        title: 'Date Activated',
         dataIndex: 'inserted_at',
-        render: data => moment(data).format('LL')
+        render: data => moment.utc(data).local().format('lll')
       },
       {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <Button
-              icon="delete"
-              type="danger"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { "id": record.id })
-                deleteDevice(record.id)
-              }}
-            />
+          <div>
+            <Link to="#" onClick={() => this.props.openDeleteDeviceModal(record.id)}>Delete</Link>
+            <Text>{" | "}</Text>
+            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -98,12 +85,14 @@ class QueryResults extends Component {
 
     this.state = {
       page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10
+      pageSize: get(props, ['variables', 'pageSize']) || 10,
+      selectedRows: [],
     }
 
     this.handleChangePage = this.handleChangePage.bind(this)
     this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
     this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
+    this.handleSelectOption = this.handleSelectOption.bind(this)
   }
 
   componentDidMount() {
@@ -117,6 +106,14 @@ class QueryResults extends Component {
         this.handleSubscriptionAdded()
       }
     })
+  }
+
+  handleSelectOption(value) {
+    if (value === 'addLabel') {
+      this.props.openDeviceAddLabelsModal(this.state.selectedRows)
+    } else {
+      this.props.openDeleteDeviceModal(this.state.selectedRows)
+    }
   }
 
   handleChangePage(page) {
@@ -140,7 +137,7 @@ class QueryResults extends Component {
   }
 
   render() {
-    const { loading, error, data, columns } = this.props
+    const { loading, error, data, columns, openCreateDeviceModal } = this.props
 
     if (loading) return null;
     if (error) return (
@@ -151,19 +148,54 @@ class QueryResults extends Component {
 
     if (results.entries.length === 0) return (
       <Empty
-      style={{marginBottom: 70}}
+        style={{marginBottom: 70}}
         image={EmptyImg}
         description={<span>No Devices</span>}
       />
     )
 
+    const rowSelection = {
+      onSelect: (record, selected) => {
+        const { selectedRows } = this.state
+        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
+        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
+      },
+      onSelectAll: (selected, selectedRows) => {
+        if (selected) this.setState({ selectedRows })
+        else this.setState({ selectedRows: [] })
+      },
+    }
+
     return (
-      <div>
+      <Card
+        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        title={`${results.entries.length} Devices`}
+        extra={
+          <React.Fragment>
+            <Select
+              value="Quick Action"
+              style={{ width: 220, marginRight: 10 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="addLabel">Add Label to Selected Devices</Option>
+              <Option value="delete" style={{ color: '#F5222D' }}>Delete Selected Devices</Option>
+            </Select>
+            <Button
+              type="primary"
+              icon="plus"
+              onClick={this.props.openCreateDeviceModal}
+            >
+              Add Device
+            </Button>
+          </React.Fragment>
+        }
+      >
         <Table
           columns={columns}
           dataSource={results.entries}
           rowKey={record => record.id}
           pagination={false}
+          rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
@@ -175,13 +207,9 @@ class QueryResults extends Component {
             style={{marginBottom: 20}}
           />
         </div>
-      </div>
+      </Card>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice }, dispatch);
 }
 
 export default DevicesTable
