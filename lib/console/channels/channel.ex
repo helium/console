@@ -6,7 +6,6 @@ defmodule Console.Channels.Channel do
   alias Console.Events.Event
   alias Console.Channels
   alias Console.Devices.Device
-  alias Console.Devices.DevicesChannels
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,7 +20,6 @@ defmodule Console.Channels.Channel do
     field :show_dupes, :boolean, default: false
 
     belongs_to :organization, Organization
-    many_to_many :devices, Device, join_through: DevicesChannels, on_delete: :delete_all
 
     timestamps()
   end

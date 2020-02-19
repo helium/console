@@ -10,24 +10,6 @@ export const createDevice = (params) => {
   }
 }
 
-export const setDeviceChannel = (id, params) => {
-  return (dispatch) => {
-    rest.post(`/api/devices/${id}/channel`, {
-      channel: params
-    })
-    .then(response => {})
-  }
-}
-
-export const deleteDeviceChannel = (id, params) => {
-  return (dispatch) => {
-    rest.destroy(`/api/devices/${id}/channel?channel_id=${params.id}`, {
-      channel: params
-    })
-    .then(response => {})
-  }
-}
-
 export const updateDevice = (id, params) => {
   return (dispatch) => {
     rest.put(`/api/devices/${id}`, {

@@ -17,7 +17,7 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([:channels])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
     key = device.key
       |> :base64.decode
       |> :erlang.binary_to_list()

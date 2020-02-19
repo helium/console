@@ -11,7 +11,7 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import { CHANNEL_FRAGMENT, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
+import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
@@ -27,23 +27,9 @@ const queryOptions = {
   })
 }
 
-const query = gql`
-  query ChannelShowQuery ($id: ID!) {
-    channel(id: $id) {
-      ...ChannelFragment
-      method
-      endpoint
-      inbound_token
-      headers
-      devices {
-        name
-      }
-    }
-  }
-  ${CHANNEL_FRAGMENT}
-`
 
-@graphql(query, queryOptions)
+
+@graphql(CHANNEL_SHOW, queryOptions)
 @connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
   constructor(props) {
@@ -131,9 +117,7 @@ class ChannelShow extends Component {
 
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>
-      <Card title="Integration Details" extra={<Tag type="secondary">
-            Default Channel for New Devices
-          </Tag>}>
+      <Card title="Integration Details">
 
         <Input
           name="newName"
@@ -154,21 +138,7 @@ class ChannelShow extends Component {
         <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
                 <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
                 <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-                <Paragraph><Text strong> Devices Piped: </Text><Text>––</Text></Paragraph>
 
-                {
-          channel.devices.map(d => (
-            <Tag key={d.name}>
-              {d.name}
-            </Tag>
-          ))
-        }
-
-        {
-          !channel.default && channel.devices.length === 0 && <Text>
-            0 Connected Devices
-          </Text>
-        }
 
 
         </Col>

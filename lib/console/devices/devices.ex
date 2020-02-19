@@ -3,7 +3,6 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
-  alias Console.Devices.DevicesChannels
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
 
@@ -65,16 +64,5 @@ defmodule Console.Devices do
 
   def delete_device(%Device{} = device) do
     Repo.delete(device)
-  end
-
-  def set_device_channel(%Device{} = device, %Channel{} = channel) do
-    %DevicesChannels{}
-      |> DevicesChannels.join_changeset(device, channel)
-      |> Repo.insert()
-  end
-
-  def delete_device_channel(%Device{} = device, channel_id) do
-    Repo.get_by(DevicesChannels, [device_id: device.id, channel_id: channel_id])
-    |> Repo.delete()
   end
 end

@@ -15,7 +15,6 @@ defmodule ConsoleWeb.Schema do
     field :organization, :organization
     field :inserted_at, :naive_datetime
     field :labels, list_of(:label)
-    field :channels, list_of(:channel)
   end
 
   paginated object :label do

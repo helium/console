@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
-import { setDeviceChannel, deleteDeviceChannel, updateDevice } from '../../actions/device'
+import { updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
@@ -26,7 +26,6 @@ class DeviceShow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      channelSelected: "",
       newName: "",
       newDevEUI: "",
       showNameInput: false,
@@ -34,9 +33,6 @@ class DeviceShow extends Component {
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSelectUpdate = this.handleSelectUpdate.bind(this);
-    this.handleAddChannel = this.handleAddChannel.bind(this);
-    this.handleDeleteChannel = this.handleDeleteChannel.bind(this);
     this.handleDeviceNameUpdate = this.handleDeviceNameUpdate.bind(this);
     this.handleDeviceEUIUpdate = this.handleDeviceEUIUpdate.bind(this);
     this.toggleNameInput = this.toggleNameInput.bind(this);
@@ -63,24 +59,6 @@ class DeviceShow extends Component {
 
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value})
-  }
-
-  handleSelectUpdate(channelSelected) {
-    this.setState({ channelSelected })
-  }
-
-  handleAddChannel() {
-    const { channelSelected } = this.state
-    const { device } = this.props.data
-    this.props.setDeviceChannel(device.id, { id: channelSelected })
-    analyticsLogger.logEvent("ACTION_ADD_DEVICE_CHANNEL", {"id": device.id})
-    this.setState({ channelSelected: "" })
-  }
-
-  handleDeleteChannel(channel_id) {
-    const { device } = this.props.data
-    analyticsLogger.logEvent("ACTION_DELETE_DEVICE_CHANNEL", {"id": device.id})
-    this.props.deleteDeviceChannel(device.id, { id: channel_id })
   }
 
   handleDeviceNameUpdate(id) {
@@ -117,14 +95,12 @@ class DeviceShow extends Component {
   }
 
   render() {
-    const { channelSelected, newName, showNameInput, showDevEUIInput } = this.state
-    const { loading, device, organizationChannels: channels } = this.props.data
+    const { newName, showNameInput, showDevEUIInput } = this.state
+    const { loading, device } = this.props.data
 
     if (loading) return <DashboardLayout />
 
     const appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8)
-
-    const defaultChannel = find(channels, c => c.default)
 
     return(
       <DashboardLayout title={`${device.name}`}>
@@ -220,37 +196,7 @@ class DeviceShow extends Component {
         </Card>
 
         <Card title="Device Integrations">
-        <Select
-          placeholder="Select Integration"
-          onChange={this.handleSelectUpdate}
-          style={{ width: 200, marginRight: 5 }}
-        >
-          {channels.map(c => (
-            <Option value={c.id} key={c.id}>{c.name}</Option>
-          ))}
-        </Select>
-
-        <Button
-          type="primary"
-          onClick={this.handleAddChannel}
-        >
-          Add
-        </Button>
-                </Card>
-<Card title="Real Time Packets">
-        <div>
-          {
-            device.channels.map(c => (
-              <Tag key={c.id} closable onClose={() => this.handleDeleteChannel(c.id)}>{`Channel: ${c.name}`}</Tag>
-            ))
-          }
-          {
-            device.channels.length === 0 && channels.length > 0 && defaultChannel && (
-              <Tag>{`Default Channel: ${defaultChannel.name}`}</Tag>
-            )
-          }
-        </div>
-        <EventsDashboard contextName="devices" contextId={device.id} />
+          <EventsDashboard contextName="devices" contextId={device.id} />
         </Card>
       </DashboardLayout>
     )
@@ -272,25 +218,13 @@ const query = gql`
       ...DeviceFragment
       key
       oui
-      channels {
-        name
-        id
-      }
-    },
-    organizationChannels {
-      name,
-      type,
-      type_name,
-      id,
-      active,
-      default
     }
   }
   ${DEVICE_FRAGMENT}
 `
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ setDeviceChannel, deleteDeviceChannel, updateDevice }, dispatch)
+  return bindActionCreators({ updateDevice }, dispatch)
 }
 
 const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)

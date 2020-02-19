@@ -9,7 +9,7 @@ defmodule Console.Channels.ChannelResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(id) |> Repo.preload([:devices])
+    channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(id)
 
     channel =
       case channel.type do

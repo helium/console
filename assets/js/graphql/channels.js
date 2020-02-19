@@ -12,6 +12,19 @@ export const CHANNEL_FRAGMENT = gql`
   }
 `
 
+export const CHANNEL_SHOW = gql`
+  query ChannelShowQuery ($id: ID!) {
+    channel(id: $id) {
+      ...ChannelFragment
+      method
+      endpoint
+      inbound_token
+      headers
+    }
+  }
+  ${CHANNEL_FRAGMENT}
+`
+
 export const CHANNEL_SUBSCRIPTION = gql`
   subscription onChannelAdded {
     channelAdded {
