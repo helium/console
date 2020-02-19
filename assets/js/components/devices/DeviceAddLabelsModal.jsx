@@ -40,7 +40,6 @@ class DeviceAddLabelsModal extends Component {
       this.props.addDevicesToNewLabel(deviceIds, labelName)
     }
 
-    this.setState({ labelId: null, labelName: null })
     this.props.onClose()
   }
 

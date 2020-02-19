@@ -4,6 +4,7 @@ defmodule Console.Devices do
 
   alias Console.Devices.Device
   alias Console.Devices.DevicesChannels
+  alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
 
   def list_devices do
@@ -56,8 +57,10 @@ defmodule Console.Devices do
   end
 
   def delete_devices(device_ids) do
-    from(d in Device, where: d.id in ^device_ids)
-    |> Repo.delete_all()
+    Repo.transaction(fn ->
+      from(dl in DevicesLabels, where: dl.device_id in ^device_ids) |> Repo.delete_all()
+      from(d in Device, where: d.id in ^device_ids) |> Repo.delete_all()
+    end)
   end
 
   def delete_device(%Device{} = device) do

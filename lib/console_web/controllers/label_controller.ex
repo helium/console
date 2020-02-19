@@ -55,7 +55,7 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(List.first(labels))
     length = length(labels)
 
-    with {length, nil} <- Labels.delete_labels(labels) do
+    with {:ok, _} <- Labels.delete_labels(labels) do
       broadcast(label)
 
       conn

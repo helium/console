@@ -70,7 +70,7 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(List.first(devices))
     length = length(devices)
 
-    with {length, nil} <- Devices.delete_devices(devices) do
+    with {:ok, _} <- Devices.delete_devices(devices) do
       broadcast(device)
 
       conn
