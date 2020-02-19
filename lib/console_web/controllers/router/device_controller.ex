@@ -9,7 +9,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Channels
 
   def show(conn, %{"id" => id, "oui" => oui}) do
-    case Devices.get_by_seq_id(id, oui) do
+    case Devices.get_by_id(id, oui) do
       nil ->
         conn
         |> send_resp(404, "")

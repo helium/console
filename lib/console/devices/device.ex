@@ -12,12 +12,11 @@ defmodule Console.Devices.Device do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "devices" do
-    field :mac, :string
     field :name, :string
-    field :key, :string
-    field :seq_id, :integer
-    field :oui, :integer
     field :dev_eui, :string
+    field :app_key, :string
+    field :app_eui, :string        
+    field :oui, :integer    
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
@@ -30,9 +29,9 @@ defmodule Console.Devices.Device do
   def changeset(device, attrs) do
     changeset =
       device
-      |> cast(attrs, [:name, :mac, :key, :organization_id, :seq_id, :dev_eui])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
-      |> validate_required([:name, :mac, :key, :seq_id, :oui, :dev_eui])
+      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui])
       |> unique_constraint(:mac)
   end
 end

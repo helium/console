@@ -10,7 +10,7 @@ defmodule Console.Devices.DeviceResolver do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
       |> preload([:labels])
-      |> order_by(asc: :seq_id)
+      |> order_by(asc: :dev_eui)
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, devices}
@@ -18,12 +18,6 @@ defmodule Console.Devices.DeviceResolver do
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
-    key = device.key
-      |> :base64.decode
-      |> :erlang.binary_to_list()
-      |> Enum.map(fn b -> :io_lib.format("~2.16.0B", [b]) |> to_string() end)
-
-    device = Map.put(device, :key, key)
     {:ok, device}
   end
 
