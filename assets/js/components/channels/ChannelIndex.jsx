@@ -4,25 +4,38 @@ import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelCargoRow from './ChannelCargoRow'
+import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography } from 'antd';
 import { Card } from 'antd';
 const { Text } = Typography
 
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between'
-  },
-}
-
 class ChannelIndex extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      showDeleteChannelModal: false,
+      channel: null,
+    }
+    this.openDeleteChannelModal = this.openDeleteChannelModal.bind(this)
+    this.closeDeleteChannelModal = this.closeDeleteChannelModal.bind(this)
+  }
+
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX")
   }
 
+  openDeleteChannelModal(channel) {
+    this.setState({ showDeleteChannelModal: true, channel })
+  }
+
+  closeDeleteChannelModal() {
+    this.setState({ showDeleteChannelModal: false })
+  }
+
   render() {
-    const { classes } = this.props
+    const { showDeleteChannelModal, channel } = this.state
     return (
       <DashboardLayout title="Integrations">
         <Card title="Helium Integrations">
@@ -32,10 +45,12 @@ class ChannelIndex extends Component {
         <Card title="Create your own Integration">
           <ChannelCreateRow />
         </Card>
-        
+
         <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px'}}>
-          <ChannelsTable />
+          <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} />
         </Card>
+
+        <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channel}/>
       </DashboardLayout>
     )
   }

@@ -57,13 +57,20 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def delete(conn, %{"id" => id}) do
-    channel = Channels.get_channel!(id)
+    channel = Channels.get_channel!(id) |> Channels.fetch_assoc([:labels])
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel)
+      msg =
+        case length(channel.labels) do
+          0 -> "The Integration #{channel.name} has been deleted"
+          _ ->
+            labels = Enum.reduce(channel.labels, "", fn (l, acc) -> acc = acc <> l.name <> ", " end)
+            "The devices with label #{labels}are no longer connected to Integration #{channel.name}"
+        end
 
       conn
-      |> put_resp_header("message", "#{channel.name} deleted successfully")
+      |> put_resp_header("message", msg)
       |> render("show.json", channel: channel)
     end
   end

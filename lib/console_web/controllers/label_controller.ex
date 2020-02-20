@@ -28,11 +28,18 @@ defmodule ConsoleWeb.LabelController do
   def update(conn, %{"id" => id, "label" => label_params}) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(id)
+    name = label.name
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       broadcast(label, label.id)
+      msg =
+        cond do
+          label.name == name -> "#{label.name} updated successfully"
+          true -> "The label #{name} was successfully updated to #{label.name}"
+        end
+
       conn
-      |> put_resp_header("message", "#{label.name} updated successfully")
+      |> put_resp_header("message", msg)
       |> render("show.json", label: label)
     end
   end

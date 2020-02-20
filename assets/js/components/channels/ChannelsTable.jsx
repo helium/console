@@ -1,29 +1,21 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { deleteChannel } from '../../actions/channel'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import UserCan from '../common/UserCan'
 import LabelTag from '../common/LabelTag'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
-import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
 import { Table, Button, Empty, Pagination } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
-
 
 const defaultVariables = {
   page: 1,
   pageSize: 10
 }
 
-@connect(null, mapDispatchToProps)
 class ChannelsTable extends Component {
   render() {
-    const { deleteChannel } = this.props
-
     const columns = [
       {
         title: 'Name',
@@ -62,10 +54,7 @@ class ChannelsTable extends Component {
             <Button
               type="danger"
               icon="delete"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", {"id": record.id})
-                deleteChannel(record.id)
-              }}
+              onClick={() => this.props.openDeleteChannelModal(record)}
             />
           </div>
         )
@@ -175,10 +164,6 @@ class QueryResults extends Component {
       </div>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteChannel }, dispatch);
 }
 
 export default ChannelsTable
