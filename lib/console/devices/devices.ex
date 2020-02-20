@@ -16,6 +16,7 @@ defmodule Console.Devices do
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
      from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
+     |> preload([:labels])
      |> Repo.all()
   end
 

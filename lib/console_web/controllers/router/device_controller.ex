@@ -1,15 +1,26 @@
 defmodule ConsoleWeb.Router.DeviceController do
   use ConsoleWeb, :controller
+  alias Console.Repo
+  import Ecto.Query
   import ConsoleWeb.AuthErrorHandler
 
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Organizations
   alias Console.Organizations
   alias Console.Devices.Device
   alias Console.Channels
 
-  def show(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
+  def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
+    devices = Enum.map(devices, fn d ->
+      if length(d.labels) > 0 do
+        Map.put(d, :channels, Ecto.assoc(d.labels, :channels) |> Repo.all() |> Enum.uniq())
+      else
+        Map.put(d, :channels, [])
+      end
+    end)
+
     render(conn, "index.json", devices: devices)
   end
 
@@ -24,13 +35,5 @@ defmodule ConsoleWeb.Router.DeviceController do
         conn
         |> send_resp(200, "")
     end
-  end
-
-  defp show_device(conn, device) do
-    device = device |> Devices.fetch_assoc([:labels])
-    channels = Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq()
-    
-    conn
-    |> render("show.json", device: Map.put(device, :channels, channels))
   end
 end

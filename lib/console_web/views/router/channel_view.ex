@@ -23,11 +23,7 @@ defmodule ConsoleWeb.Router.ChannelView do
   end
 
   def append_channels(json, channels) do
-    if Ecto.assoc_loaded?(channels) do
-      channels_json = render_many(channels, ChannelView, "channel.json")
-      Map.put(json, :channels, channels_json)
-    else
-      json
-    end
+    channels_json = render_many(channels, ChannelView, "channel.json")
+    Map.put(json, :channels, channels_json)
   end
 end
