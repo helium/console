@@ -27,21 +27,10 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   defp show_device(conn, device) do
-    device = device |> Devices.fetch_assoc([:channels])
-    device =
-      case device.channels do
-        [] ->
-          organization = Organizations.get_organization!(device.organization_id)
-
-          default_channel = Channels.get_default_channel(organization)
-          if default_channel != nil do
-            Map.put(device, :channels, [default_channel])
-          else
-            device
-          end
-        _ -> device
-      end
+    device = device |> Devices.fetch_assoc([:labels])
+    channels = Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq()
+    
     conn
-    |> render("show.json", device: device)
+    |> render("show.json", device: Map.put(device, :channels, channels))
   end
 end

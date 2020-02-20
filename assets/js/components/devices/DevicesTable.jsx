@@ -146,14 +146,6 @@ class QueryResults extends Component {
 
     const results = find(data, d => d.entries !== undefined)
 
-    if (results.entries.length === 0) return (
-      <Empty
-        style={{marginBottom: 70}}
-        image={EmptyImg}
-        description={<span>No Devices</span>}
-      />
-    )
-
     const rowSelection = {
       onSelect: (record, selected) => {
         const { selectedRows } = this.state
