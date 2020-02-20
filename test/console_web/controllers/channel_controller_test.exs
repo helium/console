@@ -22,7 +22,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     end
 
     test "creates channel when data is valid", %{conn: conn} do
-      conn = post conn, channel_path(conn, :create), channel: @create_attrs
+      conn = post conn, channel_path(conn, :create), channel: @create_attrs, labels: []
       created_channel = json_response(conn, 201)
       assert created_channel["name"] == @create_attrs.name
       assert created_channel["active"] == @create_attrs.active
@@ -31,7 +31,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     end
 
     test "renders create errors when data is invalid", %{conn: conn} do
-      conn = post conn, channel_path(conn, :create), channel: @invalid_attrs
+      conn = post conn, channel_path(conn, :create), channel: @invalid_attrs, labels: []
       assert json_response(conn, 422)["errors"] != %{}
     end
 

@@ -40,6 +40,7 @@ class DeviceShow extends Component {
     this.handleDeviceNameUpdate = this.handleDeviceNameUpdate.bind(this);
     this.handleDeviceEUIUpdate = this.handleDeviceEUIUpdate.bind(this);
     this.handleAppEUIUpdate = this.handleAppEUIUpdate.bind(this);
+    this.handleAppKeyUpdate = this.handleAppKeyUpdate.bind(this);
     this.toggleNameInput = this.toggleNameInput.bind(this);
     this.toggleDevEUIInput = this.toggleDevEUIInput.bind(this);
     this.toggleAppEUIInput = this.toggleAppEUIInput.bind(this);
@@ -68,7 +69,7 @@ class DeviceShow extends Component {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleDeviceNameUpdate(id) {
+  handleDeviceNameUpdate(id, e) {
     const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
@@ -167,12 +168,12 @@ class DeviceShow extends Component {
                       />
                       <Button
                         type="primary"
+                        name="newName"
                         onClick={() => this.handleDeviceNameUpdate(device.id)}
                       >
                         Update
                       </Button>
                     </OutsideClick>
-
                   ) : (
                     <React.Fragment>
                       <Text  style={{ marginRight: 5 }}>{device.name} </Text>
@@ -200,6 +201,7 @@ class DeviceShow extends Component {
                       />
                       <Button
                         type="primary"
+                        name="newDevEUI"
                         onClick={() => this.handleDeviceEUIUpdate(device.id)}
                       >
                         Update
@@ -235,6 +237,7 @@ class DeviceShow extends Component {
                       />
                       <Button
                         type="primary"
+                        name="newAppEUI"
                         onClick={() => this.handleAppEUIUpdate(device.id)}
                       >
                         Update
@@ -270,6 +273,7 @@ class DeviceShow extends Component {
                       />
                       <Button
                         type="primary"
+                        name="newAppKey"
                         onClick={() => this.handleAppKeyUpdate(device.id)}
                       >
                         Update

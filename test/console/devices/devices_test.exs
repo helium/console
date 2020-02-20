@@ -8,9 +8,9 @@ defmodule Console.DevicesTest do
   describe "devices" do
     alias Console.Devices.Device
 
-    @valid_attrs %{"mac" => "some mac", "name" => "some name", "dev_eui" => "randomeui"}
-    @update_attrs %{"mac" => "some updated mac", "name" => "some updated name"}
-    @invalid_attrs %{"mac" => nil, "name" => nil}
+    @valid_attrs %{"dev_eui" => "randomeui", "app_eui" => "randomeui", "name" => "some name", "app_key" => "randomkey"}
+    @update_attrs %{"dev_eui" => "1randomeui", "app_eui" => "1randomeui", "name" => "some updated name"}
+    @invalid_attrs %{"name" => nil}
 
     def device_fixture(attrs \\ %{}) do
       organization = insert(:organization)
@@ -37,7 +37,7 @@ defmodule Console.DevicesTest do
       organization = insert(:organization)
       attrs = @valid_attrs |> Enum.into(%{"organization_id" => organization.id})
       assert {:ok, %Device{} = device} = Devices.create_device(attrs)
-      assert device.mac == "some mac"
+      assert device.dev_eui == "randomeui"
       assert device.name == "some name"
     end
 
@@ -49,7 +49,7 @@ defmodule Console.DevicesTest do
       device = device_fixture()
       assert {:ok, device} = Devices.update_device(device, @update_attrs)
       assert %Device{} = device
-      assert device.mac == "some updated mac"
+      assert device.dev_eui == "1randomeui"
       assert device.name == "some updated name"
     end
 

@@ -10,3 +10,13 @@ defmodule Console.Repo.Migrations.UpdateDevicesTable do
     end
   end
 end
+
+# Run after db script
+# alter table(:devices) do
+#   modify :app_eui, :string, null: false
+#   modify :app_key, :string, null: false
+#   modify :dev_eui, :string, null: false
+#   modify :name, :string, null: false
+#   remove :key
+#   remove :seq_id
+# end

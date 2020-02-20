@@ -14,21 +14,14 @@ class NewDeviceModal extends Component {
 
     this.state = {
       name: "",
-      devEUI: this.randomString(16),
-      appEUI: this.randomString(16),
-      appKey: this.randomString(32),
+      devEUI: randomString(16),
+      appEUI: randomString(16),
+      appKey: randomString(32),
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-  randomString(length) {
-    let chars = "0123456789ABCDEF";
-    let result = '';
-    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    return result;
-}
 
   handleInputUpdate(e) {
     this.setState({ [e.target.name]: e.target.value})
@@ -43,7 +36,7 @@ class NewDeviceModal extends Component {
 
       this.props.onClose()
     } else {
-      displayError(`Device EUI must be exactly 8 bytes long`)
+      displayError(`Please ensure your device credentials are of the correct length.`)
     }
   }
 
@@ -116,6 +109,13 @@ class NewDeviceModal extends Component {
       </Modal>
     )
   }
+}
+
+const randomString = length => {
+  let chars = "0123456789ABCDEF";
+  let result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
 }
 
 function mapDispatchToProps(dispatch) {

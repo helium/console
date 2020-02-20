@@ -4,9 +4,9 @@ defmodule ConsoleWeb.DeviceControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{mac: "some mac", name: "some name", public_key: "some public_key", dev_eui: "randomeui"}
-  @update_attrs %{mac: "some updated mac", name: "some updated name", public_key: "some updated public_key"}
-  @invalid_attrs %{mac: nil, name: nil, public_key: nil}
+  @create_attrs %{app_eui: "some app_eui", name: "some name", app_key: "some app_key", dev_eui: "randomeui"}
+  @update_attrs %{app_eui: "some updated app_eui", name: "some updated name", app_key: "some updated app_key"}
+  @invalid_attrs %{app_eui: nil, name: nil, public_key: nil}
 
   describe "index" do
     setup [:authenticate_user]
@@ -26,7 +26,6 @@ defmodule ConsoleWeb.DeviceControllerTest do
       %{"id" => id} = json_response(conn, 201)
       assert json_response(conn, 201) == %{
         "id" => id,
-        "mac" => "some mac",
         "name" => "some name",
         "organization_id" => organization.id,
       }
@@ -42,7 +41,6 @@ defmodule ConsoleWeb.DeviceControllerTest do
       conn = get conn, device_path(conn, :show, device.id)
       assert json_response(conn, 200) == %{
         "id" => device.id,
-        "mac" => device.mac,
         "name" => device.name,
         "organization_id" => organization.id,
       }
@@ -53,7 +51,6 @@ defmodule ConsoleWeb.DeviceControllerTest do
       conn = put conn, device_path(conn, :update, device.id), device: @update_attrs
       assert json_response(conn, 200) == %{
         "id" => device.id,
-        "mac" => "some updated mac",
         "name" => "some updated name",
         "organization_id" => organization.id,
       }
