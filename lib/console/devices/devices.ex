@@ -13,10 +13,6 @@ defmodule Console.Devices do
   def get_device!(id), do: Repo.get!(Device, id)
 
   def get_device(id), do: Repo.get(Device, id)
-  
-  def get_by_id(id, oui) do
-     Repo.get_by(Device, [id: id, oui: oui])
-  end
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
      from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)

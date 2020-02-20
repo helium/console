@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createDevice } from '../../actions/device'
-import { randomMac } from '../../util/random'
 import { displayError } from '../../util/messages'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input } from 'antd';
