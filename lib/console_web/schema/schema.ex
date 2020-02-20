@@ -5,11 +5,10 @@ defmodule ConsoleWeb.Schema do
 
   paginated object :device do
     field :id, :id
-    field :seq_id, :integer
     field :name, :string
-    field :key, :string
-    field :mac, :string
     field :dev_eui, :string
+    field :app_eui, :string
+    field :app_key, :string
     field :oui, :integer
     field :organization_id, :id
     field :organization, :organization

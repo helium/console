@@ -13,15 +13,13 @@ defmodule Console.Devices do
   def get_device!(id), do: Repo.get!(Device, id)
 
   def get_device(id), do: Repo.get(Device, id)
-
-  def get_by_mac(mac), do: Repo.get_by(Device, mac: mac)
-
-  def get_by_seq_id(seq_id, oui) do
-     Repo.get_by(Device, [seq_id: seq_id, oui: oui])
+  
+  def get_by_id(id, oui) do
+     Repo.get_by(Device, [id: id, oui: oui])
   end
 
-  def get_by_dev_eui(dev_eui) do
-     from(d in Device, where: d.dev_eui == ^dev_eui)
+  def get_by_dev_eui_app_eui(dev_eui, app_eui) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
      |> Repo.all()
   end
 
@@ -30,20 +28,6 @@ defmodule Console.Devices do
   end
 
   def create_device(attrs \\ %{}) do
-    query = from(d in Device, select: d.seq_id)
-    seq_id =
-      case Repo.all(query) do
-        [] -> 0
-        list -> Enum.max(list) + 1
-      end
-
-    key = :crypto.strong_rand_bytes(16)
-      |> :base64.encode
-
-    attrs = attrs
-      |> Map.put_new("seq_id", seq_id)
-      |> Map.put_new("key", key)
-
     %Device{}
     |> Device.changeset(attrs)
     |> Repo.insert()

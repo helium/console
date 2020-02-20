@@ -15,10 +15,9 @@ defmodule ConsoleWeb.Router.DeviceView do
     %{
       id: device.id,
       name: device.name,
-      mac: device.mac,
-      key: device.key,
       dev_eui: device.dev_eui,
-      seq_id: device.seq_id,
+      app_eui: device.app_eui,
+      app_key: device.app_key,
       oui: device.oui,
       organization_id: device.organization_id
     }

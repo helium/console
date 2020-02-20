@@ -8,20 +8,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
 
-  def show(conn, %{"id" => id, "oui" => oui}) do
-    case Devices.get_by_seq_id(id, oui) do
-      nil ->
-        conn
-        |> send_resp(404, "")
-      device ->
-        conn
-        |> show_device(device)
-    end
-  end
-
-  def show(conn, %{"id" => dev_eui}) do
-    devices = Devices.get_by_dev_eui(dev_eui)
-
+  def show(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
+    devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
     render(conn, "index.json", devices: devices)
   end
 

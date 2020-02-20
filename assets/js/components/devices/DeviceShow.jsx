@@ -28,15 +28,22 @@ class DeviceShow extends Component {
     this.state = {
       newName: "",
       newDevEUI: "",
+      newAppEUI: "",
+      newAppKey: "",
       showNameInput: false,
       showDevEUIInput: false,
+      showAppEUIInput: false,
+      showAppKeyInput: false,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleDeviceNameUpdate = this.handleDeviceNameUpdate.bind(this);
     this.handleDeviceEUIUpdate = this.handleDeviceEUIUpdate.bind(this);
+    this.handleAppEUIUpdate = this.handleAppEUIUpdate.bind(this);
     this.toggleNameInput = this.toggleNameInput.bind(this);
     this.toggleDevEUIInput = this.toggleDevEUIInput.bind(this);
+    this.toggleAppEUIInput = this.toggleAppEUIInput.bind(this);
+    this.toggleAppKeyInput = this.toggleAppKeyInput.bind(this);
   }
 
   componentDidMount() {
@@ -84,6 +91,34 @@ class DeviceShow extends Component {
     }
   }
 
+  handleAppEUIUpdate(id) {
+    const { newAppEUI } = this.state
+    if (newAppEUI.length === 16) {
+      this.props.updateDevice(id, { app_eui: this.state.newAppEUI.toUpperCase() })
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "app_eui": newAppEUI })
+      return this.setState({ newAppEUI: "", showAppEUIInput: false })
+    }
+    if (newAppEUI === "") {
+      this.setState({ newAppEUI: "", showAppEUIInput: false })
+    } else {
+      displayError(`App EUI must be exactly 8 bytes long`)
+    }
+  }
+
+  handleAppKeyUpdate(id) {
+    const { newAppKey } = this.state
+    if (newAppKey.length === 32) {
+      this.props.updateDevice(id, { app_key: this.state.newAppKey.toUpperCase() })
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "app_key": newAppKey })
+      return this.setState({ newAppKey: "", showAppKeyInput: false })
+    }
+    if (newAppKey === "") {
+      this.setState({ newAppKey: "", showAppKeyInput: false })
+    } else {
+      displayError(`App Key must be exactly 16 bytes long`)
+    }
+  }
+
   toggleNameInput() {
     const { showNameInput } = this.state
     this.setState({ showNameInput: !showNameInput })
@@ -94,13 +129,21 @@ class DeviceShow extends Component {
     this.setState({ showDevEUIInput: !showDevEUIInput })
   }
 
+  toggleAppEUIInput() {
+    const { showAppEUIInput } = this.state
+    this.setState({ showAppEUIInput: !showAppEUIInput })
+  }
+
+  toggleAppKeyInput() {
+    const { showAppKeyInput } = this.state
+    this.setState({ showAppKeyInput: !showAppKeyInput })
+  }
+
   render() {
-    const { newName, showNameInput, showDevEUIInput } = this.state
+    const { newName, showNameInput, showDevEUIInput, showAppEUIInput, showAppKeyInput } = this.state
     const { loading, device } = this.props.data
 
     if (loading) return <DashboardLayout />
-
-    const appEUI = ('00000000' + device.oui.toString(16).toUpperCase()).slice(-8) + ('00000000' + device.seq_id.toString(16).toUpperCase()).slice(-8)
 
     return(
       <DashboardLayout title={`${device.name}`}>
@@ -153,7 +196,7 @@ class DeviceShow extends Component {
                         value={this.state.newDevEUI}
                         onChange={this.handleInputUpdate}
                         maxLength={16}
-                        style={{ width: 150, marginRight: 5 }}
+                        style={{ width: 200, marginRight: 5 }}
                       />
                       <Button
                         type="primary"
@@ -177,15 +220,77 @@ class DeviceShow extends Component {
               </tr>
               <tr style={{height: '30px'}}>
                 <td><Text strong>App EUI</Text></td>
-                <td><DeviceCredentials data={appEUI} /></td>
+                <td>
+                  {showAppEUIInput && (
+                    <OutsideClick
+                      onOutsideClick={this.toggleAppEUIInput}
+                    >
+                      <Input
+                        name="newAppEUI"
+                        placeholder={device.app_eui}
+                        value={this.state.newAppEUI}
+                        onChange={this.handleInputUpdate}
+                        maxLength={16}
+                        style={{ width: 200, marginRight: 5 }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => this.handleAppEUIUpdate(device.id)}
+                      >
+                        Update
+                      </Button>
+                    </OutsideClick>
+                  )}
+                  {!showAppEUIInput && (
+                    <React.Fragment>
+                      {
+                        device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
+                      }
+                      <Tag color="blue" size="small" onClick={this.toggleAppEUIInput}>
+                        <Icon type="edit"></Icon>
+                      </Tag>
+                    </React.Fragment>
+                  )}
+                </td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td><Text strong>App Key</Text></td>
-                <td><DeviceCredentials data={device.key} /></td>
+                <td>
+                  {showAppKeyInput && (
+                    <OutsideClick
+                      onOutsideClick={this.toggleAppKeyInput}
+                    >
+                      <Input
+                        name="newAppKey"
+                        placeholder={device.app_key}
+                        value={this.state.newAppKey}
+                        onChange={this.handleInputUpdate}
+                        maxLength={32}
+                        style={{ width: 300, marginRight: 5 }}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={() => this.handleAppKeyUpdate(device.id)}
+                      >
+                        Update
+                      </Button>
+                    </OutsideClick>
+                  )}
+                  {!showAppKeyInput && (
+                    <React.Fragment>
+                      {
+                        device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
+                      }
+                      <Tag color="blue" size="small" onClick={this.toggleAppKeyInput}>
+                        <Icon type="edit"></Icon>
+                      </Tag>
+                    </React.Fragment>
+                  )}
+                </td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
-                <td><Tag color="blue">OTAA</Tag></td>
+                <td><Tag color="green">OTAA</Tag></td>
               </tr>
               <tr style={{height: '30px'}}>
                 <td><Text strong>LoRaWAN US Channels</Text></td>
@@ -216,7 +321,7 @@ const query = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       ...DeviceFragment
-      key
+      app_key
       oui
     }
   }

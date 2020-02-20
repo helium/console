@@ -15,7 +15,7 @@ defmodule ConsoleWeb.DeviceView do
     %{
       id: device.id,
       name: device.name,
-      mac: device.mac,
+      dev_eui: device.dev_eui,
       organization_id: device.organization_id,
     }
   end

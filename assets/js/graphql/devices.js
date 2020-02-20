@@ -2,11 +2,11 @@ import gql from 'graphql-tag';
 
 export const DEVICE_FRAGMENT = gql`
   fragment DeviceFragment on Device {
-    name,
-    mac,
     id,
-    seq_id,
+    name,
     dev_eui,
+    app_eui,
+    app_key,
     inserted_at,
     labels {
       name,
@@ -28,8 +28,7 @@ export const DEVICE_SUBSCRIPTION = gql`
 export const DEVICE_UPDATE_SUBSCRIPTION = gql`
   subscription onDeviceUpdated($deviceId: String) {
     deviceUpdated(deviceId: $deviceId) {
-      name,
-      seq_id
+      name
     }
   }
 `
