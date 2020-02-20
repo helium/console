@@ -143,8 +143,6 @@ class DeviceShow extends Component {
     const { newName, showNameInput, showDevEUIInput, showAppEUIInput, showAppKeyInput } = this.state
     const { loading, device } = this.props.data
 
-    console.log(device)
-
     if (loading) return <DashboardLayout />
 
     return(
