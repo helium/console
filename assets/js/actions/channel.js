@@ -2,10 +2,11 @@ import { push, replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 import { displayInfo } from '../util/messages'
 
-export const createChannel = (params) => {
+export const createChannel = (params, labels) => {
   return (dispatch) => {
     rest.post('/api/channels', {
-        channel: params
+        channel: params,
+        labels
       })
       .then(response => {
         displayInfo(`${response.data.name} has been created`)

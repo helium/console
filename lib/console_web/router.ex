@@ -34,10 +34,7 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
-    resources "/devices", DeviceController, except: [:new, :edit] do
-      post "/channel", DeviceController, :set_channel
-      delete "/channel", DeviceController, :delete_channel
-    end
+    resources "/devices", DeviceController, except: [:new, :edit]
     post "/devices/delete", DeviceController, :delete
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete

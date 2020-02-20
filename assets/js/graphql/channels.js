@@ -20,6 +20,14 @@ export const CHANNEL_SHOW = gql`
       endpoint
       inbound_token
       headers
+      labels {
+        name,
+        id
+      }
+      devices {
+        name,
+        id
+      }
     }
   }
   ${CHANNEL_FRAGMENT}
@@ -47,6 +55,12 @@ export const PAGINATED_CHANNELS = gql`
     channels(page: $page, pageSize: $pageSize) {
       entries {
         ...ChannelFragment
+        labels {
+          name,
+          id,
+          color
+        },
+        device_count
       },
       totalEntries,
       totalPages,

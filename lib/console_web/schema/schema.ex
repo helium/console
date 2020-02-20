@@ -37,7 +37,9 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :default, :boolean
     field :show_dupes, :boolean
+    field :labels, list_of(:label)
     field :devices, list_of(:device)
+    field :device_count, :integer
   end
 
   paginated object :gateway do

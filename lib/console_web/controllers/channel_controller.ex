@@ -2,6 +2,7 @@ defmodule ConsoleWeb.ChannelController do
   use ConsoleWeb, :controller
 
   alias Console.Channels
+  alias Console.Labels
   alias Console.Channels.Channel
   alias Console.Organizations
 
@@ -17,11 +18,14 @@ defmodule ConsoleWeb.ChannelController do
     render(conn, "index.json", channels: current_organization.channels)
   end
 
-  def create(conn, %{"channel" => channel_params}) do
+  def create(conn, %{"channel" => channel_params, "labels" => labels}) do
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+      if length(labels) > 0 do
+        Labels.add_labels_to_channel(labels, channel, current_organization)
+      end
       broadcast(channel)
 
       conn

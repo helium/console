@@ -6,6 +6,8 @@ defmodule Console.Channels.Channel do
   alias Console.Events.Event
   alias Console.Channels
   alias Console.Devices.Device
+  alias Console.Labels.Label
+  alias Console.Labels.ChannelsLabels
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -20,6 +22,7 @@ defmodule Console.Channels.Channel do
     field :show_dupes, :boolean, default: false
 
     belongs_to :organization, Organization
+    many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
 
     timestamps()
   end

@@ -57,7 +57,7 @@ export const LABEL_UPDATE_SUBSCRIPTION = gql`
 `
 
 // For LabelAddDeviceModal
-export const LABELS_DEVICES = gql`
+export const ALL_LABELS_DEVICES = gql`
   query LabelsDevicesQuery {
     allLabels {
       id,
@@ -66,6 +66,16 @@ export const LABELS_DEVICES = gql`
     allDevices {
       id,
       name,
+    }
+  }
+`
+
+export const ALL_LABELS = gql`
+  query AllLabelsQuery {
+    allLabels {
+      id,
+      name,
+      color
     }
   }
 `

@@ -110,7 +110,7 @@ class QueryResults extends Component {
 
   handleSelectOption(value) {
     if (value === 'addLabel') {
-      this.props.openDeviceAddLabelsModal(this.state.selectedRows)
+      this.props.openDevicesAddLabelModal(this.state.selectedRows)
     } else {
       this.props.openDeleteDeviceModal(this.state.selectedRows)
     }

@@ -45,7 +45,7 @@ class LabelShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.openRemoveLabelModal([record])}>Remove</Link>
+            <Link to="#" onClick={() => this.props.openRemoveDevicesFromLabelModal([record])}>Remove</Link>
             <Text>{" | "}</Text>
             <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
@@ -104,7 +104,7 @@ class QueryResults extends Component {
   }
 
   handleSelectOption() {
-    this.props.openRemoveLabelModal(this.state.selectedRows)
+    this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
   }
 
   handleChangePage(page) {

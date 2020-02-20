@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { deleteChannel, updateChannel } from '../../actions/channel'
+import { deleteChannel } from '../../actions/channel'
 import find from 'lodash/find'
 import get from 'lodash/get'
 import UserCan from '../common/UserCan'
+import LabelTag from '../common/LabelTag'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Query } from 'react-apollo';
@@ -21,7 +22,7 @@ const defaultVariables = {
 @connect(null, mapDispatchToProps)
 class ChannelsTable extends Component {
   render() {
-    const { deleteChannel, updateChannel } = this.props
+    const { deleteChannel } = this.props
 
     const columns = [
       {
@@ -36,25 +37,28 @@ class ChannelsTable extends Component {
         dataIndex: 'type_name'
       },
       {
+        title: 'Labels',
+        dataIndex: 'labels',
+        render: (text, record) => (
+          <div>
+            {
+              record.labels.map(l => (
+                <LabelTag key={l.id} text={l.name} color={l.color} />
+              ))
+            }
+          </div>
+        )
+      },
+      {
+        title: 'Devices',
+        dataIndex: 'device_count',
+        render: text => text ? text : 0
+      },
+      {
         title: '',
         key: 'action',
         render: (text, record) => (
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            {
-              !record.default && (
-                <Button
-                  type="primary"
-                  style={{ marginRight: 5 }}
-                  onClick={() => {
-                    analyticsLogger.logEvent("ACTION_SET_DEFAULT_CHANNEL", {"id": record.id})
-                    updateChannel(record.id, { default: true })
-                  }}
-                >
-                  Set Default
-                </Button>
-              )
-            }
-
             <Button
               type="danger"
               icon="delete"
@@ -174,7 +178,7 @@ class QueryResults extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteChannel, updateChannel }, dispatch);
+  return bindActionCreators({ deleteChannel }, dispatch);
 }
 
 export default ChannelsTable

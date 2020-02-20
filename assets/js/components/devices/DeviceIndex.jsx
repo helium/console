@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import DevicesTable from './DevicesTable'
 import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
-import DeviceAddLabelsModal from './DeviceAddLabelsModal'
+import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeleteDeviceModal from './DeleteDeviceModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -15,15 +15,15 @@ class DeviceIndex extends Component {
     this.state = {
       showCreateDeviceModal: false,
       showDeleteDeviceModal: false,
-      showDeviceAddLabelsModal: false,
+      showDevicesAddLabelModal: false,
       devicesSelected: null,
     }
     this.openCreateDeviceModal = this.openCreateDeviceModal.bind(this)
     this.closeCreateDeviceModal = this.closeCreateDeviceModal.bind(this)
     this.openDeleteDeviceModal = this.openDeleteDeviceModal.bind(this)
     this.closeDeleteDeviceModal = this.closeDeleteDeviceModal.bind(this)
-    this.openDeviceAddLabelsModal = this.openDeviceAddLabelsModal.bind(this)
-    this.closeDeviceAddLabelsModal = this.closeDeviceAddLabelsModal.bind(this)
+    this.openDevicesAddLabelModal = this.openDevicesAddLabelModal.bind(this)
+    this.closeDevicesAddLabelModal = this.closeDevicesAddLabelModal.bind(this)
   }
 
   componentDidMount() {
@@ -38,12 +38,12 @@ class DeviceIndex extends Component {
     this.setState({ showCreateDeviceModal: false })
   }
 
-  openDeviceAddLabelsModal(devicesSelected) {
-    this.setState({ showDeviceAddLabelsModal: true, devicesSelected })
+  openDevicesAddLabelModal(devicesSelected) {
+    this.setState({ showDevicesAddLabelModal: true, devicesSelected })
   }
 
-  closeDeviceAddLabelsModal() {
-    this.setState({ showDeviceAddLabelsModal: false })
+  closeDevicesAddLabelModal() {
+    this.setState({ showDevicesAddLabelModal: false })
   }
 
   openDeleteDeviceModal(devicesSelected) {
@@ -55,20 +55,20 @@ class DeviceIndex extends Component {
   }
 
   render() {
-    const { showCreateDeviceModal, showDeleteDeviceModal, showDeviceAddLabelsModal } = this.state
+    const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal } = this.state
     return(
       <DashboardLayout title="Devices">
         <DevicesTable
           openCreateDeviceModal={this.openCreateDeviceModal}
           openDeleteDeviceModal={this.openDeleteDeviceModal}
-          openDeviceAddLabelsModal={this.openDeviceAddLabelsModal}
+          openDevicesAddLabelModal={this.openDevicesAddLabelModal}
         />
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
-        <DeviceAddLabelsModal
-          open={showDeviceAddLabelsModal}
-          onClose={this.closeDeviceAddLabelsModal}
+        <DevicesAddLabelModal
+          open={showDevicesAddLabelModal}
+          onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={this.state.devicesSelected}
         />
 
