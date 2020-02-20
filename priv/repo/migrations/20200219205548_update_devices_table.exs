@@ -6,9 +6,7 @@ defmodule Console.Repo.Migrations.UpdateDevicesTable do
       add :app_eui, :string
       add :app_key, :string
 
-      remove :key
       remove :mac
-      remove :seq_id
     end
   end
 end

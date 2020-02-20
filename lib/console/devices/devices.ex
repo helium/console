@@ -18,8 +18,8 @@ defmodule Console.Devices do
      Repo.get_by(Device, [id: id, oui: oui])
   end
 
-  def get_by_dev_eui(dev_eui) do
-     from(d in Device, where: d.dev_eui == ^dev_eui)
+  def get_by_dev_eui_app_eui(dev_eui, app_eui) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
      |> Repo.all()
   end
 
