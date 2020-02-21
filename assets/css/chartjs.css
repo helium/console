@@ -9,10 +9,6 @@
   align-items: center;
 }
 
-.chart-legend.left {
-  margin-top: 20px;
-}
-
 .chart-legend.right {
   justify-content: flex-end;
 }
