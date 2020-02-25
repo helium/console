@@ -32,6 +32,7 @@ defmodule Console.Labels do
   def delete_labels(label_ids) do
     Repo.transaction(fn ->
       from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all()
+      from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all()
       from(l in Label, where: l.id in ^label_ids) |> Repo.delete_all()
     end)
   end

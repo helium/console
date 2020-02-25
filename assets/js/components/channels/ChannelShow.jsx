@@ -174,7 +174,7 @@ class ChannelShow extends Component {
           }
           {
             channel.devices.map(d => (
-              <Text>{d.name}</Text>
+              <Text key={d.id}>{d.name}</Text>
             ))
           }
         </Card>
