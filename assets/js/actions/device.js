@@ -1,10 +1,11 @@
 import { push, replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 
-export const createDevice = (params) => {
+export const createDevice = (params, labelId) => {
   return (dispatch) => {
     rest.post('/api/devices', {
-        device: params
+        device: params,
+        label_id: labelId,
       })
       .then(response => {})
   }

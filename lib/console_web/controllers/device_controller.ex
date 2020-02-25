@@ -1,8 +1,10 @@
 defmodule ConsoleWeb.DeviceController do
   use ConsoleWeb, :controller
 
+  alias Console.Repo
   alias Console.Devices
   alias Console.Channels
+  alias Console.Labels
   alias Console.Channels.Channel
   alias Console.Devices.Device
 
@@ -18,11 +20,16 @@ defmodule ConsoleWeb.DeviceController do
     render(conn, "index.json", devices: current_organization.devices)
   end
 
-  def create(conn, %{"device" => device_params}) do
+  def create(conn, %{"device" => device_params, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
+      if label_id != nil do
+        label = Ecto.assoc(current_organization, :labels) |> Repo.get(label_id)
+        Labels.add_devices_to_label([device.id], label.id, current_organization)
+      end
+
       broadcast(device)
 
       conn

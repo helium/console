@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createDevice } from '../../actions/device'
 import { displayError } from '../../util/messages'
+import { graphql } from 'react-apollo';
+import { ALL_LABELS } from '../../graphql/labels'
+import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button, Typography, Input } from 'antd';
+import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 const { Text } = Typography
+const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class NewDeviceModal extends Component {
@@ -17,10 +21,12 @@ class NewDeviceModal extends Component {
       devEUI: randomString(16),
       appEUI: randomString(16),
       appKey: randomString(32),
+      labelId: null,
     }
 
     this.handleInputUpdate = this.handleInputUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSelectOption = this.handleSelectOption.bind(this);
   }
 
   handleInputUpdate(e) {
@@ -29,10 +35,10 @@ class NewDeviceModal extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const { name, devEUI, appEUI, appKey } = this.state;
+    const { name, devEUI, appEUI, appKey, labelId } = this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32)  {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name, "devEUI": devEUI, "appEUI": appEUI, "appKey": appKey})
-      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() })
+      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, labelId)
 
       this.props.onClose()
     } else {
@@ -40,12 +46,16 @@ class NewDeviceModal extends Component {
     }
   }
 
+  handleSelectOption(labelId) {
+    this.setState({ labelId })
+  }
+
   render() {
-    const { open, onClose, classes } = this.props
+    const { open, onClose, data } = this.props
 
     return (
       <Modal
-        title="Create a new device"
+        title="Create a New Device"
         visible={open}
         centered
         onCancel={onClose}
@@ -106,6 +116,23 @@ class NewDeviceModal extends Component {
             <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>{Math.floor(this.state.appKey.length / 2)} / 16 Bytes</Text>
           }
         />
+
+        <Divider />
+
+        <Text strong>Attach a Label (Optional)</Text><br />
+        <Select
+          placeholder="Choose Label"
+          style={{ width: 220, marginRight: 10, marginTop: 10 }}
+          onSelect={this.handleSelectOption}
+        >
+          {
+            data.allLabels && data.allLabels.map(l => (
+              <Option value={l.id} key={l.id}>
+                <LabelTag text={l.name} color={l.color} />
+              </Option>
+            ))
+          }
+        </Select>
       </Modal>
     )
   }
@@ -122,4 +149,10 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createDevice }, dispatch)
 }
 
-export default NewDeviceModal
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+export default graphql(ALL_LABELS, queryOptions)(NewDeviceModal)
