@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import DevicesTable from './DevicesTable'
+import DeviceIndexTable from './DeviceIndexTable'
 import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
@@ -58,7 +58,7 @@ class DeviceIndex extends Component {
     const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal } = this.state
     return(
       <DashboardLayout title="Devices">
-        <DevicesTable
+        <DeviceIndexTable
           openCreateDeviceModal={this.openCreateDeviceModal}
           openDeleteDeviceModal={this.openDeleteDeviceModal}
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}

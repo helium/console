@@ -8,12 +8,12 @@ import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
+import DeviceShowTable from './DeviceShowTable'
 import { updateDevice } from '../../actions/device'
-import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
+import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 import { Typography, Button, Input, Icon, Select, Tag } from 'antd';
 import { Card } from 'antd';
 import DeviceCredentials from './DeviceCredentials'
@@ -304,6 +304,8 @@ class DeviceShow extends Component {
           </table>
         </Card>
 
+        <DeviceShowTable labels={device.labels} device={device}/>
+
         <Card title="Device Integrations">
           <EventsDashboard contextName="devices" contextId={device.id} />
         </Card>
@@ -321,21 +323,10 @@ const queryOptions = {
   })
 }
 
-const query = gql`
-  query DeviceShowQuery ($id: ID!) {
-    device(id: $id) {
-      ...DeviceFragment
-      app_key
-      oui
-    }
-  }
-  ${DEVICE_FRAGMENT}
-`
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateDevice }, dispatch)
 }
 
-const DeviceShowWithData = graphql(query, queryOptions)(DeviceShow)
+const DeviceShowWithData = graphql(DEVICE_SHOW, queryOptions)(DeviceShow)
 
 export default DeviceShowWithData

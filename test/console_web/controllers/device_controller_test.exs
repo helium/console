@@ -22,7 +22,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
     end
 
     test "creates device when data is valid", %{conn: conn, organization: organization} do
-      conn = post conn, device_path(conn, :create), device: @create_attrs
+      conn = post conn, device_path(conn, :create), device: @create_attrs, label_id: nil
       %{"id" => id} = json_response(conn, 201)
       assert json_response(conn, 201) == %{
         "id" => id,
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
     end
 
     test "renders create errors when data is invalid", %{conn: conn} do
-      conn = post conn, device_path(conn, :create), device: @invalid_attrs
+      conn = post conn, device_path(conn, :create), device: @invalid_attrs, label_id: nil
       assert json_response(conn, 422)["errors"] != %{}
     end
 

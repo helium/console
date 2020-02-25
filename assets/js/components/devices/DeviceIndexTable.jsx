@@ -19,7 +19,7 @@ const defaultVariables = {
   pageSize: 10
 }
 
-class DevicesTable extends Component {
+class DeviceIndexTable extends Component {
   render() {
     const columns = [
       {
@@ -215,4 +215,4 @@ class QueryResults extends Component {
   }
 }
 
-export default DevicesTable
+export default DeviceIndexTable

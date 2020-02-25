@@ -8,11 +8,6 @@ export const DEVICE_FRAGMENT = gql`
     app_eui,
     app_key,
     inserted_at,
-    labels {
-      name,
-      id,
-      color,
-    }
   }
 `
 
@@ -33,6 +28,24 @@ export const DEVICE_UPDATE_SUBSCRIPTION = gql`
   }
 `
 
+export const DEVICE_SHOW = gql`
+  query DeviceShowQuery ($id: ID!) {
+    device(id: $id) {
+      ...DeviceFragment
+      labels {
+        name,
+        id,
+        color,
+        channels {
+          name,
+          id,
+        }
+      }
+    }
+  }
+  ${DEVICE_FRAGMENT}
+`
+
 export const PAGINATED_DEVICES = gql`
   query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
     devices(page: $page, pageSize: $pageSize) {
@@ -41,6 +54,11 @@ export const PAGINATED_DEVICES = gql`
         channels {
           name,
           id
+        }
+        labels {
+          name,
+          id,
+          color,
         }
       },
       totalEntries,
