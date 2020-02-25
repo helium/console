@@ -73,17 +73,9 @@ class InvitationsTable extends Component {
 }
 
 class QueryResults extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10
-    }
-
-    this.handleChangePage = this.handleChangePage.bind(this)
-    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
-    this.handleSubscriptionAdded = this.handleSubscriptionAdded.bind(this)
+  state = {
+    page: 1,
+    pageSize: get(this.props, ['variables', 'pageSize']) || 10
   }
 
   componentDidMount() {
@@ -99,19 +91,19 @@ class QueryResults extends Component {
     })
   }
 
-  handleChangePage(page) {
+  handleChangePage = (page) => {
     this.setState({ page })
 
     const { pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded() {
+  handleSubscriptionAdded = () => {
     const { page, pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  refetchPaginatedEntries(page, pageSize) {
+  refetchPaginatedEntries = (page, pageSize) => {
     const { fetchMore } = this.props
     fetchMore({
       variables: { page, pageSize },

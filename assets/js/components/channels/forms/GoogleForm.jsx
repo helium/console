@@ -3,18 +3,13 @@ import { Typography, Input } from 'antd';
 const { Text } = Typography
 
 class GoogleForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.state = {
-      registryId: "",
-      region: "",
-      privateKey: ""
-    }
+  state = {
+    registryId: "",
+    region: "",
+    privateKey: ""
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const { registryId, region, privateKey } = this.state
       if (registryId.length > 0 && region.length > 0 && privateKey.length > 0) {

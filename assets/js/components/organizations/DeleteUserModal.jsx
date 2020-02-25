@@ -4,13 +4,7 @@ import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
 
 class DeleteUserModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
 
     const { membership, deleteMembership, deleteInvitation, onClose } = this.props

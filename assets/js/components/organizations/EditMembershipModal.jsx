@@ -5,15 +5,8 @@ import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
 
 class EditMembershipModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      role: "manager"
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    role: "manager"
   }
 
   componentDidUpdate(prevProps) {
@@ -24,11 +17,11 @@ class EditMembershipModal extends Component {
     }
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
 
     const { membership, updateMembership, onClose } = this.props

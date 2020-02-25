@@ -5,7 +5,6 @@ class PacketGraph extends Component {
   constructor(props) {
     super(props)
 
-    this.updateChart = this.updateChart.bind(this)
     this.chartUpdateInterval = null
     this.chartOptions = {
       animation: false,
@@ -98,7 +97,7 @@ class PacketGraph extends Component {
     clearInterval(this.chartUpdateInterval)
   }
 
-  updateChart(events) {
+  updateChart = (events) => {
     const success = []
     const failure = []
     const noChannel = []

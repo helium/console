@@ -29,23 +29,12 @@ const queryOptions = {
 }
 
 
-
 @graphql(CHANNEL_SHOW, queryOptions)
 @connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      newName: "",
-      credentials: {}
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleShowDupesUpdate = this.handleShowDupesUpdate.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleUpdateDetailsInput = this.handleUpdateDetailsInput.bind(this);
-    this.handleUpdateDetailsChange = this.handleUpdateDetailsChange.bind(this);
+  state = {
+    newName: "",
+    credentials: {}
   }
 
   componentDidMount() {
@@ -65,28 +54,28 @@ class ChannelShow extends Component {
     })
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleUpdateDetailsInput(credentials) {
+  handleUpdateDetailsInput = (credentials) => {
     this.setState({ credentials })
   }
 
-  handleNameChange() {
+  handleNameChange = () => {
     const { channel } = this.props.data
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_NAME", { "id": channel.id, "name": this.state.newName})
     this.props.updateChannel(channel.id, { name: this.state.newName })
     this.setState({ newName: ""})
   }
 
-  handleShowDupesUpdate() {
+  handleShowDupesUpdate = () => {
     const { channel } = this.props.data
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DUPLICATES_FLAG", { "id": channel.id, "show_dupes": !channel.show_dupes })
     this.props.updateChannel(channel.id, { show_dupes: !channel.show_dupes })
   }
 
-  handleUpdateDetailsChange() {
+  handleUpdateDetailsChange = () => {
     const { channel } = this.props.data
     const { credentials } = this.state
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", { "id": channel.id})
@@ -94,7 +83,7 @@ class ChannelShow extends Component {
     this.setState({ credentials: {} })
   }
 
-  renderForm() {
+  renderForm = () => {
     const { channel } = this.props.data
 
     switch (channel.type) {

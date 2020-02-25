@@ -11,24 +11,16 @@ const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class DevicesAddLabelModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      labelId: null,
-      labelName: null,
-    }
-
-    this.handleSelectOption = this.handleSelectOption.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
+  state = {
+    labelId: null,
+    labelName: null,
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { labelName, labelId } = this.state
     const deviceIds = this.props.devicesToUpdate.map(d => d.id)
@@ -42,7 +34,7 @@ class DevicesAddLabelModal extends Component {
     this.props.onClose()
   }
 
-  handleSelectOption(labelId) {
+  handleSelectOption = (labelId) => {
     this.setState({ labelId })
   }
 

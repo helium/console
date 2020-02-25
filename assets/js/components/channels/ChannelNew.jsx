@@ -23,21 +23,12 @@ const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
-  constructor(props) {
-    super(props)
-
-    this.handleStep2Input = this.handleStep2Input.bind(this)
-    this.handleStep3Input = this.handleStep3Input.bind(this)
-    this.handleStep3Submit = this.handleStep3Submit.bind(this)
-    this.handleSelectLabels = this.handleSelectLabels.bind(this)
-    this.renderForm = this.renderForm.bind(this)
-    this.state = {
-      type: this.props.match.params.id,
-      showNextSteps: false,
-      credentials: {},
-      channelName: "",
-      labels: [],
-    }
+  state = {
+    type: this.props.match.params.id,
+    showNextSteps: false,
+    credentials: {},
+    channelName: "",
+    labels: [],
   }
 
   componentDidUpdate(prevProps) {
@@ -51,15 +42,15 @@ class ChannelNew extends Component {
       })
   }
 
-  handleStep2Input(credentials) {
+  handleStep2Input = (credentials) => {
     this.setState({ credentials, showNextSteps: true })
   }
 
-  handleStep3Input(e) {
+  handleStep3Input = (e) => {
     this.setState({ channelName: e.target.value})
   }
 
-  handleStep3Submit(e) {
+  handleStep3Submit = (e) => {
     e.preventDefault()
     const { channelName, type, credentials, labels } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
@@ -70,11 +61,11 @@ class ChannelNew extends Component {
     }, labels)
   }
 
-  handleSelectLabels(labels) {
+  handleSelectLabels = (labels) => {
     this.setState({ labels })
   }
 
-  renderForm() {
+  renderForm = () => {
     switch (this.state.type) {
       case "aws":
         return <AWSForm onValidInput={this.handleStep2Input}/>

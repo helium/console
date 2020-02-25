@@ -7,36 +7,29 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
 
 class LabelIndex extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      showCreateLabelModal: false,
-      showDeleteLabelModal: false,
-      labelsToDelete: null,
-    }
-    this.openCreateLabelModal = this.openCreateLabelModal.bind(this)
-    this.closeCreateLabelModal = this.closeCreateLabelModal.bind(this)
-    this.openDeleteLabelModal = this.openDeleteLabelModal.bind(this)
-    this.closeDeleteLabelModal = this.closeDeleteLabelModal.bind(this)
+  state = {
+    showCreateLabelModal: false,
+    showDeleteLabelModal: false,
+    labelsToDelete: null,
   }
 
   componentDidMount() {
     // analyticsLogger.logEvent("ACTION_NAV_LABELS")
   }
 
-  openCreateLabelModal() {
+  openCreateLabelModal = () => {
     this.setState({ showCreateLabelModal: true })
   }
 
-  closeCreateLabelModal() {
+  closeCreateLabelModal = () => {
     this.setState({ showCreateLabelModal: false })
   }
 
-  openDeleteLabelModal(labelsToDelete) {
+  openDeleteLabelModal = (labelsToDelete) => {
     this.setState({ showDeleteLabelModal: true, labelsToDelete })
   }
 
-  closeDeleteLabelModal() {
+  closeDeleteLabelModal = () => {
     this.setState({ showDeleteLabelModal: false })
   }
 

@@ -3,21 +3,15 @@ import { Typography, Input, Button } from 'antd';
 const { Text } = Typography
 
 class CargoForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      method: "post",
-      endpoint: "https://cargo.helium.com/api/payloads",
-      headers: [
-        { header: "Content-Type", value: "application/json" }
-      ]
-    }
-
-    this.validateInput = this.validateInput.bind(this)
+  state = {
+    method: "post",
+    endpoint: "https://cargo.helium.com/api/payloads",
+    headers: [
+      { header: "Content-Type", value: "application/json" }
+    ]
   }
 
-  validateInput() {
+  validateInput = () => {
     const { method, endpoint, headers } = this.state
     if (method.length > 0 && endpoint.length > 0) {
       const parsedHeaders = headers.reduce((a, h) => {

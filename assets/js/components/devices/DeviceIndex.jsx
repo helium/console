@@ -9,48 +9,38 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
 
 class DeviceIndex extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      showCreateDeviceModal: false,
-      showDeleteDeviceModal: false,
-      showDevicesAddLabelModal: false,
-      devicesSelected: null,
-    }
-    this.openCreateDeviceModal = this.openCreateDeviceModal.bind(this)
-    this.closeCreateDeviceModal = this.closeCreateDeviceModal.bind(this)
-    this.openDeleteDeviceModal = this.openDeleteDeviceModal.bind(this)
-    this.closeDeleteDeviceModal = this.closeDeleteDeviceModal.bind(this)
-    this.openDevicesAddLabelModal = this.openDevicesAddLabelModal.bind(this)
-    this.closeDevicesAddLabelModal = this.closeDevicesAddLabelModal.bind(this)
+  state = {
+    showCreateDeviceModal: false,
+    showDeleteDeviceModal: false,
+    showDevicesAddLabelModal: false,
+    devicesSelected: null,
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
   }
 
-  openCreateDeviceModal() {
+  openCreateDeviceModal = () => {
     this.setState({ showCreateDeviceModal: true })
   }
 
-  closeCreateDeviceModal() {
+  closeCreateDeviceModal = () => {
     this.setState({ showCreateDeviceModal: false })
   }
 
-  openDevicesAddLabelModal(devicesSelected) {
+  openDevicesAddLabelModal = (devicesSelected) => {
     this.setState({ showDevicesAddLabelModal: true, devicesSelected })
   }
 
-  closeDevicesAddLabelModal() {
+  closeDevicesAddLabelModal = () => {
     this.setState({ showDevicesAddLabelModal: false })
   }
 
-  openDeleteDeviceModal(devicesSelected) {
+  openDeleteDeviceModal = (devicesSelected) => {
     this.setState({ showDeleteDeviceModal: true, devicesSelected })
   }
 
-  closeDeleteDeviceModal() {
+  closeDeleteDeviceModal = () => {
     this.setState({ showDeleteDeviceModal: false })
   }
 

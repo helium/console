@@ -18,21 +18,11 @@ const { Text } = Typography
 
 @connect(null, mapDispatchToProps)
 class LabelShow extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      showUpdateLabelModal: false,
-      showLabelAddDeviceModal: false,
-      showRemoveDevicesFromLabelModal: false,
-      devicesToRemove: [],
-    }
-    this.openUpdateLabelModal = this.openUpdateLabelModal.bind(this)
-    this.closeUpdateLabelModal = this.closeUpdateLabelModal.bind(this)
-    this.openLabelAddDeviceModal = this.openLabelAddDeviceModal.bind(this)
-    this.closeLabelAddDeviceModal = this.closeLabelAddDeviceModal.bind(this)
-    this.openRemoveDevicesFromLabelModal = this.openRemoveDevicesFromLabelModal.bind(this)
-    this.closeRemoveDevicesFromLabelModal = this.closeRemoveDevicesFromLabelModal.bind(this)
-    this.handleUpdateLabel = this.handleUpdateLabel.bind(this)
+  state = {
+    showUpdateLabelModal: false,
+    showLabelAddDeviceModal: false,
+    showRemoveDevicesFromLabelModal: false,
+    devicesToRemove: [],
   }
 
   componentDidMount() {
@@ -52,31 +42,31 @@ class LabelShow extends Component {
     })
   }
 
-  openUpdateLabelModal() {
+  openUpdateLabelModal = () => {
     this.setState({ showUpdateLabelModal: true })
   }
 
-  closeUpdateLabelModal() {
+  closeUpdateLabelModal = () => {
     this.setState({ showUpdateLabelModal: false })
   }
 
-  openLabelAddDeviceModal() {
+  openLabelAddDeviceModal = () => {
     this.setState({ showLabelAddDeviceModal: true })
   }
 
-  closeLabelAddDeviceModal() {
+  closeLabelAddDeviceModal = () => {
     this.setState({ showLabelAddDeviceModal: false })
   }
 
-  openRemoveDevicesFromLabelModal(devicesToRemove) {
+  openRemoveDevicesFromLabelModal = (devicesToRemove) => {
     this.setState({ showRemoveDevicesFromLabelModal: true, devicesToRemove })
   }
 
-  closeRemoveDevicesFromLabelModal() {
+  closeRemoveDevicesFromLabelModal = () => {
     this.setState({ showRemoveDevicesFromLabelModal: false })
   }
 
-  handleUpdateLabel(name, color) {
+  handleUpdateLabel = (name, color) => {
     const labelId = this.props.match.params.id
     const attrs = name ? { name, color } : { color }
     this.props.updateLabel(labelId, attrs)

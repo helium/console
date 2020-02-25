@@ -7,18 +7,26 @@ import { deleteChannel } from '../../actions/channel'
 
 @connect(null, mapDispatchToProps)
 class DeleteChannelModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { channel, onClose } = this.props
 
     this.props.deleteChannel(channel.id)
     onClose()
+  }
+
+  renderContent = () => {
+    const { channel } = this.props
+    if (!channel) return (<div />)
+    if (!channel.device_count && channel.labels.length === 0) return (
+      <Text>Do you want to delete Integration {channel.name}?</Text>
+    )
+    if (!channel.device_count && channel.labels.length > 0) return (
+      <Text>Do you want to delete Integration {channel.name}? Labels currently connected to this Integration {JSON.stringify(channel.labels.map(l => l.name))} will not be deleted.</Text>
+    )
+    if (channel.device_count) return (
+      <Text>Do you want to delete Integration {channel.name}? Devices with label {JSON.stringify(channel.labels.map(l => l.name))} will be no longer be connected to this Integration.</Text>
+    )
   }
 
   render() {
@@ -42,20 +50,6 @@ class DeleteChannelModal extends Component {
       >
         {this.renderContent()}
       </Modal>
-    )
-  }
-
-  renderContent() {
-    const { channel } = this.props
-    if (!channel) return (<div />)
-    if (!channel.device_count && channel.labels.length === 0) return (
-      <Text>Do you want to delete Integration {channel.name}?</Text>
-    )
-    if (!channel.device_count && channel.labels.length > 0) return (
-      <Text>Do you want to delete Integration {channel.name}? Labels currently connected to this Integration {JSON.stringify(channel.labels.map(l => l.name))} will not be deleted.</Text>
-    )
-    if (channel.device_count) return (
-      <Text>Do you want to delete Integration {channel.name}? Devices with label {JSON.stringify(channel.labels.map(l => l.name))} will be no longer be connected to this Integration.</Text>
     )
   }
 }

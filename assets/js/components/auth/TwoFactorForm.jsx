@@ -5,24 +5,17 @@ import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
 const { Text, Title } = Typography
 
 class TwoFactorForm extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      twoFactorCode: ""
-    };
-
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
+  state = {
+    twoFactorCode: ""
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault()
 
     this.props.onSubmit(this.state.twoFactorCode)
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ twoFactorCode: e.target.value})
   }
 

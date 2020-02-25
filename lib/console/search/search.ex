@@ -28,15 +28,15 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, mac AS description, 1.0::float AS score, 'devices' AS category
+            SELECT id, name AS title, dev_eui AS description, 1.0::float AS score, 'devices' AS category
             FROM devices
-            WHERE organization_id = $3 AND (name ILIKE $1 OR mac ILIKE $1)
+            WHERE organization_id = $3 AND (name ILIKE $1 OR dev_eui ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, mac AS description, 0.5::float AS score, 'devices' AS category
+            SELECT id, name AS title, dev_eui AS description, 0.5::float AS score, 'devices' AS category
             FROM devices
-            WHERE organization_id = $3 AND (name ~* $2 OR mac ~* $2)
+            WHERE organization_id = $3 AND (name ~* $2 OR dev_eui ~* $2)
           )
         ) d ORDER BY id, score DESC)
         UNION
@@ -71,9 +71,9 @@ defmodule Console.Search do
 
     sql = """
     (
-      SELECT id, name AS title, mac AS description, score, 'devices' AS category
+      SELECT id, name AS title, dev_eui AS description, score, 'devices' AS category
       FROM (
-        SELECT *, SIMILARITY(name || ' ' || mac, $1) AS score
+        SELECT *, SIMILARITY(name || ' ' || dev_eui, $1) AS score
         FROM devices
         WHERE organization_id = $2
         ORDER BY score DESC

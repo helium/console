@@ -5,17 +5,12 @@ import { Row, Col } from 'antd';
 
 
 class MQTTForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.state = {
-      endpoint: "",
-      topic: ""
-    }
+  state = {
+    endpoint: "",
+    topic: ""
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const { endpoint, topic } = this.state
       if (endpoint.length > 0 && topic.length > 0) {

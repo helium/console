@@ -3,53 +3,46 @@ import { Button, Icon, Tag } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class DeviceCredentials extends Component {
-    constructor(props) {
-      super(props)
+  state = {
+    display: 'default'
+  }
 
-      this.state = {
-        display: 'default'
-      }
+  toggleDefault = () => {
+    const { display } = this.state
+    this.setState({ display: display === 'default' ? 'msb' : 'default' })
+  }
 
-      this.toggleDefault = this.toggleDefault.bind(this)
-      this.toggleType = this.toggleType.bind(this)
-    }
+  toggleType = () => {
+    const { display } = this.state
+    this.setState({ display: display === 'msb' ? 'lsb' : 'msb' })
+  }
 
-    toggleDefault() {
-      const { display } = this.state
-      this.setState({ display: display === 'default' ? 'msb' : 'default' })
-    }
+  render() {
+    const { data } = this.props
+    const { display } = this.state
 
-    toggleType() {
-      const { display } = this.state
-      this.setState({ display: display === 'msb' ? 'lsb' : 'msb' })
-    }
+    const formattedData = data.toUpperCase()
+    const msb = chunkArray(formattedData.split(''), 2).map(chunk => `0x${chunk.join('')}`).join(', ')
+    const lsb = chunkArray(formattedData.split(''), 2).reverse().map(chunk => `0x${chunk.join('')}`).join(', ')
 
-    render() {
-      const { data } = this.props
-      const { display } = this.state
+    return(
+      <span>
+        <Tag color={display !== 'default' ? 'blue' : ''} onClick={this.toggleDefault}><Icon type="arrows-alt" /></Tag>
 
-      const formattedData = data.toUpperCase()
-      const msb = chunkArray(formattedData.split(''), 2).map(chunk => `0x${chunk.join('')}`).join(', ')
-      const lsb = chunkArray(formattedData.split(''), 2).reverse().map(chunk => `0x${chunk.join('')}`).join(', ')
+        { display !== 'default' && <Tag color="green" onClick={this.toggleType}><Icon type="swap" /></Tag> }
+        { display !== 'default' && <Tag>{display}</Tag> }
+        { display == 'default' && <span style={{ marginRight: 7 }}>{formattedData}</span>}
+        { display == 'default' && <CopyToClipboard text={formattedData}><Tag><Icon type="copy" /></Tag></CopyToClipboard>}
 
-      return(
-        <span>
-          <Tag color={display !== 'default' ? 'blue' : ''} onClick={this.toggleDefault}><Icon type="arrows-alt" /></Tag>
+        { display == 'msb' &&  <span style={{ marginRight: 7 }}>{msb}</span> }
+        { display == 'msb' &&  <CopyToClipboard text={msb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
 
-          { display !== 'default' && <Tag color="green" onClick={this.toggleType}><Icon type="swap" /></Tag> }
-          { display !== 'default' && <Tag>{display}</Tag> }
-          { display == 'default' && <span style={{ marginRight: 7 }}>{formattedData}</span>}
-          { display == 'default' && <CopyToClipboard text={formattedData}><Tag><Icon type="copy" /></Tag></CopyToClipboard>}
+        { display == 'lsb' &&  <span style={{ marginRight: 7 }}>{lsb}</span> }
+        { display == 'lsb' &&  <CopyToClipboard text={lsb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
 
-          { display == 'msb' &&  <span style={{ marginRight: 7 }}>{msb}</span> }
-          { display == 'msb' &&  <CopyToClipboard text={msb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
-
-          { display == 'lsb' &&  <span style={{ marginRight: 7 }}>{lsb}</span> }
-          { display == 'lsb' &&  <CopyToClipboard text={lsb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
-
-        </span>
-      )
-    }
+      </span>
+    )
+  }
 }
 
 const chunkArray = (array, chunkSize) => {

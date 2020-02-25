@@ -7,24 +7,19 @@ import { Card } from 'antd';
 
 
 class Dashboard extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      showOrganizationModal: false,
-    }
-    this.openOrganizationModal = this.openOrganizationModal.bind(this)
-    this.closeOrganizationModal = this.closeOrganizationModal.bind(this)
+  state = {
+    showOrganizationModal: false,
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DASHBOARD")
   }
 
-  openOrganizationModal() {
+  openOrganizationModal = () => {
     this.setState({ showOrganizationModal: true })
   }
 
-  closeOrganizationModal() {
+  closeOrganizationModal = () => {
     this.setState({ showOrganizationModal: false })
   }
 

@@ -13,20 +13,8 @@ const { Text, Title } = Typography
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 class TwoFactorPrompt extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      twoFactorCode: ""
-    };
-
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleSkip = this.handleSkip.bind(this)
-    this.handleContinue = this.handleContinue.bind(this)
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.renderQRCode = this.renderQRCode.bind(this)
-    this.renderForm = this.renderForm.bind(this)
-    this.renderBackupCodes = this.renderBackupCodes.bind(this)
+  state = {
+    twoFactorCode: ""
   }
 
   componentDidMount() {
@@ -41,29 +29,29 @@ class TwoFactorPrompt extends Component {
     if (user.backup_codes) this.props.clear2faBackupCodes()
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault()
     const { user } = this.props.auth
     analyticsLogger.logEvent("ACTION_ENABLE_2FA", { "id": user.id })
     this.props.enable2fa(this.state.twoFactorCode, user.id, user.secret2fa)
   }
 
-  handleSkip() {
+  handleSkip = () => {
     const { user } = this.props.auth
     this.props.skip2fa(user.id)
     analyticsLogger.logEvent("ACTION_SKIP_2FA", { "id": user.id})
     this.props.history.replace("/dashboard")
   }
 
-  handleContinue() {
+  handleContinue = () => {
     this.props.history.replace("/dashboard")
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ twoFactorCode: e.target.value})
   }
 
-  renderQRCode() {
+  renderQRCode = () => {
     const { user } = this.props.auth
     if (user.secret2fa) {
       const secret2fa = "otpauth://totp/Helium%20Console?secret=" + user.secret2fa + "&issuer=Helium%20Inc"
@@ -71,7 +59,7 @@ class TwoFactorPrompt extends Component {
     }
   }
 
-  renderForm() {
+  renderForm = () => {
     return(
       <AuthLayout>
         <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
@@ -115,7 +103,7 @@ class TwoFactorPrompt extends Component {
     )
   }
 
-  renderBackupCodes() {
+  renderBackupCodes = () => {
     const { user } = this.props.auth
 
     return(

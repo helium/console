@@ -23,28 +23,15 @@ const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class DeviceShow extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      newName: "",
-      newDevEUI: "",
-      newAppEUI: "",
-      newAppKey: "",
-      showNameInput: false,
-      showDevEUIInput: false,
-      showAppEUIInput: false,
-      showAppKeyInput: false,
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleDeviceNameUpdate = this.handleDeviceNameUpdate.bind(this);
-    this.handleDeviceEUIUpdate = this.handleDeviceEUIUpdate.bind(this);
-    this.handleAppEUIUpdate = this.handleAppEUIUpdate.bind(this);
-    this.handleAppKeyUpdate = this.handleAppKeyUpdate.bind(this);
-    this.toggleNameInput = this.toggleNameInput.bind(this);
-    this.toggleDevEUIInput = this.toggleDevEUIInput.bind(this);
-    this.toggleAppEUIInput = this.toggleAppEUIInput.bind(this);
-    this.toggleAppKeyInput = this.toggleAppKeyInput.bind(this);
+  state = {
+    newName: "",
+    newDevEUI: "",
+    newAppEUI: "",
+    newAppKey: "",
+    showNameInput: false,
+    showDevEUIInput: false,
+    showAppEUIInput: false,
+    showAppKeyInput: false,
   }
 
   componentDidMount() {
@@ -65,11 +52,11 @@ class DeviceShow extends Component {
     })
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleDeviceNameUpdate(id, e) {
+  handleDeviceNameUpdate = (id, e) => {
     const { newName } = this.state
     if (newName !== "") {
       this.props.updateDevice(id, { name: this.state.newName })
@@ -78,7 +65,7 @@ class DeviceShow extends Component {
     this.setState({ newName: "", showNameInput: false })
   }
 
-  handleDeviceEUIUpdate(id) {
+  handleDeviceEUIUpdate = (id) => {
     const { newDevEUI } = this.state
     if (newDevEUI.length === 16) {
       this.props.updateDevice(id, { dev_eui: this.state.newDevEUI.toUpperCase() })
@@ -92,7 +79,7 @@ class DeviceShow extends Component {
     }
   }
 
-  handleAppEUIUpdate(id) {
+  handleAppEUIUpdate = (id) => {
     const { newAppEUI } = this.state
     if (newAppEUI.length === 16) {
       this.props.updateDevice(id, { app_eui: this.state.newAppEUI.toUpperCase() })
@@ -106,7 +93,7 @@ class DeviceShow extends Component {
     }
   }
 
-  handleAppKeyUpdate(id) {
+  handleAppKeyUpdate = (id) => {
     const { newAppKey } = this.state
     if (newAppKey.length === 32) {
       this.props.updateDevice(id, { app_key: this.state.newAppKey.toUpperCase() })
@@ -120,22 +107,22 @@ class DeviceShow extends Component {
     }
   }
 
-  toggleNameInput() {
+  toggleNameInput = () => {
     const { showNameInput } = this.state
     this.setState({ showNameInput: !showNameInput })
   }
 
-  toggleDevEUIInput() {
+  toggleDevEUIInput = () => {
     const { showDevEUIInput } = this.state
     this.setState({ showDevEUIInput: !showDevEUIInput })
   }
 
-  toggleAppEUIInput() {
+  toggleAppEUIInput = () => {
     const { showAppEUIInput } = this.state
     this.setState({ showAppEUIInput: !showAppEUIInput })
   }
 
-  toggleAppKeyInput() {
+  toggleAppKeyInput = () => {
     const { showAppKeyInput } = this.state
     this.setState({ showAppKeyInput: !showAppKeyInput })
   }

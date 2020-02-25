@@ -5,17 +5,11 @@ import { graphql } from 'react-apollo';
 import { SEARCH_LABELS } from '../../graphql/search'
 
 class LabelAddLabelSelect extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      searchLabels: []
-    }
-
-    this.runSearch = this.runSearch.bind(this)
+  state = {
+    searchLabels: []
   }
 
-  runSearch(value) {
+  runSearch = (value) => {
     const { data } = this.props
     if (!data.loading) {
       data.fetchMore({

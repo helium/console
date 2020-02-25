@@ -12,9 +12,7 @@ import DeleteUserModal from './DeleteUserModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Card } from 'antd';
-
 const { Text } = Typography
-
 
 const styles = {
   header: {
@@ -26,52 +24,41 @@ const styles = {
 
 @connect(null, mapDispatchToProps)
 class UserIndex extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      newUserOpen: false,
-      editMembershipOpen: false,
-      deleteUserOpen: false,
-      editingMembership: null
-    }
-
-    this.openNewUserModal = this.openNewUserModal.bind(this)
-    this.closeNewUserModal = this.closeNewUserModal.bind(this)
-    this.openEditMembershipModal = this.openEditMembershipModal.bind(this)
-    this.closeEditMembershipModal = this.closeEditMembershipModal.bind(this)
-    this.openDeleteUserModal = this.openDeleteUserModal.bind(this)
-    this.closeDeleteUserModal = this.closeDeleteUserModal.bind(this)
+  state = {
+    newUserOpen: false,
+    editMembershipOpen: false,
+    deleteUserOpen: false,
+    editingMembership: null
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_ORG_USERS")
   }
 
-  openNewUserModal() {
+  openNewUserModal = () => {
     this.setState({newUserOpen: true})
   }
 
-  closeNewUserModal() {
+  closeNewUserModal = () => {
     this.setState({newUserOpen: false})
   }
 
-  openEditMembershipModal(membership) {
+  openEditMembershipModal = (membership) => {
     this.setState({
       editMembershipOpen: true,
       editingMembership: membership
     })
   }
 
-  closeEditMembershipModal() {
+  closeEditMembershipModal = () => {
     this.setState({editMembershipOpen: false})
   }
 
-  openDeleteUserModal(membership, type) {
+  openDeleteUserModal = (membership, type) => {
     this.setState({ deleteUserOpen: true, editingMembership: Object.assign({}, membership, { type }) })
   }
 
-  closeDeleteUserModal() {
+  closeDeleteUserModal = () => {
     this.setState({deleteUserOpen: false})
   }
 

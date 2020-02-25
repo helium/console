@@ -5,28 +5,20 @@ const { Text } = Typography
 const { Option } = Select
 
 class UpdateLabelModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      labelName: null,
-      color: props.label.color || labelColors[0]
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleColorSelect = this.handleColorSelect.bind(this);
+  state = {
+    labelName: null,
+    color: this.props.label.color || labelColors[0]
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleColorSelect(color) {
+  handleColorSelect = (color) => {
     this.setState({ color })
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { labelName, color } = this.state;
 

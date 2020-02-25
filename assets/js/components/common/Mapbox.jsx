@@ -7,15 +7,6 @@ import { parseLocation } from '../../util/geolocation'
 
 @connect(null, mapDispatchToProps)
 class Mapbox extends Component {
-  constructor(props) {
-    super(props)
-
-    this.setMapDefaults = this.setMapDefaults.bind(this)
-    this.addGatewaysToMap = this.addGatewaysToMap.bind(this)
-    this.removeGatewaysFromMap = this.removeGatewaysFromMap.bind(this)
-    this.addPopupsToMap = this.addPopupsToMap.bind(this)
-  }
-
   componentDidMount() {
     this.setMapDefaults()
 
@@ -36,7 +27,7 @@ class Mapbox extends Component {
     }
   }
 
-  setMapDefaults() {
+  setMapDefaults = () => {
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ'
 
     let initialCenter = [-93.436, 37.778] //US Center
@@ -61,7 +52,7 @@ class Mapbox extends Component {
     })
   }
 
-  addGatewaysToMap() {
+  addGatewaysToMap = () => {
     let features = []
 
     this.props.gateways.forEach(gateway => {
@@ -130,14 +121,14 @@ class Mapbox extends Component {
     }
   }
 
-  removeGatewaysFromMap() {
+  removeGatewaysFromMap = () => {
     this.map.removeLayer("innerCircle")
     this.map.removeLayer("outerCircle")
     this.map.removeSource("innerCircle")
     this.map.removeSource("outerCircle")
   }
 
-  addPopupsToMap() {
+  addPopupsToMap = () => {
     this.map.on('mouseenter', 'innerCircle', (e) => {
       this.map.getCanvas().style.cursor = 'pointer'
 

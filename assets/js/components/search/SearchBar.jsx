@@ -21,29 +21,16 @@ const queryOptions = {
 @withRouter
 @graphql(GENERAL_SEARCH, queryOptions)
 class SearchBar extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      query: "",
-      open: false,
-      searchResults: [],
-      pageResults: [],
-      flatResults: [],
-      selectedResult: null
-    }
-
-    this.searchBarInput = React.createRef()
-    this.handleUpdateQuery = this.handleUpdateQuery.bind(this)
-    this.handleKeydown = this.handleKeydown.bind(this)
-    this.focusSearchBar = this.focusSearchBar.bind(this)
-    this.nextResult = this.nextResult.bind(this)
-    this.previousResult = this.previousResult.bind(this)
-    this.clearResults = this.clearResults.bind(this)
-    this.gotoResult = this.gotoResult.bind(this)
-    this.handleFocus = this.handleFocus.bind(this)
-    this.handleClick = this.handleClick.bind(this)
+  state = {
+    query: "",
+    open: false,
+    searchResults: [],
+    pageResults: [],
+    flatResults: [],
+    selectedResult: null
   }
+
+  searchBarInput = React.createRef()
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeydown)
@@ -57,7 +44,7 @@ class SearchBar extends Component {
     window.removeEventListener('click', this.handleClick)
   }
 
-  handleUpdateQuery(e) {
+  handleUpdateQuery = (e) => {
     // Update query state first
     const newQuery = e.target.value
 
@@ -101,14 +88,14 @@ class SearchBar extends Component {
     })
   }
 
-  handleFocus(e) {
+  handleFocus = (e) => {
     const { query } = this.state
     this.setState({
       open: query.length > 0
     })
   }
 
-  handleClick(e) {
+  handleClick = (e) => {
     const clickPath = e.composedPath().map(p => p.id)
     if (findIndex(clickPath, el => el === 'searchResults') > -1) return
     if (findIndex(clickPath, el => el === 'searchBar') > -1) return
@@ -118,7 +105,7 @@ class SearchBar extends Component {
     })
   }
 
-  handleKeydown(event) {
+  handleKeydown = (event) => {
     if (this.state.open) {
       if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
         event.preventDefault()
@@ -151,11 +138,11 @@ class SearchBar extends Component {
     }
   }
 
-  focusSearchBar() {
+  focusSearchBar = () => {
     this.searchBarInput.current.focus()
   }
 
-  nextResult() {
+  nextResult = () => {
     const { selectedResult, flatResults } = this.state
     const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
     const result = flatResults[resultIndex + 1]
@@ -164,7 +151,7 @@ class SearchBar extends Component {
     })
   }
 
-  previousResult() {
+  previousResult = () => {
     const { selectedResult, flatResults } = this.state
     const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
     const result = resultIndex >= 0 ? flatResults[resultIndex - 1] : last(flatResults)
@@ -173,7 +160,7 @@ class SearchBar extends Component {
     })
   }
 
-  clearResults() {
+  clearResults = () => {
     this.searchBarInput.current.blur()
     this.setState({
       query: "",
@@ -182,7 +169,7 @@ class SearchBar extends Component {
     })
   }
 
-  gotoResult(result) {
+  gotoResult = (result) => {
     analyticsLogger.logEvent("ACTION_SEARCH", { "query": this.state.query, "title": result.title })
     this.clearResults()
     this.props.history.push(result.url)

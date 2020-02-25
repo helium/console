@@ -13,19 +13,10 @@ const { Text, Title } = Typography
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
 class Login extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: "",
-      password: "",
-      loginPage: "login"
-    };
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleTwoFactorSubmit = this.handleTwoFactorSubmit.bind(this);
-    this.loginForm = this.loginForm.bind(this);
+  state = {
+    email: "",
+    password: "",
+    loginPage: "login"
   }
 
   componentDidUpdate(prevProps) {
@@ -34,23 +25,23 @@ class Login extends Component {
     }
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
     analyticsLogger.logEvent("ACTION_LOGIN", { "email": email })
     this.props.checkCredentials(email, password);
   }
 
-  handleTwoFactorSubmit(code) {
+  handleTwoFactorSubmit = (code) => {
     const { user } = this.props.auth
     this.props.verify2fa(code, user.id)
   }
 
-  loginForm() {
+  loginForm = () => {
     return (
       <AuthLayout>
       <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
@@ -76,7 +67,7 @@ class Login extends Component {
           </Form.Item>
 
           <Form.Item>
-          
+
             <Input
               prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
               type="password"

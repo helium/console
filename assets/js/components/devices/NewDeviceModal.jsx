@@ -13,27 +13,19 @@ const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class NewDeviceModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: "",
-      devEUI: randomString(16),
-      appEUI: randomString(16),
-      appKey: randomString(32),
-      labelId: null,
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSelectOption = this.handleSelectOption.bind(this);
+  state = {
+    name: "",
+    devEUI: randomString(16),
+    appEUI: randomString(16),
+    appKey: randomString(32),
+    labelId: null,
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { name, devEUI, appEUI, appKey, labelId } = this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32)  {
@@ -46,7 +38,7 @@ class NewDeviceModal extends Component {
     }
   }
 
-  handleSelectOption(labelId) {
+  handleSelectOption = (labelId) => {
     this.setState({ labelId })
   }
 

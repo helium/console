@@ -8,13 +8,7 @@ import { displayError } from '../../util/messages'
 
 @connect(null, mapDispatchToProps)
 class RemoveDevicesFromLabelModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { devicesToRemove, removeDevicesFromLabel, label, onClose } = this.props
 

@@ -10,23 +10,16 @@ const { Text, Title } = Typography
 
 @connect(null, mapDispatchToProps)
 class ResetPassword extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      password: "",
-      passwordConfirm: ""
-    };
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    password: "",
+    passwordConfirm: ""
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { password, passwordConfirm } = this.state;
     const token = this.props.match.params.token
@@ -35,8 +28,6 @@ class ResetPassword extends Component {
   }
 
   render() {
-    const { classes } = this.props
-
     return(
       <AuthLayout>
         <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>

@@ -11,22 +11,15 @@ const { Text, Title } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class ResendVerification extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: "",
-    };
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    email: "",
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { email } = this.state;
     analyticsLogger.logEvent("ACTION_RESEND_VERIFICATION", { "email": email })

@@ -7,13 +7,7 @@ import { bindActionCreators } from 'redux'
 
 @connect(null, mapDispatchToProps)
 class DeleteDeviceModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { deleteDevice, deleteDevices, devicesToDelete, onClose } = this.props
     const isArray = Array.isArray(devicesToDelete)

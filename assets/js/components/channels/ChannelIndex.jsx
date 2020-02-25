@@ -11,26 +11,20 @@ import { Card } from 'antd';
 const { Text } = Typography
 
 class ChannelIndex extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      showDeleteChannelModal: false,
-      channel: null,
-    }
-    this.openDeleteChannelModal = this.openDeleteChannelModal.bind(this)
-    this.closeDeleteChannelModal = this.closeDeleteChannelModal.bind(this)
+  state = {
+    showDeleteChannelModal: false,
+    channel: null,
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX")
   }
 
-  openDeleteChannelModal(channel) {
+  openDeleteChannelModal = (channel) => {
     this.setState({ showDeleteChannelModal: true, channel })
   }
 
-  closeDeleteChannelModal() {
+  closeDeleteChannelModal = () => {
     this.setState({ showDeleteChannelModal: false })
   }
 

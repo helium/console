@@ -9,21 +9,12 @@ import LabelAddDeviceSelect from './LabelAddDeviceSelect'
 import LabelAddLabelSelect from './LabelAddLabelSelect'
 
 class LabelAddDeviceModal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      checkedDevices: {},
-      checkedLabels: {}
-    }
-
-    this.checkAllDevices = this.checkAllDevices.bind(this)
-    this.checkAllLabels = this.checkAllLabels.bind(this)
-    this.checkSingleDevice = this.checkSingleDevice.bind(this)
-    this.checkSingleLabel = this.checkSingleLabel.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+  state = {
+    checkedDevices: {},
+    checkedLabels: {}
   }
 
-  handleSubmit() {
+  handleSubmit = () => {
     const { checkedDevices, checkedLabels } = this.state
 
     this.props.addDevicesToLabels(checkedDevices, checkedLabels, this.props.label.id)
@@ -31,7 +22,7 @@ class LabelAddDeviceModal extends Component {
     this.props.onClose()
   }
 
-  checkAllDevices(search) {
+  checkAllDevices = (search) => {
     const { checkedDevices } = this.state
     if (Object.keys(checkedDevices).length > 0) {
       this.setState({ checkedDevices: {} })
@@ -50,7 +41,7 @@ class LabelAddDeviceModal extends Component {
     }
   }
 
-  checkSingleDevice(id) {
+  checkSingleDevice = (id) => {
     const { checkedDevices } = this.state
     let devices
     if (checkedDevices[id]) {
@@ -61,7 +52,7 @@ class LabelAddDeviceModal extends Component {
     this.setState({ checkedDevices: devices })
   }
 
-  checkAllLabels(search) {
+  checkAllLabels = (search) => {
     const { checkedLabels } = this.state
     if (Object.keys(checkedLabels).length > 0) {
       this.setState({ checkedLabels: {} })
@@ -80,7 +71,7 @@ class LabelAddDeviceModal extends Component {
     }
   }
 
-  checkSingleLabel(id) {
+  checkSingleLabel = (id) => {
     const { checkedLabels } = this.state
     let labels
 

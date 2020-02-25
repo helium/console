@@ -11,24 +11,16 @@ const { Option } = Select
 
 @connect(null, mapDispatchToProps)
 class CreateLabelModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      labelName: "",
-      channelId: null,
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSelectOption = this.handleSelectOption.bind(this);
+  state = {
+    labelName: "",
+    channelId: null,
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  handleSubmit(e, redirect = false) {
+  handleSubmit = (e, redirect = false) => {
     e.preventDefault();
     const { labelName, channelId } = this.state;
 
@@ -38,7 +30,7 @@ class CreateLabelModal extends Component {
     this.props.onClose()
   }
 
-  handleSelectOption(channelId) {
+  handleSelectOption = (channelId) => {
     this.setState({ channelId })
   }
 

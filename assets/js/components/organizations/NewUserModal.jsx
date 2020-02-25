@@ -9,23 +9,16 @@ const { Text } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class NewUserModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: "",
-      role: "manager"
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    email: "",
+    role: "manager"
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { email, role } = this.state;
     const { organization } = this.props

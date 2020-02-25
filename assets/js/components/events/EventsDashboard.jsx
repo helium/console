@@ -8,16 +8,11 @@ import { Typography, Table } from 'antd';
 const { Text } = Typography
 
 class EventsDashboard extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      rows: []
-    }
-
-    this.addEvent = this.addEvent.bind(this)
+  state = {
+    rows: []
   }
 
-  addEvent(event) {
+  addEvent = (event) => {
     const { rows } = this.state
     const lastEvent = rows[rows.length - 1]
     if (rows.length > 100 && getDiffInSeconds(lastEvent.delivered_at) > 300) {

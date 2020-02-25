@@ -3,18 +3,13 @@ import { Typography, Input } from 'antd';
 const { Text } = Typography
 
 class AWSForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.state ={
-      accessKeyId: "",
-      secretAccessKey: "",
-      region: ""
-    }
+  state = {
+    accessKeyId: "",
+    secretAccessKey: "",
+    region: ""
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const {accessKeyId, secretAccessKey, region } = this.state
       if (accessKeyId.length > 0 && secretAccessKey.length > 0 && region.length > 0) {

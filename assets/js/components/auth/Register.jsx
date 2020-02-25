@@ -12,36 +12,24 @@ const { Text, Title } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class Register extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      organizationName: "",
-      email: props.email || "",
-      password: "",
-      showOrgCreation: false,
-      acceptedTerms: false,
-    };
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.registerUser = this.registerUser.bind(this);
-
-    this.registerContent = this.registerContent.bind(this)
-    this.joinContent = this.joinContent.bind(this)
-    this.commonFields = this.commonFields.bind(this)
+  state = {
+    organizationName: "",
+    email: this.props.email || "",
+    password: "",
+    showOrgCreation: false,
+    acceptedTerms: false,
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     if (this.state.acceptedTerms) this.setState({ showOrgCreation: true })
   }
 
-  registerUser(e) {
+  registerUser = (e) => {
     e.preventDefault()
     const { email, password, organizationName } = this.state;
     const { register, invitationToken } = this.props
@@ -54,7 +42,7 @@ class Register extends Component {
     );
   }
 
-  registerContent() {
+  registerContent = () => {
     const { classes } = this.props
     const { showOrgCreation, acceptedTerms } = this.state
     return (
@@ -123,7 +111,7 @@ class Register extends Component {
     )
   }
 
-  joinContent() {
+  joinContent = () => {
     const { classes, organizationName, inviter } = this.props
     const { acceptedTerms } = this.state
 
@@ -158,7 +146,7 @@ class Register extends Component {
     )
   }
 
-  commonFields() {
+  commonFields = () => {
     const { classes } = this.props
     const { acceptedTerms } = this.state
     return (

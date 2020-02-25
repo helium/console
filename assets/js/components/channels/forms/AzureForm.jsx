@@ -3,19 +3,14 @@ import { Typography, Input } from 'antd';
 const { Text } = Typography
 
 class AzureForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.state = {
-      connectionString: "",
-      hostName: "",
-      accessKeyName: "",
-      accessKey: ""
-    }
+  state = {
+    connectionString: "",
+    hostName: "",
+    accessKeyName: "",
+    accessKey: ""
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const { connectionString } = this.state
       if (connectionString.length > 0) {

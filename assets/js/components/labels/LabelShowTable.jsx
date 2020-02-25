@@ -76,18 +76,10 @@ class LabelShowTable extends Component {
 }
 
 class QueryResults extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      page: 1,
-      pageSize: get(props, ['variables', 'pageSize']) || 10,
-      selectedRows: [],
-    }
-
-    this.handleSelectOption = this.handleSelectOption.bind(this)
-    this.handleChangePage = this.handleChangePage.bind(this)
-    this.refetchPaginatedEntries = this.refetchPaginatedEntries.bind(this)
+  state = {
+    page: 1,
+    pageSize: get(this.props, ['variables', 'pageSize']) || 10,
+    selectedRows: [],
   }
 
   componentDidMount() {
@@ -103,18 +95,18 @@ class QueryResults extends Component {
     })
   }
 
-  handleSelectOption() {
+  handleSelectOption = () => {
     this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
   }
 
-  handleChangePage(page) {
+  handleChangePage = (page) => {
     this.setState({ page })
 
     const { pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  refetchPaginatedEntries(page, pageSize) {
+  refetchPaginatedEntries = (page, pageSize) => {
     const { fetchMore } = this.props
     fetchMore({
       variables: { page, pageSize },

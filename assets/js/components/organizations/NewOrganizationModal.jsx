@@ -8,22 +8,15 @@ const { Text } = Typography
 
 @connect(null, mapDispatchToProps)
 class NewOrganizationModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: "",
-    }
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    name: "",
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { name } = this.state;
 

@@ -5,44 +5,34 @@ const { Option } = Select
 import { Row, Col } from 'antd';
 
 class HTTPForm extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleInputUpdate = this.handleInputUpdate.bind(this)
-    this.handleMethodUpdate = this.handleMethodUpdate.bind(this)
-    this.handleHttpHeaderUpdate = this.handleHttpHeaderUpdate.bind(this)
-    this.addHeaderRow = this.addHeaderRow.bind(this)
-    this.removeHeaderRow = this.removeHeaderRow.bind(this)
-    this.validateInput = this.validateInput.bind(this)
-    this.state = {
-      method: "post",
-      endpoint: "",
-      headers: [
-        { header: "", value: "" },
-        { header: "", value: "" }
-      ]
-    }
+  state = {
+    method: "post",
+    endpoint: "",
+    headers: [
+      { header: "", value: "" },
+      { header: "", value: "" }
+    ]
   }
 
-  addHeaderRow() {
+  addHeaderRow = () => {
     const newHeadersArray = [...this.state.headers, { header: "", value: "" }]
     this.setState({ headers: newHeadersArray })
   }
 
-  removeHeaderRow(index) {
+  removeHeaderRow = (index) => {
     const newHeadersArray = this.state.headers.slice(0, index).concat(this.state.headers.slice(index + 1))
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
-  handleInputUpdate(e) {
+  handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, this.validateInput)
   }
 
-  handleMethodUpdate(method) {
+  handleMethodUpdate = (method) => {
     this.setState({ method }, this.validateInput)
   }
 
-  handleHttpHeaderUpdate(e) {
+  handleHttpHeaderUpdate = (e) => {
     let index, input
     [index, input] = e.target.name.split('-')
 
@@ -53,7 +43,7 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
-  validateInput() {
+  validateInput = () => {
     const { method, endpoint, headers } = this.state
     if (method.length > 0 && endpoint.length > 0) {
       const parsedHeaders = headers.reduce((a, h) => {
