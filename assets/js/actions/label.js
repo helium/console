@@ -1,12 +1,13 @@
 import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
 
-export const createLabel = (name, redirect) => {
+export const createLabel = (name, channelId, redirect) => {
   return (dispatch) => {
     rest.post('/api/labels', {
         label: {
           name
         },
+        channel_id: channelId
       })
       .then(response => {
         if (redirect) dispatch(push(`/labels/${response.data.id}`))

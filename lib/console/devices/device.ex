@@ -15,8 +15,9 @@ defmodule Console.Devices.Device do
     field :name, :string
     field :dev_eui, :string
     field :app_key, :string
-    field :app_eui, :string        
-    field :oui, :integer    
+    field :app_eui, :string
+    field :key, :string        
+    field :oui, :integer
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all

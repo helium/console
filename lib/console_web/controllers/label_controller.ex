@@ -4,6 +4,7 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Repo
   alias Console.Labels
   alias Console.Devices
+  alias Console.Organizations
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
 
@@ -11,12 +12,17 @@ defmodule ConsoleWeb.LabelController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def create(conn, %{"label" => label_params}) do
+  def create(conn, %{"label" => label_params, "channel_id" => channel_id}) do
     current_organization = conn.assigns.current_organization
     label_params = Map.merge(label_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
       broadcast(label)
+
+      if channel_id != nil do
+        channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
+        Labels.add_labels_to_channel([label.id], channel, current_organization)
+      end
 
       conn
       |> put_status(:created)
