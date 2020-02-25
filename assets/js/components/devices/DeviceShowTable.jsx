@@ -1,20 +1,24 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import moment from 'moment'
 import LabelTag from '../common/LabelTag'
-import { removeDevicesFromLabel } from '../../actions/label'
 import { Table, Button, Empty, Tag, Typography, Select } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
 import { Card } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-@connect(null, mapDispatchToProps)
 class DeviceShowTable extends Component {
+  state = {
+    selectedRows: []
+  }
+
+  handleSelectOption = () => {
+    this.props.openDeviceRemoveLabelModal(this.state.selectedRows)
+  }
+
   render() {
-    const { device, labels, removeDevicesFromLabel } = this.props
+    const { device, labels, openDeviceRemoveLabelModal, openDevicesAddLabelModal } = this.props
 
     const columns = [
       {
@@ -48,7 +52,7 @@ class DeviceShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => removeDevicesFromLabel([device], record.id)}>Remove</Link>
+            <Link to="#" onClick={() => openDeviceRemoveLabelModal([record])}>Remove</Link>
             <Text>{" | "}</Text>
             <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
@@ -56,18 +60,39 @@ class DeviceShowTable extends Component {
       },
     ]
 
+    const rowSelection = {
+      onSelect: (record, selected) => {
+        const { selectedRows } = this.state
+        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
+        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
+      },
+      onSelectAll: (selected, selectedRows) => {
+        if (selected) this.setState({ selectedRows })
+        else this.setState({ selectedRows: [] })
+      },
+    }
+
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${labels.length} Labels Attached`}
         extra={
-          <Button
-            type="primary"
-            icon="plus"
-            onClick={() => {}}
-          >
-            Add Label
-          </Button>
+          <React.Fragment>
+            <Select
+              value="Quick Action"
+              style={{ width: 220, marginRight: 10 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="remove" style={{ color: '#F5222D' }}>Remove Labels from Device</Option>
+            </Select>
+            <Button
+              type="primary"
+              icon="plus"
+              onClick={this.props.openDevicesAddLabelModal}
+            >
+              Add Label
+            </Button>
+          </React.Fragment>
         }
       >
         <Table
@@ -75,14 +100,11 @@ class DeviceShowTable extends Component {
           dataSource={labels}
           rowKey={record => record.id}
           pagination={false}
+          rowSelection={rowSelection}
         />
       </Card>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ removeDevicesFromLabel }, dispatch)
 }
 
 export default DeviceShowTable

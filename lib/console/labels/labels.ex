@@ -86,8 +86,13 @@ defmodule Console.Labels do
     end
   end
 
-  def delete_devices_labels(devices, label_id) do
+  def delete_devices_from_label(devices, label_id) do
     query = from(dl in DevicesLabels, where: dl.device_id in ^devices and dl.label_id == ^label_id)
+    Repo.delete_all(query)
+  end
+
+  def delete_labels_from_device(labels, device_id) do
+    query = from(dl in DevicesLabels, where: dl.label_id in ^labels and dl.device_id == ^device_id)
     Repo.delete_all(query)
   end
 

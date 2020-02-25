@@ -118,6 +118,7 @@ defmodule ConsoleWeb.LabelController do
 
         broadcast(label, label.id)
         ConsoleWeb.DeviceController.broadcast(device)
+        ConsoleWeb.DeviceController.broadcast(device, device.id)
 
         conn
         |> put_resp_header("message", msg)
@@ -149,6 +150,7 @@ defmodule ConsoleWeb.LabelController do
           broadcast(label)
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.DeviceController.broadcast(device)
+          ConsoleWeb.DeviceController.broadcast(device, device.id)
 
           conn
           |> put_resp_header("message", "#{count} Devices added to label successfully")
@@ -157,13 +159,24 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  def delete_devices_from_label(conn, %{"devices" => devices, "label_id" => label_id}) do
-    with {_, nil} <- Labels.delete_devices_labels(devices, label_id) do
+  def delete_devices_from_labels(conn, %{"devices" => devices, "label_id" => label_id}) do
+    with {_, nil} <- Labels.delete_devices_from_label(devices, label_id) do
       label = Labels.get_label!(label_id)
       broadcast(label, label.id)
 
       conn
       |> put_resp_header("message", "Device(s) successfully removed from label")
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def delete_devices_from_labels(conn, %{"labels" => labels, "device_id" => device_id}) do
+    with {_, nil} <- Labels.delete_labels_from_device(labels, device_id) do
+      device = Devices.get_device!(device_id)
+      ConsoleWeb.DeviceController.broadcast(device, device.id)
+
+      conn
+      |> put_resp_header("message", "Label(s) successfully removed from device")
       |> send_resp(:no_content, "")
     end
   end

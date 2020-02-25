@@ -89,7 +89,7 @@ defmodule ConsoleWeb.DeviceController do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end
 
-  defp broadcast(%Device{} = device, id) do
+  def broadcast(%Device{} = device, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
   end
 end

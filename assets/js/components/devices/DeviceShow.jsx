@@ -9,6 +9,8 @@ import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
 import DeviceShowTable from './DeviceShowTable'
+import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
+import DevicesAddLabelModal from './DevicesAddLabelModal'
 import { updateDevice } from '../../actions/device'
 import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -32,6 +34,9 @@ class DeviceShow extends Component {
     showDevEUIInput: false,
     showAppEUIInput: false,
     showAppKeyInput: false,
+    labelsSelected: null,
+    showDeviceRemoveLabelModal: false,
+    showDevicesAddLabelModal: false,
   }
 
   componentDidMount() {
@@ -127,8 +132,33 @@ class DeviceShow extends Component {
     this.setState({ showAppKeyInput: !showAppKeyInput })
   }
 
+  openDeviceRemoveLabelModal = (labelsSelected) => {
+    this.setState({ showDeviceRemoveLabelModal: true, labelsSelected })
+  }
+
+  closeDeviceRemoveLabelModal = () => {
+    this.setState({ showDeviceRemoveLabelModal: false })
+  }
+
+  openDevicesAddLabelModal = () => {
+    this.setState({ showDevicesAddLabelModal: true })
+  }
+
+  closeDevicesAddLabelModal = () => {
+    this.setState({ showDevicesAddLabelModal: false })
+  }
+
   render() {
-    const { newName, showNameInput, showDevEUIInput, showAppEUIInput, showAppKeyInput } = this.state
+    const {
+      newName,
+      showNameInput,
+      showDevEUIInput,
+      showAppEUIInput,
+      showAppKeyInput,
+      showDeviceRemoveLabelModal,
+      labelsSelected,
+      showDevicesAddLabelModal, 
+    } = this.state
     const { loading, device } = this.props.data
 
     if (loading) return <DashboardLayout />
@@ -291,11 +321,29 @@ class DeviceShow extends Component {
           </table>
         </Card>
 
-        <DeviceShowTable labels={device.labels} device={device}/>
+        <DeviceShowTable
+          labels={device.labels}
+          device={device}
+          openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
+          openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+        />
 
         <Card title="Device Integrations">
           <EventsDashboard contextName="devices" contextId={device.id} />
         </Card>
+
+        <DeviceRemoveLabelModal
+          open={showDeviceRemoveLabelModal}
+          onClose={this.closeDeviceRemoveLabelModal}
+          labels={labelsSelected}
+          device={device}
+        />
+
+        <DevicesAddLabelModal
+          open={showDevicesAddLabelModal}
+          onClose={this.closeDevicesAddLabelModal}
+          devicesToUpdate={[device]}
+        />
       </DashboardLayout>
     )
   }
