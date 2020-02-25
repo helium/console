@@ -28,6 +28,17 @@ class LabelIndexTable extends Component {
         )
       },
       {
+        title: 'Associated Integrations',
+        dataIndex: 'channels',
+        render: (text, record) => (
+          <div>
+            {
+              record.channels.map((c, i) => <Text key={c.id}>{c.name}{i != record.channels.length - 1 && ", "}</Text>)
+            }
+          </div>
+        )
+      },
+      {
         title: 'No. of Devices',
         dataIndex: 'devices',
         render: (text, record) => <Text>{record.devices.length}</Text>

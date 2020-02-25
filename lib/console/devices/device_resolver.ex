@@ -9,11 +9,23 @@ defmodule Console.Devices.DeviceResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
-      |> preload([:labels])
+      |> preload([labels: [:channels]])
       |> order_by(asc: :dev_eui)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    {:ok, devices}
+    entries =
+      Enum.map(devices.entries, fn d ->
+        channels =
+          Enum.map(d.labels, fn l ->
+            l.channels
+          end)
+          |> List.flatten()
+          |> Enum.uniq()
+
+        Map.put(d, :channels, channels)
+      end)
+
+    {:ok, Map.put(devices, :entries, entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do

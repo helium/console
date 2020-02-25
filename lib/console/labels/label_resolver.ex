@@ -6,7 +6,7 @@ defmodule Console.Labels.LabelResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:devices])
+      |> preload([:devices, :channels])
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, labels}

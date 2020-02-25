@@ -42,6 +42,17 @@ class DevicesTable extends Component {
         }
       },
       {
+        title: 'Integrations',
+        dataIndex: 'channels',
+        render: (text, record) => (
+          <div>
+            {
+              record.channels.map((c, i) => <Text key={c.id}>{c.name}{i != record.channels.length - 1 && ", "}</Text>)
+            }
+          </div>
+        )
+      },
+      {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')

@@ -10,6 +10,10 @@ export const LABEL_FRAGMENT = gql`
       name,
       id
     }
+    channels {
+      name,
+      id
+    }
   }
 `
 

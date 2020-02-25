@@ -38,6 +38,10 @@ export const PAGINATED_DEVICES = gql`
     devices(page: $page, pageSize: $pageSize) {
       entries {
         ...DeviceFragment
+        channels {
+          name,
+          id
+        }
       },
       totalEntries,
       totalPages,
