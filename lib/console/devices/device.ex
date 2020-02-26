@@ -16,10 +16,7 @@ defmodule Console.Devices.Device do
     field :dev_eui, :string
     field :app_key, :string
     field :app_eui, :string
-<<<<<<< HEAD
-    field :key, :string        
-=======
->>>>>>> Store events from devices
+    field :key, :string
     field :oui, :integer
 
     belongs_to :organization, Organization
