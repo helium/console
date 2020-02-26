@@ -24,6 +24,17 @@ defmodule ConsoleWeb.Router.DeviceController do
     render(conn, "index.json", devices: devices)
   end
 
+  def show(conn, %{"id" => id}) do
+    device = Devices.get_device!(id)
+    if length(device.labels) > 0 do
+      Map.put(device, :channels, Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq())
+    else
+      Map.put(device, :channels, [])
+    end
+
+    render(conn, "show.json", device: device)
+  end
+
   def show_event(conn, %{"device_id" => device_id} = event) do
     case Devices.get_device(device_id) do
       nil ->
