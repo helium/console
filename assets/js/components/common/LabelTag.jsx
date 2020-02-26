@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Tag } from 'antd';
 
 const LabelTag = ({ text, color, style, closable, onClose }) => (
-  <Tag style={style} color={color ? color : "geekblue"} closable onClose={onClose}>{text}</Tag>
+  <Tag style={style} color={color ? color : "geekblue"} closable={closable} onClose={onClose}>{text}</Tag>
 )
 
 export const labelColors = [
