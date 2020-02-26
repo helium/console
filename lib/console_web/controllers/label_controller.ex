@@ -4,6 +4,7 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Repo
   alias Console.Labels
   alias Console.Devices
+  alias Console.Channels
   alias Console.Organizations
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
@@ -127,6 +128,25 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
+  def add_labels_to_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
+    current_organization = conn.assigns.current_organization
+    channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
+
+    with {:ok, count} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
+      msg =
+        case count do
+          0 -> "All selected labels are already in channel"
+          _ ->
+            ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+            "#{count} Labels added to channel successfully"
+        end
+
+      conn
+      |> put_resp_header("message", msg)
+      |> send_resp(:no_content, "")
+    end
+  end
+
   def add_devices_to_label(conn, %{"devices" => devices, "new_label" => label_name}) do
     current_organization = conn.assigns.current_organization
 
@@ -177,6 +197,17 @@ defmodule ConsoleWeb.LabelController do
 
       conn
       |> put_resp_header("message", "Label(s) successfully removed from device")
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def delete_labels_from_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
+    with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id) do
+      channel = Channels.get_channel!(channel_id)
+      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+      
+      conn
+      |> put_resp_header("message", "Label(s) successfully removed from channel")
       |> send_resp(:no_content, "")
     end
   end

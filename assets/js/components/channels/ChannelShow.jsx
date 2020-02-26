@@ -2,8 +2,12 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import pick from 'lodash/pick'
+import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
+import { displayError } from '../../util/messages'
+import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
+import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
+import ChannelShowRemoveLabelModal from './ChannelShowRemoveLabelModal'
 import HttpDetails from './HttpDetails'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
@@ -11,11 +15,9 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import LabelTag from '../common/LabelTag'
 import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
 const { Text, Paragraph } = Typography
 
@@ -28,13 +30,15 @@ const queryOptions = {
   })
 }
 
-
 @graphql(CHANNEL_SHOW, queryOptions)
 @connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
   state = {
     newName: "",
-    credentials: {}
+    credentials: {},
+    selectedLabel: null,
+    showChannelShowAddLabelModal: false,
+    showChannelShowRemoveLabelModal: false,
   }
 
   componentDidMount() {
@@ -83,6 +87,32 @@ class ChannelShow extends Component {
     this.setState({ credentials: {} })
   }
 
+  handleSelectLabel = (selectedLabel) => {
+    this.setState({ selectedLabel })
+  }
+
+  handleOpenChannelShowAddLabelModal = () => {
+    const { selectedLabel } = this.state
+
+    if (!selectedLabel) {
+      displayError("Please select a label to add to this integration.")
+    } else {
+      this.setState({ showChannelShowAddLabelModal: true })
+    }
+  }
+
+  handleCloseChannelShowAddLabelModal = () => {
+    this.setState({ showChannelShowAddLabelModal: false })
+  }
+
+  handleOpenChannelShowRemoveLabelModal = (selectedLabel) => {
+    this.setState({ showChannelShowRemoveLabelModal: true, selectedLabel })
+  }
+
+  handleCloseChannelShowRemoveLabelModal = () => {
+    this.setState({ showChannelShowRemoveLabelModal: false })
+  }
+
   renderForm = () => {
     const { channel } = this.props.data
 
@@ -101,14 +131,13 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { loading, channel } = this.props.data
+    const { loading, channel, allLabels } = this.props.data
 
     if (loading) return <DashboardLayout />
 
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>
       <Card title="Integration Details">
-
         <Input
           name="newName"
           placeholder={channel.name}
@@ -125,23 +154,20 @@ class ChannelShow extends Component {
         <Divider />
         <Row>
           <Col span={12}>
-        <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
-                <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
-                <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-
-
-
-        </Col>
-        <Col span={12}>
-        <Card size="small" title="HTTP Details">
-           {channel.type === "http" && <HttpDetails channel={channel} />}
-        </Card>
-        <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
-          Show Duplicate Packets
-        </Checkbox>
-        </Col>
-
-
+          <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
+          <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
+          <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
+          <Paragraph><Text strong> Devices Piped-- </Text></Paragraph>
+          <Paragraph>{channel.devices.length} Connected Devices</Paragraph>
+          </Col>
+          <Col span={12}>
+            <Card size="small" title="HTTP Details">
+               {channel.type === "http" && <HttpDetails channel={channel} />}
+            </Card>
+            <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
+              Show Duplicate Packets
+            </Checkbox>
+          </Col>
         </Row>
         </Card>
         <Card title="Update your Connection Details">
@@ -155,18 +181,27 @@ class ChannelShow extends Component {
           </Button>
         </Card>
 
-        <Card title="Integration Labels and Devices">
-          {
-            channel.labels.map(l => (
-              <LabelTag key={l.id} text={l.name} color={l.color} />
-            ))
-          }
-          {
-            channel.devices.map(d => (
-              <Text key={d.id}>{d.name}</Text>
-            ))
-          }
-        </Card>
+        <ChannelShowLabelsApplied
+          handleSelectLabel={this.handleSelectLabel}
+          allLabels={allLabels}
+          channel={channel}
+          handleClickAdd={this.handleOpenChannelShowAddLabelModal}
+          handleClickRemove={this.handleOpenChannelShowRemoveLabelModal}
+        />
+
+        <ChannelShowAddLabelModal
+          open={this.state.showChannelShowAddLabelModal}
+          onClose={this.handleCloseChannelShowAddLabelModal}
+          label={find(allLabels, { id: this.state.selectedLabel })}
+          channel={channel}
+        />
+
+        <ChannelShowRemoveLabelModal
+          open={this.state.showChannelShowRemoveLabelModal}
+          onClose={this.handleCloseChannelShowRemoveLabelModal}
+          label={find(allLabels, { id: this.state.selectedLabel })}
+          channel={channel}
+        />
       </DashboardLayout>
     )
   }

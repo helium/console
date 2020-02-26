@@ -92,3 +92,23 @@ export const removeLabelsFromDevice = (labels, device_id) => {
     .then(response => {})
   }
 }
+
+export const addLabelsToChannel = (labels, channel_id) => {
+  return (dispatch) => {
+    rest.post(`/api/channels_labels`, {
+      labels,
+      channel_id,
+    })
+    .then(response => {})
+  }
+}
+
+export const removeLabelsFromChannel = (labels, channel_id) => {
+  return (dispatch) => {
+    rest.post(`/api/channels_labels/delete`, {
+      labels,
+      channel_id,
+    })
+    .then(response => {})
+  }
+}

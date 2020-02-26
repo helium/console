@@ -75,11 +75,11 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  defp broadcast(%Channel{} = channel) do
+  def broadcast(%Channel{} = channel) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.organization_id}/channel_added")
   end
 
-  defp broadcast(%Channel{} = channel, id) do
+  def broadcast(%Channel{} = channel, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/#{id}/channel_updated")
   end
 end

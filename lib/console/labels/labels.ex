@@ -101,13 +101,25 @@ defmodule Console.Labels do
     all_labels = Repo.all(labels_query)
 
     channels_labels = Enum.reduce(all_labels, [], fn label, acc ->
-      acc ++ [%{ channel_id: channel.id, label_id: label.id }]
+      if Repo.get_by(ChannelsLabels, channel_id: channel.id, label_id: label.id) == nil do
+        acc ++ [%{ channel_id: channel.id, label_id: label.id }]
+      else
+        acc
+      end
     end)
 
-    Repo.transaction(fn ->
-      Enum.each(channels_labels, fn attrs ->
-        Repo.insert!(ChannelsLabels.changeset(%ChannelsLabels{}, attrs))
+    with {:ok, :ok} <- Repo.transaction(fn ->
+        Enum.each(channels_labels, fn attrs ->
+          Repo.insert!(ChannelsLabels.changeset(%ChannelsLabels{}, attrs))
+        end)
       end)
-    end)
+    do
+      {:ok, length(channels_labels)}
+    end
+  end
+
+  def delete_labels_from_channel(labels, channel_id) do
+    query = from(cl in ChannelsLabels, where: cl.label_id in ^labels and cl.channel_id == ^channel_id)
+    Repo.delete_all(query)
   end
 end

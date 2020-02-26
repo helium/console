@@ -22,8 +22,18 @@ export const CHANNEL_SHOW = gql`
       headers
       labels {
         name,
+        id,
+        color
+      }
+      devices {
+        name,
         id
       }
+    }
+    allLabels {
+      name,
+      id,
+      color,
       devices {
         name,
         id
