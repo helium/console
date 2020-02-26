@@ -1,21 +1,67 @@
 import React, { Component } from 'react'
-import { Query } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
-import { PAGINATED_DEVICES_BY_LABEL, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
+import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
+import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-const defaultVariables = {
-  page: 1,
-  pageSize: 10
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10,
+      labelId: props.labelId
+    },
+    fetchPolicy: 'cache-and-network',
+  })
 }
 
+@graphql(PAGINATED_DEVICES_BY_LABEL, queryOptions)
 class LabelShowTable extends Component {
+  state = {
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    selectedRows: [],
+  }
+
+  componentDidMount() {
+    const { subscribeToMore} = this.props.data
+    const { page, pageSize } = this.state
+
+    subscribeToMore({
+      document: LABEL_UPDATE_SUBSCRIPTION,
+      variables: { id: this.props.labelId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleSelectOption = () => {
+    this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
   render() {
     const columns = [
       {
@@ -53,76 +99,12 @@ class LabelShowTable extends Component {
       },
     ]
 
-    const variables = Object.assign({}, defaultVariables, { labelId: this.props.labelId })
-
-    return (
-      <Query query={PAGINATED_DEVICES_BY_LABEL} fetchPolicy={'cache-and-network'} variables={variables}>
-        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
-          <QueryResults
-            loading={loading}
-            error={error}
-            columns={columns}
-            data={data}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
-            subscription={LABEL_UPDATE_SUBSCRIPTION}
-            variables={variables}
-            {...this.props}
-          />
-        )}
-      </Query>
-    )
-  }
-}
-
-class QueryResults extends Component {
-  state = {
-    page: 1,
-    pageSize: get(this.props, ['variables', 'pageSize']) || 10,
-    selectedRows: [],
-  }
-
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore, variables } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
-    })
-  }
-
-  handleSelectOption = () => {
-    this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
-  }
-
-  handleChangePage = (page) => {
-    this.setState({ page })
-
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  render() {
-    const { loading, error, data, columns } = this.props
+    const { loading, error, devices_by_label } = this.props.data
 
     if (loading) return null;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
-
-    const results = find(data, d => d.entries !== undefined)
 
     const rowSelection = {
       onSelect: (record, selected) => {
@@ -139,7 +121,7 @@ class QueryResults extends Component {
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
-        title={`${results.entries.length} Devices`}
+        title={`${devices_by_label.entries.length} Devices`}
         extra={
           <Select
             value="Quick Action"
@@ -152,16 +134,16 @@ class QueryResults extends Component {
       >
         <Table
           columns={columns}
-          dataSource={results.entries}
+          dataSource={devices_by_label.entries}
           rowKey={record => record.id}
           pagination={false}
           rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
-            current={results.pageNumber}
-            pageSize={results.pageSize}
-            total={results.totalEntries}
+            current={devices_by_label.pageNumber}
+            pageSize={devices_by_label.pageSize}
+            total={devices_by_label.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
           />

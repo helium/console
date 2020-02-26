@@ -1,25 +1,61 @@
 import React, { Component } from 'react'
-import find from 'lodash/find'
 import get from 'lodash/get'
 import moment from 'moment'
-import UserCan from '../common/UserCan'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Query } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
 
-const defaultVariables = {
-  page: 1,
-  pageSize: 10
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    },
+    fetchPolicy: 'cache-and-network',
+  })
 }
 
+@graphql(PAGINATED_MEMBERSHIPS, queryOptions)
 class MembersTable extends Component {
-  render() {
-    const {
-       openEditMembershipModal,
-       openDeleteUserModal
-    } = this.props
+  state = {
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10
+  }
 
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: MEMBERSHIP_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleSubscriptionAdded = () => {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  render() {
     const columns = [
       {
         title: 'User',
@@ -48,7 +84,7 @@ class MembersTable extends Component {
             <Button
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
-                openEditMembershipModal(record)
+                this.props.openEditMembershipModal(record)
               }}
               style={{ marginRight: 5 }}
               type="primary"
@@ -59,7 +95,7 @@ class MembersTable extends Component {
             <Button
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
-                openDeleteUserModal(record, "membership")
+                this.props.openDeleteUserModal(record, "membership")
               }}
               type="danger"
               icon="delete"
@@ -69,98 +105,28 @@ class MembersTable extends Component {
       },
     ]
 
-    return (
-      <Query query={PAGINATED_MEMBERSHIPS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
-        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
-          <QueryResults
-            loading={loading}
-            error={error}
-            data={data}
-            columns={columns}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
-            subscription={MEMBERSHIP_SUBSCRIPTION}
-            variables={variables}
-            {...this.props}
-          />
-        )}
-      </Query>
-    )
-  }
-}
-
-class QueryResults extends Component {
-  state = {
-    page: 1,
-    pageSize: get(this.props, ['variables', 'pageSize']) || 10
-  }
-
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore, variables } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
-    })
-  }
-
-  handleChangePage = (page) => {
-    this.setState({ page })
-
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  render() {
-    const { loading, error, data, columns } = this.props
+    const { loading, error, memberships } = this.props.data
 
     if (loading) return null;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
-    const results = find(data, d => d.entries !== undefined)
-
-    if (results.entries.length === 0) return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={<span>No Members</span>}
-      />
-    )
-
     return (
       <div>
         <Table
           columns={columns}
-          dataSource={results.entries}
+          dataSource={memberships.entries}
           rowKey={record => record.id}
           pagination={false}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
           <Pagination
-            current={results.pageNumber}
-            pageSize={results.pageSize}
-            total={results.totalEntries}
+            current={memberships.pageNumber}
+            pageSize={memberships.pageSize}
+            total={memberships.totalEntries}
             onChange={page => this.handleChangePage(page)}
-            hideOnSinglePage={true}
-            style={{marginBottom: 20}}
+            style={{ marginBottom: 20 }}
           />
         </div>
       </div>

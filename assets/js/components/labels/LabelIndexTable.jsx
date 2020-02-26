@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Query } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import find from 'lodash/find'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
@@ -10,12 +9,60 @@ import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-const defaultVariables = {
-  page: 1,
-  pageSize: 10
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    },
+    fetchPolicy: 'cache-and-network',
+  })
 }
 
+@graphql(PAGINATED_LABELS, queryOptions)
 class LabelIndexTable extends Component {
+  state = {
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    selectedRows: [],
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: LABEL_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleSelectOption = () => {
+    this.props.openDeleteLabelModal(this.state.selectedRows)
+  }
+
+  handleSubscriptionAdded = () => {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
   render() {
     const columns = [
       {
@@ -61,79 +108,12 @@ class LabelIndexTable extends Component {
       },
     ]
 
-    return (
-      <Query query={PAGINATED_LABELS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
-        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
-          <QueryResults
-            loading={loading}
-            error={error}
-            columns={columns}
-            data={data}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
-            subscription={LABEL_SUBSCRIPTION}
-            variables={variables}
-            {...this.props}
-          />
-        )}
-      </Query>
-    )
-  }
-}
-
-class QueryResults extends Component {
-  state = {
-    page: 1,
-    pageSize: get(this.props, ['variables', 'pageSize']) || 10,
-    selectedRows: [],
-  }
-
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore, variables } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
-    })
-  }
-
-  handleSelectOption = () => {
-    this.props.openDeleteLabelModal(this.state.selectedRows)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleChangePage = (page) => {
-    this.setState({ page })
-
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  render() {
-    const { loading, error, data, columns } = this.props
+    const { loading, error, labels } = this.props.data
 
     if (loading) return null;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
-
-    const results = find(data, d => d.entries !== undefined)
 
     const rowSelection = {
       onSelect: (record, selected) => {
@@ -150,7 +130,7 @@ class QueryResults extends Component {
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1 }}
-        title={`${results.entries.length} Labels`}
+        title={`${labels.entries.length} Labels`}
         extra={
           <React.Fragment>
             <Select
@@ -172,16 +152,16 @@ class QueryResults extends Component {
       >
         <Table
           columns={columns}
-          dataSource={results.entries}
+          dataSource={labels.entries}
           rowKey={record => record.id}
           pagination={false}
           rowSelection={rowSelection}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
-            current={results.pageNumber}
-            pageSize={results.pageSize}
-            total={results.totalEntries}
+            current={labels.pageNumber}
+            pageSize={labels.pageSize}
+            total={labels.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
           />

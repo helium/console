@@ -1,20 +1,61 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import find from 'lodash/find'
 import get from 'lodash/get'
-import UserCan from '../common/UserCan'
 import LabelTag from '../common/LabelTag'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
-import { Query } from 'react-apollo';
-import { Table, Button, Empty, Pagination } from 'antd';
-import EmptyImg from '../../../img/emptydevice.svg'
+import { graphql } from 'react-apollo';
+import { Table, Button, Empty, Pagination, Typography } from 'antd';
+const { Text } = Typography
 
-const defaultVariables = {
-  page: 1,
-  pageSize: 10
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    },
+    fetchPolicy: 'cache-and-network',
+  })
 }
 
+@graphql(PAGINATED_CHANNELS, queryOptions)
 class ChannelsTable extends Component {
+  state = {
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10
+  }
+
+  componentDidMount() {
+    const { subscribeToMore} = this.props.data
+
+    subscribeToMore({
+      document: CHANNEL_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleSubscriptionAdded = () => {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
   render() {
     const columns = [
       {
@@ -61,95 +102,26 @@ class ChannelsTable extends Component {
       },
     ]
 
-    return (
-      <Query query={PAGINATED_CHANNELS} fetchPolicy={'cache-and-network'} variables={defaultVariables}>
-        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
-          <QueryResults
-            loading={loading}
-            error={error}
-            data={data}
-            columns={columns}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
-            subscription={CHANNEL_SUBSCRIPTION}
-            variables={variables}
-            {...this.props}
-          />
-        )}
-      </Query>
-    )
-  }
-}
-
-class QueryResults extends Component {
-  state = {
-    page: 1,
-    pageSize: get(this.props, ['variables', 'pageSize']) || 10
-  }
-
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore, variables } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
-    })
-  }
-
-  handleChangePage = (page) => {
-    this.setState({ page })
-
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
-  }
-
-  render() {
-    const { loading, error, data, columns } = this.props
+    const { channels, loading, error } = this.props.data
 
     if (loading) return null;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
-    const results = find(data, d => d.entries !== undefined)
-
-    if (results.entries.length === 0) return (
-      <Empty
-        image={EmptyImg}
-        description={<span>No Channels</span>}
-      />
-    )
-
     return (
       <div>
         <Table
           columns={columns}
-          dataSource={results.entries}
+          dataSource={channels.entries}
           rowKey={record => record.id}
           pagination={false}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
           <Pagination
-            current={results.pageNumber}
-            pageSize={results.pageSize}
-            total={results.totalEntries}
+            current={channels.pageNumber}
+            pageSize={channels.pageSize}
+            total={channels.totalEntries}
             onChange={page => this.handleChangePage(page)}
           />
         </div>

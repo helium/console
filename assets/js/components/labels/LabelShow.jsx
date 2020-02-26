@@ -12,7 +12,6 @@ import { updateLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 

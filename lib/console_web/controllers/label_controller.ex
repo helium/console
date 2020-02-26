@@ -205,7 +205,7 @@ defmodule ConsoleWeb.LabelController do
     with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id) do
       channel = Channels.get_channel!(channel_id)
       ConsoleWeb.ChannelController.broadcast(channel, channel.id)
-      
+
       conn
       |> put_resp_header("message", "Label(s) successfully removed from channel")
       |> send_resp(:no_content, "")

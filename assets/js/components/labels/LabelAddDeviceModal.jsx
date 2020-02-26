@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import debounce from 'lodash/debounce'
-import gql from 'graphql-tag';
 import omit from 'lodash/omit'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS_DEVICES } from '../../graphql/labels'
@@ -20,7 +19,7 @@ class LabelAddDeviceModal extends Component {
 
     this.props.addDevicesToLabels(checkedDevices, checkedLabels, this.props.label.id)
     analyticsLogger.logEvent(
-      "ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL", 
+      "ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL",
       {
         id: this.props.label.id,
         devices: Object.keys(checkedDevices),
