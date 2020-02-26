@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography } from 'antd';
 import { deleteDevice, deleteDevices } from '../../actions/device'
+import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -13,8 +14,10 @@ class DeleteDeviceModal extends Component {
     const isArray = Array.isArray(devicesToDelete)
 
     if (isArray) {
+      analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: devicesToDelete.map(d => d.id) })
       deleteDevices(devicesToDelete)
     } else {
+      analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: [devicesToDelete] })
       deleteDevice(devicesToDelete)
     }
 

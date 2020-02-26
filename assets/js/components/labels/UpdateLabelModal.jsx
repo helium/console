@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography, Input, Divider, Select } from 'antd';
 import LabelTag, { labelColors } from '../common/LabelTag'
+import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 const { Option } = Select
 
@@ -23,6 +24,7 @@ class UpdateLabelModal extends Component {
     const { labelName, color } = this.state;
 
     this.props.handleUpdateLabel(labelName, color)
+    analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
     this.props.onClose()
   }
 

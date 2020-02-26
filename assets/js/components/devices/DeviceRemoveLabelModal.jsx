@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography } from 'antd';
 import { removeLabelsFromDevice } from '../../actions/label'
+import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -12,6 +13,7 @@ class DeviceRemoveLabelModal extends Component {
     const { onClose, removeLabelsFromDevice, labels, device } = this.props
 
     removeLabelsFromDevice(labels, device.id)
+    analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {labels: labels.map(l => l.id), device: device.id})
 
     onClose()
   }

@@ -31,6 +31,10 @@ class ChannelNew extends Component {
     labels: [],
   }
 
+  componentDidMount() {
+    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_NEW")
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id)
       this.setState({

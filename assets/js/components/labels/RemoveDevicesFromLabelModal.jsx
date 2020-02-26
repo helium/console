@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { removeDevicesFromLabel } from '../../actions/label'
 import { displayError } from '../../util/messages'
+import analyticsLogger from '../../util/analyticsLogger'
 
 @connect(null, mapDispatchToProps)
 class RemoveDevicesFromLabelModal extends Component {
@@ -13,7 +14,10 @@ class RemoveDevicesFromLabelModal extends Component {
     const { devicesToRemove, removeDevicesFromLabel, label, onClose } = this.props
 
     if (devicesToRemove.length === 0) displayError("No devices are selected for removal")
-    else removeDevicesFromLabel(devicesToRemove, label.id)
+    else {
+      analyticsLogger.logEvent("ACTION_REMOVE_DEVICES_FROM_LABEL",  {id: label.id, devices: devicesToRemove.map(d => d.id)})
+      removeDevicesFromLabel(devicesToRemove, label.id)
+    }
 
     onClose()
   }

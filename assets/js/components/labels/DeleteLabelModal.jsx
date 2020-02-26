@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography } from 'antd';
 const { Text } = Typography
+import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { deleteLabel, deleteLabels } from '../../actions/label'
@@ -14,8 +15,10 @@ class DeleteLabelModal extends Component {
     const isArray = Array.isArray(labelsToDelete)
 
     if (isArray) {
+      analyticsLogger.logEvent("ACTION_DELETE_LABEL", { labels: labelsToDelete.map(d => d.id) })
       deleteLabels(labelsToDelete)
     } else {
+      analyticsLogger.logEvent("ACTION_DELETE_LABEL", { labels: [labelsToDelete] })
       deleteLabel(labelsToDelete)
     }
 

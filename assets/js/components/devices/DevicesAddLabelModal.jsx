@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { graphql } from 'react-apollo';
+import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { addDevicesToLabel, addDevicesToNewLabel } from '../../actions/label'
 import LabelTag from '../common/LabelTag'
@@ -27,8 +28,10 @@ class DevicesAddLabelModal extends Component {
 
     if (labelId) {
       this.props.addDevicesToLabel(deviceIds, labelId)
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: devicesIds, label: labelId})
     } else if (labelName) {
       this.props.addDevicesToNewLabel(deviceIds, labelName)
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: devicesIds, label_name: labelName})
     }
 
     this.props.onClose()

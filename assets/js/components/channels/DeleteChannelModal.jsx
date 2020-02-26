@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography } from 'antd';
 const { Text } = Typography
+import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { deleteChannel } from '../../actions/channel'
@@ -12,6 +13,7 @@ class DeleteChannelModal extends Component {
     const { channel, onClose } = this.props
 
     this.props.deleteChannel(channel.id)
+    analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", { channel: channel.id })
     onClose()
   }
 

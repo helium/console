@@ -26,6 +26,8 @@ class LabelShow extends Component {
   }
 
   componentDidMount() {
+    analyticsLogger.logEvent("ACTION_NAV_LABEL_SHOW")
+
     const { subscribeToMore, fetchMore } = this.props.data
     const variables = { id: this.props.match.params.id }
 
