@@ -67,21 +67,24 @@ class UserIndex extends Component {
 
     return (
       <DashboardLayout title="Users">
-        <Card title="Members" bodyStyle={{padding:'0', paddingTop: 20, paddingBottom: 0}}>
-          <header style={styles.header}>
-            <Button
-            type="primary"
-            icon="plus"
-            style={{marginBottom: 20}}
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
-                this.openNewUserModal()
-              }}
-            >
-              Add User
-            </Button>
-          </header>
-
+        <Card
+          title="Members"
+          bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0}}
+          extra={
+            <UserCan>
+              <Button
+                type="primary"
+                icon="plus"
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
+                  this.openNewUserModal()
+                }}
+              >
+                Add User
+              </Button>
+            </UserCan>
+          }
+        >
           <MembersTable
             openEditMembershipModal={this.openEditMembershipModal}
             openDeleteUserModal={this.openDeleteUserModal}

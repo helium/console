@@ -32,13 +32,17 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channel } = this.state
     return (
       <DashboardLayout title="Integrations">
-        <Card title="Helium Integrations">
-          <ChannelCargoRow />
-        </Card>
+        <UserCan>
+          <Card title="Helium Integrations">
+            <ChannelCargoRow />
+          </Card>
+        </UserCan>
 
-        <Card title="Create your own Integration">
-          <ChannelCreateRow />
-        </Card>
+        <UserCan>
+          <Card title="Create your own Integration">
+            <ChannelCreateRow />
+          </Card>
+        </UserCan>
 
         <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px'}}>
           <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} />

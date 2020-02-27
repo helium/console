@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
@@ -91,13 +92,13 @@ class ChannelsTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+          <UserCan>
             <Button
               type="danger"
               icon="delete"
               onClick={() => this.props.openDeleteChannelModal(record)}
             />
-          </div>
+          </UserCan>
         )
       },
     ]

@@ -10,7 +10,12 @@ const roles = [
   {
     value: "manager",
     name: "Manager",
-    description: "Managers can modify channels only."
+    description: "Managers are limited in actions to some degree."
+  },
+  {
+    value: "read",
+    name: "Read-Only",
+    description: "Read-only users cannot perform any modifying actions."
   },
 ]
 

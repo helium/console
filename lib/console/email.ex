@@ -23,7 +23,7 @@ defmodule Console.Email do
   end
 
   def invitation_email(%Invitation{email: email, token: token, role: role}, %User{email: inviter_email}, %Organization{name: organization_name}) do
-    role_hash = %{ "admin" => "Administrator", "manager" => "Manager" }
+    role_hash = %{ "admin" => "Administrator", "manager" => "Manager", "read" => "Read-Only" }
 
     base_email()
     |> to(email)

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { Table, Button, Empty, Tag, Typography, Select } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
 import { Card } from 'antd';
@@ -52,8 +53,10 @@ class DeviceShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
+            <UserCan>
             <Link to="#" onClick={() => openDeviceRemoveLabelModal([record])}>Remove</Link>
             <Text>{" | "}</Text>
+            </UserCan>
             <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
         )
@@ -77,7 +80,7 @@ class DeviceShowTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${labels.length} Labels Attached`}
         extra={
-          <React.Fragment>
+          <UserCan>
             <Select
               value="Quick Action"
               style={{ width: 220, marginRight: 10 }}
@@ -92,7 +95,7 @@ class DeviceShowTable extends Component {
             >
               Add Label
             </Button>
-          </React.Fragment>
+          </UserCan>
         }
       >
         <Table

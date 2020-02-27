@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
+import UserCan from '../common/UserCan'
 import { displayError } from '../../util/messages'
 import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
 import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
@@ -141,19 +142,21 @@ class ChannelShow extends Component {
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>
       <Card title="Integration Details">
-        <Input
-          name="newName"
-          placeholder={channel.name}
-          value={this.state.newName}
-          onChange={this.handleInputUpdate}
-          style={{ width: 150, marginRight: 5 }}
-        />
-        <Button
-          type="primary"
-          onClick={this.handleNameChange}
-        >
-          Update
-        </Button>
+        <UserCan alternate={<Text strong>{channel.name}</Text>}>
+          <Input
+            name="newName"
+            placeholder={channel.name}
+            value={this.state.newName}
+            onChange={this.handleInputUpdate}
+            style={{ width: 150, marginRight: 5 }}
+          />
+          <Button
+            type="primary"
+            onClick={this.handleNameChange}
+          >
+            Update
+          </Button>
+        </UserCan>
         <Divider />
         <Row>
           <Col span={12}>
@@ -164,25 +167,36 @@ class ChannelShow extends Component {
           <Paragraph>{channel.devices.length} Connected Devices</Paragraph>
           </Col>
           <Col span={12}>
-            <Card size="small" title="HTTP Details">
-               {channel.type === "http" && <HttpDetails channel={channel} />}
-            </Card>
-            <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
-              Show Duplicate Packets
-            </Checkbox>
+            {channel.type === "http" && (
+              <Card size="small" title="HTTP Details">
+                 <HttpDetails channel={channel} />
+              </Card>
+            )}
+            <UserCan
+              alternate={<Checkbox checked={channel.show_dupes} disabled>
+                Show Duplicate Packets
+              </Checkbox>}
+            >
+              <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
+                Show Duplicate Packets
+              </Checkbox>
+            </UserCan>
           </Col>
         </Row>
         </Card>
-        <Card title="Update your Connection Details">
-          {this.renderForm()}
-          <Divider />
-          <Button
-            type="primary"
-            onClick={this.handleUpdateDetailsChange}
-          >
-            Update Details
-          </Button>
-        </Card>
+
+        <UserCan>
+          <Card title="Update your Connection Details">
+            {this.renderForm()}
+            <Divider />
+            <Button
+              type="primary"
+              onClick={this.handleUpdateDetailsChange}
+            >
+              Update Details
+            </Button>
+          </Card>
+        </UserCan>
 
         <ChannelShowLabelsApplied
           handleSelectLabel={this.handleSelectLabel}

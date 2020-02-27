@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import get from 'lodash/get'
 import moment from 'moment'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
+import UserCan from '../common/UserCan'
 import { graphql } from 'react-apollo';
-import { Table, Button, Empty, Pagination, Tag } from 'antd';
+import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
+const { Text } = Typography
 
 const queryOptions = {
   options: props => ({
@@ -16,6 +19,7 @@ const queryOptions = {
   })
 }
 
+@connect(mapStateToProps, null)
 @graphql(PAGINATED_MEMBERSHIPS, queryOptions)
 class MembersTable extends Component {
   state = {
@@ -56,6 +60,7 @@ class MembersTable extends Component {
   }
 
   render() {
+    const { email } = this.props.user
     const columns = [
       {
         title: 'User',
@@ -79,29 +84,38 @@ class MembersTable extends Component {
       {
         title: '',
         key: 'action',
-        render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <Button
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
-                this.props.openEditMembershipModal(record)
-              }}
-              style={{ marginRight: 5 }}
-              type="primary"
-            >
-              Edit
-            </Button>
+        render: (text, record) => {
+          if (email === record.email) return (
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Text>You</Text>
+            </div>
+          )
+          return (
+            <UserCan>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Button
+                  onClick={() => {
+                    analyticsLogger.logEvent("ACTION_OPEN_EDIT_MEMBERSHIP", {"email": record.email})
+                    this.props.openEditMembershipModal(record)
+                  }}
+                  style={{ marginRight: 5 }}
+                  type="primary"
+                >
+                  Edit
+                </Button>
 
-            <Button
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
-                this.props.openDeleteUserModal(record, "membership")
-              }}
-              type="danger"
-              icon="delete"
-            />
-          </div>
-        )
+                <Button
+                  onClick={() => {
+                    analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                    this.props.openDeleteUserModal(record, "membership")
+                  }}
+                  type="danger"
+                  icon="delete"
+                />
+              </div>
+            </UserCan>
+          )
+        }
       },
     ]
 
@@ -134,12 +148,20 @@ class MembersTable extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    user: state.user
+  }
+}
+
 const Role = (props) => {
   switch(props.role) {
     case 'admin':
       return <span>Administrator</span>
     case 'manager':
       return <span>Manager</span>
+    case 'read':
+      return <span>Read-Only</span>
     default:
       return <span>{props.role}</span>
   }

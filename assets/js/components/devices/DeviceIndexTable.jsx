@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -110,8 +111,10 @@ class DeviceIndexTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.openDeleteDeviceModal(record.id)}>Delete</Link>
-            <Text>{" | "}</Text>
+            <UserCan>
+              <Link to="#" onClick={() => this.props.openDeleteDeviceModal(record.id)}>Delete</Link>
+              <Text>{" | "}</Text>
+            </UserCan>
             <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
@@ -142,7 +145,7 @@ class DeviceIndexTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${devices.entries.length} Devices`}
         extra={
-          <React.Fragment>
+          <UserCan>
             <Select
               value="Quick Action"
               style={{ width: 220, marginRight: 10 }}
@@ -158,7 +161,7 @@ class DeviceIndexTable extends Component {
             >
               Add Device
             </Button>
-          </React.Fragment>
+          </UserCan>
         }
       >
         <Table

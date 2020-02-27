@@ -8,6 +8,7 @@ import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -102,7 +103,7 @@ class LabelShow extends Component {
           }
           title={`${label.name}`}
           extra={
-            <span>
+            <UserCan>
               <Button
                 size="large"
                 icon="setting"
@@ -119,7 +120,7 @@ class LabelShow extends Component {
               >
                 Add this Label to a Device
               </Button>
-            </span>
+            </UserCan>
           }
         >
           <LabelTag text={label.name} color={label.color} style={{ position: 'relative', top: -30 }}/>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
@@ -91,8 +92,10 @@ class LabelShowTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.openRemoveDevicesFromLabelModal([record])}>Remove</Link>
-            <Text>{" | "}</Text>
+            <UserCan>
+              <Link to="#" onClick={() => this.props.openRemoveDevicesFromLabelModal([record])}>Remove</Link>
+              <Text>{" | "}</Text>
+            </UserCan>
             <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
@@ -123,13 +126,15 @@ class LabelShowTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${devices_by_label.entries.length} Devices`}
         extra={
-          <Select
-            value="Quick Action"
-            style={{ width: 220 }}
-            onSelect={this.handleSelectOption}
-          >
-            <Option value="remove" style={{ color: '#F5222D' }}>Remove Devices from Label</Option>
-          </Select>
+          <UserCan>
+            <Select
+              value="Quick Action"
+              style={{ width: 220 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="remove" style={{ color: '#F5222D' }}>Remove Devices from Label</Option>
+            </Select>
+          </UserCan>
         }
       >
         <Table

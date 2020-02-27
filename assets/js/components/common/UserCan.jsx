@@ -3,12 +3,9 @@ import { connect } from 'react-redux';
 
 @connect(mapStateToProps, null)
 class UserCan extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     if (userCan(this.props)) return this.props.children
+    if (this.props.alternate) return this.props.alternate
     return null
   }
 }
@@ -20,14 +17,10 @@ function mapStateToProps(state) {
 }
 
 export const userCan = (props) => {
-  const { user, itemType, item } = props
-  const { email, role } = user
+  const { role } = props.user
 
-  if (itemType === 'membership' && item && email === item.email) return false
-  if (itemType === 'channel' && role === 'manager') return true
-  if (role === 'admin') return true
-
-  return false
+  if (role === 'read') return false
+  return true
 }
 
 export default UserCan

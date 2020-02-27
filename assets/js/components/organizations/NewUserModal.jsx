@@ -11,7 +11,7 @@ const { Text } = Typography
 class NewUserModal extends Component {
   state = {
     email: "",
-    role: "manager"
+    role: "read"
   }
 
   handleInputUpdate = (e) => {

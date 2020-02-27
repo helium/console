@@ -202,9 +202,11 @@ class DeviceShow extends Component {
                   ) : (
                     <React.Fragment>
                       <Text  style={{ marginRight: 5 }}>{device.name} </Text>
-                      <Tag color="blue" size="small" onClick={this.toggleNameInput}>
-                        <Icon type="edit"></Icon>
-                      </Tag>
+                      <UserCan>
+                        <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                          <Icon type="edit"></Icon>
+                        </Tag>
+                      </UserCan>
                     </React.Fragment>
                   )}
                 </td>
@@ -238,9 +240,11 @@ class DeviceShow extends Component {
                       {
                         device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
                       }
+                      <UserCan>
                       <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
+                      </UserCan>
                     </React.Fragment>
                   )}
                 </td>
@@ -274,9 +278,11 @@ class DeviceShow extends Component {
                       {
                         device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
                       }
+                      <UserCan>
                       <Tag color="blue" size="small" onClick={this.toggleAppEUIInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
+                      </UserCan>
                     </React.Fragment>
                   )}
                 </td>
@@ -310,9 +316,11 @@ class DeviceShow extends Component {
                       {
                         device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
                       }
+                      <UserCan>
                       <Tag color="blue" size="small" onClick={this.toggleAppKeyInput}>
                         <Icon type="edit"></Icon>
                       </Tag>
+                      </UserCan>
                     </React.Fragment>
                   )}
                 </td>

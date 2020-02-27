@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
+import UserCan from '../common/UserCan'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
@@ -100,8 +101,10 @@ class LabelIndexTable extends Component {
         key: 'action',
         render: (text, record) => (
           <div>
-            <Link to="#" onClick={() => this.props.openDeleteLabelModal(record.id)}>Delete</Link>
-            <Text>{" | "}</Text>
+            <UserCan>
+              <Link to="#" onClick={() => this.props.openDeleteLabelModal(record.id)}>Delete</Link>
+              <Text>{" | "}</Text>
+            </UserCan>
             <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
         )
@@ -132,7 +135,7 @@ class LabelIndexTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${labels.entries.length} Labels`}
         extra={
-          <React.Fragment>
+          <UserCan>
             <Select
               value="Quick Action"
               style={{ width: 220, marginRight: 10 }}
@@ -147,7 +150,7 @@ class LabelIndexTable extends Component {
             >
               Create New Label
             </Button>
-          </React.Fragment>
+          </UserCan>
         }
       >
         <Table

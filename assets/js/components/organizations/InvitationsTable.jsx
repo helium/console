@@ -3,6 +3,7 @@ import get from 'lodash/get'
 import moment from 'moment'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 import analyticsLogger from '../../util/analyticsLogger'
+import UserCan from '../common/UserCan'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
 
@@ -75,16 +76,18 @@ class InvitationsTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <Button
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
-                this.props.openDeleteUserModal(record, "invitation")
-              }}
-              type="danger"
-              icon="delete"
-            />
-          </div>
+          <UserCan>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Button
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_OPEN_DELETE_USER", {"email": record.email})
+                  this.props.openDeleteUserModal(record, "invitation")
+                }}
+                type="danger"
+                icon="delete"
+              />
+            </div>
+          </UserCan>
         )
       },
     ]
@@ -124,6 +127,8 @@ const Role = (props) => {
       return <span>Administrator</span>
     case 'manager':
       return <span>Manager</span>
+    case 'read':
+      return <span>Read-Only</span>
     default:
       return <span>{props.role}</span>
   }
