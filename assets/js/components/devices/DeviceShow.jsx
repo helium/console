@@ -11,19 +11,27 @@ import DashboardLayout from '../common/DashboardLayout'
 import DeviceShowTable from './DeviceShowTable'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
+import DeviceCredentials from './DeviceCredentials'
 import { updateDevice } from '../../actions/device'
-import { DEVICE_FRAGMENT, DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
+import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Icon, Select, Tag } from 'antd';
-import { Card } from 'antd';
-import DeviceCredentials from './DeviceCredentials'
-
+import { Typography, Button, Input, Icon, Select, Tag, Card } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(DEVICE_SHOW, queryOptions)
 class DeviceShow extends Component {
   state = {
     newName: "",
@@ -157,16 +165,16 @@ class DeviceShow extends Component {
       showAppKeyInput,
       showDeviceRemoveLabelModal,
       labelsSelected,
-      showDevicesAddLabelModal, 
+      showDevicesAddLabelModal,
     } = this.state
-    const { loading, device } = this.props.data
+    const { loading, error, device } = this.props.data
 
     if (loading) return <DashboardLayout />
+    if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
     return(
       <DashboardLayout title={`${device.name}`}>
         <Card title="Device Details">
-
           <table>
             <tbody>
               <tr style={{height: '30px'}}>
@@ -349,19 +357,8 @@ class DeviceShow extends Component {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateDevice }, dispatch)
 }
 
-const DeviceShowWithData = graphql(DEVICE_SHOW, queryOptions)(DeviceShow)
-
-export default DeviceShowWithData
+export default DeviceShow

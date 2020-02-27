@@ -9,7 +9,14 @@ import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(ALL_CHANNELS, queryOptions)
 class CreateLabelModal extends Component {
   state = {
     labelName: "",
@@ -35,7 +42,8 @@ class CreateLabelModal extends Component {
   }
 
   render() {
-    const { open, onClose, data } = this.props
+    const { open, onClose } = this.props
+    const { allChannels, error } = this.props.data
 
     return (
       <Modal
@@ -70,12 +78,12 @@ class CreateLabelModal extends Component {
 
         <Text strong>Step 2 - Attach an Integration (Optional)</Text>
         <Select
-          placeholder="Choose Integration"
+          placeholder={error ? "Data failed to load..." : "Choose Integration"}
           style={{ width: 220, marginRight: 10, marginTop: 10 }}
           onSelect={this.handleSelectOption}
         >
           {
-            data.allChannels && data.allChannels.map(c => (
+            allChannels && allChannels.map(c => (
               <Option value={c.id} key={c.id}>
                 {c.name}
               </Option>
@@ -92,10 +100,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createLabel }, dispatch)
 }
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-export default graphql(ALL_CHANNELS, queryOptions)(CreateLabelModal)
+export default CreateLabelModal

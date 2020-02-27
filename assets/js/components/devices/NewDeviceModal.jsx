@@ -11,7 +11,14 @@ import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(ALL_LABELS, queryOptions)
 class NewDeviceModal extends Component {
   state = {
     name: "",
@@ -43,7 +50,8 @@ class NewDeviceModal extends Component {
   }
 
   render() {
-    const { open, onClose, data } = this.props
+    const { open, onClose } = this.props
+    const { allLabels, error } = this.props.data
 
     return (
       <Modal
@@ -113,12 +121,12 @@ class NewDeviceModal extends Component {
 
         <Text strong>Attach a Label (Optional)</Text><br />
         <Select
-          placeholder="Choose Label"
+          placeholder={error ? "Labels failed to load..." : "Choose Label"}
           style={{ width: 220, marginRight: 10, marginTop: 10 }}
           onSelect={this.handleSelectOption}
         >
           {
-            data.allLabels && data.allLabels.map(l => (
+            allLabels && allLabels.map(l => (
               <Option value={l.id} key={l.id}>
                 <LabelTag text={l.name} color={l.color} />
               </Option>
@@ -141,10 +149,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createDevice }, dispatch)
 }
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-export default graphql(ALL_LABELS, queryOptions)(NewDeviceModal)
+export default NewDeviceModal

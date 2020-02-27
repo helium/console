@@ -10,7 +10,14 @@ import { Modal, Button, Typography, Input, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(ALL_LABELS, queryOptions)
 class DevicesAddLabelModal extends Component {
   state = {
     labelId: null,
@@ -26,12 +33,13 @@ class DevicesAddLabelModal extends Component {
     const { labelName, labelId } = this.state
     const deviceIds = this.props.devicesToUpdate.map(d => d.id)
 
+
     if (labelId) {
       this.props.addDevicesToLabel(deviceIds, labelId)
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: devicesIds, label: labelId})
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: deviceIds, label: labelId})
     } else if (labelName) {
       this.props.addDevicesToNewLabel(deviceIds, labelName)
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: devicesIds, label_name: labelName})
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: deviceIds, label_name: labelName})
     }
 
     this.props.onClose()
@@ -42,7 +50,8 @@ class DevicesAddLabelModal extends Component {
   }
 
   render() {
-    const { open, onClose, devicesToUpdate, data } = this.props
+    const { open, onClose, devicesToUpdate } = this.props
+    const { error, allLabels } = this.props.data
     const { labelName, labelId } = this.state
 
     return (
@@ -67,12 +76,12 @@ class DevicesAddLabelModal extends Component {
       >
         <div>
           <Select
-            placeholder="Choose Label"
+            placeholder={error ? "Labels failed to load..." : "Choose Label"}
             style={{ width: 220, marginRight: 10 }}
             onSelect={this.handleSelectOption}
           >
             {
-              data.allLabels && data.allLabels.map(l => (
+              allLabels && allLabels.map(l => (
                 <Option value={l.id} key={l.id}>
                   <LabelTag text={l.name} color={l.color} />
                 </Option>
@@ -104,10 +113,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ addDevicesToLabel, addDevicesToNewLabel }, dispatch)
 }
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-export default graphql(ALL_LABELS, queryOptions)(DevicesAddLabelModal)
+export default DevicesAddLabelModal

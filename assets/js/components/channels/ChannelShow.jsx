@@ -131,9 +131,12 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { loading, channel, allLabels } = this.props.data
+    const { loading, error, channel, allLabels } = this.props.data
 
     if (loading) return <DashboardLayout />
+    if (error) return (
+      <Text>Data failed to load, please reload the page and try again</Text>
+    )
 
     return(
       <DashboardLayout title={`Integration: ${channel.name}`}>

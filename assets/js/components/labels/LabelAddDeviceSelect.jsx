@@ -4,15 +4,24 @@ import { Checkbox, Input, Card, Icon, AutoComplete } from 'antd';
 import { graphql } from 'react-apollo';
 import { SEARCH_DEVICES } from '../../graphql/search'
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      query: ""
+    }
+  })
+}
+
+@graphql(SEARCH_DEVICES, queryOptions)
 class LabelAddDeviceSelect extends Component {
   state = {
     searchDevices: []
   }
 
   runSearch = (value) => {
-    const { data } = this.props
-    if (!data.loading) {
-      data.fetchMore({
+    const { loading, fetchMore } = this.props.data
+    if (!loading) {
+      fetchMore({
         variables: { query: value },
         updateQuery: (prev, { fetchMoreResult }) => {
           const { searchDevices } = fetchMoreResult
@@ -30,7 +39,6 @@ class LabelAddDeviceSelect extends Component {
       checkedDevices,
       checkSingleDevice,
       labelNormalizedDevices,
-      data
     } = this.props
 
     const { searchDevices } = this.state
@@ -72,12 +80,4 @@ class LabelAddDeviceSelect extends Component {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-export default graphql(SEARCH_DEVICES, queryOptions)(LabelAddDeviceSelect)
+export default LabelAddDeviceSelect

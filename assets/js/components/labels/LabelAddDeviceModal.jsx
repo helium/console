@@ -4,10 +4,18 @@ import debounce from 'lodash/debounce'
 import omit from 'lodash/omit'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS_DEVICES } from '../../graphql/labels'
-import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete } from 'antd';
+import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete, Typography } from 'antd';
 import LabelAddDeviceSelect from './LabelAddDeviceSelect'
 import LabelAddLabelSelect from './LabelAddLabelSelect'
+const { Text } = Typography
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+@graphql(ALL_LABELS_DEVICES, queryOptions)
 class LabelAddDeviceModal extends Component {
   state = {
     checkedDevices: {},
@@ -91,7 +99,8 @@ class LabelAddDeviceModal extends Component {
   }
 
   render() {
-    const { open, onClose, data, label, labelNormalizedDevices } = this.props
+    const { open, onClose, label, labelNormalizedDevices } = this.props
+    const { allDevices, allLabels, loading, error } = this.props.data
     const { checkedDevices, checkedLabels } = this.state
 
     return (
@@ -111,11 +120,11 @@ class LabelAddDeviceModal extends Component {
         ]}
       >
         {
-          !data.loading && (
+          !loading && !error && (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
               <LabelAddDeviceSelect
                 checkAllDevices={this.checkAllDevices}
-                allDevices={data.allDevices}
+                allDevices={allDevices}
                 checkedDevices={checkedDevices}
                 checkSingleDevice={this.checkSingleDevice}
                 labelNormalizedDevices={labelNormalizedDevices}
@@ -123,7 +132,7 @@ class LabelAddDeviceModal extends Component {
 
               <LabelAddLabelSelect
                 checkAllLabels={this.checkAllLabels}
-                allLabels={data.allLabels}
+                allLabels={allLabels}
                 checkedLabels={checkedLabels}
                 checkSingleLabel={this.checkSingleLabel}
                 currentLabel={label}
@@ -131,17 +140,12 @@ class LabelAddDeviceModal extends Component {
             </div>
           )
         }
+        {
+          error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
       </Modal>
     )
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-const ModalWithData = graphql(ALL_LABELS_DEVICES, queryOptions)(LabelAddDeviceModal)
-
-export default ModalWithData
+export default LabelAddDeviceModal

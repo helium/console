@@ -9,13 +9,33 @@ import { Menu, Icon, Typography } from 'antd'
 const { SubMenu } = Menu
 const { Text } = Typography
 import { graphql } from 'react-apollo';
-import { MENU_LABELS } from '../../graphql/labels'
+import { MENU_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @withRouter
-@graphql(MENU_LABELS, {})
+@graphql(MENU_LABELS, queryOptions)
 @connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
+  componentDidMount() {
+    const { subscribeToMore, fetchMore } = this.props.data
+
+    subscribeToMore({
+      document: LABEL_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+  }
+
   handleClick = e => {
     this.props.push(e.key)
   }

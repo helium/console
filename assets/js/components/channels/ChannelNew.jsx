@@ -21,7 +21,14 @@ import { Typography, Select, Card } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(ALL_LABELS, queryOptions)
 class ChannelNew extends Component {
   state = {
     type: this.props.match.params.id,
@@ -88,7 +95,7 @@ class ChannelNew extends Component {
 
   render() {
     const { showNextSteps } = this.state
-    const { data } = this.props
+    const { allLabels } = this.props.data
 
     return(
       <DashboardLayout title="Create New Integration">
@@ -114,7 +121,7 @@ class ChannelNew extends Component {
               onSubmit={this.handleStep3Submit}
             />
         )}
-        { showNextSteps && data.allLabels && (
+        { showNextSteps && allLabels && (
           <Card title="Step 4 - Apply Integration to Label (Optional)">
             <Select
               mode="multiple"
@@ -122,7 +129,7 @@ class ChannelNew extends Component {
               style={{ width: 220 }}
               placeholder="Choose Label..."
             >
-              {data.allLabels.map(l => (
+              {allLabels.map(l => (
                 <Option value={l.id} key={l.id}>
                   <LabelTag text={l.name} color={l.color} />
                 </Option>
@@ -139,10 +146,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createChannel }, dispatch);
 }
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-export default graphql(ALL_LABELS, queryOptions)(ChannelNew)
+export default ChannelNew

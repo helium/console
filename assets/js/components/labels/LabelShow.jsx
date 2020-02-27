@@ -15,7 +15,17 @@ import { graphql } from 'react-apollo';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.match.params.id
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
 @connect(null, mapDispatchToProps)
+@graphql(LABEL_SHOW, queryOptions)
 class LabelShow extends Component {
   state = {
     showUpdateLabelModal: false,
@@ -26,17 +36,15 @@ class LabelShow extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_LABEL_SHOW")
-
     const { subscribeToMore, fetchMore } = this.props.data
-    const variables = { id: this.props.match.params.id }
 
     subscribeToMore({
       document: LABEL_UPDATE_SUBSCRIPTION,
-      variables,
+      variables: { id: this.props.match.params.id },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         fetchMore({
-          variables,
+          variables: { id: this.props.match.params.id },
           updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
         })
       }
@@ -71,12 +79,12 @@ class LabelShow extends Component {
     const labelId = this.props.match.params.id
     const attrs = name ? { name, color } : { color }
     this.props.updateLabel(labelId, attrs)
-    // analyticsLogger.logEvent("ACTION_UPDATE_LABEL", {"name": name, "id": labelId})
   }
 
   render() {
-    const { loading, label } = this.props.data
+    const { loading, error, label } = this.props.data
     if (loading) return <DashboardLayout />
+    if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
     const normalizedDevices = label.devices.reduce((map, device) => {
       map[device.id] = device
@@ -145,19 +153,8 @@ class LabelShow extends Component {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateLabel, addDevicesToLabels }, dispatch)
 }
 
-const LabelShowWithData = graphql(LABEL_SHOW, queryOptions)(LabelShow)
-
-export default LabelShowWithData
+export default LabelShow
