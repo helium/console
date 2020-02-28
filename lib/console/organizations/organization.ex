@@ -13,6 +13,7 @@ defmodule Console.Organizations.Organization do
     has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
     has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all
+    has_many :api_keys, Console.ApiKeys.ApiKey, on_delete: :delete_all
 
     timestamps()
   end

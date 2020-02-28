@@ -4,6 +4,7 @@ import moment from 'moment'
 import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
+import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
 
@@ -65,7 +66,7 @@ class InvitationsTable extends Component {
       {
         title: 'Role',
         dataIndex: 'role',
-        render: text => <Role role={text} />
+        render: text => <RoleName role={text} />
       },
       {
         title: 'Sent At',
@@ -118,19 +119,6 @@ class InvitationsTable extends Component {
         </div>
       </div>
     )
-  }
-}
-
-const Role = (props) => {
-  switch(props.role) {
-    case 'admin':
-      return <span>Administrator</span>
-    case 'manager':
-      return <span>Manager</span>
-    case 'read':
-      return <span>Read-Only</span>
-    default:
-      return <span>{props.role}</span>
   }
 }
 

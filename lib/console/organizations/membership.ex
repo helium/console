@@ -26,7 +26,7 @@ defmodule Console.Organizations.Membership do
     |> unique_constraint(:unique_member, name: :memberships_user_id_organization_id_index, message: "That email is already part of this organization")
   end
 
-  def join_org_changeset(membership, user, organization, role \\ "read") do
+  def join_org_changeset(membership, user, organization, role) do
     membership
     |> changeset(%{user_id: user.id, organization_id: organization.id, role: role})
   end

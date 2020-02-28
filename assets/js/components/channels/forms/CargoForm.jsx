@@ -39,7 +39,7 @@ class CargoForm extends Component {
         </Text>
         <br />
         <Text>
-          Please do not share any sensitive information. Use as your own discretion.
+          Please do not share any sensitive information. Use at your own discretion.
         </Text>
         <br />
         <Button

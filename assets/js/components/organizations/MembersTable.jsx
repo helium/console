@@ -5,6 +5,7 @@ import moment from 'moment'
 import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
+import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
 const { Text } = Typography
@@ -69,7 +70,7 @@ class MembersTable extends Component {
       {
         title: 'Role',
         dataIndex: 'role',
-        render: text => <Role role={text} />
+        render: text => <RoleName role={text} />
       },
       {
         title: 'Two-Factor',
@@ -151,19 +152,6 @@ class MembersTable extends Component {
 function mapStateToProps(state) {
   return {
     user: state.user
-  }
-}
-
-const Role = (props) => {
-  switch(props.role) {
-    case 'admin':
-      return <span>Administrator</span>
-    case 'manager':
-      return <span>Manager</span>
-    case 'read':
-      return <span>Read-Only</span>
-    default:
-      return <span>{props.role}</span>
   }
 }
 

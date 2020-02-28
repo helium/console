@@ -74,6 +74,13 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
+  object :api_key do
+    field :id, :id
+    field :name, :string
+    field :role, :string
+    field :inserted_at, :naive_datetime
+  end
+
   object :event do
     field :id, :id
     field :payload_size, :integer
@@ -202,6 +209,10 @@ defmodule ConsoleWeb.Schema do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search_labels/2
     end
+
+    field :api_keys, list_of(:api_key) do
+      resolve &Console.ApiKeys.ApiKeyResolver.all/2
+    end
   end
 
   subscription do
@@ -279,6 +290,14 @@ defmodule ConsoleWeb.Schema do
     field :invitation_updated, :invitation do
       config fn _, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/invitation_updated"}
+      end
+    end
+
+    field :api_key_added, :api_key do
+      arg :user_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.user_id}/api_key_added"}
       end
     end
   end

@@ -53,6 +53,8 @@ defmodule ConsoleWeb.Router do
     resources "/invitations", InvitationController, only: [:index, :create, :delete]
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
 
+    resources "/api_keys", ApiKeyController, only: [:create, :delete]
+
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
     post "/2fa/skip", TwoFactorController, :skip

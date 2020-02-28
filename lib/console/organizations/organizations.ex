@@ -8,6 +8,7 @@ defmodule Console.Organizations do
   alias Console.Organizations.Invitation
   alias Console.Auth
   alias Console.Auth.User
+  alias Console.ApiKeys.ApiKey
 
   def list_organizations do
     Repo.all(Organization)
@@ -72,7 +73,7 @@ defmodule Console.Organizations do
 
     membership_fn = fn _repo, %{organization: organization} ->
       %Membership{}
-      |> Membership.join_org_changeset(user, organization)
+      |> Membership.join_org_changeset(user, organization, "admin")
       |> Repo.insert()
     end
 
@@ -88,7 +89,7 @@ defmodule Console.Organizations do
     end
   end
 
-  def join_organization(%User{} = user, %Organization{} = organization, role \\ "manager") do
+  def join_organization(%User{} = user, %Organization{} = organization, role \\ "read") do
     %Membership{}
     |> Membership.join_org_changeset(user, organization, role)
     |> Repo.insert()
@@ -133,9 +134,20 @@ defmodule Console.Organizations do
   end
 
   def update_membership(%Membership{} = membership, attrs) do
-    membership
-    |> Membership.changeset(attrs)
-    |> Repo.update()
+    if attrs["role"] == "read" do
+      Repo.transaction(fn ->
+        from(key in ApiKey, where: key.user_id == ^membership.user_id and key.organization_id == ^membership.organization_id)
+        |> Repo.delete_all()
+
+        membership
+        |> Membership.changeset(attrs)
+        |> Repo.update()
+      end)
+    else
+      membership
+      |> Membership.changeset(attrs)
+      |> Repo.update()
+    end
   end
 
   def delete_invitation(%Invitation{} = invitation) do
@@ -143,7 +155,11 @@ defmodule Console.Organizations do
   end
 
   def delete_membership(%Membership{} = membership) do
-    Repo.delete(membership)
+    Repo.transaction(fn ->
+      from(key in ApiKey, where: key.user_id == ^membership.user_id and key.organization_id == ^membership.organization_id)
+      |> Repo.delete_all()
+      Repo.delete(membership)
+    end)
   end
 
   def delete_organization(%Organization{} = organization) do

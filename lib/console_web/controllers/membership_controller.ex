@@ -18,8 +18,7 @@ defmodule ConsoleWeb.MembershipController do
   def update(conn, %{"id" => id, "membership" => attrs}) do
     membership = Organizations.get_membership!(id)
 
-    with {:ok, %Membership{} = membership} <- Organizations.update_membership(membership, attrs) do
-      membership = membership |> Organizations.fetch_assoc_membership()
+    with {:ok, _} <- Organizations.update_membership(membership, attrs) do
       broadcast(membership)
 
       conn
@@ -31,7 +30,7 @@ defmodule ConsoleWeb.MembershipController do
   def delete(conn, %{"id" => id}) do
     membership = Organizations.get_membership!(id)
 
-    with {:ok, %Membership{}} <- Organizations.delete_membership(membership) do
+    with {:ok, _} <- Organizations.delete_membership(membership) do
       broadcast(membership)
 
       conn

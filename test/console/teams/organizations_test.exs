@@ -75,9 +75,9 @@ defmodule Console.OrganizationsTest do
       user = insert(:user)
       organization = insert(:organization)
       {:ok, %Membership{} = membership} = Organizations.join_organization(user, organization)
-      assert membership.role == "manager"
+      assert membership.role == "read"
       {:ok, %Membership{} = membership} = Organizations.update_membership(membership, %{"role" => "admin"})
-      assert membership.role != "manager"
+      assert membership.role != "read"
       assert membership.role == "admin"
     end
 
