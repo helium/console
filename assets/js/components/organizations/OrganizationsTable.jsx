@@ -42,7 +42,7 @@ class OrganizationsTable extends Component {
               >
                 Switch
               </Button>
-              
+
               <Button
                 icon="delete"
                 type="danger"
@@ -118,17 +118,19 @@ class QueryResults extends Component {
     return (
       <div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
-          <Button
-          icon="plus"
-            onClick={() => {
-              analyticsLogger.logEvent("ACTION_NEW_ORG")
-              openOrganizationModal()
-            }}
-                        type="primary"
+          <UserCan>
+            <Button
+              icon="plus"
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_NEW_ORG")
+                openOrganizationModal()
+              }}
+                          type="primary"
 
-          >
-            Add Organization
-          </Button>
+            >
+              Add Organization
+            </Button>
+          </UserCan>
         </div>
         <Table columns={columns} dataSource={organizations} pagination={false} />
       </div>
