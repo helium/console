@@ -3,24 +3,25 @@ defmodule Console.Events.Event do
   import Ecto.Changeset
 
   alias Console.Devices.Device
-  alias Console.Gateways.Gateway
-  alias Console.Channels.Channel
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "events" do
-    field(:description, :string)
-    field(:direction, :string)
-    field(:payload, :string)
-    field(:payload_size, :integer)
-    field(:reported_at, :naive_datetime)
-    field(:rssi, :float)
-    field(:signal_strength, :integer)
-    field(:status, :string)
-    belongs_to(:device, Device)
-    belongs_to(:gateway, Gateway)
-    belongs_to(:channel, Channel)
+    field :hotspot_name, :string
+    field :channel_name, :string
+    field :status, :string
+    field :description, :string
+    field :payload, :string
+    field :payload_size, :integer
+    field :rssi, :float
+    field :snr, :float
+    field :category, :string
+    field :frame_up, :integer
+    field :frame_down, :integer
+    field :reported_at, :string
+    field :reported_at_naive, :naive_datetime
 
+    belongs_to :device, Device
     timestamps()
   end
 
@@ -28,29 +29,20 @@ defmodule Console.Events.Event do
   def changeset(event, attrs) do
     event
     |> cast(attrs, [
+      :hotspot_name,
+      :channel_name,
+      :status,
       :description,
-      :direction,
       :payload,
       :payload_size,
-      :reported_at,
       :rssi,
-      :signal_strength,
-      :status,
+      :snr,
+      :category,
+      :frame_up,
+      :frame_down,
+      :reported_at,
+      :reported_at_naive,
       :device_id,
-      :gateway_id,
-      :channel_id
     ])
-    |> put_reported_at_timestamp()
-    |> validate_required([:reported_at])
-    |> validate_required([:direction])
-    |> validate_inclusion(:direction, ~w(inbound outbound))
-  end
-
-  defp put_reported_at_timestamp(changeset) do
-    if Map.has_key?(changeset.changes, :reported_at) do
-      changeset
-    else
-      put_change(changeset, :reported_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
-    end
   end
 end

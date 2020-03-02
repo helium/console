@@ -6,10 +6,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   alias Console.Devices
   alias Console.Devices.Device
-  alias Console.Organizations
-  alias Console.Organizations
-  alias Console.Devices.Device
-  alias Console.Channels
+  alias Console.Events
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
@@ -37,14 +34,16 @@ defmodule ConsoleWeb.Router.DeviceController do
     render(conn, "show.json", device: device)
   end
 
-  def show_event(conn, %{"device_id" => device_id} = event) do
+  def add_device_event(conn, %{"device_id" => device_id} = event) do
     case Devices.get_device(device_id) do
       nil ->
         conn
         |> send_resp(404, "")
       %Device{} ->
-        event = for {key, val} <- event, into: %{}, do: {String.to_atom(key), val}
-        Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+        case Events.create_event(event) do
+          {:ok, event} -> Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+        end
+
         conn
         |> send_resp(200, "")
     end

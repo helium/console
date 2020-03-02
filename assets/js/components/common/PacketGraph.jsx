@@ -103,7 +103,7 @@ class PacketGraph extends Component {
     const noChannel = []
     events.forEach(event => {
       const currentTime = Date.now() / 1000
-      const eventTime =  event.delivered_at
+      const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
       if ( timeDiff < 300 ) {
         if (event.status == 'success') {

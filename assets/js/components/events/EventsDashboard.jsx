@@ -15,7 +15,7 @@ class EventsDashboard extends Component {
   addEvent = (event) => {
     const { rows } = this.state
     const lastEvent = rows[rows.length - 1]
-    if (rows.length > 100 && getDiffInSeconds(lastEvent.delivered_at) > 300) {
+    if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
       truncated = rows.pop()
       this.setState({
         rows: [event].concat(truncated)
@@ -32,16 +32,12 @@ class EventsDashboard extends Component {
 
     const columns = [
       {
-        title: 'Device ID',
-        dataIndex: 'id',
+        title: 'Channel',
+        dataIndex: 'channel_name',
       },
       {
         title: 'Hotspot Name',
         dataIndex: 'hotspot_name',
-      },
-      {
-        title: 'Channel',
-        dataIndex: 'channel_name',
       },
       {
         title: 'Status',
@@ -50,6 +46,10 @@ class EventsDashboard extends Component {
       {
         title: 'Description',
         dataIndex: 'description',
+      },
+      {
+        title: 'Payload',
+        dataIndex: 'payload',
       },
       {
         title: 'Size',
@@ -66,8 +66,20 @@ class EventsDashboard extends Component {
         render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span>
       },
       {
-        title: 'Delivered At',
-        dataIndex: 'delivered_at',
+        title: 'Category',
+        dataIndex: 'category',
+      },
+      {
+        title: 'Frame Up',
+        dataIndex: 'frame_up',
+      },
+      {
+        title: 'Frame Down',
+        dataIndex: 'frame_down',
+      },
+      {
+        title: 'Reported At',
+        dataIndex: 'reported_at',
         render: data => <span>{formatUnixDatetime(data)}</span>
       },
     ]

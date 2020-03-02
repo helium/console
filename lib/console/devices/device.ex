@@ -16,11 +16,11 @@ defmodule Console.Devices.Device do
     field :dev_eui, :string
     field :app_key, :string
     field :app_eui, :string
-    field :key, :string        
+    field :key, :string
     field :oui, :integer
 
     belongs_to :organization, Organization
-    has_many :events, Event, on_delete: :delete_all
+    has_many :events, Event
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
 
     timestamps()

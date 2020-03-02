@@ -3,7 +3,6 @@ defmodule Console.Channels.Channel do
   import Ecto.Changeset
 
   alias Console.Organizations.Organization
-  alias Console.Events.Event
   alias Console.Channels
   alias Console.Devices.Device
   alias Console.Labels.Label

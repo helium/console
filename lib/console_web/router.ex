@@ -40,7 +40,6 @@ defmodule ConsoleWeb.Router do
     post "/labels/delete", LabelController, :delete
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
-    resources "/events", EventController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
     end
@@ -73,7 +72,7 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.RouterApiPipeline
 
     resources "/devices", DeviceController, only: [:show] do
-      post "/event", DeviceController, :show_event, as: :show_device_event
+      post "/event", DeviceController, :add_device_event
     end
     post "/gateways/register", GatewayController, :register
     post "/gateways/verify", GatewayController, :verify

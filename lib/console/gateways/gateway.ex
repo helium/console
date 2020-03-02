@@ -2,7 +2,6 @@ defmodule Console.Gateways.Gateway do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Console.Events.Event
   alias Console.Helpers
   alias Console.HardwareIdentifiers.HardwareIdentifier
 
@@ -18,7 +17,6 @@ defmodule Console.Gateways.Gateway do
     field :status, :string
 
     belongs_to :hardware_identifier, HardwareIdentifier
-    has_many :events, Event, on_delete: :delete_all
 
     timestamps()
   end

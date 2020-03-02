@@ -83,15 +83,20 @@ defmodule ConsoleWeb.Schema do
 
   object :event do
     field :id, :id
-    field :payload_size, :integer
-    field :rssi, :string
-    field :snr, :string
-    field :reported_at, :string
-    field :delivered_at, :string
+    field :device_id, :id
+    field :hotspot_name, :string
+    field :channel_name, :string
     field :status, :string
     field :description, :string
-    field :channel_name, :string
-    field :hotspot_name, :string
+    field :payload, :string
+    field :payload_size, :integer
+    field :rssi, :float
+    field :snr, :float
+    field :category, :string
+    field :frame_up, :integer
+    field :frame_down, :integer
+    field :reported_at, :string
+    field :reported_at_naive, :naive_datetime
   end
 
   object :search_result do
