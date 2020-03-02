@@ -126,6 +126,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.find/2
     end
 
+    field :device_events, list_of(:event) do
+      arg :device_id, non_null(:id)
+
+      resolve &Console.Devices.DeviceResolver.events/2
+    end
+
     field :all_devices, list_of(:device) do
       resolve &Console.Devices.DeviceResolver.all/2
     end
@@ -230,11 +236,10 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :event_added, :event do
-      arg :context_id, :string
-      arg :context_name, :string
+      arg :device_id, :string
 
       config fn args, _ ->
-        {:ok, topic: "#{args.context_name}/#{args.context_id}"}
+        {:ok, topic: "devices/#{args.device_id}"}
       end
     end
 

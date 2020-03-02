@@ -345,7 +345,7 @@ class DeviceShow extends Component {
         />
 
         <Card title="Device Integrations">
-          <EventsDashboard contextName="devices" contextId={device.id} />
+          <EventsDashboard device_id={device.id} />
         </Card>
 
         <DeviceRemoveLabelModal

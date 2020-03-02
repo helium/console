@@ -1,6 +1,7 @@
 defmodule Console.Devices.DeviceResolver do
   alias Console.Repo
   alias Console.Devices.Device
+  alias Console.Events.Event
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
   alias Console.Channels
@@ -50,5 +51,18 @@ defmodule Console.Devices.DeviceResolver do
       preload: [:labels]
 
     {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
+  end
+
+  def events(%{device_id: id}, %{context: %{current_organization: current_organization}}) do
+    device = Device
+      |> where([d], d.organization_id == ^current_organization.id and d.id == ^id)
+      |> Repo.one()
+
+    five_min_ago = NaiveDateTime.utc_now() |> NaiveDateTime.add(-300)
+    events = Event
+      |> where([e], e.device_id == ^device.id and e.reported_at_naive > ^five_min_ago)
+      |> Repo.all()
+
+    {:ok, events}
   end
 end

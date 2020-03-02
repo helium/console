@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 
 export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
+    id,
     hotspot_name,
     channel_name,
     status,
@@ -17,8 +18,17 @@ export const EVENT_FRAGMENT = gql`
   }
 `
 export const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($contextId: String, $contextName: String) {
-    eventAdded(contextId: $contextId, contextName: $contextName) {
+  subscription onEventAdded($device_id: String) {
+    eventAdded(device_id: $device_id) {
+      ...EventFragment
+    }
+  }
+  ${EVENT_FRAGMENT}
+`
+
+export const DEVICE_EVENTS = gql`
+  query DeviceEventsQuery ($device_id: String) {
+    deviceEvents(device_id: $device_id) {
       ...EventFragment
     }
   }

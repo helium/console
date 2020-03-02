@@ -2,14 +2,41 @@ import React, { Component } from 'react'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import merge from 'lodash/merge'
 import PacketGraph from '../common/PacketGraph'
-import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
-import { Subscription } from 'react-apollo';
+import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
+import { graphql } from 'react-apollo';
 import { Typography, Table } from 'antd';
 const { Text } = Typography
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      device_id: props.device_id,
+    },
+    fetchPolicy: 'network-only',
+  })
+}
+
+@graphql(DEVICE_EVENTS, queryOptions)
 class EventsDashboard extends Component {
   state = {
     rows: []
+  }
+
+  componentDidUpdate(prevProps) {
+    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
+
+    if (prevProps.data.loading && !loading && deviceEvents.length > 0) {
+      this.setState({ rows: deviceEvents }, () => {
+        subscribeToMore({
+          document: EVENTS_SUBSCRIPTION,
+          variables,
+          updateQuery: (prev, { subscriptionData }) => {
+            if (!subscriptionData.data) return prev
+            this.addEvent(subscriptionData.data.eventAdded)
+          }
+        })
+      })
+    }
   }
 
   addEvent = (event) => {
@@ -28,8 +55,6 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const { contextId, contextName, fetchPolicy } = this.props
-
     const columns = [
       {
         title: 'Channel',
@@ -84,56 +109,34 @@ class EventsDashboard extends Component {
       },
     ]
 
-    return(
-      <Subscription
-        variables={{ contextId, contextName }}
-        subscription={EVENTS_SUBSCRIPTION}
-        onSubscriptionData={({ subscriptionData }) => { this.addEvent(subscriptionData.data.eventAdded) }}
-      >
-        {({ data }) => (
-          <React.Fragment>
+    const { loading, error } = this.props.data
 
-            <div>
-              <div className="chart-legend-bulb red"></div>
-              <Text>
-                Live Data
-              </Text>
-            </div>
-            <PacketGraph events={this.state.rows} />
-
-            <Text strong>
-              Event Log
-            </Text>
-            <br />
-            <QueryResults
-              rows={this.state.rows}
-              columns={columns}
-            />
-          </React.Fragment>
-        )}
-      </Subscription>
+    if (loading) return null;
+    if (error) return (
+      <Text>Data failed to load, please reload the page and try again</Text>
     )
-  }
-}
 
-class QueryResults extends Component {
-  render() {
-    const { rows, columns } = this.props
+    return(
+      <React.Fragment>
+        <div>
+          <div className="chart-legend-bulb red"></div>
+          <Text>
+            Live Data
+          </Text>
+        </div>
+        <PacketGraph events={this.state.rows} />
 
-    if (rows.length === 0) {
-      return (
-        <Text component="p">
-          No events yet
+        <Text strong>
+          Event Log
         </Text>
-      )
-    }
-
-    return (
-      <Table
-        dataSource={rows}
-        columns={columns}
-        pagination={false}
-      />
+        <br />
+        <Table
+          dataSource={this.state.rows}
+          columns={columns}
+          rowKey={record => record.id}
+          pagination={false}
+        />
+      </React.Fragment>
     )
   }
 }
