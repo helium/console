@@ -59,12 +59,11 @@ defmodule Console.Factory do
   def event_factory do
     %Event{
       description: "I am an event",
-      direction: sequence(:direction, ~w(inbound outbound)),
       payload: "some payload",
       payload_size: 42,
-      reported_at: "2010-04-17T14:00:00.000000Z",
+      reported_at_naive: "2010-04-17T14:00:00.000000Z",
       rssi: 120.5,
-      signal_strength: 42,
+      snr: 42,
       status: "some status"
     }
   end

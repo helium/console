@@ -20,11 +20,12 @@ defmodule Console.Events do
         _ ->
           reported_at_naive =
             attrs["reported_at"]
-            |> String.to_integer()
             |> DateTime.from_unix!()
             |> DateTime.to_naive()
 
-          Map.merge(attrs, %{"reported_at_naive" => reported_at_naive})
+          reported_at = Integer.to_string(attrs["reported_at"])
+
+          Map.merge(attrs, %{"reported_at_naive" => reported_at_naive, "reported_at" => reported_at})
       end
 
     %Event{}
