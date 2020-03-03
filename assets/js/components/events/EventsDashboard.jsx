@@ -27,7 +27,7 @@ class EventsDashboard extends Component {
   componentDidUpdate(prevProps) {
     const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
 
-    if (prevProps.data.loading && !loading && deviceEvents.length > 0) {
+    if (prevProps.data.loading && !loading) {
       this.setState({ rows: deviceEvents }, () => {
         subscribeToMore({
           document: EVENTS_SUBSCRIPTION,
@@ -57,7 +57,7 @@ class EventsDashboard extends Component {
       return n.frame_up;
     });
     const uniqChannels = uniqBy(this.state.rows, 'channel_name');
-    const uniqRows = uniqBy(this.state.rows, 'frame_up');
+    const uniqRows = uniqBy(this.state.rows, v => [v.frame_up, v.frame_down].join());
 
     const categoryTag = (category) => {
       switch(category) {
@@ -115,7 +115,7 @@ class EventsDashboard extends Component {
       const hotspotColumns = [
         { title: 'Hotspot Name', dataIndex: 'hotspot_name', key: 'hotspot_name' },
         { title: 'RSSI', dataIndex: 'rssi', key: 'rssi' },
-        { title: 'SNR', dataIndex: 'snr', key: 'snr' }
+        { title: 'SNR', dataIndex: 'snr', key: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
       ]
       const hotspotData = uniqBy(fcntGroupedRows[record.frame_up], 'hotspot_name');
 
