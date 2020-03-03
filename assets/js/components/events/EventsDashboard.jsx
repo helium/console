@@ -45,15 +45,11 @@ class EventsDashboard extends Component {
     const { rows } = this.state    
     const lastEvent = rows[rows.length - 1]    
     if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
-      truncated = rows.pop()
-      this.setState({
-        rows: [event].concat(truncated)
-      })
-    } else {
-      this.setState({
-        rows: [event].concat(rows)
-      })
+      rows.pop()      
     }
+    this.setState({
+      rows: [event].concat(rows)
+    })
   }
 
   render() {
