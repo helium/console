@@ -1,15 +1,16 @@
 import { push } from 'connected-react-router';
+import sanitizeHtml from 'sanitize-html'
 import * as rest from '../util/rest';
 import { getOrganizationId, getOrganizationName } from '../util/jwt';
 
 export const FETCH_ORGANIZATIONS = 'FETCH_ORGANIZATIONS'
 export const SWITCHED_ORGANIZATION = 'SWITCHED_ORGANIZATION'
 
-export const createOrganization = (name, getToken) => {
+export const createOrganization = (name) => {
   return (dispatch) => {
     rest.post('/api/organizations', {
         organization: {
-          name
+          name: sanitizeHtml(name)
         },
       })
       .then(response => {})

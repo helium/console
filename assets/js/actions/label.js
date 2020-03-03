@@ -1,12 +1,13 @@
 import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
+import sanitizeHtml from 'sanitize-html'
 
 export const createLabel = (name, channelId, redirect) => {
   return (dispatch) => {
+    const labelParams = sanitizeParams({ name })
+
     rest.post('/api/labels', {
-        label: {
-          name
-        },
+        label: labelParams,
         channel_id: channelId
       })
       .then(response => {
@@ -17,8 +18,10 @@ export const createLabel = (name, channelId, redirect) => {
 
 export const updateLabel = (id, params) => {
   return (dispatch) => {
+    const labelParams = sanitizeParams(params)
+
     rest.put(`/api/labels/${id}`, {
-      label: params
+      label: labelParams
     })
     .then(response => {})
   }
@@ -67,7 +70,7 @@ export const addDevicesToNewLabel = (devices, labelName) => {
   return (dispatch) => {
     rest.post(`/api/devices_labels`, {
       devices,
-      new_label: labelName,
+      new_label: sanitizeParams(labelName),
     })
     .then(response => {})
   }
@@ -111,4 +114,10 @@ export const removeLabelsFromChannel = (labels, channel_id) => {
     })
     .then(response => {})
   }
+}
+
+const sanitizeParams = (params) => {
+  if (params.name) params.name = sanitizeHtml(params.name)
+  if (params.color) params.color = sanitizeHtml(params.color)
+  return params
 }

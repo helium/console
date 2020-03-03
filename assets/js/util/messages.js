@@ -37,4 +37,3 @@ export const displayError = (errorMsg) => {
 
   debounceMessage(config)
 }
-

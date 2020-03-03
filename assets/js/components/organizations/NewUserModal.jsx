@@ -24,7 +24,7 @@ class NewUserModal extends Component {
     const { organization } = this.props
 
     analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP", { "organization": organization.id, "email": email, "role": role })
-    this.props.inviteUser({ email, role, organization: organization.id });
+    this.props.inviteUser(email, role, organization.id);
 
     this.props.onClose()
   }
