@@ -18,6 +18,7 @@ defmodule Console.Devices.Device do
     field :app_eui, :string
     field :key, :string
     field :oui, :integer
+    field :seq_id, :integer
 
     belongs_to :organization, Organization
     has_many :events, Event

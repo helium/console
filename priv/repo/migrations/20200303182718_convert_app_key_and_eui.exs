@@ -3,13 +3,14 @@ defmodule Console.Repo.Migrations.ConvertAppKeyAndEui do
   import Ecto.Query, only: [from: 2]
 
   def up do
-    devices = from(d in Console.Devices.Device, select: %{id: d.id, key: d.key, oui: d.oui, seq_id: d.seq_id}) |> Console.Repo.all
+    devices = from(d in Console.Devices.Device, select: d) |> Console.Repo.all
 
     Enum.each(devices, fn device ->
       app_key =
         case device.key do
           nil -> nil
           _ -> device.key |> Base.decode64! |> Base.encode16
+        end
 
       app_eui =
         case device.seq_id do
@@ -18,6 +19,7 @@ defmodule Console.Repo.Migrations.ConvertAppKeyAndEui do
             hex = device.seq_id |> Integer.to_string(16)
             str = "00000000" <> hex
             "00000001" <> String.slice(str, -8..-1)
+        end
 
       changeset = Ecto.Changeset.change(device, %{ app_key: app_key, app_eui: app_eui })
       Console.Repo.update!(changeset)
@@ -25,7 +27,7 @@ defmodule Console.Repo.Migrations.ConvertAppKeyAndEui do
   end
 
   def down do
-    devices = from(d in Console.Devices.Device, select: %{id: d.id, key: d.key}) |> Console.Repo.all
+    devices = from(d in Console.Devices.Device, select: d) |> Console.Repo.all
 
     Enum.each(devices, fn device ->
       changeset = Ecto.Changeset.change(device, %{ app_key: nil, app_eui: nil })
