@@ -21,7 +21,7 @@ defmodule Console.Devices.Device do
     field :seq_id, :integer
 
     belongs_to :organization, Organization
-    has_many :events, Event
+    has_many :events, Event, on_delete: :delete_all
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
 
     timestamps()
