@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
-import merge from 'lodash/merge'
+import uniqBy from 'lodash/uniqBy';
+import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
-import { Typography, Table } from 'antd';
+import { Badge, Card, Col, Row, Typography, Table, Tag } from 'antd';
+import { Base64 } from 'js-base64';
 const { Text } = Typography
 
 const queryOptions = {
@@ -40,8 +42,8 @@ class EventsDashboard extends Component {
   }
 
   addEvent = (event) => {
-    const { rows } = this.state
-    const lastEvent = rows[rows.length - 1]
+    const { rows } = this.state    
+    const lastEvent = rows[rows.length - 1]    
     if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
       truncated = rows.pop()
       this.setState({
@@ -55,59 +57,95 @@ class EventsDashboard extends Component {
   }
 
   render() {
+    const fcntGroupedRows = groupBy(this.state.rows, function(n) {
+      return n.frame_up;
+    });
+    const uniqChannels = uniqBy(this.state.rows, 'channel_name');
+    this.state.rows.sort(function(a,b){
+      return new Date(b.frame_up) - new Date(a.frame_up);
+    });
+    const uniqRows = uniqBy(this.state.rows, 'frame_up');
+
+    const categoryTag = (category) => {
+      switch(category) {
+        case "up":
+          return <Tag color="green">uplink</Tag>
+        case "down":
+          return <Tag color="red">downlink</Tag>
+        case "ack":
+          return <Tag color="orange">ack</Tag>
+        case "activation":
+          return <Tag color="blue">activation</Tag>
+      }
+    }
+
+    const statusBadge = (status) => {
+      switch(status) {
+        case "failure":
+          return <Badge status="error" />
+        case "success":
+          return <Badge status="success" />
+        default:
+          return <Badge status="default" text={status} />
+      }
+    }
+
+    function toHexString(byteArray) {
+      return Array.from(byteArray, function(byte) {
+        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+      }).join('')
+    }
+
     const columns = [
       {
-        title: 'Channel',
-        dataIndex: 'channel_name',
-      },
-      {
-        title: 'Hotspot Name',
-        dataIndex: 'hotspot_name',
-      },
-      {
-        title: 'Status',
-        dataIndex: 'status',
-      },
-      {
-        title: 'Description',
-        dataIndex: 'description',
+        dataIndex: 'category',
+        render: data => <span>{categoryTag(data)}</span>
       },
       {
         title: 'Payload',
         dataIndex: 'payload',
+        render: data => <span>{toHexString(Base64.decode(data))}</span>
       },
+      ,
       {
-        title: 'Size',
-        dataIndex: 'payload_size',
-        render: data => <span>{data ? `${data} bytes` : ""} </span>
-      },
-      {
-        title: 'RSSI',
-        dataIndex: 'rssi',
-      },
-      {
-        title: 'SNR',
-        dataIndex: 'snr',
-        render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span>
-      },
-      {
-        title: 'Category',
-        dataIndex: 'category',
-      },
-      {
-        title: 'Frame Up',
+        title: 'FCnt',
         dataIndex: 'frame_up',
       },
       {
-        title: 'Frame Down',
-        dataIndex: 'frame_down',
-      },
-      {
-        title: 'Reported At',
+        title: 'Time',
         dataIndex: 'reported_at',
         render: data => <span>{formatUnixDatetime(data)}</span>
       },
     ]
+
+    const expandedRowRender = (record) => {
+      const hotspotColumns = [
+        { title: 'Hotspot Name', dataIndex: 'hotspot_name', key: 'hotspot_name' },
+        { title: 'RSSI', dataIndex: 'rssi', key: 'rssi' },
+        { title: 'SNR', dataIndex: 'snr', key: 'snr' }
+      ]
+      const hotspotData = uniqBy(fcntGroupedRows[record.frame_up], 'hotspot_name');
+
+      const channelColumns = [
+        { dataIndex: 'status', key: 'status', render: data => <span>{statusBadge(data)}</span> },
+        { title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' },        
+        { title: 'Response', dataIndex: 'description', key: 'description' }
+      ]
+
+      return <Row>
+              <Col span={12}>
+                <Card bordered={false}>
+                  <Table columns={hotspotColumns} dataSource={hotspotData} pagination={false} rowKey={record => record.hotspot_name}/>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card bordered={false}>
+                  <Table columns={channelColumns} dataSource={uniqChannels} pagination={false} rowKey={record => record.hotspot_name}/>                  
+                </Card>
+              </Col>
+              </Row>
+      
+    }
 
     const { loading, error } = this.props.data
 
@@ -131,10 +169,11 @@ class EventsDashboard extends Component {
         </Text>
         <br />
         <Table
-          dataSource={this.state.rows}
+          dataSource={uniqRows}
           columns={columns}
           rowKey={record => record.id}
           pagination={false}
+          expandedRowRender={record => expandedRowRender(record)}
         />
       </React.Fragment>
     )

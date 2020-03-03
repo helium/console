@@ -19,6 +19,7 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "history": "^4.10.1",
+    "js-base64": "2.5.2",
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.6.0",
     "moment": "^2.24.0",
