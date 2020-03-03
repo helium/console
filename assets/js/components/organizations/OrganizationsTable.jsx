@@ -2,20 +2,70 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
+import get from 'lodash/get'
 import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization } from '../../actions/organization'
 import UserCan from '../common/UserCan'
-import { ALL_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
+import { PAGINATED_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Table, Typography, Button, Empty } from 'antd';
+import { graphql } from 'react-apollo';
+import { Table, Typography, Button, Empty, Pagination } from 'antd';
 const { Text } = Typography
 import { Query } from 'react-apollo';
 
-@connect(mapStateToProps, mapDispatchToProps)
-class OrganizationsTable extends Component {
-  render() {
-    const { currentOrganizationId, switchOrganization, userId, deleteOrganization } = this.props
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10,
+      userId: props.userId
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
 
+@connect(mapStateToProps, mapDispatchToProps)
+@graphql(PAGINATED_ORGANIZATIONS, queryOptions)
+class OrganizationsTable extends Component {
+  state = {
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+  }
+
+  componentDidMount() {
+    const { subscribeToMore, variables } = this.props.data
+
+    subscribeToMore({
+      document: ORGANIZATION_SUBSCRIPTION,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
+      }
+    })
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleSubscriptionAdded = () => {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
+  render() {
     const columns = [
       {
         title: 'Organization',
@@ -61,58 +111,12 @@ class OrganizationsTable extends Component {
       },
     ]
 
-    return (
-      <Query query={ALL_ORGANIZATIONS} fetchPolicy={'cache-and-network'} variables={{ userId: userId }}>
-        {({ loading, error, data, fetchMore, subscribeToMore, variables }) => (
-          <QueryResults
-            loading={loading}
-            error={error}
-            data={data}
-            columns={columns}
-            fetchMore={fetchMore}
-            subscribeToMore={subscribeToMore}
-            subscription={ORGANIZATION_SUBSCRIPTION}
-            variables={variables}
-            {...this.props}
-          />
-        )}
-      </Query>
-    )
-  }
-}
-
-
-class QueryResults extends Component {
-  componentDidMount() {
-    const { subscribeToMore, subscription, fetchMore, variables } = this.props
-
-    subscription && subscribeToMore({
-      document: subscription,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
-    })
-  }
-
-  render() {
-    const { loading, error, data, columns, openOrganizationModal } = this.props
+    const { currentOrganizationId, switchOrganization, userId, deleteOrganization } = this.props
+    const { organizations, loading, error } = this.props.data
 
     if (loading) return null;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
-    )
-
-    const organizations = filter(data.organizations, d => d !== undefined).map(r => { r.key = r.id; return r })
-
-    if (organizations.length === 0) return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={<span>No Organizations</span>}
-      />
     )
 
     return (
@@ -123,16 +127,24 @@ class QueryResults extends Component {
               icon="plus"
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_NEW_ORG")
-                openOrganizationModal()
+                this.props.openOrganizationModal()
               }}
-                          type="primary"
-
+              type="primary"
             >
               Add Organization
             </Button>
           </UserCan>
         </div>
-        <Table columns={columns} dataSource={organizations} pagination={false} />
+        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id}/>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+          <Pagination
+            current={organizations.pageNumber}
+            pageSize={organizations.pageSize}
+            total={organizations.totalEntries}
+            onChange={page => this.handleChangePage(page)}
+            style={{marginBottom: 20}}
+          />
+        </div>
       </div>
     )
   }

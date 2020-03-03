@@ -68,7 +68,7 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
-  object :organization do
+  paginated object :organization do
     field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
@@ -192,15 +192,15 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.InvitationResolver.paginate/2)
     end
 
+    @desc "Get all organizations"
+    paginated field :organizations, :paginated_organizations do
+      resolve(&Console.Organizations.OrganizationResolver.paginate/2)
+    end
+
     @desc "Get a single organization"
     field :organization, :organization do
       arg :id, non_null(:id)
       resolve(&Console.Organizations.OrganizationResolver.find/2)
-    end
-
-    @desc "Get all organizations"
-    field :organizations, list_of(:organization) do
-      resolve(&Console.Organizations.OrganizationResolver.all/2)
     end
 
     @desc "Search for devices, gateways and channels"

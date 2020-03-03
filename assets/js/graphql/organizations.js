@@ -8,10 +8,16 @@ export const ORGANIZATION_FRAGMENT = gql`
   }
 `
 
-export const ALL_ORGANIZATIONS = gql`
-  query allOrganizationsQuery {
-    organizations {
-      ...OrganizationFragment
+export const PAGINATED_ORGANIZATIONS = gql`
+  query PaginatedOrganizationsQuery($page: Int, $pageSize: Int) {
+    organizations(page: $page, pageSize: $pageSize) {
+      entries {
+        ...OrganizationFragment
+      }
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
     }
   }
   ${ORGANIZATION_FRAGMENT}

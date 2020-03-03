@@ -75,5 +75,4 @@ config :console,
 config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
 
-config :console, google_maps_secret: "AIzaSyBDifcwr-8OoEj024h_rN6IvXOWIyGXwEE"
 config :console, oui: 1
