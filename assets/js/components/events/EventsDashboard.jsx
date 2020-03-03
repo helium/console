@@ -42,10 +42,10 @@ class EventsDashboard extends Component {
   }
 
   addEvent = (event) => {
-    const { rows } = this.state    
-    const lastEvent = rows[rows.length - 1]    
+    const { rows } = this.state
+    const lastEvent = rows[rows.length - 1]
     if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
-      rows.pop()      
+      rows.pop()
     }
     this.setState({
       rows: [event].concat(rows)
@@ -57,9 +57,6 @@ class EventsDashboard extends Component {
       return n.frame_up;
     });
     const uniqChannels = uniqBy(this.state.rows, 'channel_name');
-    this.state.rows.sort(function(a,b){
-      return new Date(b.frame_up) - new Date(a.frame_up);
-    });
     const uniqRows = uniqBy(this.state.rows, 'frame_up');
 
     const categoryTag = (category) => {
@@ -124,7 +121,7 @@ class EventsDashboard extends Component {
 
       const channelColumns = [
         { dataIndex: 'status', key: 'status', render: data => <span>{statusBadge(data)}</span> },
-        { title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' },        
+        { title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' },
         { title: 'Response', dataIndex: 'description', key: 'description' }
       ]
 
@@ -136,11 +133,11 @@ class EventsDashboard extends Component {
               </Col>
               <Col span={12}>
                 <Card bordered={false}>
-                  <Table columns={channelColumns} dataSource={uniqChannels} pagination={false} rowKey={record => record.hotspot_name}/>                  
+                  <Table columns={channelColumns} dataSource={uniqChannels} pagination={false} rowKey={record => record.hotspot_name}/>
                 </Card>
               </Col>
               </Row>
-      
+
     }
 
     const { loading, error } = this.props.data
