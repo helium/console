@@ -17,6 +17,10 @@ defmodule Console.Devices do
      Repo.get_by!(Device, [id: id, organization_id: organization.id])
   end
 
+  def get_device(organization, id) do
+     Repo.get_by(Device, [id: id, organization_id: organization.id])
+  end
+
   def get_device(id), do: Repo.get(Device, id)
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do

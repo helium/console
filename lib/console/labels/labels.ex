@@ -7,6 +7,8 @@ defmodule Console.Labels do
   alias Console.Labels.DevicesLabels
   alias Console.Labels.ChannelsLabels
   alias Console.Devices.Device
+  alias Console.Devices
+  alias Console.Channels
   alias Console.Organizations
 
   def get_label!(id), do: Repo.get!(Label, id)
@@ -14,7 +16,11 @@ defmodule Console.Labels do
      Repo.get_by!(Label, [id: id, organization_id: organization.id])
   end
 
-  def get_label_by_name(name), do: Repo.get_by(Label, name: name)
+  def get_label(organization, id) do
+     Repo.get_by(Label, [id: id, organization_id: organization.id])
+  end
+
+  def get_label_by_name(name, organization_id), do: Repo.get_by(Label, [name: name, organization_id: organization_id])
 
   def create_label(attrs \\ %{}) do
     %Label{}
@@ -91,14 +97,23 @@ defmodule Console.Labels do
     end
   end
 
-  def delete_devices_from_label(devices, label_id) do
-    query = from(dl in DevicesLabels, where: dl.device_id in ^devices and dl.label_id == ^label_id)
-    Repo.delete_all(query)
+  def delete_devices_from_label(devices, label_id, organization) do
+    case get_label(organization, label_id) do
+      nil -> { :error }
+      _ ->
+        query = from(dl in DevicesLabels, where: dl.device_id in ^devices and dl.label_id == ^label_id)
+        Repo.delete_all(query)
+    end
   end
 
-  def delete_labels_from_device(labels, device_id) do
-    query = from(dl in DevicesLabels, where: dl.label_id in ^labels and dl.device_id == ^device_id)
-    Repo.delete_all(query)
+  def delete_labels_from_device(labels, device_id, organization) do
+    case Devices.get_device(organization, device_id) do
+      nil -> { :error }
+      _ ->
+        query = from(dl in DevicesLabels, where: dl.label_id in ^labels and dl.device_id == ^device_id)
+        Repo.delete_all(query)
+    end
+
   end
 
   def add_labels_to_channel(labels, channel, organization) do
@@ -123,8 +138,12 @@ defmodule Console.Labels do
     end
   end
 
-  def delete_labels_from_channel(labels, channel_id) do
-    query = from(cl in ChannelsLabels, where: cl.label_id in ^labels and cl.channel_id == ^channel_id)
-    Repo.delete_all(query)
+  def delete_labels_from_channel(labels, channel_id, organization) do
+    case Channels.get_channel(organization, channel_id) do
+      nil -> {:error}
+      _ ->
+        query = from(cl in ChannelsLabels, where: cl.label_id in ^labels and cl.channel_id == ^channel_id)
+        Repo.delete_all(query)
+    end
   end
 end
