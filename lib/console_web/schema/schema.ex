@@ -228,10 +228,8 @@ defmodule ConsoleWeb.Schema do
 
   subscription do
     field :organization_updated, :organization do
-      arg :user_id, :string
-
-      config fn args, _ ->
-        {:ok, topic: "#{args.user_id}/organization_updated"}
+      config fn _, %{context: %{ current_user_id: user_id }} ->
+        {:ok, topic: "#{user_id}/organization_updated"}
       end
     end
 
@@ -304,10 +302,8 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :api_key_added, :api_key do
-      arg :user_id, :string
-
-      config fn args, %{context: %{ current_organization_id: organization_id }} ->
-        {:ok, topic: "#{organization_id}/#{args.user_id}/api_key_added"}
+      config fn _, %{context: %{ current_organization_id: organization_id, current_user_id: user_id }} ->
+        {:ok, topic: "#{organization_id}/#{user_id}/api_key_added"}
       end
     end
   end

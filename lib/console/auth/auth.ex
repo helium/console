@@ -168,7 +168,7 @@ defmodule Console.Auth do
   end
 
   def generate_session_token(%User{} = user, %Organization{} = current_organization) do
-    claims = %{organization: current_organization.id, organization_name: current_organization.name}
+    claims = %{organization: current_organization.id, organization_name: current_organization.name, user: user.id}
 
     {:ok, token, _claims} = ConsoleWeb.Guardian.encode_and_sign(user, claims, ttl: { 1, :day })
     token

@@ -38,7 +38,6 @@ class Profile extends Component {
 
     subscribeToMore({
       document: API_KEY_SUBSCRIPTION,
-      variables: { userId: this.props.userId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         fetchMore({

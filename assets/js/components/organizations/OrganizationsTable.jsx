@@ -18,7 +18,6 @@ const queryOptions = {
     variables: {
       page: 1,
       pageSize: 10,
-      userId: props.userId
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -111,7 +110,7 @@ class OrganizationsTable extends Component {
       },
     ]
 
-    const { currentOrganizationId, switchOrganization, userId, deleteOrganization } = this.props
+    const { currentOrganizationId, switchOrganization, deleteOrganization } = this.props
     const { organizations, loading, error } = this.props.data
 
     if (loading) return null;
@@ -153,7 +152,6 @@ class OrganizationsTable extends Component {
 function mapStateToProps(state) {
   return {
     currentOrganizationId: state.auth.currentOrganizationId,
-    userId: state.auth.user.id,
   }
 }
 
