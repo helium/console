@@ -2,6 +2,7 @@ import { push } from 'connected-react-router';
 import * as rest from '../util/rest';
 import { getOrganizationId, getOrganizationName } from '../util/jwt'
 import analyticsLogger from '../util/analyticsLogger'
+import sanitizeHtml from 'sanitize-html'
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -18,7 +19,7 @@ export const checkCredentials = (email, password) => {
   return (dispatch) => {
     rest.post('/api/sessions', {
         session: {
-          email,
+          email: sanitizeHtml(email),
           password
         }
       })
@@ -39,7 +40,7 @@ export const verify2fa = (code, userId) => {
   return (dispatch) => {
     rest.post('/api/2fa/verify', {
         session: {
-          code,
+          code: sanitizeHtml(code),
           userId
         }
       })
@@ -62,7 +63,7 @@ export const enable2fa = (code, userId, secret2fa) => {
   return (dispatch) => {
     rest.post('/api/2fa', {
         user: {
-          code,
+          code: sanitizeHtml(code),
           userId,
           secret2fa
         }
@@ -98,7 +99,7 @@ export const logOut = () => {
 export const register = (organizationName, email, password, invitationToken) => {
   let params = {
     user: {
-      email,
+      email: sanitizeHtml(email),
       password,
     }
   }
@@ -112,7 +113,7 @@ export const register = (organizationName, email, password, invitationToken) => 
   } else {
     params = Object.assign(params, {
       organization: {
-        name: organizationName
+        name: sanitizeHtml(organizationName)
       }
     })
   }
@@ -129,7 +130,7 @@ export const register = (organizationName, email, password, invitationToken) => 
 export const forgotPassword = (email) => {
   return (dispatch) => {
     rest.post('/api/users/forgot_password', {
-        email
+        email: sanitizeHtml(email)
       })
       .then(response => {
         return dispatch(sentPassword())
@@ -142,7 +143,7 @@ export const changePassword = (password, passwordConfirm, token) => {
   return (dispatch) => {
     rest.post('/api/users/change_password', {
         user: {
-          token,
+          token: sanitizeHtml(token),
           password,
           password_confirmation: passwordConfirm
         }
@@ -157,7 +158,7 @@ export const changePassword = (password, passwordConfirm, token) => {
 export const resendVerification = (email) => {
   return (dispatch) => {
     rest.post('/api/users/resend_verification', {
-        email
+        email: sanitizeHtml(email)
       })
       .then(response => {
         return dispatch(sentVerification())

@@ -39,7 +39,7 @@ class LabelShowTable extends Component {
       variables: { id: this.props.labelId },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
+        this.refetchPaginatedEntries(page, pageSize)
       }
     })
   }

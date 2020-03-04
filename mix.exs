@@ -58,7 +58,8 @@ defmodule Console.Mixfile do
       {:bamboo, "~> 1.3.0"},
       {:httpoison, "~> 1.6.1"},
       {:pot, "~> 0.10.2"},
-      {:libp2p_crypto, "1.0.1"}
+      {:libp2p_crypto, "1.0.1"},
+      {:html_sanitize_ex, "~> 1.3.0"}
     ]
   end
 

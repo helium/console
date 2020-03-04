@@ -1,6 +1,7 @@
 defmodule Console.Organizations.Invitation do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -17,12 +18,15 @@ defmodule Console.Organizations.Invitation do
 
   @doc false
   def changeset(invitation, attrs \\ %{}) do
+    attrs = Helpers.sanitize_attrs(attrs, ["email", "role"])
+
     invitation
     |> cast(attrs, [:email, :role, :organization_id, :inviter_id])
     |> validate_required([:organization_id, :inviter_id])
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")
+    |> validate_inclusion(:role, ~w(admin manager read))
     |> unique_constraint(:email, name: :invitations_email_organization_id_index, message: "That email has already been invited to this organization")
   end
 

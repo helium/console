@@ -1,7 +1,13 @@
 import * as rest from '../util/rest';
+import sanitizeHtml from 'sanitize-html'
 
-export const inviteUser = (invitation) => {
+export const inviteUser = (email, role, organization) => {
   return (dispatch) => {
+    const invitation = {
+      email: sanitizeHtml(email),
+      role,
+      organization
+    }
     rest.post(`/api/invitations`, { invitation })
     .then(response => {})
   }

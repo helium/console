@@ -33,4 +33,17 @@ defmodule Console.Helpers do
       _ -> "api_call_failed"
     end
   end
+
+  def sanitize_attrs(attrs, keys) do
+    attrs = Enum.reduce(keys, attrs, fn key, acc ->
+      case Map.get(attrs, key) do
+        nil -> acc
+        value ->
+          clean_value = value |> HtmlSanitizeEx.strip_tags()
+          Map.put(acc, key, clean_value)
+      end
+    end)
+    attrs
+  end
+
 end

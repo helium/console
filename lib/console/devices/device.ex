@@ -8,6 +8,7 @@ defmodule Console.Devices.Device do
   alias Console.Devices
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -29,6 +30,8 @@ defmodule Console.Devices.Device do
 
   @doc false
   def changeset(device, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
+
     changeset =
       device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])

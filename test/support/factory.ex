@@ -77,7 +77,7 @@ defmodule Console.Factory do
   def invitation_factory do
     %Invitation{
       email: sequence(:email, &"email-#{&1}@example.com"),
-      role: sequence(:role, ~w(admin manager)),
+      role: sequence(:role, ~w(admin manager read)),
       token: sequence(:token, &"TOKEN-#{&1}")
     }
   end

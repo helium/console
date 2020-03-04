@@ -1,6 +1,7 @@
 defmodule Console.Organizations.Organization do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -20,6 +21,8 @@ defmodule Console.Organizations.Organization do
 
   @doc false
   def changeset(organization, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name"])
+
     organization
     |> cast(attrs, [:name])
     |> validate_required(:name, message: "Organization Name is required")

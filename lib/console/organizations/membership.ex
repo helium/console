@@ -4,6 +4,7 @@ defmodule Console.Organizations.Membership do
   import Ecto.Query, warn: false
   alias Console.Auth.User
   alias Console.Auth.TwoFactor
+  alias Console.Helper
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -19,6 +20,8 @@ defmodule Console.Organizations.Membership do
 
   @doc false
   def changeset(membership, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["role"])
+
     membership
     |> cast(attrs, [:role, :user_id, :organization_id])
     |> validate_required([:role, :user_id, :organization_id])

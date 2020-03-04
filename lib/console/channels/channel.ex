@@ -1,6 +1,7 @@
 defmodule Console.Channels.Channel do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Console.Helpers
 
   alias Console.Organizations.Organization
   alias Console.Channels
@@ -28,9 +29,12 @@ defmodule Console.Channels.Channel do
 
   @doc false
   def changeset(channel, attrs \\ %{}) do
+    attrs = Helpers.sanitize_attrs(attrs, ["type", "name"])
+
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default])
     |> validate_required([:name, :type, :active, :credentials, :organization_id, :default])
+    |> validate_inclusion(:type, ~w(http mqtt aws azure google))
     |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
@@ -42,6 +46,8 @@ defmodule Console.Channels.Channel do
   end
 
   def update_changeset(channel, attrs \\ %{}) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name"])
+
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])
     |> validate_required([:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])

@@ -220,7 +220,12 @@ defmodule Console.Search do
 
   def cast(record) do
     {:ok, id} = Ecto.UUID.cast(Enum.at(record, 0))
-    category = Enum.at(record, 4)
+    category =
+      case Enum.at(record, 4) do
+        "channels" -> "integrations"
+        _ -> Enum.at(record, 4)
+      end
+
     url = "/#{category}/#{id}"
     %{
       id: id,

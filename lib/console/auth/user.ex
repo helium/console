@@ -1,6 +1,7 @@
 defmodule Console.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,6 +22,8 @@ defmodule Console.Auth.User do
   end
 
   def changeset(user, attrs \\ %{}) do
+    attrs = Helpers.sanitize_attrs(attrs, ["email"])
+
     user
     |> cast(attrs, [:email])
     |> validate_required(:email, message: "Email needs to not be blank")

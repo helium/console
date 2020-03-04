@@ -1,9 +1,10 @@
 import * as rest from '../util/rest';
+import sanitizeHtml from 'sanitize-html'
 
 export const generateKey = (name, role) => (dispatch) => (
   rest.post('/api/api_keys', {
         api_key: {
-          name,
+          name: sanitizeHtml(name),
           role
         }
       })

@@ -5,7 +5,6 @@ import NewOrganizationModal from '../organizations/NewOrganizationModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card } from 'antd';
 
-
 class Dashboard extends Component {
   state = {
     showOrganizationModal: false,

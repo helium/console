@@ -7,6 +7,7 @@ defmodule Console.Labels.Label do
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
   alias Console.Labels.ChannelsLabels
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,6 +22,8 @@ defmodule Console.Labels.Label do
   end
 
   def changeset(label, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "color"])
+    
     attrs =
       case attrs["name"] do
         nil -> attrs
