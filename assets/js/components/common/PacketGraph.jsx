@@ -64,11 +64,9 @@ class PacketGraph extends Component {
         displayColors: false,
         callbacks: {
           label: (tooltip, data) => {
-            return data.datasets[tooltip.datasetIndex].label + ' '
-              + (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4
-              + 'B packet '
-              + Math.floor(data.datasets[tooltip.datasetIndex].data[tooltip.index].x)
-              + ' seconds ago'
+            return (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4
+              + 'byte packet received by '
+              + data.datasets[tooltip.datasetIndex].data[tooltip.index].h              
           }
         }
       }
@@ -110,19 +108,22 @@ class PacketGraph extends Component {
           success.push({
             x: timeDiff,
             y: parseFloat(event.rssi),
-            r: event.payload_size / 4 + 2
+            r: event.payload_size / 4 + 2,
+            h: event.hotspot_name
           })
         } else if (event.status == 'failure') {
           failure.push({
             x: timeDiff,
             y: parseFloat(event.rssi),
-            r: event.payload_size / 4 + 2
+            r: event.payload_size / 4 + 2,
+            h: event.hotspot_name
           })
         } else {
           noChannel.push({
             x: timeDiff,
             y: parseFloat(event.rssi),
-            r: event.payload_size / 4 + 2
+            r: event.payload_size / 4 + 2,
+            h: event.hotspot_name
           })
         }
       }

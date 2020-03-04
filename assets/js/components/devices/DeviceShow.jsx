@@ -212,6 +212,10 @@ class DeviceShow extends Component {
                 </td>
               </tr>
               <tr style={{height: '30px'}}>
+                <td style={{paddingBottom: '20px'}}><Text strong>UUID</Text></td>
+                <td style={{paddingBottom: '20px'}}>{device.id}</td>
+              </tr>
+              <tr style={{height: '30px'}}>
                 <td><Text strong>Device EUI</Text></td>
                 <td>
                   {showDevEUIInput && (
@@ -288,8 +292,8 @@ class DeviceShow extends Component {
                 </td>
               </tr>
               <tr style={{height: '30px'}}>
-                <td><Text strong>App Key</Text></td>
-                <td>
+                <td style={{paddingBottom: '20px'}}><Text strong>App Key</Text></td>
+                <td style={{paddingBottom: '20px'}}>
                   {showAppKeyInput && (
                     <OutsideClick
                       onOutsideClick={this.toggleAppKeyInput}

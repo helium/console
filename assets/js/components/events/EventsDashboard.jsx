@@ -120,7 +120,7 @@ class EventsDashboard extends Component {
 
       if (record.category === "down" || record.category === "ack") {
         channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
-        hotspotData = this.state.rows.filter(row => row.frame_down === record.frame_down);
+        hotspotData = this.state.rows.filter(row => row.frame_down === record.frame_down && (row.category === "down" || row.category === "ack"));
         channelData = uniqBy(hotspotData, 'channel_name');
       } else if (record.category === "activation") {
         channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
