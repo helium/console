@@ -13,7 +13,7 @@ defmodule ConsoleWeb.Abilities do
     #   controller == ConsoleWeb.OrganizationController and action in [:delete_organization] -> false
     #   true -> true
     # end
-    true
+    false
   end
 
   def can?(_membership, _action, _controller), do: false

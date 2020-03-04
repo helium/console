@@ -29,6 +29,15 @@ defmodule Console.Devices.Device do
 
   @doc false
   def changeset(device, attrs) do
+    attrs = Enum.reduce(["name", "dev_eui", "app_eui", "app_key"], attrs, fn key, acc ->
+      case Map.get(attrs, key) do
+        nil -> acc
+        value ->
+          clean_value = value |> HtmlSanitizeEx.strip_tags()
+          Map.put(acc, key, clean_value)
+      end
+    end)
+
     changeset =
       device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
