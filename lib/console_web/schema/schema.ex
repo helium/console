@@ -228,10 +228,8 @@ defmodule ConsoleWeb.Schema do
 
   subscription do
     field :organization_updated, :organization do
-      arg :user_id, :string
-
-      config fn args, _ ->
-        {:ok, topic: "#{args.user_id}/organization_updated"}
+      config fn _, %{context: %{ current_user_id: user_id }} ->
+        {:ok, topic: "#{user_id}/organization_updated"}
       end
     end
 
