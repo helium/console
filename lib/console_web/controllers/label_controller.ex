@@ -21,7 +21,7 @@ defmodule ConsoleWeb.LabelController do
       broadcast(label)
 
       if channel_id != nil do
-        channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
+        channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(channel_id)
         Labels.add_labels_to_channel([label.id], channel, current_organization)
       end
 
@@ -34,7 +34,7 @@ defmodule ConsoleWeb.LabelController do
 
   def update(conn, %{"id" => id, "label" => label_params}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(id)
+    label = Labels.get_label!(current_organization, id)
     name = label.name
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
@@ -53,7 +53,7 @@ defmodule ConsoleWeb.LabelController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(id)
+    label = Labels.get_label!(current_organization, id)
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
       broadcast(label)
@@ -67,9 +67,8 @@ defmodule ConsoleWeb.LabelController do
   def delete(conn, %{"labels" => labels}) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(List.first(labels))
-    length = length(labels)
 
-    with {:ok, _} <- Labels.delete_labels(labels) do
+    with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
       broadcast(label)
 
       conn
@@ -80,19 +79,19 @@ defmodule ConsoleWeb.LabelController do
 
   def add_devices_to_label(conn, %{"devices" => devices, "labels" => labels, "to_label" => to_label}) do
     current_organization = conn.assigns.current_organization
+    destination_label = Labels.get_label!(current_organization, to_label)
 
     if length(devices) == 0 and length(labels) == 0 do
       {:error, :bad_request, "Please select a device or label"}
     else
-      with {:ok, count} <- Labels.add_devices_to_label(devices, labels, to_label, current_organization) do
+      with {:ok, count} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
         msg =
           case count do
             0 -> "All selected devices are already in label"
             _ -> "#{count} Devices added to label successfully"
           end
 
-        label = Labels.get_label!(to_label)
-        broadcast(label, label.id)
+        broadcast(destination_label, destination_label.id)
 
         conn
         |> put_resp_header("message", msg)
@@ -103,21 +102,21 @@ defmodule ConsoleWeb.LabelController do
 
   def add_devices_to_label(conn, %{"devices" => devices, "to_label" => to_label}) do
     current_organization = conn.assigns.current_organization
+    destination_label = Labels.get_label!(current_organization, to_label)
 
     if length(devices) == 0 do
       {:error, :bad_request, "Please select a device"}
     else
-      with {:ok, count} <- Labels.add_devices_to_label(devices, to_label, current_organization) do
+      with {:ok, count} <- Labels.add_devices_to_label(devices, destination_label.id, current_organization) do
         msg =
           case count do
             0 -> "All selected devices are already in label"
             _ -> "#{count} Devices added to label successfully"
           end
 
-        label = Labels.get_label!(to_label)
         device = Devices.get_device!(List.first(devices))
 
-        broadcast(label, label.id)
+        broadcast(destination_label, destination_label.id)
         ConsoleWeb.DeviceController.broadcast(device)
         ConsoleWeb.DeviceController.broadcast(device, device.id)
 
@@ -152,7 +151,7 @@ defmodule ConsoleWeb.LabelController do
 
     cond do
       length(devices) == 0 -> {:error, :bad_request, "Please select a device"}
-      Labels.get_label_by_name(String.upcase(label_name)) != nil -> {:error, :bad_request, "That label already exists"}
+      Labels.get_label_by_name(String.upcase(label_name), current_organization.id) != nil -> {:error, :bad_request, "That label already exists"}
       true ->
         label_changeset =
           %Label{}
@@ -180,7 +179,9 @@ defmodule ConsoleWeb.LabelController do
   end
 
   def delete_devices_from_labels(conn, %{"devices" => devices, "label_id" => label_id}) do
-    with {_, nil} <- Labels.delete_devices_from_label(devices, label_id) do
+    current_organization = conn.assigns.current_organization
+
+    with {_, nil} <- Labels.delete_devices_from_label(devices, label_id, current_organization) do
       label = Labels.get_label!(label_id)
       broadcast(label, label.id)
 
@@ -191,7 +192,9 @@ defmodule ConsoleWeb.LabelController do
   end
 
   def delete_devices_from_labels(conn, %{"labels" => labels, "device_id" => device_id}) do
-    with {_, nil} <- Labels.delete_labels_from_device(labels, device_id) do
+    current_organization = conn.assigns.current_organization
+
+    with {_, nil} <- Labels.delete_labels_from_device(labels, device_id, current_organization) do
       device = Devices.get_device!(device_id)
       ConsoleWeb.DeviceController.broadcast(device, device.id)
 
@@ -202,7 +205,9 @@ defmodule ConsoleWeb.LabelController do
   end
 
   def delete_labels_from_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
-    with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id) do
+    current_organization = conn.assigns.current_organization
+
+    with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id, current_organization) do
       channel = Channels.get_channel!(channel_id)
       ConsoleWeb.ChannelController.broadcast(channel, channel.id)
 

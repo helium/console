@@ -4,7 +4,9 @@ defmodule Console.ApiKeys do
 
   alias Console.ApiKeys.ApiKey
 
-  def get_api_key!(id), do: Repo.get!(ApiKey, id)
+  def get_api_key!(user, id) do
+     Repo.get_by!(ApiKey, [id: id, user_id: user.id])
+  end
 
   def create_api_key(organization, user, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{"organization_id" => organization.id, "user_id" => user.id})
