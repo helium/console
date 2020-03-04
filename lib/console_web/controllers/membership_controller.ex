@@ -16,7 +16,8 @@ defmodule ConsoleWeb.MembershipController do
   end
 
   def update(conn, %{"id" => id, "membership" => attrs}) do
-    membership = Organizations.get_membership!(id)
+    current_organization = conn.assigns.current_organization
+    membership = Organizations.get_membership!(current_organization, id)
 
     with {:ok, _} <- Organizations.update_membership(membership, attrs) do
       broadcast(membership)
@@ -28,7 +29,8 @@ defmodule ConsoleWeb.MembershipController do
   end
 
   def delete(conn, %{"id" => id}) do
-    membership = Organizations.get_membership!(id)
+    current_organization = conn.assigns.current_organization
+    membership = Organizations.get_membership!(current_organization, id)
 
     with {:ok, _} <- Organizations.delete_membership(membership) do
       broadcast(membership)

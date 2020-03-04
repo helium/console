@@ -46,6 +46,10 @@ defmodule Console.Organizations do
     Repo.get!(Membership, id)
   end
 
+  def get_membership!(%Organization{} = organization, id) do
+    Repo.get_by!(Membership, [id: id, organization_id: organization.id])
+  end
+
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
     Repo.get_by!(Membership, user_id: user_id, organization_id: organization_id)
   end
