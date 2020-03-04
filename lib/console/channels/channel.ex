@@ -109,9 +109,9 @@ defmodule Console.Channels.Channel do
       %URI{host: nil} -> add_error(changeset, :message, "Endpoint host is invalid (ex: m1.helium.com)")
       _ ->
         cond do
-          String.length(creds["topic"]) == 0 -> put_change(changeset, :credentials, Map.merge(creds, %{"topic" => "helium/"}))
           Regex.match?(~r/ /, creds["topic"]) -> add_error(changeset, :message, "Topic should not have spaces")
           Regex.match?(~r/^\//, creds["topic"]) -> add_error(changeset, :message, "Topic should not start with a forward slash")
+          Regex.match?(~r/\/$/, creds["topic"]) -> add_error(changeset, :message, "Topic should not end with a forward slash")
           true -> changeset
         end
     end
