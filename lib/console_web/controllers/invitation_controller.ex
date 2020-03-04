@@ -22,32 +22,37 @@ defmodule ConsoleWeb.InvitationController do
     current_user = conn.assigns.current_user
     organization = Organizations.get_organization!(attrs["organization"])
 
-    case current_user.email != attrs["email"] and Auth.user_exists?(attrs["email"]) do
-      {true, existing_user} ->
+    if Organizations.user_has_access?(current_user, organization) do
+      case current_user.email != attrs["email"] and Auth.user_exists?(attrs["email"]) do
+        {true, existing_user} ->
 
-        with {:ok, %Membership{} = membership} <-
-               Organizations.join_organization(existing_user, organization, attrs["role"]) do
-          membership = membership |> Organizations.fetch_assoc_membership()
-          Email.joined_organization_email(membership) |> Mailer.deliver_later()
-          ConsoleWeb.MembershipController.broadcast(membership)
+          with {:ok, %Membership{} = membership} <-
+                 Organizations.join_organization(existing_user, organization, attrs["role"]) do
+            membership = membership |> Organizations.fetch_assoc_membership()
+            Email.joined_organization_email(membership) |> Mailer.deliver_later()
+            ConsoleWeb.MembershipController.broadcast(membership)
 
-          conn
-          |> put_status(:created)
-          |> put_resp_header("message", "User added to organization")
-          |> put_view(ConsoleWeb.MembershipView)
-          |> render("show.json", membership: membership)
-        end
-      false ->
-        with {:ok, %Invitation{} = invitation} <-
-               Organizations.create_invitation(current_user, organization, attrs) do
-          Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
-          broadcast(invitation)
+            conn
+            |> put_status(:created)
+            |> put_resp_header("message", "User added to organization")
+            |> put_view(ConsoleWeb.MembershipView)
+            |> render("show.json", membership: membership)
+          end
+        false ->
+          with {:ok, %Invitation{} = invitation} <-
+                 Organizations.create_invitation(current_user, organization, attrs) do
+            Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
+            broadcast(invitation)
 
-          conn
-          |> put_status(:created)
-          |> put_resp_header("message", "Invitation sent")
-          |> render("show.json", invitation: invitation)
-        end
+            conn
+            |> put_status(:created)
+            |> put_resp_header("message", "Invitation sent")
+            |> render("show.json", invitation: invitation)
+          end
+      end
+    else
+      conn
+      |> send_resp(:unauthorized, "")
     end
   end
 
