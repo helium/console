@@ -10,6 +10,9 @@ defmodule Console.Labels do
   alias Console.Organizations
 
   def get_label!(id), do: Repo.get!(Label, id)
+  def get_label!(organization, id) do
+     Repo.get_by!(Label, [id: id, organization_id: organization.id])
+  end
 
   def get_label_by_name(name), do: Repo.get_by(Label, name: name)
 
@@ -29,7 +32,9 @@ defmodule Console.Labels do
     Repo.delete(label)
   end
 
-  def delete_labels(label_ids) do
+  def delete_labels(label_ids, organization_id) do
+    label_ids = from(l in Label, where: l.organization_id == ^organization_id and l.id in ^label_ids) |> Repo.all() |> Enum.map(fn l -> l.id end)
+
     Repo.transaction(fn ->
       from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all()
       from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all()

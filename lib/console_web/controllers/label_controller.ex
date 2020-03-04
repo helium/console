@@ -21,7 +21,7 @@ defmodule ConsoleWeb.LabelController do
       broadcast(label)
 
       if channel_id != nil do
-        channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
+        channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(channel_id)
         Labels.add_labels_to_channel([label.id], channel, current_organization)
       end
 
@@ -34,7 +34,7 @@ defmodule ConsoleWeb.LabelController do
 
   def update(conn, %{"id" => id, "label" => label_params}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(id)
+    label = Labels.get_label!(current_organization, id)
     name = label.name
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
@@ -53,7 +53,7 @@ defmodule ConsoleWeb.LabelController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(id)
+    label = Labels.get_label!(current_organization, id)
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
       broadcast(label)
@@ -67,9 +67,8 @@ defmodule ConsoleWeb.LabelController do
   def delete(conn, %{"labels" => labels}) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(List.first(labels))
-    length = length(labels)
 
-    with {:ok, _} <- Labels.delete_labels(labels) do
+    with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
       broadcast(label)
 
       conn
