@@ -15,7 +15,7 @@ defmodule ConsoleWeb.ApiKeyController do
 
     with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
       broadcast(api_key)
-      
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "#{api_key.name} created successfully")
@@ -24,7 +24,8 @@ defmodule ConsoleWeb.ApiKeyController do
   end
 
   def delete(conn, %{"id" => id}) do
-    api_key = ApiKeys.get_api_key!(id)
+    current_user = conn.assigns.current_user
+    api_key = ApiKeys.get_api_key!(current_user, id)
 
     with {:ok, %ApiKey{} = api_key} <- ApiKeys.delete_api_key(api_key) do
       broadcast(api_key)
