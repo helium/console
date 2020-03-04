@@ -6,7 +6,6 @@ import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
 import { Badge, Card, Col, Row, Typography, Table, Tag } from 'antd';
-import { Base64 } from 'js-base64';
 const { Text } = Typography
 
 const queryOptions = {
@@ -83,10 +82,15 @@ class EventsDashboard extends Component {
       }
     }
 
-    function toHexString(byteArray) {
-      return Array.from(byteArray, function(byte) {
-        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-      }).join('')
+    //thanks https://stackoverflow.com/questions/39460182/decode-base64-to-hexadecimal-string-with-javascript
+    function base64ToHex(str) {
+      const raw = atob(str);
+      let result = '';
+      for (let i = 0; i < raw.length; i++) {
+        const hex = raw.charCodeAt(i).toString(16);
+        result += (hex.length === 2 ? hex : '0' + hex);
+      }
+      return result.toUpperCase();
     }
 
     const columns = [
@@ -97,7 +101,7 @@ class EventsDashboard extends Component {
       {
         title: 'Payload',
         dataIndex: 'payload',
-        render: data => <span>{toHexString(Base64.decode(data))}</span>
+        render: data => <span>{base64ToHex(data)}</span>
       },
       ,
       {
