@@ -42,7 +42,7 @@ defmodule ConsoleWeb.ChannelController do
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
     current_organization = conn.assigns.current_organization
-    channel = Channels.get_channel!(id)
+    channel = Channels.get_channel!(current_organization, id)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       broadcast(channel, channel.id)
@@ -54,7 +54,8 @@ defmodule ConsoleWeb.ChannelController do
   end
 
   def delete(conn, %{"id" => id}) do
-    channel = Channels.get_channel!(id) |> Channels.fetch_assoc([:labels])
+    current_organization = conn.assigns.current_organization
+    channel = Channels.get_channel!(current_organization, id) |> Channels.fetch_assoc([:labels])
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel)
