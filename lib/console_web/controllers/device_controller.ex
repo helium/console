@@ -26,7 +26,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
       if label_id != nil do
-        label = Ecto.assoc(current_organization, :labels) |> Repo.get(label_id)
+        label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
         Labels.add_devices_to_label([device.id], label.id, current_organization)
       end
 
@@ -47,7 +47,7 @@ defmodule ConsoleWeb.DeviceController do
 
   def update(conn, %{"id" => id, "device" => device_params}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(id)
+    device = Devices.get_device!(current_organization, id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
       broadcast(device, device.id)
@@ -60,7 +60,7 @@ defmodule ConsoleWeb.DeviceController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(id)
+    device = Devices.get_device!(current_organization, id)
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device)
@@ -74,9 +74,8 @@ defmodule ConsoleWeb.DeviceController do
   def delete(conn, %{"devices" => devices}) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(List.first(devices))
-    length = length(devices)
 
-    with {:ok, _} <- Devices.delete_devices(devices) do
+    with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       broadcast(device)
 
       conn
