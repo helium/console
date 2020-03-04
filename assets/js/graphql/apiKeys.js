@@ -12,8 +12,8 @@ export const ALL_API_KEYS = gql`
 `
 
 export const API_KEY_SUBSCRIPTION = gql`
-  subscription onApiKeyAdded($userId: String) {
-    apiKeyAdded(userId: $userId) {
+  subscription onApiKeyAdded {
+    apiKeyAdded {
       id
     }
   }
