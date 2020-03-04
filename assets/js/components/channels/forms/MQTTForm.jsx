@@ -13,7 +13,7 @@ class MQTTForm extends Component {
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const { endpoint, topic } = this.state
-      if (endpoint.length > 0 && topic.length > 0) {
+      if (endpoint.length > 0) {
         // check validation, if pass
         this.props.onValidInput({
           endpoint,

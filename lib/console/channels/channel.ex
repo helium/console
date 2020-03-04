@@ -107,10 +107,9 @@ defmodule Console.Channels.Channel do
     case uri do
       %URI{scheme: scheme} when scheme != "mqtt" and scheme != "mqtts" -> add_error(changeset, :message, "Endpoint scheme is invalid (ex: mqtt/mqtts)")
       %URI{host: nil} -> add_error(changeset, :message, "Endpoint host is invalid (ex: m1.helium.com)")
-      %URI{userinfo: nil} -> add_error(changeset, :message, "Endpoint user info is invalid (ex: username:password)")
       _ ->
         cond do
-          String.length(creds["topic"]) == 0 -> add_error(changeset, :message, "Topic should not be blank")
+          String.length(creds["topic"]) == 0 -> put_change(changeset, :credentials, Map.merge(creds, %{"topic" => "helium/"}))
           Regex.match?(~r/ /, creds["topic"]) -> add_error(changeset, :message, "Topic should not have spaces")
           Regex.match?(~r/^\//, creds["topic"]) -> add_error(changeset, :message, "Topic should not start with a forward slash")
           true -> changeset

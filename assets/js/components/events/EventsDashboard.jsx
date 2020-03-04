@@ -24,7 +24,7 @@ class EventsDashboard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
+    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data    
 
     if (prevProps.data.loading && !loading) {
       this.setState({ rows: deviceEvents }, () => {
@@ -52,10 +52,6 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const fcntGroupedRows = groupBy(this.state.rows, function(n) {
-      return n.frame_up;
-    });
-    const uniqChannels = uniqBy(this.state.rows, 'channel_name');
     const uniqRows = uniqBy(this.state.rows, v => [v.frame_up, v.frame_down].join());
 
     const categoryTag = (category) => {
@@ -107,6 +103,7 @@ class EventsDashboard extends Component {
       {
         title: 'FCnt',
         dataIndex: 'frame_up',
+        render: (data, row) => row.category === 'up' ? <span>{row.frame_up}</span> : <span>{row.frame_down}</span>
       },
       {
         title: 'Time',
@@ -116,18 +113,27 @@ class EventsDashboard extends Component {
     ]
 
     const expandedRowRender = (record) => {
-      const hotspotColumns = [
-        { title: 'Hotspot Name', dataIndex: 'hotspot_name', key: 'hotspot_name' },
-        { title: 'RSSI', dataIndex: 'rssi', key: 'rssi' },
-        { title: 'SNR', dataIndex: 'snr', key: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
-      ]
-      const hotspotData = uniqBy(fcntGroupedRows[record.frame_up], 'hotspot_name');
+      let hotspotData = [];
+      let channelData = [];
+      let hotspotColumns = [{ title: 'Hotspot Name', dataIndex: 'hotspot_name', key: 'hotspot_name' },];
+      let channelColumns = [{ dataIndex: 'status', key: 'status', render: data => <span>{statusBadge(data)}</span> },];
 
-      const channelColumns = [
-        { dataIndex: 'status', key: 'status', render: data => <span>{statusBadge(data)}</span> },
-        { title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' },
-        { title: 'Response', dataIndex: 'description', key: 'description' }
-      ]
+      if (record.category === "down" || record.category === "ack") {
+        channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
+        hotspotData = this.state.rows.filter(row => row.frame_down === record.frame_down);
+        channelData = uniqBy(hotspotData, 'channel_name');
+      } else if (record.category === "activation") {
+        channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
+        hotspotData = this.state.rows.filter(row => row.frame_up === record.frame_up && row.category === "activation");
+        hotspotData = uniqBy(hotspotData, 'hotspot_name');
+        channelData = uniqBy(hotspotData, 'channel_name');
+      } else { //uplinks
+        hotspotColumns.push({ title: 'RSSI', dataIndex: 'rssi', key: 'rssi' }, { title: 'SNR', dataIndex: 'snr', key: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> });
+        channelColumns.push({ title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' }, { title: 'Response', dataIndex: 'description', key: 'description' });
+        hotspotData = this.state.rows.filter(row => row.frame_up === record.frame_up && row.category === "up");
+        hotspotData = uniqBy(hotspotData, 'hotspot_name');
+        channelData = uniqBy(hotspotData, 'channel_name');
+      }
 
       return <Row>
               <Col span={12}>
@@ -137,7 +143,7 @@ class EventsDashboard extends Component {
               </Col>
               <Col span={12}>
                 <Card bordered={false}>
-                  <Table columns={channelColumns} dataSource={uniqChannels} pagination={false} rowKey={record => record.hotspot_name}/>
+                  <Table columns={channelColumns} dataSource={channelData} pagination={false} rowKey={record => record.hotspot_name}/>
                 </Card>
               </Col>
               </Row>
