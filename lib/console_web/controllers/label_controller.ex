@@ -15,7 +15,12 @@ defmodule ConsoleWeb.LabelController do
 
   def create(conn, %{"label" => label_params, "channel_id" => channel_id}) do
     current_organization = conn.assigns.current_organization
-    label_params = Map.merge(label_params, %{"organization_id" => current_organization.id})
+    current_user = conn.assigns.current_user
+    label_params =
+      Map.merge(label_params, %{
+        "organization_id" => current_organization.id,
+        "creator" => current_user.email
+      })
 
     with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
       broadcast(label)
@@ -148,6 +153,7 @@ defmodule ConsoleWeb.LabelController do
 
   def add_devices_to_label(conn, %{"devices" => devices, "new_label" => label_name}) do
     current_organization = conn.assigns.current_organization
+    current_user = conn.assigns.current_user
 
     cond do
       length(devices) == 0 -> {:error, :bad_request, "Please select a device"}
@@ -155,7 +161,7 @@ defmodule ConsoleWeb.LabelController do
       true ->
         label_changeset =
           %Label{}
-          |> Label.changeset(%{"name" => label_name, "organization_id" => current_organization.id})
+          |> Label.changeset(%{"name" => label_name, "organization_id" => current_organization.id, "creator" => current_user.email})
 
         result =
           Ecto.Multi.new()

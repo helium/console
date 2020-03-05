@@ -23,7 +23,7 @@ defmodule Console.Labels.Label do
   end
 
   def changeset(label, attrs) do
-    attrs = Helpers.sanitize_attrs(attrs, ["name", "color"])
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "color", "creator"])
 
     attrs =
       case attrs["name"] do
@@ -33,7 +33,7 @@ defmodule Console.Labels.Label do
 
     changeset =
       label
-      |> cast(attrs, [:name, :organization_id, :color])
+      |> cast(attrs, [:name, :organization_id, :color, :creator])
       |> validate_required([:name, :organization_id])
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "Label already exists, please use another name.")
   end

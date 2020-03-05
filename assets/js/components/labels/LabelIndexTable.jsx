@@ -92,6 +92,10 @@ class LabelIndexTable extends Component {
         render: (text, record) => <Text>{record.devices.length}</Text>
       },
       {
+        title: 'Creator',
+        dataIndex: 'creator',
+      },
+      {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')

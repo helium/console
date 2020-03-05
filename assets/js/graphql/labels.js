@@ -6,6 +6,7 @@ export const LABEL_FRAGMENT = gql`
     id,
     color,
     inserted_at,
+    creator,
     devices{
       name,
       id
