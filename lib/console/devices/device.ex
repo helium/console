@@ -17,9 +17,10 @@ defmodule Console.Devices.Device do
     field :dev_eui, :string
     field :app_key, :string
     field :app_eui, :string
-    field :key, :string
     field :oui, :integer
-    field :seq_id, :integer
+    field :frame_up, :integer
+    field :frame_down, :integer
+    field :last_connected, :naive_datetime
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all

@@ -14,6 +14,7 @@ defmodule Console.Labels.Label do
   schema "labels" do
     field :name, :string
     field :color, :string
+    field :creator, :string
 
     belongs_to :organization, Organization
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
@@ -23,7 +24,7 @@ defmodule Console.Labels.Label do
 
   def changeset(label, attrs) do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "color"])
-    
+
     attrs =
       case attrs["name"] do
         nil -> attrs
