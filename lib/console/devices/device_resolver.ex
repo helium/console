@@ -58,9 +58,9 @@ defmodule Console.Devices.DeviceResolver do
       |> where([d], d.organization_id == ^current_organization.id and d.id == ^id)
       |> Repo.one()
 
-    five_min_ago = NaiveDateTime.utc_now() |> NaiveDateTime.add(-300)
     events = Event
-      |> where([e], e.device_id == ^device.id and e.reported_at_naive > ^five_min_ago)
+      |> where([e], e.device_id == ^device.id)
+      |> limit(100)
       |> order_by(desc: :reported_at_naive)
       |> Repo.all()
 
