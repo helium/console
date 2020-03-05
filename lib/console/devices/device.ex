@@ -37,6 +37,5 @@ defmodule Console.Devices.Device do
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui])
-      |> unique_constraint(:mac)
   end
 end
