@@ -59,7 +59,7 @@ class Register extends Component {
           showOrgCreation ? (
             <Form onSubmit={this.registerUser}>
               <Text>
-                To easily manage devices, Console provides a logical structure with Organizations and Devices. Define an Organization name as the top level of your structure, (usually your company name).
+                Define an Organization as the top level of your structure, (usually your company name).
               </Text>
               <br />
               <Text>
@@ -76,12 +76,11 @@ class Register extends Component {
               </Form.Item>
 
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Button type="primary" htmlType="submit">
-                  Register
-                </Button>
-
                 <Button onClick={() => this.setState({ showOrgCreation: false })}>
                   Back
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Continue
                 </Button>
               </div>
             </Form>
