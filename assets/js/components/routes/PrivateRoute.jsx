@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Redirect, withRouter } from 'react-router'
 import { connect } from 'react-redux';
+import NoOrganization from '../dashboard/NoOrganization'
 
 class PrivateRoute extends Component {
   render() {
@@ -11,6 +12,10 @@ class PrivateRoute extends Component {
       <Route path={path} render={props => {
         if (!isLoggedIn) {
           return <Redirect to='/login' />
+        }
+
+        if (!currentOrganizationId) {
+          return <NoOrganization />
         }
 
         return <Component {...props} />

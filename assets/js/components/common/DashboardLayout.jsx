@@ -7,7 +7,7 @@ const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
   render() {
-    const { classes, title, extra, breadCrumbs } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav } = this.props;
 
     return (
       <Layout style={{width: '100%'}}>
@@ -16,10 +16,14 @@ class DashboardLayout extends Component {
           </Header>
 
       <Layout style={{ height: 'calc(100vh - 64px)' }}>
-        <Sider>
-          <NavDrawer />
-          <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Beta v0.1</Tag>
-        </Sider>
+        {
+          !noSideNav && (
+            <Sider>
+              <NavDrawer />
+              <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Beta v0.1</Tag>
+            </Sider>
+          )
+        }
         <Layout>
           <Content><ContentLayout title={title} extra={extra} breadCrumbs={breadCrumbs}>
             {this.props.children}

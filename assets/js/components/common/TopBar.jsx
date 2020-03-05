@@ -33,9 +33,11 @@ class TopBar extends Component {
           }
         </div>
         <div style={{ flexGrow: 1 }}/>
-        <SearchBar />
+        {
+          currentOrganizationName && <SearchBar />
+        }
         <div style={{ width: 20 }}/>
-        <Dropdown overlay={menu(this.handleClick)}>
+        <Dropdown overlay={menu(this.handleClick, !!currentOrganizationName)}>
           <Text style={{ color: 'white', cursor: 'pointer' }}>
             Account <Icon type="down" />
           </Text>
@@ -45,11 +47,15 @@ class TopBar extends Component {
   }
 }
 
-const menu = handleClick => (
+const menu = (handleClick, showProfile) => (
   <Menu onClick={handleClick}>
-    <Menu.Item key="/profile">
-      <Icon type="profile" /> Profile
-    </Menu.Item>
+    {
+      showProfile && (
+        <Menu.Item key="/profile">
+          <Icon type="profile" /> Profile
+        </Menu.Item>
+      )
+    }
     <Menu.Item key="logout">
       <Icon type="logout" /> Log Out
     </Menu.Item>
