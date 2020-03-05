@@ -126,7 +126,7 @@
                                 <tr>
                                    <!-- start of image -->
                                    <td align="center">
-                                      <a target="_blank" href="#"><img width="54" border="0" height="54" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="/images/bluelogo.png" class="bigimage"></a>
+                                      <a target="_blank" href="#"><img width="54" border="0" height="54" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/bluelogo.png") %>" class="bigimage"></a>
                                    </td>
                                 </tr>
                                 <!-- end of image -->
@@ -163,7 +163,7 @@
                                  <tr>
                                     <!-- start of image -->
                                     <td align="center">
-                                       <a target="_blank" href="#"><img width="580" border="0" height="278" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="/images/welcomeheader.jpg" class="bigimage"></a>
+                                       <a target="_blank" href="#"><img width="580" border="0" height="278" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/welcomeheader.jpg") %>" class="bigimage"></a>
                                     </td>
                                  </tr>
                                  <!-- end of image -->
@@ -245,7 +245,7 @@
                                 <tr>
                                    <!-- start of image -->
                                    <td align="center">
-                                      <a target="_blank" href="#"><img width="580" border="0" height="15" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="/images/footer.jpg" class="bigimage"></a>
+                                      <a target="_blank" href="#"><img width="580" border="0" height="15" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/footer.jpg") %>" class="bigimage"></a>
                                    </td>
                                 </tr>
                                 <!-- end of image -->
@@ -257,7 +257,7 @@
                                 <tr>
                                    <!-- start of image -->
                                    <td align="center">
-                                      <a target="_blank" href="#"><img width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="/images/greysignoff.png" class="bigimage"></a>
+                                      <a target="_blank" href="#"><img width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/greysignoff.png") %>" class="bigimage"></a>
                                    </td>
                                 </tr>
                              </tbody>
