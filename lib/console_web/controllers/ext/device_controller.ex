@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.Cli.DeviceController do
+defmodule ConsoleWeb.Ext.DeviceController do
   use ConsoleWeb, :controller
   alias Console.Repo
   import Ecto.Query
@@ -15,12 +15,24 @@ defmodule ConsoleWeb.Cli.DeviceController do
     render(conn, "index.json", devices: current_organization.devices)
   end
 
+  def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui_app_eui_org_id(dev_eui, app_eui, current_organization.id)
+    
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Device not found"}
+      _ ->
+        render(conn, "show.json", device: List.first(devices))
+    end
+  end
+
   def show(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
     case Devices.get_device(current_organization, id) do
       nil ->
-        {:error, :not_found, "Device ID not found"}
+        {:error, :not_found, "Device not found"}
       %Device{} = device ->
         render(conn, "show.json", device: device)
     end

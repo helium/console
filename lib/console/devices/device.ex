@@ -37,6 +37,6 @@ defmodule Console.Devices.Device do
       device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
-      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui])
+      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
   end
 end

@@ -29,6 +29,11 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
+  def get_by_dev_eui_app_eui_org_id(dev_eui, app_eui, org_id) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui and d.organization_id == ^org_id)
+     |> Repo.all()
+  end
+
   def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
     Repo.preload(device, assoc)
   end
