@@ -28,6 +28,18 @@ class NewDeviceModal extends Component {
     labelId: null,
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.open && this.props.open) {
+      this.setState({
+        name: "",
+        devEUI: randomString(16),
+        appEUI: randomString(16),
+        appKey: randomString(32),
+        labelId: null,
+      })
+    }
+  }
+
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }

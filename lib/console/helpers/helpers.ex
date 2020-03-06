@@ -46,4 +46,14 @@ defmodule Console.Helpers do
     attrs
   end
 
+  def upcase_attrs(attrs, keys) do
+    attrs = Enum.reduce(keys, attrs, fn key, acc ->
+      case Map.get(attrs, key) do
+        nil -> acc
+        value ->
+          Map.put(acc, key, String.upcase(value))
+      end
+    end)
+    attrs
+  end
 end
