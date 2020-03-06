@@ -18,7 +18,7 @@ defmodule ConsoleWeb.Ext.DeviceController do
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     current_organization = conn.assigns.current_organization
     devices = Devices.get_by_dev_eui_app_eui_org_id(dev_eui, app_eui, current_organization.id)
-    
+
     case length(devices) do
       0 ->
         {:error, :not_found, "Device not found"}
@@ -43,11 +43,11 @@ defmodule ConsoleWeb.Ext.DeviceController do
 
     case Devices.get_device(current_organization, id) do
       nil ->
-        {:error, :not_found, "Device ID not found"}
+        {:error, :not_found, "Device not found"}
       %Device{} = device ->
         with {:ok, _} <- Devices.delete_device(device) do
           conn
-          |> send_resp(:no_content, "Device deleted")
+          |> send_resp(:ok, "Device deleted")
         end
     end
   end
