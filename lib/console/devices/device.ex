@@ -40,6 +40,8 @@ defmodule Console.Devices.Device do
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
+
   end
 
   defp check_attrs_format(changeset) do
