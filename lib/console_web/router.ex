@@ -28,6 +28,7 @@ defmodule ConsoleWeb.Router do
     post "/users/change_password", UserController, :change_password
     post "/sessions", SessionController, :create
     post "/2fa/verify", TwoFactorController, :verify
+    get "/invitations/:token", InvitationController, :get_by_token
   end
 
   scope "/api", ConsoleWeb do

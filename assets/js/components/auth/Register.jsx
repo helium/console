@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { parse } from 'query-string'
 import { register } from '../../actions/auth.js';
+import { getInvitation } from '../../actions/invitation.js';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -14,10 +15,18 @@ const { Text, Title } = Typography
 class Register extends Component {
   state = {
     organizationName: "",
-    email: this.props.email || "",
+    email: "",
     password: "",
     showOrgCreation: false,
     acceptedTerms: false,
+  }
+
+  componentDidMount() {
+    const { invitationToken, getInvitation } = this.props
+    if (invitationToken) {
+      getInvitation(invitationToken)
+      .then(invite => this.setState({ email: invite.email, invite }))
+    }
   }
 
   handleInputUpdate = (e) => {
@@ -111,8 +120,7 @@ class Register extends Component {
   }
 
   joinContent = () => {
-    const { classes, organizationName, inviter } = this.props
-    const { acceptedTerms } = this.state
+    const { acceptedTerms, invite } = this.state
 
     return (
       <div>
@@ -120,9 +128,9 @@ class Register extends Component {
           <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
           <div style={{textAlign: 'center', marginBottom: 30}}>
             <Title>
-              Register to join {organizationName}
+              Register to join {invite && invite.organizationName}
             </Title>
-            <Text style={{color:'#38A2FF'}}>You are invited by {inviter}</Text>
+            <Text style={{color:'#38A2FF'}}>You are invited by {invite && invite.inviter}</Text>
           </div>
           <Form onSubmit={this.registerUser}>
             {this.commonFields()}
@@ -200,9 +208,6 @@ function mapStateToProps(state, ownProps) {
       auth: state.auth,
       version: "join",
       invitationToken: queryParams.invitation,
-      organizationName: queryParams.organization_name,
-      inviter: queryParams.inviter,
-      email: queryParams.email,
     }
   }
 
@@ -213,7 +218,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ register }, dispatch);
+  return bindActionCreators({ register, getInvitation }, dispatch);
 }
 
 export default Register

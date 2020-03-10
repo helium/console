@@ -13,6 +13,13 @@ export const inviteUser = (email, role, organization) => {
   }
 }
 
+export const getInvitation = (token) => {
+  return (dispatch) => {
+    return rest.get(`/api/invitations/${token}`)
+      .then(response => response.data)
+  }
+}
+
 export const deleteInvitation = (invitation) => {
   return (dispatch) => {
     rest.destroy(`/api/invitations/${invitation.id}`)

@@ -9,7 +9,7 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Email
   alias Console.Mailer
 
-  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept]
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :get_by_token]
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -53,15 +53,9 @@ defmodule ConsoleWeb.InvitationController do
 
   def accept(conn, %{"token" => token}) do
     with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
-      inv = Organizations.fetch_assoc_invitation(inv)
-      organization = inv.organization
-      organization_name = URI.encode(organization.name)
-      inviter = inv.inviter
-      inviter_email = URI.encode(inviter.email)
-
       conn
       |> redirect(
-        to: "/register?invitation=#{token}&organization_name=#{organization_name}&inviter=#{inviter_email}&email=#{inv.email}"
+        to: "/register?invitation=#{token}"
       )
     else
       {false, _} ->
@@ -69,6 +63,18 @@ defmodule ConsoleWeb.InvitationController do
         |> put_flash(:error, "This invitation is no longer valid")
         |> redirect(to: "/register")
         |> halt()
+    end
+  end
+
+  def get_by_token(conn, %{"token" => token}) do
+    with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
+      inv = Organizations.fetch_assoc_invitation(inv)
+      organization = inv.organization
+      organization_name = URI.encode(organization.name)
+      inviter = inv.inviter
+      inviter_email = URI.encode(inviter.email)
+
+      render(conn, "invitation.json", invitation: inv, organization_name: organization_name, inviter: inviter_email)
     end
   end
 
