@@ -29,6 +29,7 @@ defmodule Console.Auth.User do
     |> validate_required(:email, message: "Email needs to not be blank")
     |> validate_length(:email, min: 1, max: 255, message: "Email needs to be between 1 and 255 characters long")
     |> validate_format(:email, ~r/@/, message: "Email needs to have an @ sign to be valid")
+    |> put_downcased_email()
     |> unique_constraint(:email, message: "Email has already been taken, please log in instead")
   end
 
@@ -74,6 +75,14 @@ defmodule Console.Auth.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
         put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(pass))
+      _ -> changeset
+    end
+  end
+
+  defp put_downcased_email(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{email: email}} ->
+        put_change(changeset, :email, email |> String.trim() |> String.downcase())
       _ -> changeset
     end
   end
