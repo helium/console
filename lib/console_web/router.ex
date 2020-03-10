@@ -13,7 +13,6 @@ defmodule ConsoleWeb.Router do
     plug :accepts, ["json"]
   end
 
-  forward "/graphql/console", Absinthe.Plug.GraphiQL, schema: ConsoleWeb.Schema
   scope "/graphql" do
     pipe_through ConsoleWeb.Plug.GraphqlPipeline
 
