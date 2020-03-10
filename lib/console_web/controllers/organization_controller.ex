@@ -5,7 +5,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.Organizations
   alias Console.Auth
 
-  plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete_organization]
+  plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
   action_fallback ConsoleWeb.FallbackController
 
