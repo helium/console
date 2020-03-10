@@ -163,6 +163,10 @@ defmodule Console.Organizations do
   end
 
   def delete_organization(%Organization{} = organization) do
-    Repo.delete(organization)
+    Repo.transaction(fn ->
+      from(key in ApiKey, where: key.organization_id == ^organization.id)
+      |> Repo.delete_all()
+      Repo.delete(organization)
+    end)
   end
 end

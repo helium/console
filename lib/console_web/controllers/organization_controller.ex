@@ -36,7 +36,7 @@ defmodule ConsoleWeb.OrganizationController do
 
   def delete(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
-    with {:ok, %Organization{} = organization} <- Organizations.delete_organization(organization) do
+    with {:ok, _} <- Organizations.delete_organization(organization) do
       broadcast(organization, conn.assigns.current_user)
 
       conn
