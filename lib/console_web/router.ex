@@ -82,6 +82,9 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.ExtApiPipeline
 
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
+    get "/labels", LabelController, :index
+    post "/devices_labels", LabelController, :add_device_to_label
+    post "/devices_labels/delete", LabelController, :delete_device_from_label
   end
 
   scope "/api/stats", ConsoleWeb do
