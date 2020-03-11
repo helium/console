@@ -12,6 +12,10 @@ defmodule Console.ApiKeys do
      Repo.get_by(ApiKey, [key: key])
   end
 
+  def get_api_key_by_token(token) do
+    Repo.get_by(ApiKey, [token: token])
+  end
+
   def get_user_api_keys(user) do
     ApiKey
       |> where([k], k.user_id == ^user.id)
@@ -28,5 +32,11 @@ defmodule Console.ApiKeys do
 
   def delete_api_key(%ApiKey{} = api_key) do
     Repo.delete(api_key)
+  end
+
+  def mark_api_key_activated(%ApiKey{} = api_key) do
+    api_key
+    |> ApiKey.activate_changeset()
+    |> Repo.update()
   end
 end

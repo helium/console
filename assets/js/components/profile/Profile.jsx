@@ -83,9 +83,16 @@ class Profile extends Component {
         dataIndex: 'role',
       },
       {
-        title: 'Date Activated',
+        title: 'Date Created',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')
+      },
+      {
+        title: 'Activated',
+        dataIndex: 'active',
+        render: r => (
+          <Text>{r.toString()}</Text>
+        )
       },
       {
         title: 'Created By',
@@ -96,7 +103,7 @@ class Profile extends Component {
         key: 'action',
         render: (text, record) => (
           <UserCan>
-            <Link to="#" onClick={() => this.props.deleteKey(record.id)}>Deactivate</Link>
+            <Link to="#" onClick={() => this.props.deleteKey(record.id)}>Delete</Link>
           </UserCan>
         )
       },

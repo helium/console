@@ -81,6 +81,7 @@ defmodule ConsoleWeb.Schema do
     field :role, :string
     field :inserted_at, :naive_datetime
     field :user, :string
+    field :active, :boolean
   end
 
   object :event do

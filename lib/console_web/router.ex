@@ -105,6 +105,7 @@ defmodule ConsoleWeb.Router do
     get "/users/reset_password/:token", UserController, :reset_password, as: "reset_password"
 
     get "/invitations/accept/:token", InvitationController, :accept, as: "accept_invitation"
+    get "/api_keys/accept/:token", ApiKeyController, :accept, as: "accept_api_key"
 
     get "/*path", PageController, :index
   end

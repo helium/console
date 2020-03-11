@@ -18,7 +18,7 @@ defmodule Console.ApiKeys.ApiKey do
     timestamps()
   end
 
-  def create_changeset(api_key, attrs \\ %{}) do
+  def changeset(api_key, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["role", "name"])
 
     api_key
@@ -28,7 +28,19 @@ defmodule Console.ApiKeys.ApiKey do
     |> validate_required(:name, message: "Please choose a name for your new api key")
     |> validate_required([:key, :organization_id, :user_id])
     |> unique_constraint(:name, name: :api_keys_name_organization_id_index, message: "This name has already been used in this organization")
+  end
+
+  def create_changeset(api_key, attrs \\ %{}) do
+    api_key
+    |> changeset(attrs)
     |> put_token()
+  end
+
+  def activate_changeset(api_key) do
+    api_key
+    |> changeset()
+    |> put_change(:active, true)
+    |> put_change(:token, nil)
   end
 
   defp put_token(changeset) do

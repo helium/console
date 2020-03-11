@@ -2,6 +2,7 @@ defmodule Console.Email do
   use Bamboo.Phoenix, view: ConsoleWeb.EmailView
 
   alias Console.Auth.User
+  alias Console.ApiKeys.ApiKey
   alias Console.Organizations.Invitation
   alias Console.Organizations.Membership
   alias Console.Organizations.Organization
@@ -41,6 +42,15 @@ defmodule Console.Email do
     |> subject("You've been added to #{organization_name} on Helium")
     |> assign(:organization_name, organization_name)
     |> render(:joined_organization_email)
+  end
+
+  def api_key_email(%User{email: email}, %ApiKey{token: token, name: name}) do
+    base_email()
+    |> to(email)
+    |> subject("Activate your new Helium API Key")
+    |> assign(:token, token)
+    |> assign(:key_name, name)
+    |> render(:api_key_email)
   end
 
   defp base_email do

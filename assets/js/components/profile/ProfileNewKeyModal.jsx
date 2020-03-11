@@ -15,20 +15,22 @@ const ProfileNewKeyModal = ({ newKey, onClose }) => (
     ]}
   >
     <div style={{ marginBottom: 20 }}>
-      <Text>Please copy your new API key now.</Text><br />
-      <Text>This key will be displayed to you on this occasion only. You will have to generate new keys if you lose this one.</Text>
+      <Text>This key will be displayed to you on this occasion only. You will have to generate a new key if you lose this one.</Text>
     </div>
     {
       newKey && (
         <div>
-          <div style={{ marginBottom: 20 }}>
+          <Text>{newKey.key}</Text>
+          <div style={{ marginTop: 20 }}>
             <Text strong>Key Name: {newKey.name}</Text><br />
             <Text strong>Key Role: {newKey.role}</Text><br />
           </div>
-          <Text>{newKey.key}</Text>
         </div>
       )
     }
+    <div style={{ marginTop: 20 }}>
+      <Text>Please check your email for a confirmation to activate this key.</Text>
+    </div>
   </Modal>
 )
 

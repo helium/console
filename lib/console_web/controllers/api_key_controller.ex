@@ -2,9 +2,12 @@ defmodule ConsoleWeb.ApiKeyController do
   use ConsoleWeb, :controller
   alias Console.Repo
   alias Console.ApiKeys
+  alias Console.Email
+  alias Console.Mailer
   alias Console.ApiKeys.ApiKey
 
-  plug ConsoleWeb.Plug.AuthorizeAction
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept]
+
   action_fallback(ConsoleWeb.FallbackController)
 
   def create(conn, %{"api_key" => params}) do
@@ -20,6 +23,7 @@ defmodule ConsoleWeb.ApiKeyController do
 
       with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
         broadcast(api_key)
+        Email.api_key_email(current_user, api_key) |> Mailer.deliver_later()
 
         conn
         |> put_status(:created)
@@ -39,6 +43,29 @@ defmodule ConsoleWeb.ApiKeyController do
       conn
       |> put_resp_header("message", "#{api_key.name} deleted successfully")
       |> send_resp(:no_content, "")
+    end
+  end
+
+  def accept(conn, %{"token" => token}) do
+    with %ApiKey{} = api_key <- ApiKeys.get_api_key_by_token(token) do
+      case ApiKeys.mark_api_key_activated(api_key) do
+        {:ok, _} ->
+          conn
+          |> put_flash(:info, "Your API key is now activated")
+          |> redirect(to: "/profile")
+          |> halt()
+        _ ->
+          conn
+          |> put_flash(:error, "Something went wrong")
+          |> redirect(to: "/profile")
+          |> halt()
+      end
+    else
+      nil ->
+        conn
+        |> put_flash(:error, "Invalid API Key token provided")
+        |> redirect(to: "/profile")
+        |> halt()
     end
   end
 
