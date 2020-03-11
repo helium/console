@@ -8,6 +8,8 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Devices.Device
   action_fallback(ConsoleWeb.FallbackController)
 
+  plug CORSPlug, origin: "*"
+
   def index(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     current_organization = conn.assigns.current_organization
     devices = Devices.get_by_device_attrs(dev_eui, app_eui, app_key, current_organization.id)

@@ -10,6 +10,8 @@ defmodule ConsoleWeb.V1.LabelController do
   alias Console.Labels.Label
   action_fallback(ConsoleWeb.FallbackController)
 
+  plug CORSPlug, origin: "*"
+
   def index(conn, _params) do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:labels])
