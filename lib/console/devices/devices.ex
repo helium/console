@@ -29,8 +29,8 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
-  def get_by_dev_eui_app_eui_org_id(dev_eui, app_eui, org_id) do
-     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui and d.organization_id == ^org_id)
+  def get_by_device_attrs(dev_eui, app_eui, app_key, org_id) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui and d.app_key == ^app_key and d.organization_id == ^org_id)
      |> Repo.all()
   end
 

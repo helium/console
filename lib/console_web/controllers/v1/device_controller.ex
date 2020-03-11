@@ -8,16 +8,9 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Devices.Device
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    current_organization =
-      conn.assigns.current_organization |> Organizations.fetch_assoc([:devices])
-
-    render(conn, "index.json", devices: current_organization.devices)
-  end
-
-  def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
+  def index(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     current_organization = conn.assigns.current_organization
-    devices = Devices.get_by_dev_eui_app_eui_org_id(dev_eui, app_eui, current_organization.id)
+    devices = Devices.get_by_device_attrs(dev_eui, app_eui, app_key, current_organization.id)
 
     case length(devices) do
       0 ->
@@ -25,6 +18,13 @@ defmodule ConsoleWeb.V1.DeviceController do
       _ ->
         render(conn, "show.json", device: List.first(devices))
     end
+  end
+
+  def index(conn, _params) do
+    current_organization =
+      conn.assigns.current_organization |> Organizations.fetch_assoc([:devices])
+
+    render(conn, "index.json", devices: current_organization.devices)
   end
 
   def show(conn, %{ "id" => id }) do
