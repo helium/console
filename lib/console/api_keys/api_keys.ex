@@ -12,6 +12,12 @@ defmodule Console.ApiKeys do
      Repo.get_by(ApiKey, [key: key])
   end
 
+  def get_user_api_keys(user) do
+    ApiKey
+      |> where([k], k.user_id == ^user.id)
+      |> Repo.all()
+  end
+
   def create_api_key(organization, user, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{"organization_id" => organization.id, "user_id" => user.id})
 

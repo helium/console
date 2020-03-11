@@ -10,16 +10,22 @@ defmodule ConsoleWeb.ApiKeyController do
   def create(conn, %{"api_key" => params}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
-    key = :crypto.strong_rand_bytes(32) |> Base.encode64(padding: false)
-    params = Map.put(params, "key", :crypto.hash(:sha256, key))
+    keys = ApiKeys.get_user_api_keys(current_user)
 
-    with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
-      broadcast(api_key)
+    if length(keys) > 9 do
+      {:error, :forbidden, "Users can create a maximum of 10 api keys each"}
+    else
+      key = :crypto.strong_rand_bytes(32) |> Base.encode64(padding: false)
+      params = Map.put(params, "key", :crypto.hash(:sha256, key))
 
-      conn
-      |> put_status(:created)
-      |> put_resp_header("message",  "#{api_key.name} created successfully")
-      |> render("show.json", api_key: api_key, key: key)
+      with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
+        broadcast(api_key)
+
+        conn
+        |> put_status(:created)
+        |> put_resp_header("message",  "#{api_key.name} created successfully")
+        |> render("show.json", api_key: api_key, key: key)
+      end
     end
   end
 
