@@ -82,7 +82,7 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.V1ApiPipeline
 
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
-    get "/labels", LabelController, :index
+    resources "/labels", LabelController, only: [:index, :create, :delete]
     post "/devices_labels", LabelController, :add_device_to_label
     post "/devices_labels/delete", LabelController, :delete_device_from_label
   end

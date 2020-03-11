@@ -17,10 +17,11 @@ defmodule ConsoleWeb.Plug.VerifyApiKey do
         |> auth_error({:invalid_api_key, :invalid_api_key}, %{})
         |> halt()
 
-      %ApiKey{ organization_id: id } ->
-        current_organization = Organizations.get_organization!(id)
+      %ApiKey{ organization_id: organization_id, user_id: user_id } ->
+        current_organization = Organizations.get_organization!(organization_id)
         conn
         |> assign(:current_organization, current_organization)
+        |> assign(:user_id, user_id)
     end
   end
 end

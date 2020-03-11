@@ -5,6 +5,7 @@ defmodule ConsoleWeb.V1.LabelController do
 
   alias Console.Organizations
   alias Console.Devices
+  alias Console.Auth
   alias Console.Labels
   alias Console.Labels.Label
   action_fallback(ConsoleWeb.FallbackController)
@@ -14,6 +15,35 @@ defmodule ConsoleWeb.V1.LabelController do
       conn.assigns.current_organization |> Organizations.fetch_assoc([:labels])
 
     render(conn, "index.json", labels: current_organization.labels)
+  end
+
+  def create(conn, %{"label" => label_params}) do
+    current_organization = conn.assigns.current_organization
+    current_user = conn.assigns.user_id |> Auth.get_user_by_id!()
+
+    label_params =
+      Map.merge(label_params, %{
+        "organization_id" => current_organization.id,
+        "creator" => current_user.email
+      })
+
+    with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
+      render(conn, "show.json", label: label)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    current_organization = conn.assigns.current_organization
+
+    case Labels.get_label(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        with {:ok, _} <- Labels.delete_label(label) do
+          conn
+          |> send_resp(:ok, "Label deleted")
+        end
+    end
   end
 
   def add_device_to_label(conn, %{ "label" => label_id, "device" => device_id}) do
