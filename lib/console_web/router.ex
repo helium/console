@@ -81,6 +81,7 @@ defmodule ConsoleWeb.Router do
   scope "/api/v1", ConsoleWeb.V1 do
     pipe_through ConsoleWeb.V1ApiPipeline
 
+    get "/organization", OrganizationController, :show
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
     resources "/labels", LabelController, only: [:index, :create, :delete]
     post "/devices_labels", LabelController, :add_device_to_label
