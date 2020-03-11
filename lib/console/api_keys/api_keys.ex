@@ -4,8 +4,8 @@ defmodule Console.ApiKeys do
 
   alias Console.ApiKeys.ApiKey
 
-  def get_api_key!(user, id) do
-     Repo.get_by!(ApiKey, [id: id, user_id: user.id])
+  def get_api_key!(organization, id) do
+     Repo.get_by!(ApiKey, [id: id, organization_id: organization.id])
   end
 
   def get_api_key(key) do

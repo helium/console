@@ -24,8 +24,8 @@ defmodule ConsoleWeb.ApiKeyController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
-    api_key = ApiKeys.get_api_key!(current_user, id)
+    current_organization = conn.assigns.current_organization
+    api_key = ApiKeys.get_api_key!(current_organization, id)
 
     with {:ok, %ApiKey{} = api_key} <- ApiKeys.delete_api_key(api_key) do
       broadcast(api_key)
@@ -37,6 +37,6 @@ defmodule ConsoleWeb.ApiKeyController do
   end
 
   def broadcast(%ApiKey{} = api_key) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, api_key, api_key_added: "#{api_key.organization_id}/#{api_key.user_id}/api_key_added")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, api_key, api_key_added: "#{api_key.organization_id}/api_key_added")
   end
 end

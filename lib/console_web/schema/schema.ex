@@ -80,6 +80,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :role, :string
     field :inserted_at, :naive_datetime
+    field :user, :string
   end
 
   object :event do
@@ -304,7 +305,7 @@ defmodule ConsoleWeb.Schema do
 
     field :api_key_added, :api_key do
       config fn _, %{context: %{ current_organization_id: organization_id, current_user_id: user_id }} ->
-        {:ok, topic: "#{organization_id}/#{user_id}/api_key_added"}
+        {:ok, topic: "#{organization_id}/api_key_added"}
       end
     end
   end

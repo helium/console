@@ -88,6 +88,10 @@ class Profile extends Component {
         render: data => moment.utc(data).local().format('lll')
       },
       {
+        title: 'Created By',
+        dataIndex: 'user',
+      },
+      {
         title: 'Action',
         key: 'action',
         render: (text, record) => (

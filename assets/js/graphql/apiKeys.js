@@ -7,6 +7,7 @@ export const ALL_API_KEYS = gql`
       name
       role
       inserted_at
+      user
     }
   }
 `
