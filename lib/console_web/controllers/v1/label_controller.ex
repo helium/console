@@ -28,7 +28,9 @@ defmodule ConsoleWeb.V1.LabelController do
       })
 
     with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
-      render(conn, "show.json", label: label)
+      conn
+      |> put_status(:created)
+      |> render("show.json", label: label)
     end
   end
 
