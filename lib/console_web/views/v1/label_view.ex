@@ -1,6 +1,6 @@
-defmodule ConsoleWeb.Ext.LabelView do
+defmodule ConsoleWeb.V1.LabelView do
   use ConsoleWeb, :view
-  alias ConsoleWeb.Ext.LabelView
+  alias ConsoleWeb.V1.LabelView
 
   def render("index.json", %{labels: labels}) do
     render_many(labels, LabelView, "label.json")

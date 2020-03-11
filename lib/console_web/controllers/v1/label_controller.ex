@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.Ext.LabelController do
+defmodule ConsoleWeb.V1.LabelController do
   use ConsoleWeb, :controller
   alias Console.Repo
   import Ecto.Query

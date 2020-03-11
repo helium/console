@@ -78,8 +78,8 @@ defmodule ConsoleWeb.Router do
     post "/gateways/verify", GatewayController, :verify
   end
 
-  scope "/api/ext", ConsoleWeb.Ext do
-    pipe_through ConsoleWeb.ExtApiPipeline
+  scope "/api/v1", ConsoleWeb.V1 do
+    pipe_through ConsoleWeb.V1ApiPipeline
 
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
     get "/labels", LabelController, :index

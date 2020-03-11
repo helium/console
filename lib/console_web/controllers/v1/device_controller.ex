@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.Ext.DeviceController do
+defmodule ConsoleWeb.V1.DeviceController do
   use ConsoleWeb, :controller
   alias Console.Repo
   import Ecto.Query

@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.ExtApiPipeline do
+defmodule ConsoleWeb.V1ApiPipeline do
   use Guardian.Plug.Pipeline, otp_app: :console
 
   plug ConsoleWeb.Plug.VerifyApiKey
