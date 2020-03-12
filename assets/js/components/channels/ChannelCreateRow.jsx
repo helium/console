@@ -34,8 +34,8 @@ const styles = {
 const channelTypes = [
   { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
   { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
-  { name: "Azure IoT - Coming Soon", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
-  { name: "AWS IoT - Coming Soon", link: "/integrations/new/aws", img: `${Aws}`, inactive: true },
+  { name: "AWS IoT Core", link: "/integrations/new/aws", img: `${Aws}`},
+  { name: "Azure IoT - Coming Soon", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },  
   { name: "Google IoT - Coming Soon", link: "/integrations/new/google", img: `${Google}`, inactive: true },
 ]
 

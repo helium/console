@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
 import { Typography, Input } from 'antd';
-const { Text } = Typography
+const { Text, Title } = Typography
 
 class AWSForm extends Component {
   state = {
-    accessKeyId: "",
-    secretAccessKey: "",
-    region: ""
+    accessKey: "",
+    secretKey: "",
+    region: "",
+    topic: "",
   }
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
-      const {accessKeyId, secretAccessKey, region } = this.state
-      if (accessKeyId.length > 0 && secretAccessKey.length > 0 && region.length > 0) {
+      const {accessKey, secretKey, region, topic } = this.state
+      if (accessKey.length > 0 && secretKey.length > 0 && region.length > 0 && topic.length > 0) {
         // check validation, if pass
         this.props.onValidInput({
-          accessKeyId,
-          secretAccessKey,
-          region
+          aws_access_key: accessKey,
+          aws_secret_key: secretKey,
+          aws_region: region,
+          topic
         })
       }
     })
@@ -26,44 +28,47 @@ class AWSForm extends Component {
   render() {
     const { type } = this.props
 
-    return (
-      <div>
-        <Text>
-          Connection coming soon...
-        </Text>
-      </div>
-    )
-
     return(
       <div>
-        <Text strong>
-          {type === "update" ? "Update Channel" : "Step 2"}
-        </Text>
-        <br />
-        <Text>
+        <Title level={4} style={{ marginBottom: '20px'}}>
           {type === "update" ? "Update your AWS Connection Details" : "Enter your AWS Connection Details"}
-        </Text>
+        </Title>
 
         <div>
           <Input
-            placeholder="Access Key ID"
-            name="accessKeyId"
-            value={this.state.accessKeyId}
+            addonBefore={(<div style={{width: '125px', textAlign: 'left'}}>Access Key</div>)}
+            placeholder="ie. AKIATFHY24442Z62QSQW"
+            name="accessKey"
+            value={this.state.accessKey}
             onChange={this.handleInputUpdate}
+            style={{ marginBottom: '10px', width: '350px'}}
           />
-
+          <br />
           <Input
-            placeholder="Secret Access Key"
-            name="secretAccessKey"
-            value={this.state.secretAccessKey}
+            addonBefore={(<div style={{width: '125px', textAlign: 'left'}}>Secret Key</div>)}
+            placeholder="ie. /bqKQzh8QbSuxrZJJGVX/KST5ZBGQW0kblIO4qJ4"
+            name="secretKey"
+            value={this.state.secretKey}
             onChange={this.handleInputUpdate}
+            style={{ marginBottom: '10px', width: '475px'}}
           />
-
+          <br />
           <Input
-            placeholder="Region"
+            addonBefore={(<div style={{width: '125px', textAlign: 'left'}}>Region</div>)}
+            placeholder="ie. us-west-1"
             name="region"
             value={this.state.region}
             onChange={this.handleInputUpdate}
+            style={{ marginBottom: '10px', width: '350px'}}
+          />
+          <br />
+          <Input
+            addonBefore={(<div style={{width: '125px', textAlign: 'left'}}>Topic</div>)}
+            placeholder="ie. my topic"
+            name="topic"
+            value={this.state.topic}
+            onChange={this.handleInputUpdate}
+            style={{ marginBottom: '10px', width: '350px'}}
           />
         </div>
       </div>
