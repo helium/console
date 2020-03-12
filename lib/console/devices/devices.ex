@@ -3,12 +3,18 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
+  alias Console.Organizations.Organization
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
 
   def list_devices do
     Repo.all(Device)
+  end
+
+  def get_organization_device_count(organization) do
+    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(devices)
   end
 
   def get_device!(id), do: Repo.get!(Device, id)
@@ -38,10 +44,16 @@ defmodule Console.Devices do
     Repo.preload(device, assoc)
   end
 
-  def create_device(attrs \\ %{}) do
-    %Device{}
-    |> Device.changeset(attrs)
-    |> Repo.insert()
+  def create_device(%Organization{} = organization, attrs \\ %{}) do
+    count = get_organization_device_count(organization)
+    cond do
+      count > 9999 ->
+        {:error, :forbidden, "Device limit for organization reached"}
+      true ->
+        %Device{}
+        |> Device.changeset(attrs)
+        |> Repo.insert()
+    end
   end
 
   def update_device(%Device{} = device, attrs) do

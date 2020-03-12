@@ -31,6 +31,8 @@ axios.interceptors.response.use(
       Object.keys(error.response.data.errors).forEach(key => {
         displayError(error.response.data.errors[key])
       })
+    } else if (error.response.status === 429) {
+      displayError("Too many requests per minute, please slow down your requests")
     } else {
       displayError()
     }

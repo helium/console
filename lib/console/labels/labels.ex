@@ -10,6 +10,12 @@ defmodule Console.Labels do
   alias Console.Devices
   alias Console.Channels
   alias Console.Organizations
+  alias Console.Organizations.Organization
+
+  def get_organization_label_count(organization) do
+    labels = from(d in Label, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(labels)
+  end
 
   def get_label!(id), do: Repo.get!(Label, id)
   def get_label!(organization, id) do
@@ -22,10 +28,16 @@ defmodule Console.Labels do
 
   def get_label_by_name(name, organization_id), do: Repo.get_by(Label, [name: name, organization_id: organization_id])
 
-  def create_label(attrs \\ %{}) do
-    %Label{}
-    |> Label.changeset(attrs)
-    |> Repo.insert()
+  def create_label(%Organization{} = organization, attrs \\ %{}) do
+    count = get_organization_label_count(organization)
+    cond do
+      count > 9999 ->
+        {:error, :forbidden, "Label limit for organization reached"}
+      true ->
+        %Label{}
+        |> Label.changeset(attrs)
+        |> Repo.insert()
+    end
   end
 
   def update_label(%Label{} = label, attrs) do

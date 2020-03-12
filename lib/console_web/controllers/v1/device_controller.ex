@@ -62,7 +62,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         "oui" => Application.fetch_env!(:console, :oui)
       })
 
-    with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
+    with {:ok, %Device{} = device} <- Devices.create_device(current_organization, device_params) do
       conn
       |> put_status(:created)
       |> render("show.json", device: device)

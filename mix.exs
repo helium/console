@@ -61,6 +61,7 @@ defmodule Console.Mixfile do
       {:libp2p_crypto, "1.0.1"},
       {:html_sanitize_ex, "~> 1.3.0"},
       {:cors_plug, "~> 2.0"},
+      {:hammer, "~> 6.0"},
     ]
   end
 

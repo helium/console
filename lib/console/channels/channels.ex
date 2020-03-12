@@ -14,6 +14,11 @@ defmodule Console.Channels do
     Repo.all(Channel)
   end
 
+  def get_organization_channel_count(organization) do
+    channels = from(d in Channel, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(channels)
+  end
+
   def get_channel!(id), do: Repo.get!(Channel, id)
 
   def get_channel!(organization, id) do
@@ -29,9 +34,15 @@ defmodule Console.Channels do
   end
 
   def create_channel(%Organization{} = organization, attrs \\ %{}) do
-    %Channel{}
-    |> Channel.create_changeset(attrs)
-    |> Repo.insert()
+    count = get_organization_channel_count(organization)
+    cond do
+      count > 9999 ->
+        {:error, :forbidden, "Channel limit for organization reached"}
+      true ->
+        %Channel{}
+        |> Channel.create_changeset(attrs)
+        |> Repo.insert()
+    end
   end
 
   def update_channel(%Channel{} = channel, %Organization{} = organization, attrs) do

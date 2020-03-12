@@ -22,7 +22,7 @@ defmodule ConsoleWeb.LabelController do
         "creator" => current_user.email
       })
 
-    with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
+    with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       broadcast(label)
 
       if channel_id != nil do

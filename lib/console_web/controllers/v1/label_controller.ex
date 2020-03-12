@@ -29,7 +29,7 @@ defmodule ConsoleWeb.V1.LabelController do
         "creator" => current_user.email
       })
 
-    with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
+    with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       conn
       |> put_status(:created)
       |> render("show.json", label: label)

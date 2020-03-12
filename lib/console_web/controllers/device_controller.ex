@@ -24,7 +24,7 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
 
-    with {:ok, %Device{} = device} <- Devices.create_device(device_params) do
+    with {:ok, %Device{} = device} <- Devices.create_device(current_organization, device_params) do
       if label_id != nil do
         label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
         Labels.add_devices_to_label([device.id], label.id, current_organization)

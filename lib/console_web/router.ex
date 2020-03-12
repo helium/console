@@ -7,10 +7,12 @@ defmodule ConsoleWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug ConsoleWeb.Plug.RateLimit, ["browser_actions", 60]
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ConsoleWeb.Plug.RateLimit, ["auth_actions", 60]
   end
 
   scope "/graphql" do
