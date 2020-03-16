@@ -133,6 +133,17 @@ defmodule Console.Organizations do
     end
   end
 
+  def valid_invitation_token_and_lock?(token) do
+    lock_query = Invitation
+      |> where([i], i.token == ^token)
+      |> lock("FOR UPDATE NOWAIT")
+
+    with %Invitation{} = invitation <- Repo.one(lock_query) do
+      {invitation.pending, invitation}
+    else nil -> {false, nil}
+    end
+  end
+
   def update_membership(%Membership{} = membership, attrs) do
     if attrs["role"] == "read" do
       Repo.transaction(fn ->

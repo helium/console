@@ -12,8 +12,11 @@ defmodule Console.ApiKeys do
      Repo.get_by(ApiKey, [key: key])
   end
 
-  def get_api_key_by_token(token) do
-    Repo.get_by(ApiKey, [token: token])
+  def get_api_key_by_token_and_lock(token) do
+    ApiKey
+      |> where([k], k.token == ^token)
+      |> lock("FOR UPDATE NOWAIT")
+      |> Repo.one()
   end
 
   def get_user_api_keys(user) do

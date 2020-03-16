@@ -47,7 +47,7 @@ defmodule ConsoleWeb.ApiKeyController do
   end
 
   def accept(conn, %{"token" => token}) do
-    with %ApiKey{} = api_key <- ApiKeys.get_api_key_by_token(token) do
+    with %ApiKey{} = api_key <- ApiKeys.get_api_key_by_token_and_lock(token) do
       case ApiKeys.mark_api_key_activated(api_key) do
         {:ok, _} ->
           conn

@@ -36,7 +36,7 @@ defmodule ConsoleWeb.UserController do
 
   # Registration via accepting invitation
   def create(conn, %{"user" => user_params, "invitation" => %{"token" => invitation_token}}) do
-    with {true, invitation} <- Organizations.valid_invitation_token?(invitation_token),
+    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token),
       {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
         organization = Organizations.get_organization!(invitation.organization_id)
 
