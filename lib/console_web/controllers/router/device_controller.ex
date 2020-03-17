@@ -23,7 +23,6 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def show(conn, %{"id" => id}) do
     device = Devices.get_device!(id) |> Repo.preload([:labels])
-
     device =
       if length(device.labels) > 0 do
         Map.put(device, :channels, Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq())
