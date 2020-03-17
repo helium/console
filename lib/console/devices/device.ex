@@ -36,7 +36,7 @@ defmodule Console.Devices.Device do
 
     changeset =
       device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :frame_up, :frame_down, :last_connected])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])

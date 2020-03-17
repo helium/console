@@ -7,6 +7,9 @@ export const DEVICE_FRAGMENT = gql`
     dev_eui,
     app_eui,
     app_key,
+    frame_up,
+    frame_down,
+    last_connected,
     inserted_at,
   }
 `

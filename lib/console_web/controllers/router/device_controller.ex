@@ -38,9 +38,15 @@ defmodule ConsoleWeb.Router.DeviceController do
       nil ->
         conn
         |> send_resp(404, "")
-      %Device{} ->
+      %Device{} = device ->
         case Events.create_event(event) do
-          {:ok, event} -> Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+          {:ok, event} ->
+            Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+            Devices.update_device(device, %{
+              "last_connected" => event.reported_at_naive,
+              "frame_up" => event.frame_up,
+              "frame_down" => event.frame_down
+            })
         end
 
         conn

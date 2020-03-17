@@ -10,9 +10,12 @@ defmodule ConsoleWeb.Schema do
     field :app_eui, :string
     field :app_key, :string
     field :oui, :integer
+    field :frame_up, :integer
+    field :frame_down, :integer
     field :organization_id, :id
     field :organization, :organization
     field :inserted_at, :naive_datetime
+    field :last_connected, :naive_datetime
     field :labels, list_of(:label)
     field :channels, list_of(:channel)
   end
