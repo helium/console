@@ -44,11 +44,6 @@ class DeviceShowTable extends Component {
         )
       },
       {
-        title: 'Date Activated',
-        dataIndex: 'inserted_at',
-        render: data => moment.utc(data).local().format('lll')
-      },
-      {
         title: '',
         key: 'action',
         render: (text, record) => (
