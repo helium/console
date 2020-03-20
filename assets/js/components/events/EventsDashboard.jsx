@@ -17,6 +17,41 @@ const queryOptions = {
   })
 }
 
+//https://stackoverflow.com/questions/39460182/decode-base64-to-hexadecimal-string-with-javascript
+const base64ToHex = str => {
+  const raw = atob(str);
+  let result = '';
+  for (let i = 0; i < raw.length; i++) {
+    const hex = raw.charCodeAt(i).toString(16);
+    result += (hex.length === 2 ? hex : '0' + hex);
+  }
+  return result.toUpperCase();
+}
+
+const categoryTag = (category) => {
+  switch(category) {
+    case "up":
+      return <Tag color="green">uplink</Tag>
+    case "down":
+      return <Tag color="red">downlink</Tag>
+    case "ack":
+      return <Tag color="orange">ack</Tag>
+    case "activation":
+      return <Tag color="blue">activation</Tag>
+  }
+}
+
+const statusBadge = (status) => {
+  switch(status) {
+    case "failure":
+      return <Badge status="error" />
+    case "success":
+      return <Badge status="success" />
+    default:
+      return <Badge status="default" text={status} />
+  }
+}
+
 @graphql(DEVICE_EVENTS, queryOptions)
 class EventsDashboard extends Component {
   state = {
@@ -24,7 +59,7 @@ class EventsDashboard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data    
+    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
 
     if (prevProps.data.loading && !loading) {
       this.setState({ rows: deviceEvents }, () => {
@@ -40,7 +75,7 @@ class EventsDashboard extends Component {
     }
   }
 
-  addEvent = (event) => {
+  addEvent = event => {
     const { rows } = this.state
     const lastEvent = rows[rows.length - 1]
     if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
@@ -51,43 +86,28 @@ class EventsDashboard extends Component {
     })
   }
 
+  renderExpanded = record => {
+    const hotspotColumns = [{ title: 'Hotspot Name', dataIndex: 'name' }];
+    const channelColumns = [{ title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text>}];
+
+    return (
+      <Row gutter={10} >
+        <Col span={11}>
+          <Card bordered={false}>
+            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.name}/>
+          </Card>
+        </Col>
+        <Col span={11}>
+          <Card bordered={false}>
+            <Table columns={channelColumns} dataSource={record.channels} pagination={false} rowKey={record => record.id}/>
+          </Card>
+        </Col>
+      </Row>
+    )
+  }
+
   render() {
-    const uniqRows = uniqBy(this.state.rows, v => [v.frame_up, v.frame_down].join());
-
-    const categoryTag = (category) => {
-      switch(category) {
-        case "up":
-          return <Tag color="green">uplink</Tag>
-        case "down":
-          return <Tag color="red">downlink</Tag>
-        case "ack":
-          return <Tag color="orange">ack</Tag>
-        case "activation":
-          return <Tag color="blue">activation</Tag>
-      }
-    }
-
-    const statusBadge = (status) => {
-      switch(status) {
-        case "failure":
-          return <Badge status="error" />
-        case "success":
-          return <Badge status="success" />
-        default:
-          return <Badge status="default" text={status} />
-      }
-    }
-
-    //thanks https://stackoverflow.com/questions/39460182/decode-base64-to-hexadecimal-string-with-javascript
-    function base64ToHex(str) {
-      const raw = atob(str);
-      let result = '';
-      for (let i = 0; i < raw.length; i++) {
-        const hex = raw.charCodeAt(i).toString(16);
-        result += (hex.length === 2 ? hex : '0' + hex);
-      }
-      return result.toUpperCase();
-    }
+    const { rows } = this.state
 
     const columns = [
       {
@@ -112,44 +132,6 @@ class EventsDashboard extends Component {
       },
     ]
 
-    const expandedRowRender = (record) => {
-      let hotspotData = [];
-      let channelData = [];
-      let hotspotColumns = [{ title: 'Hotspot Name', dataIndex: 'hotspot_name', key: 'hotspot_name' },];
-      let channelColumns = [{ dataIndex: 'status', key: 'status', render: data => <span>{statusBadge(data)}</span> },];
-
-      if (record.category === "down" || record.category === "ack") {
-        channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
-        hotspotData = this.state.rows.filter(row => row.frame_down === record.frame_down && (row.category === "down" || row.category === "ack"));
-        channelData = uniqBy(hotspotData, 'channel_name');
-      } else if (record.category === "activation") {
-        channelColumns.push({ title: 'Message', dataIndex: 'description', key: 'description' });
-        hotspotData = this.state.rows.filter(row => row.frame_up === record.frame_up && row.category === "activation");
-        hotspotData = uniqBy(hotspotData, 'hotspot_name');
-        channelData = uniqBy(hotspotData, 'channel_name');
-      } else { //uplinks
-        hotspotColumns.push({ title: 'RSSI', dataIndex: 'rssi', key: 'rssi' }, { title: 'SNR', dataIndex: 'snr', key: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> });
-        channelColumns.push({ title: 'Integration', dataIndex: 'channel_name', key: 'channel_name' }, { title: 'Response', dataIndex: 'description', key: 'description' });
-        hotspotData = this.state.rows.filter(row => row.frame_up === record.frame_up && row.category === "up");
-        hotspotData = uniqBy(hotspotData, 'hotspot_name');
-        channelData = uniqBy(hotspotData, 'channel_name');
-      }
-
-      return <Row>
-              <Col span={12}>
-                <Card bordered={false}>
-                  <Table columns={hotspotColumns} dataSource={hotspotData} pagination={false} rowKey={record => record.hotspot_name}/>
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card bordered={false}>
-                  <Table columns={channelColumns} dataSource={channelData} pagination={false} rowKey={record => record.hotspot_name}/>
-                </Card>
-              </Col>
-              </Row>
-
-    }
-
     const { loading, error } = this.props.data
 
     if (loading) return null;
@@ -172,11 +154,11 @@ class EventsDashboard extends Component {
         </Text>
         <br />
         <Table
-          dataSource={uniqRows}
+          dataSource={rows}
           columns={columns}
-          rowKey={record => record.id}
+          rowKey={record => record.device_id}
           pagination={false}
-          expandedRowRender={record => expandedRowRender(record)}
+          expandedRowRender={this.renderExpanded}
         />
       </React.Fragment>
     )
@@ -184,3 +166,68 @@ class EventsDashboard extends Component {
 }
 
 export default EventsDashboard
+
+// [{
+//   description: 'test description',
+//   payload: 'payload',
+//   payload_size: '2',
+//   category: 'up',
+//   frame_up: '2',
+//   frame_down: '0',
+//   device_id: 'test ids',
+//   reported_at: '1584990903',
+//   hotspots: [
+//     {
+//       name: 'hotspot name 1',
+//       rssi: '10',
+//       snr: '20',
+//       reported_at: '1584990903',
+//     },
+//     {
+//       name: 'hotspot name 2',
+//       rssi: '10',
+//       snr: '20',
+//       reported_at: '1584990903',
+//     },
+//   ],
+//   channels: [
+//     {
+//       name: 'channel name 1',
+//       id: 'uuid 1',
+//       description: 'what happene ihagkljhajklshdlkhlahskljdhfjkhalkd',
+//       status: 'failure'
+//     },
+//     {
+//       name: 'channel name 2',
+//       id: 'uuid 2',
+//       description: 'what happened',
+//       status: 'success'
+//     }
+//   ]
+// },
+// {
+//   description: 'test description',
+//   payload: 'payload',
+//   payload_size: '2',
+//   category: 'up',
+//   frame_up: '2',
+//   frame_down: '0',
+//   device_id: 'test id',
+//   reported_at: '1584990903',
+//   hotspots: [
+//     {
+//       name: 'hotspot name',
+//       rssi: '10',
+//       snr: '20',
+//       reported_at: '1584990903',
+//     },
+//   ],
+//   channels: [
+//     {
+//       name: 'channel name 2',
+//       id: 'uuid 2',
+//       description: 'what happened',
+//       status: 'success'
+//     }
+//   ]
+// }]

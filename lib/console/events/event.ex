@@ -9,6 +9,8 @@ defmodule Console.Events.Event do
   schema "events" do
     field :hotspot_name, :string
     field :channel_name, :string
+    field :hotspots, {:array, :map}
+    field :channels, {:array, :map}
     field :status, :string
     field :description, :string
     field :payload, :string
@@ -31,6 +33,8 @@ defmodule Console.Events.Event do
     |> cast(attrs, [
       :hotspot_name,
       :channel_name,
+      :hotspots,
+      :channels,
       :status,
       :description,
       :payload,
