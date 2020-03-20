@@ -136,7 +136,7 @@ class LabelIndexTable extends Component {
 
     return (
       <Card
-        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        bodyStyle={{ padding: 0, paddingTop: 1, overflow: 'hidden' }}
         title={`${labels.entries.length} Labels`}
         extra={
           <UserCan>

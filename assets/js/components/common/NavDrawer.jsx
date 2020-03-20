@@ -6,6 +6,7 @@ import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Menu, Icon, Typography } from 'antd'
+import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
 import { graphql } from 'react-apollo';
@@ -61,7 +62,7 @@ class NavDrawer extends Component {
           {
             data.allLabels && data.allLabels.map(l => (
               <Link to={`/labels/${l.id}`} key={l.id}>
-                <LabelRow text={l.name} color={l.color}/>
+                <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
               </Link>
             ))
           }

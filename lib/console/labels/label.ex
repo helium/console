@@ -25,12 +25,6 @@ defmodule Console.Labels.Label do
   def changeset(label, attrs) do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "color", "creator"])
 
-    attrs =
-      case attrs["name"] do
-        nil -> attrs
-        _ -> Map.put(attrs, "name", String.upcase(attrs["name"]))
-      end
-
     changeset =
       label
       |> cast(attrs, [:name, :organization_id, :color, :creator])

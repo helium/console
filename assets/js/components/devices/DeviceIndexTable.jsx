@@ -119,7 +119,7 @@ class DeviceIndexTable extends Component {
       {
         title: 'Last Connected',
         dataIndex: 'last_connected',
-        render: data => data ? moment.utc(data).local().format('lll') : "" 
+        render: data => data ? moment.utc(data).local().format('lll') : ""
       },
       {
         title: '',
@@ -157,7 +157,7 @@ class DeviceIndexTable extends Component {
 
     return (
       <Card
-        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        bodyStyle={{ padding: 0, paddingTop: 1, overflow: 'hidden' }}
         title={`${devices.entries.length} Devices`}
         extra={
           <UserCan>

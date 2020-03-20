@@ -72,7 +72,7 @@ class DeviceShowTable extends Component {
 
     return (
       <Card
-        bodyStyle={{ padding: 0, paddingTop: 1 }}
+        bodyStyle={{ padding: 0, paddingTop: 1, overflow: 'hidden' }}
         title={`${labels.length} Labels Attached`}
         extra={
           <UserCan>
