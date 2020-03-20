@@ -34,7 +34,7 @@ defmodule Console.FactoryHelper do
   def create_device_for_organization(organization, attrs \\ %{}) do
     attrs = Map.merge(attrs, %{organization_id: organization.id})
     attrs = for {key, val} <- params_for(:device, attrs), into: %{}, do: {Atom.to_string(key), val}
-    {:ok, device} = Console.Devices.create_device(attrs)
+    {:ok, device} = Console.Devices.create_device(attrs, organization)
     device
   end
 

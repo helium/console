@@ -16,7 +16,7 @@ defmodule Console.OrganizationsTest do
   @invalid_attrs2 %{"name" => ""}
   @invalid_attrs3 %{"name" => "a"}
   @channel_creds %{"a field" => "a value", "endpoint" => "http://test.com/api"}
-  @device_attrs %{"app_eui" => "some mac","app_key" => "some mac", "name" => "some name", "dev_eui" => "randomeui"}
+  @device_attrs %{"app_eui" => "0000000000000000","app_key" => "00000000000000000000000000000000", "name" => "some name", "dev_eui" => "0000000000000000"}
   @channel_attrs %{"active" => true, "credentials" => @channel_creds, "name" => "some name", "type" => "http", "type_name" => "HTTP"}
 
   describe "organizations" do
@@ -104,7 +104,7 @@ defmodule Console.OrganizationsTest do
       user = insert(:user)
       assert {:ok, %Organization{} = organization} = Organizations.create_organization(user, @valid_attrs)
       assert {:ok, channel} = Channels.create_channel(organization, Map.put(@channel_attrs, "organization_id", organization.id))
-      assert {:ok, device} = Devices.create_device(Map.put(@device_attrs, "organization_id", organization.id))
+      assert {:ok, device} = Devices.create_device(Map.put(@device_attrs, "organization_id", organization.id), organization)
       organization = Organizations.fetch_assoc(organization)
       assert 1 == organization.channels |> Enum.count()
       assert 1 == organization.devices |> Enum.count()

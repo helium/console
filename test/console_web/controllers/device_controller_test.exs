@@ -4,8 +4,8 @@ defmodule ConsoleWeb.DeviceControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  @create_attrs %{app_eui: "some app_eui", name: "some name", app_key: "some app_key", dev_eui: "randomeui"}
-  @update_attrs %{app_eui: "some updated app_eui", name: "some updated name", app_key: "some updated app_key"}
+  @create_attrs %{app_eui: "0000000000000000", name: "some name", app_key: "00000000000000000000000000000000", dev_eui: "0000000000000000"}
+  @update_attrs %{app_eui: "1111111111111111", name: "some updated name", app_key: "11111111111111111111111111111111"}
   @invalid_attrs %{app_eui: nil, name: nil, public_key: nil}
 
   describe "index" do

@@ -44,7 +44,7 @@ defmodule Console.Devices do
     Repo.preload(device, assoc)
   end
 
-  def create_device(%Organization{} = organization, attrs \\ %{}) do
+  def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
     cond do
       count > 9999 ->
