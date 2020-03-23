@@ -18,6 +18,10 @@ defmodule ConsoleWeb.Schema do
     field :last_connected, :naive_datetime
     field :labels, list_of(:label)
     field :channels, list_of(:channel)
+    field :total_packets, :integer
+    field :packets_last_1d, :integer
+    field :packets_last_7d, :integer
+    field :packets_last_30d, :integer
   end
 
   paginated object :label do

@@ -20,6 +20,7 @@ defmodule Console.Devices.Device do
     field :oui, :integer
     field :frame_up, :integer
     field :frame_down, :integer
+    field :total_packets, :integer
     field :last_connected, :naive_datetime
 
     belongs_to :organization, Organization
@@ -36,7 +37,7 @@ defmodule Console.Devices.Device do
 
     changeset =
       device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :frame_up, :frame_down, :last_connected])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :frame_up, :frame_down, :last_connected, :total_packets])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])

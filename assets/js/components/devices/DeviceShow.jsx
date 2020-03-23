@@ -17,7 +17,7 @@ import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Icon, Select, Tag, Card } from 'antd';
+import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -174,172 +174,195 @@ class DeviceShow extends Component {
 
     return(
       <DashboardLayout title={`${device.name}`}>
-        <Card title="Device Details">
-          <table>
-            <tbody>
-              <tr style={{height: '30px'}}>
-                <td style={{width: '200px'}}><Text strong>Name</Text></td>
-                <td>
-                  {showNameInput ? (
-                    <OutsideClick
-                      onOutsideClick={this.toggleNameInput}
-                    >
-                      <Input
-                        name="newName"
-                        placeholder={device.name}
-                        value={this.state.newName}
-                        onChange={this.handleInputUpdate}
-                        style={{ width: 200, marginRight: 5 }}
-                      />
-                      <Button
-                        type="primary"
-                        name="newName"
-                        onClick={() => this.handleDeviceNameUpdate(device.id)}
+        <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
+          <Col span={16}>
+          <Card title="Device Details">
+            <table>
+              <tbody>
+                <tr style={{height: '30px'}}>
+                  <td style={{width: '200px'}}><Text strong>Name</Text></td>
+                  <td>
+                    {showNameInput ? (
+                      <OutsideClick
+                        onOutsideClick={this.toggleNameInput}
                       >
-                        Update
-                      </Button>
-                    </OutsideClick>
-                  ) : (
-                    <React.Fragment>
-                      <Text  style={{ marginRight: 5 }}>{device.name} </Text>
-                      <UserCan>
-                        <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                        <Input
+                          name="newName"
+                          placeholder={device.name}
+                          value={this.state.newName}
+                          onChange={this.handleInputUpdate}
+                          style={{ width: 200, marginRight: 5 }}
+                        />
+                        <Button
+                          type="primary"
+                          name="newName"
+                          onClick={() => this.handleDeviceNameUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    ) : (
+                      <React.Fragment>
+                        <Text  style={{ marginRight: 5 }}>{device.name} </Text>
+                        <UserCan>
+                          <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                            <Icon type="edit"></Icon>
+                          </Tag>
+                        </UserCan>
+                      </React.Fragment>
+                    )}
+                  </td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td style={{paddingBottom: '20px'}}><Text strong>UUID</Text></td>
+                  <td style={{paddingBottom: '20px'}}>{device.id}</td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>Device EUI</Text></td>
+                  <td>
+                    {showDevEUIInput && (
+                      <OutsideClick
+                        onOutsideClick={this.toggleDevEUIInput}
+                      >
+                        <Input
+                          name="newDevEUI"
+                          placeholder={device.dev_eui}
+                          value={this.state.newDevEUI}
+                          onChange={this.handleInputUpdate}
+                          maxLength={16}
+                          style={{ width: 200, marginRight: 5 }}
+                        />
+                        <Button
+                          type="primary"
+                          name="newDevEUI"
+                          onClick={() => this.handleDeviceEUIUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    )}
+                    {!showDevEUIInput && (
+                      <React.Fragment>
+                        {
+                          device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
+                        }
+                        <UserCan>
+                        <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
                           <Icon type="edit"></Icon>
                         </Tag>
-                      </UserCan>
-                    </React.Fragment>
-                  )}
-                </td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td style={{paddingBottom: '20px'}}><Text strong>UUID</Text></td>
-                <td style={{paddingBottom: '20px'}}>{device.id}</td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td><Text strong>Device EUI</Text></td>
-                <td>
-                  {showDevEUIInput && (
-                    <OutsideClick
-                      onOutsideClick={this.toggleDevEUIInput}
-                    >
-                      <Input
-                        name="newDevEUI"
-                        placeholder={device.dev_eui}
-                        value={this.state.newDevEUI}
-                        onChange={this.handleInputUpdate}
-                        maxLength={16}
-                        style={{ width: 200, marginRight: 5 }}
-                      />
-                      <Button
-                        type="primary"
-                        name="newDevEUI"
-                        onClick={() => this.handleDeviceEUIUpdate(device.id)}
+                        </UserCan>
+                      </React.Fragment>
+                    )}
+                  </td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>App EUI</Text></td>
+                  <td>
+                    {showAppEUIInput && (
+                      <OutsideClick
+                        onOutsideClick={this.toggleAppEUIInput}
                       >
-                        Update
-                      </Button>
-                    </OutsideClick>
-                  )}
-                  {!showDevEUIInput && (
-                    <React.Fragment>
-                      {
-                        device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
-                      }
-                      <UserCan>
-                      <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
-                        <Icon type="edit"></Icon>
-                      </Tag>
-                      </UserCan>
-                    </React.Fragment>
-                  )}
-                </td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td><Text strong>App EUI</Text></td>
-                <td>
-                  {showAppEUIInput && (
-                    <OutsideClick
-                      onOutsideClick={this.toggleAppEUIInput}
-                    >
-                      <Input
-                        name="newAppEUI"
-                        placeholder={device.app_eui}
-                        value={this.state.newAppEUI}
-                        onChange={this.handleInputUpdate}
-                        maxLength={16}
-                        style={{ width: 200, marginRight: 5 }}
-                      />
-                      <Button
-                        type="primary"
-                        name="newAppEUI"
-                        onClick={() => this.handleAppEUIUpdate(device.id)}
+                        <Input
+                          name="newAppEUI"
+                          placeholder={device.app_eui}
+                          value={this.state.newAppEUI}
+                          onChange={this.handleInputUpdate}
+                          maxLength={16}
+                          style={{ width: 200, marginRight: 5 }}
+                        />
+                        <Button
+                          type="primary"
+                          name="newAppEUI"
+                          onClick={() => this.handleAppEUIUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    )}
+                    {!showAppEUIInput && (
+                      <React.Fragment>
+                        {
+                          device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
+                        }
+                        <UserCan>
+                        <Tag color="blue" size="small" onClick={this.toggleAppEUIInput}>
+                          <Icon type="edit"></Icon>
+                        </Tag>
+                        </UserCan>
+                      </React.Fragment>
+                    )}
+                  </td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td style={{paddingBottom: '20px'}}><Text strong>App Key</Text></td>
+                  <td style={{paddingBottom: '20px'}}>
+                    {showAppKeyInput && (
+                      <OutsideClick
+                        onOutsideClick={this.toggleAppKeyInput}
                       >
-                        Update
-                      </Button>
-                    </OutsideClick>
-                  )}
-                  {!showAppEUIInput && (
-                    <React.Fragment>
-                      {
-                        device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
-                      }
-                      <UserCan>
-                      <Tag color="blue" size="small" onClick={this.toggleAppEUIInput}>
-                        <Icon type="edit"></Icon>
-                      </Tag>
-                      </UserCan>
-                    </React.Fragment>
-                  )}
-                </td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td style={{paddingBottom: '20px'}}><Text strong>App Key</Text></td>
-                <td style={{paddingBottom: '20px'}}>
-                  {showAppKeyInput && (
-                    <OutsideClick
-                      onOutsideClick={this.toggleAppKeyInput}
-                    >
-                      <Input
-                        name="newAppKey"
-                        placeholder={device.app_key}
-                        value={this.state.newAppKey}
-                        onChange={this.handleInputUpdate}
-                        maxLength={32}
-                        style={{ width: 300, marginRight: 5 }}
-                      />
-                      <Button
-                        type="primary"
-                        name="newAppKey"
-                        onClick={() => this.handleAppKeyUpdate(device.id)}
-                      >
-                        Update
-                      </Button>
-                    </OutsideClick>
-                  )}
-                  {!showAppKeyInput && (
-                    <React.Fragment>
-                      {
-                        device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
-                      }
-                      <UserCan>
-                      <Tag color="blue" size="small" onClick={this.toggleAppKeyInput}>
-                        <Icon type="edit"></Icon>
-                      </Tag>
-                      </UserCan>
-                    </React.Fragment>
-                  )}
-                </td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
-                <td><Tag color="green">OTAA</Tag></td>
-              </tr>
-              <tr style={{height: '30px'}}>
-                <td><Text strong>LoRaWAN US Channels</Text></td>
-                <td><Text>48-55 (sub-band 7)</Text></td>
-              </tr>
-            </tbody>
-          </table>
-        </Card>
+                        <Input
+                          name="newAppKey"
+                          placeholder={device.app_key}
+                          value={this.state.newAppKey}
+                          onChange={this.handleInputUpdate}
+                          maxLength={32}
+                          style={{ width: 300, marginRight: 5 }}
+                        />
+                        <Button
+                          type="primary"
+                          name="newAppKey"
+                          onClick={() => this.handleAppKeyUpdate(device.id)}
+                        >
+                          Update
+                        </Button>
+                      </OutsideClick>
+                    )}
+                    {!showAppKeyInput && (
+                      <React.Fragment>
+                        {
+                          device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
+                        }
+                        <UserCan>
+                        <Tag color="blue" size="small" onClick={this.toggleAppKeyInput}>
+                          <Icon type="edit"></Icon>
+                        </Tag>
+                        </UserCan>
+                      </React.Fragment>
+                    )}
+                  </td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
+                  <td><Tag color="green">OTAA</Tag></td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>LoRaWAN US Channels</Text></td>
+                  <td><Text>48-55 (sub-band 7)</Text></td>
+                </tr>
+              </tbody>
+            </table>
+          </Card>
+          </Col>
+
+          <Col span={8}>
+          <Card title="Packets" style={{ height: 'calc(100% - 20px)' }}>
+            <Col span={12}>
+              <Text style={{ fontSize: 16 }}>All Time</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.total_packets}</Text><br/>
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16 }}>Last 30 Days</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_30d}</Text><br/>
+            </Col>
+            <Col span={12}>
+              <Text style={{ fontSize: 16 }}>Last 7 Days</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_7d}</Text><br/>
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16 }}>Last 24 Hours</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_1d}</Text><br/>
+            </Col>
+          </Card>
+          </Col>
+        </Row>
 
         <DeviceShowTable
           labels={device.labels}

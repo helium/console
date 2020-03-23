@@ -32,7 +32,18 @@ defmodule Console.Devices.DeviceResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels]])
 
-    {:ok, device}
+    query1 = from e in Event, where: e.device_id == ^device.id, select: count(e)
+    query2 = from e in Event, where: e.device_id == ^device.id, select: count(e), union_all: ^query1
+    query3 = from e in Event, where: e.device_id == ^device.id, select: count(e), union_all: ^query2
+    [packets_last_1d, packets_last_7d, packets_last_30d] = Repo.all(query3)
+
+    {:ok,
+      Map.merge(device, %{
+        packets_last_1d: packets_last_1d,
+        packets_last_7d: packets_last_7d,
+        packets_last_30d: packets_last_30d,
+      })
+    }
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do
