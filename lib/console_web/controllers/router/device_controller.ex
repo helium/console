@@ -45,7 +45,8 @@ defmodule ConsoleWeb.Router.DeviceController do
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
               "frame_up" => event.frame_up,
-              "frame_down" => event.frame_down
+              "frame_down" => event.frame_down,
+              "total_packets" => device.total_packets + 1,
             })
         end
 

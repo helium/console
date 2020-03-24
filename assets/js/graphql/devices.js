@@ -44,6 +44,10 @@ export const DEVICE_SHOW = gql`
           id,
         }
       }
+      total_packets,
+      packets_last_1d,
+      packets_last_7d,
+      packets_last_30d
     }
   }
   ${DEVICE_FRAGMENT}
