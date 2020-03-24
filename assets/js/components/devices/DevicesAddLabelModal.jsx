@@ -52,8 +52,7 @@ class DevicesAddLabelModal extends Component {
   render() {
     const { open, onClose, devicesToUpdate } = this.props
     const { error, allLabels } = this.props.data
-    const { labelName, labelId } = this.state
-    const { selected } = this.state
+    const { labelName, labelId, selected } = this.state
 
     return (
       <Modal
