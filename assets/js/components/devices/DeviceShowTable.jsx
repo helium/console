@@ -28,7 +28,7 @@ class DeviceShowTable extends Component {
         render: (text, record) => (
           <React.Fragment>
             <Text>{text}</Text>
-            <LabelTag text={text} color={record.color} style={{ marginLeft: 10 }}/>
+            <LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0}/>
           </React.Fragment>
         )
       },
