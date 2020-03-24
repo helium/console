@@ -11,6 +11,7 @@ export const DEVICE_FRAGMENT = gql`
     frame_down,
     last_connected,
     inserted_at,
+    total_packets,
   }
 `
 

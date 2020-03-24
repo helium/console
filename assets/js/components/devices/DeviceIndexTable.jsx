@@ -104,12 +104,14 @@ class DeviceIndexTable extends Component {
       {
         title: 'Frame Up',
         dataIndex: 'frame_up',
-        render: (text, record) => <Text>{record.frame_up}</Text>
       },
       {
         title: 'Frame Down',
         dataIndex: 'frame_down',
-        render: (text, record) => <Text>{record.frame_down}</Text>
+      },
+      {
+        title: 'Packets Transferred',
+        dataIndex: 'total_packets',
       },
       {
         title: 'Date Activated',
