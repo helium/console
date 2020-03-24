@@ -23,6 +23,10 @@ const queryOptions = {
 @graphql(MENU_LABELS, queryOptions)
 @connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
+  state = {
+    showLabels: true
+  }
+
   componentDidMount() {
     const { subscribeToMore, fetchMore } = this.props.data
 
@@ -43,6 +47,7 @@ class NavDrawer extends Component {
 
   render() {
     const { history, data } = this.props
+    const { showLabels } = this.state
 
     return (
       <div>
@@ -58,9 +63,15 @@ class NavDrawer extends Component {
           <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits"><Icon type="wallet" />Data Credits</Menu.Item>
           <Menu.Item disabled={history.location.pathname === "/labels"} key="/labels"><Icon type="tag" />Labels</Menu.Item>
         </Menu>
-        <div style={{ position: "absolute", top: 330, left: 24 }}>
+        <p
+          style={{ color: '#A3AAB0', position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+          onClick={() => this.setState({ showLabels: !showLabels })}
+        >
+          -
+        </p>
+        <div style={{ position: "absolute", top: 330, left: 0, padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13' }}>
           {
-            data.allLabels && data.allLabels.map(l => (
+            showLabels && data.allLabels && data.allLabels.map(l => (
               <Link to={`/labels/${l.id}`} key={l.id}>
                 <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
               </Link>
