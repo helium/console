@@ -25,7 +25,7 @@ class DevicesAddLabelModal extends Component {
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value })
+    this.setState({ [e.target.name]: e.target.value, labelId: null, selected: undefined })
   }
 
   handleSubmit = (e) => {
@@ -46,13 +46,14 @@ class DevicesAddLabelModal extends Component {
   }
 
   handleSelectOption = (labelId) => {
-    this.setState({ labelId })
+    this.setState({ labelId, selected: labelId, labelName: null })
   }
 
   render() {
     const { open, onClose, devicesToUpdate } = this.props
     const { error, allLabels } = this.props.data
     const { labelName, labelId } = this.state
+    const { selected } = this.state
 
     return (
       <Modal
@@ -79,6 +80,7 @@ class DevicesAddLabelModal extends Component {
             placeholder={error ? "Labels failed to load..." : "Choose Label"}
             style={{ width: 220, marginRight: 10 }}
             onSelect={this.handleSelectOption}
+            value={selected}
           >
             {
               allLabels && allLabels.map(l => (
