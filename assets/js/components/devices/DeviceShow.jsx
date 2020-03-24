@@ -17,8 +17,9 @@ import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col } from 'antd';
+import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs } from 'antd';
 const { Text } = Typography
+const { TabPane } = Tabs
 const { Option } = Select
 
 const queryOptions = {
@@ -345,20 +346,29 @@ class DeviceShow extends Component {
           </Col>
 
           <Col span={8}>
-          <Card title="Packets" style={{ height: 'calc(100% - 20px)' }}>
+          <Card
+            title={
+              <Tabs defaultActiveKey="1" tabBarStyle={{ marginBottom: 0, position: 'relative', top: -2.5, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <TabPane tab={<span><Icon type="wifi" />Packets Transferred</span>} key="1"/>
+                <TabPane tab={<span>Data Credits Used</span>} key="2" disabled/>
+              </Tabs>
+            }
+            style={{ height: 'calc(100% - 20px)' }}
+            headStyle={{ paddingLeft: 0, paddingRight: 0, borderBottom: '0px solid'}}
+          >
             <Col span={12}>
-              <Text style={{ fontSize: 16 }}>All Time</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.total_packets}</Text><br/>
+              <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>All Time</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.total_packets}</Text><br/>
               <div style={{ marginBottom: 30 }} />
-              <Text style={{ fontSize: 16 }}>Last 30 Days</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_30d}</Text><br/>
+              <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 30 Days</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_30d}</Text><br/>
             </Col>
             <Col span={12}>
-              <Text style={{ fontSize: 16 }}>Last 7 Days</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_7d}</Text><br/>
+              <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 7 Days</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_7d}</Text><br/>
               <div style={{ marginBottom: 30 }} />
-              <Text style={{ fontSize: 16 }}>Last 24 Hours</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7' }}>{device.packets_last_1d}</Text><br/>
+              <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 24 Hours</Text><br/>
+              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_1d}</Text><br/>
             </Col>
           </Card>
           </Col>
