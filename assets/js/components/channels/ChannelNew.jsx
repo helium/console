@@ -105,11 +105,11 @@ class ChannelNew extends Component {
 
       <Card title="Step 1 – Choose an Integration Type">
 
-        <Card size="small" title="Use a Premade Integration">
+        <Card size="small" title="Add a Prebuilt Integration">
           <ChannelPremadeRow />
         </Card>
 
-        <Card size="small" title="Use a Custom Integration">
+        <Card size="small" title="Add a Custom Integration">
           <ChannelCreateRow />
         </Card>
 

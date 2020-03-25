@@ -33,13 +33,13 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="Integrations">
         <UserCan>
-          <Card title="Ready to Use Integrations">
+          <Card title="Add a Prebuilt Integration">
             <ChannelPremadeRow />
           </Card>
         </UserCan>
 
         <UserCan>
-          <Card title="Create your own Integration">
+          <Card title="Add a Custom Integration">
             <ChannelCreateRow />
           </Card>
         </UserCan>

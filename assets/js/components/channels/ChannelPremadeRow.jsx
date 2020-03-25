@@ -30,7 +30,7 @@ const styles = {
 
 const channelTypes = [
   { name: "Helium Cargo (HTTP)", link: "/integrations/new/cargo", img: `${Cargo}` },
-  { name: "Cayenne (HTTP)", link: "/integrations/new/mydevices", img: `${MyDevices}` },
+  { name: "myDevices Cayenne (HTTP)", link: "/integrations/new/mydevices", img: `${MyDevices}` },
   {},
   {},
   {},
