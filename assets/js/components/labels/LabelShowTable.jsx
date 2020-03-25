@@ -133,7 +133,7 @@ class LabelShowTable extends Component {
               style={{ width: 220 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: redForTablesDeleteText }}>Remove Devices from Label</Option>
+              <Option disabled={this.state.selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Devices from Label</Option>
             </Select>
           </UserCan>
         }

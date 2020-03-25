@@ -42,6 +42,10 @@ class DeviceIndexTable extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.clearTable && this.props.clearTable) this.setState({ selectedRows: [] })
+  }
+
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
       this.props.openDevicesAddLabelModal(this.state.selectedRows)
@@ -169,8 +173,8 @@ class DeviceIndexTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="addLabel">Add Label to Selected Devices</Option>
-              <Option value="delete" style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
+              <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
             <Button
               type="primary"
@@ -188,6 +192,7 @@ class DeviceIndexTable extends Component {
           rowKey={record => record.id}
           pagination={false}
           rowSelection={rowSelection}
+          selectedRowKeys={this.state.selectedRows}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

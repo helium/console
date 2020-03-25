@@ -82,7 +82,7 @@ class DeviceShowTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: redForTablesDeleteText }}>Remove Labels from Device</Option>
+              <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Remove Labels from Device</Option>
             </Select>
             <Button
               type="primary"

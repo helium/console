@@ -33,7 +33,7 @@ class DeviceIndex extends Component {
   }
 
   closeDevicesAddLabelModal = () => {
-    this.setState({ showDevicesAddLabelModal: false })
+    this.setState({ showDevicesAddLabelModal: false, devicesSelected: null })
   }
 
   openDeleteDeviceModal = (devicesSelected) => {
@@ -41,7 +41,7 @@ class DeviceIndex extends Component {
   }
 
   closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false })
+    this.setState({ showDeleteDeviceModal: false, devicesSelected: null })
   }
 
   render() {
@@ -52,6 +52,7 @@ class DeviceIndex extends Component {
           openCreateDeviceModal={this.openCreateDeviceModal}
           openDeleteDeviceModal={this.openDeleteDeviceModal}
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+          clearTable={this.state.devicesSelected == null}
         />
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
