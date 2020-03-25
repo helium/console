@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { redForTablesDeleteText } from '../../util/colors'
 import { Table, Button, Empty, Tag, Typography, Select } from 'antd';
 import EmptyImg from '../../../img/emptydevice.svg'
 import { Card } from 'antd';
@@ -81,7 +82,7 @@ class DeviceShowTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: '#F5222D' }}>Remove Labels from Device</Option>
+              <Option value="remove" style={{ color: redForTablesDeleteText }}>Remove Labels from Device</Option>
             </Select>
             <Button
               type="primary"

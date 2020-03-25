@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AuthLayout from '../common/AuthLayout'
 import { Typography, Card, Row, Col, Button } from 'antd';
 import Logo from '../../../img/symbol.svg'
+import { primaryBlue } from '../../util/colors'
 const { Text, Title } = Typography
 
 class ConfirmEmailPrompt extends Component {
@@ -16,7 +17,7 @@ class ConfirmEmailPrompt extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:'#38A2FF'}}>Registration Successful</Text>
+            <Text style={{color:primaryBlue}}>Registration Successful</Text>
           </div>
           <Text>
             Please check your inbox for a confirmation email

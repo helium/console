@@ -12,6 +12,7 @@ const { Text } = Typography
 import { graphql } from 'react-apollo';
 import { MENU_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
+import { grayForHideLabelsDash } from '../../util/colors'
 
 const queryOptions = {
   options: props => ({
@@ -64,7 +65,7 @@ class NavDrawer extends Component {
           <Menu.Item disabled={history.location.pathname === "/labels"} key="/labels"><Icon type="tag" />Labels</Menu.Item>
         </Menu>
         <p
-          style={{ color: '#A3AAB0', position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+          style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
           onClick={() => this.setState({ showLabels: !showLabels })}
         >
           -

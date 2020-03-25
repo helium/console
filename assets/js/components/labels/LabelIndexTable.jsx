@@ -5,6 +5,7 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 const { Text } = Typography
@@ -145,7 +146,7 @@ class LabelIndexTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: '#F5222D' }}>Delete Selected Labels</Option>
+              <Option value="remove" style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
             <Button
               type="primary"

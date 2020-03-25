@@ -1,0 +1,5 @@
+export const primaryBlue = '#38A2FF'
+export const grayForHideLabelsDash = '#A3AAB0'
+export const redForTablesDeleteText = '#F5222D'
+export const grayForModalCaptions = '#8C8C8C'
+export const blueForDeviceStatsLarge = '#4091F7'

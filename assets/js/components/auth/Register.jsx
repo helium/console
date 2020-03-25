@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { parse } from 'query-string'
 import { register } from '../../actions/auth.js';
 import { getInvitation } from '../../actions/invitation.js';
+import { primaryBlue } from '../../util/colors'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -62,7 +63,7 @@ class Register extends Component {
         <Title>
           Register for <br />Helium Console
         </Title>
-        <Text style={{color:'#38A2FF'}}>Create your account below</Text>
+        <Text style={{color:primaryBlue}}>Create your account below</Text>
         </div>
         {
           showOrgCreation ? (
@@ -130,7 +131,7 @@ class Register extends Component {
             <Title>
               Register to join {invite && invite.organizationName}
             </Title>
-            <Text style={{color:'#38A2FF'}}>You are invited by {invite && invite.inviter}</Text>
+            <Text style={{color:primaryBlue}}>You are invited by {invite && invite.inviter}</Text>
           </div>
           <Form onSubmit={this.registerUser}>
             {this.commonFields()}

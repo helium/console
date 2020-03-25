@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { forgotPassword } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 import analyticsLogger from '../../util/analyticsLogger'
+import { primaryBlue } from '../../util/colors'
 import Logo from '../../../img/symbol.svg'
 import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
 const { Text, Title } = Typography
@@ -36,7 +37,7 @@ class ForgotPassword extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:'#38A2FF'}}>Reset Your Password</Text>
+            <Text style={{color:primaryBlue}}>Reset Your Password</Text>
           </div>
 
           <Form onSubmit={this.handleSubmit}>

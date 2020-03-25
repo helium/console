@@ -16,6 +16,7 @@ import { updateDevice } from '../../actions/device'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
+import { blueForDeviceStatsLarge } from '../../util/colors'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs } from 'antd';
 const { Text } = Typography
@@ -358,17 +359,17 @@ class DeviceShow extends Component {
           >
             <Col span={12}>
               <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>All Time</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.total_packets}</Text><br/>
+              <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.total_packets}</Text><br/>
               <div style={{ marginBottom: 30 }} />
               <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 30 Days</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_30d}</Text><br/>
+              <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_30d}</Text><br/>
             </Col>
             <Col span={12}>
               <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 7 Days</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_7d}</Text><br/>
+              <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_7d}</Text><br/>
               <div style={{ marginBottom: 30 }} />
               <Text style={{ fontSize: 16, fontFamily: 'soleil-light' }}>Last 24 Hours</Text><br/>
-              <Text style={{ fontSize: 46, color: '#4091F7', position: 'relative', top: -15 }}>{device.packets_last_1d}</Text><br/>
+              <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_1d}</Text><br/>
             </Col>
           </Card>
           </Col>

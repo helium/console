@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { createLabel } from '../../actions/label'
 import { graphql } from 'react-apollo';
 import { ALL_CHANNELS } from '../../graphql/channels'
+import { grayForModalCaptions } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 const { Text } = Typography
@@ -72,7 +73,7 @@ class CreateLabelModal extends Component {
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
         />
-        <Text style={{ marginBottom: 20, color: '#8C8C8C' }}>Label names must be unique</Text>
+        <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>Label names must be unique</Text>
 
         <Divider />
 

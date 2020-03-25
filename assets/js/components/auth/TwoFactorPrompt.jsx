@@ -6,6 +6,7 @@ import { withRouter } from 'react-router'
 import QRCode from 'qrcode.react';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
+import { primaryBlue } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
 const { Text, Title } = Typography
@@ -68,7 +69,7 @@ class TwoFactorPrompt extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:'#38A2FF'}}>Set up multi-factor authentication by scanning the QR code below, we highly recommend it.</Text>
+            <Text style={{color:primaryBlue}}>Set up multi-factor authentication by scanning the QR code below, we highly recommend it.</Text>
           </div>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: 30 }}>
             {this.renderQRCode()}
@@ -114,7 +115,7 @@ class TwoFactorPrompt extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:'#38A2FF'}}>Copy backup codes</Text>
+            <Text style={{color:primaryBlue}}>Copy backup codes</Text>
           </div>
           <div style={{ marginBottom: 20 }}>
             <Text>
