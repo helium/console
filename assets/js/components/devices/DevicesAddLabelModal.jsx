@@ -20,12 +20,12 @@ const queryOptions = {
 @graphql(ALL_LABELS, queryOptions)
 class DevicesAddLabelModal extends Component {
   state = {
-    labelId: null,
-    labelName: null,
+    labelId: undefined,
+    labelName: undefined,
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value, labelId: null, selected: undefined })
+    this.setState({ [e.target.name]: e.target.value, labelId: undefined})
   }
 
   handleSubmit = (e) => {
@@ -46,13 +46,13 @@ class DevicesAddLabelModal extends Component {
   }
 
   handleSelectOption = (labelId) => {
-    this.setState({ labelId, selected: labelId, labelName: null })
+    this.setState({ labelId, labelName: null })
   }
 
   render() {
     const { open, onClose, devicesToUpdate } = this.props
     const { error, allLabels } = this.props.data
-    const { labelName, labelId, selected } = this.state
+    const { labelName, labelId } = this.state
 
     return (
       <Modal
@@ -79,7 +79,7 @@ class DevicesAddLabelModal extends Component {
             placeholder={error ? "Labels failed to load..." : "Choose Label"}
             style={{ width: 220, marginRight: 10 }}
             onSelect={this.handleSelectOption}
-            value={selected}
+            value={labelId}
           >
             {
               allLabels && allLabels.map(l => (
