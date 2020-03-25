@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { graphql } from 'react-apollo';
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
+import { grayForModalCaptions } from '../../util/colors'
 import { addDevicesToLabel, addDevicesToNewLabel } from '../../actions/label'
 import LabelTag from '../common/LabelTag'
 import { Modal, Button, Typography, Input, Select } from 'antd';
@@ -92,7 +93,7 @@ class DevicesAddLabelModal extends Component {
         </div>
 
         <div style={{ marginTop: 15, marginBottom: 15 }}>
-          <Text style={{ color: '#8C8C8C' }}>or</Text>
+          <Text style={{ color: grayForModalCaptions }}>or</Text>
         </div>
 
         <div>
@@ -103,7 +104,7 @@ class DevicesAddLabelModal extends Component {
             value={this.state.labelName}
             onChange={this.handleInputUpdate}
           />
-          <Text style={{ marginBottom: 20, color: '#8C8C8C' }}>Label names must be unique</Text>
+          <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>Label names must be unique</Text>
         </div>
       </Modal>
     )

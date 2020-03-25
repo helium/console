@@ -3,6 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { checkCredentials, verify2fa } from '../../actions/auth';
+import { primaryBlue } from '../../util/colors'
 import TwoFactorForm from './TwoFactorForm'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
@@ -50,7 +51,7 @@ class Login extends Component {
         <Title>
           Helium Console
         </Title>
-        <Text style={{color:'#38A2FF'}}>Please Sign in</Text>
+        <Text style={{color:primaryBlue}}>Please Sign in</Text>
         </div>
 
         <Form onSubmit={this.handleSubmit}>

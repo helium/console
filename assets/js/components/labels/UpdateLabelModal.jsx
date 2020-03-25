@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Button, Typography, Input, Divider, Select } from 'antd';
 import LabelTag, { labelColors } from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
+import { grayForModalCaptions } from '../../util/colors'
 const { Text } = Typography
 const { Option } = Select
 
@@ -54,7 +55,7 @@ class UpdateLabelModal extends Component {
           value={this.state.labelName}
           onChange={this.handleInputUpdate}
         />
-        <Text style={{ color: '#8C8C8C' }}>Label names must be unique</Text>
+        <Text style={{ color: grayForModalCaptions }}>Label names must be unique</Text>
         <Divider />
         <Text>Pick a Color</Text>
         <Select defaultValue={label.color || labelColors[0]} style={{ width: '100%' }} name="color" onChange={this.handleColorSelect}>

@@ -28,7 +28,7 @@ class SearchResults extends Component {
 
     if ((pageResultsLength + searchResultsLength) > 0) {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: '#FFFFFF', boxShadow: '0 52px 64px -50px #001529' }} id="searchResults">
+        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: 'white', boxShadow: '0 52px 64px -50px #001529' }} id="searchResults">
           {searchResultsLength > 0 &&
             <SearchResultsSection
               title="SEARCH RESULTS"

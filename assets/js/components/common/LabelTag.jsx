@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Tag } from 'antd';
+import { Tag, Icon } from 'antd';
 
-const LabelTag = ({ text, color, style, closable, onClose }) => (
-  <Tag style={style} color={color ? color : "geekblue"} closable={closable} onClose={onClose}>{text}</Tag>
+const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations }) => (
+  <Tag style={style} color={color ? color : "geekblue"} closable={closable} onClose={onClose}>
+    {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {text}
+  </Tag>
 )
 
 export const labelColors = [

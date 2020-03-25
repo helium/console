@@ -5,6 +5,7 @@ import { push } from 'connected-react-router';
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
+import { primaryBlue } from '../../util/colors'
 import { Menu, Dropdown, Icon, Typography } from 'antd';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite.svg'
@@ -29,7 +30,7 @@ class TopBar extends Component {
                 </div>
         <div>
           {
-            currentOrganizationName && <Text style={{ color: '#38A2FF', marginRight: 20 }}><span style={{fontWeight:500, color:'white'}}>Organization:</span> {currentOrganizationName}</Text>
+            currentOrganizationName && <Text style={{ color: primaryBlue, marginRight: 20 }}><span style={{fontWeight:500, color:'white'}}>Organization:</span> {currentOrganizationName}</Text>
           }
         </div>
         <div style={{ flexGrow: 1 }}/>

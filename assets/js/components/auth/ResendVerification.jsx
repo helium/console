@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { resendVerification } from '../../actions/auth.js';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
+import { primaryBlue } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Input, Form, Card, Icon, Row, Col } from 'antd';
 const { Text, Title } = Typography
@@ -39,7 +40,7 @@ class ResendVerification extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:'#38A2FF'}}>Resend My Verification Email</Text>
+            <Text style={{color:primaryBlue}}>Resend My Verification Email</Text>
           </div>
 
           <Form onSubmit={this.handleSubmit}>

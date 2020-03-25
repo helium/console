@@ -4,6 +4,7 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -104,12 +105,14 @@ class DeviceIndexTable extends Component {
       {
         title: 'Frame Up',
         dataIndex: 'frame_up',
-        render: (text, record) => <Text>{record.frame_up}</Text>
       },
       {
         title: 'Frame Down',
         dataIndex: 'frame_down',
-        render: (text, record) => <Text>{record.frame_down}</Text>
+      },
+      {
+        title: 'Packets Transferred',
+        dataIndex: 'total_packets',
       },
       {
         title: 'Date Activated',
@@ -167,7 +170,7 @@ class DeviceIndexTable extends Component {
               onSelect={this.handleSelectOption}
             >
               <Option value="addLabel">Add Label to Selected Devices</Option>
-              <Option value="delete" style={{ color: '#F5222D' }}>Delete Selected Devices</Option>
+              <Option value="delete" style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
             <Button
               type="primary"

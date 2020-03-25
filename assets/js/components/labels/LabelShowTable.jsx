@@ -5,6 +5,7 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
@@ -132,7 +133,7 @@ class LabelShowTable extends Component {
               style={{ width: 220 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: '#F5222D' }}>Remove Devices from Label</Option>
+              <Option value="remove" style={{ color: redForTablesDeleteText }}>Remove Devices from Label</Option>
             </Select>
           </UserCan>
         }
