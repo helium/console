@@ -146,7 +146,7 @@ class LabelIndexTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="remove" style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
+              <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
             <Button
               type="primary"
