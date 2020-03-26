@@ -202,6 +202,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {_, nil} <- Labels.delete_labels_from_device(labels, device_id, current_organization) do
       device = Devices.get_device!(device_id)
+      ConsoleWeb.DeviceController.broadcast(device)
       ConsoleWeb.DeviceController.broadcast(device, device.id)
 
       conn
