@@ -64,12 +64,23 @@ class NavDrawer extends Component {
           <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits"><Icon type="wallet" />Data Credits</Menu.Item>
           <Menu.Item disabled={history.location.pathname === "/labels"} key="/labels"><Icon type="tag" />Labels</Menu.Item>
         </Menu>
-        <p
-          style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
-          onClick={() => this.setState({ showLabels: !showLabels })}
-        >
-          -
-        </p>
+        {
+          showLabels ? (
+            <p
+              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+              onClick={() => this.setState({ showLabels: false })}
+            >
+              -
+            </p>
+          ) : (
+            <p
+              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', cursor: 'pointer' }}
+              onClick={() => this.setState({ showLabels: true })}
+            >
+              +
+            </p>
+          )
+        }
         <div style={{ position: "absolute", top: 330, left: 0, padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13' }}>
           {
             showLabels && data.allLabels && data.allLabels.map(l => (
