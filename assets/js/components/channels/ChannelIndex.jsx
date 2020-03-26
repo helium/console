@@ -3,7 +3,7 @@ import ChannelsTable from './ChannelsTable'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'
-import ChannelCargoRow from './ChannelCargoRow'
+import ChannelPremadeRow from './ChannelPremadeRow'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography } from 'antd';
@@ -33,13 +33,13 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="Integrations">
         <UserCan>
-          <Card title="Helium Integrations">
-            <ChannelCargoRow />
+          <Card title="Add a Prebuilt Integration">
+            <ChannelPremadeRow />
           </Card>
         </UserCan>
 
         <UserCan>
-          <Card title="Create your own Integration">
+          <Card title="Add a Custom Integration">
             <ChannelCreateRow />
           </Card>
         </UserCan>

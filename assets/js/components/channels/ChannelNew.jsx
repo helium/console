@@ -10,9 +10,10 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import CargoForm from './forms/CargoForm.jsx'
+import MyDevicesForm from './forms/MyDevicesForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
-import ChannelCargoRow from './ChannelCargoRow'
+import ChannelPremadeRow from './ChannelPremadeRow'
 import LabelTag from '../common/LabelTag'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -67,7 +68,7 @@ class ChannelNew extends Component {
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     this.props.createChannel({
       name: channelName,
-      type: type == 'cargo' ? 'http' : type,
+      type: type == 'cargo' || type == 'mydevices' ? 'http' : type,
       credentials,
     }, labels)
   }
@@ -88,6 +89,8 @@ class ChannelNew extends Component {
         return <HTTPForm onValidInput={this.handleStep2Input}/>
       case "azure":
         return <AzureForm onValidInput={this.handleStep2Input}/>
+      case "mydevices":
+        return <MyDevicesForm onValidInput={this.handleStep2Input}/>
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
@@ -102,11 +105,11 @@ class ChannelNew extends Component {
 
       <Card title="Step 1 – Choose an Integration Type">
 
-        <Card size="small" title="Use Helium Cargo">
-          <ChannelCargoRow />
+        <Card size="small" title="Add a Prebuilt Integration">
+          <ChannelPremadeRow />
         </Card>
 
-        <Card size="small" title="Use a Custom Integration">
+        <Card size="small" title="Add a Custom Integration">
           <ChannelCreateRow />
         </Card>
 
