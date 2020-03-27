@@ -14,19 +14,28 @@ defmodule Console.Events do
   end
 
   def create_event(attrs \\ %{}) do
-    attrs =
-      case attrs["reported_at"] do
-        nil -> attrs
-        _ ->
-          reported_at_naive =
-            attrs["reported_at"]
-            |> DateTime.from_unix!()
-            |> DateTime.to_naive()
+    reported_at_naive =
+      attrs["reported_at"]
+      |> DateTime.from_unix!()
+      |> DateTime.to_naive()
+    reported_at = Integer.to_string(attrs["reported_at"])
 
-          reported_at = Integer.to_string(attrs["reported_at"])
+    hotspots = Jason.decode!(attrs["hotspots"])
+    # channels = Jason.decode!(attrs["channels"]) swap out below during phase 2 router
+    channels = [%{
+      "name" => attrs["channel_name"],
+      "id" => attrs["channel_id"],
+      "description" => attrs["description"],
+      "status" => attrs["status"]
+    }]
+    # remove useless attrs on event.ex after phase 2
 
-          Map.merge(attrs, %{"reported_at_naive" => reported_at_naive, "reported_at" => reported_at})
-      end
+    attrs = Map.merge(attrs, %{
+      "reported_at_naive" => reported_at_naive,
+      "reported_at" => reported_at,
+      "hotspots" => hotspots,
+      "channels" => channels
+    })
 
     %Event{}
     |> Event.changeset(attrs)
