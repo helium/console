@@ -15,6 +15,17 @@ export const EVENT_FRAGMENT = gql`
     frame_up,
     frame_down,
     reported_at,
+    hotspots {
+      id,
+      name,
+      rssi
+    },
+    channels {
+      id,
+      name,
+      status,
+      description
+    }
   }
 `
 export const EVENTS_SUBSCRIPTION = gql`

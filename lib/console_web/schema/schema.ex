@@ -105,8 +105,23 @@ defmodule ConsoleWeb.Schema do
     field :category, :string
     field :frame_up, :integer
     field :frame_down, :integer
+    field :hotspots, list_of(:event_hotspot)
+    field :channels, list_of(:event_channel)
     field :reported_at, :string
     field :reported_at_naive, :naive_datetime
+  end
+
+  object :event_hotspot do
+    field :id, :string
+    field :name, :string
+    field :rssi, :float
+  end
+
+  object :event_channel do
+    field :id, :string
+    field :name, :string
+    field :status, :string
+    field :description, :string
   end
 
   object :search_result do

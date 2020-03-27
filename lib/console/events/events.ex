@@ -20,21 +20,30 @@ defmodule Console.Events do
       |> DateTime.to_naive()
     reported_at = Integer.to_string(attrs["reported_at"])
 
-    hotspots = Jason.decode!(attrs["hotspots"])
-    # channels = Jason.decode!(attrs["channels"]) swap out below during phase 2 router
+    # swap out below during phase 2 router
     channels = [%{
-      "name" => attrs["channel_name"],
-      "id" => attrs["channel_id"],
-      "description" => attrs["description"],
-      "status" => attrs["status"]
+      name: attrs["channel_name"],
+      id: attrs["channel_id"],
+      description: attrs["description"],
+      status: attrs["status"]
     }]
     # remove useless attrs on event.ex after phase 2
+
+    hotspots =
+      case attrs["hotspots"] do
+        nil -> []
+        _ ->
+          Enum.map(attrs["hotspots"], fn h ->
+            Map.new(h, fn {k, v} -> {String.to_atom(k), v} end)
+          end)
+      end
+
 
     attrs = Map.merge(attrs, %{
       "reported_at_naive" => reported_at_naive,
       "reported_at" => reported_at,
       "hotspots" => hotspots,
-      "channels" => channels
+      "channels" => channels,
     })
 
     %Event{}

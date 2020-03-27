@@ -66,7 +66,7 @@ class PacketGraph extends Component {
           label: (tooltip, data) => {
             return (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4
               + 'byte packet received by '
-              + data.datasets[tooltip.datasetIndex].data[tooltip.index].h              
+              + data.datasets[tooltip.datasetIndex].data[tooltip.index].h
           }
         }
       }
@@ -99,6 +99,7 @@ class PacketGraph extends Component {
     const success = []
     const failure = []
     const noChannel = []
+
     events.forEach(event => {
       const currentTime = Date.now() / 1000
       const eventTime =  event.reported_at
@@ -107,23 +108,23 @@ class PacketGraph extends Component {
         if (event.status == 'success') {
           success.push({
             x: timeDiff,
-            y: parseFloat(event.rssi),
+            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspot_name
+            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
           })
         } else if (event.status == 'failure') {
           failure.push({
             x: timeDiff,
-            y: parseFloat(event.rssi),
+            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspot_name
+            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
           })
         } else {
           noChannel.push({
             x: timeDiff,
-            y: parseFloat(event.rssi),
+            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspot_name
+            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
           })
         }
       }
