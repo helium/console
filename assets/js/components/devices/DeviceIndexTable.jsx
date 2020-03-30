@@ -92,11 +92,13 @@ class DeviceIndexTable extends Component {
             {
               labels.map(l => (
                 <UserCan
+                  key={l.id}
                   alternate={
                     <LabelTag
                       key={l.name}
                       text={l.name}
                       color={l.color}
+                      hasIntegrations={l.devices.length > 0}
                     />
                   }
                 >
@@ -104,6 +106,7 @@ class DeviceIndexTable extends Component {
                     key={l.name}
                     text={l.name}
                     color={l.color}
+                    hasIntegrations={l.devices.length > 0}
                     closable
                     onClose={e => {
                       e.preventDefault()

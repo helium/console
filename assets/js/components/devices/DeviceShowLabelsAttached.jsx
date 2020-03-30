@@ -21,6 +21,7 @@ class DeviceShowLabelsAttached extends Component {
                   key={l.id}
                   text={l.name}
                   color={l.color}
+                  hasIntegrations={l.devices.length > 0}
                   style={{ marginBottom: 3 }}
                 />
               ))
@@ -35,6 +36,7 @@ class DeviceShowLabelsAttached extends Component {
                 key={l.id}
                 text={l.name}
                 color={l.color}
+                hasIntegrations={l.devices.length > 0}
                 style={{ marginBottom: 3 }}
                 closable
                 onClose={e => {

@@ -43,7 +43,7 @@ class ChannelPremadeRow extends Component {
     return(
       <div style={styles.createRow}>
         {
-          channelTypes.map(channel => {
+          channelTypes.map((channel, i) => {
             if (channel.name) return (
               <div style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
                 <Link to={channel.link}>
@@ -57,7 +57,7 @@ class ChannelPremadeRow extends Component {
               </div>
             )
             return (
-              <div style={{width: '19%', minWidth: 120}}/>
+              <div style={{width: '19%', minWidth: 120}} key={i} />
             )
           })
         }

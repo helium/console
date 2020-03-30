@@ -134,7 +134,7 @@ class ChannelNew extends Component {
             >
               {allLabels.map(l => (
                 <Option value={l.id} key={l.id}>
-                  <LabelTag text={l.name} color={l.color} />
+                  <LabelTag text={l.name} color={l.color} hasIntegrations={l.devices.length > 0} />
                 </Option>
               ))}
             </Select>
