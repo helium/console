@@ -4,25 +4,16 @@ defmodule Console.Channels.ChannelResolver do
   import Ecto.Query
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
-    device_count_query = from(
-      c in Channel,
-      join: l in assoc(c, :labels),
-      join: d in assoc(l, :devices),
-      select: {c.id, count(d.id)},
-      group_by: c.id
-    )
-
-    device_count_map =
-      Repo.all(device_count_query)
-      |> Enum.reduce(%{}, fn ({key, value}, acc) -> Map.put(acc, key, value) end)
-
     channels = Channel
       |> where([c], c.organization_id == ^current_organization.id)
-      |> preload([:labels])
+      |> preload([labels: :devices])
       |> Repo.paginate(page: page, page_size: page_size)
 
     updated_entries = channels.entries
-      |> Enum.map(fn c -> Map.put(c, :device_count, device_count_map[c.id]) end)
+      |> Enum.map(fn c ->
+        device_count = Enum.map(c.labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> length()
+        Map.put(c, :device_count, device_count)
+      end)
 
     {:ok, Map.put(channels, :entries, updated_entries)}
   end
@@ -30,15 +21,15 @@ defmodule Console.Channels.ChannelResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     channel = Channel
       |> where([c], c.id == ^id and c.organization_id == ^current_organization.id)
-      |> preload([:labels])
+      |> preload([labels: :devices])
       |> Repo.one!()
 
     devices =
       case length(channel.labels) do
         0 -> []
-        _ -> Ecto.assoc(channel.labels, :devices) |> Repo.all() |> Enum.uniq()
+        _ -> Enum.map(channel.labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
       end
-      
+
     channel =
       case channel.type do
         "http" ->

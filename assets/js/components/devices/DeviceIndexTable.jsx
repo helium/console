@@ -87,10 +87,34 @@ class DeviceIndexTable extends Component {
       {
         title: 'Labels',
         dataIndex: 'labels',
-        render: labels => {
+        render: (labels, record) => {
           return <React.Fragment>
             {
-              labels.map(l => <LabelTag key={l.name} text={l.name} color={l.color} />)
+              labels.map(l => (
+                <UserCan
+                  key={l.id}
+                  alternate={
+                    <LabelTag
+                      key={l.name}
+                      text={l.name}
+                      color={l.color}
+                      hasIntegrations={l.devices.length > 0}
+                    />
+                  }
+                >
+                  <LabelTag
+                    key={l.name}
+                    text={l.name}
+                    color={l.color}
+                    hasIntegrations={l.devices.length > 0}
+                    closable
+                    onClose={e => {
+                      e.preventDefault()
+                      this.props.openDevicesRemoveLabelModal([l], record)
+                    }}
+                  />
+                </UserCan>
+              ))
             }
           </React.Fragment>
         }

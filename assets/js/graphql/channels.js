@@ -23,7 +23,11 @@ export const CHANNEL_SHOW = gql`
       labels {
         name,
         id,
-        color
+        color,
+        devices {
+          name,
+          id
+        }
       }
       devices {
         name,
@@ -68,7 +72,11 @@ export const PAGINATED_CHANNELS = gql`
         labels {
           name,
           id,
-          color
+          color,
+          devices {
+            id,
+            name
+          }
         },
         device_count
       },

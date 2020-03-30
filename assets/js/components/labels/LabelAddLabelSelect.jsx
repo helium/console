@@ -53,7 +53,7 @@ class LabelAddLabelSelect extends Component {
           onChange={e => debouncedSearch(e.target.value)}
           style={{ width: 200, marginBottom: 10 }}
         />
-        <div style={{ overflow: 'scroll', height: 102 }}>
+        <div style={{ overflow: 'scroll', height: 102, width: 200 }}>
           {
             searchLabels.length === 0 && allLabels.map(l => {
               if (l.id === currentLabel.id) return

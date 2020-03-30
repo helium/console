@@ -67,6 +67,10 @@ export const ALL_LABELS_DEVICES = gql`
     allLabels {
       id,
       name,
+      devices{
+        name,
+        id
+      }
     }
     allDevices {
       id,
@@ -80,7 +84,11 @@ export const ALL_LABELS = gql`
     allLabels {
       id,
       name,
-      color
+      color,
+      devices{
+        name,
+        id
+      }
     }
   }
 `

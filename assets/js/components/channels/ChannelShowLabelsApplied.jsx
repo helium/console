@@ -18,7 +18,7 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
           >
             {allLabels.map(l => (
               <Option value={l.id} key={l.id}>
-                <LabelTag text={l.name} color={l.color} />
+                <LabelTag text={l.name} color={l.color} hasIntegrations={l.devices.length > 0} />
               </Option>
             ))}
           </Select>
@@ -35,12 +35,19 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
             channel.labels.map(l => (
               <UserCan
                 key={l.id}
-                alternate={<LabelTag text={l.name} color={l.color} />}
+                alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.devices.length > 0}/>}
               >
-                <LabelTag key={l.id} text={l.name} color={l.color} closable onClose={e => {
-                  e.preventDefault()
-                  handleClickRemove(l.id)
-                }}/>
+                <LabelTag
+                  key={l.id}
+                  text={l.name}
+                  color={l.color}
+                  hasIntegrations={l.devices.length > 0}
+                  closable
+                  onClose={e => {
+                    e.preventDefault()
+                    handleClickRemove(l.id)
+                  }}
+                />
               </UserCan>
             ))
           }

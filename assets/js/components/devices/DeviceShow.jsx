@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom'
 import OutsideClick from 'react-outside-click-handler';
 import pick from 'lodash/pick'
 import find from 'lodash/find'
+import flatten from 'lodash/flatten'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
-import DeviceShowTable from './DeviceShowTable'
+import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
@@ -216,9 +217,10 @@ class DeviceShow extends Component {
                   </td>
                 </tr>
                 <tr style={{height: '30px'}}>
-                  <td style={{paddingBottom: '20px'}}><Text strong>UUID</Text></td>
-                  <td style={{paddingBottom: '20px'}}>{device.id}</td>
+                  <td><Text strong>UUID</Text></td>
+                  <td>{device.id}</td>
                 </tr>
+                <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
                   <td><Text strong>Device EUI</Text></td>
                   <td>
@@ -296,8 +298,8 @@ class DeviceShow extends Component {
                   </td>
                 </tr>
                 <tr style={{height: '30px'}}>
-                  <td style={{paddingBottom: '20px'}}><Text strong>App Key</Text></td>
-                  <td style={{paddingBottom: '20px'}}>
+                  <td><Text strong>App Key</Text></td>
+                  <td>
                     {showAppKeyInput && (
                       <OutsideClick
                         onOutsideClick={this.toggleAppKeyInput}
@@ -333,6 +335,7 @@ class DeviceShow extends Component {
                     )}
                   </td>
                 </tr>
+                <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
                   <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
                   <td><Tag color="green">OTAA</Tag></td>
@@ -340,6 +343,23 @@ class DeviceShow extends Component {
                 <tr style={{height: '30px'}}>
                   <td><Text strong>LoRaWAN US Channels</Text></td>
                   <td><Text>48-55 (sub-band 7)</Text></td>
+                </tr>
+                <tr style={{height: '20px'}} />
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>Attached Labels</Text></td>
+                  <td>
+                    <DeviceShowLabelsAttached
+                      labels={device.labels}
+                      openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
+                      openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+                    />
+                  </td>
+                </tr>
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>Associated Integrations</Text></td>
+                  <td>
+                    {flatten(device.labels.map(l => l.channels)).map(c => c.name).join(", ")}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -378,13 +398,6 @@ class DeviceShow extends Component {
             )
           }
         </Row>
-
-        <DeviceShowTable
-          labels={device.labels}
-          device={device}
-          openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
-          openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-        />
 
         <Card title="Device Integrations">
           <EventsDashboard device_id={device.id} />

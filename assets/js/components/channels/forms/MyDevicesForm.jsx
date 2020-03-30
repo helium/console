@@ -9,6 +9,10 @@ class MyDevicesForm extends Component {
     headers: []
   }
 
+  componentDidMount = () => {
+    this.validateInput()
+  }
+
   validateInput = () => {
     const { method, endpoint, headers } = this.state
     if (method.length > 0 && endpoint.length > 0) {
@@ -39,14 +43,6 @@ class MyDevicesForm extends Component {
         <Text>
           For more integration information, check <a href="http://developer.helium.com/console/integrations" target="_blank">developer.helium.com/console/integrations</a>.
         </Text>
-        <br />
-        <Button
-          onClick={this.validateInput}
-          type="default"
-          style={{marginTop: 20}}
-        >
-          I AGREE
-        </Button>
       </div>
     );
   }
