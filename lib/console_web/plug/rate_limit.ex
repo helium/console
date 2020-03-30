@@ -4,7 +4,7 @@ defmodule ConsoleWeb.Plug.RateLimit do
   def init(default), do: default
 
   def call(conn, [action, limit]) do
-    ip_address = conn |> get_req_header("x-forwarded-for") |> List.first()
+    ip_address = conn |> get_req_header("cf-connecting-ip") |> List.first()
 
     case Hammer.check_rate("#{action}:#{ip_address}", 60_000, limit) do
       {:allow, _count} ->
