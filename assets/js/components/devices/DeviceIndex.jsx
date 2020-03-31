@@ -5,6 +5,7 @@ import NewDeviceModal from './NewDeviceModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeleteDeviceModal from './DeleteDeviceModal'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
+import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
@@ -15,6 +16,7 @@ class DeviceIndex extends Component {
     showDeleteDeviceModal: false,
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
+    showDeviceRemoveAllLabelsModal: false,
     devicesSelected: null,
     labelsSelected: null,
     deviceToRemoveLabel: null,
@@ -40,6 +42,14 @@ class DeviceIndex extends Component {
     this.setState({ showDevicesAddLabelModal: false })
   }
 
+  openDeviceRemoveAllLabelsModal = (devicesSelected) => {
+    this.setState({ showDeviceRemoveAllLabelsModal: true, devicesSelected })
+  }
+
+  closeDeviceRemoveAllLabelsModal = () => {
+    this.setState({ showDeviceRemoveAllLabelsModal: false })
+  }
+
   openDevicesRemoveLabelModal = (labelsSelected, deviceToRemoveLabel) => {
     this.setState({ showDevicesRemoveLabelModal: true, labelsSelected, deviceToRemoveLabel })
   }
@@ -57,7 +67,7 @@ class DeviceIndex extends Component {
   }
 
   render() {
-    const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal, showDevicesRemoveLabelModal, labelsSelected, deviceToRemoveLabel } = this.state
+    const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal, showDevicesRemoveLabelModal, showDeviceRemoveAllLabelsModal, labelsSelected, deviceToRemoveLabel } = this.state
     return(
       <DashboardLayout title="Devices">
         <DeviceIndexTable
@@ -65,6 +75,7 @@ class DeviceIndex extends Component {
           openDeleteDeviceModal={this.openDeleteDeviceModal}
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
           openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+          openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
         />
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
@@ -80,6 +91,12 @@ class DeviceIndex extends Component {
           onClose={this.closeDevicesRemoveLabelModal}
           labels={labelsSelected}
           device={deviceToRemoveLabel}
+        />
+
+        <DeviceRemoveAllLabelsModal
+          open={showDeviceRemoveAllLabelsModal}
+          onClose={this.closeDeviceRemoveAllLabelsModal}
+          devices={this.state.devicesSelected}
         />
 
         <DeleteDeviceModal

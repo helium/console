@@ -41,6 +41,7 @@ class LabelShowTable extends Component {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.refetchPaginatedEntries(page, pageSize)
+        this.setState({ selectedRows: [] })
       }
     })
   }

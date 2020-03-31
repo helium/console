@@ -37,6 +37,7 @@ class LabelIndexTable extends Component {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionAdded()
+        this.setState({ selectedRows: [] })
       }
     })
   }

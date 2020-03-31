@@ -38,6 +38,7 @@ class DeviceIndexTable extends Component {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionAdded()
+        this.setState({ selectedRows: [] })
       }
     })
   }
@@ -45,6 +46,8 @@ class DeviceIndexTable extends Component {
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
       this.props.openDevicesAddLabelModal(this.state.selectedRows)
+    } else if (value === 'removeAllLabels') {
+      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
     } else {
       this.props.openDeleteDeviceModal(this.state.selectedRows)
     }
@@ -186,6 +189,7 @@ class DeviceIndexTable extends Component {
               onSelect={this.handleSelectOption}
             >
               <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
+              <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
               <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
             <Button

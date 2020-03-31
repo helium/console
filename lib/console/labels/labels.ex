@@ -125,7 +125,18 @@ defmodule Console.Labels do
         query = from(dl in DevicesLabels, where: dl.label_id in ^labels and dl.device_id == ^device_id)
         Repo.delete_all(query)
     end
+  end
 
+  def delete_all_labels_from_devices(device_ids, organization) do
+    devices = Devices.get_devices(organization, device_ids)
+    case devices do
+      [] -> { :error }
+      _ ->
+        ids = Enum.map(devices, fn d -> d.id end)
+        query = from(dl in DevicesLabels, where: dl.device_id in ^ids)
+        Repo.delete_all(query)
+        { :ok, devices }
+    end
   end
 
   def add_labels_to_channel(labels, channel, organization) do

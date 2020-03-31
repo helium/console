@@ -23,6 +23,11 @@ defmodule Console.Devices do
      Repo.get_by!(Device, [id: id, organization_id: organization.id])
   end
 
+  def get_devices(organization, ids) do
+     from(d in Device, where: d.id in ^ids and d.organization_id == ^organization.id)
+     |> Repo.all()
+  end
+
   def get_device(organization, id) do
      Repo.get_by(Device, [id: id, organization_id: organization.id])
   end

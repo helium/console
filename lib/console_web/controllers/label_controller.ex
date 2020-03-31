@@ -211,6 +211,20 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
+  def delete_devices_from_labels(conn, %{"devices" => devices}) do
+    current_organization = conn.assigns.current_organization
+
+    with {:ok, devices} <- Labels.delete_all_labels_from_devices(devices, current_organization) do
+      devices
+        |> List.first()
+        |> ConsoleWeb.DeviceController.broadcast()
+
+      conn
+      |> put_resp_header("message", "All labels successfully removed from devices")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   def delete_labels_from_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
     current_organization = conn.assigns.current_organization
 
