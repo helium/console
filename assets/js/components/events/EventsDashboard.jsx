@@ -87,8 +87,15 @@ class EventsDashboard extends Component {
   }
 
   renderExpanded = record => {
-    const hotspotColumns = [{ title: 'Hotspot Name', dataIndex: 'name' }];
-    const channelColumns = [{ title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text>}];
+    const hotspotColumns = [
+      { title: 'Hotspot Name', dataIndex: 'name' },
+      { title: 'RSSI', dataIndex: 'rssi' },
+      { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> }
+    ]
+
+    const channelColumns = [
+      { title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text> }
+    ]
 
     return (
       <Row gutter={10} >
