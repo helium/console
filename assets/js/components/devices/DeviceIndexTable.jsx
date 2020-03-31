@@ -42,10 +42,6 @@ class DeviceIndexTable extends Component {
     })
   }
 
-  componentDidUpdate(prevProps) {
-    if (!prevProps.clearTable && this.props.clearTable) this.setState({ selectedRows: [] })
-  }
-
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
       this.props.openDevicesAddLabelModal(this.state.selectedRows)
@@ -175,15 +171,7 @@ class DeviceIndexTable extends Component {
     )
 
     const rowSelection = {
-      onSelect: (record, selected) => {
-        const { selectedRows } = this.state
-        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
-        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
-      },
-      onSelectAll: (selected, selectedRows) => {
-        if (selected) this.setState({ selectedRows })
-        else this.setState({ selectedRows: [] })
-      },
+      onChange: (keys, selectedRows) => this.setState({ selectedRows })
     }
 
     return (
@@ -216,7 +204,6 @@ class DeviceIndexTable extends Component {
           rowKey={record => record.id}
           pagination={false}
           rowSelection={rowSelection}
-          selectedRowKeys={this.state.selectedRows}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

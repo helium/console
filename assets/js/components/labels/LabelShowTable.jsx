@@ -111,15 +111,7 @@ class LabelShowTable extends Component {
     )
 
     const rowSelection = {
-      onSelect: (record, selected) => {
-        const { selectedRows } = this.state
-        if (selected) this.setState({ selectedRows: selectedRows.concat(record) })
-        else this.setState({ selectedRows: selectedRows.filter(r => r.id !== record.id) })
-      },
-      onSelectAll: (selected, selectedRows) => {
-        if (selected) this.setState({ selectedRows })
-        else this.setState({ selectedRows: [] })
-      },
+      onChange: (keys, selectedRows) => this.setState({ selectedRows })
     }
 
     return (
