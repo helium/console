@@ -154,7 +154,7 @@ class Profile extends Component {
 
             {
               data.apiKeys && (
-                <div style={{ marginTop: 20 }}>
+                <div style={{ marginTop: 20, overflowX: 'scroll' }}>
                   <Table
                     columns={columns}
                     dataSource={data.apiKeys}

@@ -10,7 +10,7 @@ class DashboardLayout extends Component {
     const { classes, title, extra, breadCrumbs, noSideNav } = this.props;
 
     return (
-      <Layout style={{width: '100%'}}>
+      <Layout style={{width: '100%', minWidth: 800 }}>
       <Header>
             <TopBar />
           </Header>

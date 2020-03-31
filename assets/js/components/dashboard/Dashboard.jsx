@@ -26,7 +26,7 @@ class Dashboard extends Component {
     const { showOrganizationModal } = this.state
     return (
       <DashboardLayout title="Dashboard">
-        <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20, overflow: 'hidden' }}>
+        <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20, overflowX: 'scroll' }}>
           <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
         </Card>
 

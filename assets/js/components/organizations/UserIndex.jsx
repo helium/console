@@ -69,7 +69,7 @@ class UserIndex extends Component {
       <DashboardLayout title="Users">
         <Card
           title="Members"
-          bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflow: 'hidden' }}
+          bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflowX: 'scroll' }}
           extra={
             <UserCan>
               <Button
@@ -91,7 +91,7 @@ class UserIndex extends Component {
           />
         </Card>
 
-        <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0, overflow: 'hidden' }}>
+        <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0, overflowX: 'scroll' }}>
           <header style={{ ...styles.header, marginTop: 1 }} />
           <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} />
         </Card>
