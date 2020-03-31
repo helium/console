@@ -22,6 +22,11 @@ defmodule Console.Labels do
      Repo.get_by!(Label, [id: id, organization_id: organization.id])
   end
 
+  def get_labels(organization, ids) do
+     from(l in Label, where: l.id in ^ids and l.organization_id == ^organization.id)
+     |> Repo.all()
+  end
+
   def get_label(organization, id) do
      Repo.get_by(Label, [id: id, organization_id: organization.id])
   end
@@ -136,6 +141,18 @@ defmodule Console.Labels do
         query = from(dl in DevicesLabels, where: dl.device_id in ^ids)
         Repo.delete_all(query)
         { :ok, devices }
+    end
+  end
+
+  def delete_all_devices_from_labels(label_ids, organization) do
+    labels = get_labels(organization, label_ids)
+    case labels do
+      [] -> { :error }
+      _ ->
+        ids = Enum.map(labels, fn l -> l.id end)
+        query = from(dl in DevicesLabels, where: dl.label_id in ^ids)
+        Repo.delete_all(query)
+        { :ok, labels }
     end
   end
 

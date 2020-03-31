@@ -42,8 +42,9 @@ class LabelIndexTable extends Component {
     })
   }
 
-  handleSelectOption = () => {
-    this.props.openDeleteLabelModal(this.state.selectedRows)
+  handleSelectOption = (value) => {
+    if (value === 'removeDevices') this.props.openRemoveAllDevicesFromLabelsModal(this.state.selectedRows)
+    else this.props.openDeleteLabelModal(this.state.selectedRows)
   }
 
   handleSubscriptionAdded = () => {
@@ -139,6 +140,7 @@ class LabelIndexTable extends Component {
               style={{ width: 220, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
+              <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices From Selected Labels</Option>
               <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
             <Button
