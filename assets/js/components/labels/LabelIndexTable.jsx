@@ -74,7 +74,7 @@ class LabelIndexTable extends Component {
         dataIndex: 'name',
         render: (text, record) => (
           <React.Fragment>
-            <Text>{text}</Text><LabelTag text={text} color={record.color} hasIntegrations={record.channels.length > 0} style={{ marginLeft: 10 }} />
+            <Text>{text}</Text><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0}/>
           </React.Fragment>
         )
       },

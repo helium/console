@@ -2,6 +2,7 @@ import React from 'react'
 import { Typography, Button, Card, Select } from 'antd';
 const { Text, Paragraph } = Typography
 const { Option } = Select
+import find from 'lodash/find'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 
@@ -18,7 +19,7 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
           >
             {allLabels.map(l => (
               <Option value={l.id} key={l.id}>
-                <LabelTag text={l.name} color={l.color} hasIntegrations={l.devices.length > 0} />
+                <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0}/>
               </Option>
             ))}
           </Select>
@@ -35,14 +36,14 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
             channel.labels.map(l => (
               <UserCan
                 key={l.id}
-                alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.devices.length > 0}/>}
+                alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={find(allLabels, { id: l.id }).channels.length > 0}/>}
               >
                 <LabelTag
                   key={l.id}
                   text={l.name}
                   color={l.color}
-                  hasIntegrations={l.devices.length > 0}
                   closable
+                  hasIntegrations={find(allLabels, { id: l.id }).channels.length > 0}
                   onClose={e => {
                     e.preventDefault()
                     handleClickRemove(l.id)

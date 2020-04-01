@@ -123,7 +123,7 @@ class LabelShow extends Component {
             </UserCan>
           }
         >
-          <LabelTag text={label.name} color={label.color} hasIntegrations={label.devices.length > 0} style={{ position: 'relative', top: -30 }}/>
+          <LabelTag text={label.name} color={label.color} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30 }}/>
 
           <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} />
 

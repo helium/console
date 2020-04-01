@@ -7,7 +7,7 @@ export const LABEL_FRAGMENT = gql`
     color,
     inserted_at,
     creator,
-    devices{
+    devices {
       name,
       id
     }
@@ -67,10 +67,6 @@ export const ALL_LABELS_DEVICES = gql`
     allLabels {
       id,
       name,
-      devices{
-        name,
-        id
-      }
     }
     allDevices {
       id,
@@ -85,9 +81,9 @@ export const ALL_LABELS = gql`
       id,
       name,
       color,
-      devices{
-        name,
-        id
+      channels {
+        id,
+        name
       }
     }
   }

@@ -30,7 +30,7 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:devices, :channels]])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels]])
 
     query1 = from e in Event, where: e.device_id == ^device.id, select: count(e)
     query2 = from e in Event, where: e.device_id == ^device.id, select: count(e), union_all: ^query1
@@ -59,7 +59,7 @@ defmodule Console.Devices.DeviceResolver do
       join: dl in DevicesLabels,
       on: dl.device_id == d.id,
       where: d.organization_id == ^current_organization.id and dl.label_id == ^label_id,
-      preload: [labels: :devices]
+      preload: [labels: [:channels]]
 
     {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
   end

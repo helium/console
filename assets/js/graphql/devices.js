@@ -44,10 +44,6 @@ export const DEVICE_SHOW = gql`
           name,
           id,
         }
-        devices {
-          id,
-          name
-        }
       }
       total_packets,
       packets_last_1d,
@@ -71,9 +67,9 @@ export const PAGINATED_DEVICES = gql`
           name,
           id,
           color,
-          devices {
-            id,
-            name
+          channels {
+            name,
+            id
           }
         }
       },
@@ -97,9 +93,9 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
         labels {
           name,
           color,
-          devices {
-            name,
-            id
+          channels {
+            id,
+            name
           }
         }
       },

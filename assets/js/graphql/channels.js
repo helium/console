@@ -24,10 +24,6 @@ export const CHANNEL_SHOW = gql`
         name,
         id,
         color,
-        devices {
-          name,
-          id
-        }
       }
       devices {
         name,
@@ -39,6 +35,10 @@ export const CHANNEL_SHOW = gql`
       id,
       color,
       devices {
+        name,
+        id
+      }
+      channels {
         name,
         id
       }
@@ -73,10 +73,6 @@ export const PAGINATED_CHANNELS = gql`
           name,
           id,
           color,
-          devices {
-            id,
-            name
-          }
         },
         device_count
       },

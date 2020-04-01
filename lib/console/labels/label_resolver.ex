@@ -13,7 +13,7 @@ defmodule Console.Labels.LabelResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    label = Ecto.assoc(current_organization, :labels) |> preload([:devices]) |> Repo.get!(id)
+    label = Ecto.assoc(current_organization, :labels) |> preload([:channels, :devices]) |> Repo.get!(id)
 
     {:ok, label}
   end
@@ -21,7 +21,7 @@ defmodule Console.Labels.LabelResolver do
   def all(_, %{context: %{current_organization: current_organization}}) do
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:devices])
+      |> preload([:devices, :channels])
       |> Repo.all()
 
     {:ok, labels}

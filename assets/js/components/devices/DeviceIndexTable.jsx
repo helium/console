@@ -97,7 +97,7 @@ class DeviceIndexTable extends Component {
                       key={l.name}
                       text={l.name}
                       color={l.color}
-                      hasIntegrations={l.devices.length > 0}
+                      hasIntegrations={l.channels.length > 0}
                     />
                   }
                 >
@@ -105,8 +105,8 @@ class DeviceIndexTable extends Component {
                     key={l.name}
                     text={l.name}
                     color={l.color}
-                    hasIntegrations={l.devices.length > 0}
                     closable
+                    hasIntegrations={l.channels.length > 0}
                     onClose={e => {
                       e.preventDefault()
                       this.props.openDevicesRemoveLabelModal([l], record)
