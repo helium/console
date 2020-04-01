@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography } from 'antd';
-import { deleteDevice, deleteDevices } from '../../actions/device'
+import { deleteDevices } from '../../actions/device'
 import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 import { connect } from 'react-redux'
@@ -10,27 +10,20 @@ import { bindActionCreators } from 'redux'
 class DeleteDeviceModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteDevice, deleteDevices, devicesToDelete, onClose } = this.props
-    const isArray = Array.isArray(devicesToDelete)
+    const { deleteDevices, devicesToDelete, onClose } = this.props
 
-    if (isArray) {
-      analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: devicesToDelete.map(d => d.id) })
-      deleteDevices(devicesToDelete)
-    } else {
-      analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: [devicesToDelete] })
-      deleteDevice(devicesToDelete)
-    }
+    analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: devicesToDelete.map(d => d.id) })
+    deleteDevices(devicesToDelete)
 
     onClose()
   }
 
   render() {
     const { open, onClose, devicesToDelete } = this.props
-    const isArray = Array.isArray(devicesToDelete)
 
     return (
       <Modal
-        title={isArray ? "Delete Devices" : "Delete Device"}
+        title="Delete Devices"
         visible={open}
         onCancel={onClose}
         centered
@@ -39,33 +32,25 @@ class DeleteDeviceModal extends Component {
           <Button key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={isArray && devicesToDelete.length === 0}>
+          <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={devicesToDelete && devicesToDelete.length === 0}>
             Submit
           </Button>,
         ]}
       >
+        <div style={{ marginBottom: 20 }}>
+          <Text>Are you sure you want to delete the following devices?</Text>
+        </div>
         {
-          isArray ? (
-            <React.Fragment>
-              <div style={{ marginBottom: 20 }}>
-                <Text>Are you sure you want to delete the following devices?</Text>
-              </div>
-              {
-                devicesToDelete.length == 0 ? (
-                  <div>
-                    <Text>&ndash; No Devices Currently Selected</Text>
-                  </div>
-                ) : (
-                  devicesToDelete.map(d => (
-                    <div key={d.id}>
-                      <Text>&ndash; {d.name}</Text>
-                    </div>
-                  ))
-                )
-              }
-            </React.Fragment>
+          devicesToDelete && devicesToDelete.length == 0 ? (
+            <div>
+              <Text>&ndash; No Devices Currently Selected</Text>
+            </div>
           ) : (
-            <Text>Are you sure you want to delete this device?</Text>
+            devicesToDelete && devicesToDelete.map(d => (
+              <div key={d.id}>
+                <Text>&ndash; {d.name}</Text>
+              </div>
+            ))
           )
         }
       </Modal>
@@ -74,7 +59,7 @@ class DeleteDeviceModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevice, deleteDevices }, dispatch)
+  return bindActionCreators({ deleteDevices }, dispatch)
 }
 
 export default DeleteDeviceModal

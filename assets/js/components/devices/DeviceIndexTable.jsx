@@ -157,7 +157,7 @@ class DeviceIndexTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openDeleteDeviceModal(record.id)}>Delete</Link>
+              <Link to="#" onClick={() => this.props.openDeleteDeviceModal([record])}>Delete</Link>
               <Text>{" | "}</Text>
             </UserCan>
             <Link to={`/devices/${record.id}`}>Show</Link>
