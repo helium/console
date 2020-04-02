@@ -38,6 +38,7 @@ defmodule Console.Channels.Channel do
     |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
+    |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
   def create_changeset(channel, attrs \\ %{}) do
@@ -52,6 +53,7 @@ defmodule Console.Channels.Channel do
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])
     |> validate_required([:name, :type, :active, :credentials, :organization_id, :default, :show_dupes])
     |> check_credentials_update(channel.type)
+    |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
   defp put_type_name(changeset) do

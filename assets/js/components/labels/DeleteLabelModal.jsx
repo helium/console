@@ -37,20 +37,29 @@ class DeleteLabelModal extends Component {
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 20 }}>
-          <Text>Are you sure you want to delete the following labels? All devices tagged with these labels will remain.</Text>
-        </div>
         {
-          labelsToDelete && labelsToDelete.length == 0 ? (
-            <div>
-              <Text>&ndash; No Labels Currently Selected</Text>
-            </div>
-          ) : (
-            labelsToDelete && labelsToDelete.map(l => (
-              <div key={l.id}>
-                <Text>&ndash; {l.name}</Text>
+          labelsToDelete && labelsToDelete.length === 1 && (
+            <React.Fragment>
+              <div style={{ marginBottom: 20 }}>
+                <Text>The {labelsToDelete[0].channels.map(c => c.name).join(", ")} integration{`${labelsToDelete[0].channels.length == 1 ? " is" : "s are"}`} mapped to this label. Are you sure you want to proceed? All devices tagged with this label will remain.</Text>
               </div>
-            ))
+            </React.Fragment>
+          )
+        }
+        {
+          labelsToDelete && labelsToDelete.length > 1 && (
+            <React.Fragment>
+              <div style={{ marginBottom: 20 }}>
+                <Text>Are you sure you want to delete the following labels? All devices tagged with these labels will remain.</Text>
+              </div>
+              {
+                labelsToDelete.map(l => (
+                  <div key={l.id}>
+                    <Text>&ndash; {l.name}</Text>
+                  </div>
+                ))
+              }
+            </React.Fragment>
           )
         }
       </Modal>
