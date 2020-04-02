@@ -109,7 +109,7 @@ class LabelIndexTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openDeleteLabelModal(record.id)}>Delete</Link>
+              <Link to="#" onClick={() => this.props.openDeleteLabelModal([record])}>Delete</Link>
               <Text>{" | "}</Text>
             </UserCan>
             <Link to={`/labels/${record.id}`}>Show</Link>
