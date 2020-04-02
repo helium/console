@@ -136,12 +136,13 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
     channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
 
-    with {:ok, count} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
+    with {:ok, count, first_label} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
       msg =
         case count do
           0 -> "All selected labels are already in channel"
           _ ->
             ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+            broadcast(first_label)
             "#{count} Labels added to channel successfully"
         end
 

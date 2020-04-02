@@ -185,7 +185,7 @@ class DeviceIndexTable extends Component {
           <UserCan>
             <Select
               value="Quick Action"
-              style={{ width: 220, marginRight: 10 }}
+              style={{ width: 270, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
               <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>

@@ -48,6 +48,7 @@ class LabelIndexTable extends Component {
 
   handleSelectOption = (value) => {
     if (value === 'removeDevices') this.props.openRemoveAllDevicesFromLabelsModal(this.state.selectedRows)
+    else if (value === 'addIntegration') this.props.openLabelAddChannelModal(this.state.selectedRows)
     else this.props.openDeleteLabelModal(this.state.selectedRows)
   }
 
@@ -146,10 +147,11 @@ class LabelIndexTable extends Component {
           <UserCan>
             <Select
               value="Quick Action"
-              style={{ width: 220, marginRight: 10 }}
+              style={{ width: 270, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
-              <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices From Selected Labels</Option>
+              <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>
+              <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
               <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
             <Button

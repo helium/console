@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import CreateLabelModal from './CreateLabelModal'
 import DeleteLabelModal from './DeleteLabelModal'
+import LabelAddChannelModal from './LabelAddChannelModal'
 import RemoveAllDevicesFromLabelsModal from './RemoveAllDevicesFromLabelsModal'
 import LabelIndexTable from './LabelIndexTable'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -12,6 +13,7 @@ class LabelIndex extends Component {
     showCreateLabelModal: false,
     showDeleteLabelModal: false,
     showRemoveAllDevicesFromLabelsModal: false,
+    showLabelAddChannelModal: false,
     labelsSelected: null,
   }
 
@@ -43,14 +45,23 @@ class LabelIndex extends Component {
     this.setState({ showRemoveAllDevicesFromLabelsModal: false })
   }
 
+  openLabelAddChannelModal = (labelsSelected) => {
+    this.setState({ showLabelAddChannelModal: true, labelsSelected })
+  }
+
+  closeLabelAddChannelModal = () => {
+    this.setState({ showLabelAddChannelModal: false })
+  }
+
   render() {
-    const { showRemoveAllDevicesFromLabelsModal, showCreateLabelModal, showDeleteLabelModal, labelsSelected } = this.state
+    const { showRemoveAllDevicesFromLabelsModal, showCreateLabelModal, showDeleteLabelModal, showLabelAddChannelModal, labelsSelected } = this.state
     return (
       <DashboardLayout title="Labels">
         <LabelIndexTable
           openCreateLabelModal={this.openCreateLabelModal}
           openDeleteLabelModal={this.openDeleteLabelModal}
           openRemoveAllDevicesFromLabelsModal={this.openRemoveAllDevicesFromLabelsModal}
+          openLabelAddChannelModal={this.openLabelAddChannelModal}
         />
 
         <CreateLabelModal
@@ -67,6 +78,12 @@ class LabelIndex extends Component {
         <RemoveAllDevicesFromLabelsModal
           open={showRemoveAllDevicesFromLabelsModal}
           onClose={this.closeRemoveAllDevicesFromLabelsModal}
+          labels={labelsSelected}
+        />
+
+        <LabelAddChannelModal
+          open={showLabelAddChannelModal}
+          onClose={this.closeLabelAddChannelModal}
           labels={labelsSelected}
         />
       </DashboardLayout>

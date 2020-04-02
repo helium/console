@@ -174,7 +174,7 @@ defmodule Console.Labels do
         end)
       end)
     do
-      {:ok, length(channels_labels)}
+      {:ok, length(channels_labels), List.first(all_labels)}
     end
   end
 
