@@ -37,7 +37,7 @@ defmodule ConsoleWeb.TwoFactorControllerTest do
     test "skipping 2fa", %{conn: conn, user: user} do
       conn = post conn, two_factor_path(conn, :skip), userId: user.id
 
-      assert json_response(conn, 202)["success_message"] === "You have skipped 2fa for 24 hours"
+      assert json_response(conn, 202)["success_message"] === "You've skipped two-factor authentication for today"
     end
   end
 

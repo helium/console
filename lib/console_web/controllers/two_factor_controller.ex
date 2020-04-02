@@ -58,7 +58,7 @@ defmodule ConsoleWeb.TwoFactorController do
 
         conn
         |> put_status(:accepted)
-        |> render("2fa_status.json", message: "You have skipped 2fa for 24 hours")
+        |> render("2fa_status.json", message: "You've skipped two-factor authentication for today")
     end
   end
 end
