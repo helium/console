@@ -5,7 +5,7 @@ defmodule Console.Mixfile do
     [
       app: :console,
       version: "0.0.1",
-      elixir: "~> 1.9.0",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
