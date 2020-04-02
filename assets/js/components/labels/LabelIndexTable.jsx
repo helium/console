@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
@@ -21,6 +24,7 @@ const queryOptions = {
   })
 }
 
+@connect(null, mapDispatchToProps)
 @graphql(PAGINATED_LABELS, queryOptions)
 class LabelIndexTable extends Component {
   state = {
@@ -67,6 +71,11 @@ class LabelIndexTable extends Component {
     })
   }
 
+  handleDeleteLabelClick = (label) => {
+    if (label.channels.length === 0) this.props.deleteLabel(label.id)
+    else this.props.openDeleteLabelModal([label])
+  }
+
   render() {
     const columns = [
       {
@@ -109,7 +118,7 @@ class LabelIndexTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openDeleteLabelModal([record])}>Delete</Link>
+              <Link to="#" onClick={() => this.handleDeleteLabelClick(record)}>Delete</Link>
               <Text>{" | "}</Text>
             </UserCan>
             <Link to={`/labels/${record.id}`}>Show</Link>
@@ -172,6 +181,10 @@ class LabelIndexTable extends Component {
       </Card>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ deleteLabel }, dispatch)
 }
 
 export default LabelIndexTable
