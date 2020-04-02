@@ -115,6 +115,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :string
     field :name, :string
     field :rssi, :float
+    field :snr, :float
   end
 
   object :event_channel do

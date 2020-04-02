@@ -18,7 +18,8 @@ export const EVENT_FRAGMENT = gql`
     hotspots {
       id,
       name,
-      rssi
+      rssi,
+      snr,
     },
     channels {
       id,
