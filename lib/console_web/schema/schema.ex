@@ -102,6 +102,8 @@ defmodule ConsoleWeb.Schema do
     field :payload_size, :integer
     field :rssi, :float
     field :snr, :float
+    field :port, :integer
+    field :devaddr, :string
     field :category, :string
     field :frame_up, :integer
     field :frame_down, :integer
@@ -116,6 +118,8 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :rssi, :float
     field :snr, :float
+    field :frequency, :float
+    field :spreading, :string
   end
 
   object :event_channel do

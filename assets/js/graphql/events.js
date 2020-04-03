@@ -15,11 +15,15 @@ export const EVENT_FRAGMENT = gql`
     frame_up,
     frame_down,
     reported_at,
+    port,
+    devaddr,
     hotspots {
       id,
       name,
       rssi,
       snr,
+      frequency,
+      spreading
     },
     channels {
       id,
