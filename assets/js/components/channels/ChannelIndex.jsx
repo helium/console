@@ -45,7 +45,7 @@ class ChannelIndex extends Component {
         </UserCan>
 
         <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px', overflowX: 'scroll' }}>
-          <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} />
+          <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} history={this.props.history}/>
         </Card>
 
         <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channel}/>

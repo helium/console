@@ -76,6 +76,7 @@ class DeviceIndex extends Component {
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
           openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
           openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+          history={this.props.history}
         />
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>

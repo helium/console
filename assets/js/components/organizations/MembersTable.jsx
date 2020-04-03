@@ -112,6 +112,7 @@ class MembersTable extends Component {
                   }}
                   type="danger"
                   icon="delete"
+                  shape="circle"
                 />
               </div>
             </UserCan>

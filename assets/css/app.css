@@ -156,3 +156,8 @@ h1 {
   margin-top: 20px;
   margin-right: 20px;
 }
+
+.ant-message {
+  top: 70px;
+  left: 100px;
+}

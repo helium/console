@@ -93,8 +93,9 @@ class OrganizationsTable extends Component {
               </Button>
 
               <Button
-                icon="delete"
                 type="danger"
+                icon="delete"
+                shape="circle"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
                   deleteOrganization(record.id)

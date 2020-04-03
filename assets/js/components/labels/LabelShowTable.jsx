@@ -70,6 +70,7 @@ class LabelShowTable extends Component {
       {
         title: 'Device Name',
         dataIndex: 'name',
+        render: (text, record) => <Link to="#">{text}</Link>
       },
       {
         title: 'Labels',
@@ -90,15 +91,21 @@ class LabelShowTable extends Component {
         render: data => moment.utc(data).local().format('lll')
       },
       {
-        title: 'Action',
+        title: '',
         key: 'action',
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openRemoveDevicesFromLabelModal([record])}>Remove</Link>
-              <Text>{" | "}</Text>
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                onClick={e => {
+                  e.stopPropagation()
+                  this.props.openRemoveDevicesFromLabelModal([record])
+                }}
+              />
             </UserCan>
-            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -132,6 +139,9 @@ class LabelShowTable extends Component {
         }
       >
         <Table
+          onRow={(record, rowIndex) => ({
+            onClick: () => this.props.history.push(`/devices/${record.id}`)
+          })}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={record => record.id}

@@ -62,6 +62,7 @@ class LabelIndex extends Component {
           openDeleteLabelModal={this.openDeleteLabelModal}
           openRemoveAllDevicesFromLabelsModal={this.openRemoveAllDevicesFromLabelsModal}
           openLabelAddChannelModal={this.openLabelAddChannelModal}
+          history={this.props.history}
         />
 
         <CreateLabelModal

@@ -78,6 +78,7 @@ class DeviceIndexTable extends Component {
       {
         title: 'Device Name',
         dataIndex: 'name',
+        render: (text, record) => <Link to="#">{text}</Link>
       },
       {
         title: 'Device EUI',
@@ -157,10 +158,16 @@ class DeviceIndexTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openDeleteDeviceModal([record])}>Delete</Link>
-              <Text>{" | "}</Text>
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                onClick={e => {
+                  e.stopPropagation()
+                  this.props.openDeleteDeviceModal([record])
+                }}
+              />
             </UserCan>
-            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -203,6 +210,9 @@ class DeviceIndexTable extends Component {
         }
       >
         <Table
+          onRow={(record, rowIndex) => ({
+            onClick: () => this.props.history.push(`/devices/${record.id}`)
+          })}
           columns={columns}
           dataSource={devices.entries}
           rowKey={record => record.id}

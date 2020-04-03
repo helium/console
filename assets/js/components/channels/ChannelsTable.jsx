@@ -63,7 +63,7 @@ class ChannelsTable extends Component {
         title: 'Name',
         dataIndex: 'name',
         render: (text, record) => (
-          <Link to={`/integrations/${record.id}`}>{text}</Link>
+          <Link to="#">{text}</Link>
         )
       },
       {
@@ -96,7 +96,11 @@ class ChannelsTable extends Component {
             <Button
               type="danger"
               icon="delete"
-              onClick={() => this.props.openDeleteChannelModal(record)}
+              shape="circle"
+              onClick={e => {
+                e.stopPropagation()
+                this.props.openDeleteChannelModal(record)
+              }}
             />
           </UserCan>
         )
@@ -113,6 +117,9 @@ class ChannelsTable extends Component {
     return (
       <div>
         <Table
+          onRow={(record, rowIndex) => ({
+            onClick: () => this.props.history.push(`/integrations/${record.id}`)
+          })}
           columns={columns}
           dataSource={channels.entries}
           rowKey={record => record.id}

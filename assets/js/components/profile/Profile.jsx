@@ -102,9 +102,16 @@ class Profile extends Component {
         title: 'Action',
         key: 'action',
         render: (text, record) => (
-          <UserCan>
-            <Link to="#" onClick={() => this.props.deleteKey(record.id)}>Delete</Link>
-          </UserCan>
+          <div style={{ display: 'flex', justifyContent: 'center'}}>
+            <UserCan>
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                onClick={() => this.props.deleteKey(record.id)}
+              />
+            </UserCan>
+          </div>
         )
       },
     ]
