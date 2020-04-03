@@ -74,12 +74,6 @@ class ChannelShow extends Component {
     this.setState({ newName: ""})
   }
 
-  handleShowDupesUpdate = () => {
-    const { channel } = this.props.data
-    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DUPLICATES_FLAG", { "id": channel.id, "show_dupes": !channel.show_dupes })
-    this.props.updateChannel(channel.id, { show_dupes: !channel.show_dupes })
-  }
-
   handleUpdateDetailsChange = () => {
     const { channel } = this.props.data
     const { credentials } = this.state
@@ -172,15 +166,6 @@ class ChannelShow extends Component {
                  <HttpDetails channel={channel} />
               </Card>
             )}
-            <UserCan
-              alternate={<Checkbox checked={channel.show_dupes} disabled>
-                Show Duplicate Packets
-              </Checkbox>}
-            >
-              <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
-                Show Duplicate Packets
-              </Checkbox>
-            </UserCan>
           </Col>
         </Row>
         </Card>

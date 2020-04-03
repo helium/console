@@ -44,8 +44,6 @@ defmodule ConsoleWeb.Schema do
     field :headers, :string
     field :inbound_token, :string
     field :active, :boolean
-    field :default, :boolean
-    field :show_dupes, :boolean
     field :labels, list_of(:label)
     field :devices, list_of(:device)
     field :device_count, :integer
