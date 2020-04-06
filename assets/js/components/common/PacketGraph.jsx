@@ -105,14 +105,14 @@ class PacketGraph extends Component {
       const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
       if ( timeDiff < 300 ) {
-        if (event.status == 'success') {
+        if (event.channels[0] && event.channels[0].status == 'success') {
           success.push({
             x: timeDiff,
             y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
           })
-        } else if (event.status == 'failure') {
+        } else if (event.channels[0] && event.channels[0].status == 'failure') {
           failure.push({
             x: timeDiff,
             y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
