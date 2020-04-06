@@ -62,9 +62,6 @@ defmodule Console.Factory do
       payload: "some payload",
       payload_size: 42,
       reported_at_naive: "2010-04-17T14:00:00.000000Z",
-      rssi: 120.5,
-      snr: 42,
-      status: "some status"
     }
   end
 

@@ -19,11 +19,6 @@ defmodule Console.Events.Event do
     field :devaddr, :string
     field :hotspots, {:array, :map}
     field :channels, {:array, :map}
-    field :hotspot_name, :string #useless now
-    field :channel_name, :string #useless now
-    field :status, :string #useless now
-    field :rssi, :float #useless now
-    field :snr, :float #useless now
 
     belongs_to :device, Device
     timestamps()

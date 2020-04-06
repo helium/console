@@ -92,14 +92,9 @@ defmodule ConsoleWeb.Schema do
   object :event do
     field :id, :id
     field :device_id, :id
-    field :hotspot_name, :string
-    field :channel_name, :string
-    field :status, :string
     field :description, :string
     field :payload, :string
     field :payload_size, :integer
-    field :rssi, :float
-    field :snr, :float
     field :port, :integer
     field :devaddr, :string
     field :category, :string

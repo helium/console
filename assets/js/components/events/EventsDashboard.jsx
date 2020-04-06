@@ -91,7 +91,7 @@ class EventsDashboard extends Component {
       { title: 'Hotspot Name', dataIndex: 'name' },
       { title: 'RSSI', dataIndex: 'rssi' },
       { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
-      { title: 'Frequency', dataIndex: 'frequency' },
+      { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
       { title: 'Spreading', dataIndex: 'spreading' },
     ]
 

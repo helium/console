@@ -3,14 +3,9 @@ import gql from 'graphql-tag';
 export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
     id,
-    hotspot_name,
-    channel_name,
-    status,
     description,
     payload,
     payload_size,
-    rssi,
-    snr,
     category,
     frame_up,
     frame_down,

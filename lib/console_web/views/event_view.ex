@@ -17,13 +17,9 @@ defmodule ConsoleWeb.EventView do
     %{
       id: event.id,
       description: event.description,
-      direction: event.direction,
       payload: event.payload,
       payload_size: event.payload_size,
       reported_at: event.reported_at,
-      rssi: event.rssi,
-      signal_strength: event.signal_strength,
-      status: event.status
     }
     |> append_device(event.device)
     |> append_gateway(event.gateway)
