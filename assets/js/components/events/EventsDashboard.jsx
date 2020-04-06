@@ -90,7 +90,9 @@ class EventsDashboard extends Component {
     const hotspotColumns = [
       { title: 'Hotspot Name', dataIndex: 'name' },
       { title: 'RSSI', dataIndex: 'rssi' },
-      { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> }
+      { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
+      { title: 'Frequency', dataIndex: 'frequency' },
+      { title: 'Spreading', dataIndex: 'spreading' },
     ]
 
     const channelColumns = [
@@ -98,13 +100,11 @@ class EventsDashboard extends Component {
     ]
 
     return (
-      <Row gutter={10} >
-        <Col span={11}>
+      <Row gutter={10}>
+        <Col span={22}>
           <Card bordered={false}>
-            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.name}/>
+            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
           </Card>
-        </Col>
-        <Col span={11}>
           <Card bordered={false}>
             <Table columns={channelColumns} dataSource={record.channels} pagination={false} rowKey={record => record.id}/>
           </Card>
@@ -131,6 +131,14 @@ class EventsDashboard extends Component {
         title: 'FCnt',
         dataIndex: 'frame_up',
         render: (data, row) => row.category === 'up' ? <span>{row.frame_up}</span> : <span>{row.frame_down}</span>
+      },
+      {
+        title: 'Port',
+        dataIndex: 'port',
+      },
+      {
+        title: 'DevAddr',
+        dataIndex: 'devaddr',
       },
       {
         title: 'Time',
@@ -163,7 +171,7 @@ class EventsDashboard extends Component {
         <Table
           dataSource={rows}
           columns={columns}
-          rowKey={record => record.device_id}
+          rowKey={record => record.id}
           pagination={false}
           expandedRowRender={this.renderExpanded}
         />
@@ -173,68 +181,3 @@ class EventsDashboard extends Component {
 }
 
 export default EventsDashboard
-
-// [{
-//   description: 'test description',
-//   payload: 'payload',
-//   payload_size: '2',
-//   category: 'up',
-//   frame_up: '2',
-//   frame_down: '0',
-//   device_id: 'test ids',
-//   reported_at: '1584990903',
-//   hotspots: [
-//     {
-//       name: 'hotspot name 1',
-//       rssi: '10',
-//       snr: '20',
-//       reported_at: '1584990903',
-//     },
-//     {
-//       name: 'hotspot name 2',
-//       rssi: '10',
-//       snr: '20',
-//       reported_at: '1584990903',
-//     },
-//   ],
-//   channels: [
-//     {
-//       name: 'channel name 1',
-//       id: 'uuid 1',
-//       description: 'what happene ihagkljhajklshdlkhlahskljdhfjkhalkd',
-//       status: 'failure'
-//     },
-//     {
-//       name: 'channel name 2',
-//       id: 'uuid 2',
-//       description: 'what happened',
-//       status: 'success'
-//     }
-//   ]
-// },
-// {
-//   description: 'test description',
-//   payload: 'payload',
-//   payload_size: '2',
-//   category: 'up',
-//   frame_up: '2',
-//   frame_down: '0',
-//   device_id: 'test id',
-//   reported_at: '1584990903',
-//   hotspots: [
-//     {
-//       name: 'hotspot name',
-//       rssi: '10',
-//       snr: '20',
-//       reported_at: '1584990903',
-//     },
-//   ],
-//   channels: [
-//     {
-//       name: 'channel name 2',
-//       id: 'uuid 2',
-//       description: 'what happened',
-//       status: 'success'
-//     }
-//   ]
-// }]
