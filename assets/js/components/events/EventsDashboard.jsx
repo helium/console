@@ -43,7 +43,7 @@ const categoryTag = (category) => {
 
 const statusBadge = (status) => {
   switch(status) {
-    case "failure":
+    case "error":
       return <Badge status="error" />
     case "success":
       return <Badge status="success" />
