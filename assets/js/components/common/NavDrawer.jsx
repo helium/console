@@ -57,11 +57,10 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/dashboard"} class="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Dashboard</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/devices"} class="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/integrations"} class="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
           <div style={{ marginLeft: 24, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
-            <Link to={"/labels"} class="menu-link" style={{ marginRight: 40 }}>
+            <Link to={"/labels"} className="menu-link" style={{ marginRight: 40 }}>
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
             </Link>
             {
@@ -87,8 +86,8 @@ class NavDrawer extends Component {
               <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 16 }}>
                 {
                   data.allLabels && data.allLabels.map(l => (
-                    <div style={{ padding: 2 }}>
-                      <Link to={`/labels/${l.id}`} key={l.id}>
+                    <div style={{ padding: 2 }} key={l.id}>
+                      <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
                       </Link>
                     </div>
@@ -97,10 +96,10 @@ class NavDrawer extends Component {
               </div>
             )
           }
-
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"#"} class="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} class="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} class="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"#"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
         </Menu>
       </div>
     )
