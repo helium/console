@@ -96,7 +96,7 @@ class EventsDashboard extends Component {
     ]
 
     const channelColumns = [
-      { title: 'Channel Name', dataIndex: 'name' },
+      { title: 'Integration Name', dataIndex: 'name' },
       { title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text> }
     ]
 
