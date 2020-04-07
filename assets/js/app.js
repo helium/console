@@ -23,8 +23,30 @@ import "phoenix_html"
 import React from "react"
 import ReactDOM from "react-dom"
 import App from "./App.jsx"
+import { Auth0Provider } from "./components/auth/Auth0Provider"
+import { history } from "./store/configureStore"
+
+const config = {
+  domain: 'dev-j03rcvdv.auth0.com',
+  clientId: 'dAS0iCnOsSBTsyanPPcYEmDVitsRcQ8c'
+}
+
+const onRedirectCallback = appState => {
+  history.push(
+    appState && appState.targetUrl
+      ? appState.targetUrl
+      : window.location.pathname
+  )
+}
 
 ReactDOM.render(
-  <App/>,
+  <Auth0Provider
+    domain={config.domain}
+    client_id={config.clientId}
+    redirect_uri={window.location.origin}
+    onRedirectCallback={onRedirectCallback}
+  >
+    <App/>
+  </Auth0Provider>,
   document.getElementById("react-root")
 )
