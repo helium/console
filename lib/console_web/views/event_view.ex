@@ -17,7 +17,6 @@ defmodule ConsoleWeb.EventView do
     %{
       id: event.id,
       description: event.description,
-      payload: event.payload,
       payload_size: event.payload_size,
       reported_at: event.reported_at,
     }

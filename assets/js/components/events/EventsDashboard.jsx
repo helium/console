@@ -123,12 +123,6 @@ class EventsDashboard extends Component {
         render: data => <span>{categoryTag(data)}</span>
       },
       {
-        title: 'Payload',
-        dataIndex: 'payload',
-        render: data => <span>{base64ToHex(data)}</span>
-      },
-      ,
-      {
         title: 'FCnt',
         dataIndex: 'frame_up',
         render: (data, row) => row.category === 'up' ? <span>{row.frame_up}</span> : <span>{row.frame_down}</span>
