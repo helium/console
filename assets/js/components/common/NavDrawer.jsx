@@ -96,7 +96,7 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"#"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
           <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
           <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
           <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>

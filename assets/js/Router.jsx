@@ -33,6 +33,8 @@ import OrganizationIndex from './components/organizations/OrganizationIndex'
 import LabelIndex from './components/labels/LabelIndex'
 import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
+import FunctionIndex from './components/functions/FunctionIndex';
+import FunctionNew from './components/functions/FunctionNew';
 
 class Router extends React.Component {
   render() {
@@ -64,6 +66,8 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/users" component={UserIndex} />
                   <PrivateRoute exact path="/organizations" component={OrganizationIndex} />
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />
+                  <PrivateRoute exact path="/functions" component={FunctionIndex} />
+                  <PrivateRoute exact path="/functions/new" component={FunctionNew} />
                 </Switch>
               </ConnectedRouter>
             </UserOrgProvider>
