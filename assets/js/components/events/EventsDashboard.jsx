@@ -60,7 +60,6 @@ class EventsDashboard extends Component {
 
   componentDidUpdate(prevProps) {
     const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
-    const { showDebugSidebar, updateDebugData } = this.props
 
     if (prevProps.data.loading && !loading) {
       this.setState({ rows: deviceEvents }, () => {
@@ -71,7 +70,7 @@ class EventsDashboard extends Component {
             if (!subscriptionData.data) return prev
 
             this.addEvent(subscriptionData.data.eventAdded)
-            if (showDebugSidebar) updateDebugData(subscriptionData.data.eventAdded)
+            if (this.props.showDebugSidebar) this.props.updateDebugData(subscriptionData.data.eventAdded)
           }
         })
       })

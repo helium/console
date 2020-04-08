@@ -9,12 +9,12 @@ const DebugSidebar = ({ show, toggle, data }) => (
       backgroundColor: debugSidebarBackgroundColor,
       position: 'absolute',
       top: 64,
-      width: 500,
+      width: show ? 500 : 0,
       height: 'calc(100vh - 64px)',
-      right: show ? 0 : -500,
+      right: 0,
       zIndex: 10,
-      padding: 20,
-      transition: 'all 0.5s ease'
+      padding: 0,
+      transition: 'all 0.5s ease',
     }}
   >
     <div
@@ -36,11 +36,19 @@ const DebugSidebar = ({ show, toggle, data }) => (
     >
       <Text style={{ color: 'white' }}>Debug</Text>
     </div>
-    {
-      data.map(d => (
-        <Text code style={{ color: debugTextColor }}>{JSON.stringify(d)}</Text>
-      ))
-    }
+    <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
+      {
+        data.map(d => (
+          <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
+            <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
+              <pre>
+                {JSON.stringify(d, null, 2)}
+              </pre>
+            </Text>
+          </div>
+        ))
+      }
+    </div>
   </div>
 )
 
