@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
+import DebugSidebar from '../common/DebugSidebar'
 import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
@@ -48,6 +49,8 @@ class DeviceShow extends Component {
     labelsSelected: null,
     showDeviceRemoveLabelModal: false,
     showDevicesAddLabelModal: false,
+    showDebugSidebar: false,
+    debugData: null,
   }
 
   componentDidMount() {
@@ -159,6 +162,16 @@ class DeviceShow extends Component {
     this.setState({ showDevicesAddLabelModal: false })
   }
 
+  handleToggleDebug = () => {
+    const { showDebugSidebar } = this.state
+
+    if (showDebugSidebar) {
+      this.setState({ showDebugSidebar: false })
+    } else {
+      this.setState({ showDebugSidebar: true })
+    }
+  }
+
   render() {
     const {
       newName,
@@ -169,6 +182,8 @@ class DeviceShow extends Component {
       showDeviceRemoveLabelModal,
       labelsSelected,
       showDevicesAddLabelModal,
+      showDebugSidebar,
+      debugData
     } = this.state
     const { loading, error, device } = this.props.data
 
@@ -178,7 +193,7 @@ class DeviceShow extends Component {
     return(
       <DashboardLayout title={`${device.name}`}>
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
-          <Col span={16}>
+          <Col span={15}>
           <Card title="Device Details">
             <table>
               <tbody>
@@ -367,7 +382,7 @@ class DeviceShow extends Component {
           </Col>
 
 
-          <Col span={8}>
+          <Col span={9}>
             <Card
               title={
                 <Tabs defaultActiveKey="1" tabBarStyle={{ marginBottom: 0, position: 'relative', top: -2.5, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
@@ -411,6 +426,12 @@ class DeviceShow extends Component {
           open={showDevicesAddLabelModal}
           onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={[device]}
+        />
+
+        <DebugSidebar
+          show={showDebugSidebar}
+          data={debugData}
+          toggle={this.handleToggleDebug}
         />
       </DashboardLayout>
     )
