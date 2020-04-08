@@ -59,7 +59,6 @@ defmodule Console.Factory do
   def event_factory do
     %Event{
       description: "I am an event",
-      payload: "some payload",
       payload_size: 42,
       reported_at_naive: "2010-04-17T14:00:00.000000Z",
     }

@@ -93,7 +93,6 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :device_id, :id
     field :description, :string
-    field :payload, :string
     field :payload_size, :integer
     field :port, :integer
     field :devaddr, :string

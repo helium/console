@@ -68,6 +68,7 @@ class EventsDashboard extends Component {
           variables,
           updateQuery: (prev, { subscriptionData }) => {
             if (!subscriptionData.data) return prev
+
             this.addEvent(subscriptionData.data.eventAdded)
           }
         })
@@ -122,12 +123,6 @@ class EventsDashboard extends Component {
         dataIndex: 'category',
         render: data => <span>{categoryTag(data)}</span>
       },
-      {
-        title: 'Payload',
-        dataIndex: 'payload',
-        render: data => <span>{base64ToHex(data)}</span>
-      },
-      ,
       {
         title: 'FCnt',
         dataIndex: 'frame_up',

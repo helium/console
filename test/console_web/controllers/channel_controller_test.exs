@@ -42,7 +42,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert updated_channel["name"] == @update_attrs.name
       assert updated_channel["active"] == @update_attrs.active
       assert updated_channel["credentials"]["a"] == @update_attrs.credentials["a"]
-      assert updated_channel["type"] == @update_attrs.type
     end
 
     test "renders update errors when data is invalid", %{conn: conn, organization: organization} do

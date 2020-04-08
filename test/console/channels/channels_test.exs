@@ -57,7 +57,6 @@ defmodule Console.ChannelsTest do
       assert channel.active == false
       assert channel.credentials["endpoint"] == @updated_creds["endpoint"]
       assert channel.name == "some updated name"
-      assert channel.type == "mqtt"
     end
 
     test "update_channel/2 with invalid data returns error changeset" do

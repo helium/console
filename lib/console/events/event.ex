@@ -13,7 +13,6 @@ defmodule Console.Events.Event do
     field :reported_at_naive, :naive_datetime
     field :frame_up, :integer
     field :frame_down, :integer
-    field :payload, :string
     field :payload_size, :integer
     field :port, :integer
     field :devaddr, :string
@@ -31,7 +30,6 @@ defmodule Console.Events.Event do
       :hotspots,
       :channels,
       :description,
-      :payload,
       :payload_size,
       :category,
       :frame_up,

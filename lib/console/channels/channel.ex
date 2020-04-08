@@ -48,7 +48,7 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     channel
-    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id])
+    |> cast(attrs, [:name, :active, :credentials, :organization_id])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> check_credentials_update(channel.type)
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
