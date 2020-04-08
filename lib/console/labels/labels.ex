@@ -27,6 +27,11 @@ defmodule Console.Labels do
      |> Repo.all()
   end
 
+  def get_labels_of_device(device) do
+     from(dl in DevicesLabels, where: dl.device_id == ^device.id)
+     |> Repo.all()
+  end
+
   def get_label(organization, id) do
      Repo.get_by(Label, [id: id, organization_id: organization.id])
   end

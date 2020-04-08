@@ -7,6 +7,7 @@ import LabelAddDeviceModal from './LabelAddDeviceModal'
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
+import DebugSidebar from '../common/DebugSidebar'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
@@ -33,6 +34,8 @@ class LabelShow extends Component {
     showLabelAddDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
     devicesToRemove: [],
+    showDebugSidebar: false,
+    debugData: [],
   }
 
   componentDidMount() {
@@ -80,6 +83,24 @@ class LabelShow extends Component {
     const labelId = this.props.match.params.id
     const attrs = name ? { name, color } : { color }
     this.props.updateLabel(labelId, attrs)
+  }
+
+  handleToggleDebug = () => {
+    const { showDebugSidebar } = this.state
+
+    if (showDebugSidebar) {
+      this.setState({ showDebugSidebar: false })
+    } else {
+      this.setState({ showDebugSidebar: true, debugData: [] })
+    }
+  }
+
+  updateDebugData = packet => {
+    const { debugData } = this.state
+    if (debugData.length > 50) {
+      debugData.pop()
+    }
+    this.setState({ debugData: [packet].concat(debugData) })
   }
 
   render() {
@@ -147,6 +168,12 @@ class LabelShow extends Component {
             open={this.state.showRemoveDevicesFromLabelModal}
             onClose={this.closeRemoveDevicesFromLabelModal}
             devicesToRemove={this.state.devicesToRemove}
+          />
+
+          <DebugSidebar
+            show={this.state.showDebugSidebar}
+            data={this.state.debugData}
+            toggle={this.handleToggleDebug}
           />
         </DashboardLayout>
       </div>

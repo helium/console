@@ -4,6 +4,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   import Ecto.Query
   import ConsoleWeb.AuthErrorHandler
 
+  alias Console.Labels
   alias Console.Devices
   alias Console.Devices.Device
   alias Console.Events
@@ -48,6 +49,9 @@ defmodule ConsoleWeb.Router.DeviceController do
               "frame_down" => event.frame_down,
               "total_packets" => device.total_packets + 1,
             })
+
+            labels = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
+            IO.inspect labels
         end
 
         conn
