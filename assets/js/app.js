@@ -20,16 +20,12 @@ import "phoenix_html"
 
 // import socket from "./socket"
 
-import React from "react"
-import ReactDOM from "react-dom"
-import App from "./App.jsx"
-import { Auth0Provider } from "./components/auth/Auth0Provider"
-import { history } from "./store/configureStore"
-
-const config = {
-  domain: 'dev-j03rcvdv.auth0.com',
-  clientId: 'dAS0iCnOsSBTsyanPPcYEmDVitsRcQ8c'
-}
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App.jsx'
+import { Auth0Provider } from './components/auth/Auth0Provider'
+import { history } from './store/configureStore'
+import { config } from './config/auth0'
 
 const onRedirectCallback = appState => {
   history.push(
