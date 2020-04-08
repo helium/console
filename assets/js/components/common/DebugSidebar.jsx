@@ -37,9 +37,9 @@ const DebugSidebar = ({ show, toggle, data }) => (
       <Text style={{ color: 'white' }}>Debug</Text>
     </div>
     {
-      data && (
-        <Text code style={{ color: debugTextColor }}>{JSON.stringify({test: 'test'})}</Text>
-      )
+      data.map(d => (
+        <Text code style={{ color: debugTextColor }}>{JSON.stringify(d)}</Text>
+      ))
     }
   </div>
 )

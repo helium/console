@@ -50,7 +50,7 @@ class DeviceShow extends Component {
     showDeviceRemoveLabelModal: false,
     showDevicesAddLabelModal: false,
     showDebugSidebar: false,
-    debugData: null,
+    debugData: [],
   }
 
   componentDidMount() {
@@ -168,8 +168,16 @@ class DeviceShow extends Component {
     if (showDebugSidebar) {
       this.setState({ showDebugSidebar: false })
     } else {
-      this.setState({ showDebugSidebar: true })
+      this.setState({ showDebugSidebar: true, debugData: [] })
     }
+  }
+
+  updateDebugData = packet => {
+    const { debugData } = this.state
+    if (debugData.length > 50) {
+      debugData.pop()
+    }
+    this.setState({ debugData: [packet].concat(debugData) })
   }
 
   render() {
@@ -412,7 +420,7 @@ class DeviceShow extends Component {
         </Row>
 
         <Card title="Device Integrations">
-          <EventsDashboard device_id={device.id} />
+          <EventsDashboard device_id={device.id} showDebugSidebar={showDebugSidebar} updateDebugData={this.updateDebugData} />
         </Card>
 
         <DeviceRemoveLabelModal
