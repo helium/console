@@ -5,7 +5,6 @@ import moment from 'moment'
 import get from 'lodash/get'
 import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization } from '../../actions/organization'
-import UserCan from '../common/UserCan'
 import { PAGINATED_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -121,20 +120,6 @@ class OrganizationsTable extends Component {
 
     return (
       <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
-          <UserCan>
-            <Button
-              icon="plus"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_NEW_ORG")
-                this.props.openOrganizationModal()
-              }}
-              type="primary"
-            >
-              Add Organization
-            </Button>
-          </UserCan>
-        </div>
         <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id}/>
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

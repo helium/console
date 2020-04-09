@@ -199,13 +199,6 @@ class DeviceIndexTable extends Component {
               <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
               <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
-            <Button
-              type="primary"
-              icon="plus"
-              onClick={this.props.openCreateDeviceModal}
-            >
-              Add Device
-            </Button>
           </UserCan>
         }
       >

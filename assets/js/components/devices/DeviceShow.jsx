@@ -186,7 +186,15 @@ class DeviceShow extends Component {
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
     return(
-      <DashboardLayout title={`${device.name}`}>
+      <DashboardLayout
+        title={`${device.name}`}
+        breadCrumbs={
+          <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+            <Link to="/devices"><Text style={{ color: "#8C8C8C" }}>Devices&nbsp;&nbsp;/</Text></Link>
+            <Text>&nbsp;&nbsp;{device.name}</Text>
+          </div>
+        }
+      >
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
           <Col span={15}>
           <Card title="Device Details">

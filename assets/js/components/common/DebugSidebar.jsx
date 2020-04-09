@@ -49,7 +49,7 @@ class DebugSidebar extends Component {
             transform: 'rotate(-90deg)',
             position: 'absolute',
             left: -52,
-            top: 80,
+            top: 160,
             backgroundColor: debugSidebarBackgroundColor,
             paddingLeft: 12,
             paddingRight: 12,

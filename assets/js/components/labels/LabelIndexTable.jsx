@@ -160,13 +160,6 @@ class LabelIndexTable extends Component {
               <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
               <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
-            <Button
-              type="primary"
-              icon="tag"
-              onClick={this.props.openCreateLabelModal}
-            >
-              Create New Label
-            </Button>
           </UserCan>
         }
       >

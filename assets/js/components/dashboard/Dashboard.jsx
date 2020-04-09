@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import OrganizationsTable from '../organizations/OrganizationsTable'
 import NewOrganizationModal from '../organizations/NewOrganizationModal'
+import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 
 class Dashboard extends Component {
   state = {
@@ -25,9 +26,26 @@ class Dashboard extends Component {
   render() {
     const { showOrganizationModal } = this.state
     return (
-      <DashboardLayout title="Dashboard">
+      <DashboardLayout
+        title="Dashboard"
+        extra={
+          <UserCan>
+            <Button
+              icon="plus"
+              size="large"
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_NEW_ORG")
+                this.openOrganizationModal()
+              }}
+              type="primary"
+            >
+              Add Organization
+            </Button>
+          </UserCan>
+        }
+      >
         <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20, overflowX: 'scroll' }}>
-          <OrganizationsTable openOrganizationModal={this.openOrganizationModal} />
+          <OrganizationsTable />
         </Card>
 
         <NewOrganizationModal

@@ -15,6 +15,7 @@ class ContentLayout extends Component {
           title={title}
           subTitle=""
           extra={extra}
+          style={{ paddingRight: 3 }}
         />
         <div>
           {this.props.children}

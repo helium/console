@@ -66,24 +66,27 @@ class UserIndex extends Component {
     const { updateMembership, deleteMembership, deleteInvitation } = this.props
 
     return (
-      <DashboardLayout title="Users">
+      <DashboardLayout
+        title="Users"
+        extra={
+          <UserCan>
+            <Button
+              type="primary"
+              icon="plus"
+              size="large"
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
+                this.openNewUserModal()
+              }}
+            >
+              Add User
+            </Button>
+          </UserCan>
+        }
+      >
         <Card
           title="Members"
           bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflowX: 'scroll' }}
-          extra={
-            <UserCan>
-              <Button
-                type="primary"
-                icon="plus"
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
-                  this.openNewUserModal()
-                }}
-              >
-                Add User
-              </Button>
-            </UserCan>
-          }
         >
           <MembersTable
             openEditMembershipModal={this.openEditMembershipModal}

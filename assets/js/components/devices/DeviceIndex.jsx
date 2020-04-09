@@ -69,9 +69,22 @@ class DeviceIndex extends Component {
   render() {
     const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal, showDevicesRemoveLabelModal, showDeviceRemoveAllLabelsModal, labelsSelected, deviceToRemoveLabel } = this.state
     return(
-      <DashboardLayout title="Devices">
+      <DashboardLayout
+        title="Devices"
+        extra={
+          <UserCan>
+            <Button
+              size="large"
+              type="primary"
+              icon="plus"
+              onClick={this.openCreateDeviceModal}
+            >
+              Add Device
+            </Button>
+          </UserCan>
+        }
+      >
         <DeviceIndexTable
-          openCreateDeviceModal={this.openCreateDeviceModal}
           openDeleteDeviceModal={this.openDeleteDeviceModal}
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
           openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
