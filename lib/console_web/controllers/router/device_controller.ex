@@ -35,6 +35,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
+    payload = event["payload"]
+
     case Devices.get_device(device_id) do
       nil ->
         conn
@@ -42,6 +44,8 @@ defmodule ConsoleWeb.Router.DeviceController do
       %Device{} = device ->
         case Events.create_event(event) do
           {:ok, event} ->
+            event = Map.merge(event, %{ device_name: device.name, payload: payload })
+
             Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}/event")
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,

@@ -103,6 +103,8 @@ defmodule ConsoleWeb.Schema do
     field :channels, list_of(:event_channel)
     field :reported_at, :string
     field :reported_at_naive, :naive_datetime
+    field :device_name, :string
+    field :payload, :string
   end
 
   object :event_hotspot do
