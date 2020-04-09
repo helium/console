@@ -431,13 +431,15 @@ class DeviceShow extends Component {
           devicesToUpdate={[device]}
         />
 
-        <DebugSidebar
-          show={showDebugSidebar}
-          toggle={this.handleToggleDebug}
-          subscription={EVENTS_SUBSCRIPTION}
-          variables={{ device_id: this.props.match.params.id }}
-          subscriptionKey="eventAdded"
-        />
+        <UserCan>
+          <DebugSidebar
+            show={showDebugSidebar}
+            toggle={this.handleToggleDebug}
+            subscription={EVENTS_SUBSCRIPTION}
+            variables={{ device_id: this.props.match.params.id }}
+            subscriptionKey="eventAdded"
+          />
+        </UserCan>
       </DashboardLayout>
     )
   }

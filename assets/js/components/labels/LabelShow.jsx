@@ -158,13 +158,15 @@ class LabelShow extends Component {
             devicesToRemove={this.state.devicesToRemove}
           />
 
-          <DebugSidebar
-            show={this.state.showDebugSidebar}
-            toggle={this.handleToggleDebug}
-            subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
-            variables={{ label_id: this.props.match.params.id }}
-            subscriptionKey="labelDebugEventAdded"
-          />
+          <UserCan>
+            <DebugSidebar
+              show={this.state.showDebugSidebar}
+              toggle={this.handleToggleDebug}
+              subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+              variables={{ label_id: this.props.match.params.id }}
+              subscriptionKey="labelDebugEventAdded"
+            />
+          </UserCan>
         </DashboardLayout>
       </div>
     )

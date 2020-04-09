@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Subscription } from 'react-apollo';
-import { debugSidebarBackgroundColor, debugTextColor } from '../../util/colors'
-import { Typography } from 'antd';
+import { debugSidebarBackgroundColor, debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
+import { Typography, Icon, Popover, Button } from 'antd';
 const { Text } = Typography
+import Loader from '../../../img/debug-loader.png'
 
 class DebugSidebar extends Component {
   state = {
@@ -20,15 +21,57 @@ class DebugSidebar extends Component {
 
     const event = subscriptionData.data[this.props.subscriptionKey]
     const { data } = this.state
-    if (data.length > 50) {
+    if (data.length > 9) {
       data.pop()
     }
     this.setState({ data: [event].concat(data) })
   }
 
+  renderData = () => {
+    const { data } = this.state
+
+    if (data.length === 0) return (
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
+        <Text code style={{ color: debugTextColor }}>
+          Loading Debug Mode
+        </Text>
+      </div>
+    )
+    return (
+      <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
+        <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ color: 'white' }}>
+            Displaying <span style={{ fontFamily: 'soleil-light' }}>{data.length} / 10 Payloads</span>
+          </Text>
+          <Popover content="Debug mode only shows a limited amount of payloads at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
+            <Icon type="info-circle" style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
+          </Popover>
+          <div style={{ flexGrow: 1 }}/>
+          <Button
+            type="primary"
+            icon="reload"
+            shape="circle"
+            onClick={() => this.setState({ data: [] })}
+          />
+        </div>
+        {
+          data.map(d => (
+            <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
+              <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
+                <pre>
+                  {JSON.stringify(d, null, 2)}
+                </pre>
+              </Text>
+            </div>
+          ))
+        }
+      </div>
+    )
+  }
+
   render() {
     const { show, subscription, variables } = this.props
-    const { data } = this.state
 
     return (
       <div
@@ -72,21 +115,7 @@ class DebugSidebar extends Component {
               fetchPolicy="network-only"
               shouldResubscribe
             >
-              {() => (
-                <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
-                  {
-                    data.map(d => (
-                      <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
-                        <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
-                          <pre>
-                            {JSON.stringify(d, null, 2)}
-                          </pre>
-                        </Text>
-                      </div>
-                    ))
-                  }
-                </div>
-              )}
+              {this.renderData}
             </Subscription>
           )
         }

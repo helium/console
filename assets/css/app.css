@@ -161,3 +161,11 @@ h1 {
   top: 70px;
   left: 100px;
 }
+
+@keyframes rotate{
+  to{ transform: rotate(360deg); }
+}
+
+.rotate{
+  animation: rotate 1.5s linear infinite;
+}
