@@ -18,7 +18,7 @@ class DebugSidebar extends Component {
   updateData = subscriptionData => {
     if (!this.props.show) return
 
-    const event = subscriptionData.data.eventAdded
+    const event = subscriptionData.data[this.props.subscriptionKey]
     const { data } = this.state
     if (data.length > 50) {
       data.pop()

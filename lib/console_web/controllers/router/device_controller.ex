@@ -42,7 +42,7 @@ defmodule ConsoleWeb.Router.DeviceController do
       %Device{} = device ->
         case Events.create_event(event) do
           {:ok, event} ->
-            Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}")
+            Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}/event")
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
               "frame_up" => event.frame_up,
@@ -50,8 +50,10 @@ defmodule ConsoleWeb.Router.DeviceController do
               "total_packets" => device.total_packets + 1,
             })
 
-            labels = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
-            IO.inspect labels
+            label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
+            Enum.each(label_ids, fn id ->
+              Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, label_debug_event_added: "labels/#{id}/event")
+            end)
         end
 
         conn

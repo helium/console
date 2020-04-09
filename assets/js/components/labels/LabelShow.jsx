@@ -12,6 +12,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
+import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Button, Typography } from 'antd';
@@ -35,7 +36,6 @@ class LabelShow extends Component {
     showRemoveDevicesFromLabelModal: false,
     devicesToRemove: [],
     showDebugSidebar: false,
-    debugData: [],
   }
 
   componentDidMount() {
@@ -88,19 +88,7 @@ class LabelShow extends Component {
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
-    if (showDebugSidebar) {
-      this.setState({ showDebugSidebar: false })
-    } else {
-      this.setState({ showDebugSidebar: true, debugData: [] })
-    }
-  }
-
-  updateDebugData = packet => {
-    const { debugData } = this.state
-    if (debugData.length > 50) {
-      debugData.pop()
-    }
-    this.setState({ debugData: [packet].concat(debugData) })
+    this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
   render() {
@@ -172,8 +160,10 @@ class LabelShow extends Component {
 
           <DebugSidebar
             show={this.state.showDebugSidebar}
-            data={this.state.debugData}
             toggle={this.handleToggleDebug}
+            subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+            variables={{ label_id: this.props.match.params.id }}
+            subscriptionKey="labelDebugEventAdded"
           />
         </DashboardLayout>
       </div>

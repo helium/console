@@ -259,7 +259,15 @@ defmodule ConsoleWeb.Schema do
       arg :device_id, :string
 
       config fn args, _ ->
-        {:ok, topic: "devices/#{args.device_id}"}
+        {:ok, topic: "devices/#{args.device_id}/event"}
+      end
+    end
+
+    field :label_debug_event_added, :event do
+      arg :label_id, :string
+
+      config fn args, _ ->
+        {:ok, topic: "labels/#{args.label_id}/event"}
       end
     end
 
