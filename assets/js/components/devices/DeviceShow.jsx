@@ -382,7 +382,7 @@ class DeviceShow extends Component {
               title={
                 <Tabs defaultActiveKey="1" tabBarStyle={{ marginBottom: 0, position: 'relative', top: -2.5, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                   <TabPane tab={<span><Icon type="wifi" />Packets Transferred</span>} key="1"/>
-                  <TabPane tab={<span>Data Credits Used</span>} key="2" disabled/>
+                  {false && <TabPane tab={<span>Data Credits Used</span>} key="2" disabled/>}
                 </Tabs>
               }
               style={{ height: 'calc(100% - 20px)' }}
