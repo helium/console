@@ -52,5 +52,9 @@ let socket = new Socket("/socket/router", {params: {token: ""}})
 // from connect if you don't care about authentication.
 
 socket.connect()
+// const channel = socket.channel("device:all", { who: "this"})
+// channel.join()
+//   .receive("ok", resp => { console.log("Joined successfully", resp) })
+//   .receive("error", resp => { console.log("Unable to join", resp) })
 
 export default socket

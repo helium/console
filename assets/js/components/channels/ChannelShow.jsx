@@ -10,6 +10,7 @@ import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
 import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
 import ChannelShowRemoveLabelModal from './ChannelShowRemoveLabelModal'
 import HttpDetails from './HttpDetails'
+import AwsDetails from './AwsDetails'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
 import GoogleForm from './forms/GoogleForm.jsx'
@@ -172,6 +173,11 @@ class ChannelShow extends Component {
             {channel.type === "http" && (
               <Card size="small" title="HTTP Details">
                  <HttpDetails channel={channel} />
+              </Card>
+            )}
+            {channel.type === "aws" && (
+              <Card size="small" title="AWS Details">
+                 <AwsDetails channel={channel} />
               </Card>
             )}
           </Col>

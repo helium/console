@@ -18,6 +18,8 @@ export const CHANNEL_SHOW = gql`
       endpoint
       inbound_token
       headers
+      aws_region
+      topic
       labels {
         name,
         id,

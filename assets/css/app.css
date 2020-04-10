@@ -158,8 +158,7 @@ h1 {
 }
 
 .ant-message {
-  top: 70px;
-  left: 100px;
+  top: 30px;
 }
 
 @keyframes rotate{

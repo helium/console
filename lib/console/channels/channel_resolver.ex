@@ -39,6 +39,11 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:inbound_token, channel.credentials["inbound_token"])
           |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
           |> Map.put(:devices, devices)
+        "aws" ->
+          channel
+          |> Map.put(:aws_region, channel.credentials["aws_region"])
+          |> Map.put(:topic, channel.credentials["topic"])
+          |> Map.put(:devices, devices)
         _ ->
           channel
           |> Map.put(:devices, devices)
