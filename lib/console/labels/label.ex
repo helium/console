@@ -7,6 +7,7 @@ defmodule Console.Labels.Label do
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
   alias Console.Labels.ChannelsLabels
+  alias Console.Functions.Function
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -17,6 +18,7 @@ defmodule Console.Labels.Label do
     field :creator, :string
 
     belongs_to :organization, Organization
+    belongs_to :function, Function
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: ChannelsLabels, on_delete: :delete_all
     timestamps()

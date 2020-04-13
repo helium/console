@@ -15,6 +15,7 @@ defmodule Console.Organizations.Organization do
     many_to_many :users, Console.Auth.User, join_through: "memberships"
     has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all
     has_many :api_keys, Console.ApiKeys.ApiKey, on_delete: :delete_all
+    has_many :functions, Console.Functions.Function, on_delete: :delete_all
 
     timestamps()
   end
