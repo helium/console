@@ -27,6 +27,7 @@ defmodule Console.Organizations.Organization do
     |> cast(attrs, [:name])
     |> validate_required(:name, message: "Organization Name is required")
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
+    |> check_name
   end
 
   @doc false
@@ -40,5 +41,17 @@ defmodule Console.Organizations.Organization do
     organization
     |> changeset(attrs)
     |> put_assoc(:users, [user])
+  end
+
+  defp check_name(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
+        valid_name = Helpers.check_special_characters(name)
+        case valid_name do
+          false -> add_error(changeset, :message, "Please refrain from using special characters in the org name")
+          true -> changeset
+        end
+      _ -> changeset
+    end
   end
 end
