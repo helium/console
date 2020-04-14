@@ -58,6 +58,6 @@ defmodule Console.Helpers do
   end
 
   def check_special_characters(string) do
-    String.match?(string, ~r/^[A-Za-z0-9\(\)\[\]\-\_\+\|\!\?\:]+$/)
+    String.match?(string, ~r/^[A-Za-z0-9\(\)\[\]\-\_\+\|\!\?\:\s]+$/)
   end
 end
