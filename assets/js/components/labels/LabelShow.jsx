@@ -10,7 +10,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import DebugSidebar from '../common/DebugSidebar'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { updateLabel, addDevicesToLabels } from '../../actions/label'
+import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -88,6 +88,7 @@ class LabelShow extends Component {
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
+    if (!showDebugSidebar) this.props.toggleLabelDebug(this.props.match.params.id)
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
@@ -174,7 +175,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug }, dispatch)
 }
 
 export default LabelShow

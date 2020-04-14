@@ -38,8 +38,10 @@ defmodule ConsoleWeb.Router do
 
     resources "/devices", DeviceController, except: [:new, :edit]
     post "/devices/delete", DeviceController, :delete
+    post "/devices/debug", DeviceController, :debug
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
+    post "/labels/debug", LabelController, :debug
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do

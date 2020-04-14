@@ -14,7 +14,7 @@ import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
-import { updateDevice } from '../../actions/device'
+import { updateDevice, toggleDeviceDebug } from '../../actions/device'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -165,6 +165,7 @@ class DeviceShow extends Component {
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
+    if (!showDebugSidebar) this.props.toggleDeviceDebug(this.props.match.params.id)
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
@@ -446,7 +447,7 @@ class DeviceShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice }, dispatch)
+  return bindActionCreators({ updateDevice, toggleDeviceDebug }, dispatch)
 }
 
 export default DeviceShow

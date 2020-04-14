@@ -43,6 +43,15 @@ export const deleteDevices = (devices) => {
   }
 }
 
+export const toggleDeviceDebug = (device_id) => {
+  return (dispatch) => {
+    rest.post(`/api/devices/debug`, {
+      device: device_id
+    })
+    .then(response => {})
+  }
+}
+
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   if (params.dev_eui) params.dev_eui = sanitizeHtml(params.dev_eui)

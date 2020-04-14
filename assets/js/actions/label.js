@@ -134,6 +134,15 @@ export const removeLabelsFromChannel = (labels, channel_id) => {
   }
 }
 
+export const toggleLabelDebug = (label_id) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/debug`, {
+      label: label_id
+    })
+    .then(response => {})
+  }
+}
+
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   if (params.color) params.color = sanitizeHtml(params.color)
