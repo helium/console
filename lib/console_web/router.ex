@@ -57,6 +57,7 @@ defmodule ConsoleWeb.Router do
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
+    resources "/functions", FunctionController, only: [:create, :delete, :update]
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create

@@ -62,7 +62,7 @@ class FunctionNew extends Component {
               onSelect={this.handleSelectFunctionType}
               style={{ width: 220, marginLeft: 8 }}
             >
-              <Option value="Decoder">
+              <Option value="decoder">
                 Decoder
               </Option>
             </Select>
