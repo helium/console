@@ -10,10 +10,6 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 
 class FunctionValidator extends Component {
-  state = {
-    code: ""
-  }
-
   render() {
     return (
       <Row gutter={20} type="flex">
@@ -21,8 +17,8 @@ class FunctionValidator extends Component {
           <Card title="Step 2 - Enter Custom Script" style={{ height: 'calc(100% - 20px)'}} bodyStyle={{ padding: 0 }}>
             <div>
               <Editor
-                value={this.state.code}
-                onValueChange={code => this.setState({ code })}
+                value={this.props.body}
+                onValueChange={this.props.handleFunctionUpdate}
                 highlight={code => highlight(code, languages.js)}
                 padding={10}
                 style={{
@@ -50,7 +46,7 @@ class FunctionValidator extends Component {
                 />
               </Col>
               <Col span={8}>
-                <Text>Port Number</Text>
+                <Text>Port</Text>
                 <InputNumber
                   type="number"
                   style={{ marginTop: 5, width: '100%' }}

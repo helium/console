@@ -1,32 +1,50 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
+import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+@connect(null, mapDispatchToProps)
 class FunctionNew extends Component {
   state = {
-    functionName: "",
+    name: "",
     type: null,
-    format: null
+    format: null,
+    body: ""
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_FUNCTIONS_NEW")
   }
 
-  handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
+  handleInputUpdate = e => this.setState({ [e.target.name]: e.target.value })
 
   handleSelectFunctionType = () => this.setState({ type: "decoder" })
+
   handleSelectFormat = format => this.setState({ format })
 
+  handleFunctionUpdate = body => this.setState({ body })
+
+  handleSubmit = () => {
+    const {name, type, format, body} = this.state
+    this.props.createFunction({
+      name,
+      type,
+      format,
+      body
+    })
+
+    analyticsLogger.logEvent("ACTION_CREATE_FUNCTION", { "name": name, "type": type, "format": format })
+  }
+
   render() {
-    const {functionName, type, format} = this.state
+    const {name, type, format, body} = this.state
     return (
       <DashboardLayout title="Create New Function">
         <Card title="Step 1 - Enter Function Details">
@@ -34,8 +52,8 @@ class FunctionNew extends Component {
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
               placeholder="e.g. My Decoder"
-              name="functionName"
-              value={functionName}
+              name="name"
+              value={name}
               onChange={this.handleInputUpdate}
               style={{ width: 220 }}
             />
@@ -64,7 +82,7 @@ class FunctionNew extends Component {
           </div>
         </Card>
         {
-          true && <FunctionValidator />
+          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} />
         }
 
         <UserCan>
@@ -78,7 +96,8 @@ class FunctionNew extends Component {
               size="large"
               icon="save"
               type="primary"
-              onClick={null}
+              onClick={this.handleSubmit}
+              disabled={!type || !format || name.length === 0}
             >
               Save Function
             </Button>
@@ -87,6 +106,10 @@ class FunctionNew extends Component {
       </DashboardLayout>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ createFunction }, dispatch);
 }
 
 export default FunctionNew
