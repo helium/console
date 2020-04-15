@@ -5,6 +5,10 @@ defmodule Console.Functions do
   alias Console.Functions.Function
   alias Console.Organizations.Organization
 
+  def get_function!(organization, id) do
+     Repo.get_by!(Function, [id: id, organization_id: organization.id])
+  end
+
   def get_organization_function_count(organization) do
     functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
     length(functions)
@@ -20,5 +24,9 @@ defmodule Console.Functions do
         |> Function.changeset(attrs)
         |> Repo.insert()
     end
+  end
+
+  def delete_function(%Function{} = function) do
+    Repo.delete(function)
   end
 end

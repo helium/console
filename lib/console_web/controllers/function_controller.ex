@@ -14,11 +14,24 @@ defmodule ConsoleWeb.FunctionController do
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
       broadcast(function)
-      
+
       conn
         |> put_status(:created)
         |> put_resp_header("message",  "#{function.name} created successfully")
         |> render("show.json", function: function)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    current_organization = conn.assigns.current_organization
+    function = Functions.get_function!(current_organization, id)
+
+    with {:ok, %Function{} = function} <- Functions.delete_function(function) do
+      broadcast(function)
+
+      conn
+      |> put_resp_header("message", "#{function.name} deleted successfully")
+      |> send_resp(:no_content, "")
     end
   end
 

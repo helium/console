@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { deleteFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -19,6 +22,7 @@ const queryOptions = {
   })
 }
 
+@connect(null, mapDispatchToProps)
 @graphql(PAGINATED_FUNCTIONS, queryOptions)
 class FunctionIndexTable extends Component {
   state = {
@@ -90,7 +94,7 @@ class FunctionIndexTable extends Component {
                 style={{ marginLeft: 10 }}
                 onClick={e => {
                   e.stopPropagation()
-
+                  this.props.deleteFunction(record.id)
                 }}
               />
             </UserCan>
@@ -132,6 +136,10 @@ class FunctionIndexTable extends Component {
       </Card>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ deleteFunction }, dispatch);
 }
 
 export default FunctionIndexTable

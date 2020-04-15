@@ -15,6 +15,15 @@ export const createFunction = (params) => {
   }
 }
 
+export const deleteFunction = (id, redirect = false) => {
+  return (dispatch) => {
+    rest.destroy(`/api/functions/${id}`)
+      .then(response => {
+        if (redirect) dispatch(replace('/functions'))
+      })
+  }
+}
+
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   return params
