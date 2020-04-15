@@ -106,7 +106,7 @@ class LabelShow extends Component {
       <div>
         <DashboardLayout
           breadCrumbs={
-            <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+            <div style={{ marginLeft: 4, paddingBottom: 0 }}>
               <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
               <Text>&nbsp;&nbsp;{label.name}</Text>
             </div>

@@ -136,9 +136,9 @@ class ChannelShow extends Component {
 
     return(
       <DashboardLayout
-        title={`Integration: ${channel.name}`}
+        title={`${channel.name}`}
         breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
             <Text>&nbsp;&nbsp;{channel.name}</Text>
           </div>

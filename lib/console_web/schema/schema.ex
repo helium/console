@@ -265,6 +265,12 @@ defmodule ConsoleWeb.Schema do
     paginated field :functions, :paginated_functions do
       resolve(&Console.Functions.FunctionResolver.paginate/2)
     end
+
+    @desc "Get a single function"
+    field :function, :function do
+      arg :id, non_null(:id)
+      resolve &Console.Functions.FunctionResolver.find/2
+    end
   end
 
   subscription do
@@ -359,6 +365,14 @@ defmodule ConsoleWeb.Schema do
     field :function_added, :function do
       config fn _, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/function_added"}
+      end
+    end
+
+    field :function_updated, :function do
+      arg :function_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.function_id}/function_updated"}
       end
     end
   end

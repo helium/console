@@ -190,7 +190,7 @@ class DeviceShow extends Component {
       <DashboardLayout
         title={`${device.name}`}
         breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/devices"><Text style={{ color: "#8C8C8C" }}>Devices&nbsp;&nbsp;/</Text></Link>
             <Text>&nbsp;&nbsp;{device.name}</Text>
           </div>

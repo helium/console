@@ -28,6 +28,7 @@ defmodule ConsoleWeb.FunctionController do
 
     with {:ok, %Function{} = function} <- Functions.update_function(function, function_params) do
       broadcast(function)
+      broadcast(function, function.id)
 
       conn
       |> put_resp_header("message", "#{function.name} updated successfully")
@@ -50,5 +51,9 @@ defmodule ConsoleWeb.FunctionController do
 
   def broadcast(%Function{} = function) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, function, function_added: "#{function.organization_id}/function_added")
+  end
+
+  def broadcast(%Function{} = function, id) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, function, function_updated: "#{function.organization_id}/#{id}/function_updated")
   end
 end

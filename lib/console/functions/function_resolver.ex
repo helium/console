@@ -11,4 +11,12 @@ defmodule Console.Functions.FunctionResolver do
 
     {:ok, functions}
   end
+
+  def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
+    function = Function
+      |> where([f], f.id == ^id and f.organization_id == ^current_organization.id)
+      |> Repo.one!()
+
+    {:ok, function}
+  end
 end

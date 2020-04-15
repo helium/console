@@ -26,6 +26,16 @@ export const PAGINATED_FUNCTIONS = gql`
   ${FUNCTION_FRAGMENT}
 `
 
+export const FUNCTION_SHOW = gql`
+  query FunctionShowQuery ($id: ID!) {
+    function(id: $id) {
+      ...FunctionFragment
+
+    }
+  }
+  ${FUNCTION_FRAGMENT}
+`
+
 export const FUNCTION_SUBSCRIPTION = gql`
   subscription onFunctionAdded {
     functionAdded {
@@ -33,4 +43,12 @@ export const FUNCTION_SUBSCRIPTION = gql`
     }
   }
   ${FUNCTION_FRAGMENT}
+`
+
+export const FUNCTION_UPDATE_SUBSCRIPTION = gql`
+  subscription onFunctionUpdated($functionId: String) {
+    functionUpdated(functionId: $functionId) {
+      name
+    }
+  }
 `

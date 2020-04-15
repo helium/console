@@ -35,6 +35,7 @@ import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
+import FunctionShow from './components/functions/FunctionShow';
 
 class Router extends React.Component {
   render() {
@@ -68,6 +69,7 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />
                   <PrivateRoute exact path="/functions" component={FunctionIndex} />
                   <PrivateRoute exact path="/functions/new" component={FunctionNew} />
+                  <PrivateRoute exact path="/functions/:id" component={FunctionShow} />
                 </Switch>
               </ConnectedRouter>
             </UserOrgProvider>
