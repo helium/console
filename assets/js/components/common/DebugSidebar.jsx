@@ -24,7 +24,7 @@ class DebugSidebar extends Component {
 
     if (!event.payload) return
 
-    event = omit(event, ["__typename"])
+    event = omit(event, ["__typename", "category", "description", "reported_at"])
     event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
     event.channels = event.channels.map(c => {
       const channel = omit(c, ["__typename"])
@@ -41,19 +41,19 @@ class DebugSidebar extends Component {
   renderData = () => {
     const { data } = this.state
 
-    if (data.length === 0) return (
-      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
-        <Text code style={{ color: debugTextColor }}>
-          Loading Debug Mode
-        </Text>
-      </div>
-    )
+    // if (data.length === 0) return (
+    //   <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    //     <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
+    //     <Text code style={{ color: debugTextColor }}>
+    //       Loading Debug Mode
+    //     </Text>
+    //   </div>
+    // )
     return (
       <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
           <Text style={{ color: 'white' }}>
-            Displaying <span style={{ fontFamily: 'soleil-light' }}>{data.length} / 10 Payloads</span>
+            <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Payloads</span>
           </Text>
           <Popover content="Debug mode only shows a limited amount of payloads at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
             <Icon type="info-circle" style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>

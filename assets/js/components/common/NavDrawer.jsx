@@ -67,14 +67,14 @@ class NavDrawer extends Component {
         {
           showLabels ? (
             <p
-              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontWeight: 300, transform: 'scale(1.5,1)', cursor: 'pointer' }}
               onClick={() => this.setState({ showLabels: false })}
             >
               -
             </p>
           ) : (
             <p
-              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontFamily: 'soleil-light', cursor: 'pointer' }}
+              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontWeight: 300, cursor: 'pointer' }}
               onClick={() => this.setState({ showLabels: true })}
             >
               +
