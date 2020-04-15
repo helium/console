@@ -22,6 +22,19 @@ defmodule ConsoleWeb.FunctionController do
     end
   end
 
+  def update(conn, %{"id" => id, "function" => function_params}) do
+    current_organization = conn.assigns.current_organization
+    function = Functions.get_function!(current_organization, id)
+
+    with {:ok, %Function{} = function} <- Functions.update_function(function, function_params) do
+      broadcast(function)
+
+      conn
+      |> put_resp_header("message", "#{function.name} updated successfully")
+      |> render("show.json", function: function)
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
     function = Functions.get_function!(current_organization, id)

@@ -25,7 +25,7 @@ defmodule Console.Functions.Function do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     function
-    |> cast(attrs, [:name, :body, :type, :format, :organization_id])
+    |> cast(attrs, [:name, :body, :type, :format, :organization_id, :active])
     |> put_cayenne_body()
     |> validate_required([:name, :body, :type, :format, :organization_id])
     |> validate_inclusion(:type, ~w(decoder))

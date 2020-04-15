@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { deleteFunction } from '../../actions/function'
+import { deleteFunction, updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -85,7 +85,11 @@ class FunctionIndexTable extends Component {
             <UserCan>
               <Switch
                 checked={record.active}
-                onChange={(value, e) => e.stopPropagation()}
+                onChange={(value, e) => {
+                  e.stopPropagation()
+                  this.props.updateFunction(record.id, { active: !record.active })
+                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": record.id, "active": !record.active })
+                }}
               />
               <Button
                 type="danger"
@@ -139,7 +143,7 @@ class FunctionIndexTable extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction }, dispatch);
+  return bindActionCreators({ deleteFunction, updateFunction }, dispatch);
 }
 
 export default FunctionIndexTable

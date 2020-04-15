@@ -15,6 +15,17 @@ export const createFunction = (params) => {
   }
 }
 
+export const updateFunction = (id, params) => {
+  return (dispatch) => {
+    const functionParams = sanitizeParams(params)
+
+    rest.put(`/api/functions/${id}`, {
+      function: functionParams
+    })
+    .then(() => {})
+  }
+}
+
 export const deleteFunction = (id, redirect = false) => {
   return (dispatch) => {
     rest.destroy(`/api/functions/${id}`)

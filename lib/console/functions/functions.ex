@@ -26,6 +26,12 @@ defmodule Console.Functions do
     end
   end
 
+  def update_function(%Function{} = function, attrs) do
+    function
+    |> Function.changeset(attrs)
+    |> Repo.update()
+  end
+
   def delete_function(%Function{} = function) do
     Repo.delete(function)
   end
