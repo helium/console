@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import FunctionIndexTable from './FunctionIndexTable'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
@@ -26,9 +27,9 @@ class FunctionIndex extends Component {
           </UserCan>
         }
       >
-        <Card title="My Functions" bodyStyle={{ overflowX: 'scroll' }}>
-
-        </Card>
+        <FunctionIndexTable
+          history={this.props.history}
+        />
       </DashboardLayout>
     )
   }

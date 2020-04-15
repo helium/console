@@ -1,3 +1,4 @@
+import { replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 import sanitizeHtml from 'sanitize-html'
 
@@ -8,7 +9,9 @@ export const createFunction = (params) => {
     rest.post('/api/functions', {
         function: functionParams,
       })
-      .then(response => {})
+      .then(response => {
+        dispatch(replace(`/functions/${response.data.id}`))
+      })
   }
 }
 

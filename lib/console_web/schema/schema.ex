@@ -91,6 +91,15 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
   end
 
+  paginated object :function do
+    field :id, :id
+    field :name, :string
+    field :body, :string
+    field :type, :string
+    field :format, :string
+    field :active, :boolean
+  end
+
   object :event do
     field :id, :id
     field :device_id, :id
@@ -251,6 +260,11 @@ defmodule ConsoleWeb.Schema do
     field :api_keys, list_of(:api_key) do
       resolve &Console.ApiKeys.ApiKeyResolver.all/2
     end
+
+    @desc "Get paginated functions"
+    paginated field :functions, :paginated_functions do
+      resolve(&Console.Functions.FunctionResolver.paginate/2)
+    end
   end
 
   subscription do
@@ -339,6 +353,12 @@ defmodule ConsoleWeb.Schema do
     field :api_key_added, :api_key do
       config fn _, %{context: %{ current_organization_id: organization_id, current_user_id: user_id }} ->
         {:ok, topic: "#{organization_id}/api_key_added"}
+      end
+    end
+
+    field :function_added, :function do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/function_added"}
       end
     end
   end

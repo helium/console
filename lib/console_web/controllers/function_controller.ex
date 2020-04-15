@@ -13,10 +13,16 @@ defmodule ConsoleWeb.FunctionController do
     function_params = Map.merge(function_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
+      broadcast(function)
+      
       conn
         |> put_status(:created)
         |> put_resp_header("message",  "#{function.name} created successfully")
         |> render("show.json", function: function)
     end
+  end
+
+  def broadcast(%Function{} = function) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, function, function_added: "#{function.organization_id}/function_added")
   end
 end

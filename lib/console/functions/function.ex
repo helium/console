@@ -13,6 +13,7 @@ defmodule Console.Functions.Function do
     field :body, :string
     field :type, :string
     field :format, :string
+    field :active, :boolean
 
     belongs_to :organization, Organization
     has_many :labels, Label
