@@ -31,20 +31,20 @@ defmodule Console.Devices.DeviceResolver do
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels]])
-    oneDay = NaiveDateTime.utc_now() |> NaiveDateTime.add(-86400, :second)
-    sevenDay = NaiveDateTime.utc_now() |> NaiveDateTime.add(-604800, :second)
-    thirtyDay = NaiveDateTime.utc_now() |> NaiveDateTime.add(-2592000, :second)
 
-    query1 = from e in Event, where: e.device_id == ^device.id and e.reported_at_naive > ^oneDay, select: count(e)
-    query2 = from e in Event, where: e.device_id == ^device.id and e.reported_at_naive > ^sevenDay, select: count(e), union_all: ^query1
-    query3 = from e in Event, where: e.device_id == ^device.id and e.reported_at_naive > ^thirtyDay, select: count(e), union_all: ^query2
-    [packets_last_1d, packets_last_7d, packets_last_30d] = Repo.all(query3)
+    {:ok, device_id} = Ecto.UUID.dump(device.id)
+    result = Ecto.Adapters.SQL.query!(
+      Console.Repo,
+      "(SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '1 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '7 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '30 DAY')",
+      [device_id]
+    )
+    counts = List.flatten(result.rows)
 
     {:ok,
       Map.merge(device, %{
-        packets_last_1d: packets_last_1d,
-        packets_last_7d: packets_last_7d,
-        packets_last_30d: packets_last_30d,
+        packets_last_1d: Enum.at(counts, 0),
+        packets_last_7d: Enum.at(counts, 1),
+        packets_last_30d: Enum.at(counts, 2),
       })
     }
   end

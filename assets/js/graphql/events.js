@@ -25,7 +25,8 @@ export const EVENT_FRAGMENT = gql`
       id,
       name,
       status,
-      description
+      description,
+      debug
     }
   }
 `

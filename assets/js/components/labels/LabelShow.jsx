@@ -166,6 +166,7 @@ class LabelShow extends Component {
               subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
               variables={{ label_id: this.props.match.params.id }}
               subscriptionKey="labelDebugEventAdded"
+              refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
             />
           </UserCan>
         </DashboardLayout>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Subscription } from 'react-apollo';
+import omit from 'lodash/omit'
 import { debugSidebarBackgroundColor, debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
 import { Typography, Icon, Popover, Button } from 'antd';
 const { Text } = Typography
@@ -19,11 +20,21 @@ class DebugSidebar extends Component {
   updateData = subscriptionData => {
     if (!this.props.show) return
 
-    const event = subscriptionData.data[this.props.subscriptionKey]
+    let event = subscriptionData.data[this.props.subscriptionKey]
+
+    if (!event.payload) return
+
+    event = omit(event, ["__typename"])
+    event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
+    event.channels = event.channels.map(c => {
+      const channel = omit(c, ["__typename"])
+      channel.debug = JSON.parse(c["debug"])
+      if (channel.debug.req && channel.debug.req.body) channel.debug.req.body = JSON.parse(channel.debug.req.body)
+      if (channel.debug.res && channel.debug.res.body) channel.debug.res.body = JSON.parse(channel.debug.res.body)
+      return channel
+    })
+
     const { data } = this.state
-    if (data.length > 9) {
-      data.pop()
-    }
     this.setState({ data: [event].concat(data) })
   }
 
@@ -52,7 +63,10 @@ class DebugSidebar extends Component {
             type="primary"
             icon="reload"
             shape="circle"
-            onClick={() => this.setState({ data: [] })}
+            onClick={() => {
+              this.setState({ data: [] })
+              this.props.refresh()
+            }}
           />
         </div>
         <div style={{ width: "100%", marginTop: 85 }}>

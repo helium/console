@@ -123,6 +123,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :status, :string
     field :description, :string
+    field :debug, :string
   end
 
   object :search_result do

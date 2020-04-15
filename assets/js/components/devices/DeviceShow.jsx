@@ -439,6 +439,7 @@ class DeviceShow extends Component {
             subscription={EVENTS_SUBSCRIPTION}
             variables={{ device_id: this.props.match.params.id }}
             subscriptionKey="eventAdded"
+            refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
           />
         </UserCan>
       </DashboardLayout>

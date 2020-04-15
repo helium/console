@@ -36,6 +36,25 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
     payload = event["payload"]
+    channels_with_debug =
+      event["channels"]
+      |> Enum.map(fn c ->
+        case c["debug"] do
+          nil -> c
+          value -> Map.put(c, "debug", Jason.encode!(value))
+        end
+      end)
+      |> Enum.map(fn c ->
+        c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end) 
+      end)
+
+    channels_without_debug =
+      event["channels"]
+      |> Enum.map(fn c ->
+        Map.drop(c, ["debug"])
+      end)
+
+    event = Map.put(event, "channels", channels_without_debug)
 
     case Devices.get_device(device_id) do
       nil ->
@@ -44,7 +63,13 @@ defmodule ConsoleWeb.Router.DeviceController do
       %Device{} = device ->
         case Events.create_event(event) do
           {:ok, event} ->
-            event = Map.merge(event, %{ device_name: device.name, payload: payload })
+            event =
+              case payload do
+                nil ->
+                  Map.merge(event, %{ device_name: device.name })
+                _ ->
+                  Map.merge(event, %{ device_name: device.name, payload: payload, channels: channels_with_debug })
+              end
 
             Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}/event")
             Devices.update_device(device, %{
