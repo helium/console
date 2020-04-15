@@ -40,7 +40,7 @@ class DebugSidebar extends Component {
     )
     return (
       <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
-        <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
           <Text style={{ color: 'white' }}>
             Displaying <span style={{ fontFamily: 'soleil-light' }}>{data.length} / 10 Payloads</span>
           </Text>
@@ -55,17 +55,19 @@ class DebugSidebar extends Component {
             onClick={() => this.setState({ data: [] })}
           />
         </div>
-        {
-          data.map(d => (
-            <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
-              <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
-                <pre>
-                  {JSON.stringify(d, null, 2)}
-                </pre>
-              </Text>
-            </div>
-          ))
-        }
+        <div style={{ width: "100%", marginTop: 85 }}>
+          {
+            data.map(d => (
+              <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
+                <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
+                  <pre>
+                    {JSON.stringify(d, null, 2)}
+                  </pre>
+                </Text>
+              </div>
+            ))
+          }
+        </div>
       </div>
     )
   }
