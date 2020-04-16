@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import bg from '../../../img/bgauth.svg'
 
 const styles = {
   root: {
