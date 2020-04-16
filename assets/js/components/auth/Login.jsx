@@ -9,7 +9,10 @@ import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Input, Form, Icon, Card, Row, Col } from 'antd';
+import Fade from 'react-reveal/Fade';
+
 const { Text, Title } = Typography
+
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -45,6 +48,7 @@ class Login extends Component {
   loginForm = () => {
     return (
       <AuthLayout>
+      <Fade>
       <Card style={{padding: 30, paddingTop: 20, borderRadius: 20, minWidth: 450, boxShadow: '0 52px 64px -50px #001529'}}>
       <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
       <div style={{textAlign: 'center', marginBottom: 30}}>
@@ -108,7 +112,7 @@ class Login extends Component {
 
         </Form>
               </Card>
-
+              </Fade>
       </AuthLayout>
     )
   }
