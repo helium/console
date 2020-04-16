@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 const styles = {
   root: {
@@ -10,6 +10,9 @@ const styles = {
     display: 'flex',
     background: '#F0F2F5',
     justifyContent: 'center',
+    backgroundImage: `url(${bg})`,
+    backgroundPosition: 'center center',
+    backgroundSize: 'cover',
   },
   main: {
     maxWidth: 500,

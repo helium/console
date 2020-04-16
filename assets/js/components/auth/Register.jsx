@@ -57,24 +57,21 @@ class Register extends Component {
     const { showOrgCreation, acceptedTerms } = this.state
     return (
       <div>
-        <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+        <Card style={{padding: 30, paddingTop:20, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
       <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
       <div style={{textAlign: 'center', marginBottom: 30}}>
         <Title>
           Register for <br />Helium Console
         </Title>
-        <Text style={{color:primaryBlue}}>Create your account below</Text>
+        <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Create your account below</Text>
         </div>
         {
           showOrgCreation ? (
             <Form onSubmit={this.registerUser}>
               <Text>
-                Define an Organization as the top level of your structure, (usually your company name).
+                Define an Organization as the top level of your structure, (usually your company name).  This Organization name is used when inviting other users to your Console.
               </Text>
-              <br />
-              <Text>
-                The Organization name is used when inviting other users to your Console.
-              </Text>
+ 
 
               <Form.Item>
                 <Input
@@ -82,14 +79,15 @@ class Register extends Component {
                   name="organizationName"
                   value={this.state.organizationName}
                   onChange={this.handleInputUpdate}
+                  style={{marginTop: 20}}
                 />
               </Form.Item>
 
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Button onClick={() => this.setState({ showOrgCreation: false })}>
+                <Button onClick={() => this.setState({ showOrgCreation: false })} style={{width: '100%'}}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button style={{marginRight: 0, width: '100%'}} type="primary" htmlType="submit">
                   Continue
                 </Button>
               </div>
@@ -100,14 +98,15 @@ class Register extends Component {
 
 
               <Row gutter={16} style={{marginTop:10}}>
-          <Col sm={12}>
-            <Button type="primary" htmlType="submit" style={{width: '100%'}} disabled={!acceptedTerms}>
-              Register
+          
+            <Col sm={12}>
+            <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
+              Go to Login
             </Button>
             </Col>
             <Col sm={12}>
-            <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
-              I want to Login
+            <Button type="primary" htmlType="submit" style={{width: '100%',}} disabled={!acceptedTerms}>
+              Register
             </Button>
             </Col>
             </Row>
@@ -168,7 +167,7 @@ class Register extends Component {
             value={this.state.email}
             onChange={this.handleInputUpdate}
              prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              style={{width: 400}}
+              style={{width: '100%'}}
           />
         </Form.Item>
 
@@ -180,7 +179,7 @@ class Register extends Component {
             name="password"
             value={this.state.password}
             onChange={this.handleInputUpdate}
-            style={{width: 400}}
+            style={{width:  '100%'}}
           />
         </Form.Item>
 

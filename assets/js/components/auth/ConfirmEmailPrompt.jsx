@@ -11,20 +11,21 @@ class ConfirmEmailPrompt extends Component {
   render() {
     return (
       <AuthLayout>
-        <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+        <Card style={{padding: 30, paddingTop: 20, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
           <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
-          <div style={{textAlign: 'center', marginBottom: 30}}>
+          <div style={{textAlign: 'center', marginBottom: 40}}>
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:primaryBlue}}>Registration Successful</Text>
-          </div>
-          <Text>
+            <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Registration Successful</Text>
+             <Text style={{display: 'block'}}>
             Please check your inbox for a confirmation email
           </Text>
+          </div>
+         
           <Row gutter={16} style={{marginTop: 20, display: 'flex', justifyContent: 'center' }}>
             <Col sm={12}>
-            <Button onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
+            <Button type="primary" onClick={() => this.props.history.push('/login')} style={{width: '100%'}}>
               Go to Login
             </Button>
             </Col>

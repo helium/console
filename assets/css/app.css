@@ -161,6 +161,14 @@ h1 {
   top: 30px;
 }
 
+.ant-btn-icon-only > i {
+  vertical-align: -0.12em;
+}
+
+.ant-table-tbody > tr > td:last-of-type {
+  text-align: right;
+}
+
 @keyframes rotate{
   to{ transform: rotate(360deg); }
 }
