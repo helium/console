@@ -57,9 +57,9 @@ class DebugSidebar extends Component {
       <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
           <Text style={{ color: 'white' }}>
-            <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Payloads</span>
+            <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Packets</span>
           </Text>
-          <Popover content="Debug mode only shows a limited amount of payloads at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
+          <Popover content="Debug mode only shows a limited amount of packets at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
             <Icon type="info-circle" style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
           </Popover>
           <div style={{ flexGrow: 1 }}/>
