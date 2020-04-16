@@ -42,6 +42,7 @@ class FunctionShow extends Component {
     body: "",
     showDeleteFunctionModal: false,
     functionToDelete: null,
+    codeUpdated: false,
   }
 
   componentDidMount() {
@@ -61,13 +62,16 @@ class FunctionShow extends Component {
     })
   }
 
-  handleInputUpdate = e => this.setState({ [e.target.name]: e.target.value })
+  handleInputUpdate = e => this.setState({ name: e.target.value })
 
   handleSelectFunctionType = () => this.setState({ type: "decoder" })
 
-  handleSelectFormat = format => this.setState({ format })
+  handleSelectFormat = format => {
+    if (format === 'custom') this.setState({ format, codeUpdated: true })
+    else this.setState({ format })
+  }
 
-  handleFunctionUpdate = body => this.setState({ body })
+  handleFunctionUpdate = body => this.setState({ body, codeUpdated: true })
 
   handleSubmit = () => {
     const {name, type, format, body} = this.state
@@ -90,7 +94,8 @@ class FunctionShow extends Component {
       name: "",
       type: undefined,
       format: undefined,
-      body: ""
+      body: "",
+      codeUpdated: false
     })
   }
 
@@ -103,7 +108,7 @@ class FunctionShow extends Component {
   }
 
   render() {
-    const {name, type, format, body, showDeleteFunctionModal} = this.state
+    const {name, type, format, body, codeUpdated, showDeleteFunctionModal} = this.state
     const { loading, error } = this.props.data
     const fxn = this.props.data.function
 
@@ -195,7 +200,7 @@ class FunctionShow extends Component {
           (format === 'custom' || (fxn.format === 'custom' && !format)) && (
             <FunctionValidator
               handleFunctionUpdate={this.handleFunctionUpdate}
-              body={body === "" ? fxn.body : body}
+              body={(body === "" && !codeUpdated) ? fxn.body : body}
               title="Custom Script"
             />
           )
