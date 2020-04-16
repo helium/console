@@ -25,14 +25,18 @@ class DebugSidebar extends Component {
     if (!event.payload) return
 
     event = omit(event, ["__typename", "category", "description", "reported_at"])
-    event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
-    event.channels = event.channels.map(c => {
-      const channel = omit(c, ["__typename"])
-      channel.debug = JSON.parse(c["debug"])
-      if (channel.debug.req && channel.debug.req.body) channel.debug.req.body = JSON.parse(channel.debug.req.body)
-      if (channel.debug.res && channel.debug.res.body) channel.debug.res.body = JSON.parse(channel.debug.res.body)
-      return channel
-    })
+    if (event.hotspots && event.hotspots.length > 0) event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
+    if (event.channels && event.hotspots.length > 0) {
+      event.channels = event.channels.map(c => {
+        const channel = omit(c, ["__typename"])
+        if (channel.debug) {
+          channel.debug = JSON.parse(c["debug"])
+          if (channel.debug.req && channel.debug.req.body) channel.debug.req.body = JSON.parse(channel.debug.req.body)
+          if (channel.debug.res && channel.debug.res.body) channel.debug.res.body = JSON.parse(channel.debug.res.body)
+        }
+        return channel
+      })
+    }
 
     const { data } = this.state
     this.setState({ data: [event].concat(data) })
@@ -41,14 +45,14 @@ class DebugSidebar extends Component {
   renderData = () => {
     const { data } = this.state
 
-    // if (data.length === 0) return (
-    //   <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-    //     <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
-    //     <Text code style={{ color: debugTextColor }}>
-    //       Loading Debug Mode
-    //     </Text>
-    //   </div>
-    // )
+    if (data.length === 0) return (
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
+        <Text code style={{ color: debugTextColor }}>
+          Loading Debug Mode
+        </Text>
+      </div>
+    )
     return (
       <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
