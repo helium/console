@@ -9,7 +9,10 @@ import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Input, Form, Icon, Card, Row, Col } from 'antd';
+import Fade from 'react-reveal/Fade';
+
 const { Text, Title } = Typography
+
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -45,13 +48,14 @@ class Login extends Component {
   loginForm = () => {
     return (
       <AuthLayout>
-      <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+      <Fade>
+      <Card style={{padding: 30, paddingTop: 20, borderRadius: 20, minWidth: 450, boxShadow: '0 52px 64px -50px #001529'}}>
       <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
       <div style={{textAlign: 'center', marginBottom: 30}}>
         <Title>
           Helium Console
         </Title>
-        <Text style={{color:primaryBlue}}>Please Sign in</Text>
+        <Text style={{color:primaryBlue, fontWeight: 300, fontSize: 18}}>Please Sign in</Text>
         </div>
 
         <Form onSubmit={this.handleSubmit}>
@@ -63,7 +67,7 @@ class Login extends Component {
               value={this.state.email}
               onChange={this.handleInputUpdate}
               prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              style={{width: 400}}
+              style={{width: '100%'}}
             />
           </Form.Item>
 
@@ -76,7 +80,7 @@ class Login extends Component {
                name="password"
               value={this.state.password}
               onChange={this.handleInputUpdate}
-              style={{width: 400}}
+              style={{width: '100%'}}
             />
         </Form.Item>
 
@@ -93,21 +97,22 @@ class Login extends Component {
           </div>
 
           <Row gutter={16} style={{marginTop: 20}}>
-          <Col sm={12}>
-            <Button type="primary" htmlType="submit" style={{width: '100%'}}>
-              Log in
-            </Button>
-            </Col>
+          
             <Col sm={12}>
             <Button onClick={() => this.props.history.push('/register')} style={{width: '100%'}}>
               Register
+            </Button>
+            </Col>
+            <Col sm={12}>
+            <Button type="primary" htmlType="submit" style={{width: '100%'}}>
+              Log in
             </Button>
             </Col>
             </Row>
 
         </Form>
               </Card>
-
+              </Fade>
       </AuthLayout>
     )
   }
