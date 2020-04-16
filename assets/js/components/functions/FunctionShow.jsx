@@ -6,6 +6,7 @@ import { graphql } from 'react-apollo';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
+import DeleteFunctionModal from './DeleteFunctionModal'
 import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -38,7 +39,9 @@ class FunctionShow extends Component {
     name: "",
     type: undefined,
     format: undefined,
-    body: ""
+    body: "",
+    showDeleteFunctionModal: false,
+    functionToDelete: null,
   }
 
   componentDidMount() {
@@ -91,8 +94,16 @@ class FunctionShow extends Component {
     })
   }
 
+  openDeleteFunctionModal = (functionToDelete) => {
+    this.setState({ showDeleteFunctionModal: true, functionToDelete })
+  }
+
+  closeDeleteFunctionModal = () => {
+    this.setState({ showDeleteFunctionModal: false })
+  }
+
   render() {
-    const {name, type, format, body} = this.state
+    const {name, type, format, body, showDeleteFunctionModal} = this.state
     const { loading, error } = this.props.data
     const fxn = this.props.data.function
 
@@ -129,7 +140,7 @@ class FunctionShow extends Component {
               icon="delete"
               onClick={e => {
                 e.stopPropagation()
-                this.props.deleteFunction(fxn.id, true)
+                this.openDeleteFunctionModal(fxn)
               }}
             >
               Delete Function
@@ -208,6 +219,13 @@ class FunctionShow extends Component {
             </Button>
           </UserCan>
         </div>
+
+        <DeleteFunctionModal
+          open={showDeleteFunctionModal}
+          onClose={this.closeDeleteFunctionModal}
+          functionToDelete={this.state.functionToDelete}
+          redirect
+        />
       </DashboardLayout>
     )
   }

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { deleteFunction, updateFunction } from '../../actions/function'
+import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -104,7 +104,7 @@ class FunctionIndexTable extends Component {
                 style={{ marginLeft: 10 }}
                 onClick={e => {
                   e.stopPropagation()
-                  this.props.deleteFunction(record.id)
+                  this.props.openDeleteFunctionModal(record)
                 }}
               />
             </UserCan>
@@ -149,7 +149,7 @@ class FunctionIndexTable extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction, updateFunction }, dispatch);
+  return bindActionCreators({ updateFunction }, dispatch);
 }
 
 export default FunctionIndexTable
