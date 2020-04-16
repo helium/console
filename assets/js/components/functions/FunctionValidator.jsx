@@ -11,10 +11,17 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 
 class FunctionValidator extends Component {
+  state = {
+    input: "",
+    port: "",
+    decodedValue: ""
+  }
+
   onClickEditor = () => {
     const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
     editor.focus()
   }
+
   render() {
     return (
       <Row gutter={20} type="flex">
@@ -69,22 +76,29 @@ class FunctionValidator extends Component {
               <Col span={16}>
                 <Text>Payload Input</Text>
                 <Input
+                  name="input"
                   style={{ marginTop: 5, width: '100%' }}
                   placeholder="Enter encoded payload here"
+                  value={this.state.input}
+                  onChange={e => this.setState({ input: e.target.value })}
                 />
               </Col>
               <Col span={8}>
                 <Text>Port</Text>
                 <InputNumber
                   type="number"
+                  name="port"
+                  placeholder="1"
                   style={{ marginTop: 5, width: '100%' }}
+                  value={this.state.port}
+                  onChange={port => this.setState({ port })}
                 />
               </Col>
             </Row>
             <div style={{ marginTop: 24 }}>
               <Text>Payload Output</Text>
               <TextArea
-                value={"test"}
+                value={this.state.decodedValue}
                 style={{ minHeight: 340, maxHeight: 340, marginTop: 5 }}
               />
             </div>
