@@ -22,13 +22,22 @@ const queryOptions = {
   })
 }
 
+const functionTypes = {
+  decoder: "Decoder"
+}
+
+const functionFormats = {
+  cayenne: "Cayenne LPP",
+  custom: "Custom Script"
+}
+
 @connect(null, mapDispatchToProps)
 @graphql(FUNCTION_SHOW, queryOptions)
 class FunctionShow extends Component {
   state = {
     name: "",
-    type: null,
-    format: null,
+    type: undefined,
+    format: undefined,
     body: ""
   }
 
@@ -49,13 +58,6 @@ class FunctionShow extends Component {
     })
   }
 
-  componentDidUpdate(prevProps) {
-    if (!prevProps.data.function && this.props.data.function) {
-      const {name, body, type, format} = this.props.data.function
-      this.setState({ name, body, type, format })
-    }
-  }
-
   handleInputUpdate = e => this.setState({ [e.target.name]: e.target.value })
 
   handleSelectFunctionType = () => this.setState({ type: "decoder" })
@@ -66,12 +68,27 @@ class FunctionShow extends Component {
 
   handleSubmit = () => {
     const {name, type, format, body} = this.state
-    // this.props.createFunction({
-    //   name,
-    //   type,
-    //   format,
-    //   body
-    // })
+    const functionId = this.props.match.params.id
+    const fxn = this.props.data.function
+
+    const newAttrs = {}
+
+    if (name.length > 0) newAttrs.name = name
+    if (type) newAttrs.type = type
+    if (format) newAttrs.format = format
+    if (format === 'custom' || (fxn.format === 'custom' && !format)) newAttrs.body = body
+    this.props.updateFunction(functionId, newAttrs)
+
+    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_DETAILS", { "id": functionId, attrs: newAttrs })
+  }
+
+  clearInputs = () => {
+    this.setState({
+      name: "",
+      type: undefined,
+      format: undefined,
+      body: ""
+    })
   }
 
   render() {
@@ -120,30 +137,31 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <Card title="Step 1 - Enter Function Details">
-          <Text>Enter Function Name</Text>
+        <Card title="Function Details">
+          <Text>Update Function</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
-              placeholder="e.g. My Decoder"
+              placeholder={fxn.name}
               name="name"
               value={name}
               onChange={this.handleInputUpdate}
               style={{ width: 220 }}
             />
             <Select
-              placeholder="Function Type"
+              placeholder={functionTypes[fxn.type]}
               onSelect={this.handleSelectFunctionType}
               style={{ width: 220, marginLeft: 8 }}
+              value={type}
             >
               <Option value="decoder">
                 Decoder
               </Option>
             </Select>
             <Select
-              placeholder="Choose Format"
+              placeholder={functionFormats[fxn.format]}
               onSelect={this.handleSelectFormat}
               style={{ width: 220, marginLeft: 8 }}
-              disabled={!type}
+              value={format}
             >
               <Option value="cayenne">
                 Cayenne LPP
@@ -152,10 +170,24 @@ class FunctionShow extends Component {
                 Custom Script
               </Option>
             </Select>
+            <Button
+              icon="delete"
+              onClick={this.clearInputs}
+              style={{ marginLeft: 8 }}
+            >
+              Clear
+            </Button>
           </div>
+
         </Card>
         {
-          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} />
+          (format === 'custom' || (fxn.format === 'custom' && !format)) && (
+            <FunctionValidator
+              handleFunctionUpdate={this.handleFunctionUpdate}
+              body={body === "" ? fxn.body : body}
+              title="Custom Script"
+            />
+          )
         }
 
         <UserCan>
@@ -170,7 +202,7 @@ class FunctionShow extends Component {
               icon="save"
               type="primary"
               onClick={this.handleSubmit}
-              disabled={!type || !format || name.length === 0}
+              disabled={!type && !format && name.length === 0 && body.length === 0}
             >
               Save Changes
             </Button>

@@ -22,6 +22,11 @@ const queryOptions = {
   })
 }
 
+const functionFormats = {
+  cayenne: "Cayenne LPP",
+  custom: "Custom"
+}
+
 @connect(null, mapDispatchToProps)
 @graphql(PAGINATED_FUNCTIONS, queryOptions)
 class FunctionIndexTable extends Component {
@@ -72,6 +77,7 @@ class FunctionIndexTable extends Component {
       {
         title: 'Type',
         dataIndex: 'format',
+        render: text => <span>{functionFormats[text]}</span>
       },
       {
         title: 'Applied To',

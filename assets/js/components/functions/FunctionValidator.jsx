@@ -14,7 +14,7 @@ class FunctionValidator extends Component {
     return (
       <Row gutter={20} type="flex">
         <Col sm={14}>
-          <Card title="Step 2 - Enter Custom Script" style={{ height: 'calc(100% - 20px)'}} bodyStyle={{ padding: 0 }}>
+          <Card title={this.props.title} style={{ height: 'calc(100% - 20px)'}} bodyStyle={{ padding: 0 }}>
             <div>
               <Editor
                 value={this.props.body}

@@ -82,7 +82,7 @@ class FunctionNew extends Component {
           </div>
         </Card>
         {
-          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} />
+          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
         }
 
         <UserCan>
