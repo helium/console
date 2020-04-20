@@ -39,13 +39,14 @@ class FunctionNew extends Component {
 
   handleSubmit = () => {
     const {name, type, format, body, labels} = this.state
-    this.props.createFunction({
-      name,
-      type,
-      format,
-      body,
-      labels
-    })
+    const fxn = { name, type, format, body }
+    if (labels) {
+      fxn.labels = {
+        labelsApplied: labels.labelsApplied.map(l => l.id),
+        newLabels: labels.newLabels.map(l => l.name)
+      }
+    }
+    this.props.createFunction(fxn)
 
     analyticsLogger.logEvent("ACTION_CREATE_FUNCTION", { "name": name, "type": type, "format": format })
   }

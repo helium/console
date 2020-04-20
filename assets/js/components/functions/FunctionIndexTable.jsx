@@ -93,7 +93,7 @@ class FunctionIndexTable extends Component {
                       key={l.name}
                       text={l.name}
                       color={l.color}
-                      hasIntegrations={l.channels.length > 0}
+                      hasIntegrations={l.channels && l.channels.length > 0}
                     />
                   }
                 >
@@ -102,7 +102,7 @@ class FunctionIndexTable extends Component {
                     text={l.name}
                     color={l.color}
                     closable
-                    hasIntegrations={l.channels.length > 0}
+                    hasIntegrations={l.channels && l.channels.length > 0}
                     onClose={e => {
                       e.preventDefault()
                     }}

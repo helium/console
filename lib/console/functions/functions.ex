@@ -4,6 +4,7 @@ defmodule Console.Functions do
 
   alias Console.Functions.Function
   alias Console.Organizations.Organization
+  alias Console.Labels
 
   def get_function!(organization, id) do
      Repo.get_by!(Function, [id: id, organization_id: organization.id])
@@ -12,6 +13,10 @@ defmodule Console.Functions do
   def get_organization_function_count(organization) do
     functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
     length(functions)
+  end
+
+  def fetch_assoc(%Function{} = function, assoc \\ [:labels]) do
+    Repo.preload(function, assoc)
   end
 
   def create_function(attrs \\ %{}, %Organization{} = organization) do
@@ -33,6 +38,12 @@ defmodule Console.Functions do
   end
 
   def delete_function(%Function{} = function) do
-    Repo.delete(function)
+    labels = fetch_assoc(function).labels
+    Repo.transaction(fn ->
+      Enum.each(labels, fn label ->
+        Labels.update_label(label, %{ "function_id" => nil })
+      end)
+      Repo.delete(function)
+    end)
   end
 end
