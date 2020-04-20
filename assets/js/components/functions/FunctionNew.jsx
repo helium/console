@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
+import LabelsApplied from '../common/LabelsApplied'
 import FunctionValidator from './FunctionValidator'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -16,7 +17,8 @@ class FunctionNew extends Component {
     name: "",
     type: null,
     format: null,
-    body: ""
+    body: "",
+    labels: null,
   }
 
   componentDidMount() {
@@ -31,20 +33,26 @@ class FunctionNew extends Component {
 
   handleFunctionUpdate = body => this.setState({ body })
 
+  handleLabelsUpdate = labels => {
+    this.setState({ labels })
+  }
+
   handleSubmit = () => {
-    const {name, type, format, body} = this.state
+    const {name, type, format, body, labels} = this.state
     this.props.createFunction({
       name,
       type,
       format,
-      body
+      body,
+      labels
     })
 
     analyticsLogger.logEvent("ACTION_CREATE_FUNCTION", { "name": name, "type": type, "format": format })
   }
 
   render() {
-    const {name, type, format, body} = this.state
+    const { name, type, format, body } = this.state
+
     return (
       <DashboardLayout title="Create New Function">
         <Card title="Step 1 - Enter Function Details">
@@ -87,6 +95,7 @@ class FunctionNew extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
+            <LabelsApplied handleLabelsUpdate={this.handleLabelsUpdate} />
           </Card>
         </UserCan>
 
