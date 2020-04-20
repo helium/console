@@ -7,7 +7,16 @@ export const FUNCTION_FRAGMENT = gql`
     body,
     type,
     format,
-    active
+    active,
+    labels {
+      id,
+      name,
+      color,
+      channels {
+        name,
+        id,
+      }
+    }
   }
 `
 

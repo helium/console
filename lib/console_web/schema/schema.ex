@@ -98,6 +98,7 @@ defmodule ConsoleWeb.Schema do
     field :type, :string
     field :format, :string
     field :active, :boolean
+    field :labels, list_of(:label)
   end
 
   object :event do

@@ -81,7 +81,37 @@ class FunctionIndexTable extends Component {
       },
       {
         title: 'Applied To',
-        dataIndex: 'type',
+        dataIndex: 'labels',
+        render: (labels, record) => {
+          return <React.Fragment>
+            {
+              labels.map(l => (
+                <UserCan
+                  key={l.id}
+                  alternate={
+                    <LabelTag
+                      key={l.name}
+                      text={l.name}
+                      color={l.color}
+                      hasIntegrations={l.channels.length > 0}
+                    />
+                  }
+                >
+                  <LabelTag
+                    key={l.name}
+                    text={l.name}
+                    color={l.color}
+                    closable
+                    hasIntegrations={l.channels.length > 0}
+                    onClose={e => {
+                      e.preventDefault()
+                    }}
+                  />
+                </UserCan>
+              ))
+            }
+          </React.Fragment>
+        }
       },
       {
         title: '',
