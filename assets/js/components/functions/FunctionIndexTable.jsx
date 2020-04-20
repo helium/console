@@ -105,6 +105,8 @@ class FunctionIndexTable extends Component {
                     hasIntegrations={l.channels && l.channels.length > 0}
                     onClose={e => {
                       e.preventDefault()
+                      e.stopPropagation()
+                      this.props.openRemoveFunctionLabelModal(record, l)
                     }}
                   />
                 </UserCan>

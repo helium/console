@@ -5,6 +5,7 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Labels
   alias Console.Devices
   alias Console.Channels
+  alias Console.Functions
   alias Console.Organizations
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
@@ -250,6 +251,22 @@ defmodule ConsoleWeb.LabelController do
       conn
       |> put_resp_header("message", "Label(s) successfully removed from channel")
       |> send_resp(:no_content, "")
+    end
+  end
+
+  def remove_function(conn, %{ "label" => label_id, "function" => function_id }) do
+    current_organization = conn.assigns.current_organization
+    label = Labels.get_label!(current_organization, label_id)
+    if label.function_id == function_id do
+      with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
+        Functions.get_function!(current_organization, function_id) |> ConsoleWeb.FunctionController.broadcast()
+        
+        conn
+        |> put_resp_header("message", "Label successfully removed from function")
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :not_found, "Function not found on label"}
     end
   end
 

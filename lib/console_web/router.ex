@@ -41,6 +41,7 @@ defmodule ConsoleWeb.Router do
     post "/devices/debug", DeviceController, :debug
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
+    post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]

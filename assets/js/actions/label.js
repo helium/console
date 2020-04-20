@@ -134,6 +134,16 @@ export const removeLabelsFromChannel = (labels, channel_id) => {
   }
 }
 
+export const removeLabelFromFunction = (label_id, function_id) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/remove_function`, {
+      label: label_id,
+      function: function_id,
+    })
+    .then(response => {})
+  }
+}
+
 export const toggleLabelDebug = (label_id) => {
   return (dispatch) => {
     rest.post(`/api/labels/debug`, {
