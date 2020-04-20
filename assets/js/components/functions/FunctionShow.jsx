@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { graphql } from 'react-apollo';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
+import LabelsApplied from '../common/LabelsApplied'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
 import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
@@ -208,6 +209,7 @@ class FunctionShow extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
+            <LabelsApplied />
           </Card>
         </UserCan>
 
