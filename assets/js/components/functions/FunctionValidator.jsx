@@ -27,39 +27,41 @@ class FunctionValidator extends Component {
       <Row gutter={20} type="flex">
         <Col sm={14}>
           <Card title={this.props.title} style={{ height: 560, overflow: 'hidden'}} bodyStyle={{ padding: 0 }}>
-            <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
-              <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                {
-                  range(501).map(i => (
-                    <p
-                      key={i}
-                      style={{
-                        textAlign: 'right',
-                        fontFamily: 'monospace',
-                        color: codeEditorLineColor,
-                        fontSize: 14,
-                        marginBottom: 0,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        backgroundColor: codeEditorBgColor
-                      }}
-                    >
-                      {i}
-                    </p>
-                  ))
-                }
-              </div>
+            <div style={{ height: 503, overflowY: 'scroll' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
+                <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                  {
+                    range(501).map(i => (
+                      <p
+                        key={i}
+                        style={{
+                          textAlign: 'right',
+                          fontFamily: 'monospace',
+                          color: codeEditorLineColor,
+                          fontSize: 14,
+                          marginBottom: 0,
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                          backgroundColor: codeEditorBgColor
+                        }}
+                      >
+                        {i}
+                      </p>
+                    ))
+                  }
+                </div>
 
-              <Editor
-                value={this.props.body}
-                onValueChange={this.props.handleFunctionUpdate}
-                highlight={code => highlight(code, languages.js)}
-                padding={10}
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: 14,
-                }}
-              />
+                <Editor
+                  value={this.props.body}
+                  onValueChange={this.props.handleFunctionUpdate}
+                  highlight={code => highlight(code, languages.js)}
+                  padding={10}
+                  style={{
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                  }}
+                />
+              </div>
             </div>
           </Card>
         </Col>
