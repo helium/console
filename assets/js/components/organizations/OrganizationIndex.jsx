@@ -6,7 +6,7 @@ import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
 
-class Dashboard extends Component {
+class OrganizationIndex extends Component {
   state = {
     showOrganizationModal: false,
   }
@@ -57,4 +57,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard
+export default OrganizationIndex

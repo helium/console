@@ -57,39 +57,50 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <Menu.Item disabled={history.location.pathname === "/dashboard"} key="/dashboard"><Icon type="dashboard"/>Dashboard</Menu.Item>
-          <Menu.Item disabled={history.location.pathname === "/devices"} key="/devices"><Icon type="appstore" />Devices</Menu.Item>
-          <Menu.Item disabled={history.location.pathname === "/integrations"} key="/integrations"><Icon type="api" />Integrations</Menu.Item>
-          <Menu.Item disabled={history.location.pathname === "/users"} key="/users"><Icon type="user" />Users</Menu.Item>
-          <Menu.Item disabled={history.location.pathname === "/datacredits"} key="/datacredits"><Icon type="wallet" />Data Credits</Menu.Item>
-          <Menu.Item disabled={history.location.pathname === "/labels"} key="/labels"><Icon type="tag" />Labels</Menu.Item>
-        </Menu>
-        {
-          showLabels ? (
-            <p
-              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontWeight: 300, transform: 'scale(1.5,1)', cursor: 'pointer' }}
-              onClick={() => this.setState({ showLabels: false })}
-            >
-              -
-            </p>
-          ) : (
-            <p
-              style={{ color: grayForHideLabelsDash, position: "absolute", top: 291, left: 170, fontSize: 20, fontWeight: 300, cursor: 'pointer' }}
-              onClick={() => this.setState({ showLabels: true })}
-            >
-              +
-            </p>
-          )
-        }
-        <div style={{ position: "absolute", top: 330, left: 0, padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13' }}>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
+            <Link to={"/labels"} className="menu-link" style={{ marginRight: 40 }}>
+              <Icon style={{ marginRight: 8 }} type="tag"/>Labels
+            </Link>
+            {
+              showLabels ? (
+                <p
+                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+                  onClick={() => this.setState({ showLabels: false })}
+                >
+                  -
+                </p>
+              ) : (
+                <p
+                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', cursor: 'pointer' }}
+                  onClick={() => this.setState({ showLabels: true })}
+                >
+                  +
+                </p>
+              )
+            }
+          </div>
           {
-            showLabels && data.allLabels && data.allLabels.map(l => (
-              <Link to={`/labels/${l.id}`} key={l.id}>
-                <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
-              </Link>
-            ))
+            showLabels && (
+              <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 16 }}>
+                {
+                  data.allLabels && data.allLabels.map(l => (
+                    <div style={{ padding: 2 }} key={l.id}>
+                      <Link to={`/labels/${l.id}`}>
+                        <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
+                      </Link>
+                    </div>
+                  ))
+                }
+              </div>
+            )
           }
-        </div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
+          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
+        </Menu>
       </div>
     )
   }

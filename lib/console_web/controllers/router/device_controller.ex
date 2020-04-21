@@ -23,7 +23,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id) |> Repo.preload([:labels])
+    device = Devices.get_device!(id) |> Repo.preload([labels: :function])
     device =
       if length(device.labels) > 0 do
         Map.put(device, :channels, Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq())
@@ -45,7 +45,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         end
       end)
       |> Enum.map(fn c ->
-        c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end) 
+        c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
       end)
 
     channels_without_debug =

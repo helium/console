@@ -2,7 +2,7 @@ defmodule ConsoleWeb.Router.DeviceView do
   use ConsoleWeb, :view
   alias ConsoleWeb.Router.DeviceView
   alias ConsoleWeb.Router.ChannelView
-  alias ConsoleWeb.LabelView
+  alias ConsoleWeb.Router.LabelView
 
   def render("index.json", %{devices: devices}) do
     render_many(devices, DeviceView, "device.json")

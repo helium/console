@@ -16,7 +16,7 @@ class PublicRoute extends Component {
       <Route path={path} render={props => (
         isLoggedIn === false
           ? <Component {...props} />
-        : <Redirect to='/dashboard' />
+        : <Redirect to='/devices' />
       )} />
     )
   }

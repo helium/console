@@ -41,6 +41,7 @@ defmodule ConsoleWeb.Router do
     post "/devices/debug", DeviceController, :debug
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
+    post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
@@ -57,6 +58,7 @@ defmodule ConsoleWeb.Router do
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
+    resources "/functions", FunctionController, only: [:create, :delete, :update]
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create

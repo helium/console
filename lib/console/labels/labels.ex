@@ -195,4 +195,21 @@ defmodule Console.Labels do
         Repo.delete_all(query)
     end
   end
+
+  def add_function_to_labels(function, label_ids, organization) do
+    Repo.transaction(fn ->
+      Enum.each(label_ids, fn id ->
+        label = get_label!(organization, id)
+        update_label(label, %{ "function_id" => function.id })
+      end)
+    end)
+  end
+
+  def create_labels_add_function(function, label_names, organization, user) do
+    Repo.transaction(fn ->
+      Enum.each(label_names, fn name ->
+        create_label(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
+      end)
+    end)
+  end
 end

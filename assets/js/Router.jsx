@@ -29,10 +29,13 @@ import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import UserIndex from './components/organizations/UserIndex'
-import Dashboard from './components/dashboard/Dashboard'
+import OrganizationIndex from './components/organizations/OrganizationIndex'
 import LabelIndex from './components/labels/LabelIndex'
 import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
+import FunctionIndex from './components/functions/FunctionIndex';
+import FunctionNew from './components/functions/FunctionNew';
+import FunctionShow from './components/functions/FunctionShow';
 
 class Router extends React.Component {
   render() {
@@ -62,8 +65,11 @@ class Router extends React.Component {
                   <PrivateRoute exact path="/integrations/new/:id?" component={ChannelNew} />
                   <PrivateRoute exact path="/integrations/:id" component={ChannelShow} />
                   <PrivateRoute exact path="/users" component={UserIndex} />
-                  <PrivateRoute exact path="/dashboard" component={Dashboard} />
+                  <PrivateRoute exact path="/organizations" component={OrganizationIndex} />
                   <PrivateRoute exact path="/datacredits" component={DataCredits} />
+                  <PrivateRoute exact path="/functions" component={FunctionIndex} />
+                  <PrivateRoute exact path="/functions/new" component={FunctionNew} />
+                  <PrivateRoute exact path="/functions/:id" component={FunctionShow} />
                 </Switch>
               </ConnectedRouter>
             </UserOrgProvider>

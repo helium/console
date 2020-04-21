@@ -5,6 +5,7 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Labels
   alias Console.Devices
   alias Console.Channels
+  alias Console.Functions
   alias Console.Organizations
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
@@ -30,9 +31,16 @@ defmodule ConsoleWeb.LabelController do
         Labels.add_labels_to_channel([label.id], channel, current_organization)
       end
 
+      case label_params["function_id"] do
+        nil -> nil
+        id ->
+          function = Functions.get_function!(current_organization, id)
+          ConsoleWeb.FunctionController.broadcast(function, function.id)
+      end
+
       conn
       |> put_status(:created)
-      |> put_resp_header("message",  "#{label.name} created successfully")
+      |> put_resp_header("message",  "Label #{label.name} created successfully")
       |> render("show.json", label: label)
     end
   end
@@ -42,11 +50,20 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(current_organization, id)
     name = label.name
 
+    function =
+      case label_params["function_id"] do
+        nil -> false
+        id -> Functions.get_function!(current_organization, id)
+      end
+
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       broadcast(label, label.id)
+      if function, do: ConsoleWeb.FunctionController.broadcast(function, function.id)
+
       msg =
         cond do
-          label.name == name -> "#{label.name} updated successfully"
+          function -> "Label #{label.name} added to function successfully"
+          label.name == name -> "Label #{label.name} updated successfully"
           true -> "The label #{name} was successfully updated to #{label.name}"
         end
 
@@ -250,6 +267,24 @@ defmodule ConsoleWeb.LabelController do
       conn
       |> put_resp_header("message", "Label(s) successfully removed from channel")
       |> send_resp(:no_content, "")
+    end
+  end
+
+  def remove_function(conn, %{ "label" => label_id, "function" => function_id }) do
+    current_organization = conn.assigns.current_organization
+    label = Labels.get_label!(current_organization, label_id)
+    if label.function_id == function_id do
+      with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
+        function = Functions.get_function!(current_organization, function_id)
+        ConsoleWeb.FunctionController.broadcast(function)
+        ConsoleWeb.FunctionController.broadcast(function, function.id)
+
+        conn
+        |> put_resp_header("message", "Label successfully removed from function")
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :not_found, "Function not found on label"}
     end
   end
 

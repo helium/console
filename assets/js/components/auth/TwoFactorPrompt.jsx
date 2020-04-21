@@ -41,11 +41,11 @@ class TwoFactorPrompt extends Component {
     const { user } = this.props.auth
     this.props.skip2fa(user.id)
     analyticsLogger.logEvent("ACTION_SKIP_2FA", { "id": user.id})
-    this.props.history.replace("/dashboard")
+    this.props.history.replace("/devices")
   }
 
   handleContinue = () => {
-    this.props.history.replace("/dashboard")
+    this.props.history.replace("/devices")
   }
 
   handleInputUpdate = (e) => {

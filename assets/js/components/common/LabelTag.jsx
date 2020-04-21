@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Tag, Icon } from 'antd';
 
-const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations }) => (
+const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNew }) => (
   <Tag style={style} color={color ? color : "geekblue"} closable={closable} onClose={onClose}>
-    {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {text}
+    {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
   </Tag>
 )
 

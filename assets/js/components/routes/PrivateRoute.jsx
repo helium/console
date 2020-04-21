@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Redirect, withRouter } from 'react-router'
 import { connect } from 'react-redux';
-import NoOrganization from '../dashboard/NoOrganization'
+import NoOrganization from '../organizations/NoOrganization'
 
 class PrivateRoute extends Component {
   render() {

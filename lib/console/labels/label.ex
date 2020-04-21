@@ -7,6 +7,7 @@ defmodule Console.Labels.Label do
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
   alias Console.Labels.ChannelsLabels
+  alias Console.Functions.Function
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -17,6 +18,7 @@ defmodule Console.Labels.Label do
     field :creator, :string
 
     belongs_to :organization, Organization
+    belongs_to :function, Function
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: ChannelsLabels, on_delete: :delete_all
     timestamps()
@@ -27,7 +29,7 @@ defmodule Console.Labels.Label do
 
     changeset =
       label
-      |> cast(attrs, [:name, :organization_id, :color, :creator])
+      |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id])
       |> validate_required([:name, :organization_id])
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "Label already exists, please use another name.")
   end

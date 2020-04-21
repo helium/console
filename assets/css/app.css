@@ -176,3 +176,11 @@ h1 {
 .rotate{
   animation: rotate 1.5s linear infinite;
 }
+
+.menu-link {
+  color: #A7ADB4;
+}
+
+.menu-link:hover {
+  color: white;
+}
