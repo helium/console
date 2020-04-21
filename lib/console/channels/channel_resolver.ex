@@ -6,7 +6,7 @@ defmodule Console.Channels.ChannelResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     channels = Channel
       |> where([c], c.organization_id == ^current_organization.id)
-      |> preload([labels: :devices])
+      |> preload([{:labels, [:devices, :function]}])
       |> Repo.paginate(page: page, page_size: page_size)
 
     updated_entries = channels.entries

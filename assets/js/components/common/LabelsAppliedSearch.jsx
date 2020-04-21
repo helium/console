@@ -69,7 +69,7 @@ class LabelsAppliedSearch extends Component {
         >
           {searchLabels.map(l => (
             <Option value={l.id} key={l.id}>
-              <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0}/>
+              <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={find(this.props.allLabels, { id: l.id }).function}/>
             </Option>
           ))}
         </Select>

@@ -92,7 +92,7 @@ class LabelsAppliedNew extends Component {
               this.state.labelsApplied.map(l => (
                 <UserCan
                   key={l.id}
-                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} />}
+                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function} />}
                 >
                   <LabelTag
                     key={l.id}
@@ -100,6 +100,7 @@ class LabelsAppliedNew extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
+                    hasFunction={l.function}
                     onClose={e => this.removeLabelApplied(l.id, "labelsApplied", e)}
                   />
                 </UserCan>
@@ -109,7 +110,7 @@ class LabelsAppliedNew extends Component {
               this.state.newLabels.map(l => (
                 <UserCan
                   key={l.id}
-                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} />}
+                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function} />}
                 >
                   <LabelTag
                     key={l.id}
@@ -117,6 +118,7 @@ class LabelsAppliedNew extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
+                    hasFunction={l.function}
                     onClose={e => this.removeLabelApplied(l.id, "newLabels", e)}
                     isNew
                   />

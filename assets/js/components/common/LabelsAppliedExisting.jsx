@@ -70,7 +70,7 @@ class LabelsAppliedExisting extends Component {
               this.props.labels.map(l => (
                 <UserCan
                   key={l.id}
-                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} />}
+                  alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function} />}
                 >
                   <LabelTag
                     key={l.id}
@@ -78,6 +78,7 @@ class LabelsAppliedExisting extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
+                    hasFunction={l.function}
                     onClose={e => {
                       e.preventDefault()
                       this.props.openRemoveFunctionLabelModal(l)

@@ -15,6 +15,10 @@ export const FUNCTION_FRAGMENT = gql`
       channels {
         name,
         id,
+      },
+      function {
+        id,
+        name
       }
     }
   }
@@ -39,7 +43,6 @@ export const FUNCTION_SHOW = gql`
   query FunctionShowQuery ($id: ID!) {
     function(id: $id) {
       ...FunctionFragment
-
     }
   }
   ${FUNCTION_FRAGMENT}

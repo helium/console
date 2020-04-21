@@ -15,6 +15,10 @@ export const LABEL_FRAGMENT = gql`
       name,
       id
     }
+    function {
+      id,
+      name
+    }
   }
 `
 

@@ -77,7 +77,7 @@ class ChannelsTable extends Component {
           <div>
             {
               record.labels.map(l => (
-                <LabelTag key={l.id} text={l.name} color={l.color} hasIntegrations={true}/>
+                <LabelTag key={l.id} text={l.name} color={l.color} hasIntegrations={true} hasFunction={l.function} />
               ))
             }
           </div>

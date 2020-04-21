@@ -94,6 +94,7 @@ class FunctionIndexTable extends Component {
                       text={l.name}
                       color={l.color}
                       hasIntegrations={l.channels && l.channels.length > 0}
+                      hasFunction
                     />
                   }
                 >
@@ -103,6 +104,7 @@ class FunctionIndexTable extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels && l.channels.length > 0}
+                    hasFunction
                     onClose={e => {
                       e.preventDefault()
                       e.stopPropagation()

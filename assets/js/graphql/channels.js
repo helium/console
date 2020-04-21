@@ -42,6 +42,10 @@ export const CHANNEL_SHOW = gql`
         name,
         id
       }
+      function {
+        id
+        name
+      }
     }
   }
   ${CHANNEL_FRAGMENT}
@@ -73,6 +77,10 @@ export const PAGINATED_CHANNELS = gql`
           name,
           id,
           color,
+          function {
+            id,
+            name
+          }
         },
         device_count
       },
