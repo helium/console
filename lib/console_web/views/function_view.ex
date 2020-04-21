@@ -17,7 +17,11 @@ defmodule ConsoleWeb.FunctionView do
       type: function.type,
       format: function.format,
       body: function.body,
-      organization_id: function.organization_id,
     }
+  end
+
+  def append_function(json, function) do
+    function_json = render_one(function, FunctionView, "show.json")
+    Map.put(json, :function, function_json)
   end
 end
