@@ -43,10 +43,19 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(current_organization, id)
     name = label.name
 
+    function =
+      case label_params["function_id"] do
+        nil -> false
+        id -> Functions.get_function!(current_organization, id)
+      end
+
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       broadcast(label, label.id)
+      if function, do: ConsoleWeb.FunctionController.broadcast(function, function.id)
+
       msg =
         cond do
+          function -> "#{label.name} added to function successfully"
           label.name == name -> "#{label.name} updated successfully"
           true -> "The label #{name} was successfully updated to #{label.name}"
         end
@@ -260,7 +269,7 @@ defmodule ConsoleWeb.LabelController do
     if label.function_id == function_id do
       with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
         Functions.get_function!(current_organization, function_id) |> ConsoleWeb.FunctionController.broadcast()
-        
+
         conn
         |> put_resp_header("message", "Label successfully removed from function")
         |> send_resp(:no_content, "")

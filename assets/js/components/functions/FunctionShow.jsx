@@ -5,11 +5,12 @@ import { bindActionCreators } from 'redux';
 import { graphql } from 'react-apollo';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import LabelsApplied from '../common/LabelsApplied'
+import LabelsAppliedExisting from '../common/LabelsAppliedExisting'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
 import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
+import { updateLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
 const { Text } = Typography
@@ -106,6 +107,11 @@ class FunctionShow extends Component {
 
   closeDeleteFunctionModal = () => {
     this.setState({ showDeleteFunctionModal: false })
+  }
+
+  updateLabelFunction = (label_id) => {
+    const function_id = this.props.match.params.id
+    this.props.updateLabel(label_id, { function_id })
   }
 
   render() {
@@ -209,7 +215,7 @@ class FunctionShow extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
-            <LabelsApplied />
+            <LabelsAppliedExisting labels={fxn.labels} updateLabelFunction={this.updateLabelFunction} />
           </Card>
         </UserCan>
 
@@ -239,7 +245,7 @@ class FunctionShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction, updateFunction }, dispatch);
+  return bindActionCreators({ deleteFunction, updateFunction, updateLabel }, dispatch);
 }
 
 export default FunctionShow

@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { ALL_LABELS } from '../../graphql/labels'
-import { Typography, Button, Select } from 'antd';
-const { Option } = Select
+import { Typography, Button } from 'antd';
 const { Text } = Typography
 import find from 'lodash/find'
 import remove from 'lodash/remove'

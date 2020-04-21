@@ -16,6 +16,7 @@ defmodule Console.Functions.FunctionResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     function = Function
       |> where([f], f.id == ^id and f.organization_id == ^current_organization.id)
+      |> preload([labels: [:channels]])
       |> Repo.one!()
 
     {:ok, function}
