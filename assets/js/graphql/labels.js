@@ -84,6 +84,10 @@ export const ALL_LABELS = gql`
       channels {
         id,
         name
+      },
+      function {
+        id,
+        name
       }
     }
   }

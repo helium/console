@@ -237,6 +237,7 @@ class FunctionShow extends Component {
               updateLabelFunction={this.updateLabelFunction}
               createLabelAttachFunction={this.createLabelAttachFunction}
               openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
+              current_function={fxn}
             />
           </Card>
         </UserCan>

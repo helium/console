@@ -8,6 +8,7 @@ import remove from 'lodash/remove'
 import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
+import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
 
 const queryOptions = {
   options: props => ({
@@ -17,18 +18,41 @@ const queryOptions = {
 
 @graphql(ALL_LABELS, queryOptions)
 class LabelsAppliedExisting extends Component {
+  state = {
+    showFunctionMoveLabelModal: false,
+    labelBeingMoved: null,
+  }
+
   addLabelToList = value => {
     const { allLabels } = this.props.data
     const existingLabel = find(allLabels, { id: value }) || find(allLabels, { name: value })
 
-    if (existingLabel) {
-      return this.props.updateLabelFunction(existingLabel.id)
+
+    if (existingLabel && existingLabel.function) {
+      if (existingLabel.function.id === this.props.current_function.id) return
+
+      this.openFunctionMoveLabelModal(existingLabel)
+    } else if (existingLabel) {
+      this.confirmAddLabel(existingLabel)
     } else {
       return this.props.createLabelAttachFunction(value)
     }
   }
 
+  confirmAddLabel = (label) => {
+    return this.props.updateLabelFunction(label.id)
+  }
+
+  openFunctionMoveLabelModal = (labelBeingMoved) => {
+    this.setState({ showFunctionMoveLabelModal: true, labelBeingMoved })
+  }
+
+  closeFunctionMoveLabelModal = () => {
+    this.setState({ showFunctionMoveLabelModal: false })
+  }
+
   render() {
+    const { showFunctionMoveLabelModal, labelBeingMoved } = this.state
     const { allLabels, loading, error } = this.props.data
     if (loading) return <div />
     if (error) return (
@@ -64,6 +88,13 @@ class LabelsAppliedExisting extends Component {
             }
           </div>
         </div>
+
+        <FunctionMoveLabelModal
+          open={showFunctionMoveLabelModal}
+          onClose={this.closeFunctionMoveLabelModal}
+          label={labelBeingMoved}
+          confirmAddLabel={this.confirmAddLabel}
+        />
       </div>
     )
   }

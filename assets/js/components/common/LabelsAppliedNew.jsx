@@ -8,6 +8,7 @@ import remove from 'lodash/remove'
 import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
+import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
 
 const queryOptions = {
   options: props => ({
@@ -19,7 +20,9 @@ const queryOptions = {
 class LabelsAppliedNew extends Component {
   state = {
     labelsApplied: [],
-    newLabels: []
+    newLabels: [],
+    showFunctionMoveLabelModal: false,
+    labelBeingMoved: null,
   }
 
   addLabelToList = value => {
@@ -40,7 +43,18 @@ class LabelsAppliedNew extends Component {
 
     if ((labelById && find(labelsApplied, labelById)) || (labelByName && find(labelsApplied, labelByName))) return
 
-    this.setState({ labelsApplied: labelsApplied.concat(labelById || labelByName) }, () => {
+    const label = labelById || labelByName
+    if (label.function) {
+      this.openFunctionMoveLabelModal(label)
+    } else {
+      this.confirmAddLabel(label)
+    }
+  }
+
+  confirmAddLabel = (label) => {
+    const { labelsApplied, newLabels } = this.state
+
+    this.setState({ labelsApplied: labelsApplied.concat(label) }, () => {
       this.props.handleLabelsUpdate({ labelsApplied: this.state.labelsApplied, newLabels })
     })
   }
@@ -51,7 +65,16 @@ class LabelsAppliedNew extends Component {
     this.setState({ [key]: this.state[key] })
   }
 
+  openFunctionMoveLabelModal = (labelBeingMoved) => {
+    this.setState({ showFunctionMoveLabelModal: true, labelBeingMoved })
+  }
+
+  closeFunctionMoveLabelModal = () => {
+    this.setState({ showFunctionMoveLabelModal: false })
+  }
+
   render() {
+    const { showFunctionMoveLabelModal, labelBeingMoved } = this.state
     const { allLabels, loading, error } = this.props.data
     if (loading) return <div />
     if (error) return (
@@ -102,6 +125,13 @@ class LabelsAppliedNew extends Component {
             }
           </div>
         </div>
+
+        <FunctionMoveLabelModal
+          open={showFunctionMoveLabelModal}
+          onClose={this.closeFunctionMoveLabelModal}
+          label={labelBeingMoved}
+          confirmAddLabel={this.confirmAddLabel}
+        />
       </div>
     )
   }

@@ -21,7 +21,7 @@ defmodule Console.Labels.LabelResolver do
   def all(_, %{context: %{current_organization: current_organization}}) do
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:devices, :channels])
+      |> preload([:channels, :function])
       |> Repo.all()
 
     {:ok, labels}
