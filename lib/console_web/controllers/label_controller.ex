@@ -275,7 +275,9 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(current_organization, label_id)
     if label.function_id == function_id do
       with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
-        Functions.get_function!(current_organization, function_id) |> ConsoleWeb.FunctionController.broadcast()
+        function = Functions.get_function!(current_organization, function_id)
+        ConsoleWeb.FunctionController.broadcast(function)
+        ConsoleWeb.FunctionController.broadcast(function, function.id)
 
         conn
         |> put_resp_header("message", "Label successfully removed from function")

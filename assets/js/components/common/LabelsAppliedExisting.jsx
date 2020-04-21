@@ -28,11 +28,6 @@ class LabelsAppliedExisting extends Component {
     }
   }
 
-  removeLabelApplied = (label_id) => {
-    e.preventDefault()
-    
-  }
-
   render() {
     const { allLabels, loading, error } = this.props.data
     if (loading) return <div />
@@ -59,7 +54,10 @@ class LabelsAppliedExisting extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
-                    onClose={e => this.removeLabelApplied(l.id)}
+                    onClose={e => {
+                      e.preventDefault()
+                      this.props.openRemoveFunctionLabelModal(l)
+                    }}
                   />
                 </UserCan>
               ))

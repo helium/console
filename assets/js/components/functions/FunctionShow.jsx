@@ -8,6 +8,7 @@ import UserCan from '../common/UserCan'
 import LabelsAppliedExisting from '../common/LabelsAppliedExisting'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
+import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
 import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
 import { updateLabel, createLabel } from '../../actions/label'
@@ -42,9 +43,11 @@ class FunctionShow extends Component {
     type: undefined,
     format: undefined,
     body: "",
-    showDeleteFunctionModal: false,
-    functionToDelete: null,
     codeUpdated: false,
+    showDeleteFunctionModal: false,
+    showRemoveFunctionLabelModal: false,
+    functionSelected: null,
+    labelToRemove: null,
   }
 
   componentDidMount() {
@@ -101,12 +104,21 @@ class FunctionShow extends Component {
     })
   }
 
-  openDeleteFunctionModal = (functionToDelete) => {
-    this.setState({ showDeleteFunctionModal: true, functionToDelete })
+  openDeleteFunctionModal = (functionSelected) => {
+    this.setState({ showDeleteFunctionModal: true, functionSelected })
   }
 
   closeDeleteFunctionModal = () => {
     this.setState({ showDeleteFunctionModal: false })
+  }
+
+  openRemoveFunctionLabelModal = (labelToRemove) => {
+    const fxn = this.props.data.function
+    this.setState({ showRemoveFunctionLabelModal: true, functionSelected: fxn, labelToRemove })
+  }
+
+  closeRemoveFunctionLabelModal = () => {
+    this.setState({ showRemoveFunctionLabelModal: false })
   }
 
   updateLabelFunction = (label_id) => {
@@ -120,7 +132,7 @@ class FunctionShow extends Component {
   }
 
   render() {
-    const {name, type, format, body, codeUpdated, showDeleteFunctionModal} = this.state
+    const {name, type, format, body, codeUpdated, showDeleteFunctionModal, showRemoveFunctionLabelModal} = this.state
     const { loading, error } = this.props.data
     const fxn = this.props.data.function
 
@@ -224,6 +236,7 @@ class FunctionShow extends Component {
               labels={fxn.labels}
               updateLabelFunction={this.updateLabelFunction}
               createLabelAttachFunction={this.createLabelAttachFunction}
+              openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
             />
           </Card>
         </UserCan>
@@ -245,8 +258,15 @@ class FunctionShow extends Component {
         <DeleteFunctionModal
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
-          functionToDelete={this.state.functionToDelete}
+          functionToDelete={this.state.functionSelected}
           redirect
+        />
+
+        <RemoveFunctionLabelModal
+          open={showRemoveFunctionLabelModal}
+          onClose={this.closeRemoveFunctionLabelModal}
+          functionSelected={this.state.functionSelected}
+          labelToRemove={this.state.labelToRemove}
         />
       </DashboardLayout>
     )
