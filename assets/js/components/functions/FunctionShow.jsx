@@ -10,7 +10,7 @@ import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
 import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
-import { updateLabel } from '../../actions/label'
+import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
 const { Text } = Typography
@@ -114,6 +114,11 @@ class FunctionShow extends Component {
     this.props.updateLabel(label_id, { function_id })
   }
 
+  createLabelAttachFunction = (name) => {
+    const function_id = this.props.match.params.id
+    this.props.createLabel({ name, function_id }, null, false)
+  }
+
   render() {
     const {name, type, format, body, codeUpdated, showDeleteFunctionModal} = this.state
     const { loading, error } = this.props.data
@@ -215,7 +220,11 @@ class FunctionShow extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
-            <LabelsAppliedExisting labels={fxn.labels} updateLabelFunction={this.updateLabelFunction} />
+            <LabelsAppliedExisting
+              labels={fxn.labels}
+              updateLabelFunction={this.updateLabelFunction}
+              createLabelAttachFunction={this.createLabelAttachFunction}
+            />
           </Card>
         </UserCan>
 
@@ -245,7 +254,7 @@ class FunctionShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction, updateFunction, updateLabel }, dispatch);
+  return bindActionCreators({ deleteFunction, updateFunction, updateLabel, createLabel }, dispatch);
 }
 
 export default FunctionShow

@@ -20,14 +20,17 @@ class LabelsAppliedExisting extends Component {
   addLabelToList = value => {
     const { allLabels } = this.props.data
     const existingLabel = find(allLabels, { id: value }) || find(allLabels, { name: value })
-    
+
     if (existingLabel) {
-      this.props.updateLabelFunction(existingLabel.id)
+      return this.props.updateLabelFunction(existingLabel.id)
+    } else {
+      return this.props.createLabelAttachFunction(value)
     }
   }
 
-  removeLabelApplied = () => {
+  removeLabelApplied = (label_id) => {
     e.preventDefault()
+    
   }
 
   render() {
@@ -56,7 +59,7 @@ class LabelsAppliedExisting extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
-                    onClose={e => this.removeLabelApplied()}
+                    onClose={e => this.removeLabelApplied(l.id)}
                   />
                 </UserCan>
               ))

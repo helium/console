@@ -31,9 +31,16 @@ defmodule ConsoleWeb.LabelController do
         Labels.add_labels_to_channel([label.id], channel, current_organization)
       end
 
+      case label_params["function_id"] do
+        nil -> nil
+        id ->
+          function = Functions.get_function!(current_organization, id)
+          ConsoleWeb.FunctionController.broadcast(function, function.id)
+      end
+
       conn
       |> put_status(:created)
-      |> put_resp_header("message",  "#{label.name} created successfully")
+      |> put_resp_header("message",  "Label #{label.name} created successfully")
       |> render("show.json", label: label)
     end
   end
@@ -55,8 +62,8 @@ defmodule ConsoleWeb.LabelController do
 
       msg =
         cond do
-          function -> "#{label.name} added to function successfully"
-          label.name == name -> "#{label.name} updated successfully"
+          function -> "Label #{label.name} added to function successfully"
+          label.name == name -> "Label #{label.name} updated successfully"
           true -> "The label #{name} was successfully updated to #{label.name}"
         end
 

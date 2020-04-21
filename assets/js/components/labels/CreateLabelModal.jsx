@@ -33,7 +33,7 @@ class CreateLabelModal extends Component {
     const { labelName, channelId } = this.state;
 
     analyticsLogger.logEvent("ACTION_CREATE_LABEL", {"name": labelName})
-    this.props.createLabel(labelName, channelId, redirect)
+    this.props.createLabel({ name: labelName }, channelId, redirect)
 
     this.props.onClose()
   }

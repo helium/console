@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import LabelsApplied from '../common/LabelsApplied'
+import LabelsAppliedNew from '../common/LabelsAppliedNew'
 import FunctionValidator from './FunctionValidator'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -96,7 +96,7 @@ class FunctionNew extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
-            <LabelsApplied handleLabelsUpdate={this.handleLabelsUpdate} />
+            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
           </Card>
         </UserCan>
 

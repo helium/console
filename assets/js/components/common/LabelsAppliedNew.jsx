@@ -16,7 +16,7 @@ const queryOptions = {
 }
 
 @graphql(ALL_LABELS, queryOptions)
-class LabelsApplied extends Component {
+class LabelsAppliedNew extends Component {
   state = {
     labelsApplied: [],
     newLabels: []
@@ -107,4 +107,4 @@ class LabelsApplied extends Component {
   }
 }
 
-export default LabelsApplied
+export default LabelsAppliedNew
