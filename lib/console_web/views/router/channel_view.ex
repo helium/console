@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.Router.ChannelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.Router.ChannelView
+  alias ConsoleWeb.Router.FunctionView
 
   def render("index.json", %{channels: channels}) do
     render_many(channels, ChannelView, "channel.json")
@@ -19,6 +20,7 @@ defmodule ConsoleWeb.Router.ChannelView do
       active: channel.active,
       organization_id: channel.organization_id,
     }
+    |> FunctionView.append_function(channel.function)
   end
 
   def append_channels(json, channels) do

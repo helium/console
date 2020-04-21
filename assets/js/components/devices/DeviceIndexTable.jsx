@@ -112,6 +112,7 @@ class DeviceIndexTable extends Component {
                     hasFunction={l.function}
                     onClose={e => {
                       e.preventDefault()
+                      e.stopPropagation()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
                   />

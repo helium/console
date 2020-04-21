@@ -23,10 +23,26 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id) |> Repo.preload([labels: :function])
+    device = Devices.get_device!(id) |> Repo.preload([labels: [:channels, :function]])
     device =
       if length(device.labels) > 0 do
-        Map.put(device, :channels, Ecto.assoc(device.labels, :channels) |> Repo.all() |> Enum.uniq())
+        channels_with_functions =
+          device.labels
+          |> Enum.filter(fn l -> l.function != nil && l.function.active == true end)
+          |> Enum.map(fn l ->
+            Enum.map(l.channels, fn c -> Map.put(c, :function, l.function) end)
+          end)
+          |> List.flatten()
+
+        channels_without_functions =
+          device.labels
+          |> Enum.filter(fn l -> l.function == nil || l.function.active == false end)
+          |> Enum.map(fn l -> l.channels end)
+          |> List.flatten()
+          |> Enum.uniq()
+          |> Enum.map(fn c -> Map.put(c, :function, nil) end)
+
+        Map.put(device, :channels, channels_with_functions ++ channels_without_functions)
       else
         Map.put(device, :channels, [])
       end
