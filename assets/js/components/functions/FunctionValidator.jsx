@@ -3,7 +3,6 @@ import DashboardLayout from '../common/DashboardLayout'
 import { primaryBlue, codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import { Typography, Card, Icon, Input, InputNumber, Row, Col } from 'antd';
 const { Text } = Typography
-const { TextArea } = Input
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
@@ -13,13 +12,26 @@ import 'prismjs/components/prism-javascript';
 class FunctionValidator extends Component {
   state = {
     input: "",
-    port: "",
-    decodedValue: ""
+    port: 1,
   }
 
   onClickEditor = () => {
     const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
     editor.focus()
+  }
+
+  runValidator = () => {
+    document.getElementById("myFrame").contentWindow.document.body.innerHTML = ''
+
+    const { port, input } = this.state
+    const code = this.props.body + `\ntry { window.parent.document.getElementById("validatorOutput").textContent = JSON.stringify(Decoder(${input}, ${port}), null, 4) } catch { window.parent.document.getElementById("validatorOutput").textContent = "Validation failed, please check inputs"}`
+
+    const scriptTag = document.createElement('script')
+    scriptTag.type = 'text/javascript'
+    scriptTag.id = "validatorScript"
+    scriptTag.appendChild(document.createTextNode(code))
+
+    document.getElementById("myFrame").contentWindow.document.body.appendChild(scriptTag)
   }
 
   render() {
@@ -71,7 +83,7 @@ class FunctionValidator extends Component {
             title="Script Validator"
             style={{ height: 560 }}
             extra={
-              <Icon type="play-circle" theme="filled" style={{ color: primaryBlue, fontSize: 22 }} onClick={() => {}}/>
+              <Icon type="play-circle" theme="filled" style={{ color: primaryBlue, fontSize: 22 }} onClick={this.runValidator}/>
             }
           >
             <Row gutter={10}>
@@ -99,11 +111,9 @@ class FunctionValidator extends Component {
             </Row>
             <div style={{ marginTop: 24 }}>
               <Text>Payload Output</Text>
-              <TextArea
-                value={this.state.decodedValue}
-                style={{ minHeight: 340, maxHeight: 340, marginTop: 5 }}
-              />
+              <textarea id="validatorOutput" style={{ minHeight: 340, maxHeight: 340, marginTop: 5, width: '100%', padding: 10, paddingTop: 5, border: 'solid 1px #d9d9d9', borderRadius: 5 }} disabled />
             </div>
+            <iframe id="myFrame" style={{ height: 0, width: 0, opacity: 0 }}></iframe>
           </Card>
         </Col>
       </Row>
