@@ -17,7 +17,7 @@ class FunctionNew extends Component {
     name: "",
     type: null,
     format: null,
-    body: "",
+    body: "function Decoder(bytes, port) { \n\n  return decoded; \n}",
     labels: null,
   }
 
