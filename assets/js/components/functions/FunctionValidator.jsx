@@ -15,23 +15,25 @@ class FunctionValidator extends Component {
     port: 1,
   }
 
+  componentDidMount() {
+    window.addEventListener('message', e => {
+      const frame = document.getElementById('myFrame')
+      if (e.origin === 'null' && e.source === frame.contentWindow) {
+        window.document.getElementById("validatorOutput").textContent = e.data
+      }
+    })
+  }
+
   onClickEditor = () => {
     const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
     editor.focus()
   }
 
   runValidator = () => {
-    document.getElementById("myFrame").contentWindow.document.body.innerHTML = ''
-
+    const frame = document.getElementById('myFrame')
     const { port, input } = this.state
-    const code = this.props.body + `\ntry { window.parent.document.getElementById("validatorOutput").textContent = JSON.stringify(Decoder(${input}, ${port}), null, 4) } catch { window.parent.document.getElementById("validatorOutput").textContent = "Validation failed, please check inputs"}`
-
-    const scriptTag = document.createElement('script')
-    scriptTag.type = 'text/javascript'
-    scriptTag.id = "validatorScript"
-    scriptTag.appendChild(document.createTextNode(code))
-
-    document.getElementById("myFrame").contentWindow.document.body.appendChild(scriptTag)
+    const code = this.props.body + `\nJSON.stringify(Decoder(${input}, ${port}), null, 4)`
+    frame.contentWindow.postMessage(code, '*')
   }
 
   render() {
@@ -113,7 +115,6 @@ class FunctionValidator extends Component {
               <Text>Payload Output</Text>
               <textarea id="validatorOutput" style={{ minHeight: 340, maxHeight: 340, marginTop: 5, width: '100%', padding: 10, paddingTop: 5, border: 'solid 1px #d9d9d9', borderRadius: 5 }} disabled />
             </div>
-            <iframe id="myFrame" style={{ height: 0, width: 0, opacity: 0 }}></iframe>
           </Card>
         </Col>
       </Row>
