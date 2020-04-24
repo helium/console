@@ -85,6 +85,13 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/v1", ConsoleWeb.V1 do
+    pipe_through :api
+
+    post "/down/:channel_id/:downlink_token/:device_id", DownlinkController, :down
+    post "/down/:channel_id/:downlink_token", DownlinkController, :down
+  end
+
+  scope "/api/v1", ConsoleWeb.V1 do
     pipe_through ConsoleWeb.V1ApiPipeline
 
     get "/organization", OrganizationController, :show
