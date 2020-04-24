@@ -12,15 +12,19 @@ defmodule ConsoleWeb.Router.ChannelView do
   end
 
   def render("channel.json", %{channel: channel}) do
-    %{
-      id: channel.id,
-      name: channel.name,
-      type: channel.type,
-      credentials: channel.credentials,
-      active: channel.active,
-      organization_id: channel.organization_id,
-    }
-    |> FunctionView.append_function(channel.function)
+    channel_json =
+      %{
+        id: channel.id,
+        name: channel.name,
+        type: channel.type,
+        credentials: channel.credentials,
+        active: channel.active,
+        organization_id: channel.organization_id,
+      }
+    case Map.get(channel, :function) do
+      nil -> channel_json
+      _ -> channel_json |> FunctionView.append_function(channel.function)
+    end
   end
 
   def append_channels(json, channels) do
