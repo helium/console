@@ -48,7 +48,7 @@ const statusBadge = (status) => {
     case "success":
       return <Badge status="success" />
     default:
-      return <Badge status="default" text={status} />
+      return <Badge status="default" />
   }
 }
 

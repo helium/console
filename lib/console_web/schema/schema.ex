@@ -50,6 +50,7 @@ defmodule ConsoleWeb.Schema do
     field :labels, list_of(:label)
     field :devices, list_of(:device)
     field :device_count, :integer
+    field :downlink_token, :string
   end
 
   paginated object :gateway do

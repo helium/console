@@ -5,6 +5,7 @@ defmodule Console.Channels.Channel do
 
   alias Console.Organizations.Organization
   alias Console.Channels
+  alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Labels.Label
   alias Console.Labels.ChannelsLabels
@@ -18,6 +19,7 @@ defmodule Console.Channels.Channel do
     field :name, :string
     field :type, :string
     field :type_name, :string
+    field :downlink_token, :string
 
     belongs_to :organization, Organization
     many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
@@ -36,6 +38,7 @@ defmodule Console.Channels.Channel do
     |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
+    |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
@@ -48,9 +51,10 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     channel
-    |> cast(attrs, [:name, :active, :credentials, :organization_id])
-    |> validate_required([:name, :type, :active, :credentials, :organization_id])
+    |> cast(attrs, [:name, :credentials, :downlink_token])
+    |> validate_required([:name, :type, :active, :credentials])
     |> check_credentials_update(channel.type)
+    |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
@@ -67,6 +71,18 @@ defmodule Console.Channels.Channel do
           end
 
         put_change(changeset, :type_name, type_name)
+      _ -> changeset
+    end
+  end
+
+  defp put_downlink_token(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{type: "http"}} ->
+        token = generate_token(32)
+        put_change(changeset, :downlink_token, token)
+      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: "http"}} ->
+        token = generate_token(32)
+        put_change(changeset, :downlink_token, token)
       _ -> changeset
     end
   end
