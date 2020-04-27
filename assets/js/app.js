@@ -28,9 +28,11 @@ import { history } from './store/configureStore'
 import { config } from './config/auth0'
 
 const onRedirectCallback = appState => {
-  history.push(
+  // This uses replace instead of push because the Auth0 SDK
+  // will overwrite the history with it's own special route otherwise
+  history.replace(
     appState && appState.targetUrl
-      ? appState.targetUrl
+      ? appState.targetUrl + appState.params
       : window.location.pathname
   )
 }

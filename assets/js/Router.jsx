@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from 'react'
 
 import { store, persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -34,7 +34,6 @@ import LabelIndex from './components/labels/LabelIndex'
 import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
 import { useAuth0  } from './components/auth/Auth0Provider'
-import { useEffect } from "react";
 
 const Router = () => {
   const { loading, isAuthenticated, loginWithRedirect, getTokenSilently } = useAuth0();
@@ -44,7 +43,7 @@ const Router = () => {
     }
     const fn = async () => {
       await loginWithRedirect({
-        appState: {targetUrl: window.location.pathname}
+        appState: {targetUrl: window.location.pathname, params: window.location.search}
       });
     };
     fn();
@@ -53,6 +52,7 @@ const Router = () => {
     return <div>Loading...</div>
   }
   const apolloClient = setupApolloClient(getTokenSilently);
+  console.log(history);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -61,7 +61,7 @@ const Router = () => {
             { /* ConnectedRouter will use the store from Provider automatically */ }
             <ConnectedRouter history={history}>
               <Switch>
-                {/* <Redirect exact from="/" to="/dashboard" /> */}
+                <Redirect exact from="/" to="/dashboard" />
                 <PublicRoute path="/terms" component={Terms}/>
                 <ConsoleRoute path="/profile" component={Profile}/>
                 <ConsoleRoute exact path="/devices" component={DeviceIndex} />

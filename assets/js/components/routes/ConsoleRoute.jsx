@@ -5,7 +5,7 @@ import NoOrganization from '../dashboard/NoOrganization'
 
 class ConsoleRoute extends Component {
   render() {
-    const { path, isLoggedIn, currentOrganizationId } = this.props
+    const { path, currentOrganizationId } = this.props
     const Component = this.props.component
 
     return(
