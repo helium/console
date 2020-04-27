@@ -66,7 +66,7 @@ const menu = (handleClick, showProfile) => (
 function mapStateToProps(state, ownProps) {
   return {
     email: state.user.email,
-    currentOrganizationName: state.auth.currentOrganizationName,
+    currentOrganizationName: state.organization.currentOrganizationName,
   }
 }
 

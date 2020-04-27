@@ -4,14 +4,14 @@ import { store, persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import { ApolloProvider } from 'react-apollo';
-import apolloClient from './util/apolloClient'
+import { setupApolloClient } from './util/apolloClient'
 
 // Routes
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
-import PrivateRoute from './components/routes/PrivateRoute.jsx';
+import ConsoleRoute from './components/routes/ConsoleRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import UserOrgProvider from './components/UserOrgProvider'
 import Login from './components/auth/Login.jsx';
@@ -37,7 +37,7 @@ import { useAuth0  } from './components/auth/Auth0Provider'
 import { useEffect } from "react";
 
 const Router = () => {
-  const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { loading, isAuthenticated, loginWithRedirect, getTokenSilently } = useAuth0();
   useEffect(() => {
     if (loading || isAuthenticated) {
       return;
@@ -49,36 +49,35 @@ const Router = () => {
     };
     fn();
   }, [loading, isAuthenticated, loginWithRedirect]);
+  if (loading) {
+    return <div>Loading...</div>
+  }
+  const apolloClient = setupApolloClient(getTokenSilently);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ApolloProvider client={apolloClient}>
-          <UserOrgProvider>
+        <UserOrgProvider>
+          <ApolloProvider client={apolloClient}>
             { /* ConnectedRouter will use the store from Provider automatically */ }
             <ConnectedRouter history={history}>
               <Switch>
+                {/* <Redirect exact from="/" to="/dashboard" /> */}
                 <PublicRoute path="/terms" component={Terms}/>
-                <PublicRoute path="/resend_verification" component={ResendVerification}/>
-                <PublicRoute path="/forgot_password" component={ForgotPassword}/>
-                <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
-                <PublicRoute path="/register" component={Register}/>
-                <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
-                <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
-                <PrivateRoute path="/profile" component={Profile}/>
-                <PrivateRoute exact path="/devices" component={DeviceIndex} />
-                <PrivateRoute exact path="/labels" component={LabelIndex} />
-                <PrivateRoute path="/devices/:id" component={DeviceShow}/>
-                <PrivateRoute path="/labels/:id" component={LabelShow} />
-                <PrivateRoute exact path="/integrations" component={ChannelIndex} />
-                <PrivateRoute exact path="/integrations/new/:id?" component={ChannelNew} />
-                <PrivateRoute exact path="/integrations/:id" component={ChannelShow} />
-                <PrivateRoute exact path="/users" component={UserIndex} />
-                <PrivateRoute exact path="/dashboard" component={Dashboard} />
-                <PrivateRoute exact path="/datacredits" component={DataCredits} />
+                <ConsoleRoute path="/profile" component={Profile}/>
+                <ConsoleRoute exact path="/devices" component={DeviceIndex} />
+                <ConsoleRoute exact path="/labels" component={LabelIndex} />
+                <ConsoleRoute path="/devices/:id" component={DeviceShow}/>
+                <ConsoleRoute path="/labels/:id" component={LabelShow} />
+                <ConsoleRoute exact path="/integrations" component={ChannelIndex} />
+                <ConsoleRoute exact path="/integrations/new/:id?" component={ChannelNew} />
+                <ConsoleRoute exact path="/integrations/:id" component={ChannelShow} />
+                <ConsoleRoute exact path="/users" component={UserIndex} />
+                <ConsoleRoute exact path="/dashboard" component={Dashboard} />
+                <ConsoleRoute exact path="/datacredits" component={DataCredits} />
               </Switch>
             </ConnectedRouter>
-          </UserOrgProvider>
-        </ApolloProvider>
+          </ApolloProvider>
+        </UserOrgProvider>
       </PersistGate>
     </Provider>
   )

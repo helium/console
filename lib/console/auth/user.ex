@@ -3,8 +3,8 @@ defmodule Console.Auth.User do
   import Ecto.Changeset
   alias Console.Helpers
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  @primary_key {:id, :string, []}
+  @foreign_key_type :string
   schema "users" do
     field :email, :string
     field :password_hash, :string

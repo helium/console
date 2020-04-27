@@ -27,10 +27,6 @@ config :console, :generators,
   binary_id: true,
   sample_binary_id: "11111111-1111-1111-1111-111111111111"
 
-config :console, ConsoleWeb.Guardian,
-       issuer: "console",
-       secret_key: "SIc3vGaukN3p6I+o/r2SEmguIhCuSRVCR3RX4w+yLDDpDpJinc7m4SsahlgmsmwK"
-
 config :console, ConsoleWeb.AuthApiPipeline,
   module: ConsoleWeb.Guardian,
   error_handler: ConsoleWeb.AuthErrorHandler
@@ -44,6 +40,9 @@ config :hammer,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
+
+config :console, :auth0,
+  app_baseurl: "https://dev-j03rcvdv.auth0.com"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -36,7 +36,8 @@ defmodule Console.Email do
     |> render(:invitation_email)
   end
 
-  def joined_organization_email(%Membership{user: %User{email: email}, organization: %Organization{name: organization_name}}) do
+  # TODO: Fix this so it correctly uses the user's email
+  def joined_organization_email(%Membership{user_id: email, organization: %Organization{name: organization_name}}) do
     base_email()
     |> to(email)
     |> subject("You've been added to #{organization_name} on Helium")

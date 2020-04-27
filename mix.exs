@@ -62,6 +62,7 @@ defmodule Console.Mixfile do
       {:html_sanitize_ex, "~> 1.3.0"},
       {:cors_plug, "~> 2.0"},
       {:hammer, "~> 6.0"},
+      {:joken, "~> 2.2.0"}
     ]
   end
 

@@ -1,5 +1,6 @@
 defmodule Console.Organizations do
   import Ecto.Query, warn: false
+  alias Ecto.UUID
   alias Console.Repo
 
   alias Console.Organizations.Organization
@@ -51,7 +52,9 @@ defmodule Console.Organizations do
   end
 
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
-    Repo.get_by!(Membership, user_id: user_id, organization_id: organization_id)
+    query = from m in Membership,
+      where: m.user_id == ^user_id and m.organization_id == ^organization_id
+    Repo.all(query)
   end
 
   def user_has_access?(%User{} = user, %Organization{} = organization) do

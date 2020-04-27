@@ -75,8 +75,8 @@ class NewUserModal extends Component {
 function mapStateToProps(state) {
   return {
     organization: {
-      id: state.auth.currentOrganizationId,
-      name: state.auth.currentOrganizationName,
+      id: state.organization.currentOrganizationId,
+      name: state.organization.currentOrganizationName,
     }
   }
 }

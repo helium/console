@@ -4,10 +4,20 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.Organizations.Organization
   alias Console.Organizations
   alias Console.Auth
+  alias Console.Auth.User
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
   action_fallback ConsoleWeb.FallbackController
+
+  def index(conn, _) do
+    user = %User{id: conn.assigns.current_user.id}
+    organizations = Organizations.get_organizations(user)
+    IO.inspect organizations
+    conn
+    |> put_status(:ok)
+    |> render("index.json", organizations: organizations)
+  end
 
   def create(conn, %{"organization" => %{ "name" => organization_name } }) do
     with {:ok, %Organization{} = organization} <- Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do

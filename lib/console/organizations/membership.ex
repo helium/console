@@ -12,7 +12,7 @@ defmodule Console.Organizations.Membership do
     field :role, :string, default: "read"
     field :email, :string, virtual: true
     field :two_factor_enabled, :boolean, virtual: true
-    belongs_to :user, Console.Auth.User
+    field :user_id, :string
     belongs_to :organization, Console.Organizations.Organization
 
     timestamps()

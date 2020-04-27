@@ -28,6 +28,7 @@ import { history } from './store/configureStore'
 import { config } from './config/auth0'
 
 const onRedirectCallback = appState => {
+  console.log(appState);
   history.push(
     appState && appState.targetUrl
       ? appState.targetUrl
@@ -39,6 +40,7 @@ ReactDOM.render(
   <Auth0Provider
     domain={config.domain}
     client_id={config.clientId}
+    audience={config.audience}
     redirect_uri={window.location.origin}
     onRedirectCallback={onRedirectCallback}
   >
