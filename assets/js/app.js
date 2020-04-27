@@ -28,7 +28,6 @@ import { history } from './store/configureStore'
 import { config } from './config/auth0'
 
 const onRedirectCallback = appState => {
-  console.log(appState);
   history.push(
     appState && appState.targetUrl
       ? appState.targetUrl
