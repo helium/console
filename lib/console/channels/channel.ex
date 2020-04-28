@@ -52,7 +52,7 @@ defmodule Console.Channels.Channel do
 
     channel
     |> cast(attrs, [:name, :credentials, :downlink_token])
-    |> validate_required([:name, :type, :active, :credentials])
+    |> validate_required([:name, :type, :credentials])
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")

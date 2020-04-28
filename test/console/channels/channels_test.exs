@@ -54,7 +54,6 @@ defmodule Console.ChannelsTest do
       { channel, organization } = channel_fixture()
       assert {:ok, channel} = Channels.update_channel(channel, organization, @update_attrs)
       assert %Channel{} = channel
-      assert channel.active == false
       assert channel.credentials["endpoint"] == @updated_creds["endpoint"]
       assert channel.name == "some updated name"
     end

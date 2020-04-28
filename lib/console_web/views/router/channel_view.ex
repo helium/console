@@ -20,6 +20,7 @@ defmodule ConsoleWeb.Router.ChannelView do
         credentials: channel.credentials,
         active: channel.active,
         organization_id: channel.organization_id,
+        downlink_token: channel.downlink_token,
       }
     case Map.get(channel, :function) do
       nil -> channel_json
