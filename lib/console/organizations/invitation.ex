@@ -10,7 +10,7 @@ defmodule Console.Organizations.Invitation do
     field :role, :string
     field :token, :string
     field :pending, :boolean, default: true
-    belongs_to :inviter, Console.Auth.User
+    field :inviter_id, :string
     belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
