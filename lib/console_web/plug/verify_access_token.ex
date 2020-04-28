@@ -12,6 +12,8 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
     signer = Joken.Signer.create("RS256", head)
     passed_token = String.replace(auth_header, "Bearer ", "")
     {:ok, data} = Joken.verify(passed_token, signer)
-    assign(conn, :user_id, data["sub"])
+    conn
+    |> assign(:user_id, data["sub"])
+    |> assign(:email, data["email"])
   end
 end

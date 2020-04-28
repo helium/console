@@ -13,7 +13,6 @@ defmodule ConsoleWeb.OrganizationController do
   def index(conn, _) do
     user = %User{id: conn.assigns.current_user.id}
     organizations = Organizations.get_organizations(user)
-    IO.inspect organizations
     conn
     |> put_status(:ok)
     |> render("index.json", organizations: organizations)

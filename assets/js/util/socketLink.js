@@ -44,7 +44,8 @@ class SocketLink extends ApolloLink {
 
   _watchAuthToken() {
     store.subscribe(async () => {
-      const newToken = await this.getAuthToken();
+      const newTokenClaims = await this.getAuthToken();
+      const newToken = newTokenClaims.__raw;
       if (newToken !== this.token) {
         this.token = newToken
         this.socket.disconnect()

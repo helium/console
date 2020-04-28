@@ -36,7 +36,7 @@ import DataCredits from './components/billing/DataCredits'
 import { useAuth0  } from './components/auth/Auth0Provider'
 
 const Router = () => {
-  const { loading, isAuthenticated, loginWithRedirect, getTokenSilently } = useAuth0();
+  const { loading, isAuthenticated, loginWithRedirect, getIdTokenClaims } = useAuth0();
   useEffect(() => {
     if (loading || isAuthenticated) {
       return;
@@ -51,8 +51,7 @@ const Router = () => {
   if (loading) {
     return <div>Loading...</div>
   }
-  const apolloClient = setupApolloClient(getTokenSilently);
-  console.log(history);
+  const apolloClient = setupApolloClient(getIdTokenClaims);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

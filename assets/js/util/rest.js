@@ -2,7 +2,7 @@ import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
 import { percentOfTimeLeft } from './jwt.js'
 import { refreshedToken } from '../actions/auth.js'
-import { getTokenSilently } from '../components/auth/Auth0Provider'
+import { getIdTokenClaims } from '../components/auth/Auth0Provider'
 
 export const get = async (path, params = {}) => {
   return axios({
@@ -73,7 +73,8 @@ const headers = async () => {
     'Content-Type': 'application/json'
   };
   // how to do this
-  const apikey = await getTokenSilently();
+  const tokenClaims = await getIdTokenClaims();
+  const apikey = tokenClaims.__raw
 
   Object.assign(headerParams, {
     'Authorization': `Bearer ${apikey}`

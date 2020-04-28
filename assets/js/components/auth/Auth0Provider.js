@@ -23,9 +23,10 @@ const getAuth0Client = () => {
     }
   })
 }
-export const getTokenSilently = async (...p) => {
+
+export const getIdTokenClaims = async (...p) => {
   const client = await getAuth0Client();
-  return await client.getTokenSilently(...p);
+  return await client.getIdTokenClaims(...p);
 }
 
 export const Auth0Provider = ({

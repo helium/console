@@ -25,7 +25,6 @@ defmodule ConsoleWeb.UserSocket do
     case Joken.verify(token, signer) do
       {:ok, data} ->
         user_id = String.replace(data["sub"], "auth0|", "")
-        IO.inspect organization_id
         case Organizations.get_organization(%User{id: user_id, super: false}, organization_id) do
           %Organization{} = current_organization ->
             authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{

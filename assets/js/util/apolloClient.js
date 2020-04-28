@@ -17,7 +17,8 @@ export const setupApolloClient = (getAuthToken) => {
   })
   
   const authLink = setContext(async (_, { headers }) => {
-    const token = await getAuthToken();
+    const tokenClaims = await getAuthToken();
+    const token = tokenClaims.__raw
     const organizationId = JSON.parse(localStorage.getItem('organization')).id;
     return {
       headers: {
