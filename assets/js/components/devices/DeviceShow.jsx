@@ -361,7 +361,7 @@ class DeviceShow extends Component {
                 </tr>
                 <tr style={{height: '30px'}}>
                   <td><Text strong>LoRaWAN US Channels</Text></td>
-                  <td><Text>48-55 (sub-band 7)</Text></td>
+                  <td><Text>8 to 15 and 65 (sub-band 2)</Text></td>
                 </tr>
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
