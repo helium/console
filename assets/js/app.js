@@ -38,7 +38,6 @@ const onRedirectCallback = appState => {
   )
 }
 
-console.log(window.location.pathname);
 ReactDOM.render(
   window.location.pathname === '/terms' ?
   <Terms/> :
