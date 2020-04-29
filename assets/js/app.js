@@ -24,6 +24,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App.jsx'
 import { Auth0Provider } from './components/auth/Auth0Provider'
+import Terms from './components/auth/Terms'
 import { history } from './store/configureStore'
 import { config } from './config/auth0'
 
@@ -37,7 +38,10 @@ const onRedirectCallback = appState => {
   )
 }
 
+console.log(window.location.pathname);
 ReactDOM.render(
+  window.location.pathname === '/terms' ?
+  <Terms/> :
   <Auth0Provider
     domain={config.domain}
     client_id={config.clientId}

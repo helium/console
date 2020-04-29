@@ -18,14 +18,16 @@ export const fetchOrganization = () => {
     if (!organization) {
       // get a new organization id
       const organizations = await getMembership();
-      dispatch(fetchedOrganization(organizations[0]));
-      localStorage.setItem('organization', JSON.stringify(organizations[0]));
+      if (organizations && organizations.length) {
+        dispatch(fetchedOrganization(organizations[0]));
+        localStorage.setItem('organization', JSON.stringify(organizations[0]));
+      }
     } else {
       // validate or replace organization id
       const fetchedOrganizations = await getMembership();
       if (fetchedOrganizations.indexOf(organization)) {
         dispatch(fetchedOrganization(organization));
-      } else {
+      } else if (fetchedOrganizations && fetchedOrganizations.length){
         dispatch(fetchedOrganization(fetchedOrganizations[0]));
         localStorage.setItem('organization', JSON.stringify(fetchedOrganizations[0]));
       }

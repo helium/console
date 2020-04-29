@@ -54,7 +54,7 @@ defmodule Console.Organizations do
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
     query = from m in Membership,
       where: m.user_id == ^user_id and m.organization_id == ^organization_id
-    Repo.all(query)
+    Repo.one(query)
   end
 
   def user_has_access?(%User{} = user, %Organization{} = organization) do
@@ -102,11 +102,11 @@ defmodule Console.Organizations do
     Repo.preload(organization, assoc)
   end
 
-  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:inviter, :organization]) do
+  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:organization]) do
     Repo.preload(invitation, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:user, :organization]) do
+  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:organization]) do
     Repo.preload(membership, assoc)
   end
 

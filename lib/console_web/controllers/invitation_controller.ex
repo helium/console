@@ -81,10 +81,8 @@ defmodule ConsoleWeb.InvitationController do
       inv = Organizations.fetch_assoc_invitation(inv)
       organization = inv.organization
       organization_name = URI.encode(organization.name)
-      inviter = inv.inviter
-      inviter_email = URI.encode(inviter.email)
 
-      render(conn, "invitation.json", invitation: inv, organization_name: organization_name, inviter: inviter_email)
+      render(conn, "invitation.json", invitation: inv, organization_name: organization_name)
     end
   end
 

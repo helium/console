@@ -61,7 +61,7 @@ const Router = () => {
             <ConnectedRouter history={history}>
               <Switch>
                 <Redirect exact from="/" to="/dashboard" />
-                <PublicRoute path="/terms" component={Terms}/>
+                <PublicRoute path="/register" component={Register}/>
                 <ConsoleRoute path="/profile" component={Profile}/>
                 <ConsoleRoute exact path="/devices" component={DeviceIndex} />
                 <ConsoleRoute exact path="/labels" component={LabelIndex} />

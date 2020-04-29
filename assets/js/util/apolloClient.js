@@ -19,7 +19,16 @@ export const setupApolloClient = (getAuthToken) => {
   const authLink = setContext(async (_, { headers }) => {
     const tokenClaims = await getAuthToken();
     const token = tokenClaims.__raw
+    let assignableHeaders = {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      }
+    }
     const organizationId = JSON.parse(localStorage.getItem('organization')).id;
+    if (organizationId) {
+      Object.assign(assignableHeaders, {organization: organizationId })
+    }
     return {
       headers: {
         ...headers,

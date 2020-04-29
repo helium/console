@@ -15,6 +15,7 @@ defmodule ConsoleWeb.Plug.PutCurrentOrganization do
       else
         conn |> get_req_header("organization") |> List.first()
       end
+    IO.inspect organization_id
     if organization_id do
       if current_user.super do
         organization = Organizations.get_organization!(organization_id)
@@ -26,6 +27,7 @@ defmodule ConsoleWeb.Plug.PutCurrentOrganization do
         case Organizations.get_organization(current_user, organization_id) do
           %Organization{} = current_organization ->
             current_membership = Organizations.get_membership!(current_user, current_organization)
+            IO.inspect current_membership
             conn
             |> assign(:current_organization, current_organization)
             |> assign(:current_membership, current_membership)

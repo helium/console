@@ -17,8 +17,8 @@ defmodule Console.Auth do
     Repo.all(User)
   end
 
-  def get_user_by_id!(id) do
-    Repo.get!(User, id)
+  def get_user_by_id(id) do
+    Repo.get(User, id)
   end
 
   def user_exists?(email) do

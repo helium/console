@@ -72,7 +72,15 @@ const headers = async () => {
   let headerParams = {
     'Content-Type': 'application/json'
   };
-  // how to do this
+  let organizationId;
+  try {
+    organizationId = JSON.parse(localStorage.getItem('organization')).id;
+  } catch (e) {
+    // unable to retrieve the organization
+  }
+  if (organizationId) {
+    Object.assign(headerParams, { organization: organizationId })
+  }
   const tokenClaims = await getIdTokenClaims();
   const apikey = tokenClaims.__raw
 
