@@ -54,7 +54,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def create(conn, %{ "device" => device_params }) do
+  def create(conn, device_params = %{ "name" => _name, "dev_eui" => _dev_eui, "app_eui" => _app_eui, "app_key" => _app_key }) do
     current_organization = conn.assigns.current_organization
     device_params =
       Map.merge(device_params, %{

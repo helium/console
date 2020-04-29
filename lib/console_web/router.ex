@@ -97,8 +97,8 @@ defmodule ConsoleWeb.Router do
     get "/organization", OrganizationController, :show
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
     resources "/labels", LabelController, only: [:index, :create, :delete]
-    post "/devices_labels", LabelController, :add_device_to_label
-    post "/devices_labels/delete", LabelController, :delete_device_from_label
+    post "/devices/:device_id/labels", LabelController, :add_device_to_label
+    delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
   end
 
   scope "/api/stats", ConsoleWeb do
