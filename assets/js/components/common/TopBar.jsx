@@ -25,13 +25,8 @@ class TopBar extends Component {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-      <div style={{width: 210}}>
-                <img src={Logo} style={{height:30}}/>
-                </div>
-        <div>
-          {
-            currentOrganizationName && <Text style={{ color: primaryBlue, marginRight: 20 }}><span style={{fontWeight:500, color:'white'}}>Organization:</span> {currentOrganizationName}</Text>
-          }
+        <div style={{width: 210}}>
+          <img src={Logo} style={{height:30}}/>
         </div>
         <div style={{ flexGrow: 1 }}/>
         {
