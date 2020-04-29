@@ -61,6 +61,18 @@ export const switchOrganization = (id) => {
   }
 }
 
+export const joinOrganization = (token) => {
+  let params = { invitation: { token } }
+  return async dispatch => {
+    rest.post('/api/users', params)
+      .then(response => {
+        dispatch(fetchedOrganization(response.data[0]));
+        localStorage.setItem('organization', JSON.stringify(response.data[0]));
+        window.location = '/dashboard';
+      })
+  }
+}
+
 export const deleteOrganization = (id) => {
   return (dispatch) => {
     rest.destroy(`/api/organizations/${id}`)

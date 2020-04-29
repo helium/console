@@ -35,22 +35,21 @@ defmodule ConsoleWeb.UserController do
   end
 
   # Registration via accepting invitation
-  def create(conn, %{"user" => user_params, "invitation" => %{"token" => invitation_token}}) do
-    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token),
-      {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
-        organization = Organizations.get_organization!(invitation.organization_id)
+  def create(conn, %{"invitation" => %{"token" => invitation_token}}) do
+    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
+      organization = Organizations.get_organization!(invitation.organization_id)
+      Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
+      Organizations.mark_invitation_used(invitation)
 
-        Organizations.get_invitation!(invitation.id)
-        |> ConsoleWeb.InvitationController.broadcast()
+      Organizations.get_invitation!(invitation.id)
+      |> ConsoleWeb.InvitationController.broadcast()
 
-        user = user |> Auth.fetch_assoc([:memberships])
-        List.last(user.memberships)
-        |> ConsoleWeb.MembershipController.broadcast()
+      Organizations.get_membership!(conn.assigns.current_user, organization)
+      |> ConsoleWeb.MembershipController.broadcast()
 
-        updatedUser = Map.merge(user, %{role: List.last(user.memberships).role})
-
-        conn
-        |> handle_created(user)
+      conn
+      |> put_status(:ok)
+      |> render("show.json", organization: organization)
     end
   end
 

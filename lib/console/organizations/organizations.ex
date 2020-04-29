@@ -16,14 +16,20 @@ defmodule Console.Organizations do
   end
 
   def get_organizations(%User{} = current_user) do
-    Ecto.assoc(current_user, :organizations) |> Repo.all()
+    query = from o in Organization,
+      join: m in Membership, on: m.organization_id == o.id,
+      where: m.user_id == ^current_user.id
+    Repo.all(query)
   end
 
   def get_organization!(%User{} = current_user, id) do
     if current_user.super do
       Repo.get!(Organization, id)
     else
-      Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
+      query = from o in Organization,
+        join: m in Membership, on: m.organization_id == o.id,
+        where: m.user_id == ^current_user.id and o.id == ^id
+      Repo.one!(query)
     end
   end
 
@@ -31,7 +37,10 @@ defmodule Console.Organizations do
     if current_user.super do
       Repo.get(Organization, id)
     else
-      Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+      query = from o in Organization,
+        join: m in Membership, on: m.organization_id == o.id,
+        where: m.user_id == ^current_user.id and o.id == ^id
+      Repo.one(query)
     end
   end
 

@@ -13,10 +13,6 @@ class UserOrgProvider extends Component {
   }
 
   render() {
-    const { currentOrganizationId } = this.props;
-    if (!currentOrganizationId) {
-      return null;
-    }
     return (
       <div>
         {this.props.children}

@@ -24,7 +24,6 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through :api
 
-    post "/users", UserController, :create
     post "/users/resend_verification", UserController, :resend_verification
     post "/users/forgot_password", UserController, :forgot_password
     post "/users/change_password", UserController, :change_password
@@ -36,6 +35,7 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
+    post "/users", UserController, :create
     resources "/devices", DeviceController, except: [:new, :edit]
     post "/devices/delete", DeviceController, :delete
     resources "/labels", LabelController, only: [:create, :update, :delete]
