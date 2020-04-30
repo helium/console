@@ -26,11 +26,28 @@ defmodule ConsoleWeb.Router.DeviceController do
     device = Devices.get_device!(id) |> Repo.preload([labels: [:channels, :function]])
     device =
       if length(device.labels) > 0 do
-        channels_with_functions =
+        channels_with_functions_and_channels =
           device.labels
-          |> Enum.filter(fn l -> l.function != nil && l.function.active == true end)
+          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) > 0 end)
           |> Enum.map(fn l ->
             Enum.map(l.channels, fn c -> Map.put(c, :function, l.function) end)
+          end)
+          |> List.flatten()
+
+        channels_with_functions_no_channels =
+          device.labels
+          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) == 0 end)
+          |> Enum.map(fn l ->
+            %{
+              function: l.function,
+              id: "no_integration_id",
+              name: "Console Debug Integration",
+              type: "console",
+              credentials: %{},
+              active: false,
+              organization_id: "no_organization_id",
+              downlink_token: "no_downlink_token"
+            }
           end)
           |> List.flatten()
 
@@ -42,7 +59,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Enum.uniq()
           |> Enum.map(fn c -> Map.put(c, :function, nil) end)
 
-        Map.put(device, :channels, channels_with_functions ++ channels_without_functions)
+        Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
       else
         Map.put(device, :channels, [])
       end

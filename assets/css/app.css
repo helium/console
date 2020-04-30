@@ -184,3 +184,13 @@ h1 {
 .menu-link:hover {
   color: white;
 }
+
+.ant-layout {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.ant-layout::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
