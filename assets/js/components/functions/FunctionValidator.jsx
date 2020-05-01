@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import { primaryBlue, codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
-import { Typography, Card, Icon, Input, InputNumber, Row, Col } from 'antd';
+import { Typography, Card, Icon, Input, InputNumber, Row, Col, Popover } from 'antd';
 const { Text } = Typography
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';
@@ -32,7 +32,7 @@ class FunctionValidator extends Component {
   runValidator = () => {
     const frame = document.getElementById('myFrame')
     const { port, input } = this.state
-    const code = this.props.body + `\nJSON.stringify(Decoder(${input}, ${port}), null, 4)`
+    const code = this.props.body + `\nlet parsedInput = "${input}".trim().split(" ").join(""); if (parsedInput.length == 0) { "Payload input must not be blank" } else { if (parsedInput.length % 2 == 1) parsedInput = "0" + parsedInput; parsedInput = parsedInput.match(/.{1,2}/g).map(x => parseInt(x, 16)); if (parsedInput.filter(x => !x).length > 0) { "Payload input could not be validly parsed" } else { JSON.stringify(Decoder(parsedInput, ${port}), null, 4) } }`
     frame.contentWindow.postMessage(code, '*')
   }
 
@@ -94,7 +94,7 @@ class FunctionValidator extends Component {
                 <Input
                   name="input"
                   style={{ marginTop: 5, width: '100%' }}
-                  placeholder="Enter encoded payload here"
+                  placeholder="Hexadecimal (eg. 20 04 7f ff)"
                   value={this.state.input}
                   onChange={e => this.setState({ input: e.target.value })}
                 />
