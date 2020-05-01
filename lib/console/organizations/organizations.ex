@@ -66,6 +66,22 @@ defmodule Console.Organizations do
     Repo.one(query)
   end
 
+  def get_current_organization(user, organization_id) do
+    if user.super do
+      organization = get_organization!(organization_id)
+      membership = %Membership{ role: "admin" }
+      %{membership: membership, organization: organization}
+    else
+      case get_organization(user, organization_id) do
+        %Organization{} = current_organization ->
+          current_membership = get_membership!(user, current_organization)
+          %{membership: current_membership, organization: current_organization}
+        _ ->
+          :forbidden
+      end
+    end
+  end
+
   def user_has_access?(%User{} = user, %Organization{} = organization) do
     query =
       from(

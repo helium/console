@@ -17,14 +17,14 @@ export const fetchOrganization = () => {
     }
     if (!organization) {
       // get a new organization id
-      const organizations = await getMembership();
+      const organizations = await getOrganizations();
       if (organizations && organizations.length) {
         dispatch(fetchedOrganization(organizations[0]));
         localStorage.setItem('organization', JSON.stringify(organizations[0]));
       }
     } else {
       // validate or replace organization id
-      const fetchedOrganizations = await getMembership();
+      const fetchedOrganizations = await getOrganizations();
       if (fetchedOrganizations.indexOf(organization)) {
         dispatch(fetchedOrganization(organization));
       } else if (fetchedOrganizations && fetchedOrganizations.length){
@@ -97,7 +97,7 @@ export const switchedOrganization = (apikey) => {
   }
 }
 
-const getMembership = async () => {
+const getOrganizations = async () => {
   const organizations = await rest.get('/api/organizations/');
   return organizations.data;
 }

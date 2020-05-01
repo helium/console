@@ -63,8 +63,7 @@ class UserIndex extends Component {
   }
 
   render() {
-    const { updateMembership, deleteMembership, deleteInvitation } = this.props
-
+    const { updateMembership, deleteMembership, deleteInvitation, user } = this.props
     return (
       <DashboardLayout title="Users">
         <Card
@@ -88,6 +87,7 @@ class UserIndex extends Component {
           <MembersTable
             openEditMembershipModal={this.openEditMembershipModal}
             openDeleteUserModal={this.openDeleteUserModal}
+            user={user}
           />
         </Card>
 

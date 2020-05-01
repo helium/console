@@ -20,7 +20,6 @@ const queryOptions = {
   })
 }
 
-@connect(mapStateToProps, null)
 @graphql(PAGINATED_MEMBERSHIPS, queryOptions)
 class MembersTable extends Component {
   state = {
@@ -146,12 +145,6 @@ class MembersTable extends Component {
         </div>
       </div>
     )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    user: state.user
   }
 }
 

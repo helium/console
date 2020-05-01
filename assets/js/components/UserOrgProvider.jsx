@@ -13,11 +13,15 @@ class UserOrgProvider extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.props.children}
-      </div>
-    )
+    const { currentOrganizationId } = this.props;
+    if (window.location.pathname == '/register' || currentOrganizationId) {
+      return (
+        <div>
+          {this.props.children}
+        </div>
+      )
+    }
+    return null;
   }
 }
 

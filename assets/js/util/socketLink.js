@@ -47,10 +47,10 @@ class SocketLink extends ApolloLink {
       const newTokenClaims = await this.getAuthToken();
       const newToken = newTokenClaims.__raw;
       if (newToken !== this.token) {
-        this.token = newToken
-        this.socket.disconnect()
-        this.socket = createPhoenixSocket(this.token)
-        this.link = createInnerSocketLink(this.socket)
+        this.token = newToken;
+        this.socket.disconnect();
+        this.socket = createPhoenixSocket(this.token);
+        this.link = createInnerSocketLink(this.socket);
       }
     })
   }

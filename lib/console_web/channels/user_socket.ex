@@ -3,7 +3,7 @@ defmodule ConsoleWeb.UserSocket do
   use Absinthe.Phoenix.Socket, schema: ConsoleWeb.Schema
   alias Console.Organizations
   alias Console.Organizations.Organization
-  alias Console.Auth.User
+  alias Console.Auth
   require Logger
 
   # Socket params are passed from the client and can
@@ -25,16 +25,20 @@ defmodule ConsoleWeb.UserSocket do
     case Joken.verify(token, signer) do
       {:ok, data} ->
         user_id = String.replace(data["sub"], "auth0|", "")
-        case Organizations.get_organization(%User{id: user_id, super: false}, organization_id) do
-          %Organization{} = current_organization ->
+        email = data["email"]
+        case Auth.get_user_by_id_and_email(user_id, email)
+          |> Organizations.get_current_organization(organization_id) do
+          %{organization: current_organization} ->
             authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
               current_organization_id: current_organization.id,
               current_user_id: user_id
             })
             {:ok, authed_socket}
-          _ -> {:error}
+          _ ->
+            {:error}
         end
-      {:error, _} -> {:error}
+      {:error, _} ->
+        {:error}
     end
   end
 
