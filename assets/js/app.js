@@ -22,6 +22,7 @@ import "phoenix_html"
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import App from './App.jsx'
 import { Auth0Provider } from './components/auth/Auth0Provider'
 import Terms from './components/auth/Terms'
@@ -39,8 +40,22 @@ const onRedirectCallback = appState => {
 }
 
 ReactDOM.render(
-  window.location.pathname === '/terms' ?
-  <Terms/> :
+  <Router history={history}>
+    <Switch>
+      <Route exact path="/terms"><Terms/></Route>
+      <Route>
+        <Auth0Provider
+          domain={config.domain}
+          client_id={config.clientId}
+          redirect_uri={window.location.origin}
+          onRedirectCallback={onRedirectCallback}
+        >
+          <App/>
+        </Auth0Provider>
+      </Route>
+    </Switch>
+  </Router>
+  /*<Terms/> :
   <Auth0Provider
     domain={config.domain}
     client_id={config.clientId}
@@ -48,6 +63,6 @@ ReactDOM.render(
     onRedirectCallback={onRedirectCallback}
   >
     <App/>
-  </Auth0Provider>,
+  </Auth0Provider>*/,
   document.getElementById("react-root")
 )

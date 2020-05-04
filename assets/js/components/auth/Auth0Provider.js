@@ -1,25 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { history } from '../../store/configureStore'
 import createAuth0Client from '@auth0/auth0-spa-js'
 
 const DEFAULT_REDIRECT_CALLBACK = () => {
-  window.history.replaceState({}, document.title, window.location.pathname);
+  history.replaceState({}, document.title, window.location.pathname);
 }
 
 export const Auth0Context = React.createContext();
 export const useAuth0 = () => useContext(Auth0Context);
 
-let _initOptions
+let _initOptions;
 
 const getAuth0Client = () => {
   return new Promise(async (resolve, reject) => {
-    let client;
-    if (!client) {
-      try {
-        client = await createAuth0Client(_initOptions);
-        resolve(client);
-      } catch (e) {
-        reject(new Error('Failed to get auth0 client'));
-      }
+    try {
+      const client = await createAuth0Client(_initOptions);
+      resolve(client);
+    } catch (e) {
+      reject(new Error('Failed to get auth0 client'));
     }
   })
 }
@@ -43,7 +41,7 @@ export const Auth0Provider = ({
     useEffect(() => {
       const initAuth0 = async () => {
         _initOptions = initOptions;
-        const auth0FromHook = await getAuth0Client(initOptions);
+        const auth0FromHook = await getAuth0Client();
         setAuth0(auth0FromHook);
         
         if (
