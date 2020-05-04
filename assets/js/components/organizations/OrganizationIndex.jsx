@@ -27,7 +27,7 @@ class OrganizationIndex extends Component {
     const { showOrganizationModal } = this.state
     return (
       <DashboardLayout
-        title="Dashboard"
+        title="Organizations"
         extra={
           <UserCan>
             <Button
@@ -44,7 +44,7 @@ class OrganizationIndex extends Component {
           </UserCan>
         }
       >
-        <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 20, overflowX: 'scroll' }}>
+        <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 1, overflowX: 'scroll' }}>
           <OrganizationsTable />
         </Card>
 

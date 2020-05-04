@@ -66,7 +66,7 @@ class OrganizationsTable extends Component {
   render() {
     const columns = [
       {
-        title: 'Organization',
+        title: 'Name',
         dataIndex: 'name',
       },
       {
