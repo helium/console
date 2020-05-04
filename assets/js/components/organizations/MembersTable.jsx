@@ -72,11 +72,6 @@ class MembersTable extends Component {
         render: text => <RoleName role={text} />
       },
       {
-        title: 'Two-Factor',
-        dataIndex: 'two_factor_enabled',
-        render: data => data ? <Tag color="blue">Enabled</Tag> : <Tag color="red">Disabled</Tag>
-      },
-      {
         title: 'Joined',
         dataIndex: 'inserted_at',
         render: data => moment(data).format('LL')

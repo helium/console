@@ -34,10 +34,4 @@ defmodule Console.Organizations.Membership do
     |> changeset(%{user_id: user.id, organization_id: organization.id, role: role, email: user.email})
   end
 
-  def user_twofactor(query) do
-    from m in query,
-    left_join: t in TwoFactor, on: [user_id: m.user_id],
-    where: not is_nil(m.id),
-    select: %{m | email: m.email, two_factor_enabled: not is_nil(t.id)}
-  end
 end

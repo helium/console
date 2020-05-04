@@ -5,8 +5,7 @@ export const MEMBERSHIP_FRAGMENT = gql`
     id,
     email,
     role,
-    inserted_at,
-    two_factor_enabled
+    inserted_at
   }
 `
 
