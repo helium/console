@@ -44,6 +44,8 @@ config :logger, :console,
 config :console, :auth0,
   app_baseurl: "https://dev-j03rcvdv.auth0.com"
 
+config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

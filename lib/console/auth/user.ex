@@ -32,6 +32,7 @@ defmodule Console.Auth.User do
     |> validate_format(:email, ~r/@/, message: "Email needs to have an @ sign to be valid")
     |> put_downcased_email()
     |> unique_constraint(:email, message: "Email has already been taken, please log in instead")
+    |> cast(attrs, [:id])
   end
 
   def registration_changeset(user, attrs \\ :empty) do

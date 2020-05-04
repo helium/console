@@ -87,7 +87,7 @@ defmodule Console.Organizations do
       from(
         m in "memberships",
         select: count(m.id),
-        where: m.user_id == type(^user.id, :binary_id) and m.organization_id == type(^organization.id, :binary_id)
+        where: m.user_id == ^user.id and m.organization_id == type(^organization.id, :binary_id)
       )
 
     count = Repo.one(query)
