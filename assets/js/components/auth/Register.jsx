@@ -30,7 +30,6 @@ class Register extends Component {
   acceptInvitation = (e) => {
     e.preventDefault()
     const { joinOrganization, invitationToken } = this.props
-    // Change to accept invitation
     joinOrganization(
       invitationToken
     );
