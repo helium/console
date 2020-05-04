@@ -110,7 +110,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               "frame_up" => event.frame_up,
               "frame_down" => event.frame_down,
               "total_packets" => device.total_packets + 1,
-            })
+            }, "router")
 
             label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
             Enum.each(label_ids, fn id ->
