@@ -56,8 +56,4 @@ defmodule Console.Helpers do
     end)
     attrs
   end
-
-  def get_current_user() do
-
-  end
 end
