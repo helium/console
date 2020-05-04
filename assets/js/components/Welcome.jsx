@@ -11,8 +11,22 @@ import CalendarIcon from '../../img/welcome-calendar-icon.png'
 import BulbImg from '../../img/welcome-tip-bulb.png'
 
 class Welcome extends Component {
+  state = {
+    hideWelcomeScreen: localStorage.getItem('hideWelcomeScreen')
+  }
+
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_WELCOME_PAGE")
+  }
+
+  onChangeCheckbox = () => {
+    if (localStorage.getItem('hideWelcomeScreen')) {
+      localStorage.removeItem('hideWelcomeScreen')
+      this.setState({ hideWelcomeScreen: false })
+    } else {
+      localStorage.setItem('hideWelcomeScreen', 'hidden')
+      this.setState({ hideWelcomeScreen: true })
+    }
   }
 
   render() {
@@ -30,8 +44,9 @@ class Welcome extends Component {
               <div style={{ marginTop: -5 }}><Text style={{ fontSize: 18, color: '#556B8C' }}>peer-to-peer wireless network.</Text></div>
               <div style={{ backgroundColor: '#E1E6ED', borderRadius: 9, padding: '10px 5px 10px 15px', marginTop: 25, width: 345, marginRight: 20 }}>
                 <Checkbox
-                  checked
+                  checked={this.state.hideWelcomeScreen ? false : true}
                   style={{ color: '#777777' }}
+                  onChange={this.onChangeCheckbox}
                 >
                   Show this Welcome Screen every time I log in
                 </Checkbox>
