@@ -128,7 +128,7 @@ class FunctionShow extends Component {
 
   createLabelAttachFunction = (name) => {
     const function_id = this.props.match.params.id
-    this.props.createLabel({ name, function_id }, null, false)
+    this.props.createLabel({ name, function_id }, false)
   }
 
   render() {

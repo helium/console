@@ -221,6 +221,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Channels.ChannelResolver.all/2
     end
 
+    field :all_functions, list_of(:function) do
+      resolve &Console.Functions.FunctionResolver.all/2
+    end
+
     @desc "Get paginated memberships"
     paginated field :memberships, :paginated_memberships do
       resolve(&Console.Organizations.MembershipResolver.paginate/2)

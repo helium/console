@@ -21,4 +21,9 @@ defmodule Console.Functions.FunctionResolver do
 
     {:ok, function}
   end
+
+  def all(_, %{context: %{current_organization: current_organization}}) do
+    functions = Ecto.assoc(current_organization, :functions) |> Repo.all()
+    {:ok, functions}
+  end
 end

@@ -14,7 +14,7 @@ defmodule ConsoleWeb.LabelController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def create(conn, %{"label" => label_params, "channel_id" => channel_id}) do
+  def create(conn, %{"label" => label_params}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     label_params =
@@ -26,9 +26,11 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       broadcast(label)
 
-      if channel_id != nil do
-        channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(channel_id)
-        Labels.add_labels_to_channel([label.id], channel, current_organization)
+      case label_params["channel_id"] do
+        nil -> nil
+        id ->
+          channel = Ecto.assoc(current_organization, :channels) |> Repo.get!(id)
+          Labels.add_labels_to_channel([label.id], channel, current_organization)
       end
 
       case label_params["function_id"] do

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createLabel } from '../../actions/label'
 import { graphql } from 'react-apollo';
-import { ALL_CHANNELS } from '../../graphql/channels'
+import { ALL_CHANNELS_FUNCTIONS } from '../../graphql/channels'
 import { grayForModalCaptions } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
@@ -17,11 +17,12 @@ const queryOptions = {
 }
 
 @connect(null, mapDispatchToProps)
-@graphql(ALL_CHANNELS, queryOptions)
+@graphql(ALL_CHANNELS_FUNCTIONS, queryOptions)
 class CreateLabelModal extends Component {
   state = {
     labelName: "",
     channelId: null,
+    functionId: null,
   }
 
   handleInputUpdate = (e) => {
@@ -30,21 +31,25 @@ class CreateLabelModal extends Component {
 
   handleSubmit = (e, redirect = false) => {
     e.preventDefault();
-    const { labelName, channelId } = this.state;
+    const { labelName, channelId, functionId } = this.state;
 
     analyticsLogger.logEvent("ACTION_CREATE_LABEL", {"name": labelName})
-    this.props.createLabel({ name: labelName }, channelId, redirect)
+    this.props.createLabel({ name: labelName, channel_id: channelId, function_id: functionId }, redirect)
 
     this.props.onClose()
   }
 
-  handleSelectOption = (channelId) => {
+  handleSelectChannel = (channelId) => {
     this.setState({ channelId })
+  }
+
+  handleSelectFunction = (functionId) => {
+    this.setState({ functionId })
   }
 
   render() {
     const { open, onClose } = this.props
-    const { allChannels, error } = this.props.data
+    const { allChannels, allFunctions, error } = this.props.data
 
     return (
       <Modal
@@ -77,21 +82,38 @@ class CreateLabelModal extends Component {
 
         <Divider />
 
-        <Text strong>Step 2 - Attach an Integration (Optional)</Text>
-        <Select
-          placeholder={error ? "Data failed to load..." : "Choose Integration"}
-          style={{ width: 220, marginRight: 10, marginTop: 10 }}
-          onSelect={this.handleSelectOption}
-        >
-          {
-            allChannels && allChannels.map(c => (
-              <Option value={c.id} key={c.id}>
-                {c.name}
-              </Option>
-            ))
-          }
-        </Select>
+        <Text strong>Step 2 - Add Label Attachments (Optional)</Text>
+        <div>
+          <Select
+            placeholder={error ? "Data failed to load..." : "Choose Integration"}
+            style={{ width: 220, marginRight: 10, marginTop: 10 }}
+            onSelect={this.handleSelectChannel}
+          >
+            {
+              allChannels && allChannels.map(c => (
+                <Option value={c.id} key={c.id}>
+                  {c.name}
+                </Option>
+              ))
+            }
+          </Select>
+        </div>
 
+        <div>
+          <Select
+            placeholder={error ? "Data failed to load..." : "Choose Function"}
+            style={{ width: 220, marginRight: 10, marginTop: 10 }}
+            onSelect={this.handleSelectFunction}
+          >
+            {
+              allFunctions && allFunctions.map(c => (
+                <Option value={c.id} key={c.id}>
+                  {c.name}
+                </Option>
+              ))
+            }
+          </Select>
+        </div>
       </Modal>
     )
   }
