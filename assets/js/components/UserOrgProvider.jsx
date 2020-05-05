@@ -4,30 +4,24 @@ import { connect } from 'react-redux';
 import { Socket } from 'phoenix'
 import { isJwtExpired } from '../util/jwt.js'
 import { fetchIndices } from '../actions/main'
+import { fetchOrganization } from '../actions/organization'
 
 @connect(mapStateToProps, mapDispatchToProps)
 class UserOrgProvider extends Component {
   componentDidMount() {
-    if (this.props.isLoggedIn && this.props.currentOrganizationId) {
-      this.props.fetchIndices()
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { isLoggedIn, currentOrganizationId, apikey, fetchIndices } = this.props
-
-    // if the user has just logged in...
-    if (!prevProps.isLoggedIn && isLoggedIn && currentOrganizationId) {
-      return fetchIndices()
-    }
+    this.props.fetchOrganization();
   }
 
   render() {
-    return (
-      <div>
-        {this.props.children}
-      </div>
-    )
+    const { currentOrganizationId } = this.props;
+    if (window.location.pathname == '/register' || currentOrganizationId) {
+      return (
+        <div>
+          {this.props.children}
+        </div>
+      )
+    }
+    return null;
   }
 }
 
@@ -35,13 +29,14 @@ function mapStateToProps(state, ownProps) {
   return {
     isLoggedIn: state.auth.isLoggedIn,
     apikey: state.auth.apikey,
-    currentOrganizationId: state.auth.currentOrganizationId
+    currentOrganizationId: state.organization.currentOrganizationId
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchIndices,
+    fetchOrganization
   }, dispatch);
 }
 

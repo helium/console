@@ -42,7 +42,7 @@ defmodule Console.OrganizationsTest do
       assert organization.users == []
       {:ok, %Membership{} = membership} = Organizations.join_organization(user, organization)
       membership = Organizations.fetch_assoc_membership(membership)
-      assert membership.user.id == user.id
+      assert membership.user_id == user.id
       assert membership.organization.id == organization.id
       assert Organizations.user_has_access?(user, organization)
       organization = Organizations.get_organization!(user, organization.id)

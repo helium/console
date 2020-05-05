@@ -6,15 +6,18 @@ defmodule ConsoleWeb.InvitationView do
     render_many(invitations, InvitationView, "invitation.json")
   end
 
+  def render("accept.json", %{organization: organization}) do
+    [%{id: organization.id, name: organization.name}]
+  end
+
   def render("show.json", %{invitation: invitation}) do
     render_one(invitation, InvitationView, "invitation.json")
   end
 
-  def render("invitation.json", %{invitation: invitation, organization_name: organization_name, inviter: inviter}) do
+  def render("invitation.json", %{invitation: invitation, organization_name: organization_name}) do
     %{
       email: invitation.email,
-      organizationName: organization_name,
-      inviter: inviter
+      organizationName: organization_name
     }
   end
 

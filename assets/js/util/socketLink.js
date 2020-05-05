@@ -10,7 +10,17 @@ function getAuthToken() {
 }
 
 function createPhoenixSocket(token) {
-  return new PhoenixSocket("/socket", { params: { token } })
+  let organizationId;
+  try {
+    const organization = JSON.parse(localStorage.getItem('organization'));
+    organizationId = organization ? organization.id : null;
+  } catch (e) {
+    organizationId = null;
+  }
+  return new PhoenixSocket(
+    "/socket", 
+    { params: { token, organization_id:  organizationId} }
+  )
 }
 
 function createInnerSocketLink(phoenixSocket) {
@@ -19,30 +29,31 @@ function createInnerSocketLink(phoenixSocket) {
 }
 
 class SocketLink extends ApolloLink {
-  constructor() {
-    super()
-    this.socket = createPhoenixSocket(getAuthToken())
-    this.link = createInnerSocketLink(this.socket)
-    this._watchAuthToken()
+  constructor(methodForAuthToken) {
+    super();
+    this.socket = createPhoenixSocket(getAuthToken());
+    this.link = createInnerSocketLink(this.socket);
+    this._watchAuthToken();
+    this.getAuthToken = methodForAuthToken;
+    this.token = null;
   }
 
   request(operation, forward) {
-    return this.link.request(operation, forward)
+    return this.link.request(operation, forward);
   }
 
   _watchAuthToken() {
-    let token = getAuthToken()
-
-    store.subscribe(() => {
-      const newToken = getAuthToken()
-      if (newToken !== token) {
-        token = newToken
-        this.socket.disconnect()
-        this.socket = createPhoenixSocket(token)
-        this.link = createInnerSocketLink(this.socket)
+    store.subscribe(async () => {
+      const newTokenClaims = await this.getAuthToken();
+      const newToken = newTokenClaims.__raw;
+      if (newToken !== this.token) {
+        this.token = newToken;
+        this.socket.disconnect();
+        this.socket = createPhoenixSocket(this.token);
+        this.link = createInnerSocketLink(this.socket);
       }
     })
   }
 }
 
-export default new SocketLink()
+export default SocketLink;

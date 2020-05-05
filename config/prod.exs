@@ -52,6 +52,9 @@ config :console,
 config :console,
   mailerlite_api_key: System.get_env("MAILERLITE_KEY")
 
+config :console, :auth0,
+  app_baseurl: System.get_env("AUTH0_BASE_URL")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

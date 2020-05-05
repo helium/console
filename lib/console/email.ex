@@ -36,14 +36,6 @@ defmodule Console.Email do
     |> render(:invitation_email)
   end
 
-  def joined_organization_email(%Membership{user: %User{email: email}, organization: %Organization{name: organization_name}}) do
-    base_email()
-    |> to(email)
-    |> subject("You've been added to #{organization_name} on Helium")
-    |> assign(:organization_name, organization_name)
-    |> render(:joined_organization_email)
-  end
-
   def api_key_email(%User{email: email}, %ApiKey{token: token, name: name}) do
     base_email()
     |> to(email)

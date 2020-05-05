@@ -5,10 +5,10 @@ defmodule Console.FactoryHelper do
 
   def authenticate_user(%{conn: conn}) do
     {:ok, user, organization} = Console.Auth.create_user(params_for(:user, %{password: "password"}), %{name: "Test Organization"})
-    token = Console.Auth.generate_session_token(user, organization)
     conn = conn
            |> put_req_header("accept", "application/json")
-           |> put_req_header("authorization", "bearer: " <> token)
+           |> put_req_header("authorization", user.id <> " " <> user.email)
+           |> put_req_header("organization", organization.id)
     {:ok, conn: conn, user: user, organization: organization}
   end
 

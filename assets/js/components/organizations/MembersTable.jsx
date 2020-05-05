@@ -20,7 +20,6 @@ const queryOptions = {
   })
 }
 
-@connect(mapStateToProps, null)
 @graphql(PAGINATED_MEMBERSHIPS, queryOptions)
 class MembersTable extends Component {
   state = {
@@ -71,11 +70,6 @@ class MembersTable extends Component {
         title: 'Role',
         dataIndex: 'role',
         render: text => <RoleName role={text} />
-      },
-      {
-        title: 'Two-Factor',
-        dataIndex: 'two_factor_enabled',
-        render: data => data ? <Tag color="blue">Enabled</Tag> : <Tag color="red">Disabled</Tag>
       },
       {
         title: 'Joined',
@@ -146,12 +140,6 @@ class MembersTable extends Component {
         </div>
       </div>
     )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    user: state.user
   }
 }
 

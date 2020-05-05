@@ -34,26 +34,6 @@ defmodule ConsoleWeb.UserController do
     end
   end
 
-  # Registration via accepting invitation
-  def create(conn, %{"user" => user_params, "invitation" => %{"token" => invitation_token}}) do
-    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token),
-      {:ok, %User{} = user, %Invitation{} = invitation} <- Auth.create_user_via_invitation(invitation, user_params) do
-        organization = Organizations.get_organization!(invitation.organization_id)
-
-        Organizations.get_invitation!(invitation.id)
-        |> ConsoleWeb.InvitationController.broadcast()
-
-        user = user |> Auth.fetch_assoc([:memberships])
-        List.last(user.memberships)
-        |> ConsoleWeb.MembershipController.broadcast()
-
-        updatedUser = Map.merge(user, %{role: List.last(user.memberships).role})
-
-        conn
-        |> handle_created(user)
-    end
-  end
-
   defp handle_created(conn, %User{} = user) do
     Email.confirm_email(user) |> Mailer.deliver_later()
 

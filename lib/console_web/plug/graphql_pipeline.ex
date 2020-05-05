@@ -4,9 +4,7 @@ defmodule ConsoleWeb.Plug.GraphqlPipeline do
     error_handler: ConsoleWeb.AuthErrorHandler
 
   plug ConsoleWeb.Plug.RateLimit, ["gql_actions", 300]
-  plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
-  plug Guardian.Plug.EnsureAuthenticated
-  plug Guardian.Plug.LoadResource
+  plug ConsoleWeb.Plug.VerifyAccessToken
   plug ConsoleWeb.Plug.PutCurrentUser
   plug ConsoleWeb.Plug.PutCurrentOrganization
   plug ConsoleWeb.Plug.GraphqlContext

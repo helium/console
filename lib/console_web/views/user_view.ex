@@ -13,8 +13,8 @@ defmodule ConsoleWeb.UserView do
     %{email: user.email}
   end
 
-  def render("show.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
+  def render("show.json", %{organization: organization}) do
+    [%{id: organization.id, name: organization.name}]
   end
 
   def render("user.json", %{user: user}) do

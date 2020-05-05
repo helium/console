@@ -21,7 +21,7 @@ defmodule ConsoleWeb.V1.LabelController do
 
   def create(conn, %{"label" => label_params}) do
     current_organization = conn.assigns.current_organization
-    current_user = conn.assigns.user_id |> Auth.get_user_by_id!()
+    current_user = conn.assigns.user_id |> Auth.get_user_by_id()
 
     label_params =
       Map.merge(label_params, %{
