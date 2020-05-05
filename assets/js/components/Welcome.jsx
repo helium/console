@@ -6,8 +6,6 @@ import analyticsLogger from '../util/analyticsLogger'
 import { Button, Typography, Checkbox, Icon } from 'antd';
 const { Text } = Typography
 import WelcomeImg from '../../img/welcome-image.png'
-import RocketIcon from '../../img/welcome-rocket-icon.png'
-import CalendarIcon from '../../img/welcome-calendar-icon.png'
 import BulbImg from '../../img/welcome-tip-bulb.png'
 
 class Welcome extends Component {
@@ -58,24 +56,24 @@ class Welcome extends Component {
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: 14, minWidth: 400, marginRight: 20, boxShadow: '0 47px 24px -30px #C6D3E8' }}>
               <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <img src={RocketIcon} style={{ height: 24, width: 24, position: 'relative', top: 4, marginRight: 5 }}/>
+                <Icon style={{ fontSize: 24, marginRight: 8, position: 'relative', top: 4, color: '#2F54EB' }} type="rocket" theme="filled" />
                 <Text strong style={{ fontSize: 20, marginBottom: 18 }}>Get Started with Console</Text>
               </div>
-              <Link to="/devices" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Add and Manage Devices <span style={{ fontFamily: 'soleil-light' }}>for the Helium Network</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
-              <Link to="/integrations" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Set up an Integration <span style={{ fontFamily: 'soleil-light' }}>to send and receive device data</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
-              <Link to="/labels" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Create and Manage Labels <span style={{ fontFamily: 'soleil-light' }}>to organize your devices</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
-              <Link to="/functions" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Apply Functions <span style={{ fontFamily: 'soleil-light' }}>to your devices</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
-              <Link to="/users" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Invite other Users <span style={{ fontFamily: 'soleil-light' }}>to your Console Organization</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
+              <Link to="/devices" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Add and Manage Devices <span style={{ fontWeight: 300 }}>for the Helium Network</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
+              <Link to="/integrations" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Set up an Integration <span style={{ fontWeight: 300 }}>to send and receive device data</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
+              <Link to="/labels" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Create and Manage Labels <span style={{ fontWeight: 300 }}>to organize your devices</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
+              <Link to="/functions" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Apply Functions <span style={{ fontWeight: 300 }}>to your devices</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
+              <Link to="/users" style={{ marginBottom: 4 }}><Text style={{ color: '#096DD9' }}>Invite other Users <span style={{ fontWeight: 300 }}>to your Console Organization</span><Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></Link>
             </div>
             <div style={{ padding: 20, display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: 14, minWidth: 400, boxShadow: '0 47px 24px -30px #C6D3E8' }}>
               <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <img src={CalendarIcon} style={{ height: 24, width: 24, position: 'relative', top: 4, marginRight: 5 }}/>
+                <Icon style={{ fontSize: 24, marginRight: 8, position: 'relative', top: 4, color: '#722ED1' }} type="calendar" theme="filled" />
                 <Text strong style={{ fontSize: 20, marginBottom: 18 }}>Developer Resources</Text>
               </div>
-              <a href="https://developer.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontFamily: 'soleil-light' }}>View</span> Documentation and Tutorials<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
-              <a href="https://www.youtube.com/channel/UCEdh5moyCkiIrfdkZOnG5ZQ/videos" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontFamily: 'soleil-light' }}>Watch our</span> How-to Videos<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
-              <a href="http://chat.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontFamily: 'soleil-light' }}>Join our</span> Community Slack Channel<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
-              <a href="https://engineering.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontFamily: 'soleil-light' }}>Read our</span> Engineering Update Blog<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
+              <a href="https://developer.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontWeight: 300 }}>View</span> Documentation and Tutorials<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
+              <a href="https://www.youtube.com/channel/UCEdh5moyCkiIrfdkZOnG5ZQ/videos" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontWeight: 300 }}>Watch our</span> How-to Videos<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
+              <a href="http://chat.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontWeight: 300 }}>Join our</span> Community Slack Channel<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
+              <a href="https://engineering.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontWeight: 300 }}>Read our</span> Engineering Update Blog<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
             </div>
           </div>
 
