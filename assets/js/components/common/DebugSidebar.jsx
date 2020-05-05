@@ -54,7 +54,7 @@ class DebugSidebar extends Component {
       </div>
     )
     return (
-      <div style={{ height: '100%', width: '100%', overflow: 'scroll'}}>
+      <div style={{ height: '100%', width: '100%', overflow: 'scroll'}} className="no-scroll-bar">
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
           <Text style={{ color: 'white' }}>
             <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Packets</span>
