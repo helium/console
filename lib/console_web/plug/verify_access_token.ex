@@ -1,23 +1,35 @@
 defmodule ConsoleWeb.AccessTokenDecoder do
-  @callback decode_conn_access_token(Plug.Conn.t()) :: :error | %{user_id: String.t(), email: String.t()}
+  @callback decode_conn_access_token(String.t()) :: :error | %{user_id: String.t(), email: String.t()}
 end
 
 defmodule ConsoleWeb.AccessTokenDecoder.Auth0 do
   @behaviour ConsoleWeb.AccessTokenDecoder
-  import Plug.Conn
 
-  def decode_conn_access_token(conn) do
-    auth_header = conn |> get_req_header("authorization") |> List.first()
-    response = HTTPoison.get!("#{Application.get_env(:console, :auth0)[:app_baseurl]}/.well-known/jwks.json")
-    key = Poison.decode!(response.body)
-    head = Enum.at(key["keys"], 0)
-    signer = Joken.Signer.create("RS256", head)
-    passed_token = String.replace(auth_header, "Bearer ", "")
-    case Joken.verify(passed_token, signer) do
-      {:ok, %{"email" => email, "sub" => sub}} -> %{email: email, user_id: sub}
-      _ -> :error
+  def decode_conn_access_token(token) do
+    case Application.get_env(:console, :auth0_jwk) do
+      nil ->
+        response = HTTPoison.get!("#{Application.get_env(:console, :auth0_baseurl)}/.well-known/jwks.json")
+        key = Poison.decode!(response.body)
+        jwk = Enum.at(key["keys"], 0)
+        Application.put_env(:console, :auth0_jwk, jwk)
+        jwk
+        |> verify_token_with_signer(token)
+      jwk ->
+        jwk
+        |> verify_token_with_signer(token)
     end
 
+  end
+
+  defp verify_token_with_signer(jwk, token) do
+    signer = Joken.Signer.create("RS256", jwk)
+    case Joken.verify(token, signer) do
+      {:ok, %{"email" => email, "sub" => sub}} ->
+        unprefixed_user_id = String.replace(sub, "auth0|", "")
+        %{email: email, user_id: unprefixed_user_id}
+      _ ->
+        :error
+    end
   end
 end
 
@@ -29,7 +41,11 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
   def init(default), do: default
 
   def call(conn, _default) do
-    case @access_token_decoder.decode_conn_access_token(conn) do
+    token = conn
+      |> get_req_header("authorization")
+      |> List.first()
+      |> String.replace("Bearer ", "")
+    case @access_token_decoder.decode_conn_access_token(token) do
       %{user_id: user_id, email: email} ->
         conn
           |> assign(:user_id, user_id)

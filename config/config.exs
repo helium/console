@@ -41,8 +41,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-config :console, :auth0,
-  app_baseurl: "https://dev-j03rcvdv.auth0.com"
+config :console,
+  auth0_baseurl: "https://dev-j03rcvdv.auth0.com"
 
 config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
 

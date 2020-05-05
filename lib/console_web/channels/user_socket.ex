@@ -6,6 +6,8 @@ defmodule ConsoleWeb.UserSocket do
   alias Console.Auth
   require Logger
 
+  @access_token_decoder Application.get_env(:console, :access_token_decoder)
+
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
@@ -18,14 +20,8 @@ defmodule ConsoleWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"token" => token, "organization_id" => organization_id}, socket) do
-    response = HTTPoison.get!("#{Application.get_env(:console, :auth0)[:app_baseurl]}/.well-known/jwks.json")
-    key = Poison.decode!(response.body)
-    head = Enum.at(key["keys"], 0)
-    signer = Joken.Signer.create("RS256", head)
-    case Joken.verify(token, signer) do
-      {:ok, data} ->
-        user_id = String.replace(data["sub"], "auth0|", "")
-        email = data["email"]
+    case @access_token_decoder.decode_conn_access_token(token) do
+      %{email: email, user_id: user_id} ->
         case Auth.get_user_by_id_and_email(user_id, email)
           |> Organizations.get_current_organization(organization_id) do
           %{organization: current_organization} ->
@@ -37,7 +33,7 @@ defmodule ConsoleWeb.UserSocket do
           _ ->
             {:error}
         end
-      {:error, _} ->
+      :error ->
         {:error}
     end
   end
