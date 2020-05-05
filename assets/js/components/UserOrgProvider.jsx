@@ -1,35 +1,31 @@
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { Socket } from 'phoenix'
-import { isJwtExpired } from '../util/jwt.js'
+import React, { useEffect } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import { fetchIndices } from '../actions/main'
 import { fetchOrganization } from '../actions/organization'
 
-@connect(mapStateToProps, mapDispatchToProps)
-class UserOrgProvider extends Component {
-  componentDidMount() {
-    this.props.fetchOrganization();
+const UserOrgProvider = (props) => {
+  useEffect(() => {
+    props.fetchOrganization();
+  }, []);
+  const location = useLocation();
+  const { loadingOrganization } = props;
+  if (location.pathname == '/register' || !loadingOrganization) {
+    return (
+      <div>
+        { props.children }
+      </div>
+    )
   }
-
-  render() {
-    const { currentOrganizationId } = this.props;
-    if (window.location.pathname == '/register' || currentOrganizationId) {
-      return (
-        <div>
-          {this.props.children}
-        </div>
-      )
-    }
-    return null;
-  }
+  return null;
 }
 
 function mapStateToProps(state, ownProps) {
   return {
     isLoggedIn: state.auth.isLoggedIn,
     apikey: state.auth.apikey,
-    currentOrganizationId: state.organization.currentOrganizationId
+    loadingOrganization: state.organization.loadingOrganization
   }
 }
 
@@ -40,4 +36,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default UserOrgProvider
+export default connect(mapStateToProps, mapDispatchToProps)(UserOrgProvider)

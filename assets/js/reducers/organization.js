@@ -1,4 +1,4 @@
-import { FETCHED_ORGANIZATION } from '../actions/organization'
+import { FETCHED_ORGANIZATION, FETCHING_ORGANIZATION } from '../actions/organization'
 
 const initialState = {
     currentOrganizationId: null
@@ -10,8 +10,14 @@ const organization = (state = initialState, action) => {
         return { 
             ...state, 
             currentOrganizationId: action.currentOrganizationId, 
-            currentOrganizationName: action.currentOrganizationName 
+            currentOrganizationName: action.currentOrganizationName,
+            loadingOrganization: false
         };
+      case FETCHING_ORGANIZATION:
+        return {
+          ...state,
+          loadingOrganization: true
+        }
       default:
         return state;
     }

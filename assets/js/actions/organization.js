@@ -5,10 +5,12 @@ import { getOrganizationId, getOrganizationName } from '../util/jwt';
 import { logIn } from './auth'
 
 export const FETCHED_ORGANIZATION = 'FETCHED_ORGANIZATIONS'
+export const FETCHING_ORGANIZATION = 'FETCHING_ORGANIZATION'
 export const SWITCHED_ORGANIZATION = 'SWITCHED_ORGANIZATION'
 
 export const fetchOrganization = () => {
   return async (dispatch) => {
+    dispatch(fetchingOrganization());
     let organization;
     try {
       organization = JSON.parse(localStorage.getItem('organization'));
@@ -19,19 +21,20 @@ export const fetchOrganization = () => {
       // get a new organization id
       const organizations = await getOrganizations();
       if (organizations && organizations.length) {
-        dispatch(fetchedOrganization(organizations[0]));
         localStorage.setItem('organization', JSON.stringify(organizations[0]));
+        return dispatch(fetchedOrganization(organizations[0]));
       }
     } else {
       // validate or replace organization id
       const fetchedOrganizations = await getOrganizations();
       if (fetchedOrganizations.indexOf(organization)) {
-        dispatch(fetchedOrganization(organization));
+        return dispatch(fetchedOrganization(organization));
       } else if (fetchedOrganizations && fetchedOrganizations.length){
-        dispatch(fetchedOrganization(fetchedOrganizations[0]));
         localStorage.setItem('organization', JSON.stringify(fetchedOrganizations[0]));
+        return dispatch(fetchedOrganization(fetchedOrganizations[0]));
       }
     }
+    return dispatch(fetchedOrganization({ id: null, name: "" }))
   }
 }
 
@@ -77,6 +80,12 @@ export const deleteOrganization = (id) => {
   return (dispatch) => {
     rest.destroy(`/api/organizations/${id}`)
       .then(response => {})
+  }
+}
+
+export const fetchingOrganization = () => {
+  return {
+    type: FETCHING_ORGANIZATION
   }
 }
 
