@@ -9,14 +9,7 @@ function getAuthToken() {
   return store.getState().auth.apikey
 }
 
-function createPhoenixSocket(token) {
-  let organizationId;
-  try {
-    const organization = JSON.parse(localStorage.getItem('organization'));
-    organizationId = organization ? organization.id : null;
-  } catch (e) {
-    organizationId = null;
-  }
+function createPhoenixSocket(token, organizationId) {
   return new PhoenixSocket(
     "/socket", 
     { params: { token, organization_id:  organizationId} }
@@ -36,6 +29,7 @@ class SocketLink extends ApolloLink {
     this._watchAuthToken();
     this.getAuthToken = methodForAuthToken;
     this.token = null;
+    this.organizationId = null;
   }
 
   request(operation, forward) {
@@ -46,10 +40,12 @@ class SocketLink extends ApolloLink {
     store.subscribe(async () => {
       const newTokenClaims = await this.getAuthToken();
       const newToken = newTokenClaims.__raw;
-      if (newToken !== this.token) {
+      const { currentOrganizationId } = store.getState().organization;
+      if (newToken !== this.token || this.organizationId !== currentOrganizationId) {
+        this.organizationId = currentOrganizationId;
         this.token = newToken;
         this.socket.disconnect();
-        this.socket = createPhoenixSocket(this.token);
+        this.socket = createPhoenixSocket(this.token, this.organizationId);
         this.link = createInnerSocketLink(this.socket);
       }
     })
