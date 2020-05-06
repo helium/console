@@ -32,7 +32,7 @@ const auth = (state = initialState, action) => {
       return { ...state, isLoggedIn: false, apikey: null, user: null, currentOrganizationId: null, currentOrganizationName: null };
     case REFRESHED_TOKEN:
     case SWITCHED_ORGANIZATION:
-      return { ...state, apikey: action.apikey, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
+      return { ...state, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
     default:
       return state;
   }

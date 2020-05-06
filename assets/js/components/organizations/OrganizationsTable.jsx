@@ -85,7 +85,7 @@ class OrganizationsTable extends Component {
                 style={{ marginRight: 5 }}
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": record.id })
-                  switchOrganization(record.id)
+                  switchOrganization(record)
                 }}
               >
                 Switch
@@ -137,7 +137,7 @@ class OrganizationsTable extends Component {
 
 function mapStateToProps(state) {
   return {
-    currentOrganizationId: state.auth.currentOrganizationId,
+    currentOrganizationId: state.organization.currentOrganizationId,
   }
 }
 

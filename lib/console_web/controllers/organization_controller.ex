@@ -22,8 +22,7 @@ defmodule ConsoleWeb.OrganizationController do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
       case Enum.count(organizations) do
         1 ->
-          jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
-          render(conn, "switch.json", jwt: jwt)
+          render(conn, "show.json", organization: organization)
         _ ->
           broadcast(organization, conn.assigns.current_user)
 

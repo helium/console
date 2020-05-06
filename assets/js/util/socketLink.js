@@ -5,10 +5,6 @@ import { Socket as PhoenixSocket } from 'phoenix'
 
 import { store } from '../store/configureStore';
 
-function getAuthToken() {
-  return store.getState().auth.apikey
-}
-
 function createPhoenixSocket(token, organizationId) {
   return new PhoenixSocket(
     "/socket", 
@@ -24,12 +20,12 @@ function createInnerSocketLink(phoenixSocket) {
 class SocketLink extends ApolloLink {
   constructor(methodForAuthToken) {
     super();
-    this.socket = createPhoenixSocket(getAuthToken());
-    this.link = createInnerSocketLink(this.socket);
-    this._watchAuthToken();
     this.getAuthToken = methodForAuthToken;
     this.token = null;
     this.organizationId = null;
+    this.socket = createPhoenixSocket(this.getAuthToken(), this.organizationId);
+    this.link = createInnerSocketLink(this.socket);
+    this._watchAuthToken();
   }
 
   request(operation, forward) {

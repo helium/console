@@ -47,20 +47,18 @@ export const createOrganization = (name, noOtherOrg = false) => {
       })
       .then(response => {
         if (noOtherOrg) {
-          dispatch(logIn(response.data.jwt))
-          window.location.reload(true)
+          dispatch(fetchedOrganization(response));
+          window.location.reload(true);
         }
       })
   }
 }
 
-export const switchOrganization = (id) => {
+export const switchOrganization = (organization) => {
   return (dispatch) => {
-    rest.post(`/api/organizations/${id}/switch`)
-      .then(response => {
-        dispatch(switchedOrganization(response.data.jwt))
-        window.location.reload(true)
-      })
+    localStorage.setItem('organization', JSON.stringify(organization));
+    dispatch(switchedOrganization(organization));
+    window.location.reload(true);
   }
 }
 
@@ -71,7 +69,7 @@ export const joinOrganization = (token) => {
       .then(response => {
         dispatch(fetchedOrganization(response.data[0]));
         localStorage.setItem('organization', JSON.stringify(response.data[0]));
-        push('/dashboard')
+        push('/devices');
       })
   }
 }
@@ -97,12 +95,11 @@ export const fetchedOrganization = (organization) => {
   }
 }
 
-export const switchedOrganization = (apikey) => {
+export const switchedOrganization = (organization) => {
   return {
     type: SWITCHED_ORGANIZATION,
-    apikey,
-    currentOrganizationId: getOrganizationId(apikey),
-    currentOrganizationName: getOrganizationName(apikey)
+    currentOrganizationId: organization.id,
+    currentOrganizationName: organization.name
   }
 }
 
