@@ -18,7 +18,7 @@ import LabelTag from '../common/LabelTag'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
-import { Typography, Select, Card } from 'antd';
+import { Typography, Select, Card, Button } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -129,11 +129,11 @@ class ChannelNew extends Component {
             <ChannelNameForm
               channelName={this.state.channelName}
               onInputUpdate={this.handleStep3Input}
-              onSubmit={this.handleStep3Submit}
             />
         )}
         { showNextSteps && allLabels && (
-          <Card title="Step 4 - Apply Integration to Label (Optional)">
+          <Card title="Step 4 - Apply Integration to Label (Can be added later)">
+            <Text>Labels are necessary to connect devices to integrations</Text><br />
             <Select
               mode="multiple"
               onChange={this.handleSelectLabels}
@@ -146,6 +146,15 @@ class ChannelNew extends Component {
                 </Option>
               ))}
             </Select>
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+              >
+                Create Integration
+              </Button>
+            </div>
           </Card>
         )}
       </DashboardLayout>
