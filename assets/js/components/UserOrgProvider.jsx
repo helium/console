@@ -23,8 +23,6 @@ const UserOrgProvider = (props) => {
 
 function mapStateToProps(state, ownProps) {
   return {
-    isLoggedIn: state.auth.isLoggedIn,
-    apikey: state.auth.apikey,
     loadingOrganization: state.organization.loadingOrganization
   }
 }
