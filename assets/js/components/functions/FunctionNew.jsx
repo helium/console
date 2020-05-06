@@ -81,6 +81,9 @@ class FunctionNew extends Component {
               style={{ width: 220, marginLeft: 8 }}
               disabled={!type}
             >
+              <Option value="browan_object_locator">
+                Browan Object Locator
+              </Option>
               <Option value="cayenne">
                 Cayenne LPP
               </Option>

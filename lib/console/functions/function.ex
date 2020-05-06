@@ -26,18 +26,19 @@ defmodule Console.Functions.Function do
 
     function
     |> cast(attrs, [:name, :body, :type, :format, :organization_id, :active])
-    |> put_cayenne_body()
+    |> put_native_decoder_body()
     |> validate_required([:name, :body, :type, :format, :organization_id])
     |> validate_inclusion(:type, ~w(decoder))
-    |> validate_inclusion(:format, ~w(custom cayenne))
+    |> validate_inclusion(:format, ~w(custom cayenne browan_object_locator))
     |> unique_constraint(:name, name: :functions_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
-  defp put_cayenne_body(changeset) do
+  defp put_native_decoder_body(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{ format: format }} ->
         case format do
           "cayenne" -> put_change(changeset, :body, "Default Cayenne Function")
+          "browan_object_locator" -> put_change(changeset, :body, "Default Browan Object Locator Function")
           _ -> changeset
         end
       _ -> changeset

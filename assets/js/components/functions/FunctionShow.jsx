@@ -32,6 +32,7 @@ const functionTypes = {
 
 const functionFormats = {
   cayenne: "Cayenne LPP",
+  browan_object_locator: "Browan Object Locator",
   custom: "Custom Script"
 }
 
@@ -203,6 +204,9 @@ class FunctionShow extends Component {
               style={{ width: 220, marginLeft: 8 }}
               value={format}
             >
+              <Option value="browan_object_locator">
+                Browan Object Locator
+              </Option>
               <Option value="cayenne">
                 Cayenne LPP
               </Option>
