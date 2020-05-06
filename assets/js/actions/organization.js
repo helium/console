@@ -1,8 +1,6 @@
 import { push } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 import * as rest from '../util/rest';
-import { getOrganizationId, getOrganizationName } from '../util/jwt';
-import { logIn } from './auth'
 
 export const FETCHED_ORGANIZATION = 'FETCHED_ORGANIZATIONS'
 export const FETCHING_ORGANIZATION = 'FETCHING_ORGANIZATION'
