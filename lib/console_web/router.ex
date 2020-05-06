@@ -38,8 +38,11 @@ defmodule ConsoleWeb.Router do
     post "/users", InvitationController, :accept
     resources "/devices", DeviceController, except: [:new, :edit]
     post "/devices/delete", DeviceController, :delete
+    post "/devices/debug", DeviceController, :debug
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
+    post "/labels/remove_function", LabelController, :remove_function
+    post "/labels/debug", LabelController, :debug
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
@@ -55,6 +58,7 @@ defmodule ConsoleWeb.Router do
     resources "/memberships", MembershipController, only: [:index, :update, :delete]
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
+    resources "/functions", FunctionController, only: [:create, :delete, :update]
 
     get "/2fa", TwoFactorController, :new
     post "/2fa", TwoFactorController, :create
@@ -81,13 +85,20 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/v1", ConsoleWeb.V1 do
+    pipe_through :api
+
+    post "/down/:channel_id/:downlink_token/:device_id", DownlinkController, :down
+    post "/down/:channel_id/:downlink_token", DownlinkController, :down
+  end
+
+  scope "/api/v1", ConsoleWeb.V1 do
     pipe_through ConsoleWeb.V1ApiPipeline
 
     get "/organization", OrganizationController, :show
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete]
     resources "/labels", LabelController, only: [:index, :create, :delete]
-    post "/devices_labels", LabelController, :add_device_to_label
-    post "/devices_labels/delete", LabelController, :delete_device_from_label
+    post "/devices/:device_id/labels", LabelController, :add_device_to_label
+    delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
   end
 
   scope "/api/stats", ConsoleWeb do

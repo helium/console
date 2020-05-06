@@ -174,8 +174,8 @@
                                  <!-- Spacing -->
                                  <!-- title -->
                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 30px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Welcome to Helium Console!
+                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 24px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                      Welcome and thanks for registering your Helium Console account.
                                     </td>
                                  </tr>
                                  <!-- end of title -->
@@ -213,6 +213,118 @@
                                     </td>
                                  </tr>
                                  <!-- /button -->
+                                 <tr>
+                                    <td width="100%" height="50"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Only Helium Console allows IoT developers to fully harness the power of the world’s first peer-to-peer wireless network.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="40"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; font-weight: bold; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Get Started Quickly with Console
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Here are resources to help you get started quickly sending data from devices to endpoints.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="20"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     1. Add a device in minutes with our <a href="https://developer.helium.com/console/quickstart">quickstart guide</a>.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="20"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     2. Organize your devices and use other capabilities like mapping devices to integrations using labels. More label information <a href="https://developer.helium.com/console/labels">here</a>.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="20"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     3. Send device data to endpoints with pre-built or custom integrations. Learn about integrations <a href="https://developer.helium.com/console/integrations">here</a>.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="40"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; font-weight: bold; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Videos
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="https://youtu.be/t78PQsPc6hQ">Running Devices on the Largest, Public LoRaWAN Network in the US</a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="https://youtu.be/0P-eMhNKK9o">Importing TTN Devices with Helium Console CLI<a/>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="20"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Never miss out on new video content by subscribing to Helium YouTube channel <a href="https://www.youtube.com/c/HeliumInc">here</a>.
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="40"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; font-weight: bold; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Resources
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="https://developer.helium.com/">Developer Documentation</a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="https://engineering.helium.com/">Engineering Blog</a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="http://chat.helium.com/">Community Slack</a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="https://www.helium.com/business">Connectivity Cost Calculator</a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td width="100%" height="20"></td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; font-weight: bold; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     Get in touch
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                   <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                     <a href="mailto:hello@helium.com">hello@helium.com</a>
+                                   </td>
+                                 </tr>
                                  <!-- Spacing -->
                                  <tr>
                                     <td width="100%" height="40"></td>

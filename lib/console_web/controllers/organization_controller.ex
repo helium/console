@@ -44,13 +44,18 @@ defmodule ConsoleWeb.OrganizationController do
 
   def delete(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
-    with {:ok, _} <- Organizations.delete_organization(organization) do
-      broadcast(organization, conn.assigns.current_user)
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+    if membership.role != "admin" do
+      {:error, :forbidden, "You don't have access to do this"}
+    else
+      with {:ok, _} <- Organizations.delete_organization(organization) do
+        broadcast(organization, conn.assigns.current_user)
 
-      conn
-      |> put_status(:accepted)
-      |> put_resp_header("message",  "#{organization.name} deleted successfully")
-      |> render("show.json", organization: organization)
+        conn
+        |> put_status(:accepted)
+        |> put_resp_header("message",  "#{organization.name} deleted successfully")
+        |> render("show.json", organization: organization)
+      end
     end
   end
 

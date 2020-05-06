@@ -7,8 +7,7 @@ export const CHANNEL_FRAGMENT = gql`
     type_name,
     id,
     active,
-    default,
-    show_dupes
+    downlink_token,
   }
 `
 
@@ -20,6 +19,8 @@ export const CHANNEL_SHOW = gql`
       endpoint
       inbound_token
       headers
+      aws_region
+      topic
       labels {
         name,
         id,
@@ -41,6 +42,10 @@ export const CHANNEL_SHOW = gql`
       channels {
         name,
         id
+      }
+      function {
+        id
+        name
       }
     }
   }
@@ -73,6 +78,10 @@ export const PAGINATED_CHANNELS = gql`
           name,
           id,
           color,
+          function {
+            id,
+            name
+          }
         },
         device_count
       },
@@ -88,6 +97,19 @@ export const PAGINATED_CHANNELS = gql`
 export const ALL_CHANNELS = gql`
   query AllChannelsQuery {
     allChannels {
+      id,
+      name,
+    }
+  }
+`
+
+export const ALL_CHANNELS_FUNCTIONS = gql`
+  query AllChannelsFunctionsQuery {
+    allChannels {
+      id,
+      name,
+    }
+    allFunctions {
       id,
       name,
     }

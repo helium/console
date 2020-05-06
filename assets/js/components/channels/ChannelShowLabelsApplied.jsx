@@ -19,7 +19,7 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
           >
             {allLabels.map(l => (
               <Option value={l.id} key={l.id}>
-                <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0}/>
+                <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
               </Option>
             ))}
           </Select>
@@ -36,7 +36,7 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
             channel.labels.map(l => (
               <UserCan
                 key={l.id}
-                alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={find(allLabels, { id: l.id }).channels.length > 0}/>}
+                alternate={<LabelTag text={l.name} color={l.color} hasIntegrations={find(allLabels, { id: l.id }).channels.length > 0} hasFunction={find(allLabels, { id: l.id }).function} />}
               >
                 <LabelTag
                   key={l.id}
@@ -48,6 +48,7 @@ const ChannelShowLabelsApplied = ({ handleClickAdd, handleClickRemove, handleSel
                     e.preventDefault()
                     handleClickRemove(l.id)
                   }}
+                  hasFunction={find(allLabels, { id: l.id }).function}
                 />
               </UserCan>
             ))

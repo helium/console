@@ -97,7 +97,7 @@ class PacketGraph extends Component {
 
   updateChart = (events) => {
     const success = []
-    const failure = []
+    const error = []
     const noChannel = []
 
     events.forEach(event => {
@@ -105,15 +105,15 @@ class PacketGraph extends Component {
       const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
       if ( timeDiff < 300 ) {
-        if (event.status == 'success') {
+        if (event.channels[0] && event.channels[0].status == 'success') {
           success.push({
             x: timeDiff,
             y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
           })
-        } else if (event.status == 'failure') {
-          failure.push({
+        } else if (event.channels[0] && event.channels[0].status == 'error') {
+          error.push({
             x: timeDiff,
             y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
@@ -139,8 +139,8 @@ class PacketGraph extends Component {
             backgroundColor: 'rgba(33, 150, 243, 0.5)'
           },
           {
-            label: 'Failure',
-            data: failure,
+            label: 'Error',
+            data: error,
             backgroundColor: 'rgba(255, 165, 0, 0.5)'
           },
           {

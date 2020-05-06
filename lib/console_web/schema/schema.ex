@@ -32,6 +32,7 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
     field :channels, list_of(:channel)
+    field :function, :function
   end
 
   paginated object :channel do
@@ -43,12 +44,13 @@ defmodule ConsoleWeb.Schema do
     field :method, :string
     field :headers, :string
     field :inbound_token, :string
+    field :aws_region, :string
+    field :topic, :string
     field :active, :boolean
-    field :default, :boolean
-    field :show_dupes, :boolean
     field :labels, list_of(:label)
     field :devices, list_of(:device)
     field :device_count, :integer
+    field :downlink_token, :string
   end
 
   paginated object :gateway do
@@ -91,17 +93,23 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
   end
 
+  paginated object :function do
+    field :id, :id
+    field :name, :string
+    field :body, :string
+    field :type, :string
+    field :format, :string
+    field :active, :boolean
+    field :labels, list_of(:label)
+  end
+
   object :event do
     field :id, :id
     field :device_id, :id
-    field :hotspot_name, :string
-    field :channel_name, :string
-    field :status, :string
     field :description, :string
-    field :payload, :string
     field :payload_size, :integer
-    field :rssi, :float
-    field :snr, :float
+    field :port, :integer
+    field :devaddr, :string
     field :category, :string
     field :frame_up, :integer
     field :frame_down, :integer
@@ -109,6 +117,8 @@ defmodule ConsoleWeb.Schema do
     field :channels, list_of(:event_channel)
     field :reported_at, :string
     field :reported_at_naive, :naive_datetime
+    field :device_name, :string
+    field :payload, :string
   end
 
   object :event_hotspot do
@@ -116,6 +126,8 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :rssi, :float
     field :snr, :float
+    field :frequency, :float
+    field :spreading, :string
   end
 
   object :event_channel do
@@ -123,6 +135,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :status, :string
     field :description, :string
+    field :debug, :string
   end
 
   object :search_result do
@@ -208,6 +221,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Channels.ChannelResolver.all/2
     end
 
+    field :all_functions, list_of(:function) do
+      resolve &Console.Functions.FunctionResolver.all/2
+    end
+
     @desc "Get paginated memberships"
     paginated field :memberships, :paginated_memberships do
       resolve(&Console.Organizations.MembershipResolver.paginate/2)
@@ -250,6 +267,17 @@ defmodule ConsoleWeb.Schema do
     field :api_keys, list_of(:api_key) do
       resolve &Console.ApiKeys.ApiKeyResolver.all/2
     end
+
+    @desc "Get paginated functions"
+    paginated field :functions, :paginated_functions do
+      resolve(&Console.Functions.FunctionResolver.paginate/2)
+    end
+
+    @desc "Get a single function"
+    field :function, :function do
+      arg :id, non_null(:id)
+      resolve &Console.Functions.FunctionResolver.find/2
+    end
   end
 
   subscription do
@@ -263,7 +291,15 @@ defmodule ConsoleWeb.Schema do
       arg :device_id, :string
 
       config fn args, _ ->
-        {:ok, topic: "devices/#{args.device_id}"}
+        {:ok, topic: "devices/#{args.device_id}/event"}
+      end
+    end
+
+    field :label_debug_event_added, :event do
+      arg :label_id, :string
+
+      config fn args, _ ->
+        {:ok, topic: "labels/#{args.label_id}/event"}
       end
     end
 
@@ -330,6 +366,20 @@ defmodule ConsoleWeb.Schema do
     field :api_key_added, :api_key do
       config fn _, %{context: %{ current_organization_id: organization_id, current_user_id: user_id }} ->
         {:ok, topic: "#{organization_id}/api_key_added"}
+      end
+    end
+
+    field :function_added, :function do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/function_added"}
+      end
+    end
+
+    field :function_updated, :function do
+      arg :function_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/#{args.function_id}/function_updated"}
       end
     end
   end

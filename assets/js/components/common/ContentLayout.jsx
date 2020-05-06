@@ -5,7 +5,7 @@ import { PageHeader } from 'antd';
 @withRouter
 class ContentLayout extends Component {
   render() {
-    const { title, extra, breadCrumbs } = this.props
+    const { title, extra, breadCrumbs, noHeaderPadding } = this.props
 
     return (
       <div style={{padding: 30}}>
@@ -15,6 +15,7 @@ class ContentLayout extends Component {
           title={title}
           subTitle=""
           extra={extra}
+          style={{ paddingRight: 3, paddingBottom: noHeaderPadding ? 0 : 30 }}
         />
         <div>
           {this.props.children}

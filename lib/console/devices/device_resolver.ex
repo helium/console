@@ -10,7 +10,7 @@ defmodule Console.Devices.DeviceResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
-      |> preload([labels: [:channels, :devices]])
+      |> preload([labels: [:channels, :devices, :function]])
       |> order_by(asc: :dev_eui)
       |> Repo.paginate(page: page, page_size: page_size)
 
@@ -30,18 +30,21 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels]])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels, :function]])
 
-    query1 = from e in Event, where: e.device_id == ^device.id, select: count(e)
-    query2 = from e in Event, where: e.device_id == ^device.id, select: count(e), union_all: ^query1
-    query3 = from e in Event, where: e.device_id == ^device.id, select: count(e), union_all: ^query2
-    [packets_last_1d, packets_last_7d, packets_last_30d] = Repo.all(query3)
+    {:ok, device_id} = Ecto.UUID.dump(device.id)
+    result = Ecto.Adapters.SQL.query!(
+      Console.Repo,
+      "(SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '1 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '7 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '30 DAY')",
+      [device_id]
+    )
+    counts = List.flatten(result.rows)
 
     {:ok,
       Map.merge(device, %{
-        packets_last_1d: packets_last_1d,
-        packets_last_7d: packets_last_7d,
-        packets_last_30d: packets_last_30d,
+        packets_last_1d: Enum.at(counts, 0),
+        packets_last_7d: Enum.at(counts, 1),
+        packets_last_30d: Enum.at(counts, 2),
       })
     }
   end
@@ -59,7 +62,7 @@ defmodule Console.Devices.DeviceResolver do
       join: dl in DevicesLabels,
       on: dl.device_id == d.id,
       where: d.organization_id == ^current_organization.id and dl.label_id == ^label_id,
-      preload: [labels: [:channels]]
+      preload: [labels: [:channels, :function]]
 
     {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
   end

@@ -15,6 +15,10 @@ export const LABEL_FRAGMENT = gql`
       name,
       id
     }
+    function {
+      id,
+      name
+    }
   }
 `
 
@@ -82,6 +86,10 @@ export const ALL_LABELS = gql`
       name,
       color,
       channels {
+        id,
+        name
+      },
+      function {
         id,
         name
       }

@@ -28,7 +28,7 @@ class MQTTForm extends Component {
 
     return(
       <div>
-          <Text>
+        <Text>
           {type === "update" ? "Update your MQTT Connection Details" : "Enter your MQTT Connection Details"}
         </Text>
 
@@ -51,9 +51,9 @@ class MQTTForm extends Component {
             value={this.state.topic}
             onChange={this.handleInputUpdate}
           />
-          <Text>{"Uplink: {topic_entry}/helium/{AppEui}/rx"}</Text>
+          <Text>{"Uplink: {topic_entry}/helium/{device-uuid}/rx"}</Text>
           <br />
-          <Text>{"Downlink: {topic_entry}/helium/{AppEui/tx"}</Text>
+          <Text>{"Downlink: {topic_entry}/helium/{device-uuid}/tx"}</Text>
         </Col>
         </Row>
       </div>

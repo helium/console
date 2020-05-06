@@ -7,10 +7,12 @@ import LabelAddDeviceModal from './LabelAddDeviceModal'
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
+import DebugSidebar from '../common/DebugSidebar'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { updateLabel, addDevicesToLabels } from '../../actions/label'
+import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
+import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Button, Typography } from 'antd';
@@ -33,6 +35,7 @@ class LabelShow extends Component {
     showLabelAddDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
     devicesToRemove: [],
+    showDebugSidebar: false,
   }
 
   componentDidMount() {
@@ -82,6 +85,13 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleToggleDebug = () => {
+    const { showDebugSidebar } = this.state
+
+    if (!showDebugSidebar) this.props.toggleLabelDebug(this.props.match.params.id)
+    this.setState({ showDebugSidebar: !showDebugSidebar })
+  }
+
   render() {
     const { loading, error, label } = this.props.data
     if (loading) return <DashboardLayout />
@@ -96,7 +106,7 @@ class LabelShow extends Component {
       <div>
         <DashboardLayout
           breadCrumbs={
-            <div style={{ marginLeft: 4, paddingBottom: 20 }}>
+            <div style={{ marginLeft: 4, paddingBottom: 0 }}>
               <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
               <Text>&nbsp;&nbsp;{label.name}</Text>
             </div>
@@ -123,9 +133,9 @@ class LabelShow extends Component {
             </UserCan>
           }
         >
-          <LabelTag text={label.name} color={label.color} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30 }}/>
+          <LabelTag text={label.name} color={label.color} hasFunction={label.function} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30 }}/>
 
-          <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} />
+          <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history}/>
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
@@ -148,6 +158,17 @@ class LabelShow extends Component {
             onClose={this.closeRemoveDevicesFromLabelModal}
             devicesToRemove={this.state.devicesToRemove}
           />
+
+          <UserCan>
+            <DebugSidebar
+              show={this.state.showDebugSidebar}
+              toggle={this.handleToggleDebug}
+              subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+              variables={{ label_id: this.props.match.params.id }}
+              subscriptionKey="labelDebugEventAdded"
+              refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
+            />
+          </UserCan>
         </DashboardLayout>
       </div>
     )
@@ -155,7 +176,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug }, dispatch)
 }
 
 export default LabelShow

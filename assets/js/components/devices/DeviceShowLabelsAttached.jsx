@@ -23,6 +23,7 @@ class DeviceShowLabelsAttached extends Component {
                   color={l.color}
                   style={{ marginBottom: 3 }}
                   hasIntegrations={l.channels.length > 0}
+                  hasFunction={l.function}
                 />
               ))
             }
@@ -39,6 +40,7 @@ class DeviceShowLabelsAttached extends Component {
                 style={{ marginBottom: 3 }}
                 closable
                 hasIntegrations={l.channels.length > 0}
+                hasFunction={l.function}
                 onClose={e => {
                   e.preventDefault()
                   this.handleRemoveLabel(l)

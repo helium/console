@@ -19,10 +19,11 @@ defmodule ConsoleWeb.V1.LabelController do
     render(conn, "index.json", labels: current_organization.labels)
   end
 
-  def create(conn, %{"label" => label_params}) do
+  def create(conn, label_params = %{ "name" => _name }) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.user_id |> Auth.get_user_by_id()
 
+    # need to make sure email is accessible here
     label_params =
       Map.merge(label_params, %{
         "organization_id" => current_organization.id,
@@ -50,7 +51,7 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
-  def add_device_to_label(conn, %{ "label" => label_id, "device" => device_id}) do
+  def add_device_to_label(conn, %{ "label" => label_id, "device_id" => device_id}) do
     current_organization = conn.assigns.current_organization
     destination_label = Labels.get_label!(current_organization, label_id)
     device = Devices.get_device!(current_organization, device_id)
@@ -67,7 +68,7 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
-  def delete_device_from_label(conn, %{ "label" => label_id, "device" => device_id}) do
+  def delete_device_from_label(conn, %{ "label_id" => label_id, "device_id" => device_id}) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, device_id)
     label = Labels.get_label!(current_organization, label_id)

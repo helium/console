@@ -30,11 +30,11 @@ class AWSForm extends Component {
 
     return(
       <div>
-        <Title level={4} style={{ marginBottom: '20px'}}>
+        <Text>
           {type === "update" ? "Update your AWS Connection Details" : "Enter your AWS Connection Details"}
-        </Title>
+        </Text>
 
-        <div>
+        <div style={{ marginTop: '20px'}}>
           <Input
             addonBefore={(<div style={{width: '125px', textAlign: 'left'}}>Access Key</div>)}
             placeholder="ie. AKIATFHY24442Z62QSQW"

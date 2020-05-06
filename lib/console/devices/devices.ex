@@ -56,14 +56,20 @@ defmodule Console.Devices do
         {:error, :forbidden, "Device limit for organization reached"}
       true ->
         %Device{}
-        |> Device.changeset(attrs)
+        |> Device.create_changeset(attrs)
         |> Repo.insert()
     end
   end
 
   def update_device(%Device{} = device, attrs) do
     device
-    |> Device.changeset(attrs)
+    |> Device.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_device(%Device{} = device, attrs, "router") do
+    device
+    |> Device.router_update_changeset(attrs)
     |> Repo.update()
   end
 

@@ -78,6 +78,7 @@ class DeviceIndexTable extends Component {
       {
         title: 'Device Name',
         dataIndex: 'name',
+        render: (text, record) => <Link to="#">{text}</Link>
       },
       {
         title: 'Device EUI',
@@ -98,6 +99,7 @@ class DeviceIndexTable extends Component {
                       text={l.name}
                       color={l.color}
                       hasIntegrations={l.channels.length > 0}
+                      hasFunction={l.function}
                     />
                   }
                 >
@@ -107,8 +109,10 @@ class DeviceIndexTable extends Component {
                     color={l.color}
                     closable
                     hasIntegrations={l.channels.length > 0}
+                    hasFunction={l.function}
                     onClose={e => {
                       e.preventDefault()
+                      e.stopPropagation()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
                   />
@@ -157,10 +161,16 @@ class DeviceIndexTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.props.openDeleteDeviceModal([record])}>Delete</Link>
-              <Text>{" | "}</Text>
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                onClick={e => {
+                  e.stopPropagation()
+                  this.props.openDeleteDeviceModal([record])
+                }}
+              />
             </UserCan>
-            <Link to={`/devices/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -192,17 +202,13 @@ class DeviceIndexTable extends Component {
               <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
               <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
-            <Button
-              type="primary"
-              icon="plus"
-              onClick={this.props.openCreateDeviceModal}
-            >
-              Add Device
-            </Button>
           </UserCan>
         }
       >
         <Table
+          onRow={(record, rowIndex) => ({
+            onClick: () => this.props.history.push(`/devices/${record.id}`)
+          })}
           columns={columns}
           dataSource={devices.entries}
           rowKey={record => record.id}

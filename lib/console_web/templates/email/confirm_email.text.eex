@@ -1,5 +1,29 @@
-Welcome to Helium Console!
+Welcome and thanks for registering your Helium Console account.
 
 Please confirm your account by visiting the link below. If you did not request an account, you can ignore this message.
-
 <%= confirm_email_url(ConsoleWeb.Endpoint, :confirm_email, @token) %>
+
+Only Helium Console allows IoT developers to fully harness the power of the world’s first peer-to-peer wireless network.
+
+Get Started Quickly with Console -
+Here are resources to help you get started quickly sending data from devices to endpoints.
+1. Add a device in minutes with our quickstart guide. (https://developer.helium.com/console/quickstart)
+
+2. Organize your devices and use other capabilities like mapping devices to integrations using labels. More label information here (https://developer.helium.com/console/labels).
+
+3. Send device data to endpoints with pre-built or custom integrations. Learn about integrations here (https://developer.helium.com/console/integrations).
+
+Videos -
+Running Devices on the Largest, Public LoRaWAN Network in the US (https://youtu.be/t78PQsPc6hQ)
+Importing TTN Devices with Helium Console CLI (https://youtu.be/0P-eMhNKK9o)
+
+Never miss out on new video content by subscribing to Helium YouTube channel here (https://www.youtube.com/c/HeliumInc).
+
+Resources -
+Developer Documentation (https://developer.helium.com/)
+Engineering Blog (https://engineering.helium.com/)
+Community Slack (http://chat.helium.com/)
+Connectivity Cost Calculator (https://www.helium.com/business)
+
+Get in touch -
+hello@helium.com (mailto:hello@helium.com)

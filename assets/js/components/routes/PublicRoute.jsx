@@ -11,12 +11,13 @@ class PublicRoute extends Component {
     const { path } = this.props;
     const { isLoggedIn } = this.props.auth;
     const Component = this.props.component;
+    const hideWelcomeScreen = localStorage.getItem('hideWelcomeScreen')
 
     return(
       <Route path={path} render={props => (
         isLoggedIn === false
           ? <Component {...props} />
-        : <Redirect to='/dashboard' />
+        : <Redirect to={hideWelcomeScreen ? '/devices' : '/welcome'} />
       )} />
     )
   }

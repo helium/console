@@ -86,6 +86,7 @@ class InvitationsTable extends Component {
                 }}
                 type="danger"
                 icon="delete"
+                shape="circle"
               />
             </div>
           </UserCan>

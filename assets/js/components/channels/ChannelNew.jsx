@@ -101,7 +101,15 @@ class ChannelNew extends Component {
     const { allLabels } = this.props.data
 
     return(
-      <DashboardLayout title="Create New Integration">
+      <DashboardLayout
+        title="Create New Integration"
+        breadCrumbs={
+          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
+            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Channels&nbsp;&nbsp;/</Text></Link>
+            <Text>&nbsp;&nbsp;Create New Integration</Text>
+          </div>
+        }
+      >
 
       <Card title="Step 1 – Choose an Integration Type">
 
@@ -134,7 +142,7 @@ class ChannelNew extends Component {
             >
               {allLabels.map(l => (
                 <Option value={l.id} key={l.id}>
-                  <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0}/>
+                  <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
                 </Option>
               ))}
             </Select>

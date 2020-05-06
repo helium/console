@@ -2,9 +2,9 @@ import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 
-export const createLabel = (name, channelId, redirect) => {
+export const createLabel = (label, channelId, redirect) => {
   return (dispatch) => {
-    const labelParams = sanitizeParams({ name })
+    const labelParams = sanitizeParams(label)
 
     rest.post('/api/labels', {
         label: labelParams,
@@ -129,6 +129,25 @@ export const removeLabelsFromChannel = (labels, channel_id) => {
     rest.post(`/api/channels_labels/delete`, {
       labels,
       channel_id,
+    })
+    .then(response => {})
+  }
+}
+
+export const removeLabelFromFunction = (label_id, function_id) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/remove_function`, {
+      label: label_id,
+      function: function_id,
+    })
+    .then(response => {})
+  }
+}
+
+export const toggleLabelDebug = (label_id) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/debug`, {
+      label: label_id
     })
     .then(response => {})
   }

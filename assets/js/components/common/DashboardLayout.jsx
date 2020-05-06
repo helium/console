@@ -7,7 +7,7 @@ const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
   render() {
-    const { classes, title, extra, breadCrumbs, noSideNav } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding } = this.props;
 
     return (
       <Layout style={{width: '100%', minWidth: 800 }}>
@@ -20,12 +20,12 @@ class DashboardLayout extends Component {
           !noSideNav && (
             <Sider style={{ overflow: 'hidden' }}>
               <NavDrawer />
-              <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Beta v0.1</Tag>
+              <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Beta v0.5</Tag>
             </Sider>
           )
         }
         <Layout>
-          <Content><ContentLayout title={title} extra={extra} breadCrumbs={breadCrumbs}>
+          <Content><ContentLayout title={title} extra={extra} breadCrumbs={breadCrumbs} noHeaderPadding={noHeaderPadding}>
             {this.props.children}
           </ContentLayout></Content>
         </Layout>

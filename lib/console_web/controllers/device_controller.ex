@@ -84,6 +84,16 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def debug(conn, %{"device" => device_id}) do
+    current_organization = conn.assigns.current_organization
+    device = Devices.get_device!(current_organization, device_id)
+
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:debug:devices", %{ "devices" => [device_id] })
+
+    conn
+    |> send_resp(:no_content, "")
+  end
+
   def broadcast(%Device{} = device) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end

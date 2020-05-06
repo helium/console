@@ -84,7 +84,7 @@ class LabelIndexTable extends Component {
         dataIndex: 'name',
         render: (text, record) => (
           <React.Fragment>
-            <Text>{text}</Text><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0}/>
+            <Link to="">{text}</Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
           </React.Fragment>
         )
       },
@@ -114,15 +114,21 @@ class LabelIndexTable extends Component {
         render: data => moment.utc(data).local().format('lll')
       },
       {
-        title: 'Action',
+        title: '',
         key: 'action',
         render: (text, record) => (
           <div>
             <UserCan>
-              <Link to="#" onClick={() => this.handleDeleteLabelClick(record)}>Delete</Link>
-              <Text>{" | "}</Text>
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                onClick={e => {
+                  e.stopPropagation()
+                  this.handleDeleteLabelClick(record)
+                }}
+              />
             </UserCan>
-            <Link to={`/labels/${record.id}`}>Show</Link>
           </div>
         )
       },
@@ -154,17 +160,13 @@ class LabelIndexTable extends Component {
               <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
               <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>
-            <Button
-              type="primary"
-              icon="tag"
-              onClick={this.props.openCreateLabelModal}
-            >
-              Create New Label
-            </Button>
           </UserCan>
         }
       >
         <Table
+          onRow={(record, rowIndex) => ({
+            onClick: () => this.props.history.push(`/labels/${record.id}`)
+          })}
           columns={columns}
           dataSource={labels.entries}
           rowKey={record => record.id}

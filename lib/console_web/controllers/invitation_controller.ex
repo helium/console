@@ -20,17 +20,22 @@ defmodule ConsoleWeb.InvitationController do
 
   def create(conn, %{"invitation" => attrs}) do
     current_user = conn.assigns.current_user
+    current_organization = conn.assigns.current_organization
     organization = Organizations.get_organization!(current_user, attrs["organization"])
 
-    with {:ok, %Invitation{} = invitation} <-
-      Organizations.create_invitation(current_user, organization, attrs) do
-      Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
-      broadcast(invitation)
+    if current_organization.id == organization.id and current_user.email != attrs["email"] do
+      with {:ok, %Invitation{} = invitation} <-
+        Organizations.create_invitation(current_user, organization, attrs) do
+        Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
+        broadcast(invitation)
 
-      conn
-      |> put_status(:created)
-      |> put_resp_header("message", "Invitation sent")
-      |> render("show.json", invitation: invitation)
+        conn
+        |> put_status(:created)
+        |> put_resp_header("message", "Invitation sent")
+        |> render("show.json", invitation: invitation)
+      end
+    else
+      {:error, :forbidden, "You don't have access to do this"}
     end
   end
 

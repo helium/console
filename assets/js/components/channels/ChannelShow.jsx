@@ -5,11 +5,14 @@ import { bindActionCreators } from 'redux';
 import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
+import { primaryBlue } from '../../util/colors'
 import { displayError } from '../../util/messages'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
 import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
 import ChannelShowRemoveLabelModal from './ChannelShowRemoveLabelModal'
 import HttpDetails from './HttpDetails'
+import AwsDetails from './AwsDetails'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
 import GoogleForm from './forms/GoogleForm.jsx'
@@ -74,10 +77,10 @@ class ChannelShow extends Component {
     this.setState({ newName: ""})
   }
 
-  handleShowDupesUpdate = () => {
+  handleChangeDownlinkToken = () => {
     const { channel } = this.props.data
-    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DUPLICATES_FLAG", { "id": channel.id, "show_dupes": !channel.show_dupes })
-    this.props.updateChannel(channel.id, { show_dupes: !channel.show_dupes })
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DOWNLINK_TOKEN", { "id": channel.id })
+    this.props.updateChannel(channel.id, { downlink_token: "new" })
   }
 
   handleUpdateDetailsChange = () => {
@@ -140,49 +143,81 @@ class ChannelShow extends Component {
     )
 
     return(
-      <DashboardLayout title={`Integration: ${channel.name}`}>
-      <Card title="Integration Details">
-        <UserCan alternate={<Text strong>{channel.name}</Text>}>
-          <Input
-            name="newName"
-            placeholder={channel.name}
-            value={this.state.newName}
-            onChange={this.handleInputUpdate}
-            style={{ width: 150, marginRight: 5 }}
-          />
-          <Button
-            type="primary"
-            onClick={this.handleNameChange}
-          >
-            Update
-          </Button>
-        </UserCan>
-        <Divider />
-        <Row>
-          <Col span={12}>
-          <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
-          <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
-          <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-          <Paragraph><Text strong> Devices Piped-- </Text></Paragraph>
-          <Paragraph>{channel.devices.length} Connected Devices</Paragraph>
-          </Col>
-          <Col span={12}>
-            {channel.type === "http" && (
-              <Card size="small" title="HTTP Details">
-                 <HttpDetails channel={channel} />
-              </Card>
-            )}
-            <UserCan
-              alternate={<Checkbox checked={channel.show_dupes} disabled>
-                Show Duplicate Packets
-              </Checkbox>}
+      <DashboardLayout
+        title={`${channel.name}`}
+        breadCrumbs={
+          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
+            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
+            <Text>&nbsp;&nbsp;{channel.name}</Text>
+          </div>
+        }
+      >
+        <Card title="Integration Details">
+          <UserCan alternate={<Text strong>{channel.name}</Text>}>
+            <Input
+              name="newName"
+              placeholder={channel.name}
+              value={this.state.newName}
+              onChange={this.handleInputUpdate}
+              style={{ width: 150, marginRight: 5 }}
+            />
+            <Button
+              type="primary"
+              onClick={this.handleNameChange}
             >
-              <Checkbox checked={channel.show_dupes} onChange={this.handleShowDupesUpdate}>
-                Show Duplicate Packets
-              </Checkbox>
-            </UserCan>
-          </Col>
-        </Row>
+              Update
+            </Button>
+          </UserCan>
+          <Divider />
+          <Row>
+            <Col span={12}>
+            <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
+            <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
+            <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
+            <Paragraph><Text strong> Devices Piped-- </Text></Paragraph>
+            <Paragraph>{channel.devices.length} Connected Devices</Paragraph>
+            </Col>
+            <Col span={12}>
+              {channel.type === "http" && (
+                <Card size="small" title="HTTP Details">
+                   <HttpDetails channel={channel} />
+                </Card>
+              )}
+              {channel.type === "aws" && (
+                <Card size="small" title="AWS Details">
+                   <AwsDetails channel={channel} />
+                </Card>
+              )}
+            </Col>
+          </Row>
+          {
+            channel.type === 'http' && (
+              <UserCan>
+                <Divider />
+                <Text>Downlink URL</Text>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
+                  <Input
+                    value="https://console.helium.com/api/v1/down/{:integration_id}/{:downlink_key}/{:optional_device_id}"
+                    style={{ marginRight: 10 }}
+                  />
+                  <CopyToClipboard text="https://console.helium.com/api/v1/down/{:integration_id}/{:downlink_key}/{:optional_device_id}">
+                    <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
+                  </CopyToClipboard>
+                </div>
+                <Text>Downlink Key</Text>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Input
+                    value={channel.downlink_token}
+                    style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
+                  />
+                  <CopyToClipboard text={channel.downlink_token}>
+                    <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
+                  </CopyToClipboard>
+                  <Button onClick={this.handleChangeDownlinkToken} style={{ marginRight: 0 }}>Generate New Key</Button>
+                </div>
+              </UserCan>
+            )
+          }
         </Card>
 
         <UserCan>

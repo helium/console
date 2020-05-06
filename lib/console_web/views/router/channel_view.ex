@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.Router.ChannelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.Router.ChannelView
+  alias ConsoleWeb.Router.FunctionView
 
   def render("index.json", %{channels: channels}) do
     render_many(channels, ChannelView, "channel.json")
@@ -11,15 +12,20 @@ defmodule ConsoleWeb.Router.ChannelView do
   end
 
   def render("channel.json", %{channel: channel}) do
-    %{
-      id: channel.id,
-      name: channel.name,
-      type: channel.type,
-      credentials: channel.credentials,
-      active: channel.active,
-      organization_id: channel.organization_id,
-      show_dupes: channel.show_dupes,
-    }
+    channel_json =
+      %{
+        id: channel.id,
+        name: channel.name,
+        type: channel.type,
+        credentials: channel.credentials,
+        active: channel.active,
+        organization_id: channel.organization_id,
+        downlink_token: channel.downlink_token,
+      }
+    case Map.get(channel, :function) do
+      nil -> channel_json
+      _ -> channel_json |> FunctionView.append_function(channel.function)
+    end
   end
 
   def append_channels(json, channels) do

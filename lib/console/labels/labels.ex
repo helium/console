@@ -27,8 +27,17 @@ defmodule Console.Labels do
      |> Repo.all()
   end
 
+  def get_labels_of_device(device) do
+     from(dl in DevicesLabels, where: dl.device_id == ^device.id)
+     |> Repo.all()
+  end
+
   def get_label(organization, id) do
      Repo.get_by(Label, [id: id, organization_id: organization.id])
+  end
+
+  def fetch_assoc(%Label{} = label, assoc \\ [:devices]) do
+    Repo.preload(label, assoc)
   end
 
   def get_label_by_name(name, organization_id), do: Repo.get_by(Label, [name: name, organization_id: organization_id])
@@ -185,5 +194,22 @@ defmodule Console.Labels do
         query = from(cl in ChannelsLabels, where: cl.label_id in ^labels and cl.channel_id == ^channel_id)
         Repo.delete_all(query)
     end
+  end
+
+  def add_function_to_labels(function, label_ids, organization) do
+    Repo.transaction(fn ->
+      Enum.each(label_ids, fn id ->
+        label = get_label!(organization, id)
+        update_label(label, %{ "function_id" => function.id })
+      end)
+    end)
+  end
+
+  def create_labels_add_function(function, label_names, organization, user) do
+    Repo.transaction(fn ->
+      Enum.each(label_names, fn name ->
+        create_label(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
+      end)
+    end)
   end
 end

@@ -156,3 +156,51 @@ h1 {
   margin-top: 20px;
   margin-right: 20px;
 }
+
+.ant-message {
+  top: 30px;
+}
+
+.ant-btn-icon-only > i {
+  vertical-align: -0.12em;
+}
+
+.ant-table-tbody > tr > td:last-of-type {
+  text-align: right;
+}
+
+@keyframes rotate{
+  to{ transform: rotate(360deg); }
+}
+
+.rotate{
+  animation: rotate 1.5s linear infinite;
+}
+
+.menu-link {
+  color: #A7ADB4;
+}
+
+.menu-link:hover {
+  color: white;
+}
+
+.ant-layout {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.ant-layout::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+
+.no-scroll-bar {
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.no-scroll-bar::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}

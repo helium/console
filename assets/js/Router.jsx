@@ -22,11 +22,15 @@ import ChannelIndex from './components/channels/ChannelIndex'
 import ChannelShow from './components/channels/ChannelShow'
 import ChannelNew from './components/channels/ChannelNew'
 import UserIndex from './components/organizations/UserIndex'
-import Dashboard from './components/dashboard/Dashboard'
+import OrganizationIndex from './components/organizations/OrganizationIndex'
 import LabelIndex from './components/labels/LabelIndex'
 import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
 import { useAuth0  } from './components/auth/Auth0Provider'
+import FunctionIndex from './components/functions/FunctionIndex';
+import FunctionNew from './components/functions/FunctionNew';
+import FunctionShow from './components/functions/FunctionShow';
+import Welcome from './components/Welcome';
 
 const Router = () => {
   const { loading, isAuthenticated, loginWithRedirect, getIdTokenClaims, user } = useAuth0();
@@ -53,7 +57,7 @@ const Router = () => {
             { /* ConnectedRouter will use the store from Provider automatically */ }
             <ConnectedRouter history={history}>
               <Switch>
-                <Redirect exact from="/" to="/dashboard" />
+                <Redirect exact from="/" to="/devices" />
                 <PublicRoute path="/register" component={Register}/>
                 <ConsoleRoute path="/profile" component={Profile} user={user}/>
                 <ConsoleRoute exact path="/devices" component={DeviceIndex} />
@@ -64,8 +68,12 @@ const Router = () => {
                 <ConsoleRoute exact path="/integrations/new/:id?" component={ChannelNew} />
                 <ConsoleRoute exact path="/integrations/:id" component={ChannelShow} />
                 <ConsoleRoute exact path="/users" component={UserIndex} user={user}/>
-                <ConsoleRoute exact path="/dashboard" component={Dashboard} />
+                <ConsoleRoute exact path="/organizations" component={OrganizationIndex} />
                 <ConsoleRoute exact path="/datacredits" component={DataCredits} />
+                <ConsoleRoute exact path="/functions" component={FunctionIndex} />
+                <ConsoleRoute exact path="/functions/new" component={FunctionNew} />
+                <ConsoleRoute exact path="/functions/:id" component={FunctionShow} />
+                <ConsoleRoute exact path="/welcome" component={Welcome} />
               </Switch>
             </ConnectedRouter>
           </ApolloProvider>

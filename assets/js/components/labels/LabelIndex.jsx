@@ -6,6 +6,7 @@ import LabelAddChannelModal from './LabelAddChannelModal'
 import RemoveAllDevicesFromLabelsModal from './RemoveAllDevicesFromLabelsModal'
 import LabelIndexTable from './LabelIndexTable'
 import analyticsLogger from '../../util/analyticsLogger'
+import UserCan from '../common/UserCan'
 import { Button } from 'antd';
 
 class LabelIndex extends Component {
@@ -56,12 +57,26 @@ class LabelIndex extends Component {
   render() {
     const { showRemoveAllDevicesFromLabelsModal, showCreateLabelModal, showDeleteLabelModal, showLabelAddChannelModal, labelsSelected } = this.state
     return (
-      <DashboardLayout title="Labels">
+      <DashboardLayout
+        title="Labels"
+        extra={
+          <UserCan>
+            <Button
+              size="large"
+              type="primary"
+              icon="plus"
+              onClick={this.openCreateLabelModal}
+            >
+              Add Label
+            </Button>
+          </UserCan>
+        }
+      >
         <LabelIndexTable
-          openCreateLabelModal={this.openCreateLabelModal}
           openDeleteLabelModal={this.openDeleteLabelModal}
           openRemoveAllDevicesFromLabelsModal={this.openRemoveAllDevicesFromLabelsModal}
           openLabelAddChannelModal={this.openLabelAddChannelModal}
+          history={this.props.history}
         />
 
         <CreateLabelModal

@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.LabelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.LabelView
+  alias ConsoleWeb.FunctionView
 
   def render("show.json", %{label: label}) do
     render_one(label, LabelView, "label.json")

@@ -6,7 +6,7 @@ defmodule Console.Channels.ChannelResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     channels = Channel
       |> where([c], c.organization_id == ^current_organization.id)
-      |> preload([labels: :devices])
+      |> preload([{:labels, [:devices, :function]}])
       |> Repo.paginate(page: page, page_size: page_size)
 
     updated_entries = channels.entries
@@ -38,6 +38,11 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:method, channel.credentials["method"])
           |> Map.put(:inbound_token, channel.credentials["inbound_token"])
           |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
+          |> Map.put(:devices, devices)
+        "aws" ->
+          channel
+          |> Map.put(:aws_region, channel.credentials["aws_region"])
+          |> Map.put(:topic, channel.credentials["topic"])
           |> Map.put(:devices, devices)
         _ ->
           channel
