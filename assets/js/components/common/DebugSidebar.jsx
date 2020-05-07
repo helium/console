@@ -31,8 +31,16 @@ class DebugSidebar extends Component {
         const channel = omit(c, ["__typename"])
         if (channel.debug) {
           channel.debug = JSON.parse(c["debug"])
-          if (channel.debug.req && channel.debug.req.body) channel.debug.req.body = JSON.parse(channel.debug.req.body)
-          if (channel.debug.res && channel.debug.res.body) channel.debug.res.body = JSON.parse(channel.debug.res.body)
+          if (channel.debug.req && channel.debug.req.body) {
+            try {
+              channel.debug.req.body =  JSON.parse(channel.debug.req.body)
+            } catch(e) {}
+          }
+          if (channel.debug.res && channel.debug.res.body) {
+            try {
+              channel.debug.res.body = JSON.parse(channel.debug.res.body)
+            } catch(e) {}
+          }
         }
         return channel
       })
