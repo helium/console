@@ -29,7 +29,10 @@ export const fetchOrganization = () => {
         org => { org.id === organization.id }
       );
       if (!org) {
-        localStorage.setItem('organization', JSON.stringify({ id: fetchedOrganizations[0].id }));
+        localStorage.setItem(
+          'organization', 
+          JSON.stringify({ id: fetchedOrganizations[0].id })
+        );
         return dispatch(fetchedOrganization(fetchedOrganizations[0]));
       }
       return dispatch(fetchedOrganization(org));
