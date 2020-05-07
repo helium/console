@@ -26,16 +26,17 @@ export const fetchOrganization = () => {
       // validate or replace organization id
       const fetchedOrganizations = await getOrganizations();
       const org = fetchedOrganizations.find(
-        org => { org.id === organization.id }
+        org => org.id === organization.id
       );
-      if (!org) {
+      if (org) {
+        return dispatch(fetchedOrganization(org));
+      } else if (fetchedOrganizations.length) {
         localStorage.setItem(
           'organization', 
           JSON.stringify({ id: fetchedOrganizations[0].id })
         );
         return dispatch(fetchedOrganization(fetchedOrganizations[0]));
       }
-      return dispatch(fetchedOrganization(org));
     }
     return dispatch(fetchedOrganization({ id: null, name: "", role: "" }));
   }
