@@ -18,7 +18,8 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   def create(conn, %{"organization" => %{ "name" => organization_name } }) do
-    with {:ok, %Organization{} = organization} <- Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
+    with {:ok, %Organization{} = organization} <-
+      Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
       case Enum.count(organizations) do
         1 ->
