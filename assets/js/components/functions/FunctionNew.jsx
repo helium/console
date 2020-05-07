@@ -99,6 +99,8 @@ class FunctionNew extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
+            <Text>Labels are necessary to apply Functions to devices</Text>
+            <div style={{ height: 10 }}/>
             <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
           </Card>
         </UserCan>

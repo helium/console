@@ -236,6 +236,8 @@ class FunctionShow extends Component {
 
         <UserCan>
           <Card title="Labels Applied To">
+            <Text>Labels are necessary to apply Functions to devices</Text>
+            <div style={{ height: 10 }}/>
             <LabelsAppliedExisting
               labels={fxn.labels}
               updateLabelFunction={this.updateLabelFunction}
