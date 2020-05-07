@@ -12,13 +12,12 @@ class UserCan extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    role: state.organization.currentRole
   }
 }
 
 export const userCan = (props) => {
-  const { role } = props.user
-
+  const { role } = props;
   if (role === 'read') return false
   return true
 }

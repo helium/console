@@ -69,7 +69,8 @@ class Profile extends Component {
   }
 
   render() {
-    const { email, role } = this.props.user;
+    const { email } = this.props.user;
+    const { role } = this.props;
     const { logOut, authKey, data } = this.props
     const { newKey } = this.state
 
@@ -186,7 +187,8 @@ class Profile extends Component {
 
 function mapStateToProps(state) {
   return {
-    authKey: state.auth.apikey
+    authKey: state.auth.apikey,
+    role: state.organization.currentRole
   }
 }
 

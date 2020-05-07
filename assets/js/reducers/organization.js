@@ -11,6 +11,7 @@ const organization = (state = initialState, action) => {
             ...state, 
             currentOrganizationId: action.currentOrganizationId, 
             currentOrganizationName: action.currentOrganizationName,
+            currentRole: action.currentRole,
             loadingOrganization: false
         };
       case FETCHING_ORGANIZATION:

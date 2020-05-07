@@ -19,20 +19,26 @@ export const fetchOrganization = () => {
       // get a new organization id
       const organizations = await getOrganizations();
       if (organizations && organizations.length) {
-        localStorage.setItem('organization', JSON.stringify(organizations[0]));
+        localStorage.setItem('organization', JSON.stringify({ id: organizations[0].id }));
         return dispatch(fetchedOrganization(organizations[0]));
       }
     } else {
       // validate or replace organization id
       const fetchedOrganizations = await getOrganizations();
-      if (fetchedOrganizations.indexOf(organization)) {
-        return dispatch(fetchedOrganization(organization));
-      } else if (fetchedOrganizations && fetchedOrganizations.length){
-        localStorage.setItem('organization', JSON.stringify(fetchedOrganizations[0]));
+      const org = fetchedOrganizations.find(
+        org => org.id === organization.id
+      );
+      if (org) {
+        return dispatch(fetchedOrganization(org));
+      } else if (fetchedOrganizations.length) {
+        localStorage.setItem(
+          'organization', 
+          JSON.stringify({ id: fetchedOrganizations[0].id })
+        );
         return dispatch(fetchedOrganization(fetchedOrganizations[0]));
       }
     }
-    return dispatch(fetchedOrganization({ id: null, name: "" }))
+    return dispatch(fetchedOrganization({ id: null, name: "", role: "" }));
   }
 }
 
@@ -89,7 +95,8 @@ export const fetchedOrganization = (organization) => {
   return {
     type: FETCHED_ORGANIZATION,
     currentOrganizationId: organization.id,
-    currentOrganizationName: organization.name
+    currentOrganizationName: organization.name,
+    currentRole: organization.role
   }
 }
 
