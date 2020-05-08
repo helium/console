@@ -9,6 +9,8 @@ import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
 import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
+import classNames from 'classnames';
+
 
 const queryOptions = {
   options: props => ({
@@ -78,7 +80,51 @@ class LabelsAppliedNew extends Component {
     const { allLabels, loading, error } = this.props.data
     if (loading) return <div />
     if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
+      
+      <div className="blankstateWrapper">
+      <div className="message">
+<h1>You have no Labels</h1>
+<p>Labels are necessary to apply Functions to devices. <br /><a href="/labels">Create a Label before starting.</a></p>
+
+      </div>
+      <style jsx>{`
+
+          .message {
+            
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+
+          }
+
+          h1, p  {
+
+            color: #242425;
+          }
+          h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+          }
+          p {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.75;
+          }
+
+
+          .blankstateWrapper {
+            width: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+            margin: 0 auto;
+            position: relative;
+
+            
+          }
+        `}</style>
+
+      </div>
     )
 
     return (

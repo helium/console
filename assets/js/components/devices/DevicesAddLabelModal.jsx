@@ -77,7 +77,7 @@ class DevicesAddLabelModal extends Component {
       >
         <div>
           <Select
-            placeholder={error ? "Labels failed to load..." : "Choose Label"}
+            placeholder={error ? "No Labels found..." : "Choose Label"}
             style={{ width: 270, marginRight: 10 }}
             onSelect={this.handleSelectOption}
             value={labelId}

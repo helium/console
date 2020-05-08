@@ -9,7 +9,10 @@ import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
+import FunctionsImg from '../../../img/functions.svg'
+import classNames from 'classnames';
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
+
 const { Text } = Typography
 
 const queryOptions = {
@@ -152,7 +155,76 @@ class FunctionIndexTable extends Component {
 
     if (loading) return null;
     if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
+
+        <div className="blankstateWrapper">
+      <div className="message">
+<img src={FunctionsImg} />
+<h1>No Functions</h1>
+<p>You haven’t created any functions yet.</p>
+
+<div className="explainer">
+  <h2>What are Functions?</h2>
+  <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
+</div>
+
+      </div>
+      <style jsx>{`
+
+         .message {
+            
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+
+          }
+
+          .explainer {
+            background: #DFE8F4;
+            padding: 20px 60px;
+            border-radius: 20px;
+            border: 1px solid #CCD7E9;
+            text-align: center;
+            margin-top: 50px;
+            box-sizing: border-box;
+          }
+
+          .explainer h2 {
+            color: #242425;
+            font-size: 20px;
+          }
+          .explainer p {
+            color: #556B8C;
+            font-size: 15px;
+          }
+
+          .explainer p a {
+            color: #096DD9;
+          }
+
+          h1, p  {
+
+            color: #242425;
+          }
+          h1 {
+            font-size: 46px;
+            margin-bottom: 10px;
+          }
+          p {
+            font-size: 20px;
+            font-weight: 300;
+          }
+
+
+          .blankstateWrapper {
+            width: 100%;
+            padding-top: 150px;
+            margin: 0 auto;
+            position: relative;
+          }
+        `}</style>
+
+      </div>
     )
 
     return (

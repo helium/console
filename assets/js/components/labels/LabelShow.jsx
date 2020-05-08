@@ -16,6 +16,7 @@ import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Button, Typography } from 'antd';
+
 const { Text } = Typography
 
 const queryOptions = {
@@ -95,7 +96,12 @@ class LabelShow extends Component {
   render() {
     const { loading, error, label } = this.props.data
     if (loading) return <DashboardLayout />
-    if (error) return <Text>Data failed to load, please reload the page and try again</Text>
+    if (error) return (
+
+
+test
+
+      )
 
     const normalizedDevices = label.devices.reduce((map, device) => {
       map[device.id] = device
