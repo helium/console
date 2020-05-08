@@ -178,7 +178,23 @@ h1 {
 }
 
 
+.ant-modal-mask {
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+backdrop-filter: saturate(180%) blur(20px);
+background: rgba(0,21,41,0.8);
+}
 
+.ant-modal-content {
+  border-radius: 14px;
+}
+
+.ant-modal-footer {
+  padding: 16px;
+}
+
+.ant-modal-header {
+  border-radius: 14px 14px 0 0;
+}
 .ant-layout {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
