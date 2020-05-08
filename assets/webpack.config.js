@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack')
 
 module.exports = function(env) {
   const production = process.env.NODE_ENV === 'production';
@@ -40,5 +41,8 @@ module.exports = function(env) {
       modules: ['node_modules', path.resolve(__dirname, 'js')],
       extensions: ['.js', '.jsx'],
     },
+    plugins: [
+      new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID'])
+    ],
   };
 };
