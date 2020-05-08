@@ -3,8 +3,6 @@ const webpack = require('webpack')
 
 module.exports = function(env) {
   const production = process.env.NODE_ENV === 'production';
-  console.error('AUTH_0_DOMAIN', process.env.AUTH_0_DOMAIN);
-  console.error('AUTH_0_DOMAIN', env);
   return {
     devtool: production ? 'source-maps' : 'eval',
     entry: './js/app.js',
