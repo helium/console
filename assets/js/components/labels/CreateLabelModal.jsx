@@ -85,7 +85,7 @@ class CreateLabelModal extends Component {
         <Text strong>Step 2 - Add Label Attachments (Optional)</Text>
         <div>
           <Select
-            placeholder={error ? "Data failed to load..." : "Choose Integration"}
+            placeholder={error ? "No Integrations Available" : "Choose Integration"}
             style={{ width: 220, marginRight: 10, marginTop: 10 }}
             onSelect={this.handleSelectChannel}
           >
@@ -97,11 +97,9 @@ class CreateLabelModal extends Component {
               ))
             }
           </Select>
-        </div>
-
-        <div>
+   
           <Select
-            placeholder={error ? "Data failed to load..." : "Choose Function"}
+            placeholder={error ? "No Functions Available" : "Choose Function"}
             style={{ width: 220, marginRight: 10, marginTop: 10 }}
             onSelect={this.handleSelectFunction}
           >
