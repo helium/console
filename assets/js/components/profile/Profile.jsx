@@ -59,7 +59,7 @@ class Profile extends Component {
     const { name, role } = this.state
     this.props.generateKey(name, role)
       .then(newKey => {
-        analyticsLogger.logEvent("ACTION_GENERATE_API_KEY", { name, role, userId: this.props.userId })
+        analyticsLogger.logEvent("ACTION_GENERATE_API_KEY", { name, role, userId: this.props.user.id })
         this.setState({ newKey })
       })
   }
@@ -69,7 +69,8 @@ class Profile extends Component {
   }
 
   render() {
-    const { email, role } = this.props.user;
+    const { email } = this.props.user;
+    const { role } = this.props;
     const { logOut, authKey, data } = this.props
     const { newKey } = this.state
 
@@ -186,9 +187,8 @@ class Profile extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user,
-    userId: state.auth.user.id,
-    authKey: state.auth.apikey
+    authKey: state.auth.apikey,
+    role: state.organization.currentRole
   }
 }
 

@@ -2,49 +2,41 @@ import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
 import { percentOfTimeLeft } from './jwt.js'
 import { refreshedToken } from '../actions/auth.js'
-import { logOut } from '../actions/auth'
+import { getIdTokenClaims } from '../components/auth/Auth0Provider'
 
-export const get = (path, params = {}) => {
-  const originalApiCall = axios({
+export const get = async (path, params = {}) => {
+  return axios({
     url: path,
     method: 'get',
-    headers: headers(),
+    headers: await headers(),
     params
   })
-
-  return checkTokenBeforeApiCall(originalApiCall)
 }
 
-export const post = (path, data) => {
-  const originalApiCall = axios({
+export const post = async (path, data) => {
+  return axios({
     url: path,
     method: 'post',
-    headers: headers(),
+    headers: await headers(),
     data
   })
-
-  return checkTokenBeforeApiCall(originalApiCall)
 }
 
-export const put = (path, data) => {
-  const originalApiCall = axios({
+export const put = async (path, data) => {
+  return axios({
     url: path,
     method: 'put',
-    headers: headers(),
+    headers: await headers(),
     data
   })
-
-  return checkTokenBeforeApiCall(originalApiCall)
 }
 
-export const destroy = (path) => {
-  const originalApiCall = axios({
+export const destroy = async (path) => {
+  return axios({
     url: path,
     method: 'delete',
-    headers: headers()
+    headers: await headers()
   })
-
-  return checkTokenBeforeApiCall(originalApiCall)
 }
 
 const checkTokenBeforeApiCall = (originalApiCall) => {
@@ -57,7 +49,8 @@ const checkTokenBeforeApiCall = (originalApiCall) => {
   }
 }
 
-const refreshTokenBeforeApiCall = (apikey, originalApiCall) => (
+const refreshTokenBeforeApiCall = async (apikey, originalApiCall) => {
+
   axios({
     url: '/api/sessions/refresh',
     method: 'post',
@@ -73,23 +66,27 @@ const refreshTokenBeforeApiCall = (apikey, originalApiCall) => (
     store.dispatch(refreshedToken(response.data.jwt))
     return originalApiCall
   })
-)
+}
 
-const auth = () => (
-  store.getState().auth
-)
-
-const headers = () => {
+const headers = async () => {
   let headerParams = {
     'Content-Type': 'application/json'
   };
-  const {isLoggedIn, apikey} = auth()
-
-  if (isLoggedIn) {
-    Object.assign(headerParams, {
-      'Authorization': `Bearer ${apikey}`
-    })
+  let organizationId;
+  try {
+    organizationId = JSON.parse(localStorage.getItem('organization')).id;
+  } catch (e) {
+    // unable to retrieve the organization
   }
+  if (organizationId) {
+    Object.assign(headerParams, { organization: organizationId })
+  }
+  const tokenClaims = await getIdTokenClaims();
+  const apikey = tokenClaims.__raw
+
+  Object.assign(headerParams, {
+    'Authorization': `Bearer ${apikey}`
+  })
 
   return headerParams;
 }

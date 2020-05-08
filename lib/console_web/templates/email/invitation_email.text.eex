@@ -6,4 +6,4 @@ Visit the link below to complete registration of your account.
 
 After you complete registration you will receive a confirmation email. If you cannot locate the email, please check Spam or Promotion folders or perform a search for an email from the address: console@helium.com.
 
- <%= accept_invitation_url(ConsoleWeb.Endpoint, :accept, @token) %>
+ <%= accept_invitation_url(ConsoleWeb.Endpoint, :redirect_to_register, @token) %>

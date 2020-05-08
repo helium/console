@@ -9,52 +9,65 @@ import { replace } from 'connected-react-router';
 
 import {ApolloLink} from "apollo-link";
 import {hasSubscription} from "@jumpn/utils-graphql";
-import socketLink from './socketLink'
+import SocketLink from './socketLink'
 
-
-const httpLink = createHttpLink({
-  uri: "/graphql"
-})
-
-const authLink = setContext((_, { headers }) => {
-  const token = store.getState().auth.apikey
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ""
+export const setupApolloClient = (getAuthToken) => {
+  const httpLink = createHttpLink({
+    uri: "/graphql"
+  })
+  
+  const authLink = setContext(async (_, { headers }) => {
+    const tokenClaims = await getAuthToken();
+    const token = tokenClaims.__raw
+    let assignableHeaders = {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+      }
     }
-  }
-})
-
-const authErrorLink = onError(({ networkError, operation: { operationName }}) => {
-  if (networkError.statusCode == 404) {
-    switch(operationName) {
-      case "DeviceShowQuery":
-        store.dispatch(replace("/devices"))
-        break
-      case "ChannelShowQuery":
-        store.dispatch(replace("/integrations"))
-        break
-      case "GatewayShowQuery":
-        store.dispatch(replace("/gateways"))
-        break
-      default:
-        break
+    const organizationId = JSON.parse(localStorage.getItem('organization')).id;
+    if (organizationId) {
+      Object.assign(assignableHeaders, {organization: organizationId })
     }
-  }
-})
-
-const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
-
-const link = new ApolloLink.split(
-  operation => hasSubscription(operation.query),
-  socketLink,
-  authHttpLink
-)
-
-const apolloClient = new ApolloClient({
-  link,
-  cache: new InMemoryCache(),
-})
-
-export default apolloClient
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : "",
+        organization: organizationId
+      }
+    }
+  })
+  
+  const authErrorLink = onError(({ networkError, operation: { operationName }}) => {
+    if (networkError.statusCode == 404) {
+      switch(operationName) {
+        case "DeviceShowQuery":
+          store.dispatch(replace("/devices"))
+          break
+        case "ChannelShowQuery":
+          store.dispatch(replace("/integrations"))
+          break
+        case "GatewayShowQuery":
+          store.dispatch(replace("/gateways"))
+          break
+        default:
+          break
+      }
+    }
+  })
+  
+  const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
+  const socketLink = new SocketLink(getAuthToken)
+  
+  const link = new ApolloLink.split(
+    operation => hasSubscription(operation.query),
+    socketLink,
+    authHttpLink
+  )
+  
+  const apolloClient = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+  })
+  return apolloClient;
+}

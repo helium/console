@@ -9,7 +9,7 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Email
   alias Console.Mailer
 
-  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :get_by_token]
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :redirect_to_register, :get_by_token]
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -24,39 +24,22 @@ defmodule ConsoleWeb.InvitationController do
     organization = Organizations.get_organization!(current_user, attrs["organization"])
 
     if current_organization.id == organization.id and current_user.email != attrs["email"] do
-      case Auth.user_exists?(attrs["email"]) do
-        {true, existing_user} ->
+      with {:ok, %Invitation{} = invitation} <-
+        Organizations.create_invitation(current_user, organization, attrs) do
+        Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
+        broadcast(invitation)
 
-          with {:ok, %Membership{} = membership} <-
-                 Organizations.join_organization(existing_user, organization, attrs["role"]) do
-            membership = membership |> Organizations.fetch_assoc_membership()
-            Email.joined_organization_email(membership) |> Mailer.deliver_later()
-            ConsoleWeb.MembershipController.broadcast(membership)
-
-            conn
-            |> put_status(:created)
-            |> put_resp_header("message", "User added to organization")
-            |> put_view(ConsoleWeb.MembershipView)
-            |> render("show.json", membership: membership)
-          end
-        false ->
-          with {:ok, %Invitation{} = invitation} <-
-                 Organizations.create_invitation(current_user, organization, attrs) do
-            Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
-            broadcast(invitation)
-
-            conn
-            |> put_status(:created)
-            |> put_resp_header("message", "Invitation sent")
-            |> render("show.json", invitation: invitation)
-          end
+        conn
+        |> put_status(:created)
+        |> put_resp_header("message", "Invitation sent")
+        |> render("show.json", invitation: invitation)
       end
     else
       {:error, :forbidden, "You don't have access to do this"}
     end
   end
 
-  def accept(conn, %{"token" => token}) do
+  def redirect_to_register(conn, %{"token" => token}) do
     with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
       conn
       |> redirect(
@@ -71,15 +54,31 @@ defmodule ConsoleWeb.InvitationController do
     end
   end
 
+  def accept(conn, %{"invitation" => %{"token" => invitation_token}}) do
+    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
+      organization = Organizations.get_organization!(invitation.organization_id)
+      Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
+      Organizations.mark_invitation_used(invitation)
+
+      Organizations.get_invitation!(invitation.id)
+      |> ConsoleWeb.InvitationController.broadcast()
+
+      Organizations.get_membership!(conn.assigns.current_user, organization)
+      |> ConsoleWeb.MembershipController.broadcast()
+
+      conn
+      |> put_status(:ok)
+      |> render("accept.json", organization: organization)
+    end
+  end
+
   def get_by_token(conn, %{"token" => token}) do
     with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
       inv = Organizations.fetch_assoc_invitation(inv)
       organization = inv.organization
       organization_name = URI.encode(organization.name)
-      inviter = inv.inviter
-      inviter_email = URI.encode(inviter.email)
 
-      render(conn, "invitation.json", invitation: inv, organization_name: organization_name, inviter: inviter_email)
+      render(conn, "invitation.json", invitation: inv, organization_name: organization_name)
     end
   end
 

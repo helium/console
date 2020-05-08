@@ -80,7 +80,7 @@ const menu = (handleClick, currentOrganizationName) => (
 function mapStateToProps(state, ownProps) {
   return {
     email: state.user.email,
-    currentOrganizationName: state.auth.currentOrganizationName,
+    currentOrganizationName: state.organization.currentOrganizationName,
   }
 }
 

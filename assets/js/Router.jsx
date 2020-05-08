@@ -1,28 +1,21 @@
-import React from "react"
+import React, { useEffect } from 'react'
 
 import { store, persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import { ApolloProvider } from 'react-apollo';
-import apolloClient from './util/apolloClient'
+import { setupApolloClient } from './util/apolloClient'
 
 // Routes
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
-import PrivateRoute from './components/routes/PrivateRoute.jsx';
+import ConsoleRoute from './components/routes/ConsoleRoute.jsx';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import UserOrgProvider from './components/UserOrgProvider'
-import Login from './components/auth/Login.jsx';
-import Terms from './components/auth/Terms.jsx';
 import Register from './components/auth/Register.jsx';
-import ResendVerification from './components/auth/ResendVerification.jsx';
-import ForgotPassword from './components/auth/ForgotPassword.jsx';
-import ResetPassword from './components/auth/ResetPassword.jsx';
 import Profile from './components/profile/Profile.jsx';
-import TwoFactorPrompt from './components/auth/TwoFactorPrompt.jsx';
-import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
 import ChannelIndex from './components/channels/ChannelIndex'
@@ -33,53 +26,61 @@ import OrganizationIndex from './components/organizations/OrganizationIndex'
 import LabelIndex from './components/labels/LabelIndex'
 import LabelShow from './components/labels/LabelShow'
 import DataCredits from './components/billing/DataCredits'
+import { useAuth0  } from './components/auth/Auth0Provider'
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
 import FunctionShow from './components/functions/FunctionShow';
 import Welcome from './components/Welcome';
 
-class Router extends React.Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <ApolloProvider client={apolloClient}>
-            <UserOrgProvider>
-              { /* ConnectedRouter will use the store from Provider automatically */ }
-              <ConnectedRouter history={history}>
-                <Switch>
-                  <Redirect exact from="/" to="/login" />
-                  <PublicRoute path="/login" component={Login}/>
-                  <PublicRoute path="/terms" component={Terms}/>
-                  <PublicRoute path="/resend_verification" component={ResendVerification}/>
-                  <PublicRoute path="/forgot_password" component={ForgotPassword}/>
-                  <PublicRoute path="/reset_password/:token" component={ResetPassword}/>
-                  <PublicRoute path="/register" component={Register}/>
-                  <PublicRoute path="/confirm_email" component={ConfirmEmailPrompt}/>
-                  <PrivateRoute path="/2fa_prompt" component={TwoFactorPrompt}/>
-                  <PrivateRoute path="/profile" component={Profile}/>
-                  <PrivateRoute exact path="/devices" component={DeviceIndex} />
-                  <PrivateRoute exact path="/labels" component={LabelIndex} />
-                  <PrivateRoute path="/devices/:id" component={DeviceShow}/>
-                  <PrivateRoute path="/labels/:id" component={LabelShow} />
-                  <PrivateRoute exact path="/integrations" component={ChannelIndex} />
-                  <PrivateRoute exact path="/integrations/new/:id?" component={ChannelNew} />
-                  <PrivateRoute exact path="/integrations/:id" component={ChannelShow} />
-                  <PrivateRoute exact path="/users" component={UserIndex} />
-                  <PrivateRoute exact path="/organizations" component={OrganizationIndex} />
-                  <PrivateRoute exact path="/datacredits" component={DataCredits} />
-                  <PrivateRoute exact path="/functions" component={FunctionIndex} />
-                  <PrivateRoute exact path="/functions/new" component={FunctionNew} />
-                  <PrivateRoute exact path="/functions/:id" component={FunctionShow} />
-                  <PrivateRoute exact path="/welcome" component={Welcome} />
-                </Switch>
-              </ConnectedRouter>
-            </UserOrgProvider>
-          </ApolloProvider>
-        </PersistGate>
-      </Provider>
-    )
+const Router = () => {
+  const { loading, isAuthenticated, loginWithRedirect, getIdTokenClaims, user } = useAuth0();
+  useEffect(() => {
+    if (loading || isAuthenticated) {
+      return;
+    }
+    const fn = async () => {
+      await loginWithRedirect({
+        appState: {targetUrl: window.location.pathname, params: window.location.search}
+      });
+    };
+    fn();
+  }, [loading, isAuthenticated, loginWithRedirect]);
+  if (loading) {
+    return <div>Loading...</div>
   }
+  const apolloClient = setupApolloClient(getIdTokenClaims);
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <UserOrgProvider>
+          <ApolloProvider client={apolloClient}>
+            { /* ConnectedRouter will use the store from Provider automatically */ }
+            <ConnectedRouter history={history}>
+              <Switch>
+                <Redirect exact from="/" to="/devices" />
+                <PublicRoute path="/register" component={Register}/>
+                <ConsoleRoute path="/profile" component={Profile} user={user}/>
+                <ConsoleRoute exact path="/devices" component={DeviceIndex} />
+                <ConsoleRoute exact path="/labels" component={LabelIndex} />
+                <ConsoleRoute path="/devices/:id" component={DeviceShow}/>
+                <ConsoleRoute path="/labels/:id" component={LabelShow} />
+                <ConsoleRoute exact path="/integrations" component={ChannelIndex} />
+                <ConsoleRoute exact path="/integrations/new/:id?" component={ChannelNew} />
+                <ConsoleRoute exact path="/integrations/:id" component={ChannelShow} />
+                <ConsoleRoute exact path="/users" component={UserIndex} user={user}/>
+                <ConsoleRoute exact path="/organizations" component={OrganizationIndex} />
+                <ConsoleRoute exact path="/datacredits" component={DataCredits} />
+                <ConsoleRoute exact path="/functions" component={FunctionIndex} />
+                <ConsoleRoute exact path="/functions/new" component={FunctionNew} />
+                <ConsoleRoute exact path="/functions/:id" component={FunctionShow} />
+                <ConsoleRoute exact path="/welcome" component={Welcome} />
+              </Switch>
+            </ConnectedRouter>
+          </ApolloProvider>
+        </UserOrgProvider>
+      </PersistGate>
+    </Provider>
+  )
 }
 
-export default Router
+export default Router;

@@ -18,7 +18,7 @@ defmodule ConsoleWeb.TwoFactorController do
   end
 
   def create(conn, %{"user" => %{"code" => code, "userId" => userId, "secret2fa" => secret2fa}}) do
-    with %User{} = user <- Auth.get_user_by_id!(userId) do
+    with %User{} = user <- Auth.get_user_by_id(userId) do
       if Auth.verify_2fa_code(code, secret2fa) do
           codes = Auth.generate_backup_codes()
           with {:ok, %TwoFactor{}} <- Auth.enable_2fa(user, secret2fa, codes) do
@@ -33,7 +33,7 @@ defmodule ConsoleWeb.TwoFactorController do
   end
 
   def verify(conn, %{"session" => %{"code" => code, "userId" => userId}}) do
-    with %User{} = user <- Auth.get_user_by_id!(userId) do
+    with %User{} = user <- Auth.get_user_by_id(userId) do
       loadedUser = Auth.fetch_assoc(user)
       userTwoFactor = loadedUser.twofactor
 
@@ -53,7 +53,7 @@ defmodule ConsoleWeb.TwoFactorController do
   end
 
   def skip(conn, %{"userId" => userId}) do
-    with %User{} = user <- Auth.get_user_by_id!(userId),
+    with %User{} = user <- Auth.get_user_by_id(userId),
       {:ok, _} = Auth.update_2fa_last_skipped(user) do
 
         conn

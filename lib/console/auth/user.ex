@@ -3,8 +3,8 @@ defmodule Console.Auth.User do
   import Ecto.Changeset
   alias Console.Helpers
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
+  @primary_key {:id, :string, []}
+  @foreign_key_type :string
   schema "users" do
     field :email, :string
     field :password_hash, :string
@@ -32,6 +32,7 @@ defmodule Console.Auth.User do
     |> validate_format(:email, ~r/@/, message: "Email needs to have an @ sign to be valid")
     |> put_downcased_email()
     |> unique_constraint(:email, message: "Email has already been taken, please log in instead")
+    |> cast(attrs, [:id])
   end
 
   def registration_changeset(user, attrs \\ :empty) do

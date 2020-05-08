@@ -5,12 +5,11 @@ import { Socket as PhoenixSocket } from 'phoenix'
 
 import { store } from '../store/configureStore';
 
-function getAuthToken() {
-  return store.getState().auth.apikey
-}
-
-function createPhoenixSocket(token) {
-  return new PhoenixSocket("/socket", { params: { token } })
+function createPhoenixSocket(token, organizationId) {
+  return new PhoenixSocket(
+    "/socket", 
+    { params: { token, organization_id:  organizationId} }
+  )
 }
 
 function createInnerSocketLink(phoenixSocket) {
@@ -19,30 +18,34 @@ function createInnerSocketLink(phoenixSocket) {
 }
 
 class SocketLink extends ApolloLink {
-  constructor() {
-    super()
-    this.socket = createPhoenixSocket(getAuthToken())
-    this.link = createInnerSocketLink(this.socket)
-    this._watchAuthToken()
+  constructor(methodForAuthToken) {
+    super();
+    this.getAuthToken = methodForAuthToken;
+    this.token = null;
+    this.organizationId = null;
+    this.socket = createPhoenixSocket(this.getAuthToken(), this.organizationId);
+    this.link = createInnerSocketLink(this.socket);
+    this._watchAuthToken();
   }
 
   request(operation, forward) {
-    return this.link.request(operation, forward)
+    return this.link.request(operation, forward);
   }
 
   _watchAuthToken() {
-    let token = getAuthToken()
-
-    store.subscribe(() => {
-      const newToken = getAuthToken()
-      if (newToken !== token) {
-        token = newToken
-        this.socket.disconnect()
-        this.socket = createPhoenixSocket(token)
-        this.link = createInnerSocketLink(this.socket)
+    store.subscribe(async () => {
+      const newTokenClaims = await this.getAuthToken();
+      const newToken = newTokenClaims.__raw;
+      const { currentOrganizationId } = store.getState().organization;
+      if (newToken !== this.token || this.organizationId !== currentOrganizationId) {
+        this.organizationId = currentOrganizationId;
+        this.token = newToken;
+        this.socket.disconnect();
+        this.socket = createPhoenixSocket(this.token, this.organizationId);
+        this.link = createInnerSocketLink(this.socket);
       }
     })
   }
 }
 
-export default new SocketLink()
+export default SocketLink;

@@ -1,11 +1,46 @@
 import { push } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 import * as rest from '../util/rest';
-import { getOrganizationId, getOrganizationName } from '../util/jwt';
-import { logIn } from './auth'
 
-export const FETCH_ORGANIZATIONS = 'FETCH_ORGANIZATIONS'
+export const FETCHED_ORGANIZATION = 'FETCHED_ORGANIZATIONS'
+export const FETCHING_ORGANIZATION = 'FETCHING_ORGANIZATION'
 export const SWITCHED_ORGANIZATION = 'SWITCHED_ORGANIZATION'
+
+export const fetchOrganization = () => {
+  return async (dispatch) => {
+    dispatch(fetchingOrganization());
+    let organization;
+    try {
+      organization = JSON.parse(localStorage.getItem('organization'));
+    } catch (e) {
+      organization = null;
+    }
+    if (!organization) {
+      // get a new organization id
+      const organizations = await getOrganizations();
+      if (organizations && organizations.length) {
+        localStorage.setItem('organization', JSON.stringify({ id: organizations[0].id }));
+        return dispatch(fetchedOrganization(organizations[0]));
+      }
+    } else {
+      // validate or replace organization id
+      const fetchedOrganizations = await getOrganizations();
+      const org = fetchedOrganizations.find(
+        org => org.id === organization.id
+      );
+      if (org) {
+        return dispatch(fetchedOrganization(org));
+      } else if (fetchedOrganizations.length) {
+        localStorage.setItem(
+          'organization', 
+          JSON.stringify({ id: fetchedOrganizations[0].id })
+        );
+        return dispatch(fetchedOrganization(fetchedOrganizations[0]));
+      }
+    }
+    return dispatch(fetchedOrganization({ id: null, name: "", role: "" }));
+  }
+}
 
 export const createOrganization = (name, noOtherOrg = false) => {
   return (dispatch) => {
@@ -16,19 +51,29 @@ export const createOrganization = (name, noOtherOrg = false) => {
       })
       .then(response => {
         if (noOtherOrg) {
-          dispatch(logIn(response.data.jwt))
-          window.location.reload(true)
+          dispatch(fetchedOrganization(response));
+          window.location.reload(true);
         }
       })
   }
 }
 
-export const switchOrganization = (id) => {
+export const switchOrganization = (organization) => {
   return (dispatch) => {
-    rest.post(`/api/organizations/${id}/switch`)
+    localStorage.setItem('organization', JSON.stringify(organization));
+    dispatch(switchedOrganization(organization));
+    window.location.reload(true);
+  }
+}
+
+export const joinOrganization = (token) => {
+  let params = { invitation: { token } }
+  return async dispatch => {
+    rest.post('/api/users', params)
       .then(response => {
-        dispatch(switchedOrganization(response.data.jwt))
-        window.location.reload(true)
+        dispatch(fetchedOrganization(response.data[0]));
+        localStorage.setItem('organization', JSON.stringify(response.data[0]));
+        push('/devices');
       })
   }
 }
@@ -40,11 +85,30 @@ export const deleteOrganization = (id) => {
   }
 }
 
-export const switchedOrganization = (apikey) => {
+export const fetchingOrganization = () => {
+  return {
+    type: FETCHING_ORGANIZATION
+  }
+}
+
+export const fetchedOrganization = (organization) => {
+  return {
+    type: FETCHED_ORGANIZATION,
+    currentOrganizationId: organization.id,
+    currentOrganizationName: organization.name,
+    currentRole: organization.role
+  }
+}
+
+export const switchedOrganization = (organization) => {
   return {
     type: SWITCHED_ORGANIZATION,
-    apikey,
-    currentOrganizationId: getOrganizationId(apikey),
-    currentOrganizationName: getOrganizationName(apikey)
+    currentOrganizationId: organization.id,
+    currentOrganizationName: organization.name
   }
+}
+
+const getOrganizations = async () => {
+  const organizations = await rest.get('/api/organizations/');
+  return organizations.data;
 }

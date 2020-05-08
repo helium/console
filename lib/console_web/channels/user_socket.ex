@@ -1,6 +1,12 @@
 defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: ConsoleWeb.Schema
+  alias Console.Organizations
+  alias Console.Organizations.Organization
+  alias Console.Auth
+  require Logger
+
+  @access_token_decoder Application.get_env(:console, :access_token_decoder)
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -13,17 +19,22 @@ defmodule ConsoleWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(%{"token" => token}, socket) do
-    case Guardian.Phoenix.Socket.authenticate(socket, ConsoleWeb.Guardian, token) do
-      {:ok, authed_socket} ->
-        authed_socket = Absinthe.Phoenix.Socket.put_options(authed_socket, context: %{
-          current_organization_id: authed_socket.assigns.guardian_default_claims["organization"],
-          current_user_id: authed_socket.assigns.guardian_default_claims["user"]
-        })
-        {:ok, authed_socket}
-
-      {:error, _} ->
-        :error
+  def connect(%{"token" => token, "organization_id" => organization_id}, socket) do
+    case @access_token_decoder.decode_conn_access_token(token) do
+      %{email: email, user_id: user_id} ->
+        case Auth.get_user_by_id_and_email(user_id, email)
+          |> Organizations.get_current_organization(organization_id) do
+          %{organization: current_organization} ->
+            authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
+              current_organization_id: current_organization.id,
+              current_user_id: user_id
+            })
+            {:ok, authed_socket}
+          _ ->
+            {:error}
+        end
+      :error ->
+        {:error}
     end
   end
 

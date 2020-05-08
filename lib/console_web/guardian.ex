@@ -25,7 +25,7 @@ defmodule ConsoleWeb.Guardian do
     # found in the `"sub"` key. In `above subject_for_token/2` we returned
     # the resource id so here we'll rely on that to look it up.
     id = claims["sub"]
-    resource = Auth.get_user_by_id!(id)
+    resource = Auth.get_user_by_id(id)
     {:ok,  resource}
   end
   def resource_from_claims(_claims) do

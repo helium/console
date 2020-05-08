@@ -1,47 +1,37 @@
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { isJwtExpired } from '../util/jwt.js'
+import React, { useEffect } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import { fetchIndices } from '../actions/main'
+import { fetchOrganization } from '../actions/organization'
 
-@connect(mapStateToProps, mapDispatchToProps)
-class UserOrgProvider extends Component {
-  componentDidMount() {
-    if (this.props.isLoggedIn && this.props.currentOrganizationId) {
-      this.props.fetchIndices()
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { isLoggedIn, currentOrganizationId, apikey, fetchIndices } = this.props
-
-    // if the user has just logged in...
-    if (!prevProps.isLoggedIn && isLoggedIn && currentOrganizationId) {
-      return fetchIndices()
-    }
-  }
-
-  render() {
+const UserOrgProvider = (props) => {
+  useEffect(() => {
+    props.fetchOrganization();
+  }, []);
+  const location = useLocation();
+  const { loadingOrganization } = props;
+  if (location.pathname == '/register' || !loadingOrganization) {
     return (
       <div>
-        {this.props.children}
+        { props.children }
       </div>
     )
   }
+  return null;
 }
 
 function mapStateToProps(state, ownProps) {
   return {
-    isLoggedIn: state.auth.isLoggedIn,
-    apikey: state.auth.apikey,
-    currentOrganizationId: state.auth.currentOrganizationId
+    loadingOrganization: state.organization.loadingOrganization
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     fetchIndices,
+    fetchOrganization
   }, dispatch);
 }
 
-export default UserOrgProvider
+export default connect(mapStateToProps, mapDispatchToProps)(UserOrgProvider)

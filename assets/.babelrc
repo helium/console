@@ -1,5 +1,15 @@
 {
-  "presets": ["env", "react"],
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "10"
+        }
+      }
+    ],
+    "babel-preset-react"
+  ],
   "plugins": [
     "transform-es2015-destructuring",
     "transform-es2015-parameters",

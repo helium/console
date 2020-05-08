@@ -1,5 +1,6 @@
 defmodule Console.Organizations do
   import Ecto.Query, warn: false
+  alias Ecto.UUID
   alias Console.Repo
 
   alias Console.Organizations.Organization
@@ -15,14 +16,21 @@ defmodule Console.Organizations do
   end
 
   def get_organizations(%User{} = current_user) do
-    Ecto.assoc(current_user, :organizations) |> Repo.all()
+    query = from o in Organization,
+      join: m in Membership, on: m.organization_id == o.id,
+      where: m.user_id == ^current_user.id,
+      select: %{id: o.id, name: o.name, role: m.role}
+    Repo.all(query)
   end
 
   def get_organization!(%User{} = current_user, id) do
     if current_user.super do
       Repo.get!(Organization, id)
     else
-      Ecto.assoc(current_user, :organizations) |> Repo.get!(id)
+      query = from o in Organization,
+        join: m in Membership, on: m.organization_id == o.id,
+        where: m.user_id == ^current_user.id and o.id == ^id
+      Repo.one!(query)
     end
   end
 
@@ -30,7 +38,10 @@ defmodule Console.Organizations do
     if current_user.super do
       Repo.get(Organization, id)
     else
-      Ecto.assoc(current_user, :organizations) |> Repo.get(id)
+      query = from o in Organization,
+        join: m in Membership, on: m.organization_id == o.id,
+        where: m.user_id == ^current_user.id and o.id == ^id
+      Repo.one(query)
     end
   end
 
@@ -51,7 +62,25 @@ defmodule Console.Organizations do
   end
 
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
-    Repo.get_by!(Membership, user_id: user_id, organization_id: organization_id)
+    query = from m in Membership,
+      where: m.user_id == ^user_id and m.organization_id == ^organization_id
+    Repo.one(query)
+  end
+
+  def get_current_organization(user, organization_id) do
+    if user.super do
+      organization = get_organization!(organization_id)
+      membership = %Membership{ role: "admin" }
+      %{membership: membership, organization: organization}
+    else
+      case get_organization(user, organization_id) do
+        %Organization{} = current_organization ->
+          current_membership = get_membership!(user, current_organization)
+          %{membership: current_membership, organization: current_organization}
+        _ ->
+          :forbidden
+      end
+    end
   end
 
   def user_has_access?(%User{} = user, %Organization{} = organization) do
@@ -59,7 +88,7 @@ defmodule Console.Organizations do
       from(
         m in "memberships",
         select: count(m.id),
-        where: m.user_id == type(^user.id, :binary_id) and m.organization_id == type(^organization.id, :binary_id)
+        where: m.user_id == ^user.id and m.organization_id == type(^organization.id, :binary_id)
       )
 
     count = Repo.one(query)
@@ -99,11 +128,11 @@ defmodule Console.Organizations do
     Repo.preload(organization, assoc)
   end
 
-  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:inviter, :organization]) do
+  def fetch_assoc_invitation(%Invitation{} = invitation, assoc \\ [:organization]) do
     Repo.preload(invitation, assoc)
   end
 
-  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:user, :organization]) do
+  def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:organization]) do
     Repo.preload(membership, assoc)
   end
 

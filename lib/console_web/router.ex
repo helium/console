@@ -24,7 +24,6 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through :api
 
-    post "/users", UserController, :create
     post "/users/resend_verification", UserController, :resend_verification
     post "/users/forgot_password", UserController, :forgot_password
     post "/users/change_password", UserController, :change_password
@@ -36,6 +35,7 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
+    post "/users", InvitationController, :accept
     resources "/devices", DeviceController, except: [:new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/debug", DeviceController, :debug
@@ -117,7 +117,7 @@ defmodule ConsoleWeb.Router do
     get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
     get "/users/reset_password/:token", UserController, :reset_password, as: "reset_password"
 
-    get "/invitations/accept/:token", InvitationController, :accept, as: "accept_invitation"
+    get "/invitations/accept/:token", InvitationController, :redirect_to_register, as: "accept_invitation"
     get "/api_keys/accept/:token", ApiKeyController, :accept, as: "accept_api_key"
 
     get "/*path", PageController, :index

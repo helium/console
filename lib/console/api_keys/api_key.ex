@@ -11,8 +11,8 @@ defmodule Console.ApiKeys.ApiKey do
     field :key, :binary
     field :token, :string
     field :active, :boolean, default: false
+    field :user_id, :string
 
-    belongs_to :user, Console.Auth.User
     belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
