@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import ReactDOM from "react-dom"
 import SearchResultsSection from './SearchResultsSection'
 import sample from 'lodash/sample'
+import Fade from 'react-reveal/Fade';
+
 import { Typography } from 'antd';
 const { Text } = Typography
 
@@ -28,7 +30,8 @@ class SearchResults extends Component {
 
     if ((pageResultsLength + searchResultsLength) > 0) {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: 'white', boxShadow: '0 52px 64px -50px #001529' }} id="searchResults">
+        <Fade>
+        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: 'white', boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px' }} id="searchResults">
           {searchResultsLength > 0 &&
             <SearchResultsSection
               title="SEARCH RESULTS"
@@ -38,7 +41,6 @@ class SearchResults extends Component {
             />
 
           }
-          <hr style={{border: 'none', borderTop: '1px solid #cdcdcd'}}/>
           {pageResultsLength > 0 &&
             <SearchResultsSection
               title="PAGES"
@@ -47,12 +49,13 @@ class SearchResults extends Component {
               gotoResult={gotoResult}
             />
           }
-        </div>,
+        </div>
+        </Fade>,
         this.el
       )
     } else {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', paddingLeft: 20, paddingTop: 10, paddingBottom: 10,  }} id="searchResults">
+        <div style={{ backgroundColor: 'white', padding: '10px 20px', borderRadius: 6,boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px', textAlign: 'center'  }} id="searchResults">
           <Text>
             No Results Found {reactionFace()}
           </Text>
@@ -64,7 +67,7 @@ class SearchResults extends Component {
 }
 
 const reactionFace = () => (
-  sample([":(", ":'(", ":c", ":{", ":[", ">:("])
+  sample(["🧐", "😩", "😠", "😐", "🤨", "😢"])
 )
 
 export default SearchResults

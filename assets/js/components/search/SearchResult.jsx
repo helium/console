@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Icon, Typography } from 'antd';
+
 const { Text } = Typography
 
 class SearchResult extends Component {
@@ -16,7 +17,9 @@ class SearchResult extends Component {
           backgroundColor: selected ? '#E3F2FD' : 'white',
           padding: 16,
           borderRadius: 4,
+          
         }}
+        className="result"
       >
         <SearchResultIcon category={result.category} />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -25,6 +28,7 @@ class SearchResult extends Component {
         </div>
         <div style={{ flexGrow: 1 }} />
         <JumpTo show={selected} />
+
       </div>
     )
   }

@@ -72,10 +72,10 @@ h1 {
 #searchResults
 {
   position: absolute;
-  top: 48px;
+  top: 58px;
   z-index: 100;
-  right: 130px;
-  width: 360px;
+  left: calc(50% - 170px);
+  width: 380px;
 }
 
 #searchResults .jumpto .jumpto--inner

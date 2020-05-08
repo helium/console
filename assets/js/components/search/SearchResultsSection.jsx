@@ -17,7 +17,7 @@ class SearchResultsSection extends Component {
 
     return (
       <div>
-        <div style={{ paddingTop: 10, paddingBottom: 10 }}>
+        <div style={{ paddingTop: 10, paddingBottom: 10, marginBottom: 10 }}>
           <Text strong>{title}</Text>
         </div>
         {results.map(result =>
