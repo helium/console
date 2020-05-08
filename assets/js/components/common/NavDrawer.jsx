@@ -13,6 +13,8 @@ import { graphql } from 'react-apollo';
 import { MENU_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
+import classNames from 'classnames';
+
 
 const queryOptions = {
   options: props => ({
@@ -57,23 +59,23 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
-            <Link to={"/labels"} className="menu-link" style={{ marginRight: 40 }}>
+          <Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link>
+          <Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link>
+          <div style={{ marginLeft: 0, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
+            <Link to={"/labels"} className="menu-link" style={{ marginBottom: 10 }}>
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
             </Link>
             {
               showLabels ? (
                 <p
-                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 24, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false })}
                 >
                   -
                 </p>
               ) : (
                 <p
-                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 24, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true })}
                 >
                   +
@@ -83,7 +85,7 @@ class NavDrawer extends Component {
           </div>
           {
             showLabels && (
-              <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 16 }}>
+              <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }}>
                 {
                   data.allLabels && data.allLabels.map(l => (
                     <div style={{ padding: 2 }} key={l.id}>
@@ -96,11 +98,28 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
+          <Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link>
+          <Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link>
+          <Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link>
+          <Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link>
         </Menu>
+
+                    <style jsx>{`
+
+                      .menu-link {
+                        color: #53779E;
+                        display: block;
+                        padding: 20px;
+                        position: relative;
+                          }
+
+                        .menu-link:hover {
+                          color: white;
+                          background: rgba(0,0,0,0.2);
+                        }
+
+                `}</style>
+
       </div>
     )
   }
