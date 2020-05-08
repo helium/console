@@ -157,11 +157,11 @@ class Welcome extends Component {
 
               }
 
-              a:hover {
+              .welcomewrapper a:hover {
                 text-decoration: underline;
               }
 
-              a:hover i {
+              .welcomewrapper a:hover i {
                 margin-left: 12px;
               }
 
