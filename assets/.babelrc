@@ -15,6 +15,7 @@
     "transform-es2015-parameters",
     "transform-object-rest-spread",
     "transform-decorators-legacy",
-    "transform-class-properties"
+    "transform-class-properties",
+    "styled-jsx/babel"
   ]
 }
