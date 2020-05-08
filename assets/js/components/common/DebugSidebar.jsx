@@ -22,7 +22,7 @@ class DebugSidebar extends Component {
 
     let event = subscriptionData.data[this.props.subscriptionKey]
 
-    if (!event.payload) return
+    if (!event.hasOwnProperty("payload")) return
 
     event = omit(event, ["__typename", "category", "description", "reported_at"])
     if (event.hotspots && event.hotspots.length > 0) event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
