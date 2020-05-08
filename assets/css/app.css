@@ -214,3 +214,15 @@ background: rgba(0,21,41,0.8);
     width: 0;
     height: 0;
 }
+
+.menu-link {
+  color: #53779E;
+  display: block;
+  padding: 20px;
+  position: relative;
+}
+
+.menu-link:hover {
+  color: white;
+  background: rgba(0,0,0,0.2);
+}

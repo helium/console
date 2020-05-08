@@ -59,8 +59,8 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link>
-          <Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link>
+          <div><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
+          <div><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
           <div style={{ marginLeft: 0, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
             <Link to={"/labels"} className="menu-link" style={{ marginBottom: 10 }}>
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
@@ -98,28 +98,11 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          <Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link>
-          <Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link>
-          <Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link>
-          <Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link>
+          <div><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
+          <div><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
+          <div><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
+          <div><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
         </Menu>
-
-                    <style jsx>{`
-
-                      .menu-link {
-                        color: #53779E;
-                        display: block;
-                        padding: 20px;
-                        position: relative;
-                          }
-
-                        .menu-link:hover {
-                          color: white;
-                          background: rgba(0,0,0,0.2);
-                        }
-
-                `}</style>
-
       </div>
     )
   }
