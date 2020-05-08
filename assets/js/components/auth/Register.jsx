@@ -55,7 +55,7 @@ class Register extends Component {
                   </Button>
                 </Col>
                 <Col sm={12}>
-                  <Button onClick={() => this.props.history.push('/dashboard')} style={{width: '100%'}}>
+                  <Button onClick={() => this.props.history.push('/devices')} style={{width: '100%'}}>
                     Reject Invitation
                   </Button>
                 </Col>
