@@ -18,12 +18,20 @@ function createInnerSocketLink(phoenixSocket) {
 }
 
 class SocketLink extends ApolloLink {
-  constructor(methodForAuthToken) {
+  constructor(methodForAuthToken, organizationId) {
     super();
     this.getAuthToken = methodForAuthToken;
     this.token = null;
-    this.organizationId = null;
-    this.socket = createPhoenixSocket(this.getAuthToken(), this.organizationId);
+    this.organizationId = organizationId;
+  }
+
+  async connect() {
+    const newTokenClaims = await this.getAuthToken();
+    const newToken = newTokenClaims.__raw;
+    if (this.token !== newToken) {
+      this.token = newToken;
+    }
+    this.socket = createPhoenixSocket(this.token, this.organizationId);
     this.link = createInnerSocketLink(this.socket);
     this._watchAuthToken();
   }

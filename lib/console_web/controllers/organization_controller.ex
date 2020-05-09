@@ -21,16 +21,18 @@ defmodule ConsoleWeb.OrganizationController do
     with {:ok, %Organization{} = organization} <-
       Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
+      membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+      membership_info = %{id: organization.id, name: organization.name, role: membership.role}
       case Enum.count(organizations) do
         1 ->
-          render(conn, "show.json", organization: organization)
+          render(conn, "show.json", organization: membership_info)
         _ ->
           broadcast(organization, conn.assigns.current_user)
 
           conn
           |> put_status(:created)
           |> put_resp_header("message",  "#{organization.name} created successfully")
-          |> render("show.json", organization: organization)
+          |> render("show.json", organization: membership_info)
       end
     end
   end
@@ -50,11 +52,11 @@ defmodule ConsoleWeb.OrganizationController do
     else
       with {:ok, _} <- Organizations.delete_organization(organization) do
         broadcast(organization, conn.assigns.current_user)
-
+        render_org = %{id: organization.id, name: organization.name, role: membership.role}
         conn
         |> put_status(:accepted)
         |> put_resp_header("message",  "#{organization.name} deleted successfully")
-        |> render("show.json", organization: organization)
+        |> render("show.json", organization: render_org)
       end
     end
   end
