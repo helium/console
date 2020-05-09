@@ -113,8 +113,7 @@ defmodule Console.Organizations do
       |> Repo.transaction()
 
     case result do
-      {:ok, %{organization: organization, membership: membership}} ->
-        {:ok, %{id: organization.id, name: organization.name, role: membership.role}}
+      {:ok, %{organization: organization}} -> {:ok, organization}
       {:error, :organization, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
