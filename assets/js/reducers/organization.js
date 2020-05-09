@@ -12,12 +12,12 @@ const organization = (state = initialState, action) => {
             currentOrganizationId: action.currentOrganizationId, 
             currentOrganizationName: action.currentOrganizationName,
             currentRole: action.currentRole,
-            loadingOrganization: false
+            loadedOrganization: true
         };
       case FETCHING_ORGANIZATION:
         return {
           ...state,
-          loadingOrganization: true
+          loadedOrganization: false
         }
       default:
         return state;

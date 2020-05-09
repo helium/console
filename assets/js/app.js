@@ -22,11 +22,12 @@ import "phoenix_html"
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import App from './App.jsx'
 import { Auth0Provider } from './components/auth/Auth0Provider'
 import Terms from './components/auth/Terms'
-import { history } from './store/configureStore'
+import { history, store } from './store/configureStore'
 import { config } from './config/auth0'
 
 const onRedirectCallback = appState => {
@@ -50,7 +51,9 @@ ReactDOM.render(
           redirect_uri={window.location.origin}
           onRedirectCallback={onRedirectCallback}
         >
-          <App/>
+          <Provider store={store}>
+            <App/>
+          </Provider>
         </Auth0Provider>
       </Route>
     </Switch>

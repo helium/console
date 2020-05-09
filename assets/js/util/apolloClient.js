@@ -7,11 +7,11 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
 
-import {ApolloLink} from "apollo-link";
-import {hasSubscription} from "@jumpn/utils-graphql";
+import { ApolloLink } from "apollo-link";
+import { hasSubscription } from "@jumpn/utils-graphql";
 import SocketLink from './socketLink'
 
-export const setupApolloClient = (getAuthToken) => {
+export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
   const httpLink = createHttpLink({
     uri: "/graphql"
   })
@@ -57,7 +57,7 @@ export const setupApolloClient = (getAuthToken) => {
   })
   
   const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
-  const socketLink = new SocketLink(getAuthToken)
+  const socketLink = new SocketLink(getAuthToken, currentOrganizationId);
   
   const link = new ApolloLink.split(
     operation => hasSubscription(operation.query),

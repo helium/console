@@ -18,7 +18,7 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   def create(conn, %{"organization" => %{ "name" => organization_name } }) do
-    with {:ok, %Organization{} = organization} <-
+    with {:ok, organization} <-
       Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
       case Enum.count(organizations) do
@@ -50,16 +50,16 @@ defmodule ConsoleWeb.OrganizationController do
     else
       with {:ok, _} <- Organizations.delete_organization(organization) do
         broadcast(organization, conn.assigns.current_user)
-
+        render_org = %{id: organization.id, name: organization.name, role: membership.role}
         conn
         |> put_status(:accepted)
         |> put_resp_header("message",  "#{organization.name} deleted successfully")
-        |> render("show.json", organization: organization)
+        |> render("show.json", organization: render_org)
       end
     end
   end
 
-  defp broadcast(%Organization{} = organization, current_user) do
+  defp broadcast(organization, current_user) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{current_user.id}/organization_updated")
   end
 end
