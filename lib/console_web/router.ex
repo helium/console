@@ -7,6 +7,7 @@ defmodule ConsoleWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.RateLimit, ["browser_actions", 60]
   end
 
