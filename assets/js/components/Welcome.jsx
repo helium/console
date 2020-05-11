@@ -172,7 +172,7 @@ class Welcome extends Component {
                 box-sizing: border-box;
                 width: 100%;
 box-shadow: 0 71px 44px -40px #C6D3E8;
-margin-top: 50px;
+margin-top: 30px;
               }
 
               .pod h2 {
