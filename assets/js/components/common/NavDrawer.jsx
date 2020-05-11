@@ -88,9 +88,9 @@ class NavDrawer extends Component {
               <div>
                 {
                   data.allLabels && data.allLabels.map(l => (
-                 <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }}>
+                 <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }} key={l.id}>
 
-                    <div style={{ padding: 2 }} key={l.id}>
+                    <div style={{ padding: 2 }}>
                       <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
                       </Link>

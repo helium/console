@@ -115,15 +115,15 @@ class ChannelsTable extends Component {
     if (loading) return null;
     if (error) return (
       <div className="blankstateWrapper">
-      <div className="message">
-<h1>You have no Integrations added</h1>
-<p>Choose an Integration above to get started.</p>
+        <div className="message">
+        <h1>You have no Integrations added</h1>
+        <p>Choose an Integration above to get started.</p>
 
-      </div>
+        </div>
       <style jsx>{`
 
           .message {
-            
+
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
@@ -153,7 +153,7 @@ class ChannelsTable extends Component {
             margin: 0 auto;
             position: relative;
 
-            
+
           }
         `}</style>
 
@@ -174,7 +174,7 @@ class ChannelsTable extends Component {
       <style jsx>{`
 
           .message {
-            
+
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
@@ -209,20 +209,30 @@ class ChannelsTable extends Component {
       )
       }
       {
-          channels.entries.length > 0 && (
-        <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/integrations/${record.id}`)
-          })}
-          columns={columns}
-          dataSource={channels.entries}
-          rowKey={record => record.id}
-          pagination={true}
-        />
-       
+        channels.entries.length > 0 && (
+          <React.Fragment>
+            <Table
+              onRow={(record, rowIndex) => ({
+                onClick: () => this.props.history.push(`/integrations/${record.id}`)
+              })}
+              columns={columns}
+              dataSource={channels.entries}
+              rowKey={record => record.id}
+              pagination={false}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+              <Pagination
+                current={channels.pageNumber}
+                pageSize={channels.pageSize}
+                total={channels.totalEntries}
+                onChange={page => this.handleChangePage(page)}
+                style={{marginBottom: 20}}
+              />
+            </div>
+          </React.Fragment>
         )
         }
-      
+
       </div>
     )
   }
