@@ -15,10 +15,22 @@ defmodule ConsoleWeb.Router do
     plug ConsoleWeb.Plug.RateLimit, ["auth_actions", 60]
   end
 
+  pipeline :no_organization do
+    plug ConsoleWeb.Plug.RateLimit, ["organization_idx", 300]
+    plug ConsoleWeb.Plug.VerifyAccessToken
+    plug ConsoleWeb.Plug.PutCurrentUser
+  end
+
   scope "/graphql" do
     pipe_through ConsoleWeb.Plug.GraphqlPipeline
 
     forward "/", Absinthe.Plug, schema: ConsoleWeb.Schema
+  end
+
+  scope "/api", ConsoleWeb do
+    pipe_through :no_organization
+
+    get "/organizations", OrganizationController, :index
   end
 
   scope "/api", ConsoleWeb do
@@ -45,7 +57,7 @@ defmodule ConsoleWeb.Router do
     post "/labels/debug", LabelController, :debug
     resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
-    resources "/organizations", OrganizationController, except: [:new, :edit] do
+    resources "/organizations", OrganizationController, except: [:new, :edit, :index] do
       post "/switch", OrganizationController, :switch
     end
 
