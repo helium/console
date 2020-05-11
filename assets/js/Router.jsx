@@ -47,6 +47,7 @@ const Router = (props) => {
       }
     }
     const fn = async () => {
+      localStorage.removeItem('organization');
       await loginWithRedirect({
         appState: {targetUrl: window.location.pathname, params: window.location.search}
       });
