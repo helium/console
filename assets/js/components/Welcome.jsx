@@ -182,35 +182,7 @@ margin-top: 50px;
 
               }
 
-              .pod#left a {
-                color: #096DD9;
-              }
-
-               .pod#right a {
-                color: #722ED1;
-              }
-
-              .pod a p {
-                margin-bottom: 10px;
-                font-size: 16px;
-                font-weight: 400;
-              }
-
-              .pod a p span {
-                font-weight: 300;
-              }
-
-              .bigicon {
-                color: #2F54EB;
-                font-size: 24px;
-                position: relative;
-                top: 1px;
-                margin-right: 10px;
-              }
-
-              .bigicon#purple {
-                color: #722ED1;
-              }
+            
 
               h1 span {
                 font-weight: 300;

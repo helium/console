@@ -34,16 +34,16 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channel } = this.state
     return (
       <DashboardLayout title="Integrations">
-      <p style={{fontSize: 16, marginBottom: 60, maxWidth: 600, marginTop: '-30px', paddingLeft: 4}}>Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.</p>
+      <p style={{fontSize: 16, marginBottom: 60, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.</p>
       <div className="flexwrapper">
         <UserCan>
-          <Card title="Add a Prebuilt Integration" className="card">
+          <Card title="Add a Prebuilt Integration" className="integrationcard">
             <ChannelPremadeRow />
           </Card>
         </UserCan>
 
         <UserCan>
-          <Card title="Add a Custom Integration" className="card">
+          <Card title="Add a Custom Integration" className="integrationcard">
             <ChannelCreateRow />
           </Card>
         </UserCan>
@@ -62,11 +62,11 @@ class ChannelIndex extends Component {
 
           }
 
-          .card {
+          .integrationcard {
             flex-grow: 1;
           }
 
-          .card:first-of-type {
+          .integrationcard:first-of-type {
             margin-right: 20px;
           }
 

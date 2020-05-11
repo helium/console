@@ -18,7 +18,7 @@ class DataCredits extends Component {
 
       <div className="blankstateWrapper">
       <div className="message">
-<img src={DCIMg} />
+<img style={{width: 100, marginBottom: 20}} src={DCIMg} />
 <h1>You have no Data Credits</h1>
 <p>Data Credits are an upcoming feature.</p>
 

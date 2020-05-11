@@ -61,8 +61,8 @@ class NavDrawer extends Component {
         >
           <div><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
           <div><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
-          <div style={{ marginLeft: 0, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
-            <Link to={"/labels"} className="menu-link" style={{ marginBottom: 10 }}>
+          <div style={{ marginLeft: 0, position: 'relative' }}>
+            <Link to={"/labels"} className="menu-link">
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
             </Link>
             {
@@ -85,13 +85,16 @@ class NavDrawer extends Component {
           </div>
           {
             showLabels && (
-              <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }}>
+              <div>
                 {
                   data.allLabels && data.allLabels.map(l => (
+                 <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }}>
+
                     <div style={{ padding: 2 }} key={l.id}>
                       <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
                       </Link>
+                    </div>
                     </div>
                   ))
                 }

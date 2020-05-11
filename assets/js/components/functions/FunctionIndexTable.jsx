@@ -159,10 +159,7 @@ class FunctionIndexTable extends Component {
     )
 
     return (
-      <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${functions.entries.length} Functions`}
-      >
+      <div>
         {
           functions.entries.length === 0 && (
             <div className="blankstateWrapper">
@@ -192,10 +189,10 @@ class FunctionIndexTable extends Component {
                 background: #DFE8F4;
                 padding: 20px 60px;
                 border-radius: 20px;
-                border: 1px solid #CCD7E9;
                 text-align: center;
                 margin-top: 50px;
                 box-sizing: border-box;
+                border: 1px solid #CCD7E9;
               }
 
               .explainer h2 {
@@ -238,6 +235,10 @@ class FunctionIndexTable extends Component {
         }
         {
           functions.entries.length > 0 && (
+            <Card
+        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+        title={`${functions.entries.length} Functions`}
+      >
             <React.Fragment>
               <Table
                 onRow={(record, rowIndex) => ({
@@ -258,9 +259,10 @@ class FunctionIndexTable extends Component {
                 />
               </div>
             </React.Fragment>
+            </Card>
           )
         }
-      </Card>
+      </div>
     )
   }
 }

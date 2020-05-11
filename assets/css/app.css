@@ -178,6 +178,14 @@ h1 {
 }
 
 
+ .integrationcard:nth-of-type(2) {
+            flex-grow: 1;
+          }
+
+          .integrationcard:first-of-type {
+            margin-right: 20px;
+          }
+
 .ant-modal-mask {
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 backdrop-filter: saturate(180%) blur(20px);
@@ -220,9 +228,44 @@ background: rgba(0,21,41,0.8);
   display: block;
   padding: 20px;
   position: relative;
+    transition: all .2s ease;
+
 }
+
+
+              .pod#left a {
+                color: #096DD9;
+              }
+
+               .pod#right a {
+                color: #722ED1;
+              }
+
+              .pod a p {
+                margin-bottom: 10px;
+                font-size: 16px;
+                font-weight: 400;
+              }
+
+              .pod a p span {
+                font-weight: 300;
+              }
+
+              .bigicon {
+                color: #2F54EB;
+                font-size: 24px;
+                position: relative;
+                top: 1px;
+                margin-right: 10px;
+              }
+
+              .bigicon#purple {
+                color: #722ED1;
+              }
+
 
 .menu-link:hover {
   color: white;
-  background: rgba(0,0,0,0.2);
+  background: rgba(255, 255, 255, 0.13);
+  transition: all .2s ease;
 }

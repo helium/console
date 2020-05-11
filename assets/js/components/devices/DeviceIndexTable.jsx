@@ -191,23 +191,7 @@ class DeviceIndexTable extends Component {
     }
 
     return (
-      <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${devices.entries.length} Devices`}
-        extra={
-          <UserCan>
-            <Select
-              value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
-              onSelect={this.handleSelectOption}
-            >
-              <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
-              <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
-              <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
-            </Select>
-          </UserCan>
-        }
-      >
+      <div>
         {
           devices.entries.length === 0 && (
             <div className="blankstateWrapper">
@@ -246,6 +230,7 @@ class DeviceIndexTable extends Component {
                   padding-top: 200px;
                   margin: 0 auto;
                   position: relative;
+                  padding-bottom: 200px;
 
 
                 }
@@ -255,6 +240,23 @@ class DeviceIndexTable extends Component {
         }
         {
           devices.entries.length > 0 && (
+            <Card
+        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+        title={`${devices.entries.length} Devices`}
+        extra={
+          <UserCan>
+            <Select
+              value="Quick Action"
+              style={{ width: 270, marginRight: 10 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
+              <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
+              <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+            </Select>
+          </UserCan>
+        }
+      >
             <React.Fragment>
               <Table
                 onRow={(record, rowIndex) => ({
@@ -276,9 +278,10 @@ class DeviceIndexTable extends Component {
                 />
               </div>
             </React.Fragment>
+            </Card>
           )
         }
-      </Card>
+      </div>
     )
   }
 }

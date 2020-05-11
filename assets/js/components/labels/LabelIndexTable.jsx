@@ -149,23 +149,7 @@ class LabelIndexTable extends Component {
     }
 
     return (
-      <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${labels.entries.length} Labels`}
-        extra={
-          <UserCan>
-            <Select
-              value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
-              onSelect={this.handleSelectOption}
-            >
-              <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>
-              <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
-              <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
-            </Select>
-          </UserCan>
-        }
-      >
+      <div>
         {
           labels.entries.length === 0 && (
             <div className="blankstateWrapper">
@@ -243,6 +227,23 @@ class LabelIndexTable extends Component {
           )
         }
         {labels.entries.length > 0 && (
+          <Card
+        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+        title={`${labels.entries.length} Labels`}
+        extra={
+          <UserCan>
+            <Select
+              value="Quick Action"
+              style={{ width: 270, marginRight: 10 }}
+              onSelect={this.handleSelectOption}
+            >
+              <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>
+              <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
+              <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
+            </Select>
+          </UserCan>
+        }
+      >
           <React.Fragment>
             <Table
               onRow={(record, rowIndex) => ({
@@ -264,8 +265,9 @@ class LabelIndexTable extends Component {
               />
             </div>
           </React.Fragment>
+          </Card>
         )}
-      </Card>
+      </div>
     )
   }
 }
