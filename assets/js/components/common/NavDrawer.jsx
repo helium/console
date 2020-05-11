@@ -66,16 +66,19 @@ class NavDrawer extends Component {
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
             </Link>
             {
-              showLabels ? (
+              showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', right: 24, top: 24, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false })}
                 >
                   -
                 </p>
-              ) : (
+              )
+            }
+            {
+              !showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', right: 24, top: 24, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true })}
                 >
                   +
