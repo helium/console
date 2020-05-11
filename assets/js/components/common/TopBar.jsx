@@ -35,7 +35,9 @@ class TopBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
+        <Link to="/welcome">
           <img src={Logo} style={{height:30}}/>
+          </Link>
         </div>
         {
           currentOrganizationName && <SearchBar />

@@ -228,8 +228,12 @@ background: rgba(0,21,41,0.8);
   display: block;
   padding: 20px;
   position: relative;
-    transition: all .2s ease;
 
+}
+
+
+a.menu-link {
+  transition: none;
 }
 
 
@@ -267,5 +271,4 @@ background: rgba(0,21,41,0.8);
 .menu-link:hover {
   color: white;
   background: rgba(255, 255, 255, 0.13);
-  transition: all .2s ease;
 }
