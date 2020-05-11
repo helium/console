@@ -93,7 +93,7 @@ export const logIn = (apikey) => {
 export const logOut = () => {
   analyticsLogger.setUserId(null)
   return async (dispatch) => {
-    await logout({returnTo: 'https://helium.com/console'});
+    await logout({returnTo: window.location.origin});
     dispatch(loggedOut())
   }
 }
