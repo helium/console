@@ -7,6 +7,8 @@ defmodule ConsoleWeb.Plug.CheckDomain do
     case conn.host do
       "staging-console.helium.com" -> conn
       "console.helium.com" -> conn
+      "www.example.com" -> conn
+      "localhost" -> conn
       _ ->
         conn
         |> Plug.Conn.resp(:found, "")
