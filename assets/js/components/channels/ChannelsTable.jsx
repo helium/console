@@ -162,6 +162,54 @@ class ChannelsTable extends Component {
 
     return (
       <div>
+      {
+          channels.entries.length === 0 && (
+
+             <div className="blankstateWrapper">
+      <div className="message">
+<h1>You have no Integrations added</h1>
+<p>Choose an Integration above to get started.</p>
+
+      </div>
+      <style jsx>{`
+
+          .message {
+            
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+
+          }
+
+          h1, p  {
+
+            color: #242425;
+          }
+          h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+          }
+          p {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.75;
+          }
+
+
+          .blankstateWrapper {
+            width: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+            margin: 0 auto;
+            position: relative;
+          }
+        `}</style>
+      </div>
+      )
+      }
+      {
+          channels.entries.length > 0 && (
         <Table
           onRow={(record, rowIndex) => ({
             onClick: () => this.props.history.push(`/integrations/${record.id}`)
@@ -169,16 +217,12 @@ class ChannelsTable extends Component {
           columns={columns}
           dataSource={channels.entries}
           rowKey={record => record.id}
-          pagination={false}
+          pagination={true}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
-          <Pagination
-            current={channels.pageNumber}
-            pageSize={channels.pageSize}
-            total={channels.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-          />
-        </div>
+       
+        )
+        }
+      
       </div>
     )
   }
