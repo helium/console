@@ -1,8 +1,9 @@
 import { push } from 'connected-react-router';
 import * as rest from '../util/rest';
-import { getOrganizationId, getOrganizationName } from '../util/jwt'
-import analyticsLogger from '../util/analyticsLogger'
-import sanitizeHtml from 'sanitize-html'
+import { getOrganizationId, getOrganizationName } from '../util/jwt';
+import { logout } from '../components/auth/Auth0Provider';
+import analyticsLogger from '../util/analyticsLogger';
+import sanitizeHtml from 'sanitize-html';
 
 export const LOGGED_IN = 'LOGGED_IN';
 export const LOGGED_OUT = 'LOGGED_OUT';
@@ -91,7 +92,8 @@ export const logIn = (apikey) => {
 
 export const logOut = () => {
   analyticsLogger.setUserId(null)
-  return (dispatch) => {
+  return async (dispatch) => {
+    await logout({returnTo: window.location.origin});
     dispatch(loggedOut())
   }
 }
