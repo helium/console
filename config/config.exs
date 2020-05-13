@@ -46,7 +46,7 @@ config :logger, :console,
   metadata: [:user_id]
 
 config :console,
-  auth0_baseurl: "https://helium-console.auth0.com"
+  auth0_baseurl: "https://dev-j03rcvdv.auth0.com"
 
 config :console,
   auth0_management_id: System.get_env("AUTH0_MANAGEMENT_ID")
