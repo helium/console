@@ -48,6 +48,15 @@ config :logger, :console,
 config :console,
   auth0_baseurl: "https://dev-j03rcvdv.auth0.com"
 
+config :console,
+  auth0_management_id: System.get_env("AUTH0_MANAGEMENT_ID")
+
+config :console,
+  auth0_secret: System.get_env("AUTH0_SECRET")
+
+config :console,
+  auth0_management_aud: System.get_env("AUTH0_MANAGEMENT_AUDIENCE")
+
 config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
 
 # Import environment specific config. This must remain at the bottom

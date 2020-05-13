@@ -15,6 +15,7 @@ export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const SENT_VERIFICATION = 'SENT_VERIFICATION';
 export const NEW_2FA_SECRET = "NEW_2FA_SECRET";
 export const CLEAR_TWO_FACTOR_BACKUP_CODES = "CLEAR_TWO_FACTOR_BACKUP_CODES";
+export const FETCHED_MFA_ENROLLMENT = "FETCHED_MFA_ENROLLMENT";
 
 export const checkCredentials = (email, password) => {
   return (dispatch) => {
@@ -51,12 +52,10 @@ export const verify2fa = (code, userId) => {
   }
 }
 
-export const getNew2fa = () => {
-  return (dispatch) => {
-    rest.get('/api/2fa')
-      .then(response => {
-        dispatch(new2faSecret(response.data.secret2fa))
-      })
+export const getMfaStatus = () => {
+  return  async (dispatch) => {
+    var response = await rest.get('/api/mfa_enrollments');
+    dispatch(fetchedMfaStatus(response.data.enrollment_status));
   }
 }
 
@@ -175,6 +174,13 @@ export const refreshedToken = (apikey) => {
     apikey,
     currentOrganizationId: getOrganizationId(apikey),
     currentOrganizationName: getOrganizationName(apikey)
+  }
+}
+
+export const fetchedMfaStatus = (status) => {
+  return {
+    type: FETCHED_MFA_ENROLLMENT,
+    mfaEnrollmentStatus: status
   }
 }
 

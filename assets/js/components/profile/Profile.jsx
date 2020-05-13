@@ -1,18 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { graphql } from 'react-apollo';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom'
-import moment from 'moment'
+import moment from 'moment';
 import { logOut } from '../../actions/auth';
 import { generateKey, deleteKey } from '../../actions/apiKeys';
-import DashboardLayout from '../common/DashboardLayout'
-import UserCan from '../common/UserCan'
-import ProfileNewKeyModal from './ProfileNewKeyModal'
-import RoleName from '../common/RoleName'
-import analyticsLogger from '../../util/analyticsLogger'
-import { ALL_API_KEYS, API_KEY_SUBSCRIPTION } from '../../graphql/apiKeys'
+import DashboardLayout from '../common/DashboardLayout';
+import UserCan from '../common/UserCan';
+import ProfileNewKeyModal from './ProfileNewKeyModal';
+import RoleName from '../common/RoleName';
+import analyticsLogger from '../../util/analyticsLogger';
+import { ALL_API_KEYS, API_KEY_SUBSCRIPTION } from '../../graphql/apiKeys';
+import { getMfaStatus } from '../../actions/auth';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
+import { loginWithRedirect } from '../auth/Auth0Provider';
+import * as rest from '../../util/rest';
 const { Text } = Typography
 const { Option } = Select
 
@@ -34,7 +36,9 @@ class Profile extends Component {
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_PROFILE")
 
-    const { subscribeToMore, fetchMore } = this.props.data
+    const { subscribeToMore, fetchMore } = this.props.data;
+    const { getMfaStatus } = this.props;
+    getMfaStatus();
 
     subscribeToMore({
       document: API_KEY_SUBSCRIPTION,
@@ -68,9 +72,16 @@ class Profile extends Component {
     this.setState({ newKey: null })
   }
 
+  handleEnrollInMfa = async () => {
+    await loginWithRedirect({
+      mode: 'enroll_mfa',
+      redirect_uri: window.location.href
+    });
+  }
+
   render() {
     const { email } = this.props.user;
-    const { role } = this.props;
+    const { role, mfaEnrollmentStatus } = this.props;
     const { logOut, authKey, data } = this.props
     const { newKey } = this.state
 
@@ -121,15 +132,25 @@ class Profile extends Component {
       <DashboardLayout title="Profile">
         <Card title="Profile Details"
           extra={
-            <Button
-              type="danger"
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
-                logOut()
-              }}
-            >
-              Log Out
-            </Button>
+            <Fragment>
+              <Button
+                type="primary"
+                onClick={this.handleEnrollInMfa}
+                style={{ marginRight: 10 }}
+                disabled={mfaEnrollmentStatus}
+              >
+                { (!mfaEnrollmentStatus && "Enroll In 2FA") || "Enrolled In 2FA" }
+              </Button>
+              <Button
+                type="danger"
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
+                  logOut()
+                }}
+              >
+                Log Out
+              </Button>
+            </Fragment>
           }
         >
           <Descriptions bordered column={4}>
@@ -188,12 +209,13 @@ class Profile extends Component {
 function mapStateToProps(state) {
   return {
     authKey: state.auth.apikey,
-    role: state.organization.currentRole
+    role: state.organization.currentRole,
+    mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, generateKey, deleteKey }, dispatch)
+  return bindActionCreators({ logOut, generateKey, deleteKey, getMfaStatus }, dispatch)
 }
 
 export default Profile

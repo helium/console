@@ -27,6 +27,11 @@ export const getIdTokenClaims = async (...p) => {
   return await client.getIdTokenClaims(...p);
 }
 
+export const loginWithRedirect = async (...p) => {
+  const client = await getAuth0Client();
+  return await client.loginWithRedirect(...p);
+}
+
 export const logout = async (...p) => {
   const client = await getAuth0Client();
   return await client.logout(...p);

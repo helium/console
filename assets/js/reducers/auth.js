@@ -4,7 +4,8 @@ import {
   IS_VALID_USER,
   NEW_2FA_SECRET,
   CLEAR_TWO_FACTOR_BACKUP_CODES,
-  REFRESHED_TOKEN
+  REFRESHED_TOKEN,
+  FETCHED_MFA_ENROLLMENT
 } from '../actions/auth.js';
 import { SWITCHED_ORGANIZATION } from '../actions/organization.js';
 
@@ -14,6 +15,7 @@ const initialState = {
   user: null,
   currentOrganizationId: null,
   currentOrganizationName: null,
+  mfaEnrollmentStatus: false
 }
 
 const auth = (state = initialState, action) => {
@@ -33,6 +35,8 @@ const auth = (state = initialState, action) => {
     case REFRESHED_TOKEN:
     case SWITCHED_ORGANIZATION:
       return { ...state, currentOrganizationId: action.currentOrganizationId, currentOrganizationName: action.currentOrganizationName };
+    case FETCHED_MFA_ENROLLMENT:
+      return { ...state, mfaEnrollmentStatus: action.mfaEnrollmentStatus}
     default:
       return state;
   }

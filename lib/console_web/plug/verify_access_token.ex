@@ -26,7 +26,7 @@ defmodule ConsoleWeb.AccessTokenDecoder.Auth0 do
     case Joken.verify(token, signer) do
       {:ok, %{"email" => email, "sub" => sub}} ->
         unprefixed_user_id = String.replace(sub, "auth0|", "")
-        %{email: email, user_id: unprefixed_user_id}
+        %{email: email, user_id: unprefixed_user_id, auth0_id: sub}
       _ ->
         :error
     end
@@ -46,10 +46,11 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
       |> List.first()
       |> String.replace("Bearer ", "")
     case @access_token_decoder.decode_conn_access_token(token) do
-      %{user_id: user_id, email: email} ->
+      %{user_id: user_id, email: email, auth0_id: auth0_id} ->
         conn
           |> assign(:user_id, user_id)
           |> assign(:email, email)
+          |> assign(:auth0_id, auth0_id)
       :error ->
         conn
         |> send_resp(
