@@ -1,4 +1,3 @@
-
 import React from 'react';
 import AuthLayout from '../common/AuthLayout'
 import { Typography, Card, Row, Col, Button } from 'antd';

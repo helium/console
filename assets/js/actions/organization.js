@@ -1,6 +1,6 @@
+import { push } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 import * as rest from '../util/rest';
-import { history } from '../store/configureStore';
 
 export const FETCHED_ORGANIZATION = 'FETCHED_ORGANIZATIONS'
 export const FETCHING_ORGANIZATION = 'FETCHING_ORGANIZATION'
@@ -73,7 +73,7 @@ export const joinOrganization = (token) => {
       .then(response => {
         dispatch(fetchedOrganization(response.data[0]));
         localStorage.setItem('organization', JSON.stringify(response.data[0]));
-        history.push('/devices');
+        dispatch(push('/'));
       })
   }
 }
