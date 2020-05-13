@@ -34,14 +34,30 @@ import { fetchOrganization } from './actions/organization';
 import { setupApolloClient } from './actions/apollo';
 
 const Router = (props) => {
-  const { loading, isAuthenticated, loginWithRedirect, getIdTokenClaims, user } = useAuth0();
-  const { currentOrganizationId, fetchOrganization, setupApolloClient, apolloClient, loadedOrganization } = props;
+  const { 
+    loading, 
+    isAuthenticated, 
+    loginWithRedirect, 
+    getIdTokenClaims, 
+    user 
+  } = useAuth0();
+  const { 
+    currentOrganizationId,
+    loadedOrganization,
+    loadingOrganization,
+    fetchOrganization, 
+    setupApolloClient, 
+    apolloClient
+  } = props;
   useEffect(() => {
     if (isAuthenticated) {
-      if (!currentOrganizationId) {
+      if (!currentOrganizationId && !loadingOrganization && !loadedOrganization) {
+        // Only fetch organizations if we haven't loaded them and there isn't one
         fetchOrganization();
         return;
-      } else if (!apolloClient) {
+      } else if (!apolloClient && currentOrganizationId) {
+        // Only set up the apollo client if there is an organization 
+        // and the client hasn't been setup yet
         setupApolloClient(getIdTokenClaims, currentOrganizationId);
         return;
       }
@@ -52,10 +68,10 @@ const Router = (props) => {
         appState: {targetUrl: window.location.pathname, params: window.location.search}
       });
     };
-    if (!loading) {
+    if (!loading && !isAuthenticated) {
       fn();
     }
-  }, [loading, isAuthenticated, loginWithRedirect, currentOrganizationId]);
+  }, [loading, isAuthenticated, loginWithRedirect, currentOrganizationId, loadingOrganization, loadedOrganization]);
   if (loading) {
     return <div>Loading...</div>
   }
@@ -106,6 +122,7 @@ function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
     loadedOrganization: state.organization.loadedOrganization,
+    loadingOrganization: state.organization.loadingOrganization,
     apolloClient: state.apollo.apolloClient
   }
 }

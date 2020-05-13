@@ -49,7 +49,7 @@ defmodule ConsoleWeb.Router do
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
     end
-
+    get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
     post "/channels_labels", LabelController, :add_labels_to_channel
