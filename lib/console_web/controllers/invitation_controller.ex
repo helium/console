@@ -76,7 +76,7 @@ defmodule ConsoleWeb.InvitationController do
     with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
       inv = Organizations.fetch_assoc_invitation(inv)
       organization = inv.organization
-      organization_name = URI.encode(organization.name)
+      organization_name = organization.name
 
       render(conn, "invitation.json", invitation: inv, organization_name: organization_name)
     end

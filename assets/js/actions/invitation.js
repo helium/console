@@ -16,11 +16,7 @@ export const inviteUser = (email, role, organization) => {
 export const getInvitation = (token) => {
   return (dispatch) => {
     return rest.get(`/api/invitations/${token}`)
-      .then(response => {
-        const organizationName = decodeURIComponent(response.data.organizationName)
-        const email = response.data.email;
-        return {email, organizationName};
-      })
+      .then(response => response.data)
   }
 }
 
