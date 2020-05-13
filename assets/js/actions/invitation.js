@@ -20,7 +20,6 @@ export const getInvitation = (token) => {
         const organizationName = decodeURIComponent(response.data.organizationName)
         const email = response.data.email;
         return {email, organizationName};
-
       })
   }
 }
