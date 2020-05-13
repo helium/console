@@ -1,13 +1,12 @@
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import AuthLayout from '../common/AuthLayout'
 import { Typography, Card, Row, Col, Button } from 'antd';
 import Logo from '../../../img/symbol.svg'
 import { primaryBlue } from '../../util/colors'
 const { Text, Title } = Typography
 
-const ConfirmEmailPrompt = (props) => {
+const ConfirmEmailPrompt = () => {
     return (
       <AuthLayout>
         <Card style={{padding: 30, paddingTop: 20, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
@@ -37,4 +36,4 @@ const ConfirmEmailPrompt = (props) => {
     )
 }
 
-export default withRouter(ConfirmEmailPrompt);
+export default ConfirmEmailPrompt;
