@@ -19,7 +19,7 @@ defmodule Console.Organizations do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
-      select: %{id: o.id, name: o.name, role: m.role}
+      select: %{id: o.id, name: o.name, role: m.role, inserted_at: o.inserted_at}
     Repo.all(query)
   end
 

@@ -23,13 +23,19 @@ defmodule ConsoleWeb.AccessTokenDecoder.Auth0 do
 
   defp verify_token_with_signer(jwk, token) do
     signer = Joken.Signer.create("RS256", jwk)
-    case Joken.verify(token, signer) do
+    case verify_token_with_email_verified(token, signer) do
       {:ok, %{"email" => email, "sub" => sub}} ->
         unprefixed_user_id = String.replace(sub, "auth0|", "")
         %{email: email, user_id: unprefixed_user_id, auth0_id: sub}
       _ ->
         :error
     end
+  end
+
+  defp verify_token_with_email_verified(token, signer) do
+    %{}
+      |> Joken.Config.add_claim("email_verified", nil, &(&1 == true))
+      |> Joken.verify_and_validate(token, signer)
   end
 end
 

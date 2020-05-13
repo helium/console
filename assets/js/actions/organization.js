@@ -73,7 +73,7 @@ export const joinOrganization = (token) => {
       .then(response => {
         dispatch(fetchedOrganization(response.data[0]));
         localStorage.setItem('organization', JSON.stringify(response.data[0]));
-        push('/devices');
+        dispatch(push('/'));
       })
   }
 }

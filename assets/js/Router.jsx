@@ -32,6 +32,7 @@ import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
 import { fetchOrganization } from './actions/organization';
 import { setupApolloClient } from './actions/apollo';
+import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt';
 
 const Router = (props) => {
   const { 
@@ -50,7 +51,7 @@ const Router = (props) => {
     apolloClient
   } = props;
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user && user.email_verified) {
       if (!currentOrganizationId && !loadingOrganization && !loadedOrganization) {
         // Only fetch organizations if we haven't loaded them and there isn't one
         fetchOrganization();
@@ -71,47 +72,57 @@ const Router = (props) => {
     if (!loading && !isAuthenticated) {
       fn();
     }
-  }, [loading, isAuthenticated, loginWithRedirect, currentOrganizationId, loadingOrganization, loadedOrganization]);
+  }, [loading, isAuthenticated, currentOrganizationId, loadingOrganization, loadedOrganization, user]);
   if (loading) {
     return <div>Loading...</div>
   }
+  const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/devices' : '/welcome';
   return (
     <PersistGate loading={null} persistor={persistor}>
       { /* ConnectedRouter will use the store from Provider automatically */ }
       <ConnectedRouter history={history}>
-        <Switch>
-          <Redirect exact from="/" to="/devices" />
-          <PublicRoute path="/register" component={Register}/>
-          <Route>
-            { /* If user has no organizations then render the no org page */
-              (loadedOrganization && !currentOrganizationId && <NoOrganization/>) || 
-              (
-                /* Otherwise if the apollo client has been instantiated, render data routes */
-                apolloClient && 
-                <ApolloProvider client={apolloClient}>
-                  <Switch>
-                    <Route path="/profile" render={() => <Profile user={user}/>}/>
-                    <Route exact path="/devices" component={DeviceIndex} />
-                    <Route exact path="/labels" component={LabelIndex} />
-                    <Route path="/devices/:id" component={DeviceShow}/>
-                    <Route path="/labels/:id" component={LabelShow} />
-                    <Route exact path="/integrations" component={ChannelIndex} />
-                    <Route exact path="/integrations/new/:id?" component={ChannelNew} />
-                    <Route exact path="/integrations/:id" component={ChannelShow} />
-                    <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
-                    <Route exact path="/organizations" component={OrganizationIndex} />
-                    <Route exact path="/datacredits" component={DataCredits} />
-                    <Route exact path="/functions" component={FunctionIndex} />
-                    <Route exact path="/functions/new" component={FunctionNew} />
-                    <Route exact path="/functions/:id" component={FunctionShow} />
-                    <Route exact path="/welcome" component={Welcome} />
-                  </Switch>
-                </ApolloProvider>
-              )
-            }
-            
-          </Route>
-        </Switch>
+        {
+          /* If the user is not verified yet, wait for them to confirm their email before continuing */
+          (user && !user.email_verified && <ConfirmEmailPrompt/>) ||
+          (
+            // Verify we are authenticated before displaying other Components
+            isAuthenticated && 
+            <Switch>
+              <Redirect exact from="/" to={redirectPath} />
+              <PublicRoute path="/register" component={Register}/>
+              <Route>
+                { /* If user has no organizations then render the no org page */
+                  (loadedOrganization && !currentOrganizationId && <NoOrganization/>) || 
+                  (
+                    /* Otherwise if the apollo client has been instantiated, render data routes */
+                    apolloClient && 
+                    <ApolloProvider client={apolloClient}>
+                      <Switch>
+                        <Route path="/profile" render={() => <Profile user={user}/>}/>
+                        <Route exact path="/devices" component={DeviceIndex} />
+                        <Route exact path="/labels" component={LabelIndex} />
+                        <Route path="/devices/:id" component={DeviceShow}/>
+                        <Route path="/labels/:id" component={LabelShow} />
+                        <Route exact path="/integrations" component={ChannelIndex} />
+                        <Route exact path="/integrations/new/:id?" component={ChannelNew} />
+                        <Route exact path="/integrations/:id" component={ChannelShow} />
+                        <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
+                        <Route exact path="/organizations" component={OrganizationIndex} />
+                        <Route exact path="/datacredits" component={DataCredits} />
+                        <Route exact path="/functions" component={FunctionIndex} />
+                        <Route exact path="/functions/new" component={FunctionNew} />
+                        <Route exact path="/functions/:id" component={FunctionShow} />
+                        <Route exact path="/welcome" component={Welcome} />
+                      </Switch>
+                    </ApolloProvider>
+                  )
+                }
+                
+              </Route>
+            </Switch>
+          )
+          
+        }
       </ConnectedRouter>
     </PersistGate>
   )
