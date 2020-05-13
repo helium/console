@@ -84,39 +84,44 @@ const Router = (props) => {
         {
           /* If the user is not verified yet, wait for them to confirm their email before continuing */
           (user && !user.email_verified && <ConfirmEmailPrompt/>) ||
-          <Switch>
-            <Redirect exact from="/" to={redirectPath} />
-            <PublicRoute path="/register" component={Register}/>
-            <Route>
-              { /* If user has no organizations then render the no org page */
-                (loadedOrganization && !currentOrganizationId && <NoOrganization/>) || 
-                (
-                  /* Otherwise if the apollo client has been instantiated, render data routes */
-                  apolloClient && 
-                  <ApolloProvider client={apolloClient}>
-                    <Switch>
-                      <Route path="/profile" render={() => <Profile user={user}/>}/>
-                      <Route exact path="/devices" component={DeviceIndex} />
-                      <Route exact path="/labels" component={LabelIndex} />
-                      <Route path="/devices/:id" component={DeviceShow}/>
-                      <Route path="/labels/:id" component={LabelShow} />
-                      <Route exact path="/integrations" component={ChannelIndex} />
-                      <Route exact path="/integrations/new/:id?" component={ChannelNew} />
-                      <Route exact path="/integrations/:id" component={ChannelShow} />
-                      <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
-                      <Route exact path="/organizations" component={OrganizationIndex} />
-                      <Route exact path="/datacredits" component={DataCredits} />
-                      <Route exact path="/functions" component={FunctionIndex} />
-                      <Route exact path="/functions/new" component={FunctionNew} />
-                      <Route exact path="/functions/:id" component={FunctionShow} />
-                      <Route exact path="/welcome" component={Welcome} />
-                    </Switch>
-                  </ApolloProvider>
-                )
-              }
-              
-            </Route>
-          </Switch>
+          (
+            // Verify we are authenticated before displaying other Components
+            isAuthenticated && 
+            <Switch>
+              <Redirect exact from="/" to={redirectPath} />
+              <PublicRoute path="/register" component={Register}/>
+              <Route>
+                { /* If user has no organizations then render the no org page */
+                  (loadedOrganization && !currentOrganizationId && <NoOrganization/>) || 
+                  (
+                    /* Otherwise if the apollo client has been instantiated, render data routes */
+                    apolloClient && 
+                    <ApolloProvider client={apolloClient}>
+                      <Switch>
+                        <Route path="/profile" render={() => <Profile user={user}/>}/>
+                        <Route exact path="/devices" component={DeviceIndex} />
+                        <Route exact path="/labels" component={LabelIndex} />
+                        <Route path="/devices/:id" component={DeviceShow}/>
+                        <Route path="/labels/:id" component={LabelShow} />
+                        <Route exact path="/integrations" component={ChannelIndex} />
+                        <Route exact path="/integrations/new/:id?" component={ChannelNew} />
+                        <Route exact path="/integrations/:id" component={ChannelShow} />
+                        <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
+                        <Route exact path="/organizations" component={OrganizationIndex} />
+                        <Route exact path="/datacredits" component={DataCredits} />
+                        <Route exact path="/functions" component={FunctionIndex} />
+                        <Route exact path="/functions/new" component={FunctionNew} />
+                        <Route exact path="/functions/:id" component={FunctionShow} />
+                        <Route exact path="/welcome" component={Welcome} />
+                      </Switch>
+                    </ApolloProvider>
+                  )
+                }
+                
+              </Route>
+            </Switch>
+          )
+          
         }
       </ConnectedRouter>
     </PersistGate>

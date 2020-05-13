@@ -50,13 +50,13 @@ class Register extends Component {
             <Form onSubmit={this.acceptInvitation}>
               <Row gutter={16} style={{marginTop:10}}>
                 <Col sm={12}>
-                  <Button type="primary" htmlType="submit" style={{width: '100%'}}>
-                    Accept Invitation
+                  <Button onClick={() => this.props.history.push('/devices')} style={{width: '100%'}}>
+                    Reject Invitation
                   </Button>
                 </Col>
                 <Col sm={12}>
-                  <Button onClick={() => this.props.history.push('/devices')} style={{width: '100%'}}>
-                    Reject Invitation
+                  <Button type="primary" htmlType="submit" style={{width: '100%'}}>
+                    Accept Invitation
                   </Button>
                 </Col>
               </Row>

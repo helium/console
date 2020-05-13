@@ -20,7 +20,7 @@ const ConfirmEmailPrompt = () => {
               Please check your inbox for a confirmation email.
             </Text>
             <Text style={{display: 'block'}}>
-              Once you have verified your email address, click below to continue
+              Once you have verified your email address, click below to continue.
             </Text>
           </div>
          
