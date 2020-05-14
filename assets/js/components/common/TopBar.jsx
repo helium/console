@@ -33,15 +33,15 @@ class TopBar extends Component {
     const { logOut, currentOrganizationName } = this.props
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
+        <Link to="/welcome">
           <img src={Logo} style={{height:30}}/>
+          </Link>
         </div>
-        <div style={{ flexGrow: 1 }}/>
         {
           currentOrganizationName && <SearchBar />
         }
-        <div style={{ width: 120 }}/>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Link to="/welcome">
             <Icon type="home" style={{ color: '#ffffff', fontSize: 18 }}/>

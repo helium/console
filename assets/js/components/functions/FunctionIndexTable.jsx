@@ -9,7 +9,10 @@ import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
+import FunctionsImg from '../../../img/functions.svg'
+import classNames from 'classnames';
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
+
 const { Text } = Typography
 
 const queryOptions = {
@@ -156,29 +159,110 @@ class FunctionIndexTable extends Component {
     )
 
     return (
-      <Card
+      <div>
+        {
+          functions.entries.length === 0 && (
+            <div className="blankstateWrapper">
+          <div className="message">
+    <img src={FunctionsImg} />
+    <h1>No Functions</h1>
+    <p>You haven’t created any functions yet.</p>
+
+    <div className="explainer">
+      <h2>What are Functions?</h2>
+      <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
+    </div>
+
+          </div>
+          <style jsx>{`
+
+             .message {
+
+                width: 100%;
+                max-width: 500px;
+                margin: 0 auto;
+                text-align: center;
+
+              }
+
+              .explainer {
+                background: #DFE8F4;
+                padding: 20px 60px;
+                border-radius: 20px;
+                text-align: center;
+                margin-top: 50px;
+                box-sizing: border-box;
+                border: 1px solid #CCD7E9;
+              }
+
+              .explainer h2 {
+                color: #242425;
+                font-size: 20px;
+              }
+              .explainer p {
+                color: #556B8C;
+                font-size: 15px;
+              }
+
+              .explainer p a {
+                color: #096DD9;
+              }
+
+              h1, p  {
+
+                color: #242425;
+              }
+              h1 {
+                font-size: 46px;
+                margin-bottom: 10px;
+              }
+              p {
+                font-size: 20px;
+                font-weight: 300;
+              }
+
+
+              .blankstateWrapper {
+                width: 100%;
+                padding-top: 150px;
+                margin: 0 auto;
+                position: relative;
+              }
+            `}</style>
+
+          </div>
+          )
+        }
+        {
+          functions.entries.length > 0 && (
+            <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${functions.entries.length} Functions`}
       >
-        <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/functions/${record.id}`)
-          })}
-          columns={columns}
-          dataSource={functions.entries}
-          rowKey={record => record.id}
-          pagination={false}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-          <Pagination
-            current={functions.pageNumber}
-            pageSize={functions.pageSize}
-            total={functions.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-            style={{marginBottom: 20}}
-          />
-        </div>
-      </Card>
+            <React.Fragment>
+              <Table
+                onRow={(record, rowIndex) => ({
+                  onClick: () => this.props.history.push(`/functions/${record.id}`)
+                })}
+                columns={columns}
+                dataSource={functions.entries}
+                rowKey={record => record.id}
+                pagination={false}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+                <Pagination
+                  current={functions.pageNumber}
+                  pageSize={functions.pageSize}
+                  total={functions.totalEntries}
+                  onChange={page => this.handleChangePage(page)}
+                  style={{marginBottom: 20}}
+                />
+              </div>
+            </React.Fragment>
+            </Card>
+          )
+        }
+      </div>
     )
   }
 }

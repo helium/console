@@ -11,6 +11,9 @@ import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
+import LabelsImg from '../../../img/labels.svg'
+import classNames from 'classnames';
+
 const { Text } = Typography
 const { Option } = Select
 
@@ -146,7 +149,85 @@ class LabelIndexTable extends Component {
     }
 
     return (
-      <Card
+      <div>
+        {
+          labels.entries.length === 0 && (
+            <div className="blankstateWrapper">
+            <div className="message">
+      <img src={LabelsImg} />
+      <h1>No Labels</h1>
+      <p>You haven’t created any labels yet.</p>
+
+      <div className="explainer">
+        <h2>What are Labels?</h2>
+        <p>Labels allow you to organise your devices into groups. Devices can have many Labels that describe different aspects of it.</p>
+        <p>Labels are also used to apply <a href="/integrations">Integrations</a> and <a href="/functions">Functions</a> to devices. </p>
+      </div>
+
+            </div>
+            <style jsx>{`
+
+                .message {
+
+                  width: 100%;
+                  max-width: 500px;
+                  margin: 0 auto;
+                  text-align: center;
+
+                }
+
+                .explainer {
+                  background: #DFE8F4;
+                  padding: 20px 60px;
+                  border-radius: 20px;
+                  border: 1px solid #CCD7E9;
+                  text-align: center;
+                  margin-top: 50px;
+                  box-sizing: border-box;
+                }
+
+                .explainer h2 {
+                  color: #242425;
+                  font-size: 20px;
+                }
+                .explainer p {
+                  color: #556B8C;
+                  font-size: 15px;
+                }
+
+                .explainer p a {
+                  color: #096DD9;
+                }
+
+                h1, p  {
+
+                  color: #242425;
+                }
+                h1 {
+                  font-size: 46px;
+                  margin-bottom: 10px;
+                }
+                p {
+                  font-size: 20px;
+                  font-weight: 300;
+                }
+
+
+                .blankstateWrapper {
+                  width: 100%;
+                  padding-top: 150px;
+                  margin: 0 auto;
+                  position: relative;
+
+
+                }
+              `}</style>
+
+            </div>
+          )
+        }
+        {labels.entries.length > 0 && (
+          <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${labels.entries.length} Labels`}
         extra={
@@ -163,26 +244,30 @@ class LabelIndexTable extends Component {
           </UserCan>
         }
       >
-        <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/labels/${record.id}`)
-          })}
-          columns={columns}
-          dataSource={labels.entries}
-          rowKey={record => record.id}
-          pagination={false}
-          rowSelection={rowSelection}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-          <Pagination
-            current={labels.pageNumber}
-            pageSize={labels.pageSize}
-            total={labels.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-            style={{marginBottom: 20}}
-          />
-        </div>
-      </Card>
+          <React.Fragment>
+            <Table
+              onRow={(record, rowIndex) => ({
+                onClick: () => this.props.history.push(`/labels/${record.id}`)
+              })}
+              columns={columns}
+              dataSource={labels.entries}
+              rowKey={record => record.id}
+              pagination={false}
+              rowSelection={rowSelection}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+              <Pagination
+                current={labels.pageNumber}
+                pageSize={labels.pageSize}
+                total={labels.totalEntries}
+                onChange={page => this.handleChangePage(page)}
+                style={{marginBottom: 20}}
+              />
+            </div>
+          </React.Fragment>
+          </Card>
+        )}
+      </div>
     )
   }
 }

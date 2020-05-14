@@ -27,10 +27,10 @@ class DeviceCredentials extends Component {
 
     return(
       <span>
-        <Tag color={display !== 'default' ? 'blue' : ''} onClick={this.toggleDefault}><Icon type="arrows-alt" /></Tag>
+        <Button color={display !== 'default' ? 'blue' : ''} size="small" onClick={this.toggleDefault}><Icon type="arrows-alt" /></Button>
 
-        { display !== 'default' && <Tag color="green" onClick={this.toggleType}><Icon type="swap" /></Tag> }
-        { display !== 'default' && <Tag>{display}</Tag> }
+        { display !== 'default' && <Button size="small"  onClick={this.toggleType}><Icon type="swap" /></Button> }
+        { display !== 'default' && <p style={{display: 'inline-block',margin: 0, marginRight: 5 }}>{display}:</p> }
         { display == 'default' && <span style={{ marginRight: 7 }}>{formattedData}</span>}
         { display == 'default' && <CopyToClipboard text={formattedData}><Tag><Icon type="copy" /></Tag></CopyToClipboard>}
 

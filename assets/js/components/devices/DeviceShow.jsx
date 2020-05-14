@@ -227,9 +227,9 @@ class DeviceShow extends Component {
                       <React.Fragment>
                         <Text  style={{ marginRight: 5 }}>{device.name} </Text>
                         <UserCan>
-                          <Tag color="blue" size="small" onClick={this.toggleNameInput}>
+                          <Button size="small" onClick={this.toggleNameInput}>
                             <Icon type="edit"></Icon>
-                          </Tag>
+                          </Button>
                         </UserCan>
                       </React.Fragment>
                     )}
@@ -237,7 +237,7 @@ class DeviceShow extends Component {
                 </tr>
                 <tr style={{height: '30px'}}>
                   <td><Text strong>UUID</Text></td>
-                  <td>{device.id}</td>
+                  <td><Text code>{device.id}</Text></td>
                 </tr>
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
@@ -270,9 +270,9 @@ class DeviceShow extends Component {
                           device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
                         }
                         <UserCan>
-                        <Tag color="blue" size="small" onClick={this.toggleDevEUIInput}>
+                        <Button size="small" onClick={this.toggleDevEUIInput}>
                           <Icon type="edit"></Icon>
-                        </Tag>
+                        </Button>
                         </UserCan>
                       </React.Fragment>
                     )}
@@ -308,9 +308,9 @@ class DeviceShow extends Component {
                           device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
                         }
                         <UserCan>
-                        <Tag color="blue" size="small" onClick={this.toggleAppEUIInput}>
+                        <Button size="small" onClick={this.toggleAppEUIInput}>
                           <Icon type="edit"></Icon>
-                        </Tag>
+                        </Button>
                         </UserCan>
                       </React.Fragment>
                     )}
@@ -346,9 +346,9 @@ class DeviceShow extends Component {
                           device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
                         }
                         <UserCan>
-                        <Tag color="blue" size="small" onClick={this.toggleAppKeyInput}>
+                        <Button size="small" onClick={this.toggleAppKeyInput}>
                           <Icon type="edit"></Icon>
-                        </Tag>
+                        </Button>
                         </UserCan>
                       </React.Fragment>
                     )}
@@ -357,7 +357,7 @@ class DeviceShow extends Component {
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
                   <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
-                  <td><Tag color="green">OTAA</Tag></td>
+                  <td><Text>OTAA</Text></td>
                 </tr>
                 <tr style={{height: '30px'}}>
                   <td><Text strong>LoRaWAN US Channels</Text></td>

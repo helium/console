@@ -13,6 +13,8 @@ import { graphql } from 'react-apollo';
 import { MENU_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
+import classNames from 'classnames';
+
 
 const queryOptions = {
   options: props => ({
@@ -57,23 +59,26 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: showLabels ? 16 : 32, position: 'relative' }}>
-            <Link to={"/labels"} className="menu-link" style={{ marginRight: 40 }}>
+          <div><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
+          <div><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
+          <div style={{ marginLeft: 0, position: 'relative' }}>
+            <Link to={"/labels"} className="menu-link">
               <Icon style={{ marginRight: 8 }} type="tag"/>Labels
             </Link>
             {
-              showLabels ? (
+              showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false })}
                 >
                   -
                 </p>
-              ) : (
+              )
+            }
+            {
+              !showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', left: 144, top: 8, color: grayForHideLabelsDash, fontSize: 20, fontFamily: 'soleil-light', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true })}
                 >
                   +
@@ -83,23 +88,26 @@ class NavDrawer extends Component {
           </div>
           {
             showLabels && (
-              <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 16 }}>
+              <div>
                 {
                   data.allLabels && data.allLabels.map(l => (
-                    <div style={{ padding: 2 }} key={l.id}>
+                 <div style={{ padding: 10, paddingLeft: 24, width: 300, backgroundColor: '#020B13', marginBottom: 20 }} key={l.id}>
+
+                    <div style={{ padding: 2 }}>
                       <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
                       </Link>
+                    </div>
                     </div>
                   ))
                 }
               </div>
             )
           }
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
-          <div style={{ marginLeft: 24, marginBottom: 32 }}><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
+          <div><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
+          <div><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
+          <div><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
+          <div><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
         </Menu>
       </div>
     )

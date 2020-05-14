@@ -133,7 +133,7 @@ class NewDeviceModal extends Component {
 
         <Text strong>Attach a Label (Optional)</Text><br />
         <Select
-          placeholder={error ? "Labels failed to load..." : "Choose Label"}
+          placeholder={error ? "No Labels found..." : "Choose Label"}
           style={{ width: 220, marginRight: 10, marginTop: 10 }}
           onSelect={this.handleSelectOption}
         >

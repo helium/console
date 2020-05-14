@@ -6,6 +6,8 @@ import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
+import classNames from 'classnames';
+
 import { Typography } from 'antd';
 import { Card } from 'antd';
 const { Text } = Typography
@@ -32,23 +34,44 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channel } = this.state
     return (
       <DashboardLayout title="Integrations">
+      <p style={{fontSize: 16, marginBottom: 60, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.</p>
+      <div className="flexwrapper">
         <UserCan>
-          <Card title="Add a Prebuilt Integration">
+          <Card title="Add a Prebuilt Integration" className="integrationcard">
             <ChannelPremadeRow />
           </Card>
         </UserCan>
 
         <UserCan>
-          <Card title="Add a Custom Integration">
+          <Card title="Add a Custom Integration" className="integrationcard">
             <ChannelCreateRow />
           </Card>
         </UserCan>
+        </div>
 
-        <Card title="My Integrations" bodyStyle={{padding: '1px 0 20px', overflowX: 'scroll' }}>
+        <Card title="My Integrations" bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}>
           <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} history={this.props.history}/>
         </Card>
 
         <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channel}/>
+
+        <style jsx>{`
+          .flexwrapper {
+            display: flex;
+            flex-wrap: wrap;
+
+          }
+
+          .integrationcard {
+            flex-grow: 1;
+          }
+
+          .integrationcard:first-of-type {
+            margin-right: 20px;
+          }
+
+
+          `}</style>
       </DashboardLayout>
     )
   }

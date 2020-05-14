@@ -112,15 +112,16 @@ class ChannelNew extends Component {
       >
 
       <Card title="Step 1 – Choose an Integration Type">
+      <div className="flexwrapper">
 
-        <Card size="small" title="Add a Prebuilt Integration">
+        <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
           <ChannelPremadeRow />
         </Card>
 
-        <Card size="small" title="Add a Custom Integration">
+        <Card size="small" title="Add a Custom Integration" className="integrationcard">
           <ChannelCreateRow />
         </Card>
-
+        </div>
         </Card>
         <Card title="Step 2 - Verify Details">
           {this.renderForm()}
@@ -157,6 +158,23 @@ class ChannelNew extends Component {
             </div>
           </Card>
         )}
+         <style jsx>{`
+          .flexwrapper {
+            display: flex;
+            flex-wrap: wrap;
+
+          }
+
+          .integrationcard {
+            flex-grow: 1;
+          }
+
+          .integrationcard:first-of-type {
+            margin-right: 20px;
+          }
+
+
+          `}</style>
       </DashboardLayout>
     )
   }

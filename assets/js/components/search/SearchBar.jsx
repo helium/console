@@ -187,7 +187,8 @@ class SearchBar extends Component {
             ref={this.searchBarInput}
             value={query}
             onChange={this.handleUpdateQuery}
-            placeholder="Search..."
+            placeholder="Search Console..."
+            style={{minWidth: 400}}
           />
         </div>
 
@@ -197,6 +198,26 @@ class SearchBar extends Component {
           selectedResult={selectedResult}
           gotoResult={this.gotoResult}
         /> }
+
+            <style jsx>{`
+
+              input::placeholder {
+                color: #56769D;
+                                transiton: all .2s ease;
+
+              }
+
+              #searchBar {
+                                                transiton: all .2s ease;
+
+              }
+
+              #searchBar:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transiton: all .2s ease;
+              }
+
+                `}</style>
       </div>
     )
   }

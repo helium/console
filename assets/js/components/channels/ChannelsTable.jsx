@@ -6,6 +6,9 @@ import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
+import classNames from 'classnames';
+
+
 const { Text } = Typography
 
 const queryOptions = {
@@ -111,28 +114,125 @@ class ChannelsTable extends Component {
 
     if (loading) return null;
     if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
+      <div className="blankstateWrapper">
+        <div className="message">
+        <h1>You have no Integrations added</h1>
+        <p>Choose an Integration above to get started.</p>
+
+        </div>
+      <style jsx>{`
+
+          .message {
+
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+
+          }
+
+          h1, p  {
+
+            color: #242425;
+          }
+          h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+          }
+          p {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.75;
+          }
+
+
+          .blankstateWrapper {
+            width: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+            margin: 0 auto;
+            position: relative;
+
+
+          }
+        `}</style>
+
+      </div>
     )
 
     return (
       <div>
-        <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/integrations/${record.id}`)
-          })}
-          columns={columns}
-          dataSource={channels.entries}
-          rowKey={record => record.id}
-          pagination={false}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
-          <Pagination
-            current={channels.pageNumber}
-            pageSize={channels.pageSize}
-            total={channels.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-          />
-        </div>
+      {
+          channels.entries.length === 0 && (
+
+             <div className="blankstateWrapper">
+      <div className="message">
+<h1>You have no Integrations added</h1>
+<p>Choose an Integration above to get started.</p>
+
+      </div>
+      <style jsx>{`
+
+          .message {
+
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+
+          }
+
+          h1, p  {
+
+            color: #242425;
+          }
+          h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+          }
+          p {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.75;
+          }
+
+
+          .blankstateWrapper {
+            width: 100%;
+            padding-top: 100px;
+            padding-bottom: 100px;
+            margin: 0 auto;
+            position: relative;
+          }
+        `}</style>
+      </div>
+      )
+      }
+      {
+        channels.entries.length > 0 && (
+          <React.Fragment>
+            <Table
+              onRow={(record, rowIndex) => ({
+                onClick: () => this.props.history.push(`/integrations/${record.id}`)
+              })}
+              columns={columns}
+              dataSource={channels.entries}
+              rowKey={record => record.id}
+              pagination={false}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+              <Pagination
+                current={channels.pageNumber}
+                pageSize={channels.pageSize}
+                total={channels.totalEntries}
+                onChange={page => this.handleChangePage(page)}
+                style={{marginBottom: 20}}
+              />
+            </div>
+          </React.Fragment>
+        )
+        }
+
       </div>
     )
   }

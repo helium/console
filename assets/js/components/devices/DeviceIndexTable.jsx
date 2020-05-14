@@ -8,6 +8,9 @@ import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
+import DevicesImg from '../../../img/devices.svg'
+
+import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -188,7 +191,56 @@ class DeviceIndexTable extends Component {
     }
 
     return (
-      <Card
+      <div>
+        {
+          devices.entries.length === 0 && (
+            <div className="blankstateWrapper">
+            <div className="message">
+              <img src={DevicesImg} />
+              <h1>No Devices</h1>
+              <p>You haven’t added any devices yet.</p>
+            </div>
+            <style jsx>{`
+
+                .message {
+
+                  width: 100%;
+                  max-width: 500px;
+                  margin: 0 auto;
+                  text-align: center;
+
+                }
+
+                h1, p  {
+
+                  color: #242425;
+                }
+                h1 {
+                  font-size: 46px;
+                  margin-bottom: 10px;
+                }
+                p {
+                  font-size: 20px;
+                  font-weight: 300;
+                }
+
+
+                .blankstateWrapper {
+                  width: 100%;
+                  padding-top: 200px;
+                  margin: 0 auto;
+                  position: relative;
+                  padding-bottom: 200px;
+
+
+                }
+              `}</style>
+            </div>
+          )
+        }
+        {
+          devices.entries.length > 0 && (
+            <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${devices.entries.length} Devices`}
         extra={
@@ -205,26 +257,31 @@ class DeviceIndexTable extends Component {
           </UserCan>
         }
       >
-        <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/devices/${record.id}`)
-          })}
-          columns={columns}
-          dataSource={devices.entries}
-          rowKey={record => record.id}
-          pagination={false}
-          rowSelection={rowSelection}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-          <Pagination
-            current={devices.pageNumber}
-            pageSize={devices.pageSize}
-            total={devices.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-            style={{marginBottom: 20}}
-          />
-        </div>
-      </Card>
+            <React.Fragment>
+              <Table
+                onRow={(record, rowIndex) => ({
+                  onClick: () => this.props.history.push(`/devices/${record.id}`)
+                })}
+                columns={columns}
+                dataSource={devices.entries}
+                rowKey={record => record.id}
+                pagination={false}
+                rowSelection={rowSelection}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+                <Pagination
+                  current={devices.pageNumber}
+                  pageSize={devices.pageSize}
+                  total={devices.totalEntries}
+                  onChange={page => this.handleChangePage(page)}
+                  style={{marginBottom: 20}}
+                />
+              </div>
+            </React.Fragment>
+            </Card>
+          )
+        }
+      </div>
     )
   }
 }
