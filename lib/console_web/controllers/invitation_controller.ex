@@ -63,12 +63,12 @@ defmodule ConsoleWeb.InvitationController do
       Organizations.get_invitation!(invitation.id)
       |> ConsoleWeb.InvitationController.broadcast()
 
-      Organizations.get_membership!(conn.assigns.current_user, organization)
-      |> ConsoleWeb.MembershipController.broadcast()
+      membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+      ConsoleWeb.MembershipController.broadcast(membership)
 
       conn
       |> put_status(:ok)
-      |> render("accept.json", organization: organization)
+      |> render("accept.json", %{organization: organization, membership: membership})
     end
   end
 
