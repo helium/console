@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :console
   use Absinthe.Phoenix.Endpoint
+  use Appsignal.Phoenix
 
   socket "/socket", ConsoleWeb.UserSocket,
     websocket: [timeout: 45_000]

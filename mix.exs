@@ -63,7 +63,8 @@ defmodule Console.Mixfile do
       {:cors_plug, "~> 2.0"},
       {:hammer, "~> 6.0"},
       {:joken, "~> 2.2.0"},
-      {:mox, "~> 0.5.2", only: :test}
+      {:mox, "~> 0.5.2", only: :test},
+      {:appsignal, "~> 1.0"},
     ]
   end
 

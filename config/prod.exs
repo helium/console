@@ -55,6 +55,12 @@ config :console,
 config :console,
   auth0_baseurl: System.get_env("AUTH0_BASE_URL")
 
+config :appsignal, :config,
+  active: true,
+  name: System.get_env("APPSIGNAL_APP_NAME"),
+  push_api_key: System.get_env("APPSIGNAL_API_KEY"),
+  env: Mix.env
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
