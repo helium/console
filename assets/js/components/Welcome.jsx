@@ -76,19 +76,6 @@ class Welcome extends Component {
               <a href="https://engineering.helium.com/" target="_blank" style={{ marginBottom: 4 }}><Text style={{ color: '#722ED1' }}><span style={{ fontWeight: 300 }}>Read our</span> Engineering Update Blog<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text></a>
             </div>
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'row', marginTop: 60 }}>
-            <div style={{ backgroundColor: '#B4C5DE', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 10, maxWidth: 110, minWidth: 110, borderRadius: '9px 0px 0px 9px' }}>
-              <img src={BulbImg} style={{ height: 60 }} />
-              <Text style={{ fontSize: 18, color: '#FFFFFF' }}>Tip 1</Text>
-            </div>
-            <div style={{ backgroundColor: '#DCE5F2', width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: 30, minWidth: 710, borderRadius: '0px 9px 9px 0px' }}>
-              <div style={{ marginBottom: 10 }}><Text style={{ fontSize: 16, color: '#556B8C' }}>Learn how to build Integrations with myDevices and AWS IoT.</Text></div>
-              <a href="https://www.youtube.com/watch?v=h6hgiztpgJA" target="_blank" style={{ marginBottom: 4 }}>
-                <Text style={{ color: '#096DD9' }}>Watch our how-to video here<Icon style={{ marginLeft: 5, position: 'relative', top: 1 }} type="caret-right" /></Text>
-              </a>
-            </div>
-          </div>
         </div>
       </DashboardLayout>
     )
