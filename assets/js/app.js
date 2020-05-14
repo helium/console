@@ -23,7 +23,7 @@ import "phoenix_html"
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Switch, Router } from 'react-router-dom';
 import App from './App.jsx';
 import { Auth0Provider } from './components/auth/Auth0Provider';
 import Terms from './components/auth/Terms';
