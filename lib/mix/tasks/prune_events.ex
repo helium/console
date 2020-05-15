@@ -2,6 +2,7 @@ defmodule Mix.Tasks.PruneEvents do
   use Mix.Task
 
   def run(db) do
+    IO.inspect "Pruned events from db"
     Mix.shell.cmd("psql -a #{db} -c 'select prune_events()'")
   end
 end
