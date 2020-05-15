@@ -45,6 +45,8 @@ defmodule ConsoleWeb.Endpoint do
 
   plug ConsoleWeb.Router
 
+  plug ConsoleWeb.Plug.AppsignalAbsinthePlug
+
   @doc """
   Callback invoked for dynamically configuring the endpoint.
 
