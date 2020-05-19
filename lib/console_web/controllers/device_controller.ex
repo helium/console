@@ -12,14 +12,6 @@ defmodule ConsoleWeb.DeviceController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    current_organization =
-      conn.assigns.current_organization
-      |> Console.Organizations.fetch_assoc([:devices])
-
-    render(conn, "index.json", devices: current_organization.devices)
-  end
-
   def create(conn, %{"device" => device_params, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
@@ -37,12 +29,6 @@ defmodule ConsoleWeb.DeviceController do
       |> put_resp_header("message",  "#{device.name} created successfully")
       |> render("show.json", device: device)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id)
-
-    render(conn, "show.json", device: device)
   end
 
   def update(conn, %{"id" => id, "device" => device_params}) do

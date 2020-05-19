@@ -5,6 +5,7 @@ defmodule Console.Factory do
   alias Console.ApiKeys.ApiKey
   alias Console.Labels.Label
   alias Console.Channels.Channel
+  alias Console.Devices.Device
 
   def user_factory do
     %{
@@ -42,14 +43,13 @@ defmodule Console.Factory do
       type: "azure"
     }
   end
-  #
-  # def device_factory do
-  #   %Device{
-  #     name: "My Device",
-  #     app_key: "0000000011111111000000001111111",
-  #     app_eui: "0000000011111111",
-  #     dev_eui: sequence(:dev_eui, &"000000001111111#{&1}"),
-  #     oui: "0"
-  #   }
-  # end
+
+  def device_factory do
+    %Device{
+      name: "My Device",
+      app_key: "0000000011111111000000001111111",
+      app_eui: "0000000011111111",
+      dev_eui: sequence(:dev_eui, &"000000001111111#{&1}"),
+    }
+  end
 end
