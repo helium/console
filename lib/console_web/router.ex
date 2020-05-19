@@ -28,23 +28,22 @@ defmodule ConsoleWeb.Router do
     post "/users/resend_verification", UserController, :resend_verification
     post "/users/forgot_password", UserController, :forgot_password
     post "/users/change_password", UserController, :change_password
-    post "/sessions", SessionController, :create
-    post "/2fa/verify", TwoFactorController, :verify
     get "/invitations/:token", InvitationController, :get_by_token
   end
 
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
+    get "/users/current", UserController, :current
     post "/users", InvitationController, :accept
-    resources "/devices", DeviceController, except: [:new, :edit]
+    resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/debug", DeviceController, :debug
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
     post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
-    resources "/channels", ChannelController, except: [:new, :edit]
+    resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
     end
@@ -59,12 +58,6 @@ defmodule ConsoleWeb.Router do
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
     resources "/functions", FunctionController, only: [:create, :delete, :update]
-
-    get "/2fa", TwoFactorController, :new
-    post "/2fa", TwoFactorController, :create
-    post "/2fa/skip", TwoFactorController, :skip
-    post "/sessions/refresh", SessionController, :refresh
-    get "/users/current", UserController, :current
   end
 
   scope "/api/router", ConsoleWeb.Router do
