@@ -53,16 +53,6 @@ defmodule ConsoleWeb.Schema do
     field :downlink_token, :string
   end
 
-  paginated object :gateway do
-    field :id, :id
-    field :name, :string
-    field :mac, :string
-    field :location, :string
-    field :longitude, :decimal
-    field :latitude, :decimal
-    field :status, :string
-  end
-
   paginated object :membership do
     field :id, :id
     field :email, :string
@@ -190,17 +180,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Labels.LabelResolver.all/2
     end
 
-    @desc "Get paginated gateways"
-    paginated field :gateways, :paginated_gateways do
-      resolve(&Console.Gateways.GatewayResolver.paginate/2)
-    end
-
-    @desc "Get a single gateway"
-    field :gateway, :gateway do
-      arg :id, non_null(:id)
-      resolve &Console.Gateways.GatewayResolver.find/2
-    end
-
     @desc "Get paginated channels"
     paginated field :channels, :paginated_channels do
       resolve(&Console.Channels.ChannelResolver.paginate/2)
@@ -246,7 +225,7 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
-    @desc "Search for devices, gateways and channels"
+    @desc "Search for devices and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search/2
@@ -328,12 +307,6 @@ defmodule ConsoleWeb.Schema do
 
       config fn args, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/#{args.device_id}/device_updated"}
-      end
-    end
-
-    field :gateway_added, :gateway do
-      config fn _, %{context: %{ current_organization_id: organization_id }} ->
-        {:ok, topic: "#{organization_id}/gateway_added"}
       end
     end
 

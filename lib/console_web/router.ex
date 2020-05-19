@@ -44,7 +44,6 @@ defmodule ConsoleWeb.Router do
     post "/labels/delete", LabelController, :delete
     post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
-    resources "/gateways", GatewayController, except: [:new, :edit]
     resources "/channels", ChannelController, except: [:new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit] do
       post "/switch", OrganizationController, :switch
@@ -81,8 +80,6 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, only: [:show] do
       post "/event", DeviceController, :add_device_event
     end
-    post "/gateways/register", GatewayController, :register
-    post "/gateways/verify", GatewayController, :verify
   end
 
   scope "/api/v1", ConsoleWeb.V1 do
