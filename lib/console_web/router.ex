@@ -54,8 +54,8 @@ defmodule ConsoleWeb.Router do
     post "/channels_labels", LabelController, :add_labels_to_channel
     post "/channels_labels/delete", LabelController, :delete_labels_from_channel
 
-    resources "/invitations", InvitationController, only: [:index, :create, :delete]
-    resources "/memberships", MembershipController, only: [:index, :update, :delete]
+    resources "/invitations", InvitationController, only: [:create, :delete]
+    resources "/memberships", MembershipController, only: [:update, :delete]
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
     resources "/functions", FunctionController, only: [:create, :delete, :update]
