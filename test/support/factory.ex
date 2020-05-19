@@ -3,6 +3,8 @@ defmodule Console.Factory do
 
   alias Console.Organizations.Organization
   alias Console.ApiKeys.ApiKey
+  alias Console.Labels.Label
+  alias Console.Channels.Channel
 
   def user_factory do
     %{
@@ -25,15 +27,21 @@ defmodule Console.Factory do
     }
   end
 
-  # def channel_factory do
-  #   %Channel{
-  #     active: true,
-  #     credentials: %{"a field" => "a value"},
-  #     name: sequence(:name, &"My Channel #{&1}"),
-  #     type_name: "Azure IoT Hub",
-  #     type: "azure"
-  #   }
-  # end
+  def label_factory do
+    %Label{
+      name: sequence(:name, &"Label #{&1}"),
+    }
+  end
+
+  def channel_factory do
+    %Channel{
+      active: true,
+      credentials: %{"a field" => "a value"},
+      name: sequence(:name, &"My Channel #{&1}"),
+      type_name: "Azure IoT Hub",
+      type: "azure"
+    }
+  end
   #
   # def device_factory do
   #   %Device{
