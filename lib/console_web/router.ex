@@ -25,9 +25,6 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through :api
 
-    post "/users/resend_verification", UserController, :resend_verification
-    post "/users/forgot_password", UserController, :forgot_password
-    post "/users/change_password", UserController, :change_password
     get "/invitations/:token", InvitationController, :get_by_token
   end
 
@@ -104,9 +101,6 @@ defmodule ConsoleWeb.Router do
 
   scope "/", ConsoleWeb do
     pipe_through :browser # Use the default browser stack
-
-    get "/users/confirm_email/:token", UserController, :confirm_email, as: "confirm_email"
-    get "/users/reset_password/:token", UserController, :reset_password, as: "reset_password"
 
     get "/invitations/accept/:token", InvitationController, :redirect_to_register, as: "accept_invitation"
     get "/api_keys/accept/:token", ApiKeyController, :accept, as: "accept_api_key"

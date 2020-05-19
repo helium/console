@@ -83,18 +83,6 @@ defmodule Console.Organizations do
     end
   end
 
-  def user_has_access?(%User{} = user, %Organization{} = organization) do
-    query =
-      from(
-        m in "memberships",
-        select: count(m.id),
-        where: m.user_id == ^user.id and m.organization_id == type(^organization.id, :binary_id)
-      )
-
-    count = Repo.one(query)
-    count > 0
-  end
-
   def create_organization(%{} = user, attrs \\ %{}) do
     organization_changeset =
       %Organization{}
@@ -134,11 +122,6 @@ defmodule Console.Organizations do
 
   def fetch_assoc_membership(%Membership{} = membership, assoc \\ [:organization]) do
     Repo.preload(membership, assoc)
-  end
-
-  def current_organization_for(%User{} = user) do
-    # TODO: use a timestamp on membership to track the last-viewed organization
-    List.first(Auth.fetch_assoc(user).organizations)
   end
 
   def create_invitation(%User{} = inviter, %Organization{} = organization, attrs) do
