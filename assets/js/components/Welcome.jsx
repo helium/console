@@ -83,7 +83,7 @@ class Welcome extends Component {
               <Icon className="bigicon" id="purple" type="calendar" theme="filled" />
               <h2>Developer Resources</h2>
               <a href="https://developer.helium.com/" target="_blank"><p><span>View</span> Documentation and Tutorials<Icon className="caret" type="caret-right" /></p></a>
-              <a href="https://www.youtube.com/channel/UCEdh5moyCkiIrfdkZOnG5ZQ/videos" target="_blank"><p><span>Watch our</span> Hot-to Videos<Icon className="caret" type="caret-right" /></p></a>
+              <a href="https://www.youtube.com/channel/UCEdh5moyCkiIrfdkZOnG5ZQ/videos" target="_blank"><p><span>Watch our</span> How-to Videos<Icon className="caret" type="caret-right" /></p></a>
               <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Slack Channel<Icon className="caret" type="caret-right" /></p></a>
               <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<Icon className="caret" type="caret-right" /></p></a>
             </div>
