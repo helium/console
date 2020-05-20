@@ -95,7 +95,7 @@ defmodule Console.Organizations do
     count > 0
   end
 
-  def create_organization(%User{} = user, attrs \\ %{}) do
+  def create_organization(%{} = user, attrs \\ %{}) do
     organization_changeset =
       %Organization{}
       |> Organization.create_changeset(attrs)

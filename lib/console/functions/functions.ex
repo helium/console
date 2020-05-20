@@ -10,6 +10,10 @@ defmodule Console.Functions do
      Repo.get_by!(Function, [id: id, organization_id: organization.id])
   end
 
+  def get_function!(id), do: Repo.get!(Function, id)
+
+  def get_function(id), do: Repo.get(Function, id)
+
   def get_organization_function_count(organization) do
     functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
     length(functions)

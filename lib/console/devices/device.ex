@@ -66,7 +66,7 @@ defmodule Console.Devices.Device do
       %Ecto.Changeset{valid?: true, changes: changes} ->
         dev_eui_valid = Map.get(changes, :dev_eui) == nil or String.match?(changes.dev_eui, ~r/[0-9a-fA-F]{16}/)
         app_eui_valid = Map.get(changes, :app_eui) == nil or String.match?(changes.app_eui, ~r/[0-9a-fA-F]{16}/)
-        app_key_valid = Map.get(changes, :app_key) == nil or String.match?(changes.app_key, ~r/[0-9a-fA-F]{16}/)
+        app_key_valid = Map.get(changes, :app_key) == nil or String.match?(changes.app_key, ~r/[0-9a-fA-F]{32}/)
 
         cond do
           !dev_eui_valid -> add_error(changeset, :message, "Dev EUI must be exactly 8 bytes long, and only contain characters 0-9 A-F")

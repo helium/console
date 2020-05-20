@@ -1,29 +1,37 @@
 defmodule Console.Factory do
   use ExMachina.Ecto, repo: Console.Repo
 
-  alias Console.Auth.User
+  alias Console.Organizations.Organization
+  alias Console.ApiKeys.ApiKey
+  alias Console.Labels.Label
   alias Console.Channels.Channel
   alias Console.Devices.Device
-  alias Console.Events.Event
-  alias Console.Organizations.Organization
-  alias Console.Organizations.Invitation
-  alias Console.Gateways.Gateway
+  alias Console.Functions.Function
 
   def user_factory do
-    %User{
+    %{
       id: sequence(:id, &"abcdefghijklmnopqrstuvwxyz#{&1}"),
       email: sequence(:email, &"email-#{&1}@example.com"),
-      password_hash: "$2b$12$8JVaQdWzTkKYJoEtORLwx.BrIWMfRZQ.0loabtPw38Y2aV9geMgt6",
-      confirmed_at: NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     }
   end
 
-  def unconfirmedUser_factory do
-    %User{
-      id: sequence(:id, &"abcdefghijklmnopqrstuvwxyz#{&1}"),
-      email: sequence(:email, &"email-#{&1}@example.com"),
-      password_hash: "pa$$word ha$h",
-      confirmation_token: "CoNfIrMaTiOnToKeN"
+  def organization_factory do
+    %Organization{
+      name: sequence(:name, &"Organization #{&1}")
+    }
+  end
+
+  def api_key_factory do
+    %ApiKey{
+      name: sequence(:name, &"Api Key #{&1}"),
+      role: "admin",
+      key: "key"
+    }
+  end
+
+  def label_factory do
+    %Label{
+      name: sequence(:name, &"Label #{&1}"),
     }
   end
 
@@ -43,40 +51,15 @@ defmodule Console.Factory do
       app_key: "0000000011111111000000001111111",
       app_eui: "0000000011111111",
       dev_eui: sequence(:dev_eui, &"000000001111111#{&1}"),
-      oui: "0"
     }
   end
 
-  def gateway_factory do
-    %Gateway{
-      name: "My Gateway",
-      mac: sequence(:mac, &"mac address #{&1}"),
-      public_key: "my public key",
-      latitude: 37.770918,
-      longitude: -122.419487,
-      status: "pending"
-    }
-  end
-
-  def event_factory do
-    %Event{
-      description: "I am an event",
-      payload_size: 42,
-      reported_at_naive: "2010-04-17T14:00:00.000000Z",
-    }
-  end
-
-  def organization_factory do
-    %Organization{
-      name: sequence(:name, &"Organization #{&1}")
-    }
-  end
-
-  def invitation_factory do
-    %Invitation{
-      email: sequence(:email, &"email-#{&1}@example.com"),
-      role: sequence(:role, ~w(admin manager read)),
-      token: sequence(:token, &"TOKEN-#{&1}")
+  def function_factory do
+    %Function{
+      name: "My Function",
+      type: "decoder",
+      format: "custom",
+      body: "none",
     }
   end
 end

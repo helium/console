@@ -8,11 +8,12 @@ defmodule ConsoleWeb.Plug.PutCurrentOrganization do
   def init(default), do: default
 
   def call(conn, _default) do
-    # Replace the following with a check for supplied organization being valid
     current_user = conn.assigns.current_user
     organization_id = if conn.params["organization_id"] do
+        # used for GraphqlPipeline
         conn.params["organization_id"]
       else
+        # used for AuthApiPipeline
         conn |> get_req_header("organization") |> List.first()
       end
     if organization_id do

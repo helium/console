@@ -3,13 +3,16 @@ defmodule Console.FactoryHelper do
   import Console.Factory
   import ConsoleWeb.Guardian
 
+  alias Console.Organizations
+
   def authenticate_user(%{conn: conn}) do
-    {:ok, user, organization} = Console.Auth.create_user(params_for(:user, %{password: "password"}), %{name: "Test Organization"})
+    user = params_for(:user)
+    {:ok, organization} = Organizations.create_organization(user, params_for(:organization))
     conn = conn
            |> put_req_header("accept", "application/json")
            |> put_req_header("authorization", user.id <> " " <> user.email)
            |> put_req_header("organization", organization.id)
-    {:ok, conn: conn, user: user, organization: organization}
+    {:ok, conn: conn}
   end
 
   def unauthenticated_user(%{conn: conn}) do
@@ -23,12 +26,6 @@ defmodule Console.FactoryHelper do
     build_conn()
     |> put_req_header("accept", "application/json")
     |> put_req_header("authorization", "bearer: " <> token)
-  end
-
-  def create_device_with_events(count) do
-    device = insert(:device)
-    events = insert_list(count, :event, device: device)
-    {device, events}
   end
 
   def create_device_for_organization(organization, attrs \\ %{}) do
