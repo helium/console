@@ -4,6 +4,8 @@ defmodule Console.Factory do
   alias Console.Organizations.Organization
   alias Console.ApiKeys.ApiKey
   alias Console.Labels.Label
+  alias Console.Labels.DevicesLabels
+  alias Console.Labels.ChannelsLabels
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Functions.Function
@@ -25,7 +27,8 @@ defmodule Console.Factory do
     %ApiKey{
       name: sequence(:name, &"Api Key #{&1}"),
       role: "admin",
-      key: "key"
+      key: "key",
+      user_id: "me"
     }
   end
 
@@ -48,8 +51,8 @@ defmodule Console.Factory do
   def device_factory do
     %Device{
       name: "My Device",
-      app_key: "0000000011111111000000001111111",
-      app_eui: "0000000011111111",
+      app_key: sequence(:dev_eui, &"000000001111111100000000111111#{&1}"),
+      app_eui: sequence(:dev_eui, &"000000001111111#{&1}"),
       dev_eui: sequence(:dev_eui, &"000000001111111#{&1}"),
     }
   end
@@ -61,5 +64,13 @@ defmodule Console.Factory do
       format: "custom",
       body: "none",
     }
+  end
+
+  def devices_labels_factory do
+    %DevicesLabels{}
+  end
+
+  def channels_labels_factory do
+    %ChannelsLabels{}
   end
 end

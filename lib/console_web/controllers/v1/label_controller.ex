@@ -21,13 +21,11 @@ defmodule ConsoleWeb.V1.LabelController do
 
   def create(conn, label_params = %{ "name" => _name }) do
     current_organization = conn.assigns.current_organization
-    current_user = conn.assigns.user_id |> Auth.get_user_by_id()
 
-    # need to make sure email is accessible here
     label_params =
       Map.merge(label_params, %{
         "organization_id" => current_organization.id,
-        "creator" => current_user.email
+        "creator" => conn.assigns.user_id
       })
 
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do

@@ -18,6 +18,7 @@ defmodule Console.Labels do
   end
 
   def get_label!(id), do: Repo.get!(Label, id)
+  def get_label(id), do: Repo.get(Label, id)
   def get_label!(organization, id) do
      Repo.get_by!(Label, [id: id, organization_id: organization.id])
   end
