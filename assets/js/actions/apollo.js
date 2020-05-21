@@ -18,7 +18,7 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
     const httpLink = createHttpLink({
       uri: "/graphql"
     })
-    
+
     const authLink = setContext(async (_, { headers }) => {
       const tokenClaims = await getAuthToken();
       const token = tokenClaims.__raw
@@ -40,7 +40,7 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
         }
       }
     })
-    
+
     const authErrorLink = onError(({ networkError, operation: { operationName }}) => {
       if (networkError.statusCode == 404) {
         switch(operationName) {
@@ -50,25 +50,22 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
           case "ChannelShowQuery":
             store.dispatch(replace("/integrations"))
             break
-          case "GatewayShowQuery":
-            store.dispatch(replace("/gateways"))
-            break
           default:
             break
         }
       }
     })
-    
+
     const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
     const socketLink = new SocketLink(getAuthToken, currentOrganizationId);
     await socketLink.connect();
-    
+
     const link = new ApolloLink.split(
       operation => hasSubscription(operation.query),
       socketLink,
       authHttpLink
     )
-    
+
     const apolloClient = new ApolloClient({
       link,
       cache: new InMemoryCache(),

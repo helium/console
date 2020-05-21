@@ -13,11 +13,6 @@ defmodule ConsoleWeb.InvitationController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    current_organization = conn.assigns.current_organization |> Organizations.fetch_assoc([:invitations])
-    render(conn, "index.json", invitations: current_organization.invitations)
-  end
-
   def create(conn, %{"invitation" => attrs}) do
     current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization

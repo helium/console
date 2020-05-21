@@ -10,11 +10,6 @@ defmodule ConsoleWeb.MembershipController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _params) do
-    current_organization = conn.assigns.current_organization |> Organizations.fetch_assoc([memberships: [:user]])
-    render(conn, "index.json", memberships: current_organization.memberships)
-  end
-
   def update(conn, %{"id" => id, "membership" => attrs}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user

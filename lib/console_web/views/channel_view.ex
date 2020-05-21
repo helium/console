@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.ChannelView do
   use ConsoleWeb, :view
   alias ConsoleWeb.ChannelView
-  alias ConsoleWeb.EventView
 
   def render("index.json", %{channels: channels}) do
     render_many(channels, ChannelView, "channel.json")
