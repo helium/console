@@ -66,13 +66,14 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
 
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id })
+      timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00])
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
         |> post("/api/router/devices/#{device_0.id}/event", %{
           "category" => "up",
           "description" => "test description",
-          "reported_at" => 1584990903,
+          "reported_at" => timestamp,
           "frame_up" => 2,
           "frame_down" => 10,
           "payload" => "payload",
@@ -83,7 +84,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
             %{
               "id" => "hotspot_id2",
               "name" => "hotspot name",
-              "reported_at" => 1584990903,
+              "reported_at" => timestamp,
               "status" => "success",
               "rssi" => -30,
               "snr" => 0.2,
@@ -95,7 +96,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
             %{
               "id" => "uuid2",
               "name" => "channel name",
-              "reported_at" => 1584990903,
+              "reported_at" => timestamp,
               "status" => "success",
               "description" => "what happened",
               "debug" => %{
