@@ -35,3 +35,8 @@ config :comeonin, :pbkdf2_rounds, 1
 config :console, oui: 1
 
 config :console, :access_token_decoder, Console.AccessTokenDecoder.MockDecodeAccessToken
+
+config :console,
+  router_secrets: [
+    "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+  ]
