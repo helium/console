@@ -1,9 +1,6 @@
 defmodule Console.Labels.LabelResolver do
   alias Console.Repo
   alias Console.Labels.Label
-  alias Console.Devices.Device
-  alias Console.Channels.Channel
-  alias Console.Functions.Function
   import Ecto.Query
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
