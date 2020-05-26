@@ -103,7 +103,8 @@ export const MENU_LABELS = gql`
     allLabels {
       id,
       name,
-      color
+      color,
+      device_count
     }
   }
 `
