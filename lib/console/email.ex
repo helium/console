@@ -7,22 +7,6 @@ defmodule Console.Email do
   alias Console.Organizations.Membership
   alias Console.Organizations.Organization
 
-  def confirm_email(%User{email: email, confirmation_token: token}) do
-    base_email()
-    |> to(email)
-    |> subject("Confirm your Helium Console account")
-    |> assign(:token, token)
-    |> render(:confirm_email)
-  end
-
-  def password_reset_email(%User{email: email}, token) do
-    base_email()
-    |> to(email)
-    |> subject("Your Helium Password Reset Link")
-    |> assign(:token, token)
-    |> render(:reset_password)
-  end
-
   def invitation_email(%Invitation{email: email, token: token, role: role}, %User{email: inviter_email}, %Organization{name: organization_name}) do
     role_hash = %{ "admin" => "Administrator", "manager" => "Manager", "read" => "Read-Only" }
 

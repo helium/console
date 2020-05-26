@@ -12,7 +12,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PublicRoute from './components/routes/PublicRoute.jsx';
-import Register from './components/auth/Register.jsx';
+import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx';
 import Profile from './components/profile/Profile.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceShow from './components/devices/DeviceShow';
@@ -35,19 +35,19 @@ import { setupApolloClient } from './actions/apollo';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt';
 
 const Router = (props) => {
-  const { 
-    loading, 
-    isAuthenticated, 
-    loginWithRedirect, 
-    getIdTokenClaims, 
-    user 
+  const {
+    loading,
+    isAuthenticated,
+    loginWithRedirect,
+    getIdTokenClaims,
+    user
   } = useAuth0();
-  const { 
+  const {
     currentOrganizationId,
     loadedOrganization,
     loadingOrganization,
-    fetchOrganization, 
-    setupApolloClient, 
+    fetchOrganization,
+    setupApolloClient,
     apolloClient
   } = props;
   useEffect(() => {
@@ -57,7 +57,7 @@ const Router = (props) => {
         fetchOrganization();
         return;
       } else if (!apolloClient && currentOrganizationId) {
-        // Only set up the apollo client if there is an organization 
+        // Only set up the apollo client if there is an organization
         // and the client hasn't been setup yet
         setupApolloClient(getIdTokenClaims, currentOrganizationId);
         return;
@@ -86,16 +86,16 @@ const Router = (props) => {
           (user && !user.email_verified && <ConfirmEmailPrompt/>) ||
           (
             // Verify we are authenticated before displaying other Components
-            isAuthenticated && 
+            isAuthenticated &&
             <Switch>
               <Redirect exact from="/" to={redirectPath} />
-              <PublicRoute path="/register" component={Register}/>
+              <PublicRoute path="/join_organization" component={JoinOrganizationPrompt}/>
               <Route>
                 { /* If user has no organizations then render the no org page */
-                  (loadedOrganization && !currentOrganizationId && <NoOrganization/>) || 
+                  (loadedOrganization && !currentOrganizationId && <NoOrganization/>) ||
                   (
                     /* Otherwise if the apollo client has been instantiated, render data routes */
-                    apolloClient && 
+                    apolloClient &&
                     <ApolloProvider client={apolloClient}>
                       <Switch>
                         <Route path="/profile" render={() => <Profile user={user}/>}/>
@@ -117,11 +117,11 @@ const Router = (props) => {
                     </ApolloProvider>
                   )
                 }
-                
+
               </Route>
             </Switch>
           )
-          
+
         }
       </ConnectedRouter>
     </PersistGate>

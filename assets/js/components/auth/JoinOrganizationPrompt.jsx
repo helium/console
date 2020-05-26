@@ -11,7 +11,7 @@ import { Typography, Button, Form, Card, Row, Col } from 'antd'
 const { Text, Title } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
-class Register extends Component {
+class JoinOrganizationPrompt extends Component {
   state = {
     organizationName: "",
     email: "",
@@ -81,4 +81,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ joinOrganization, getInvitation }, dispatch);
 }
 
-export default Register
+export default JoinOrganizationPrompt

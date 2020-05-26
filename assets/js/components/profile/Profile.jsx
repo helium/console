@@ -82,7 +82,7 @@ class Profile extends Component {
   render() {
     const { email } = this.props.user;
     const { role, mfaEnrollmentStatus } = this.props;
-    const { logOut, authKey, data } = this.props
+    const { logOut, data } = this.props
     const { newKey } = this.state
 
     const columns = [
@@ -155,7 +155,6 @@ class Profile extends Component {
         >
           <Descriptions bordered column={4}>
             <Descriptions.Item span ={4} label="Your Email is">{email}</Descriptions.Item>
-            <Descriptions.Item span ={4}  label="Auth token: "><Text copyable>{authKey}</Text></Descriptions.Item>
           </Descriptions>
         </Card>
 
@@ -208,7 +207,6 @@ class Profile extends Component {
 
 function mapStateToProps(state) {
   return {
-    authKey: state.auth.apikey,
     role: state.organization.currentRole,
     mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus
   }

@@ -2,6 +2,7 @@ defmodule Console.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Console.Helpers
+  # just using user model for superuser currently
 
   @primary_key {:id, :string, []}
   @foreign_key_type :string
