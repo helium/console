@@ -38,13 +38,13 @@ defmodule ConsoleWeb.InvitationController do
     with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
       conn
       |> redirect(
-        to: "/register?invitation=#{token}"
+        to: "/join_organization?invitation=#{token}"
       )
     else
       {false, _} ->
         conn
         |> put_flash(:error, "This invitation is no longer valid")
-        |> redirect(to: "/register")
+        |> redirect(to: "/join_organization")
         |> halt()
     end
   end

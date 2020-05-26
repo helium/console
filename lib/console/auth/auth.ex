@@ -39,28 +39,6 @@ defmodule Console.Auth do
     end
   end
 
-  def create_user_via_invitation(%Invitation{} = inv, user_attrs \\ %{}) do
-    organization = Organizations.get_organization!(inv.organization_id)
-
-    user_changeset =
-      %User{}
-      |> User.registration_changeset(user_attrs)
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:user, user_changeset)
-      |> Ecto.Multi.run(:invitation, fn _repo, %{user: user} ->
-        Organizations.join_organization(user, organization, inv.role)
-        Organizations.mark_invitation_used(inv)
-      end)
-      |> Repo.transaction()
-
-    case result do
-      {:ok, %{user: user, invitation: invitation}} -> {:ok, user, invitation}
-      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
-    end
-  end
-
   def fetch_assoc(%User{} = user, assoc \\ [:organizations]) do
     Repo.preload(user, assoc)
   end

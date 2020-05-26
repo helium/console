@@ -1,5 +1,0 @@
-Hi there,
-
-You've been added to <%= @organization_name %> on Helium. Sign in to start collaborating.
-
-Visit <%= ConsoleWeb.Endpoint.url() %> to login.

@@ -22,7 +22,6 @@ class TopBar extends Component {
 
   handleClick = e => {
     if (e.key === 'logout') {
-      analyticsLogger.logEvent("ACTION_LOGOUT", { "email": this.props.email })
       this.props.logOut()
     } else {
       this.props.push(e.key)
@@ -79,7 +78,6 @@ const menu = (handleClick, currentOrganizationName) => (
 
 function mapStateToProps(state, ownProps) {
   return {
-    email: state.user.email,
     currentOrganizationName: state.organization.currentOrganizationName,
   }
 }
