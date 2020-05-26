@@ -259,7 +259,6 @@ class DeviceIndexTable extends Component {
       >
             <React.Fragment>
               <Table
-                onRow={(record, rowIndex) => ({})}
                 columns={columns}
                 dataSource={devices.entries}
                 rowKey={record => record.id}
