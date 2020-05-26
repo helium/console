@@ -19,6 +19,7 @@ class DebugSidebar extends Component {
 
   updateData = subscriptionData => {
     if (!this.props.show) return
+    if (this.state.data.length === 10) return
 
     let event = subscriptionData.data[this.props.subscriptionKey]
 
