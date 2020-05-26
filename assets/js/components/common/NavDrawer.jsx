@@ -113,14 +113,17 @@ class NavDrawer extends Component {
 }
 
 const LabelRow = ({ text, color, deviceCount }) => (
-  <div style={{display: 'flex'}}>
-    <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10, alignSelf: 'flex-start' }} />
-    <Text style={{ color: 'white', fontSize: 12}}>{text}</Text>
+  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+    <div>
+      <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10}} />
+      <Text style={{ color: 'white', fontSize: 12}}>{text}</Text>
+    </div>
     { 
       deviceCount > 0 && 
       <div style={{
-        alignSelf: 'flex-end',
-        borderRadius: 9, 
+        marginRight: 115,
+        borderRadius: 9,
+        lineHeight: 1,
         backgroundColor: color ? labelColorsHex[color] : labelColorsHex['geekblue'],
         paddingLeft: 7,
         paddingRight: 7
