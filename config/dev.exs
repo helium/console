@@ -69,9 +69,6 @@ config :console,
     "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
   ]
 
-config :console,
-  stats_secrets: "AsxHxAdWN6m5u7RyGEmW1We9/ZfmLjQYQVdTjyZAohi4DV0ZCkpuP9prRed/uYGO"
-
 config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
 

@@ -88,12 +88,6 @@ defmodule ConsoleWeb.Router do
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
   end
 
-  scope "/api/stats", ConsoleWeb do
-    pipe_through ConsoleWeb.StatsApiPipeline
-
-    get "/", StatsController, :show
-  end
-
   if Mix.env == :dev do
     forward "/sent_emails", Bamboo.SentEmailViewerPlug
   end
