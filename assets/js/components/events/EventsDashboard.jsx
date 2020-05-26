@@ -139,7 +139,8 @@ class EventsDashboard extends Component {
       {
         title: 'Time',
         dataIndex: 'reported_at',
-        render: data => <span>{formatUnixDatetime(data)}</span>
+        align: 'left',
+        render: data => <span style={{textAlign:'left'}}>{formatUnixDatetime(data)}</span>
       },
     ]
 
