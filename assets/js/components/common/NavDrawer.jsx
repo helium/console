@@ -51,7 +51,6 @@ class NavDrawer extends Component {
   render() {
     const { history, data } = this.props
     const { showLabels } = this.state
-
     return (
       <div>
         <Menu
@@ -94,7 +93,7 @@ class NavDrawer extends Component {
                  <div style={{ padding: 8, paddingLeft: 24, width: 300, backgroundColor: '#020B13' }} key={l.id}>
                     <div style={{ padding: 2 }}>
                       <Link to={`/labels/${l.id}`}>
-                        <LabelRow text={truncate(l.name, { length: '18' })} color={l.color}/>
+                        <LabelRow text={truncate(l.name, { length: '18' })} color={l.color} deviceCount={l.device_count}/>
                       </Link>
                     </div>
                     </div>
@@ -113,10 +112,25 @@ class NavDrawer extends Component {
   }
 }
 
-const LabelRow = ({ text, color }) => (
-  <div>
-    <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10  }} />
-    <Text style={{ color: 'white', fontSize: 12 }}>{text}</Text>
+const LabelRow = ({ text, color, deviceCount }) => (
+  <div style={{display: 'flex'}}>
+    <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10, alignSelf: 'flex-start' }} />
+    <Text style={{ color: 'white', fontSize: 12}}>{text}</Text>
+    { 
+      deviceCount > 0 && 
+      <div style={{
+        alignSelf: 'flex-end',
+        borderRadius: 9, 
+        backgroundColor: color ? labelColorsHex[color] : labelColorsHex['geekblue'],
+        paddingLeft: 7,
+        paddingRight: 7
+      }}>
+        <Text 
+          style={{
+            fontSize: 12,
+          }}>{deviceCount}</Text>
+      </div>
+    }
   </div>
 )
 
