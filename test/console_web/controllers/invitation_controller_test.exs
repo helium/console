@@ -29,38 +29,78 @@ defmodule ConsoleWeb.InvitationControllerTest do
         }
       }
 
-      resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id, "email" => "test@test", "role" => "read" }}
+      resp_conn = post conn, invitation_path(conn, :create), %{
+        "invitation" => %{
+          "organization" => current_organization_id,
+          "email" => "test@test",
+          "role" => "read"
+        }
+      }
       assert json_response(resp_conn, 201)
 
       current_user = resp_conn.assigns.current_user
 
-      resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id, "email" => current_user.email, "role" => "read" }}
+      resp_conn = post conn, invitation_path(conn, :create), %{
+        "invitation" => %{
+          "organization" => current_organization_id,
+          "email" => current_user.email,
+          "role" => "read"
+        }
+      }
       assert json_response(resp_conn, 403) # cannot invite yourself to org again
     end
 
     test "can accept invitations properly", %{conn: conn} do
       current_organization_id = conn |> get_req_header("organization") |> List.first()
-      resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id, "email" => "test@test", "role" => "read" }}
+      resp_conn = post conn, invitation_path(conn, :create), %{
+        "invitation" => %{
+          "organization" => current_organization_id,
+          "email" => "test@test",
+          "role" => "read"
+        }
+      }
+
       invitation = json_response(resp_conn, 201)
       invitation = Organizations.get_invitation!(invitation["id"])
 
-      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{ "invitation" => %{ "token" => invitation.token }}
+      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
+        "invitation" => %{
+          "token" => invitation.token
+        }
+      }
       assert response(resp_conn, 200)
     end
 
     test "can delete invitations properly", %{conn: conn} do
       current_organization_id = conn |> get_req_header("organization") |> List.first()
-      resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id, "email" => "test@test", "role" => "read" }}
+      resp_conn = post conn, invitation_path(conn, :create), %{
+        "invitation" => %{
+          "organization" => current_organization_id,
+          "email" => "test@test",
+          "role" => "read"
+        }
+      }
+
       invitation = json_response(resp_conn, 201)
       invitation = Organizations.get_invitation!(invitation["id"])
 
       resp_conn = delete conn, invitation_path(conn, :delete, invitation.id)
       assert response(resp_conn, 204)
 
-      resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id, "email" => "test@test", "role" => "read" }}
+      resp_conn = post conn, invitation_path(conn, :create), %{
+        "invitation" => %{
+          "organization" => current_organization_id,
+          "email" => "test@test",
+          "role" => "read"
+        }
+      }
       invitation = json_response(resp_conn, 201)
       invitation = Organizations.get_invitation!(invitation["id"])
-      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{ "invitation" => %{ "token" => invitation.token }}
+      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
+        "invitation" => %{
+          "token" => invitation.token
+        }
+      }
 
       resp_conn = delete conn, invitation_path(conn, :delete, invitation.id)
       assert response(resp_conn, 403)
