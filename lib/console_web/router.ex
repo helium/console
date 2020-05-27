@@ -31,7 +31,7 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
-    post "/users", InvitationController, :accept
+    post "/users", InvitationController, :accept, as: "user_join_from_invitation"
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/debug", DeviceController, :debug
