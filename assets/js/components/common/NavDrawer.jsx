@@ -10,7 +10,7 @@ import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
 import { graphql } from 'react-apollo';
-import { MENU_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
+import { MENU_LABELS, LABEL_SUBSCRIPTION_FOR_NAV } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
 import classNames from 'classnames';
@@ -34,7 +34,7 @@ class NavDrawer extends Component {
     const { subscribeToMore, fetchMore } = this.props.data
 
     subscribeToMore({
-      document: LABEL_SUBSCRIPTION,
+      document: LABEL_SUBSCRIPTION_FOR_NAV,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         fetchMore({
@@ -118,8 +118,8 @@ const LabelRow = ({ text, color, deviceCount }) => (
       <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10}} />
       <Text style={{ color: 'white', fontSize: 12}}>{text}</Text>
     </div>
-    { 
-      deviceCount > 0 && 
+    {
+      deviceCount > 0 &&
       <div style={{
         marginRight: 115,
         borderRadius: 9,
@@ -128,7 +128,7 @@ const LabelRow = ({ text, color, deviceCount }) => (
         paddingLeft: 7,
         paddingRight: 7
       }}>
-        <Text 
+        <Text
           style={{
             fontSize: 12,
           }}>{deviceCount}</Text>
