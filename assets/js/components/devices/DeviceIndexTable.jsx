@@ -81,7 +81,7 @@ class DeviceIndexTable extends Component {
       {
         title: 'Device Name',
         dataIndex: 'name',
-        render: (text, record) => <Link to="#">{text}</Link>
+        render: (text, record) => <Link to={`/devices/${record.id}`}>{text}</Link>
       },
       {
         title: 'Device EUI',
@@ -259,9 +259,6 @@ class DeviceIndexTable extends Component {
       >
             <React.Fragment>
               <Table
-                onRow={(record, rowIndex) => ({
-                  onClick: () => this.props.history.push(`/devices/${record.id}`)
-                })}
                 columns={columns}
                 dataSource={devices.entries}
                 rowKey={record => record.id}
