@@ -22,7 +22,7 @@ defmodule ConsoleWeb.MembershipController do
         broadcast(membership)
 
         conn
-        |> put_resp_header("error", "User role updated successfully")
+        |> put_resp_header("message", "User role updated successfully")
         |> render("show.json", membership: membership)
       end
     end

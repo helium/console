@@ -31,7 +31,7 @@ defmodule ConsoleWeb.Router do
   scope "/api", ConsoleWeb do
     pipe_through ConsoleWeb.AuthApiPipeline
 
-    post "/users", InvitationController, :accept
+    post "/users", InvitationController, :accept, as: "user_join_from_invitation"
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/debug", DeviceController, :debug
@@ -40,9 +40,7 @@ defmodule ConsoleWeb.Router do
     post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
     resources "/channels", ChannelController, except: [:index, :new, :edit]
-    resources "/organizations", OrganizationController, except: [:new, :edit] do
-      post "/switch", OrganizationController, :switch
-    end
+    resources "/organizations", OrganizationController, except: [:new, :edit]
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
@@ -86,12 +84,6 @@ defmodule ConsoleWeb.Router do
     resources "/labels", LabelController, only: [:index, :create, :delete]
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
-  end
-
-  scope "/api/stats", ConsoleWeb do
-    pipe_through ConsoleWeb.StatsApiPipeline
-
-    get "/", StatsController, :show
   end
 
   if Mix.env == :dev do

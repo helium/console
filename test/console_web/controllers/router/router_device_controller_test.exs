@@ -5,7 +5,9 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
 
   describe "devices" do
     test "router can get devices by dev and app eui", %{conn: conn} do
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/" })
+      resp_conn = build_conn() |> post("/api/router/sessions", %{
+        "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+      })
       token = json_response(resp_conn, 201)
       jwt = token["jwt"] # get session token
 
@@ -15,7 +17,9 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       resp_conn = build_conn() |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       assert response(resp_conn, 401) # unauthenticated
 
-      resp_conn = build_conn() |> put_req_header("authorization", "Bearer " <> jwt) |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
+      resp_conn = build_conn()
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> length() == 1
       assert devices_json |> List.first() |> Map.get("id") == device_0.id
@@ -30,7 +34,9 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       insert(:channels_labels, %{ channel_id: channel_1.id, label_id: label_1.id })
       insert(:channels_labels, %{ channel_id: channel_1.id, label_id: label_2.id })
 
-      resp_conn = build_conn() |> put_req_header("authorization", "Bearer " <> jwt) |> get("/api/router/devices/yolo?app_eui=#{device_1.app_eui}&dev_eui=#{device_1.dev_eui}")
+      resp_conn = build_conn()
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api/router/devices/yolo?app_eui=#{device_1.app_eui}&dev_eui=#{device_1.dev_eui}")
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> List.first() |> Map.get("channels") |> length() == 1
 
@@ -42,25 +48,35 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       insert(:channels_labels, %{ channel_id: channel_2.id, label_id: label_3.id })
       insert(:channels_labels, %{ channel_id: channel_3.id, label_id: label_3.id })
 
-      resp_conn = build_conn() |> put_req_header("authorization", "Bearer " <> jwt) |> get("/api/router/devices/yolo?app_eui=#{device_2.app_eui}&dev_eui=#{device_2.dev_eui}")
+      resp_conn = build_conn()
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api/router/devices/yolo?app_eui=#{device_2.app_eui}&dev_eui=#{device_2.dev_eui}")
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> List.first() |> Map.get("channels") |> length() == 2
     end
 
     test "router can get single device by id", %{conn: conn} do
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/" })
+      resp_conn = build_conn()
+        |> post("/api/router/sessions", %{
+          "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+        })
       token = json_response(resp_conn, 201)
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id })
 
-      resp_conn = build_conn() |> put_req_header("authorization", "Bearer " <> jwt) |> get("/api/router/devices/#{device_0.id}")
+      resp_conn = build_conn()
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api/router/devices/#{device_0.id}")
       assert json_response(resp_conn, 200)
     end
 
     test "router add event to device event log", %{conn: conn} do
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/" })
+      resp_conn = build_conn()
+        |> post("/api/router/sessions", %{
+          "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+        })
       token = json_response(resp_conn, 201)
       jwt = token["jwt"] # get session token
 

@@ -72,20 +72,33 @@ defmodule ConsoleWeb.V1LabelControllerTest do
       label = Labels.get_label!(label["id"])
       assert label.organization_id == organization.id
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1111111111111111", "app_eui" => "1111111111111111", "app_key" => "11111111111111111111111111111111" })
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111"
+        })
       device = json_response(resp_conn, 201) # create a device in org
       assert device["organization_id"] == organization.id
 
       label = Labels.fetch_assoc(label, [:devices])
       assert label.devices |> length() == 0
       assert_error_sent 400, fn ->
-        resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => "id" })
+        resp_conn = build_conn()
+          |> put_req_header("key", key)
+          |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => "id" })
       end # label_id not valid
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
       assert response(resp_conn, 200) == "Device added to label successfully"
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
       assert response(resp_conn, 200) == "Device has already been added to label"
 
       label = Labels.get_label!(label.id)

@@ -10,54 +10,95 @@ defmodule ConsoleWeb.ChannelControllerTest do
     setup [:authenticate_user]
 
     test "creates channels properly", %{conn: conn} do
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "name" => "channel", "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "name" => "channel", "type" => "http" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "credentials" => ["can't be blank"] }} # no required attrs
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "type" => "http" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "name" => ["can't be blank"] }} # no required attrs
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "name" => "channel" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "type" => ["can't be blank"] }} # no required attrs
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "http2" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "http2" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) # type not valid
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "http", "type" => "http" }}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "http", "type" => "http" }
+        }
       end # does not have labels attr in payload
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "aws" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "aws" },
+        "labels" => []
+      }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       assert channel.downlink_token == nil # downlink token only for http
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "azure" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "azure" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) # name already used
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "http_channel", "type" => "http" }, "labels" => []}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "http_channel", "type" => "http" },
+          "labels" => []
+        }
       end # invalid http credentials
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "google.com" }, "name" => "http_channel", "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "google.com" }, "name" => "http_channel", "type" => "http" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) # invalid http credentials
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "http_channel", "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "http_channel", "type" => "http" },
+        "labels" => []
+      }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       assert channel.downlink_token != nil # downlink token only for http
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "mqtt_channel", "type" => "mqtt" }, "labels" => []}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "mqtt_channel", "type" => "mqtt" },
+          "labels" => []
+        }
       end # invalid mqtt credentials
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com" }, "name" => "mqtt_channel", "type" => "mqtt" }, "labels" => []}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com" }, "name" => "mqtt_channel", "type" => "mqtt" },
+          "labels" => []
+        }
       end # invalid mqtt credentials
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" },
+        "labels" => []
+      }
       assert json_response(resp_conn, 422) # invalid mqtt credentials
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" },
+        "labels" => []
+      }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       assert channel.downlink_token == nil # downlink token only for http
@@ -66,22 +107,34 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "create channels with labels linked properly", %{conn: conn} do
       # channel is still created even if labels do not parse by design
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel2", "type" => "google" }, "labels" => %{}}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "channel2", "type" => "google" },
+          "labels" => %{}
+        }
       end # labels attr invalid type
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel3", "type" => "google" }, "labels" => [1]}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "channel3", "type" => "google" },
+          "labels" => [1]
+        }
       end # labels attr content invalid type
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel4", "type" => "google" }, "labels" => ['gjkahksf']}
+        resp_conn = post conn, channel_path(conn, :create), %{
+          "channel" => %{ "credentials" => %{}, "name" => "channel4", "type" => "google" },
+          "labels" => ['gjkahksf']
+        }
       end # labels attr content invalid type
 
       organization_id = conn |> get_req_header("organization") |> List.first()
       label_1 = insert(:label, %{ organization_id: organization_id })
       label_2 = insert(:label, %{ organization_id: organization_id })
       label_3 = insert(:label) # not inserted into same organization
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{}, "name" => "channel5", "type" => "google" }, "labels" => [label_1.id, label_2.id]}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{}, "name" => "channel5", "type" => "google" },
+        "labels" => [label_1.id, label_2.id]
+      }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       channel = channel |> Channels.fetch_assoc([:labels])
@@ -97,7 +150,10 @@ defmodule ConsoleWeb.ChannelControllerTest do
         resp_conn = put conn, channel_path(conn, :update, not_my_channel.id), %{ "channel" => %{ "name" => "channel2" }}
       end # does not update channel not in own org
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" },
+        "labels" => []
+      }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "channel"
 
@@ -124,7 +180,10 @@ defmodule ConsoleWeb.ChannelControllerTest do
         resp_conn = delete conn, channel_path(conn, :delete, not_my_channel.id)
       end # does not delete channel not in own org
 
-      resp_conn = post conn, channel_path(conn, :create), %{ "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" }, "labels" => []}
+      resp_conn = post conn, channel_path(conn, :create), %{
+        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" },
+        "labels" => []
+      }
       channel = json_response(resp_conn, 201)
 
       assert Channels.get_channel(channel["id"]) != nil

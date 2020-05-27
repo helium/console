@@ -9,6 +9,7 @@ defmodule Console.Factory do
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Functions.Function
+  alias Console.Organizations.Membership
 
   def user_factory do
     %{
@@ -72,5 +73,9 @@ defmodule Console.Factory do
 
   def channels_labels_factory do
     %ChannelsLabels{}
+  end
+
+  def membership_factory do
+    %Membership{}
   end
 end
