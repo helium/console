@@ -60,8 +60,10 @@ defmodule ConsoleWeb.InvitationControllerTest do
         }
       }
 
-      invitation = json_response(resp_conn, 201)
-      invitation = Organizations.get_invitation!(invitation["id"])
+      invitation =
+        json_response(resp_conn, 201)
+        |> Map.get("id")
+        |> Organizations.get_invitation!()
 
       resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
         "invitation" => %{
@@ -81,8 +83,10 @@ defmodule ConsoleWeb.InvitationControllerTest do
         }
       }
 
-      invitation = json_response(resp_conn, 201)
-      invitation = Organizations.get_invitation!(invitation["id"])
+      invitation =
+        json_response(resp_conn, 201)
+        |> Map.get("id")
+        |> Organizations.get_invitation!()
 
       resp_conn = delete conn, invitation_path(conn, :delete, invitation.id)
       assert response(resp_conn, 204)
@@ -94,8 +98,10 @@ defmodule ConsoleWeb.InvitationControllerTest do
           "role" => "read"
         }
       }
-      invitation = json_response(resp_conn, 201)
-      invitation = Organizations.get_invitation!(invitation["id"])
+      invitation =
+        json_response(resp_conn, 201)
+        |> Map.get("id")
+        |> Organizations.get_invitation!()
       resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
         "invitation" => %{
           "token" => invitation.token
