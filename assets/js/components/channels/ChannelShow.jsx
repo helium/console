@@ -135,12 +135,15 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { loading, error, channel, allLabels } = this.props.data
-
+    const { loading, error, channel, allLabels } = this.props.data;
+    
     if (loading) return <DashboardLayout />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
+    const downlinkKey = channel.downlink_token || `{:downlink_key}`;
+    const downlinkUrl = `https://console.helium.com/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+
 
     return(
       <DashboardLayout
@@ -197,10 +200,10 @@ class ChannelShow extends Component {
                 <Text>Downlink URL</Text>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
                   <Input
-                    value="https://console.helium.com/api/v1/down/{:integration_id}/{:downlink_key}/{:optional_device_id}"
+                    value={downlinkUrl}
                     style={{ marginRight: 10 }}
                   />
-                  <CopyToClipboard text="https://console.helium.com/api/v1/down/{:integration_id}/{:downlink_key}/{:optional_device_id}">
+                  <CopyToClipboard text={downlinkUrl}>
                     <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
                   </CopyToClipboard>
                 </div>
