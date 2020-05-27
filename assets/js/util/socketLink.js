@@ -34,6 +34,7 @@ class SocketLink extends ApolloLink {
     this.socket = createPhoenixSocket(this.token, this.organizationId);
     this.link = createInnerSocketLink(this.socket);
     this._watchAuthToken();
+    return this.socket
   }
 
   request(operation, forward) {
