@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
+import DefaultPaymentModal from './DefaultPaymentModal'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
 import DCIMg from '../../../img/datacredits.svg'
@@ -27,12 +28,24 @@ const styles = {
 }
 
 class DataCreditsIndex extends Component {
+  state = {
+    showDefaultPaymentModal: false,
+  }
+
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS")
   }
 
+  openModal = (modal) => {
+    this.setState({ [modal]: true })
+  }
+
+  closeModal = (modal) => {
+    this.setState({ [modal]: false })
+  }
+
   renderBlankState = () => {
-    return(
+    return (
       <div className="blankstateWrapper">
         <div className="message">
           <img style={{width: 100, marginBottom: 20}} src={DCIMg} />
@@ -109,6 +122,8 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
+    const { showDefaultPaymentModal } = this.state
+
     return (
       <div>
         <Row gutter={16}>
@@ -159,7 +174,7 @@ class DataCreditsIndex extends Component {
             <Card
               title="Default Payment Method"
               extra={
-                <Link to="#">
+                <Link to="#" onClick={() => this.openModal("showDefaultPaymentModal")}>
                   <Text style={styles.tipText}>Change</Text>
                 </Link>
               }
@@ -170,6 +185,11 @@ class DataCreditsIndex extends Component {
             </Card>
           </Col>
         </Row>
+
+        <DefaultPaymentModal
+          open={showDefaultPaymentModal}
+          onClose={() => this.closeModal("showDefaultPaymentModal")}
+        />
       </div>
     )
   }
