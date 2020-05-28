@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
+import PurchaseCreditModal from './PurchaseCreditModal'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
 import DCIMg from '../../../img/datacredits.svg'
@@ -30,6 +31,7 @@ const styles = {
 class DataCreditsIndex extends Component {
   state = {
     showDefaultPaymentModal: false,
+    showPurchaseCreditModal: false,
   }
 
   componentDidMount() {
@@ -122,7 +124,7 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
-    const { showDefaultPaymentModal } = this.state
+    const { showDefaultPaymentModal, showPurchaseCreditModal } = this.state
 
     return (
       <div>
@@ -190,6 +192,11 @@ class DataCreditsIndex extends Component {
           open={showDefaultPaymentModal}
           onClose={() => this.closeModal("showDefaultPaymentModal")}
         />
+
+        <PurchaseCreditModal
+          open={showPurchaseCreditModal}
+          onClose={() => this.closeModal("showPurchaseCreditModal")}
+        />
       </div>
     )
   }
@@ -211,7 +218,7 @@ class DataCreditsIndex extends Component {
               size="large"
               type="primary"
               icon="wallet"
-              onClick={() => {}}
+              onClick={() => this.openModal("showPurchaseCreditModal")}
               style={{ marginLeft: 20 }}
             >
               Purchase Data Credits
