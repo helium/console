@@ -58,7 +58,8 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
 
     const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
     const socketLink = new SocketLink(getAuthToken, currentOrganizationId);
-    await socketLink.connect();
+    const connectedSocket = await socketLink.connect();
+    connectedSocket.disconnect()
 
     const link = new ApolloLink.split(
       operation => hasSubscription(operation.query),

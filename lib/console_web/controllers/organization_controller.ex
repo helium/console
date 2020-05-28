@@ -37,13 +37,6 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def switch(conn, %{"organization_id" => id}) do
-    with %Organization{} = organization <- Organizations.get_organization(conn.assigns.current_user, id) do
-      jwt = Auth.generate_session_token(conn.assigns.current_user, organization)
-      render(conn, "switch.json", jwt: jwt)
-    end
-  end
-
   def delete(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)

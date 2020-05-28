@@ -47,9 +47,6 @@ config :console,
   router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
 
 config :console,
-  stats_secrets: System.get_env("STATS_SECRETS")
-
-config :console,
   mailerlite_api_key: System.get_env("MAILERLITE_KEY")
 
 config :console,

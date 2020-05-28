@@ -15,9 +15,6 @@
     "ROUTER_SECRETS": {
       "required": true
     },
-    "STATS_SECRETS": {
-      "required": true
-    },
     "SECRET_KEY_BASE": {
       "required": true
     }

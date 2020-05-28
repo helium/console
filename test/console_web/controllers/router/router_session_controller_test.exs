@@ -9,10 +9,14 @@ defmodule ConsoleWeb.RouterSessionControllerTest do
         build_conn() |> post("/api/router/sessions")
       end # no router secret
 
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "nope" })
+      resp_conn = build_conn()
+        |> post("/api/router/sessions", %{ "secret" => "nope" })
       assert response(resp_conn, 401) == "{\"message\":\"invalid_secret\"}"
 
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/" })
+      resp_conn = build_conn()
+        |> post("/api/router/sessions", %{
+          "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+        })
       token = json_response(resp_conn, 201)
       assert Map.get(token, "jwt") != nil
     end
@@ -22,7 +26,10 @@ defmodule ConsoleWeb.RouterSessionControllerTest do
         build_conn() |> post("/api/router/sessions/refresh", %{ "jwt" => "agsafsafs" })
       end # fake token
 
-      resp_conn = build_conn() |> post("/api/router/sessions", %{ "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/" })
+      resp_conn = build_conn()
+        |> post("/api/router/sessions", %{
+          "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
+        })
       token = json_response(resp_conn, 201)
       assert {:ok, _ } = ConsoleWeb.Guardian.decode_and_verify(token["jwt"])
 

@@ -36,13 +36,29 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       assert json_response(resp_conn, 200) == [] # returns no devices when no devices created in org
 
       assert_error_sent 400, fn ->
-        resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1", "app_eui" => "2" })
+        resp_conn = build_conn()
+          |> put_req_header("key", key)
+          |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1", "app_eui" => "2" })
       end # not all device attrs in body
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1", "app_eui" => "2", "app_key" => "3" })
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1",
+          "app_eui" => "2",
+          "app_key" => "3"
+        })
       assert response(resp_conn, 422) # attrs must be valid, lengths need to be respected
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1111111111111111", "app_eui" => "1111111111111111", "app_key" => "11111111111111111111111111111111" })
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111"
+        })
       device = json_response(resp_conn, 201) # device created
 
       organization_2 = insert(:organization)
