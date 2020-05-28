@@ -75,7 +75,6 @@ class ChannelNew extends Component {
   }
 
   handleLabelsUpdate = (labels) => {
-    console.log(labels);
     this.setState({ labels });
   }
 
