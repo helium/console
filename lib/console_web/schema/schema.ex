@@ -289,6 +289,12 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :label_added_for_nav, :label do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/label_added_for_nav"}
+      end
+    end
+
     field :label_updated, :label do
       arg :id, :string
 

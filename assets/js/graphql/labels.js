@@ -53,7 +53,15 @@ export const LABEL_SUBSCRIPTION = gql`
       id
     }
   }
-  ${LABEL_FRAGMENT}
+`
+
+export const LABEL_SUBSCRIPTION_FOR_NAV = gql`
+  subscription onLabelAddedForNav {
+    labelAddedForNav {
+      name,
+      id
+    }
+  }
 `
 
 export const LABEL_UPDATE_SUBSCRIPTION = gql`
