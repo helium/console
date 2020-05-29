@@ -21,12 +21,13 @@ class LabelsAppliedNew extends Component {
   state = {
     labelsApplied: [],
     newLabels: [],
-    showFunctionMoveLabelModal: false,
+    showConfirmationModal: false,
     labelBeingMoved: null,
   }
 
   addLabelToList = value => {
     const { allLabels } = this.props.data
+    const { addOrPrompt } = this.props;
     const { labelsApplied, newLabels } = this.state
 
     const labelById = find(allLabels, { id: value })
@@ -44,10 +45,13 @@ class LabelsAppliedNew extends Component {
     if ((labelById && find(labelsApplied, labelById)) || (labelByName && find(labelsApplied, labelByName))) return
 
     const label = labelById || labelByName
-    if (label.function) {
-      this.openFunctionMoveLabelModal(label)
+
+    console.log(addOrPrompt);
+
+    if (addOrPrompt) {
+      addOrPrompt(label, this.openConfirmationModal, this.confirmAddLabel);
     } else {
-      this.confirmAddLabel(label)
+      this.confirmAddLabel(label);
     }
   }
 
@@ -65,16 +69,16 @@ class LabelsAppliedNew extends Component {
     this.setState({ [key]: this.state[key] })
   }
 
-  openFunctionMoveLabelModal = (labelBeingMoved) => {
-    this.setState({ showFunctionMoveLabelModal: true, labelBeingMoved })
+  openConfirmationModal = (labelBeingMoved) => {
+    this.setState({ showConfirmationModal: true, labelBeingMoved })
   }
 
-  closeFunctionMoveLabelModal = () => {
-    this.setState({ showFunctionMoveLabelModal: false })
+  closeConfirmationModal = () => {
+    this.setState({ showConfirmationModal: false })
   }
 
   render() {
-    const { showFunctionMoveLabelModal, labelBeingMoved } = this.state
+    const { showConfirmationModal, labelBeingMoved } = this.state
     const { allLabels, loading, error } = this.props.data
     if (loading) return <div />
     if (error) return (
@@ -129,8 +133,8 @@ class LabelsAppliedNew extends Component {
         </div>
 
         <FunctionMoveLabelModal
-          open={showFunctionMoveLabelModal}
-          onClose={this.closeFunctionMoveLabelModal}
+          open={showConfirmationModal}
+          onClose={this.closeConfirmationModal}
           label={labelBeingMoved}
           confirmAddLabel={this.confirmAddLabel}
         />

@@ -37,6 +37,14 @@ class FunctionNew extends Component {
     this.setState({ labels })
   }
 
+  confirmOrOpenModal = (label, openModal, confirm) => {
+    if (label.function) {
+      openModal(label);
+    } else {
+      confirm(label);
+    }
+  }
+
   handleSubmit = () => {
     const {name, type, format, body, labels} = this.state
     const fxn = { name, type, format, body }
@@ -101,7 +109,7 @@ class FunctionNew extends Component {
           <Card title="Labels Applied To">
             <Text>Labels are necessary to apply Functions to devices</Text>
             <div style={{ height: 10 }}/>
-            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
+            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} addOrPrompt={this.confirmOrOpenModal} />
           </Card>
         </UserCan>
 
