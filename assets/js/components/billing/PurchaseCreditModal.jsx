@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import ExistingCardsAddCard from './ExistingCardsAddCard'
-import { Modal, Button, Typography, Input, Divider, Icon, Row, Col, Select } from 'antd';
+import AmountEntryCalculator from './AmountEntryCalculator'
+import { Modal, Button, Typography, Divider, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -96,46 +97,12 @@ class PurchaseCreditModal extends Component {
   renderCountSelection = () => {
     return(
       <div>
-        <Text strong>Enter a quantity you wish to purchase</Text>
-        <div style={{ ...styles.container, marginTop: 12 }}>
-          <Row gutter={12} style={{ marginBottom: 12 }}>
-            <Col span={12}>
-              <Text style={styles.inputHeader}>Amount of Data Credits</Text>
-              <Input
-                placeholder="Enter Quantity"
-                name="countDC"
-                value={this.state.countDC}
-                onChange={this.handleCountInputUpdate}
-                style={styles.input}
-                type="number"
-              />
-            </Col>
-            <Col span={12}>
-              <Text style={styles.inputHeader}>Amount of Bytes</Text>
-              <Input
-                placeholder="Enter Quantity"
-                name="countB"
-                value={this.state.countB}
-                onChange={this.handleCountInputUpdate}
-                style={styles.input}
-                type="number"
-              />
-            </Col>
-          </Row>
-          <Row gutter={12}>
-            <Col span={12}>
-              <Text style={styles.inputHeader}>Amount in USD$</Text>
-              <Input
-                placeholder="Enter Quantity"
-                name="countUSD"
-                value={this.state.countUSD}
-                onChange={this.handleCountInputUpdate}
-                style={styles.input}
-                type="number"
-              />
-            </Col>
-          </Row>
-        </div>
+        <AmountEntryCalculator
+          countDC={this.state.countDC}
+          countB={this.state.countB}
+          countUSD={this.state.countUSD}
+          handleCountInputUpdate={this.handleCountInputUpdate}
+        />
         {
           this.state.countDC && (
             <div>
