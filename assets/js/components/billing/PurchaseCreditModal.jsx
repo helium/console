@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
+import ExistingCardsAddCard from './ExistingCardsAddCard'
 import { Modal, Button, Typography, Input, Divider, Icon, Row, Col, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
 const styles = {
   container: {
-    marginTop: 12,
     backgroundColor: '#E6F7FF',
     padding: 24,
     borderRadius: 8,
@@ -31,6 +31,7 @@ class PurchaseCreditModal extends Component {
     countUSD: undefined,
     countB: undefined,
     chargeOption: 'once',
+    newCard: null
   }
 
   handleCountInputUpdate = (e) => {
@@ -66,6 +67,12 @@ class PurchaseCreditModal extends Component {
     }
   }
 
+  handleNewCardUpdate = newCard => {
+    this.setState({
+      newCard
+    })
+  }
+
   handleNext = () => {
     this.setState({ showPayment: true })
   }
@@ -90,7 +97,7 @@ class PurchaseCreditModal extends Component {
     return(
       <div>
         <Text strong>Enter a quantity you wish to purchase</Text>
-        <div style={styles.container}>
+        <div style={{ ...styles.container, marginTop: 12 }}>
           <Row gutter={12} style={{ marginBottom: 12 }}>
             <Col span={12}>
               <Text style={styles.inputHeader}>Amount of Data Credits</Text>
@@ -157,7 +164,28 @@ class PurchaseCreditModal extends Component {
   }
 
   renderPayment = () => {
-
+    return (
+      <React.Fragment>
+        <div style={{
+          ...styles.container,
+          padding: 16,
+          marginBottom: 24,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+            <div><Text strong>{this.state.countDC}</Text></div>
+            <div><Text>Data Credits</Text></div>
+          </div>
+          <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
+        </div>
+        <ExistingCardsAddCard
+          handleNewCardUpdate={this.handleNewCardUpdate}
+        />
+      </React.Fragment>
+    )
   }
 
   render() {

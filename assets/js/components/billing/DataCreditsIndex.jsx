@@ -58,7 +58,7 @@ class DataCreditsIndex extends Component {
               size="large"
               type="primary"
               icon="wallet"
-              onClick={() => {}}
+              onClick={() => this.openModal("showPurchaseCreditModal")}
             >
               Purchase Data Credits
             </Button>
@@ -124,8 +124,6 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
-    const { showDefaultPaymentModal, showPurchaseCreditModal } = this.state
-
     return (
       <div>
         <Row gutter={16}>
@@ -187,21 +185,12 @@ class DataCreditsIndex extends Component {
             </Card>
           </Col>
         </Row>
-
-        <DefaultPaymentModal
-          open={showDefaultPaymentModal}
-          onClose={() => this.closeModal("showDefaultPaymentModal")}
-        />
-
-        <PurchaseCreditModal
-          open={showPurchaseCreditModal}
-          onClose={() => this.closeModal("showPurchaseCreditModal")}
-        />
       </div>
     )
   }
 
   render() {
+    const { showDefaultPaymentModal, showPurchaseCreditModal } = this.state
     return (
       <DashboardLayout
         title="Data Credits"
@@ -227,6 +216,16 @@ class DataCreditsIndex extends Component {
         }
       >
         {this.renderContent()}
+
+        <DefaultPaymentModal
+          open={showDefaultPaymentModal}
+          onClose={() => this.closeModal("showDefaultPaymentModal")}
+        />
+
+        <PurchaseCreditModal
+          open={showPurchaseCreditModal}
+          onClose={() => this.closeModal("showPurchaseCreditModal")}
+        />
       </DashboardLayout>
     )
   }
