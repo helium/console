@@ -12,12 +12,6 @@ const styles = {
     padding: 24,
     borderRadius: 8,
   },
-  inputHeader: {
-    color: '#096DD9',
-  },
-  input: {
-    marginTop: 8
-  },
   costNumber: {
     color: '#4091F7',
     fontSize: 30,

@@ -3,6 +3,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
+import AutomaticRenewalModal from './AutomaticRenewalModal'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
 import DCIMg from '../../../img/datacredits.svg'
@@ -32,6 +33,7 @@ class DataCreditsIndex extends Component {
   state = {
     showDefaultPaymentModal: false,
     showPurchaseCreditModal: false,
+    showAutomaticRenewalModal: false,
   }
 
   componentDidMount() {
@@ -190,7 +192,7 @@ class DataCreditsIndex extends Component {
   }
 
   render() {
-    const { showDefaultPaymentModal, showPurchaseCreditModal } = this.state
+    const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal } = this.state
     return (
       <DashboardLayout
         title="Data Credits"
@@ -199,7 +201,7 @@ class DataCreditsIndex extends Component {
             <Button
               size="large"
               icon="sync"
-              onClick={() => {}}
+              onClick={() => this.openModal("showAutomaticRenewalModal")}
             >
               Automatic Renewals On
             </Button>
@@ -225,6 +227,11 @@ class DataCreditsIndex extends Component {
         <PurchaseCreditModal
           open={showPurchaseCreditModal}
           onClose={() => this.closeModal("showPurchaseCreditModal")}
+        />
+
+        <AutomaticRenewalModal
+          open={showAutomaticRenewalModal}
+          onClose={() => this.closeModal("showAutomaticRenewalModal")}
         />
       </DashboardLayout>
     )
