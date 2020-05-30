@@ -5,6 +5,7 @@ import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import LabelsAppliedNew from '../common/LabelsAppliedNew'
 import FunctionValidator from './FunctionValidator'
+import FunctionMoveLabelModal from './FunctionMoveLabelModal'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
@@ -109,7 +110,11 @@ class FunctionNew extends Component {
           <Card title="Labels Applied To">
             <Text>Labels are necessary to apply Functions to devices</Text>
             <div style={{ height: 10 }}/>
-            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} addOrPrompt={this.confirmOrOpenModal} />
+            <LabelsAppliedNew
+              handleLabelsUpdate={this.handleLabelsUpdate}
+              addOrPrompt={this.confirmOrOpenModal}
+              ConfirmationModal={FunctionMoveLabelModal}
+            />
           </Card>
         </UserCan>
 

@@ -8,7 +8,6 @@ import remove from 'lodash/remove'
 import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
-import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
 
 const queryOptions = {
   options: props => ({
@@ -26,9 +25,9 @@ class LabelsAppliedNew extends Component {
   }
 
   addLabelToList = value => {
-    const { allLabels } = this.props.data
+    const { allLabels } = this.props.data;
     const { addOrPrompt } = this.props;
-    const { labelsApplied, newLabels } = this.state
+    const { labelsApplied, newLabels } = this.state;
 
     const labelById = find(allLabels, { id: value })
     const labelByName = find(allLabels, { name: value })
@@ -45,8 +44,6 @@ class LabelsAppliedNew extends Component {
     if ((labelById && find(labelsApplied, labelById)) || (labelByName && find(labelsApplied, labelByName))) return
 
     const label = labelById || labelByName
-
-    console.log(addOrPrompt);
 
     if (addOrPrompt) {
       addOrPrompt(label, this.openConfirmationModal, this.confirmAddLabel);
@@ -78,8 +75,9 @@ class LabelsAppliedNew extends Component {
   }
 
   render() {
-    const { showConfirmationModal, labelBeingMoved } = this.state
-    const { allLabels, loading, error } = this.props.data
+    const { showConfirmationModal, labelBeingMoved } = this.state;
+    const { allLabels, loading, error } = this.props.data;
+    const { ConfirmationModal } = this.props;
     if (loading) return <div />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
@@ -131,13 +129,16 @@ class LabelsAppliedNew extends Component {
             }
           </div>
         </div>
-
-        <FunctionMoveLabelModal
-          open={showConfirmationModal}
-          onClose={this.closeConfirmationModal}
-          label={labelBeingMoved}
-          confirmAddLabel={this.confirmAddLabel}
-        />
+        {
+          ConfirmationModal && 
+          <ConfirmationModal
+            open={showConfirmationModal}
+            onClose={this.closeConfirmationModal}
+            label={labelBeingMoved}
+            confirmAddLabel={this.confirmAddLabel}
+          />
+        }
+        
       </div>
     )
   }
