@@ -8,7 +8,7 @@ defmodule Console.Email do
   alias Console.Organizations.Organization
 
   def invitation_email(%Invitation{email: email, token: token, role: role}, %User{email: inviter_email}, %Organization{name: organization_name}) do
-    role_hash = %{ "admin" => "Administrator", "manager" => "Manager", "read" => "Read-Only" }
+    role_hash = %{ "admin" => "Administrator", "read" => "Read-Only" }
 
     base_email()
     |> to(email)
