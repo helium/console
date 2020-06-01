@@ -15,6 +15,7 @@ import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
 import LabelTag from '../common/LabelTag'
+import LabelsAppliedNew from '../common/LabelsAppliedNew';
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
@@ -73,8 +74,8 @@ class ChannelNew extends Component {
     }, labels)
   }
 
-  handleSelectLabels = (labels) => {
-    this.setState({ labels })
+  handleLabelsUpdate = (labels) => {
+    this.setState({ labels });
   }
 
   renderForm = () => {
@@ -132,21 +133,11 @@ class ChannelNew extends Component {
               onInputUpdate={this.handleStep3Input}
             />
         )}
-        { showNextSteps && allLabels && (
+        { showNextSteps && (
           <Card title="Step 4 - Apply Integration to Label (Can be added later)">
-            <Text>Labels are necessary to connect devices to integrations</Text><br />
-            <Select
-              mode="multiple"
-              onChange={this.handleSelectLabels}
-              style={{ width: 220 }}
-              placeholder="Choose Label..."
-            >
-              {allLabels.map(l => (
-                <Option value={l.id} key={l.id}>
-                  <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
-                </Option>
-              ))}
-            </Select>
+            <Text>Labels are necessary to connect devices to integrations</Text>
+            <div style={{ height: 10 }}/>
+            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
             <div style={{ marginTop: 20 }}>
               <Button
                 type="primary"

@@ -12,25 +12,25 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "creates channels properly", %{conn: conn} do
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "name" => "channel", "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "credentials" => ["can't be blank"] }} # no required attrs
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "name" => ["can't be blank"] }} # no required attrs
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) == %{"errors" => %{ "type" => ["can't be blank"] }} # no required attrs
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "http2" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) # type not valid
 
@@ -42,7 +42,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "aws" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
@@ -50,26 +50,26 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "azure" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) # name already used
 
       assert_error_sent 500, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "http_channel", "type" => "http" },
-          "labels" => []
+          "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
       end # invalid http credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "google.com" }, "name" => "http_channel", "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) # invalid http credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "http_channel", "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
@@ -78,26 +78,26 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert_error_sent 500, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "mqtt_channel", "type" => "mqtt" },
-          "labels" => []
+          "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
       end # invalid mqtt credentials
 
       assert_error_sent 500, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com" }, "name" => "mqtt_channel", "type" => "mqtt" },
-          "labels" => []
+          "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
       end # invalid mqtt credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) # invalid mqtt credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
@@ -109,21 +109,21 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert_error_sent 500, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel2", "type" => "google" },
-          "labels" => %{}
+          "labels" => []
         }
       end # labels attr invalid type
 
       assert_error_sent 400, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel3", "type" => "google" },
-          "labels" => [1]
+          "labels" => %{"labelsApplied" => [%{"id" => 1}]}
         }
       end # labels attr content invalid type
 
       assert_error_sent 400, fn ->
         resp_conn = post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel4", "type" => "google" },
-          "labels" => ['gjkahksf']
+          "labels" => %{"labelsApplied" => [%{"id" => 'gjkahksf'}]}
         }
       end # labels attr content invalid type
 
@@ -133,7 +133,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       label_3 = insert(:label) # not inserted into same organization
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel5", "type" => "google" },
-        "labels" => [label_1.id, label_2.id]
+        "labels" => %{"labelsApplied" => [%{"id" => label_1.id}, %{"id" => label_2.id}]}
       }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
@@ -152,7 +152,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "channel"
@@ -182,7 +182,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" },
-        "labels" => []
+        "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
 

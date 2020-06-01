@@ -12,11 +12,24 @@ defmodule ConsoleWeb.ChannelController do
 
   def create(conn, %{"channel" => channel_params, "labels" => labels}) do
     current_organization = conn.assigns.current_organization
+    user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      if length(labels) > 0 do
-        Labels.add_labels_to_channel(labels, channel, current_organization)
+      case labels["labelsApplied"] do
+        nil -> nil
+        applied_labels ->
+          label_ids = applied_labels
+            |> Enum.map(fn label ->
+              label["id"]
+            end)
+          Labels.add_labels_to_channel(label_ids, channel, current_organization)
+      end
+
+      case labels["newLabels"] do
+        nil -> nil
+        new_labels ->
+          Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
       end
       broadcast(channel)
 

@@ -8,7 +8,6 @@ import remove from 'lodash/remove'
 import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
-import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
 
 const queryOptions = {
   options: props => ({
@@ -21,13 +20,14 @@ class LabelsAppliedNew extends Component {
   state = {
     labelsApplied: [],
     newLabels: [],
-    showFunctionMoveLabelModal: false,
+    showConfirmationModal: false,
     labelBeingMoved: null,
   }
 
   addLabelToList = value => {
-    const { allLabels } = this.props.data
-    const { labelsApplied, newLabels } = this.state
+    const { allLabels } = this.props.data;
+    const { addOrPrompt } = this.props;
+    const { labelsApplied, newLabels } = this.state;
 
     const labelById = find(allLabels, { id: value })
     const labelByName = find(allLabels, { name: value })
@@ -44,10 +44,11 @@ class LabelsAppliedNew extends Component {
     if ((labelById && find(labelsApplied, labelById)) || (labelByName && find(labelsApplied, labelByName))) return
 
     const label = labelById || labelByName
-    if (label.function) {
-      this.openFunctionMoveLabelModal(label)
+
+    if (addOrPrompt) {
+      addOrPrompt(label, this.openConfirmationModal, this.confirmAddLabel);
     } else {
-      this.confirmAddLabel(label)
+      this.confirmAddLabel(label);
     }
   }
 
@@ -65,17 +66,18 @@ class LabelsAppliedNew extends Component {
     this.setState({ [key]: this.state[key] })
   }
 
-  openFunctionMoveLabelModal = (labelBeingMoved) => {
-    this.setState({ showFunctionMoveLabelModal: true, labelBeingMoved })
+  openConfirmationModal = (labelBeingMoved) => {
+    this.setState({ showConfirmationModal: true, labelBeingMoved })
   }
 
-  closeFunctionMoveLabelModal = () => {
-    this.setState({ showFunctionMoveLabelModal: false })
+  closeConfirmationModal = () => {
+    this.setState({ showConfirmationModal: false })
   }
 
   render() {
-    const { showFunctionMoveLabelModal, labelBeingMoved } = this.state
-    const { allLabels, loading, error } = this.props.data
+    const { showConfirmationModal, labelBeingMoved } = this.state;
+    const { allLabels, loading, error } = this.props.data;
+    const { ConfirmationModal } = this.props;
     if (loading) return <div />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
@@ -127,13 +129,16 @@ class LabelsAppliedNew extends Component {
             }
           </div>
         </div>
-
-        <FunctionMoveLabelModal
-          open={showFunctionMoveLabelModal}
-          onClose={this.closeFunctionMoveLabelModal}
-          label={labelBeingMoved}
-          confirmAddLabel={this.confirmAddLabel}
-        />
+        {
+          ConfirmationModal && 
+          <ConfirmationModal
+            open={showConfirmationModal}
+            onClose={this.closeConfirmationModal}
+            label={labelBeingMoved}
+            confirmAddLabel={this.confirmAddLabel}
+          />
+        }
+        
       </div>
     )
   }
