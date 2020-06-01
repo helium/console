@@ -18,7 +18,7 @@ defmodule Console.Channels.ChannelResolver do
     {:ok, Map.put(channels, :entries, updated_entries)}
   end
 
-  def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
+  def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
     channel = Channel
       |> where([c], c.id == ^id and c.organization_id == ^current_organization.id)
       |> preload([labels: :devices])
@@ -47,6 +47,12 @@ defmodule Console.Channels.ChannelResolver do
         _ ->
           channel
           |> Map.put(:devices, devices)
+      end
+
+    channel =
+      case current_membership.role do
+        "read" -> channel |> Map.put(:downlink_token, nil)
+        _ -> channel
       end
 
     {:ok, channel}

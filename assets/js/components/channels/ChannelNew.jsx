@@ -37,7 +37,7 @@ class ChannelNew extends Component {
     showNextSteps: false,
     credentials: {},
     channelName: "",
-    labels: [],
+    labels: {},
   }
 
   componentDidMount() {

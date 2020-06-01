@@ -136,14 +136,13 @@ class ChannelShow extends Component {
 
   render() {
     const { loading, error, channel, allLabels } = this.props.data;
-    
+
     if (loading) return <DashboardLayout />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
     const downlinkUrl = `https://console.helium.com/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
-
 
     return(
       <DashboardLayout

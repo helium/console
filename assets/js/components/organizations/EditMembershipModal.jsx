@@ -6,7 +6,7 @@ const { Text } = Typography
 
 class EditMembershipModal extends Component {
   state = {
-    role: "manager"
+    role: "read"
   }
 
   componentDidUpdate(prevProps) {
