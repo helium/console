@@ -8,6 +8,16 @@ export const ORGANIZATION_FRAGMENT = gql`
   }
 `
 
+export const ORGANIZATION_SHOW_DC = gql`
+  query OrganizationShowQuery ($id: ID!) {
+    organization(id: $id) {
+      id,
+      name,
+      dc_balance
+    }
+  }
+`
+
 export const PAGINATED_ORGANIZATIONS = gql`
   query PaginatedOrganizationsQuery($page: Int, $pageSize: Int) {
     organizations(page: $page, pageSize: $pageSize) {

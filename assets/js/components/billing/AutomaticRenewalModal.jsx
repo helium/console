@@ -31,15 +31,15 @@ class AutomaticRenewalModal extends Component {
     if (e.target.name == 'countDC') {
       this.setState({
         countDC: e.target.value,
-        countUSD: e.target.value / 10000,
+        countUSD: e.target.value / 100000,
         countB: e.target.value * 24
       })
     }
     if (e.target.name == 'countUSD') {
       this.setState({
-        countDC: e.target.value * 10000,
+        countDC: e.target.value * 100000,
         countUSD: e.target.value,
-        countB: e.target.value * 10000 * 24
+        countB: e.target.value * 100000 * 24
       })
     }
     if (e.target.value == '') {

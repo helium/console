@@ -73,6 +73,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
+    field :dc_balance, :integer
   end
 
   object :api_key do
@@ -224,6 +225,11 @@ defmodule ConsoleWeb.Schema do
     field :organization, :organization do
       arg :id, non_null(:id)
       resolve(&Console.Organizations.OrganizationResolver.find/2)
+    end
+
+    field :organization, :organization do
+      arg :id, non_null(:id)
+      resolve &Console.Organizations.OrganizationResolver.find/2
     end
 
     @desc "Search for devices and channels"

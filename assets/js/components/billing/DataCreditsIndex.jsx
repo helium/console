@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
+import { graphql } from 'react-apollo';
+import { connect } from 'react-redux'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
+import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
 import DCIMg from '../../../img/datacredits.svg'
@@ -26,9 +29,19 @@ const styles = {
     fontSize: 40,
     marginTop: -8,
   },
-
 }
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.currentOrganizationId
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+@connect(mapStateToProps, null)
+@graphql(ORGANIZATION_SHOW_DC, queryOptions)
 class DataCreditsIndex extends Component {
   state = {
     showDefaultPaymentModal: false,
@@ -126,6 +139,7 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
+    const { dc_balance } = this.props.data.organization
     return (
       <div>
         <Row gutter={16}>
@@ -146,7 +160,7 @@ class DataCreditsIndex extends Component {
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={DCIMg} />
-                <Text style={{ ...styles.numberCount, color: primaryBlue }}>1,000,000</Text>
+                <Text style={{ ...styles.numberCount, color: primaryBlue }}>{dc_balance}</Text>
               </Row>
             </Card>
           </Col>
@@ -167,8 +181,8 @@ class DataCreditsIndex extends Component {
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={BytesIMg} />
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>24,000,000</Text>
-                <Text>Approx 24 MB</Text>
+                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{dc_balance * 24}</Text>
+                <Text>Approx {Math.floor(dc_balance * 24 / 1000)} MB</Text>
               </Row>
             </Card>
           </Col>
@@ -191,33 +205,53 @@ class DataCreditsIndex extends Component {
     )
   }
 
+  render
+
   render() {
     const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal } = this.state
+    const { organization, error } = this.props.data
+
     return (
       <DashboardLayout
         title="Data Credits"
         extra={
           <UserCan>
-            <Button
-              size="large"
-              icon="sync"
-              onClick={() => this.openModal("showAutomaticRenewalModal")}
-            >
-              Automatic Renewals On
-            </Button>
-            <Button
-              size="large"
-              type="primary"
-              icon="wallet"
-              onClick={() => this.openModal("showPurchaseCreditModal")}
-              style={{ marginLeft: 20 }}
-            >
-              Purchase Data Credits
-            </Button>
+            {
+              organization && organization.dc_balance != null ? (
+                <React.Fragment>
+                  <Button
+                    size="large"
+                    icon="sync"
+                    onClick={() => this.openModal("showAutomaticRenewalModal")}
+                  >
+                    Automatic Renewals On
+                  </Button>
+                  <Button
+                    size="large"
+                    type="primary"
+                    icon="wallet"
+                    onClick={() => this.openModal("showPurchaseCreditModal")}
+                    style={{ marginLeft: 20 }}
+                  >
+                    Purchase Data Credits
+                  </Button>
+                </React.Fragment>
+              ) : (
+                <div />
+              )
+            }
           </UserCan>
         }
       >
-        {this.renderContent()}
+        {
+          error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          organization && organization.dc_balance == null && this.renderBlankState()
+        }
+        {
+          organization && organization.dc_balance != null && this.renderContent()
+        }
 
         <DefaultPaymentModal
           open={showDefaultPaymentModal}
@@ -235,6 +269,12 @@ class DataCreditsIndex extends Component {
         />
       </DashboardLayout>
     )
+  }
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
   }
 }
 
