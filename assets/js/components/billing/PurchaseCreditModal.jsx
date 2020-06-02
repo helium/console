@@ -39,13 +39,6 @@ class PurchaseCreditModal extends Component {
         countB: e.target.value * 24
       })
     }
-    if (e.target.name == 'countB') {
-      this.setState({
-        countDC: e.target.value / 24,
-        countUSD: e.target.value / 24 / 10000,
-        countB: e.target.value
-      })
-    }
     if (e.target.name == 'countUSD') {
       this.setState({
         countDC: e.target.value * 10000,

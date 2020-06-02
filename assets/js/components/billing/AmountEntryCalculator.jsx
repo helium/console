@@ -32,20 +32,10 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             style={styles.input}
             type="number"
           />
+          {
+            countB && <Text>= {countB} Bytes of Data</Text>
+          }
         </Col>
-        <Col span={12}>
-          <Text style={styles.inputHeader}>Amount of Bytes</Text>
-          <Input
-            placeholder="Enter Quantity"
-            name="countB"
-            value={countB}
-            onChange={handleCountInputUpdate}
-            style={styles.input}
-            type="number"
-          />
-        </Col>
-      </Row>
-      <Row gutter={12}>
         <Col span={12}>
           <Text style={styles.inputHeader}>Amount in USD$</Text>
           <Input
