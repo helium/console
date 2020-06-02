@@ -7,6 +7,7 @@ defmodule Console.Organizations.Organization do
   @foreign_key_type :binary_id
   schema "organizations" do
     field :name, :string
+    field :dc_balance, :integer
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
