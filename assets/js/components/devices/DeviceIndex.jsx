@@ -119,8 +119,7 @@ class DeviceIndex extends Component {
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
       labelsSelected,
-      deviceToRemoveLabel,
-      hasDevices
+      deviceToRemoveLabel
     } = this.state
 
     const { devices, loading, error } = this.props.data

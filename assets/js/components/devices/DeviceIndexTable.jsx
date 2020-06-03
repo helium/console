@@ -5,9 +5,6 @@ import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
-import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
-import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo';
 import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
