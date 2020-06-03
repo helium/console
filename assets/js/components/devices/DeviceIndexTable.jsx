@@ -180,6 +180,7 @@ class DeviceIndexTable extends Component {
     ]
 
     const { devices, loading, error } = this.props.data
+    const { noDevicesButton } = this.props;
 
     if (loading) return null;
     if (error) return (
@@ -199,6 +200,7 @@ class DeviceIndexTable extends Component {
               <img src={DevicesImg} />
               <h1>No Devices</h1>
               <p>You haven’t added any devices yet.</p>
+              { noDevicesButton() }
             </div>
             <style jsx>{`
 

@@ -6,10 +6,23 @@ import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeleteDeviceModal from './DeleteDeviceModal'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal'
+import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
+import { graphql } from 'react-apollo'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      page: 1,
+      pageSize: 10
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+@graphql(PAGINATED_DEVICES, queryOptions)
 class DeviceIndex extends Component {
   state = {
     showCreateDeviceModal: false,
@@ -19,10 +32,18 @@ class DeviceIndex extends Component {
     showDeviceRemoveAllLabelsModal: false,
     devicesSelected: null,
     labelsSelected: null,
-    deviceToRemoveLabel: null,
+    deviceToRemoveLabel: null
   }
 
   componentDidMount() {
+    const { subscribeToMore } = this.props.data
+
+    subscribeToMore({
+      document: DEVICE_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+      }
+    })
     analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
   }
 
@@ -67,12 +88,21 @@ class DeviceIndex extends Component {
   }
 
   render() {
-    const { showCreateDeviceModal, showDeleteDeviceModal, showDevicesAddLabelModal, showDevicesRemoveLabelModal, showDeviceRemoveAllLabelsModal, labelsSelected, deviceToRemoveLabel } = this.state
-    return(
-      <DashboardLayout
-        title="Devices"
-        extra={
-          <UserCan>
+    const {
+      showCreateDeviceModal,
+      showDeleteDeviceModal,
+      showDevicesAddLabelModal,
+      showDevicesRemoveLabelModal,
+      showDeviceRemoveAllLabelsModal,
+      labelsSelected,
+      deviceToRemoveLabel
+    } = this.state
+
+    const { devices } = this.props.data;
+
+    const createDeviceButton = () => {
+      return (
+        <UserCan>
             <Button
               size="large"
               type="primary"
@@ -82,6 +112,15 @@ class DeviceIndex extends Component {
               Add Device
             </Button>
           </UserCan>
+      )
+    }
+
+    return(
+      <DashboardLayout
+        title="Devices"
+        extra={
+          devices && devices.length &&
+          createDeviceButton()
         }
       >
         <DeviceIndexTable
@@ -89,6 +128,7 @@ class DeviceIndex extends Component {
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
           openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
           openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+          noDevicesButton={createDeviceButton}
           history={this.props.history}
         />
 
