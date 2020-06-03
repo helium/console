@@ -140,7 +140,7 @@ class DeviceIndex extends Component {
       <DashboardLayout
         title="Devices"
         extra={
-          devices && devices.entries.length &&
+          devices && devices.entries.length > 0 &&
           createDeviceButton()
         }
       >
