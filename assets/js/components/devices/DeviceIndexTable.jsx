@@ -5,9 +5,6 @@ import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
-import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
-import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo';
 import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
@@ -15,35 +12,11 @@ import { Table, Button, Empty, Pagination, Typography, Select, Card } from 'antd
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_DEVICES, queryOptions)
 class DeviceIndexTable extends Component {
   state = {
     page: 1,
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
     selectedRows: [],
-  }
-
-  componentDidMount() {
-    const { subscribeToMore } = this.props.data
-
-    subscribeToMore({
-      document: DEVICE_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-        this.setState({ selectedRows: [] })
-      }
-    })
   }
 
   handleSelectOption = (value) => {
@@ -57,23 +30,8 @@ class DeviceIndexTable extends Component {
   }
 
   handleChangePage = (page) => {
-    this.setState({ page })
-
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    this.setState({ selectedRows: [] });
+    this.props.handleChangePage(page);
   }
 
   render() {
@@ -179,12 +137,7 @@ class DeviceIndexTable extends Component {
       },
     ]
 
-    const { devices, loading, error } = this.props.data
-
-    if (loading) return null;
-    if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    )
+    const { noDevicesButton, devices } = this.props;
 
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows })
@@ -199,6 +152,7 @@ class DeviceIndexTable extends Component {
               <img src={DevicesImg} />
               <h1>No Devices</h1>
               <p>You haven’t added any devices yet.</p>
+              { noDevicesButton() }
             </div>
             <style jsx>{`
 
