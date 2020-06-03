@@ -19,6 +19,7 @@ defmodule Console.Organizations.Invitation do
   @doc false
   def changeset(invitation, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["email", "role"])
+    attrs = downcase_email(attrs)
 
     invitation
     |> cast(attrs, [:email, :role, :organization_id, :inviter_id])
@@ -26,7 +27,7 @@ defmodule Console.Organizations.Invitation do
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")
-    |> validate_inclusion(:role, ~w(admin manager read))
+    |> validate_inclusion(:role, ~w(admin read))
     |> unique_constraint(:email, name: :invitations_email_organization_id_index, message: "That email has already been invited to this organization")
   end
 
@@ -54,5 +55,12 @@ defmodule Console.Organizations.Invitation do
     :crypto.strong_rand_bytes(length)
     |> Base.url_encode64
     |> binary_part(0, length)
+  end
+
+  defp downcase_email(attrs) do
+    case Map.get(attrs, "email") do
+      nil -> attrs
+      email -> Map.put(attrs, "email", String.downcase(email))
+    end
   end
 end

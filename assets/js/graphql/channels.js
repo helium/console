@@ -7,7 +7,6 @@ export const CHANNEL_FRAGMENT = gql`
     type_name,
     id,
     active,
-    downlink_token,
   }
 `
 
@@ -15,6 +14,7 @@ export const CHANNEL_SHOW = gql`
   query ChannelShowQuery ($id: ID!) {
     channel(id: $id) {
       ...ChannelFragment
+      downlink_token
       method
       endpoint
       inbound_token
