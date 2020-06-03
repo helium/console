@@ -7,7 +7,8 @@ import DeleteDeviceModal from './DeleteDeviceModal'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal'
 import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
-import { graphql } from 'react-apollo'
+import { graphql } from 'react-apollo';
+import get from 'lodash/get'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Button } from 'antd';
@@ -32,19 +33,22 @@ class DeviceIndex extends Component {
     showDeviceRemoveAllLabelsModal: false,
     devicesSelected: null,
     labelsSelected: null,
-    deviceToRemoveLabel: null
+    deviceToRemoveLabel: null,
+    page: 1,
+    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
   }
 
   componentDidMount() {
+    analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
     const { subscribeToMore } = this.props.data
 
     subscribeToMore({
       document: DEVICE_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
+        this.handleSubscriptionAdded()
       }
     })
-    analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
   }
 
   openCreateDeviceModal = () => {
@@ -87,6 +91,26 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: false })
   }
 
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  handleSubscriptionAdded = () => {
+    const { page, pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { fetchMore } = this.props.data
+    fetchMore({
+      variables: { page, pageSize },
+      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+    })
+  }
+
   render() {
     const {
       showCreateDeviceModal,
@@ -95,42 +119,46 @@ class DeviceIndex extends Component {
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
       labelsSelected,
-      deviceToRemoveLabel
+      deviceToRemoveLabel,
+      hasDevices
     } = this.state
 
-    const { devices } = this.props.data;
+    const { devices, loading, error } = this.props.data
 
-    const createDeviceButton = () => {
-      return (
-        <UserCan>
-            <Button
-              size="large"
-              type="primary"
-              icon="plus"
-              onClick={this.openCreateDeviceModal}
-            >
-              Add Device
-            </Button>
-          </UserCan>
-      )
-    }
-
+    const createDeviceButton = () => (
+      <UserCan>
+        <Button
+          size="large"
+          type="primary"
+          icon="plus"
+          onClick={this.openCreateDeviceModal}
+        >
+          Add Device
+        </Button>
+      </UserCan>
+    )
     return(
       <DashboardLayout
         title="Devices"
         extra={
-          devices && devices.length &&
+          devices && devices.entries.length &&
           createDeviceButton()
         }
       >
-        <DeviceIndexTable
-          openDeleteDeviceModal={this.openDeleteDeviceModal}
-          openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-          openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
-          openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
-          noDevicesButton={createDeviceButton}
-          history={this.props.history}
-        />
+        {
+          (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
+            loading ? null : 
+            <DeviceIndexTable
+              openDeleteDeviceModal={this.openDeleteDeviceModal}
+              openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+              openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+              openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+              noDevicesButton={createDeviceButton}
+              devices={devices}
+              history={this.props.history}
+            />
+          )
+        }
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
