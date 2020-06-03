@@ -61,6 +61,7 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       broadcast(label, label.id)
       if function, do: ConsoleWeb.FunctionController.broadcast(function, function.id)
+      broadcast_router_update_devices(label)
 
       msg =
         cond do
@@ -77,10 +78,11 @@ defmodule ConsoleWeb.LabelController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(current_organization, id)
+    label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
       broadcast(label)
+      broadcast_router_update_devices(label.devices)
 
       conn
       |> put_resp_header("message", "#{label.name} deleted successfully")
@@ -92,8 +94,12 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(List.first(labels))
 
+    labels_to_delete = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
+    assoc_devices = Enum.map(labels_to_delete, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
+
     with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
       broadcast(label)
+      broadcast_router_update_devices(assoc_devices)
 
       conn
       |> put_resp_header("message", "Labels deleted successfully")
@@ -108,7 +114,7 @@ defmodule ConsoleWeb.LabelController do
     if length(devices) == 0 and length(labels) == 0 do
       {:error, :bad_request, "Please select a device or label"}
     else
-      with {:ok, count} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
+      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
         msg =
           case count do
             0 -> "All selected devices are already in label"
@@ -116,6 +122,9 @@ defmodule ConsoleWeb.LabelController do
           end
 
         broadcast(destination_label, destination_label.id)
+
+        assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_devices })
 
         conn
         |> put_resp_header("message", msg)
@@ -131,7 +140,7 @@ defmodule ConsoleWeb.LabelController do
     if length(devices) == 0 do
       {:error, :bad_request, "Please select a device"}
     else
-      with {:ok, count} <- Labels.add_devices_to_label(devices, destination_label.id, current_organization) do
+      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, destination_label.id, current_organization) do
         msg =
           case count do
             0 -> "All selected devices are already in label"
@@ -143,6 +152,9 @@ defmodule ConsoleWeb.LabelController do
         broadcast(destination_label, destination_label.id)
         ConsoleWeb.DeviceController.broadcast(device)
         ConsoleWeb.DeviceController.broadcast(device, device.id)
+
+        assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_devices })
 
         conn
         |> put_resp_header("message", msg)
@@ -162,6 +174,11 @@ defmodule ConsoleWeb.LabelController do
           _ ->
             ConsoleWeb.ChannelController.broadcast(channel, channel.id)
             broadcast(first_label)
+
+            labels_updated = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
+            assoc_devices = Enum.map(labels_updated, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
+            broadcast_router_update_devices(assoc_devices)
+
             "#{count} Labels added to channel successfully"
         end
 
@@ -187,15 +204,19 @@ defmodule ConsoleWeb.LabelController do
           Ecto.Multi.new()
           |> Ecto.Multi.insert(:label, label_changeset)
           |> Ecto.Multi.run(:devices_labels, fn _repo, %{label: label} ->
-            Labels.add_devices_to_label(devices, label.id, current_organization)
+            with {:ok, count, _} <- Labels.add_devices_to_label(devices, label.id, current_organization) do
+              {:ok, {label, count}}
+            end
           end)
           |> Repo.transaction()
 
-        with {:ok, %{devices_labels: count, label: label}} <- result do
+        with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
           broadcast(label)
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.DeviceController.broadcast(device)
           ConsoleWeb.DeviceController.broadcast(device, device.id)
+
+          broadcast_router_update_devices(label)
 
           conn
           |> put_resp_header("message", "#{count} Devices added to label successfully")
@@ -210,6 +231,7 @@ defmodule ConsoleWeb.LabelController do
     with {_, nil} <- Labels.delete_devices_from_label(devices, label_id, current_organization) do
       label = Labels.get_label!(label_id)
       broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => devices })
 
       conn
       |> put_resp_header("message", "Device(s) successfully removed from label")
@@ -224,6 +246,7 @@ defmodule ConsoleWeb.LabelController do
       device = Devices.get_device!(device_id)
       ConsoleWeb.DeviceController.broadcast(device)
       ConsoleWeb.DeviceController.broadcast(device, device.id)
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
 
       conn
       |> put_resp_header("message", "Label(s) successfully removed from device")
@@ -238,6 +261,7 @@ defmodule ConsoleWeb.LabelController do
       devices
         |> List.first()
         |> ConsoleWeb.DeviceController.broadcast()
+      broadcast_router_update_devices(devices)
 
       conn
       |> put_resp_header("message", "All labels successfully removed from devices")
@@ -253,6 +277,10 @@ defmodule ConsoleWeb.LabelController do
         |> List.first()
         |> broadcast()
 
+      assoc_labels = labels |> Labels.multi_fetch_assoc([:devices])
+      assoc_devices = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
+      broadcast_router_update_devices(assoc_devices)
+
       conn
       |> put_resp_header("message", "All devices successfully removed from labels")
       |> send_resp(:no_content, "")
@@ -265,6 +293,10 @@ defmodule ConsoleWeb.LabelController do
     with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id, current_organization) do
       channel = Channels.get_channel!(channel_id)
       ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+
+      assoc_labels = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
+      assoc_devices = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
+      broadcast_router_update_devices(assoc_devices)
 
       conn
       |> put_resp_header("message", "Label(s) successfully removed from channel")
@@ -280,6 +312,7 @@ defmodule ConsoleWeb.LabelController do
         function = Functions.get_function!(current_organization, function_id)
         ConsoleWeb.FunctionController.broadcast(function)
         ConsoleWeb.FunctionController.broadcast(function, function.id)
+        broadcast_router_update_devices(label)
 
         conn
         |> put_resp_header("message", "Label successfully removed from function")
@@ -311,5 +344,19 @@ defmodule ConsoleWeb.LabelController do
 
   defp broadcast(%Label{} = label, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
+  end
+
+  defp broadcast_router_update_devices(%Label{} = label) do
+    assoc_device_ids = label |> Labels.fetch_assoc([:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
+    end
+  end
+
+  defp broadcast_router_update_devices(devices) do
+    assoc_device_ids = devices |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
+    end
   end
 end

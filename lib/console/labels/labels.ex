@@ -41,6 +41,10 @@ defmodule Console.Labels do
     Repo.preload(label, assoc)
   end
 
+  def multi_fetch_assoc(labels, assoc \\ [:devices]) do
+    Repo.preload(labels, assoc)
+  end
+
   def get_label_by_name(name, organization_id), do: Repo.get_by(Label, [name: name, organization_id: organization_id])
 
   def create_label(%Organization{} = organization, attrs \\ %{}) do
@@ -98,7 +102,7 @@ defmodule Console.Labels do
         end)
       end)
     do
-      {:ok, length(devices_labels)}
+      {:ok, length(devices_labels), devices_labels}
     end
   end
 
@@ -120,7 +124,7 @@ defmodule Console.Labels do
         end)
       end)
     do
-      {:ok, length(devices_labels)}
+      {:ok, length(devices_labels), devices_labels}
     end
   end
 

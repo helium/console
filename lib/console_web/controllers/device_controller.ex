@@ -37,6 +37,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
       broadcast(device, device.id)
+      broadcast_router_update_devices(device)
 
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
@@ -86,5 +87,9 @@ defmodule ConsoleWeb.DeviceController do
 
   def broadcast(%Device{} = device, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
+  end
+
+  defp broadcast_router_update_devices(%Device{} = device) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
 end

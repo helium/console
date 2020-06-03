@@ -54,7 +54,7 @@ defmodule ConsoleWeb.V1.LabelController do
     destination_label = Labels.get_label!(current_organization, label_id)
     device = Devices.get_device!(current_organization, device_id)
 
-    with {:ok, count} <- Labels.add_devices_to_label([device.id], destination_label.id, current_organization) do
+    with {:ok, count, _} <- Labels.add_devices_to_label([device.id], destination_label.id, current_organization) do
       msg =
         case count do
           0 -> "Device has already been added to label"
