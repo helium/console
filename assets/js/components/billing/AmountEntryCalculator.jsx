@@ -17,7 +17,7 @@ const styles = {
   },
 }
 
-const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate }) => (
+const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate, disabled }) => (
   <div>
     <Text strong>Enter a quantity you wish to purchase</Text>
     <div style={{ ...styles.container, marginTop: 12 }}>
@@ -31,9 +31,10 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             onChange={handleCountInputUpdate}
             style={styles.input}
             type="number"
+            disabled={disabled}
           />
           {
-            countB && <Text>= {countB} Bytes of Data</Text>
+            countB > 0 && <Text>= {countB} Bytes of Data</Text>
           }
         </Col>
         <Col span={12}>
@@ -45,6 +46,7 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             onChange={handleCountInputUpdate}
             style={styles.input}
             type="number"
+            disabled={disabled}
           />
         </Col>
       </Row>

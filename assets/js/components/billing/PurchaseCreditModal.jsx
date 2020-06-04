@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
+import { displayError } from '../../util/messages'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import ExistingCardsAddCard from './ExistingCardsAddCard'
@@ -8,6 +9,7 @@ import { createCustomerIdAndCharge } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
+const stripe = Stripe('pk_test_tpiYaEpZAZ8EGaqTZTujgQKG00e64rEo1V')
 
 const styles = {
   container: {
@@ -30,7 +32,19 @@ class PurchaseCreditModal extends Component {
     countUSD: undefined,
     countB: undefined,
     chargeOption: 'once',
-    newCard: null,
+    paymentIntentSecret: null,
+    loading: false,
+  }
+
+  componentDidMount() {
+    const elements = stripe.elements()
+
+    const style = {
+      base: {
+        color: "#32325d",
+      }
+    }
+    this.card = elements.create("card", { style: style })
   }
 
   handleCountInputUpdate = (e) => {
@@ -59,34 +73,57 @@ class PurchaseCreditModal extends Component {
     }
   }
 
-  handleNewCardUpdate = newCard => {
-    this.setState({
-      newCard
-    })
-  }
-
   handleNext = () => {
     const { organization, createCustomerIdAndCharge } = this.props
-
+    this.setState({ loading: true })
     // if (organization.stripe_customer_id === null) {
       createCustomerIdAndCharge(this.state.countUSD)
-      .then(data => {
-        console.log(data)
-        this.setState({ showPayment: true })
+      .then(({ payment_intent_secret }) => {
+        this.setState({
+          showPayment: true,
+          loading: false,
+          paymentIntentSecret: payment_intent_secret
+        }, () => this.card.mount("#card-element"))
+      })
+      .catch(err => {
+        this.setState({ loading: false })
       })
     // }
   }
 
   handleBack = () => {
-    this.setState({ showPayment: false })
+    this.setState({ showPayment: false },
+      () => this.card.unmount("#card-element")
+    )
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e, card) => {
     e.preventDefault();
+    this.setState({ loading: true })
 
-    // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
-
-    this.props.onClose()
+    stripe.confirmCardPayment(this.state.paymentIntentSecret, {
+      payment_method: {
+        card: this.card,
+        billing_details: {
+          name: this.props.organization.name
+        }
+      },
+      setup_future_usage: 'off_session'
+    }).then(result => {
+      if (result.error) {
+        displayError(result.error.message)
+        this.setState({ loading: false })
+      } else {
+        if (result.paymentIntent.status === 'succeeded') {
+          // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
+          this.setState({ loading: false, showPayment: false })
+          this.props.onClose()
+        } else {
+          this.setState({ loading: false })
+          displayError("Could not process your payment, please try again.")
+        }
+      }
+    })
   }
 
   handleSelectCharge = chargeOption => {
@@ -101,9 +138,10 @@ class PurchaseCreditModal extends Component {
           countB={this.state.countB}
           countUSD={this.state.countUSD}
           handleCountInputUpdate={this.handleCountInputUpdate}
+          disabled={this.state.loading}
         />
         {
-          this.state.countDC && (
+          this.state.countDC > 0 && (
             <div>
               <Divider style={{ marginTop: 32, marginBottom: 12 }}/>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -117,6 +155,7 @@ class PurchaseCreditModal extends Component {
                 defaultValue={this.state.chargeOption}
                 onChange={this.handleSelectCharge}
                 style={{ width: '100%'}}
+                disabled={this.state.loading}
               >
                 <Option value="once">One time purchase</Option>
                 <Option value="10%">10% remaining</Option>
@@ -147,37 +186,45 @@ class PurchaseCreditModal extends Component {
           </div>
           <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
         </div>
-        <ExistingCardsAddCard
-          handleNewCardUpdate={this.handleNewCardUpdate}
-        />
+        <ExistingCardsAddCard />
+        <div>
+          <Text strong>
+            ...or Add New Card
+          </Text>
+          <div style={{ marginTop: 24 }}>
+            <div id="card-element" />
+            <div id="card-errors" role="alert" />
+          </div>
+        </div>
       </React.Fragment>
     )
   }
 
   render() {
     const { open, onClose } = this.props
+    const { loading } = this.state
 
     return (
       <Modal
         title="Purchase Data Credits"
         visible={open}
-        onCancel={onClose}
+        onCancel={loading ? () => {} : onClose}
         centered
         footer={
           this.state.showPayment ?
           [
-            <Button key="back" onClick={this.handleBack}>
+            <Button key="back" onClick={this.handleBack} disabled={loading}>
               Back
             </Button>,
-            <Button key="submit" type="primary" onClick={this.handleSubmit}>
+            <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={loading}>
               Make Payment
             </Button>,
           ] :
           [
-            <Button key="back" onClick={onClose}>
+            <Button key="back" onClick={onClose} disabled={loading}>
               Cancel
             </Button>,
-            <Button key="submit" type="primary" onClick={this.handleNext} disabled={!this.state.countDC || this.state.countDC == 0}>
+            <Button key="submit" type="primary" onClick={this.handleNext} disabled={!this.state.countDC || this.state.countDC == 0 || loading}>
               Continue To Payment
             </Button>,
           ]

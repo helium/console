@@ -25,16 +25,18 @@ defmodule ConsoleWeb.DataCreditController do
          customer = Poison.decode!(stripe_response.body)
          with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
            # create a payment intent in stripe
-           amount = String.to_integer(amountUSD) * 100
+           { amount, _ } = Float.parse(amountUSD)
            request_body = URI.encode_query(%{
              "customer" => organization.stripe_customer_id,
-             "amount" => amount,
+             "amount" => Float.round(amount * 100) |> trunc(),
              "currency" => "usd"
            })
 
            with {:ok, stripe_response} <- HTTPoison.post("https://api.stripe.com/v1/payment_intents", request_body, headers) do
-             payment_intent = Poison.decode!(stripe_response.body)
-             conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+             with 200 <- stripe_response.status_code do
+               payment_intent = Poison.decode!(stripe_response.body)
+               conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+             end
            end
          end
        end
