@@ -32,6 +32,7 @@ defmodule ConsoleWeb.ChannelController do
           Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
       end
       broadcast(channel)
+      broadcast_router_update_devices(channel)
 
       conn
       |> put_status(:created)
@@ -45,6 +46,7 @@ defmodule ConsoleWeb.ChannelController do
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       broadcast(channel, channel.id)
+      broadcast_router_update_devices(channel)
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
@@ -54,10 +56,12 @@ defmodule ConsoleWeb.ChannelController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    channel = Channels.get_channel!(current_organization, id) |> Channels.fetch_assoc([:labels])
+    channel = Channels.get_channel!(current_organization, id) |> Channels.fetch_assoc([labels: :devices])
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel)
+      broadcast_router_update_devices(channel.labels)
+
       msg =
         case length(channel.labels) do
           0 -> "The Integration #{channel.name} has been deleted"
@@ -78,5 +82,20 @@ defmodule ConsoleWeb.ChannelController do
 
   def broadcast(%Channel{} = channel, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/#{id}/channel_updated")
+  end
+
+  defp broadcast_router_update_devices(%Channel{} = channel) do
+    assoc_labels = channel |> Channels.fetch_assoc([labels: :devices]) |> Map.get(:labels)
+    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
+    end
+  end
+
+  defp broadcast_router_update_devices(assoc_labels) do
+    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
+    end
   end
 end
