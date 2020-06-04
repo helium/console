@@ -13,7 +13,8 @@ export const ORGANIZATION_SHOW_DC = gql`
     organization(id: $id) {
       id,
       name,
-      dc_balance
+      dc_balance,
+      stripe_customer_id
     }
   }
 `

@@ -261,6 +261,7 @@ class DataCreditsIndex extends Component {
         <PurchaseCreditModal
           open={showPurchaseCreditModal}
           onClose={() => this.closeModal("showPurchaseCreditModal")}
+          organization={organization}
         />
 
         <AutomaticRenewalModal

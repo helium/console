@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import ExistingCardsAddCard from './ExistingCardsAddCard'
 import AmountEntryCalculator from './AmountEntryCalculator'
+import { createCustomerIdAndCharge } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -19,6 +22,7 @@ const styles = {
   },
 }
 
+@connect(null, mapDispatchToProps)
 class PurchaseCreditModal extends Component {
   state = {
     showPayment: false,
@@ -26,7 +30,7 @@ class PurchaseCreditModal extends Component {
     countUSD: undefined,
     countB: undefined,
     chargeOption: 'once',
-    newCard: null
+    newCard: null,
   }
 
   handleCountInputUpdate = (e) => {
@@ -62,7 +66,15 @@ class PurchaseCreditModal extends Component {
   }
 
   handleNext = () => {
-    this.setState({ showPayment: true })
+    const { organization, createCustomerIdAndCharge } = this.props
+
+    // if (organization.stripe_customer_id === null) {
+      createCustomerIdAndCharge(this.state.countUSD)
+      .then(data => {
+        console.log(data)
+        this.setState({ showPayment: true })
+      })
+    // }
   }
 
   handleBack = () => {
@@ -176,6 +188,10 @@ class PurchaseCreditModal extends Component {
       </Modal>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ createCustomerIdAndCharge }, dispatch)
 }
 
 export default PurchaseCreditModal

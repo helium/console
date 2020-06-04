@@ -52,6 +52,8 @@ defmodule ConsoleWeb.Router do
 
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
     resources "/functions", FunctionController, only: [:create, :delete, :update]
+
+    post "/data_credits/create_customer", DataCreditController, :create_customer_id_and_charge
   end
 
   scope "/api/router", ConsoleWeb.Router do

@@ -114,6 +114,12 @@ defmodule Console.Organizations do
     end
   end
 
+  def update_organization(%Organization{} = organization, attrs) do
+    organization
+    |> Organization.update_changeset(attrs)
+    |> Repo.update()
+  end
+
   def join_organization(%User{} = user, %Organization{} = organization, role \\ "read") do
     %Membership{}
     |> Membership.join_org_changeset(user, organization, role)
