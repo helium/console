@@ -237,7 +237,7 @@ class FunctionIndexTable extends Component {
           functions.entries.length > 0 && (
             <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${functions.entries.length} Functions`}
+        title={`${functions.totalEntries} Functions`}
       >
             <React.Fragment>
               <Table

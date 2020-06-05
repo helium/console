@@ -196,7 +196,7 @@ class DeviceIndexTable extends Component {
           devices.entries.length > 0 && (
             <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${devices.entries.length} Devices`}
+        title={`${devices.totalEntries} Devices`}
         extra={
           <UserCan>
             <Select

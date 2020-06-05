@@ -229,7 +229,7 @@ class LabelIndexTable extends Component {
         {labels.entries.length > 0 && (
           <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${labels.entries.length} Labels`}
+        title={`${labels.totalEntries} Labels`}
         extra={
           <UserCan>
             <Select
