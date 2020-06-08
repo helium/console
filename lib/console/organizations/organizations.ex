@@ -65,6 +65,10 @@ defmodule Console.Organizations do
     Repo.get_by!(Membership, [id: id, organization_id: organization.id])
   end
 
+  def get_invitation!(%Organization{} = organization, id) do
+    Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
+  end
+
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
     query = from m in Membership,
       where: m.user_id == ^user_id and m.organization_id == ^organization_id
