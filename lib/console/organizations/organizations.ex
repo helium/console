@@ -167,12 +167,12 @@ defmodule Console.Organizations do
         |> Repo.delete_all()
 
         membership
-        |> Membership.changeset(attrs)
+        |> Membership.update_changeset(attrs)
         |> Repo.update()
       end)
     else
       membership
-      |> Membership.changeset(attrs)
+      |> Membership.update_changeset(attrs)
       |> Repo.update()
     end
   end
