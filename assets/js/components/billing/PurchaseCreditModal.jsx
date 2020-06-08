@@ -3,10 +3,10 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import ExistingCardsAddCard from './ExistingCardsAddCard'
+import ExistingPaymentCards from './ExistingPaymentCards'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { createCustomerIdAndCharge } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Select } from 'antd';
+import { createCustomerIdAndCharge, createCharge } from '../../actions/dataCredits'
+import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 const stripe = Stripe('pk_test_tpiYaEpZAZ8EGaqTZTujgQKG00e64rEo1V')
@@ -34,6 +34,7 @@ class PurchaseCreditModal extends Component {
     chargeOption: 'once',
     paymentIntentSecret: null,
     loading: false,
+    paymentMethodSelected: undefined
   }
 
   componentDidMount() {
@@ -45,6 +46,10 @@ class PurchaseCreditModal extends Component {
       }
     }
     this.card = elements.create("card", { style: style })
+
+    this.card.on('focus', () => {
+      this.setState({ paymentMethodSelected: undefined })
+    })
   }
 
   handleCountInputUpdate = (e) => {
@@ -74,9 +79,10 @@ class PurchaseCreditModal extends Component {
   }
 
   handleNext = () => {
-    const { organization, createCustomerIdAndCharge } = this.props
+    const { organization, createCustomerIdAndCharge, createCharge } = this.props
     this.setState({ loading: true })
-    // if (organization.stripe_customer_id === null) {
+
+    if (organization.stripe_customer_id === null) {
       createCustomerIdAndCharge(this.state.countUSD)
       .then(({ payment_intent_secret }) => {
         this.setState({
@@ -88,7 +94,19 @@ class PurchaseCreditModal extends Component {
       .catch(err => {
         this.setState({ loading: false })
       })
-    // }
+    } else {
+      createCharge(this.state.countUSD)
+      .then(({ payment_intent_secret }) => {
+        this.setState({
+          showPayment: true,
+          loading: false,
+          paymentIntentSecret: payment_intent_secret
+        }, () => this.card.mount("#card-element"))
+      })
+      .catch(err => {
+        this.setState({ loading: false })
+      })
+    }
   }
 
   handleBack = () => {
@@ -100,16 +118,26 @@ class PurchaseCreditModal extends Component {
   handleSubmit = (e, card) => {
     e.preventDefault();
     this.setState({ loading: true })
+    let payment
 
-    stripe.confirmCardPayment(this.state.paymentIntentSecret, {
-      payment_method: {
-        card: this.card,
-        billing_details: {
-          name: this.props.organization.name
-        }
-      },
-      setup_future_usage: 'off_session'
-    }).then(result => {
+    if (this.state.paymentMethodSelected) {
+      payment = {
+        payment_method: this.state.paymentMethodSelected
+      }
+    } else {
+      payment = {
+        payment_method: {
+          card: this.card,
+          billing_details: {
+            name: this.props.organization.name
+          }
+        },
+        setup_future_usage: 'off_session'
+      }
+    }
+
+    stripe.confirmCardPayment(this.state.paymentIntentSecret, payment)
+    .then(result => {
       if (result.error) {
         displayError(result.error.message)
         this.setState({ loading: false })
@@ -117,7 +145,8 @@ class PurchaseCreditModal extends Component {
         if (result.paymentIntent.status === 'succeeded') {
           // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
           this.setState({ loading: false, showPayment: false })
-          // add dc to balance with new endpoint, refetch all payment methods from backend 
+          // add dc to balance with new endpoint
+          this.props.fetchPaymentMethods()
           this.props.onClose()
         } else {
           this.setState({ loading: false })
@@ -129,6 +158,11 @@ class PurchaseCreditModal extends Component {
 
   handleSelectCharge = chargeOption => {
     this.setState({ chargeOption })
+  }
+
+  onRadioChange = e => {
+    this.card.clear()
+    this.setState({ paymentMethodSelected: e.target.value })
   }
 
   renderCountSelection = () => {
@@ -170,6 +204,7 @@ class PurchaseCreditModal extends Component {
   }
 
   renderPayment = () => {
+    const { paymentMethods } = this.props
     return (
       <React.Fragment>
         <div style={{
@@ -187,7 +222,13 @@ class PurchaseCreditModal extends Component {
           </div>
           <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
         </div>
-        <ExistingCardsAddCard />
+
+        <ExistingPaymentCards
+          paymentMethods={paymentMethods}
+          paymentMethodSelected={this.state.paymentMethodSelected}
+          onRadioChange={this.onRadioChange}
+        />
+
         <div>
           <Text strong>
             ...or Add New Card
@@ -239,7 +280,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge }, dispatch)
 }
 
 export default PurchaseCreditModal

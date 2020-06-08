@@ -15,8 +15,8 @@ const cards = {
   "diners": Diners,
 }
 
-const PaymentCard = ({ id, card }) => (
-  <div key={id}>
+const PaymentCard = ({ id, card, style }) => (
+  <div key={id} style={style}>
     <img src={cards[card.brand]} style={{ marginRight: 10, height: 24, width: 32 }}/>
     <Text style={{ fontFamily: 'monospace', color: '#777777' }}>••••/{card.last4}</Text>
   </div>

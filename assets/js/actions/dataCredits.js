@@ -5,6 +5,11 @@ export const createCustomerIdAndCharge = (amountUSD) => (dispatch) => (
   .then(({ data }) => data)
 )
 
+export const createCharge = (amountUSD) => (dispatch) => (
+  rest.post('/api/data_credits/create_charge', { amountUSD })
+  .then(({ data }) => data)
+)
+
 export const getPaymentMethods = () => (dispatch) => (
   rest.get('/api/data_credits/payment_methods')
   .then(({ data }) => data.data)
