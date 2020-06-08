@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
 import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
+import { getPaymentMethods } from '../../actions/dataCredits'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
 import DCIMg from '../../../img/datacredits.svg'
@@ -40,17 +42,29 @@ const queryOptions = {
   })
 }
 
-@connect(mapStateToProps, null)
+@connect(mapStateToProps, mapDispatchToProps)
 @graphql(ORGANIZATION_SHOW_DC, queryOptions)
 class DataCreditsIndex extends Component {
   state = {
     showDefaultPaymentModal: false,
     showPurchaseCreditModal: false,
     showAutomaticRenewalModal: false,
+    paymentMethods: [],
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS")
+  }
+
+  componentDidUpdate(prevProps) {
+    if(!prevProps.data.organization && this.props.data.organization && this.props.data.organization.stripe_customer_id) {
+      this.fetchPaymentMethods()
+    }
+  }
+
+  fetchPaymentMethods = () => {
+    this.props.getPaymentMethods()
+    .then(paymentMethods => this.setState({ paymentMethods }))
   }
 
   openModal = (modal) => {
@@ -195,9 +209,13 @@ class DataCreditsIndex extends Component {
                 </Link>
               }
             >
-              <Row type="flex" style={{ alignItems: 'center' }}>
-                <Text style={{ ...styles.numberCount }}>N/A</Text>
-              </Row>
+              {
+                this.state.paymentMethods.length == 0 && (
+                  <Row type="flex" style={{ alignItems: 'center' }}>
+                    <Text style={{ ...styles.numberCount }}>N/A</Text>
+                  </Row>
+                )
+              }
             </Card>
           </Col>
         </Row>
@@ -256,6 +274,7 @@ class DataCreditsIndex extends Component {
         <DefaultPaymentModal
           open={showDefaultPaymentModal}
           onClose={() => this.closeModal("showDefaultPaymentModal")}
+          paymentMethods={this.state.paymentMethods}
         />
 
         <PurchaseCreditModal
@@ -278,5 +297,10 @@ function mapStateToProps(state, ownProps) {
     currentOrganizationId: state.organization.currentOrganizationId,
   }
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getPaymentMethods }, dispatch)
+}
+
 
 export default DataCreditsIndex

@@ -1,19 +1,10 @@
 import React, { Component } from 'react'
+import PaymentCard from './PaymentCard'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button } from 'antd';
-import ExistingCardsAddCard from './ExistingCardsAddCard'
+import { Modal, Button, Divider, Typography } from 'antd';
+const { Text } = Typography
 
 class DefaultPaymentModal extends Component {
-  state = {
-    newCard: null
-  }
-
-  handleNewCardUpdate = newCard => {
-    this.setState({
-      newCard
-    })
-  }
-
   handleSubmit = (e) => {
     e.preventDefault();
 
@@ -23,7 +14,7 @@ class DefaultPaymentModal extends Component {
   }
 
   render() {
-    const { open, onClose } = this.props
+    const { open, onClose, paymentMethods } = this.props
 
     return (
       <Modal
@@ -41,9 +32,24 @@ class DefaultPaymentModal extends Component {
           </Button>,
         ]}
       >
-        <ExistingCardsAddCard
-          handleNewCardUpdate={this.handleNewCardUpdate}
-        />
+        <div style={{ marginBottom: 24 }}>
+          <Text strong>
+            Choose from Stored Cards
+          </Text>
+          <Divider style={{ margin: '8px 0px 16px 0px' }}/>
+          {
+            paymentMethods.length === 0 && (
+              <Text>
+                None available, create one below...
+              </Text>
+            )
+          }
+          {
+            paymentMethods.map(p => (
+              <PaymentCard key={p.id} card={p.card} />
+            ))
+          }
+        </div>
       </Modal>
     )
   }

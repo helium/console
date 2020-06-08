@@ -42,4 +42,19 @@ defmodule ConsoleWeb.DataCreditController do
        end
     end
   end
+
+  def get_payment_methods(conn, _) do
+    current_organization = conn.assigns.current_organization
+
+    headers = [
+      {"Authorization", "Bearer " <> "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    with {:ok, stripe_response} <- HTTPoison.get("https://api.stripe.com/v1/payment_methods?customer=" <> current_organization.stripe_customer_id <> "&type=card", headers) do
+      with 200 <- stripe_response.status_code do
+        conn |> send_resp(:ok, stripe_response.body)
+      end
+    end
+  end
 end

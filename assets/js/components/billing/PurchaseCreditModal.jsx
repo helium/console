@@ -117,6 +117,7 @@ class PurchaseCreditModal extends Component {
         if (result.paymentIntent.status === 'succeeded') {
           // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
           this.setState({ loading: false, showPayment: false })
+          // add dc to balance with new endpoint, refetch all payment methods from backend 
           this.props.onClose()
         } else {
           this.setState({ loading: false })
