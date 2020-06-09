@@ -9,7 +9,7 @@ import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
 import PaymentCard from './PaymentCard'
-import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
 import { getPaymentMethods } from '../../actions/dataCredits'
 import { Link } from 'react-router-dom'
 import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
@@ -63,6 +63,19 @@ class DataCreditsIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS")
+
+    const { subscribeToMore, variables, fetchMore } = this.props.data
+
+    subscribeToMore({
+      document: ORGANIZATION_UPDATE_SUBSCRIPTION,
+      variables,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
   }
 
   componentDidUpdate(prevProps) {

@@ -36,11 +36,19 @@ export const PAGINATED_ORGANIZATIONS = gql`
 `
 
 export const ORGANIZATION_SUBSCRIPTION = gql`
-  subscription onOrganizationUpdated {
-    organizationUpdated {
+  subscription onOrganizationAdded {
+    organizationAdded {
       id,
       name,
       inserted_at,
+    }
+  }
+`
+
+export const ORGANIZATION_UPDATE_SUBSCRIPTION = gql`
+  subscription onOrganizationUpdated($organizationId: String) {
+    organizationUpdated(organizationId: $organizationId) {
+      name
     }
   }
 `

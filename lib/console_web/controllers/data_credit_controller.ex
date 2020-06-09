@@ -85,9 +85,14 @@ defmodule ConsoleWeb.DataCreditController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
+      broadcast(organization)
       conn
       |> put_resp_header("message", "Default payment method updated successfully")
       |> send_resp(:no_content, "")
     end
+  end
+
+  defp broadcast(%Organization{} = organization) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end
 end

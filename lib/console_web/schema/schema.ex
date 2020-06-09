@@ -269,9 +269,17 @@ defmodule ConsoleWeb.Schema do
   end
 
   subscription do
-    field :organization_updated, :organization do
+    field :organization_added, :organization do
       config fn _, %{context: %{ current_user_id: user_id }} ->
-        {:ok, topic: "#{user_id}/organization_updated"}
+        {:ok, topic: "#{user_id}/organization_added"}
+      end
+    end
+
+    field :organization_updated, :organization do
+      arg :organization_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/organization_updated"}
       end
     end
 

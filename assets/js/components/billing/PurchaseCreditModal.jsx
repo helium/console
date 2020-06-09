@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { connect } from 'react-redux'
+import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import AmountEntryCalculator from './AmountEntryCalculator'
@@ -80,6 +81,9 @@ class PurchaseCreditModal extends Component {
 
   handleNext = () => {
     const { organization, createCustomerIdAndCharge, createCharge } = this.props
+    const defaultPayment = find(this.props.paymentMethods, p => p.id === organization.default_payment_id)
+    const paymentMethodSelected = defaultPayment ? defaultPayment.id : undefined
+
     this.setState({ loading: true })
 
     if (organization.stripe_customer_id === null) {
@@ -88,7 +92,8 @@ class PurchaseCreditModal extends Component {
         this.setState({
           showPayment: true,
           loading: false,
-          paymentIntentSecret: payment_intent_secret
+          paymentIntentSecret: payment_intent_secret,
+          paymentMethodSelected
         }, () => this.card.mount("#card-element"))
       })
       .catch(err => {
@@ -100,7 +105,8 @@ class PurchaseCreditModal extends Component {
         this.setState({
           showPayment: true,
           loading: false,
-          paymentIntentSecret: payment_intent_secret
+          paymentIntentSecret: payment_intent_secret,
+          paymentMethodSelected
         }, () => this.card.mount("#card-element"))
       })
       .catch(err => {
