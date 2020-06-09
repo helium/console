@@ -5,8 +5,9 @@ import { connect } from 'react-redux'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
+import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { createCustomerIdAndCharge, createCharge } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -116,9 +117,7 @@ class PurchaseCreditModal extends Component {
   }
 
   handleBack = () => {
-    this.setState({ showPayment: false },
-      () => this.card.unmount("#card-element")
-    )
+    this.setState({ showPayment: false })
   }
 
   handleSubmit = (e, card) => {
@@ -152,6 +151,7 @@ class PurchaseCreditModal extends Component {
           // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
           this.setState({ loading: false, showPayment: false })
           // add dc to balance with new endpoint
+          if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
           this.props.fetchPaymentMethods()
           this.props.onClose()
         } else {
@@ -169,6 +169,11 @@ class PurchaseCreditModal extends Component {
   onRadioChange = e => {
     this.card.clear()
     this.setState({ paymentMethodSelected: e.target.value })
+  }
+
+  handleClose = () => {
+    setTimeout(() => this.handleBack(), 200)
+    this.props.onClose()
   }
 
   renderCountSelection = () => {
@@ -239,24 +244,23 @@ class PurchaseCreditModal extends Component {
           <Text strong>
             ...or Add New Card
           </Text>
-          <div style={{ marginTop: 24 }}>
-            <div id="card-element" />
-            <div id="card-errors" role="alert" />
-          </div>
+          {
+            open && <StripeCardElement />
+          }
         </div>
       </React.Fragment>
     )
   }
 
   render() {
-    const { open, onClose } = this.props
+    const { open } = this.props
     const { loading } = this.state
 
     return (
       <Modal
         title="Purchase Data Credits"
         visible={open}
-        onCancel={loading ? () => {} : onClose}
+        onCancel={loading ? () => {} : this.handleClose}
         centered
         footer={
           this.state.showPayment ?
@@ -269,7 +273,7 @@ class PurchaseCreditModal extends Component {
             </Button>,
           ] :
           [
-            <Button key="back" onClick={onClose} disabled={loading}>
+            <Button key="back" onClick={this.handleClose} disabled={loading}>
               Cancel
             </Button>,
             <Button key="submit" type="primary" onClick={this.handleNext} disabled={!this.state.countDC || this.state.countDC == 0 || loading}>
@@ -286,7 +290,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod }, dispatch)
 }
 
 export default PurchaseCreditModal

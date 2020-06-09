@@ -15,7 +15,12 @@ export const getPaymentMethods = () => (dispatch) => (
   .then(({ data }) => data.data)
 )
 
+export const getSetupPaymentMethod = () => (dispatch) => (
+  rest.get('/api/data_credits/setup_payment_method')
+  .then(({ data }) => data)
+)
+
 export const setDefaultPaymentMethod = (defaultPaymentId) => (dispatch) => (
-  rest.post('/api/data_credits/payment_methods', { defaultPaymentId })
+  rest.post('/api/data_credits/set_default_payment_method', { defaultPaymentId })
   .then(() => {})
 )

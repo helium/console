@@ -81,7 +81,27 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def set_payment_method(conn, %{ "defaultPaymentId" => defaultPaymentId }) do
+  def get_setup_payment_method(conn, _) do
+    current_organization = conn.assigns.current_organization
+
+    headers = [
+      {"Authorization", "Bearer " <> "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    request_body = URI.encode_query(%{
+      "customer" => current_organization.stripe_customer_id,
+    })
+
+    with {:ok, stripe_response} <- HTTPoison.post("https://api.stripe.com/v1/setup_intents", request_body, headers) do
+      with 200 <- stripe_response.status_code do
+        setup_intent = Poison.decode!(stripe_response.body)
+        conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
+      end
+    end
+  end
+
+  def set_default_payment_method(conn, %{ "defaultPaymentId" => defaultPaymentId }) do
     current_organization = conn.assigns.current_organization
 
     with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do

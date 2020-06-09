@@ -176,6 +176,8 @@ class DataCreditsIndex extends Component {
 
   renderContent = () => {
     const { dc_balance, default_payment_id } = this.props.data.organization
+    const defaultPayment = find(this.state.paymentMethods, p => p.id === this.props.data.organization.default_payment_id)
+
     return (
       <div>
         <Row gutter={16}>
@@ -228,20 +230,29 @@ class DataCreditsIndex extends Component {
             <Card
               title="Default Payment Method"
               extra={
-                <Link to="#" onClick={() => this.openModal("showDefaultPaymentModal")}>
-                  <Text style={styles.tipText}>Change</Text>
-                </Link>
+                this.state.paymentMethods.length > 0 && (
+                  <Link to="#" onClick={() => this.openModal("showDefaultPaymentModal")}>
+                    <Text style={styles.tipText}>Change</Text>
+                  </Link>
+                )
               }
               bodyStyle={styles.cardBody}
             >
               {
-                this.state.paymentMethods.length > 0 && (
+                this.state.paymentMethods.length > 0 && defaultPayment && (
                   <Row type="flex" style={{ alignItems: 'center' }}>
                     <PaymentCard
-                      key={find(this.state.paymentMethods, p => p.id == default_payment_id).id}
-                      card={find(this.state.paymentMethods, p => p.id == default_payment_id).card}
+                      key={defaultPayment.id}
+                      card={defaultPayment.card}
                       showExpire
                     />
+                  </Row>
+                )
+              }
+              {
+                (this.state.paymentMethods.length == 0 || !defaultPayment) && (
+                  <Row type="flex" style={{ alignItems: 'center' }}>
+                    <Text style={styles.numberCount}>N/A</Text>
                   </Row>
                 )
               }
@@ -303,7 +314,9 @@ class DataCreditsIndex extends Component {
         <DefaultPaymentModal
           open={showDefaultPaymentModal}
           onClose={() => this.closeModal("showDefaultPaymentModal")}
+          organization={organization}
           paymentMethods={this.state.paymentMethods}
+          fetchPaymentMethods={this.fetchPaymentMethods}
         />
 
         <PurchaseCreditModal
