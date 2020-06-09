@@ -14,7 +14,8 @@ export const ORGANIZATION_SHOW_DC = gql`
       id,
       name,
       dc_balance,
-      stripe_customer_id
+      stripe_customer_id,
+      default_payment_id,
     }
   }
 `

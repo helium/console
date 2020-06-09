@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
+import PaymentCard from './PaymentCard'
 import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
 import { getPaymentMethods } from '../../actions/dataCredits'
 import { Link } from 'react-router-dom'
@@ -31,6 +33,13 @@ const styles = {
     fontSize: 40,
     marginTop: -8,
   },
+  cardBody: {
+    height: 90,
+    overflowY: 'scroll',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
 }
 
 const queryOptions = {
@@ -153,7 +162,7 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
-    const { dc_balance } = this.props.data.organization
+    const { dc_balance, default_payment_id } = this.props.data.organization
     return (
       <div>
         <Row gutter={16}>
@@ -171,6 +180,7 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
+              bodyStyle={styles.cardBody}
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={DCIMg} />
@@ -192,6 +202,7 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
+              bodyStyle={styles.cardBody}
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={BytesIMg} />
@@ -208,11 +219,16 @@ class DataCreditsIndex extends Component {
                   <Text style={styles.tipText}>Change</Text>
                 </Link>
               }
+              bodyStyle={styles.cardBody}
             >
               {
-                this.state.paymentMethods.length == 0 && (
+                this.state.paymentMethods.length > 0 && (
                   <Row type="flex" style={{ alignItems: 'center' }}>
-                    <Text style={{ ...styles.numberCount }}>N/A</Text>
+                    <PaymentCard
+                      key={find(this.state.paymentMethods, p => p.id == default_payment_id).id}
+                      card={find(this.state.paymentMethods, p => p.id == default_payment_id).card}
+                      showExpire
+                    />
                   </Row>
                 )
               }

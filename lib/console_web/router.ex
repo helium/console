@@ -56,6 +56,7 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/create_customer_and_charge", DataCreditController, :create_customer_id_and_charge
     post "/data_credits/create_charge", DataCreditController, :create_charge
     get "/data_credits/payment_methods", DataCreditController, :get_payment_methods
+    post "/data_credits/payment_methods", DataCreditController, :set_payment_method
   end
 
   scope "/api/router", ConsoleWeb.Router do

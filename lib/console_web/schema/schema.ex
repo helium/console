@@ -75,6 +75,7 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :dc_balance, :integer
     field :stripe_customer_id, :string
+    field :default_payment_id, :string
   end
 
   object :api_key do

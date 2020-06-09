@@ -80,4 +80,14 @@ defmodule ConsoleWeb.DataCreditController do
       end
     end
   end
+
+  def set_payment_method(conn, %{ "defaultPaymentId" => defaultPaymentId }) do
+    current_organization = conn.assigns.current_organization
+
+    with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
+      conn
+      |> put_resp_header("message", "Default payment method updated successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
 end

@@ -1,16 +1,28 @@
 import React, { Component } from 'react'
-import PaymentCard from './PaymentCard'
 import analyticsLogger from '../../util/analyticsLogger'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setDefaultPaymentMethod } from '../../actions/dataCredits'
+import ExistingPaymentCards from './ExistingPaymentCards'
 import { Modal, Button, Divider, Typography } from 'antd';
 const { Text } = Typography
 
+@connect(null, mapDispatchToProps)
 class DefaultPaymentModal extends Component {
+  state = {
+    paymentMethodSelected: undefined
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
 
     // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
-
+    this.props.setDefaultPaymentMethod(this.state.paymentMethodSelected)
     this.props.onClose()
+  }
+
+  onRadioChange = e => {
+    this.setState({ paymentMethodSelected: e.target.value })
   }
 
   render() {
@@ -28,31 +40,22 @@ class DefaultPaymentModal extends Component {
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={this.handleSubmit}>
-            Submit
+            Make Default Payment Method
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 24 }}>
-          <Text strong>
-            Choose from Stored Cards
-          </Text>
-          <Divider style={{ margin: '8px 0px 16px 0px' }}/>
-          {
-            paymentMethods.length === 0 && (
-              <Text>
-                None available, create one below...
-              </Text>
-            )
-          }
-          {
-            paymentMethods.map(p => (
-              <PaymentCard key={p.id} card={p.card} />
-            ))
-          }
-        </div>
+        <ExistingPaymentCards
+          paymentMethods={paymentMethods}
+          paymentMethodSelected={this.state.paymentMethodSelected}
+          onRadioChange={this.onRadioChange}
+        />
       </Modal>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setDefaultPaymentMethod }, dispatch)
 }
 
 export default DefaultPaymentModal

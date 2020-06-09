@@ -9,6 +9,7 @@ defmodule Console.Organizations.Organization do
     field :name, :string
     field :dc_balance, :integer
     field :stripe_customer_id, :string
+    field :default_payment_id, :string
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -41,7 +42,7 @@ defmodule Console.Organizations.Organization do
 
   def update_changeset(organization, attrs) do
     organization
-    |> cast(attrs, [:stripe_customer_id])
+    |> cast(attrs, [:stripe_customer_id, :default_payment_id])
   end
 
   @doc false
