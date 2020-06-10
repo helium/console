@@ -87,6 +87,15 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
   end
 
+  paginated object :dc_purchase do
+    field :id, :id
+    field :dc_purchased, :integer
+    field :cost, :integer
+    field :user_id, :string
+    field :card_type, :string
+    field :last_4, :string
+  end
+
   paginated object :function do
     field :id, :id
     field :name, :string
@@ -265,6 +274,10 @@ defmodule ConsoleWeb.Schema do
     field :function, :function do
       arg :id, non_null(:id)
       resolve &Console.Functions.FunctionResolver.find/2
+    end
+
+    paginated field :dc_purchases, :paginated_dc_purchases do
+      resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
     end
   end
 

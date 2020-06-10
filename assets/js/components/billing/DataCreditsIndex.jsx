@@ -8,6 +8,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
+import DataCreditPurchasesTable from './DataCreditPurchasesTable'
 import PaymentCard from './PaymentCard'
 import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
 import { getPaymentMethods } from '../../actions/dataCredits'
@@ -262,6 +263,7 @@ class DataCreditsIndex extends Component {
             </Card>
           </Col>
         </Row>
+        <DataCreditPurchasesTable />
       </div>
     )
   }
