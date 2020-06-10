@@ -29,3 +29,8 @@ export const removePaymentMethod = (paymentId) => (dispatch) => (
   rest.post('/api/data_credits/remove_payment_method', { paymentId })
   .then(() => {})
 )
+
+export const createDCPurchase = (cost, cardType, last4) => (dispatch) => (
+  rest.post('/api/data_credits/create_dc_purchase', { cost, cardType, last4 })
+  .then(() => {})
+)

@@ -84,9 +84,12 @@ class DataCreditsIndex extends Component {
     }
   }
 
-  fetchPaymentMethods = () => {
+  fetchPaymentMethods = (callback) => {
     this.props.getPaymentMethods()
-    .then(paymentMethods => this.setState({ paymentMethods }))
+    .then(paymentMethods => {
+      this.setState({ paymentMethods })
+      if (callback) callback()
+    })
   }
 
   openModal = (modal) => {

@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -149,10 +149,18 @@ class PurchaseCreditModal extends Component {
       } else {
         if (result.paymentIntent.status === 'succeeded') {
           // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
-          this.setState({ loading: false, showPayment: false })
-          // add dc to balance with new endpoint
+
+          this.props.fetchPaymentMethods(() => {
+            const paymentMethod = find(this.props.paymentMethods, ["id", result.paymentIntent.payment_method])
+            this.props.createDCPurchase(
+              result.paymentIntent.amount,
+              paymentMethod.card.brand,
+              paymentMethod.card.last4
+            )
+          })
+
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
-          this.props.fetchPaymentMethods()
+          this.setState({ loading: false, showPayment: false })
           this.props.onClose()
         } else {
           this.setState({ loading: false })
@@ -205,7 +213,6 @@ class PurchaseCreditModal extends Component {
               >
                 <Option value="once">One time purchase</Option>
                 <Option value="10%">10% remaining</Option>
-                <Option value="monthly">Monthly (same amount)</Option>
               </Select>
             </div>
           )
@@ -290,7 +297,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase }, dispatch)
 }
 
 export default PurchaseCreditModal

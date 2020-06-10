@@ -60,8 +60,9 @@ class DefaultPaymentModal extends Component {
         if (result.error) {
           displayError(result.error.message)
         } else {
-          this.props.fetchPaymentMethods()
-          this.props.setDefaultPaymentMethod(result.setupIntent.payment_method)
+          this.props.fetchPaymentMethods(() => {
+            this.props.setDefaultPaymentMethod(result.setupIntent.payment_method)
+          })
           this.props.onClose()
         }
       })

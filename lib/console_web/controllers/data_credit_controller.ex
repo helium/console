@@ -2,6 +2,8 @@ defmodule ConsoleWeb.DataCreditController do
   use ConsoleWeb, :controller
   alias Console.Repo
   alias Console.Organizations
+  alias Console.DcPurchases
+  alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -130,6 +132,26 @@ defmodule ConsoleWeb.DataCreditController do
         |> put_resp_header("message", "Payment method removed successfully")
         |> send_resp(:no_content, "")
       end
+    end
+  end
+
+  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4}) do
+    current_organization = conn.assigns.current_organization
+    current_user = conn.assigns.current_user
+
+    attrs = %{
+      "dc_purchased" => cost * 1000,
+      "cost" => cost,
+      "card_type" => card_type,
+      "last_4" => last_4,
+      "user_id" => current_user.id,
+      "organization_id" => current_organization.id
+    }
+
+    with {:ok, %DcPurchase{} = dc_purchase} <- DcPurchases.create_dc_purchase(attrs) do
+      conn
+      |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
+      |> send_resp(:no_content, "")
     end
   end
 
