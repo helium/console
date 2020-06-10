@@ -58,6 +58,7 @@ defmodule ConsoleWeb.Router do
     get "/data_credits/payment_methods", DataCreditController, :get_payment_methods
     get "/data_credits/setup_payment_method", DataCreditController, :get_setup_payment_method
     post "/data_credits/set_default_payment_method", DataCreditController, :set_default_payment_method
+    post "/data_credits/remove_payment_method", DataCreditController, :remove_payment_method
   end
 
   scope "/api/router", ConsoleWeb.Router do

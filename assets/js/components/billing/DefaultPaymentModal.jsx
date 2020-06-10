@@ -3,7 +3,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { displayError } from '../../util/messages'
 import { bindActionCreators } from 'redux'
-import { setDefaultPaymentMethod, getSetupPaymentMethod } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod } from '../../actions/dataCredits'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import { Modal, Button, Divider, Typography } from 'antd';
@@ -81,6 +81,13 @@ class DefaultPaymentModal extends Component {
     this.setState({ paymentMethodSelected: e.target.value })
   }
 
+  removePaymentMethod = (paymentId) => {
+    this.props.removePaymentMethod(paymentId)
+    .then(() => {
+      this.props.fetchPaymentMethods()
+    })
+  }
+
   render() {
     const { open, onClose, paymentMethods } = this.props
     const { loading } = this.state
@@ -105,6 +112,8 @@ class DefaultPaymentModal extends Component {
           paymentMethods={paymentMethods}
           paymentMethodSelected={this.state.paymentMethodSelected}
           onRadioChange={this.onRadioChange}
+          showDelete
+          removePaymentMethod={this.removePaymentMethod}
         />
 
         <div>
@@ -121,7 +130,7 @@ class DefaultPaymentModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ setDefaultPaymentMethod, getSetupPaymentMethod }, dispatch)
+  return bindActionCreators({ setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod }, dispatch)
 }
 
 export default DefaultPaymentModal

@@ -112,6 +112,27 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
+  def remove_payment_method(conn, %{ "paymentId" => paymentId }) do
+    current_organization = conn.assigns.current_organization
+
+    headers = [
+      {"Authorization", "Bearer " <> "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    request_body = URI.encode_query(%{})
+
+    with {:ok, stripe_response} <- HTTPoison.post("https://api.stripe.com/v1/payment_methods/" <> paymentId <> "/detach", request_body, headers) do
+      with 200 <- stripe_response.status_code do
+        broadcast(current_organization)
+
+        conn
+        |> put_resp_header("message", "Payment method removed successfully")
+        |> send_resp(:no_content, "")
+      end
+    end
+  end
+
   defp broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end

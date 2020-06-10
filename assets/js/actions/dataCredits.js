@@ -24,3 +24,8 @@ export const setDefaultPaymentMethod = (defaultPaymentId) => (dispatch) => (
   rest.post('/api/data_credits/set_default_payment_method', { defaultPaymentId })
   .then(() => {})
 )
+
+export const removePaymentMethod = (paymentId) => (dispatch) => (
+  rest.post('/api/data_credits/remove_payment_method', { paymentId })
+  .then(() => {})
+)
