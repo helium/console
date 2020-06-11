@@ -391,5 +391,11 @@ defmodule ConsoleWeb.Schema do
         {:ok, topic: "#{organization_id}/#{args.function_id}/function_updated"}
       end
     end
+
+    field :dc_purchase_added, :dc_purchase do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/dc_purchase_added"}
+      end
+    end
   end
 end

@@ -149,6 +149,7 @@ defmodule ConsoleWeb.DataCreditController do
     }
 
     with {:ok, %DcPurchase{} = dc_purchase} <- DcPurchases.create_dc_purchase(attrs) do
+      broadcast(current_organization, dc_purchase)
       conn
       |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
       |> send_resp(:no_content, "")
@@ -157,5 +158,9 @@ defmodule ConsoleWeb.DataCreditController do
 
   defp broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
+  end
+
+  defp broadcast(%Organization{} = organization, %DcPurchase{} = dc_purchase) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, dc_purchase, dc_purchase_added: "#{organization.id}/dc_purchase_added")
   end
 end

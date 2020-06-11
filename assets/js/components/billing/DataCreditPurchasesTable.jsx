@@ -3,8 +3,7 @@ import { graphql } from 'react-apollo';
 import moment from 'moment'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
-import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
-// import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
+import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination } from 'antd';
 const { Text } = Typography
 
@@ -25,20 +24,18 @@ class DataCreditPurchasesTable extends Component {
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
   }
 
-  // componentDidMount() {
-  //   const { subscribeToMore} = this.props.data
-  //   const { page, pageSize } = this.state
-  //
-  //   subscribeToMore({
-  //     document: LABEL_UPDATE_SUBSCRIPTION,
-  //     variables: { id: this.props.labelId },
-  //     updateQuery: (prev, { subscriptionData }) => {
-  //       if (!subscriptionData.data) return prev
-  //       this.refetchPaginatedEntries(page, pageSize)
-  //       this.setState({ selectedRows: [] })
-  //     }
-  //   })
-  // }
+  componentDidMount() {
+    const { subscribeToMore} = this.props.data
+    const { page, pageSize } = this.state
+
+    subscribeToMore({
+      document: DC_PURCHASE_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        this.refetchPaginatedEntries(page, pageSize)
+      }
+    })
+  }
 
   handleChangePage = (page) => {
     this.setState({ page })

@@ -19,10 +19,10 @@ export const PAGINATED_DC_PURCHASES = gql`
   }
 `
 
-// export const API_KEY_SUBSCRIPTION = gql`
-//   subscription onApiKeyAdded {
-//     apiKeyAdded {
-//       id
-//     }
-//   }
-// `
+export const DC_PURCHASE_SUBSCRIPTION = gql`
+  subscription onDcPurchaseAdded {
+    dcPurchaseAdded {
+      id
+    }
+  }
+`
