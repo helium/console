@@ -55,7 +55,7 @@ class DataCreditPurchasesTable extends Component {
   render() {
     const columns = [
       {
-        title: 'Data Credits Purchased',
+        title: 'DC Purchased',
         dataIndex: 'dc_purchased',
       },
       {
@@ -91,14 +91,15 @@ class DataCreditPurchasesTable extends Component {
 
     return (
       <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title="Payment History"
+        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
       >
         <Table
           columns={columns}
           dataSource={dcPurchases.entries}
           rowKey={record => record.id}
           pagination={false}
+          style={{ minWidth: 800 }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

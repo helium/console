@@ -15,21 +15,12 @@ const cards = {
   "diners": Diners,
 }
 
-const PaymentCard = ({ id, card, style, showExpire }) => (
+const PaymentCard = ({ id, card, style }) => (
   <div key={id} style={{ ...style, width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'space-between' }}>
     <div>
       <img src={cards[card.brand]} style={{ marginRight: 10, height: 24, width: 32 }}/>
       <Text style={{ fontFamily: 'monospace', color: '#777777' }}>••••/{card.last4}</Text>
     </div>
-    {
-      showExpire && (
-        <div>
-          <Text style={{ fontFamily: 'monospace', color: '#777777' }}>
-            ---{card.exp_month.length > 1 ? card.exp_month : "0" + card.exp_month}/{card.exp_year.toString().slice(2)}
-          </Text>
-        </div>
-      )
-    }
   </div>
 )
 

@@ -36,7 +36,8 @@ const styles = {
   },
   cardBody: {
     height: 90,
-    overflowY: 'scroll',
+    overflowY: 'hidden',
+    overflowX: 'scroll',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -90,11 +91,13 @@ class DataCreditsIndex extends Component {
   }
 
   fetchPaymentMethods = (callback) => {
-    this.props.getPaymentMethods()
-    .then(paymentMethods => {
-      this.setState({ paymentMethods })
-      if (callback) callback()
-    })
+    if (this.props.role === "admin") {
+      this.props.getPaymentMethods()
+      .then(paymentMethods => {
+        this.setState({ paymentMethods })
+        if (callback) callback()
+      })
+    }
   }
 
   openModal = (modal) => {
@@ -203,7 +206,8 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
-              bodyStyle={styles.cardBody}
+              bodyStyle={{ ...styles.cardBody, width: 400 }}
+              style={{ overflow: 'hidden' }}
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={DCIMg} />
@@ -225,13 +229,12 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
-              bodyStyle={styles.cardBody}
+              style={{ overflow: 'hidden' }}
+              bodyStyle={{ ...styles.cardBody, width: 400 }}
             >
-              <Row type="flex" style={{ alignItems: 'center' }}>
-                <img style={styles.image} src={BytesIMg} />
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{dc_balance * 24}</Text>
-                <Text>Approx {Math.floor(dc_balance * 24 / 1000)} MB</Text>
-              </Row>
+              <img style={styles.image} src={BytesIMg} />
+              <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{dc_balance * 24}</Text>
+              {false && <Text>Approx {Math.floor(dc_balance * 24 / 1000)} MB</Text>}
             </Card>
           </Col>
           <Col span={8}>
@@ -244,16 +247,23 @@ class DataCreditsIndex extends Component {
                   </Link>
                 )
               }
-              bodyStyle={styles.cardBody}
+              bodyStyle={{ ...styles.cardBody, minWidth: 230 }}
+              style={{ overflow: 'hidden' }}
             >
               {
                 this.state.paymentMethods.length > 0 && defaultPayment && (
-                  <Row type="flex" style={{ alignItems: 'center' }}>
-                    <PaymentCard
-                      key={defaultPayment.id}
-                      card={defaultPayment.card}
-                      showExpire
-                    />
+                  <Row type="flex" style={{ alignItems: 'center', width: '100%' }}>
+                    <Col span={16}>
+                      <PaymentCard
+                        key={defaultPayment.id}
+                        card={defaultPayment.card}
+                      />
+                    </Col>
+                    <Col span={8} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: -2 }}>
+                      <Text style={{ fontFamily: 'monospace', color: '#777777' }}>
+                        {defaultPayment.card.exp_month.length > 1 ? defaultPayment.card.exp_month : "0" + defaultPayment.card.exp_month}/{defaultPayment.card.exp_year.toString().slice(2)}
+                      </Text>
+                    </Col>
                   </Row>
                 )
               }
@@ -267,7 +277,9 @@ class DataCreditsIndex extends Component {
             </Card>
           </Col>
         </Row>
-        <DataCreditPurchasesTable />
+        <UserCan>
+          <DataCreditPurchasesTable />
+        </UserCan>
       </div>
     )
   }
@@ -349,6 +361,7 @@ class DataCreditsIndex extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
+    role: state.organization.currentRole
   }
 }
 
