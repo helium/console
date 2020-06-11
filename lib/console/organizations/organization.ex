@@ -42,7 +42,7 @@ defmodule Console.Organizations.Organization do
 
   def update_changeset(organization, attrs) do
     organization
-    |> cast(attrs, [:stripe_customer_id, :default_payment_id])
+    |> cast(attrs, [:stripe_customer_id, :default_payment_id, :dc_balance])
   end
 
   @doc false

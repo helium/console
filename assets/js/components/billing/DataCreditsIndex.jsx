@@ -77,6 +77,10 @@ class DataCreditsIndex extends Component {
         })
       }
     })
+
+    if (this.props.data.organization && this.props.data.organization.stripe_customer_id) {
+      this.fetchPaymentMethods()
+    }
   }
 
   componentDidUpdate(prevProps) {

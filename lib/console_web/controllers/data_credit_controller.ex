@@ -148,8 +148,9 @@ defmodule ConsoleWeb.DataCreditController do
       "organization_id" => current_organization.id
     }
 
-    with {:ok, %DcPurchase{} = dc_purchase} <- DcPurchases.create_dc_purchase(attrs) do
+    with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, current_organization) do
       broadcast(current_organization, dc_purchase)
+      broadcast(current_organization)
       conn
       |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
       |> send_resp(:no_content, "")
