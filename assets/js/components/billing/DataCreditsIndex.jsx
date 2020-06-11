@@ -335,6 +335,7 @@ class DataCreditsIndex extends Component {
         <AutomaticRenewalModal
           open={showAutomaticRenewalModal}
           onClose={() => this.closeModal("showAutomaticRenewalModal")}
+          paymentMethods={this.state.paymentMethods}
         />
       </DashboardLayout>
     )

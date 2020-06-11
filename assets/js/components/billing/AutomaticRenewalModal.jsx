@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import AmountEntryCalculator from './AmountEntryCalculator'
+import PaymentCard from './PaymentCard'
 import { Modal, Button, Typography, Select, Row, Col, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -64,7 +65,7 @@ class AutomaticRenewalModal extends Component {
   }
 
   render() {
-    const { open, onClose } = this.props
+    const { open, onClose, paymentMethods } = this.props
 
     return(
       <Modal
@@ -104,7 +105,13 @@ class AutomaticRenewalModal extends Component {
               onChange={() => {}}
               style={{ width: '100%', marginTop: 8 }}
             >
-              <Option value="one">Card One</Option>
+              {
+                paymentMethods.map(p => (
+                  <Option value={p.id} key={p.id}>
+                    <PaymentCard id={p.id} card={p.card} style={{ fontWeight: 400 }}/>
+                  </Option>
+                ))
+              }
             </Select>
           </Col>
           <Col span={12}>
