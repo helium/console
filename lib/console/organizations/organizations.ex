@@ -45,6 +45,13 @@ defmodule Console.Organizations do
     end
   end
 
+  def get_organization_and_lock_for_dc_purchase(org_id) do
+    Organization
+      |> where([o], o.id == ^org_id)
+      |> lock("FOR UPDATE NOWAIT")
+      |> Repo.one()
+  end
+
   def get_organization!(id) do
     Repo.get!(Organization, id)
   end

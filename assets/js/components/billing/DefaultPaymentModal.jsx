@@ -40,7 +40,6 @@ class DefaultPaymentModal extends Component {
     e.preventDefault();
 
     this.setState({ loading: true })
-    // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
     if (!this.state.paymentMethodSelected) {
       this.props.getSetupPaymentMethod()
       .then(({ setup_intent_secret }) => {

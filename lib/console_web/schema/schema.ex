@@ -76,6 +76,8 @@ defmodule ConsoleWeb.Schema do
     field :dc_balance, :integer
     field :stripe_customer_id, :string
     field :default_payment_id, :string
+    field :automatic_payment_method, :string
+    field :automatic_charge_amount, :integer
   end
 
   object :api_key do

@@ -148,8 +148,6 @@ class PurchaseCreditModal extends Component {
         this.setState({ loading: false })
       } else {
         if (result.paymentIntent.status === 'succeeded') {
-          // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
-
           this.props.fetchPaymentMethods(() => {
             const paymentMethod = find(this.props.paymentMethods, ["id", result.paymentIntent.payment_method])
             this.props.createDCPurchase(
@@ -212,7 +210,6 @@ class PurchaseCreditModal extends Component {
                 disabled={this.state.loading}
               >
                 <Option value="once">One time purchase</Option>
-                <Option value="10%">10% remaining</Option>
               </Select>
             </div>
           )

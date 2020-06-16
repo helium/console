@@ -34,3 +34,8 @@ export const createDCPurchase = (cost, cardType, last4) => (dispatch) => (
   rest.post('/api/data_credits/create_dc_purchase', { cost, cardType, last4 })
   .then(() => {})
 )
+
+export const setAutomaticPayments = (chargeAmount, paymentMethod, chargeOption) => (dispatch) => (
+  rest.post('/api/data_credits/set_automatic_payments', { paymentMethod, chargeAmount, chargeOption })
+  .then(() => {})
+)

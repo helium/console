@@ -16,6 +16,8 @@ export const ORGANIZATION_SHOW_DC = gql`
       dc_balance,
       stripe_customer_id,
       default_payment_id,
+      automatic_charge_amount,
+      automatic_payment_method,
     }
   }
 `

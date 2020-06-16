@@ -4,6 +4,7 @@ defmodule Console.DcPurchases do
 
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
+  alias Console.Organizations
 
   def create_dc_purchase(attrs \\ %{}, %Organization{} = organization) do
     Repo.transaction(fn ->
@@ -13,6 +14,7 @@ defmodule Console.DcPurchases do
           _ -> attrs["dc_purchased"] + organization.dc_balance
         end
 
+      organization = Organizations.get_organization_and_lock_for_dc_purchase(organization.id)
       organization
       |> Organization.update_changeset(%{ "dc_balance" => new_balance })
       |> Repo.update()

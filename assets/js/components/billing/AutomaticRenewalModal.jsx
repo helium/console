@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setAutomaticPayments } from '../../actions/dataCredits'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import PaymentCard from './PaymentCard'
 import { Modal, Button, Typography, Select, Row, Col, Checkbox } from 'antd';
@@ -17,13 +20,27 @@ const styles = {
   }
 }
 
+@connect(null, mapDispatchToProps)
 class AutomaticRenewalModal extends Component {
   state = {
     countDC: undefined,
     countUSD: undefined,
     countB: undefined,
-    chargeOption: '10%',
-    checked: false
+    chargeOption: null,
+    checked: false,
+    paymentMethod: null,
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.organization && this.props.organization) {
+      this.setState({
+        chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
+        paymentMethod: this.props.organization.automatic_payment_method || null,
+        countUSD: this.props.organization.automatic_charge_amount,
+        countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
+        countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
+      })
+    }
   }
 
   handleCountInputUpdate = (e) => {
@@ -53,19 +70,34 @@ class AutomaticRenewalModal extends Component {
   }
 
   handleSelectCharge = chargeOption => {
-    this.setState({ chargeOption })
+    if (chargeOption != 'none') {
+      this.setState({ chargeOption })
+    } else {
+      this.setState({
+        chargeOption,
+        countDC: 0,
+        countUSD: 0,
+        countB: 0,
+        checked: false,
+      })
+    }
+  }
+
+  handleSelectPaymentMethod = paymentMethod => {
+    this.setState({ paymentMethod })
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
 
-    // analyticsLogger.logEvent("ACTION_CREATE_NEW_PAYMENT_METHOD", { "organization": organization.id, "email": email, "role": role })
+    const { paymentMethod, chargeOption, countUSD } = this.state
+    this.props.setAutomaticPayments(countUSD, paymentMethod, chargeOption)
 
     this.props.onClose()
   }
 
   render() {
-    const { open, onClose, paymentMethods } = this.props
+    const { open, onClose, paymentMethods, organization } = this.props
 
     return(
       <Modal
@@ -82,7 +114,14 @@ class AutomaticRenewalModal extends Component {
               key="submit"
               type="primary"
               onClick={this.handleSubmit}
-              disabled={!this.state.checked || !this.state.countUSD || this.state.countUSD <= 0}
+              disabled={
+                this.state.chargeOption != 'none' && (
+                  !this.state.countUSD ||
+                  this.state.countUSD <= 0 ||
+                  !this.state.paymentMethod ||
+                  !this.state.checked
+                )
+              }
             >
               Save Changes
             </Button>,
@@ -101,8 +140,8 @@ class AutomaticRenewalModal extends Component {
           <Col span={12}>
             <Text strong>Payment Method</Text>
             <Select
-              defaultValue=""
-              onChange={() => {}}
+              defaultValue={this.state.paymentMethod}
+              onChange={this.handleSelectPaymentMethod}
               style={{ width: '100%', marginTop: 8 }}
             >
               {
@@ -116,13 +155,18 @@ class AutomaticRenewalModal extends Component {
           </Col>
           <Col span={12}>
             <Text strong>When to Charge</Text>
-            <Select
-              defaultValue={this.state.chargeOption}
-              onChange={this.handleSelectCharge}
-              style={{ width: '100%', marginTop: 8 }}
-            >
-              <Option value="10%">10% remaining</Option>
-            </Select>
+            {
+              organization && (
+                <Select
+                  defaultValue={this.state.chargeOption}
+                  onChange={this.handleSelectCharge}
+                  style={{ width: '100%', marginTop: 8 }}
+                >
+                  <Option value="none">Never</Option>
+                  <Option value="10%">10% remaining</Option>
+                </Select>
+              )
+            }
           </Col>
         </Row>
         <div style={styles.checkboxContainer}>
@@ -136,6 +180,10 @@ class AutomaticRenewalModal extends Component {
       </Modal>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ setAutomaticPayments }, dispatch)
 }
 
 export default AutomaticRenewalModal

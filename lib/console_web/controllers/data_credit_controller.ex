@@ -157,6 +157,32 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
+  def set_automatic_payments(conn, %{ "chargeAmount" => charge_amount, "paymentMethod" => payment_method, "chargeOption" => charge_option }) do
+    current_organization = conn.assigns.current_organization
+
+    attrs =
+      case charge_option do
+        "none" ->
+          %{
+            "automatic_charge_amount" => nil,
+            "automatic_payment_method" => nil
+          }
+        _ ->
+          { amount, _ } = Float.parse(charge_amount)
+          %{
+            "automatic_charge_amount" => Float.round(amount * 100) |> trunc(),
+            "automatic_payment_method" => payment_method
+          }
+      end
+
+    with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, attrs) do
+      broadcast(organization)
+      conn
+      |> put_resp_header("message", "Automatic payments updated successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   defp broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end

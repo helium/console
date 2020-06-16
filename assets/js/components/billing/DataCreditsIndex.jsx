@@ -303,7 +303,7 @@ class DataCreditsIndex extends Component {
                     icon="sync"
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
                   >
-                    Automatic Renewals On
+                    Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
                   </Button>
                   <Button
                     size="large"
@@ -352,6 +352,7 @@ class DataCreditsIndex extends Component {
           open={showAutomaticRenewalModal}
           onClose={() => this.closeModal("showAutomaticRenewalModal")}
           paymentMethods={this.state.paymentMethods}
+          organization={organization}
         />
       </DashboardLayout>
     )

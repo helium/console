@@ -60,6 +60,7 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/set_default_payment_method", DataCreditController, :set_default_payment_method
     post "/data_credits/remove_payment_method", DataCreditController, :remove_payment_method
     post "/data_credits/create_dc_purchase", DataCreditController, :create_dc_purchase
+    post "/data_credits/set_automatic_payments", DataCreditController, :set_automatic_payments
   end
 
   scope "/api/router", ConsoleWeb.Router do
