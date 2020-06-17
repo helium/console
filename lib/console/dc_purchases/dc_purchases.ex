@@ -16,7 +16,7 @@ defmodule Console.DcPurchases do
 
       organization = Organizations.get_organization_and_lock_for_dc_purchase(organization.id)
       organization
-      |> Organization.update_changeset(%{ "dc_balance" => new_balance })
+      |> Organization.update_changeset(%{ "dc_balance" => new_balance, "dc_balance_nonce" => organization.dc_balance_nonce + 1 })
       |> Repo.update()
 
       %DcPurchase{}
