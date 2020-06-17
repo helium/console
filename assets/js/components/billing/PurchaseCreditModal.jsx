@@ -153,7 +153,8 @@ class PurchaseCreditModal extends Component {
             this.props.createDCPurchase(
               result.paymentIntent.amount,
               paymentMethod.card.brand,
-              paymentMethod.card.last4
+              paymentMethod.card.last4,
+              result.paymentIntent.id
             )
           })
 

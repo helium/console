@@ -135,7 +135,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4}) do
+  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => stripe_payment_id}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
 
@@ -145,18 +145,31 @@ defmodule ConsoleWeb.DataCreditController do
       "card_type" => card_type,
       "last_4" => last_4,
       "user_id" => current_user.id,
-      "organization_id" => current_organization.id
+      "organization_id" => current_organization.id,
+      "stripe_payment_id" => stripe_payment_id
     }
 
-    with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, current_organization) do
-      current_organization = Organizations.get_organization!(current_organization.id)
-      broadcast(current_organization, dc_purchase)
-      broadcast(current_organization)
-      broadcast_router_refill_dc_balance(current_organization)
-      
-      conn
-      |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
-      |> send_resp(:no_content, "")
+    headers = [
+      {"Authorization", "Bearer " <> "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
+      {:ok, stripe_response} <- HTTPoison.get("https://api.stripe.com/v1/payment_intents/" <> stripe_payment_id, headers),
+      200 <- stripe_response.status_code do
+        payment_intent = Poison.decode!(stripe_response.body)
+
+        with "succeeded" <- payment_intent["status"],
+          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, current_organization) do
+            current_organization = Organizations.get_organization!(current_organization.id)
+            broadcast(current_organization, dc_purchase)
+            broadcast(current_organization)
+            broadcast_router_refill_dc_balance(current_organization)
+
+            conn
+            |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
+            |> send_resp(:no_content, "")
+        end
     end
   end
 

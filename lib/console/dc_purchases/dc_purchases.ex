@@ -6,6 +6,12 @@ defmodule Console.DcPurchases do
   alias Console.Organizations.Organization
   alias Console.Organizations
 
+  def get_by_stripe_payment_id(id) do
+    DcPurchase
+      |> where([d], d.stripe_payment_id == ^id)
+      |> Repo.one()
+  end
+
   def create_dc_purchase(attrs \\ %{}, %Organization{} = organization) do
     Repo.transaction(fn ->
       new_balance =

@@ -12,6 +12,7 @@ defmodule Console.DcPurchases.DcPurchase do
     field :card_type, :string
     field :last_4, :string
     field :user_id, :string
+    field :stripe_payment_id, :string
 
     belongs_to :organization, Organization
     timestamps()
@@ -20,7 +21,8 @@ defmodule Console.DcPurchases.DcPurchase do
   @doc false
   def changeset(dc_purchase, attrs) do
     dc_purchase
-    |> cast(attrs, [:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id])
-    |> validate_required([:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id])
+    |> cast(attrs, [:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id, :stripe_payment_id])
+    |> validate_required([:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id, :stripe_payment_id])
+    |> unique_constraint(:stripe_payment_id, name: :dc_purchases_stripe_payment_id_index, message: "That stripe payment has already been processed.")
   end
 end
