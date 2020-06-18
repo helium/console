@@ -45,7 +45,7 @@ class AutomaticRenewalModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
-
+    // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countDC') {
       this.setState({
         countDC: e.target.value,
@@ -175,7 +175,10 @@ class AutomaticRenewalModal extends Component {
             checked={this.state.checked}
             style={{ marginRight: 8 }}
           />
-          <Text>I authorize the use of the payment method above to be automatically charged according to Helium's Terms & Conditions.</Text>
+          <Text>
+            I authorize the use of the payment method above to be
+            automatically charged according to Helium's Terms & Conditions.
+          </Text>
         </div>
       </Modal>
     )

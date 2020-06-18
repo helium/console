@@ -73,3 +73,6 @@ config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
 
 config :console, oui: 1
+
+config :console,
+  stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"

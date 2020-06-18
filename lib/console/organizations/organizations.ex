@@ -48,7 +48,7 @@ defmodule Console.Organizations do
   def get_organization_and_lock_for_dc_purchase(org_id) do
     Organization
       |> where([o], o.id == ^org_id)
-      |> lock("FOR UPDATE NOWAIT")
+      |> lock("FOR UPDATE")
       |> Repo.one()
   end
 
@@ -169,7 +169,7 @@ defmodule Console.Organizations do
   def valid_invitation_token_and_lock?(token) do
     lock_query = Invitation
       |> where([i], i.token == ^token)
-      |> lock("FOR UPDATE NOWAIT")
+      |> lock("FOR UPDATE")
 
     with %Invitation{} = invitation <- Repo.one(lock_query) do
       {invitation.pending, invitation}

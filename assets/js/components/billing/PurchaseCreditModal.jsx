@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
+import stripe from '../../config/stripe'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
@@ -11,7 +12,6 @@ import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, creat
 import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
 const { Text } = Typography
 const { Option } = Select
-const stripe = Stripe('pk_test_tpiYaEpZAZ8EGaqTZTujgQKG00e64rEo1V')
 
 const styles = {
   container: {
@@ -56,7 +56,7 @@ class PurchaseCreditModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
-
+    // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countDC') {
       this.setState({
         countDC: e.target.value,
