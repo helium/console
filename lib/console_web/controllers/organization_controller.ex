@@ -55,6 +55,6 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   defp broadcast(%Organization{} = organization, current_user) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{current_user.id}/organization_updated")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
   end
 end

@@ -7,6 +7,12 @@ defmodule Console.Organizations.Organization do
   @foreign_key_type :binary_id
   schema "organizations" do
     field :name, :string
+    field :dc_balance, :integer
+    field :stripe_customer_id, :string
+    field :default_payment_id, :string
+    field :automatic_charge_amount, :integer
+    field :automatic_payment_method, :string
+    field :dc_balance_nonce, :integer
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -35,6 +41,11 @@ defmodule Console.Organizations.Organization do
   def create_changeset(organization, attrs) do
     organization
     |> changeset(attrs)
+  end
+
+  def update_changeset(organization, attrs) do
+    organization
+    |> cast(attrs, [:stripe_customer_id, :default_payment_id, :dc_balance, :automatic_charge_amount, :automatic_payment_method, :dc_balance_nonce])
   end
 
   @doc false

@@ -58,6 +58,9 @@ config :appsignal, :config,
   push_api_key: System.get_env("APPSIGNAL_API_KEY"),
   env: Mix.env
 
+config :console,
+  stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
