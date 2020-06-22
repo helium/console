@@ -35,6 +35,8 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/debug", DeviceController, :debug
+    get "/ttn/devices", DeviceController, :get_ttn
+    post "/ttn/devices/import", DeviceController, :import_ttn
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
     post "/labels/remove_function", LabelController, :remove_function

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import DeviceIndexTable from './DeviceIndexTable'
 import DashboardLayout from '../common/DashboardLayout'
 import NewDeviceModal from './NewDeviceModal'
+import ImportDevicseModal from './ttn/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeleteDeviceModal from './DeleteDeviceModal'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
@@ -28,6 +29,7 @@ class DeviceIndex extends Component {
   state = {
     showCreateDeviceModal: false,
     showDeleteDeviceModal: false,
+    showImportDevicesModal: false,
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
     showDeviceRemoveAllLabelsModal: false,
@@ -87,8 +89,16 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: true, devicesSelected })
   }
 
+  openImportDevicesModal = () => {
+    this.setState({ showImportDevicesModal: true });
+  }
+
+  closeImportDevicesModal = () => {
+    this.setState({ showImportDevicesModal: false });
+  }
+
   closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false })
+    this.setState({ showDeleteDevicesModal: false })
   }
 
   handleChangePage = (page) => {
@@ -115,6 +125,7 @@ class DeviceIndex extends Component {
     const {
       showCreateDeviceModal,
       showDeleteDeviceModal,
+      showImportDevicesModal,
       showDevicesAddLabelModal,
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
@@ -126,6 +137,14 @@ class DeviceIndex extends Component {
 
     const createDeviceButton = () => (
       <UserCan>
+        <Button
+          size="large"
+          type="primary"
+          icon="plus"
+          onClick={this.openImportDevicesModal}
+        >
+          Import Devices
+        </Button>
         <Button
           size="large"
           type="primary"
@@ -153,6 +172,7 @@ class DeviceIndex extends Component {
               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
               noDevicesButton={createDeviceButton}
+              handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
             />
@@ -160,6 +180,8 @@ class DeviceIndex extends Component {
         }
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
+
+        <ImportDevicseModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal}/>
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}

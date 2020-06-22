@@ -3,12 +3,12 @@ import axios from '../config/axios.js'
 import { percentOfTimeLeft } from './jwt.js'
 import { getIdTokenClaims } from '../components/auth/Auth0Provider'
 
-export const get = async (path, params = {}) => {
+export const get = async (path, params = {}, extraHeaders = {}) => {
   return axios({
     url: path,
     method: 'get',
-    headers: await headers(),
-    params
+    headers: Object.assign(await headers(), extraHeaders),
+    params,
   })
 }
 

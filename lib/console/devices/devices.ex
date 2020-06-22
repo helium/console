@@ -3,6 +3,7 @@ defmodule Console.Devices do
   alias Console.Repo
 
   alias Console.Devices.Device
+  alias Console.Devices.DeviceImports
   alias Console.Organizations.Organization
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
@@ -85,5 +86,30 @@ defmodule Console.Devices do
 
   def delete_device(%Device{} = device) do
     Repo.delete(device)
+  end
+
+  def get_current_imports(%Organization{} = organization) do
+    query = from di in DeviceImports,
+      where: di.organization_id == ^organization.id
+      and di.status == ^"importing"
+    query
+      |> Repo.all()
+  end
+
+  def create_import(%Organization{} = organization, user_id, type) do
+    %DeviceImports{
+      organization_id: organization.id,
+      user_id: user_id,
+      successful_devices: 0,
+      status: "importing",
+      type: type
+    }
+    |> Repo.insert()
+  end
+
+  def update_import(device_import, update_attrs) do
+    device_import
+    |> DeviceImports.update_changeset(update_attrs)
+    |> Repo.update()
   end
 end

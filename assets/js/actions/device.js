@@ -2,6 +2,13 @@ import { push, replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 import sanitizeHtml from 'sanitize-html'
 
+export const FETCHING_APPLICATIONS = "FETCHING_APPLICATIONS";
+export const FETCHED_APPLICATIONS = "FETCHED_APPLICATIONS";
+export const FETCHING_APPLICATIONS_FAILED = "FETCHING_APPLICATIONS_FAILED";
+export const IMPORT_STARTING = "IMPORT_STARTING";
+export const IMPORT_STARTED = "IMPORT_STARTED";
+export const IMPORT_FAILED = "IMPORT_FAILED";
+
 export const createDevice = (params, labelId) => {
   return (dispatch) => {
     const deviceParams = sanitizeParams(params)
@@ -51,6 +58,52 @@ export const toggleDeviceDebug = (device_id) => {
     .then(response => {})
   }
 }
+
+export const fetchTtnDevices = (ttnCtlCode) => {
+  return async (dispatch) => {
+    dispatch(fetchingApplications());
+    try {
+      const response = await rest.get(
+        `/api/ttn/devices`,
+        null,
+        { 'TTN-Ctl-Code': ttnCtlCode }
+      );
+      dispatch(fetchedApplications(response.data)); 
+    } catch (e) {
+      dispatch(fetchFailed());
+    }
+  }
+}
+
+export const importTtnDevices = (applications, account_token, add_labels, delete_devices) => {
+  return async (dispatch) => {
+    dispatch(startingDeviceImport());
+    const response = await rest.post(
+      '/api/ttn/devices/import',
+      {applications, account_token, add_labels, delete_devices}
+    );
+    dispatch(startedDeviceImport());
+  }
+}
+
+const fetchingApplications = () => ({ type: FETCHING_APPLICATIONS })
+
+const fetchedApplications = (data) => {
+  return {
+    type: FETCHED_APPLICATIONS,
+    ttnApplications: data.apps,
+    ttnAuthCode: data.account_token
+  }
+}
+
+const fetchFailed = () => ({ type: FETCHING_APPLICATIONS_FAILED })
+
+const startingDeviceImport = () => ({ type: IMPORT_STARTING })
+
+const startedDeviceImport = () => ({ type: IMPORT_STARTED })
+
+const failedDeviceImport = () => ({ type: IMPORT_FAILED })
+
 
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
