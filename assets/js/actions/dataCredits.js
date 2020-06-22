@@ -1,12 +1,12 @@
 import * as rest from '../util/rest';
 
 export const createCustomerIdAndCharge = (amountUSD) => () => (
-  rest.post('/api/data_credits/create_customer_and_charge', { amountUSD })
+  rest.post('/api/data_credits/create_customer_and_charge', { amountUSD: convertToString(amountUSD) })
   .then(({ data }) => data)
 )
 
 export const createCharge = (amountUSD) => () => (
-  rest.post('/api/data_credits/create_charge', { amountUSD })
+  rest.post('/api/data_credits/create_charge', { amountUSD: convertToString(amountUSD) })
   .then(({ data }) => data)
 )
 
@@ -36,6 +36,13 @@ export const createDCPurchase = (cost, cardType, last4, paymentId) => () => (
 )
 
 export const setAutomaticPayments = (chargeAmount, paymentMethod, chargeOption) => () => (
-  rest.post('/api/data_credits/set_automatic_payments', { paymentMethod, chargeAmount, chargeOption })
+  rest.post('/api/data_credits/set_automatic_payments', { paymentMethod, chargeAmount: convertToString(chargeAmount), chargeOption })
   .then(() => {})
 )
+
+const convertToString = (amount) => {
+  if (typeof(amount) === "number") {
+    return amount.toString()
+  }
+  return amount
+}

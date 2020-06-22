@@ -16,50 +16,58 @@ defmodule ConsoleWeb.DataCreditController do
   ]
 
   def create_customer_id_and_charge(conn, %{ "amountUSD" => amountUSD }) do
-    current_organization = conn.assigns.current_organization
+    { amount, _ } = Float.parse(amountUSD)
+    if amount < 10 do
+      {:error, :bad_request, "Credit card charges cannot be less than $10"}
+    else
+      current_organization = conn.assigns.current_organization
 
-    request_body = URI.encode_query(%{
-      "name" => current_organization.name,
-      "description" => current_organization.id,
-    })
-    # create a customer id in stripe
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, @headers) do
-       with 200 <- stripe_response.status_code do
-         customer = Poison.decode!(stripe_response.body)
-         with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
-           # create a payment intent in stripe
-           { amount, _ } = Float.parse(amountUSD)
-           request_body = URI.encode_query(%{
-             "customer" => organization.stripe_customer_id,
-             "amount" => Float.round(amount * 100) |> trunc(),
-             "currency" => "usd"
-           })
+      request_body = URI.encode_query(%{
+        "name" => current_organization.name,
+        "description" => current_organization.id,
+      })
+      # create a customer id in stripe
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, @headers) do
+         with 200 <- stripe_response.status_code do
+           customer = Poison.decode!(stripe_response.body)
+           with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
+             # create a payment intent in stripe
+             request_body = URI.encode_query(%{
+               "customer" => organization.stripe_customer_id,
+               "amount" => Float.round(amount * 100) |> trunc(),
+               "currency" => "usd"
+             })
 
-           with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
-             with 200 <- stripe_response.status_code do
-               payment_intent = Poison.decode!(stripe_response.body)
-               conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+               with 200 <- stripe_response.status_code do
+                 payment_intent = Poison.decode!(stripe_response.body)
+                 conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+               end
              end
            end
          end
-       end
+      end
     end
   end
 
   def create_charge(conn, %{ "amountUSD" => amountUSD }) do
-    current_organization = conn.assigns.current_organization
-
     { amount, _ } = Float.parse(amountUSD)
-    request_body = URI.encode_query(%{
-      "customer" => current_organization.stripe_customer_id,
-      "amount" => Float.round(amount * 100) |> trunc(),
-      "currency" => "usd"
-    })
 
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
-      with 200 <- stripe_response.status_code do
-        payment_intent = Poison.decode!(stripe_response.body)
-        conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+    if amount < 10 do
+      {:error, :bad_request, "Credit card charges cannot be less than $10"}
+    else
+      current_organization = conn.assigns.current_organization
+      request_body = URI.encode_query(%{
+        "customer" => current_organization.stripe_customer_id,
+        "amount" => Float.round(amount * 100) |> trunc(),
+        "currency" => "usd"
+      })
+
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+        with 200 <- stripe_response.status_code do
+          payment_intent = Poison.decode!(stripe_response.body)
+          conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+        end
       end
     end
   end
@@ -150,28 +158,33 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def set_automatic_payments(conn, %{ "chargeAmount" => charge_amount, "paymentMethod" => payment_method, "chargeOption" => charge_option }) do
-    current_organization = conn.assigns.current_organization
+    { amount, _ } = Float.parse(charge_amount)
 
-    attrs =
-      case charge_option do
-        "none" ->
-          %{
-            "automatic_charge_amount" => nil,
-            "automatic_payment_method" => nil
-          }
-        _ ->
-          { amount, _ } = Float.parse(charge_amount)
-          %{
-            "automatic_charge_amount" => Float.round(amount * 100) |> trunc(),
-            "automatic_payment_method" => payment_method
-          }
+    if amount < 10 do
+      {:error, :bad_request, "Credit card charges cannot be less than $10"}
+    else
+      current_organization = conn.assigns.current_organization
+
+      attrs =
+        case charge_option do
+          "none" ->
+            %{
+              "automatic_charge_amount" => nil,
+              "automatic_payment_method" => nil
+            }
+          _ ->
+            %{
+              "automatic_charge_amount" => Float.round(amount * 100) |> trunc(),
+              "automatic_payment_method" => payment_method
+            }
+        end
+
+      with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, attrs) do
+        broadcast(organization)
+        conn
+        |> put_resp_header("message", "Automatic payments updated successfully")
+        |> send_resp(:no_content, "")
       end
-
-    with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, attrs) do
-      broadcast(organization)
-      conn
-      |> put_resp_header("message", "Automatic payments updated successfully")
-      |> send_resp(:no_content, "")
     end
   end
 
