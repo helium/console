@@ -6,6 +6,7 @@ import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
+import DataCreditsChart from './DataCreditsChart'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
 import DataCreditPurchasesTable from './DataCreditPurchasesTable'
@@ -279,6 +280,7 @@ class DataCreditsIndex extends Component {
         </Row>
         <UserCan>
           <DataCreditPurchasesTable />
+          <DataCreditsChart />
         </UserCan>
       </div>
     )
