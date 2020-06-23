@@ -45,6 +45,13 @@ defmodule Console.Organizations do
     end
   end
 
+  def get_organization_and_lock_for_dc_purchase(org_id) do
+    Organization
+      |> where([o], o.id == ^org_id)
+      |> lock("FOR UPDATE")
+      |> Repo.one()
+  end
+
   def get_organization!(id) do
     Repo.get!(Organization, id)
   end
@@ -63,6 +70,10 @@ defmodule Console.Organizations do
 
   def get_membership!(%Organization{} = organization, id) do
     Repo.get_by!(Membership, [id: id, organization_id: organization.id])
+  end
+
+  def get_invitation!(%Organization{} = organization, id) do
+    Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
   end
 
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
@@ -110,6 +121,12 @@ defmodule Console.Organizations do
     end
   end
 
+  def update_organization(%Organization{} = organization, attrs) do
+    organization
+    |> Organization.update_changeset(attrs)
+    |> Repo.update()
+  end
+
   def join_organization(%User{} = user, %Organization{} = organization, role \\ "read") do
     %Membership{}
     |> Membership.join_org_changeset(user, organization, role)
@@ -152,7 +169,7 @@ defmodule Console.Organizations do
   def valid_invitation_token_and_lock?(token) do
     lock_query = Invitation
       |> where([i], i.token == ^token)
-      |> lock("FOR UPDATE NOWAIT")
+      |> lock("FOR UPDATE")
 
     with %Invitation{} = invitation <- Repo.one(lock_query) do
       {invitation.pending, invitation}
@@ -167,12 +184,12 @@ defmodule Console.Organizations do
         |> Repo.delete_all()
 
         membership
-        |> Membership.changeset(attrs)
+        |> Membership.update_changeset(attrs)
         |> Repo.update()
       end)
     else
       membership
-      |> Membership.changeset(attrs)
+      |> Membership.update_changeset(attrs)
       |> Repo.update()
     end
   end

@@ -79,8 +79,9 @@ defmodule ConsoleWeb.InvitationController do
 
   def delete(conn, %{"id" => id}) do
     current_user = conn.assigns.current_user
-    invitation = Organizations.get_invitation!(id)
-    organization = Organizations.get_organization!(current_user, invitation.organization_id)
+    current_organization = conn.assigns.current_organization
+
+    invitation = Organizations.get_invitation!(current_organization, id)
 
     if invitation.pending do
       with {:ok, %Invitation{}} <- Organizations.delete_invitation(invitation) do

@@ -28,6 +28,15 @@ defmodule Console.Organizations.Membership do
     |> unique_constraint(:unique_member, name: :memberships_user_id_organization_id_index, message: "That email is already part of this organization")
   end
 
+  def update_changeset(membership, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["role"])
+
+    membership
+    |> cast(attrs, [:role])
+    |> validate_required([:role])
+    |> validate_inclusion(:role, ~w(admin read))
+  end
+
   def join_org_changeset(membership, user, organization, role) do
     membership
     |> changeset(%{user_id: user.id, organization_id: organization.id, role: role, email: user.email})

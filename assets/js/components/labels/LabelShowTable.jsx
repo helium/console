@@ -125,7 +125,7 @@ class LabelShowTable extends Component {
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${devices_by_label.entries.length} Devices`}
+        title={`${devices_by_label.totalEntries} Devices`}
         extra={
           <UserCan>
             <Select

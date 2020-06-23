@@ -73,6 +73,11 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :name, :string
     field :inserted_at, :naive_datetime
+    field :dc_balance, :integer
+    field :stripe_customer_id, :string
+    field :default_payment_id, :string
+    field :automatic_payment_method, :string
+    field :automatic_charge_amount, :integer
   end
 
   object :api_key do
@@ -82,6 +87,15 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :user, :string
     field :active, :boolean
+  end
+
+  paginated object :dc_purchase do
+    field :id, :id
+    field :dc_purchased, :integer
+    field :cost, :integer
+    field :user_id, :string
+    field :card_type, :string
+    field :last_4, :string
   end
 
   paginated object :function do
@@ -226,6 +240,11 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
+    field :organization, :organization do
+      arg :id, non_null(:id)
+      resolve &Console.Organizations.OrganizationResolver.find/2
+    end
+
     @desc "Search for devices and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string
@@ -258,12 +277,24 @@ defmodule ConsoleWeb.Schema do
       arg :id, non_null(:id)
       resolve &Console.Functions.FunctionResolver.find/2
     end
+
+    paginated field :dc_purchases, :paginated_dc_purchases do
+      resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
+    end
   end
 
   subscription do
-    field :organization_updated, :organization do
+    field :organization_added, :organization do
       config fn _, %{context: %{ current_user_id: user_id }} ->
-        {:ok, topic: "#{user_id}/organization_updated"}
+        {:ok, topic: "#{user_id}/organization_added"}
+      end
+    end
+
+    field :organization_updated, :organization do
+      arg :organization_id, :string
+
+      config fn args, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/organization_updated"}
       end
     end
 
@@ -360,6 +391,12 @@ defmodule ConsoleWeb.Schema do
 
       config fn args, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/#{args.function_id}/function_updated"}
+      end
+    end
+
+    field :dc_purchase_added, :dc_purchase do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/dc_purchase_added"}
       end
     end
   end

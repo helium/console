@@ -165,7 +165,7 @@ class DeviceIndex extends Component {
       >
         {
           (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-            loading ? null : 
+            loading ? null :
             <DeviceIndexTable
               openDeleteDeviceModal={this.openDeleteDeviceModal}
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
@@ -175,6 +175,7 @@ class DeviceIndex extends Component {
               handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
+              handleChangePage={this.handleChangePage}
             />
           )
         }

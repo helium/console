@@ -23,7 +23,7 @@ import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 import LabelIndex from './components/labels/LabelIndex';
 import LabelShow from './components/labels/LabelShow';
-import DataCredits from './components/billing/DataCredits';
+import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
@@ -108,7 +108,7 @@ const Router = (props) => {
                         <Route exact path="/integrations/:id" component={ChannelShow} />
                         <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
                         <Route exact path="/organizations" component={OrganizationIndex} />
-                        <Route exact path="/datacredits" component={DataCredits} />
+                        <Route exact path="/datacredits" component={DataCreditsIndex} />
                         <Route exact path="/functions" component={FunctionIndex} />
                         <Route exact path="/functions/new" component={FunctionNew} />
                         <Route exact path="/functions/:id" component={FunctionShow} />
