@@ -12,7 +12,7 @@ const ExistingPaymentCards = ({ paymentMethods, onRadioChange, paymentMethodSele
     {
       paymentMethods.length === 0 && (
         <Text>
-          None available, create one below...
+          None available.
         </Text>
       )
     }
