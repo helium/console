@@ -261,7 +261,7 @@ class DataCreditsIndex extends Component {
                     </Col>
                     <Col span={8} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: -2 }}>
                       <Text style={{ fontFamily: 'monospace', color: '#777777' }}>
-                        {defaultPayment.card.exp_month.length > 1 ? defaultPayment.card.exp_month : "0" + defaultPayment.card.exp_month}/{defaultPayment.card.exp_year.toString().slice(2)}
+                        {defaultPayment.card.exp_month > 9 ? defaultPayment.card.exp_month : "0" + defaultPayment.card.exp_month}/{defaultPayment.card.exp_year.toString().slice(2)}
                       </Text>
                     </Col>
                   </Row>
