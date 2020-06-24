@@ -115,6 +115,13 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
       with 200 <- stripe_response.status_code do
+        if current_organization.automatic_payment_method == paymentId do
+          attrs = %{
+            "automatic_charge_amount" => nil,
+            "automatic_payment_method" => nil
+          }
+          Organizations.update_organization(current_organization, attrs)
+        end
         broadcast(current_organization)
 
         conn
@@ -135,7 +142,8 @@ defmodule ConsoleWeb.DataCreditController do
       "last_4" => last_4,
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
-      "stripe_payment_id" => stripe_payment_id
+      "stripe_payment_id" => stripe_payment_id,
+      "auto" => false
     }
 
     with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
