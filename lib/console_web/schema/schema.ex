@@ -96,6 +96,7 @@ defmodule ConsoleWeb.Schema do
     field :user_id, :string
     field :card_type, :string
     field :last_4, :string
+    field :auto, :boolean
   end
 
   paginated object :function do
