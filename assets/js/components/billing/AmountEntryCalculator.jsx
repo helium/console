@@ -34,7 +34,7 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             disabled={disabled}
           />
           {
-            countB > 0 && <Text>= {countB} Bytes of Data</Text>
+            countB > 0 && <Text>{convertToText(countB)}</Text>
           }
         </Col>
         <Col span={12}>
@@ -53,5 +53,12 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
     </div>
   </div>
 )
+
+const convertToText = countB => {
+  if (countB >= 1000 && countB < 1000000) return `~ ${countB / 1000} Kilobytes of Data`
+  if (countB >= 1000000 && countB < 1000000000) return `~ ${countB / 1000000} Megabytes of Data`
+  if (countB >= 1000000000) return `~ ${countB / 1000000000} Gigabytes of Data`
+  return `~ ${countB} Bytes of Data`
+}
 
 export default AmountEntryCalculator
