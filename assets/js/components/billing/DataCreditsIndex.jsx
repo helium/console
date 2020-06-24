@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import numeral from 'numeral'
 import find from 'lodash/find'
 import DashboardLayout from '../common/DashboardLayout'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -211,7 +212,7 @@ class DataCreditsIndex extends Component {
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
                 <img style={styles.image} src={DCIMg} />
-                <Text style={{ ...styles.numberCount, color: primaryBlue }}>{dc_balance}</Text>
+                <Text style={{ ...styles.numberCount, color: primaryBlue }}>{numeral(dc_balance).format('0,0')}</Text>
               </Row>
             </Card>
           </Col>
@@ -233,7 +234,7 @@ class DataCreditsIndex extends Component {
               bodyStyle={{ ...styles.cardBody, width: 400 }}
             >
               <img style={styles.image} src={BytesIMg} />
-              <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{dc_balance * 24}</Text>
+              <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{numeral(dc_balance * 24).format('0,0')}</Text>
               {false && <Text>Approx {Math.floor(dc_balance * 24 / 1000)} MB</Text>}
             </Card>
           </Col>
