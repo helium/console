@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
 const { Text } = Typography
 const { Option } = Select
@@ -156,9 +156,18 @@ class PurchaseCreditModal extends Component {
               paymentMethod.card.last4,
               result.paymentIntent.id
             )
+
+            if (this.state.chargeOption !== 'none') {
+              this.props.setAutomaticPayments(
+                this.state.countUSD,
+                result.paymentIntent.payment_method,
+                this.state.chargeOption,
+              )
+            }
           })
 
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
+
           this.setState({ loading: false, showPayment: false })
           this.props.onClose()
         } else {
@@ -211,6 +220,7 @@ class PurchaseCreditModal extends Component {
                 disabled={this.state.loading}
               >
                 <Option value="once">One time purchase</Option>
+                <Option value="10%">10% remaining</Option>
               </Select>
             </div>
           )
@@ -295,7 +305,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments }, dispatch)
 }
 
 export default PurchaseCreditModal

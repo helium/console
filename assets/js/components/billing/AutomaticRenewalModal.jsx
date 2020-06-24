@@ -36,7 +36,7 @@ class AutomaticRenewalModal extends Component {
       this.setState({
         chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
         paymentMethod: this.props.organization.automatic_payment_method || null,
-        countUSD: this.props.organization.automatic_charge_amount,
+        countUSD: this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
         countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
       })
