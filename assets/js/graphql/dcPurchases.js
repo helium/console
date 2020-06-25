@@ -10,7 +10,6 @@ export const PAGINATED_DC_PURCHASES = gql`
         card_type
         last_4
         user_id
-        auto
       },
       totalEntries,
       totalPages,
