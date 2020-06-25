@@ -46,7 +46,7 @@ class AutomaticRenewalModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
-    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return 
+    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countUSD') {
       this.setState({
@@ -157,7 +157,9 @@ class AutomaticRenewalModal extends Component {
                   onChange={this.handleSelectCharge}
                   style={{ width: '100%', marginTop: 8 }}
                 >
-                  <Option value="none">Never</Option>
+                  {
+                    organization.automatic_charge_amount && <Option value="none">Never</Option>
+                  }
                   <Option value="10%">10% remaining</Option>
                 </Select>
               )
