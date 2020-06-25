@@ -23,21 +23,6 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
     <div style={{ ...styles.container, marginTop: 12 }}>
       <Row gutter={12} style={{ marginBottom: 12 }}>
         <Col span={12}>
-          <Text style={styles.inputHeader}>Amount of Data Credits</Text>
-          <Input
-            placeholder="Enter Quantity"
-            name="countDC"
-            value={countDC}
-            onChange={handleCountInputUpdate}
-            style={styles.input}
-            type="number"
-            disabled={disabled}
-          />
-          {
-            countB > 0 && <Text>{convertToText(countB)}</Text>
-          }
-        </Col>
-        <Col span={12}>
           <Text style={styles.inputHeader}>Amount in USD$</Text>
           <Input
             placeholder="Enter Quantity"
@@ -48,6 +33,18 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             type="number"
             disabled={disabled}
           />
+        </Col>
+        <Col span={12}>
+          <Text style={styles.inputHeader}>Amount of Data Credits</Text>
+          <Input
+            name="countDC"
+            value={countDC}
+            style={styles.input}
+            disabled={disabled}
+          />
+          {
+            countB > 0 && <Text>{convertToText(countB)}</Text>
+          }
         </Col>
       </Row>
     </div>

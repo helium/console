@@ -3,6 +3,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { setAutomaticPayments } from '../../actions/dataCredits'
+import numeral from 'numeral'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import PaymentCard from './PaymentCard'
 import { Modal, Button, Typography, Select, Row, Col, Checkbox } from 'antd';
@@ -36,7 +37,7 @@ class AutomaticRenewalModal extends Component {
       this.setState({
         chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
         paymentMethod: this.props.organization.automatic_payment_method || null,
-        countUSD: this.props.organization.automatic_charge_amount / 100,
+        countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
         countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
       })
@@ -45,17 +46,11 @@ class AutomaticRenewalModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
+    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return 
     // Refactor out conversion rates between USD, DC, Bytes later
-    if (e.target.name == 'countDC') {
-      this.setState({
-        countDC: e.target.value,
-        countUSD: e.target.value / 100000,
-        countB: e.target.value * 24
-      })
-    }
     if (e.target.name == 'countUSD') {
       this.setState({
-        countDC: e.target.value * 100000,
+        countDC: numeral(e.target.value * 100000).format('0,0'),
         countUSD: e.target.value,
         countB: e.target.value * 100000 * 24
       })
