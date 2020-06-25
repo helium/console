@@ -108,17 +108,21 @@ class DefaultPaymentModal extends Component {
           </Button>,
         ]}
       >
-        <ExistingPaymentCards
-          paymentMethods={paymentMethods}
-          paymentMethodSelected={this.state.paymentMethodSelected}
-          onRadioChange={this.onRadioChange}
-          showDelete
-          removePaymentMethod={this.removePaymentMethod}
-        />
+        {
+          paymentMethods.length > 0 && (
+            <ExistingPaymentCards
+              paymentMethods={paymentMethods}
+              paymentMethodSelected={this.state.paymentMethodSelected}
+              onRadioChange={this.onRadioChange}
+              showDelete
+              removePaymentMethod={this.removePaymentMethod}
+            />
+          )
+        }
 
         <div>
           <Text strong>
-            ...or Add New Card
+            {paymentMethods.length > 0 && "...or "}Add New Card
           </Text>
           {
             open && <StripeCardElement />

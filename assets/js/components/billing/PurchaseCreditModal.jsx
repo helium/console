@@ -249,15 +249,19 @@ class PurchaseCreditModal extends Component {
           <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
         </div>
 
-        <ExistingPaymentCards
-          paymentMethods={paymentMethods}
-          paymentMethodSelected={this.state.paymentMethodSelected}
-          onRadioChange={this.onRadioChange}
-        />
+        {
+          paymentMethods.length > 0 && (
+            <ExistingPaymentCards
+              paymentMethods={paymentMethods}
+              paymentMethodSelected={this.state.paymentMethodSelected}
+              onRadioChange={this.onRadioChange}
+            />
+          )
+        }
 
         <div>
           <Text strong>
-            ...or Add New Card
+            {paymentMethods.length > 0 && "...or "}Add New Card
           </Text>
           {
             open && <StripeCardElement />
