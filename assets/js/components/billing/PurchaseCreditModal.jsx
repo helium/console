@@ -10,7 +10,7 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
+import { Modal, Button, Typography, Divider, Select, Radio, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -25,6 +25,11 @@ const styles = {
     fontSize: 30,
     marginTop: -8
   },
+  checkboxContainer: {
+    marginTop: 30,
+    display: 'flex',
+    flexDirection: 'row'
+  }
 }
 
 @connect(null, mapDispatchToProps)
@@ -37,6 +42,7 @@ class PurchaseCreditModal extends Component {
     chargeOption: 'once',
     paymentIntentSecret: null,
     loading: false,
+    checked: false,
     paymentMethodSelected: undefined
   }
 
@@ -57,7 +63,7 @@ class PurchaseCreditModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
-    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return 
+    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countUSD') {
       this.setState({
@@ -220,6 +226,22 @@ class PurchaseCreditModal extends Component {
             </div>
           )
         }
+
+        {
+          this.state.chargeOption != 'once' && (
+            <div style={styles.checkboxContainer}>
+              <Checkbox
+                onChange={e => this.setState({ checked: e.target.checked })}
+                checked={this.state.checked}
+                style={{ marginRight: 8 }}
+              />
+              <Text>
+                I authorize the use of the payment method above to be
+                automatically charged according to Helium's Terms & Conditions.
+              </Text>
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -290,7 +312,14 @@ class PurchaseCreditModal extends Component {
             <Button key="back" onClick={this.handleClose} disabled={loading}>
               Cancel
             </Button>,
-            <Button key="submit" type="primary" onClick={this.handleNext} disabled={!this.state.countDC || this.state.countDC == 0 || loading}>
+            <Button
+              key="submit"
+              type="primary"
+              onClick={this.handleNext}
+              disabled={
+                !this.state.countUSD || this.state.countUSD == 0 || loading || (this.state.chargeOption !== 'once' && !this.state.checked)
+              }
+            >
               Continue To Payment
             </Button>,
           ]
