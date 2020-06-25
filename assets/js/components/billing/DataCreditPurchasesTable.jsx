@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import moment from 'moment'
+import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
@@ -57,6 +58,7 @@ class DataCreditPurchasesTable extends Component {
       {
         title: 'DC Purchased',
         dataIndex: 'dc_purchased',
+        render: data => numeral(data).format('0,0'),
       },
       {
         title: 'Cost',

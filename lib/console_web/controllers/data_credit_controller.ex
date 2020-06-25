@@ -115,6 +115,13 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
       with 200 <- stripe_response.status_code do
+        if current_organization.automatic_payment_method == paymentId do
+          attrs = %{
+            "automatic_charge_amount" => nil,
+            "automatic_payment_method" => nil
+          }
+          Organizations.update_organization(current_organization, attrs)
+        end
         broadcast(current_organization)
 
         conn
@@ -135,7 +142,8 @@ defmodule ConsoleWeb.DataCreditController do
       "last_4" => last_4,
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
-      "stripe_payment_id" => stripe_payment_id
+      "stripe_payment_id" => stripe_payment_id,
+      "auto" => false
     }
 
     with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
@@ -160,7 +168,7 @@ defmodule ConsoleWeb.DataCreditController do
   def set_automatic_payments(conn, %{ "chargeAmount" => charge_amount, "paymentMethod" => payment_method, "chargeOption" => charge_option }) do
     { amount, _ } = Float.parse(charge_amount)
 
-    if amount < 10 do
+    if amount < 10 and charge_option != "none" do
       {:error, :bad_request, "Credit card charges cannot be less than $10"}
     else
       current_organization = conn.assigns.current_organization

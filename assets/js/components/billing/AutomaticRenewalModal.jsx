@@ -3,6 +3,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { setAutomaticPayments } from '../../actions/dataCredits'
+import numeral from 'numeral'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import PaymentCard from './PaymentCard'
 import { Modal, Button, Typography, Select, Row, Col, Checkbox } from 'antd';
@@ -32,30 +33,34 @@ class AutomaticRenewalModal extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!prevProps.organization && this.props.organization) {
-      this.setState({
+    if ((!prevProps.organization && this.props.organization) || (prevProps.organization.automatic_charge_amount !== this.props.organization.automatic_charge_amount)) {
+      return this.setState({
         chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
         paymentMethod: this.props.organization.automatic_payment_method || null,
-        countUSD: this.props.organization.automatic_charge_amount,
+        countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
         countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
       })
+    }
+
+    if (prevProps.open && !this.props.open) {
+      return setTimeout(() => this.setState({
+        chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
+        paymentMethod: this.props.organization.automatic_payment_method || null,
+        countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
+        countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
+        countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
+      }), 100)
     }
   }
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
+    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
-    if (e.target.name == 'countDC') {
-      this.setState({
-        countDC: e.target.value,
-        countUSD: e.target.value / 100000,
-        countB: e.target.value * 24
-      })
-    }
     if (e.target.name == 'countUSD') {
       this.setState({
-        countDC: e.target.value * 100000,
+        countDC: numeral(e.target.value * 100000).format('0,0'),
         countUSD: e.target.value,
         countB: e.target.value * 100000 * 24
       })
@@ -75,10 +80,11 @@ class AutomaticRenewalModal extends Component {
     } else {
       this.setState({
         chargeOption,
-        countDC: 0,
-        countUSD: 0,
-        countB: 0,
+        countDC: undefined,
+        countUSD: undefined,
+        countB: undefined,
         checked: false,
+        paymentMethod: null,
       })
     }
   }
@@ -91,7 +97,7 @@ class AutomaticRenewalModal extends Component {
     e.preventDefault();
 
     const { paymentMethod, chargeOption, countUSD } = this.state
-    this.props.setAutomaticPayments(countUSD, paymentMethod, chargeOption)
+    this.props.setAutomaticPayments(countUSD ? countUSD : 0, paymentMethod, chargeOption)
 
     this.props.onClose()
   }
@@ -107,7 +113,7 @@ class AutomaticRenewalModal extends Component {
         centered
         footer={
           [
-            <Button key="back" onClick={this.handleBack}>
+            <Button key="back" onClick={this.props.onClose}>
               Cancel
             </Button>,
             <Button
@@ -140,7 +146,7 @@ class AutomaticRenewalModal extends Component {
           <Col span={12}>
             <Text strong>Payment Method</Text>
             <Select
-              defaultValue={this.state.paymentMethod}
+              value={this.state.paymentMethod}
               onChange={this.handleSelectPaymentMethod}
               style={{ width: '100%', marginTop: 8 }}
             >
@@ -158,11 +164,13 @@ class AutomaticRenewalModal extends Component {
             {
               organization && (
                 <Select
-                  defaultValue={this.state.chargeOption}
+                  value={this.state.chargeOption}
                   onChange={this.handleSelectCharge}
                   style={{ width: '100%', marginTop: 8 }}
                 >
-                  <Option value="none">Never</Option>
+                  {
+                    organization.automatic_charge_amount && <Option value="none">Never</Option>
+                  }
                   <Option value="10%">10% remaining</Option>
                 </Select>
               )

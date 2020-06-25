@@ -3,13 +3,14 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import stripe from '../../config/stripe'
 import { connect } from 'react-redux'
+import numeral from 'numeral'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Select, Radio } from 'antd';
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
+import { Modal, Button, Typography, Divider, Select, Radio, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -24,6 +25,11 @@ const styles = {
     fontSize: 30,
     marginTop: -8
   },
+  checkboxContainer: {
+    marginTop: 30,
+    display: 'flex',
+    flexDirection: 'row'
+  }
 }
 
 @connect(null, mapDispatchToProps)
@@ -36,6 +42,7 @@ class PurchaseCreditModal extends Component {
     chargeOption: 'once',
     paymentIntentSecret: null,
     loading: false,
+    checked: false,
     paymentMethodSelected: undefined
   }
 
@@ -56,17 +63,11 @@ class PurchaseCreditModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
+    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
-    if (e.target.name == 'countDC') {
-      this.setState({
-        countDC: e.target.value,
-        countUSD: e.target.value / 100000,
-        countB: e.target.value * 24
-      })
-    }
     if (e.target.name == 'countUSD') {
       this.setState({
-        countDC: e.target.value * 100000,
+        countDC: numeral(e.target.value * 100000).format('0,0'),
         countUSD: e.target.value,
         countB: e.target.value * 100000 * 24
       })
@@ -156,9 +157,18 @@ class PurchaseCreditModal extends Component {
               paymentMethod.card.last4,
               result.paymentIntent.id
             )
+
+            if (this.state.chargeOption !== 'none') {
+              this.props.setAutomaticPayments(
+                this.state.countUSD,
+                result.paymentIntent.payment_method,
+                this.state.chargeOption,
+              )
+            }
           })
 
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
+
           this.setState({ loading: false, showPayment: false })
           this.props.onClose()
         } else {
@@ -194,7 +204,7 @@ class PurchaseCreditModal extends Component {
           disabled={this.state.loading}
         />
         {
-          this.state.countDC > 0 && (
+          this.state.countUSD > 0 && (
             <div>
               <Divider style={{ marginTop: 32, marginBottom: 12 }}/>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -211,7 +221,24 @@ class PurchaseCreditModal extends Component {
                 disabled={this.state.loading}
               >
                 <Option value="once">One time purchase</Option>
+                <Option value="10%">10% remaining</Option>
               </Select>
+            </div>
+          )
+        }
+
+        {
+          this.state.chargeOption != 'once' && (
+            <div style={styles.checkboxContainer}>
+              <Checkbox
+                onChange={e => this.setState({ checked: e.target.checked })}
+                checked={this.state.checked}
+                style={{ marginRight: 8 }}
+              />
+              <Text>
+                I authorize the use of the payment method above to be
+                automatically charged according to Helium's Terms & Conditions.
+              </Text>
             </div>
           )
         }
@@ -239,15 +266,19 @@ class PurchaseCreditModal extends Component {
           <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
         </div>
 
-        <ExistingPaymentCards
-          paymentMethods={paymentMethods}
-          paymentMethodSelected={this.state.paymentMethodSelected}
-          onRadioChange={this.onRadioChange}
-        />
+        {
+          paymentMethods.length > 0 && (
+            <ExistingPaymentCards
+              paymentMethods={paymentMethods}
+              paymentMethodSelected={this.state.paymentMethodSelected}
+              onRadioChange={this.onRadioChange}
+            />
+          )
+        }
 
         <div>
           <Text strong>
-            ...or Add New Card
+            {paymentMethods.length > 0 && "...or "}Add New Card
           </Text>
           {
             open && <StripeCardElement />
@@ -281,7 +312,14 @@ class PurchaseCreditModal extends Component {
             <Button key="back" onClick={this.handleClose} disabled={loading}>
               Cancel
             </Button>,
-            <Button key="submit" type="primary" onClick={this.handleNext} disabled={!this.state.countDC || this.state.countDC == 0 || loading}>
+            <Button
+              key="submit"
+              type="primary"
+              onClick={this.handleNext}
+              disabled={
+                !this.state.countUSD || this.state.countUSD == 0 || loading || (this.state.chargeOption !== 'once' && !this.state.checked)
+              }
+            >
               Continue To Payment
             </Button>,
           ]
@@ -295,7 +333,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments }, dispatch)
 }
 
 export default PurchaseCreditModal
