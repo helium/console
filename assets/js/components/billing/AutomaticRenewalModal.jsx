@@ -35,7 +35,7 @@ class AutomaticRenewalModal extends Component {
   componentDidUpdate(prevProps) {
     if ((!prevProps.organization && this.props.organization) || (prevProps.organization.automatic_charge_amount !== this.props.organization.automatic_charge_amount)) {
       return this.setState({
-        chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
+        chargeOption: '$5',
         paymentMethod: this.props.organization.automatic_payment_method || null,
         countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
@@ -45,7 +45,7 @@ class AutomaticRenewalModal extends Component {
 
     if (prevProps.open && !this.props.open) {
       return setTimeout(() => this.setState({
-        chargeOption: this.props.organization.automatic_charge_amount ? '10%' : null,
+        chargeOption: '$5',
         paymentMethod: this.props.organization.automatic_payment_method || null,
         countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
@@ -56,6 +56,7 @@ class AutomaticRenewalModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
+    if (e.target.value.length > 7) return
     if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countUSD') {
@@ -153,7 +154,7 @@ class AutomaticRenewalModal extends Component {
               {
                 paymentMethods.map(p => (
                   <Option value={p.id} key={p.id}>
-                    <PaymentCard id={p.id} card={p.card} style={{ fontWeight: 400 }}/>
+                    <PaymentCard id={p.id} card={p.card} style={{ fontWeight: 400, marginTop: -1 }}/>
                   </Option>
                 ))
               }
@@ -171,19 +172,24 @@ class AutomaticRenewalModal extends Component {
                   {
                     organization.automatic_charge_amount && <Option value="none">Never</Option>
                   }
-                  <Option value="10%">10% remaining</Option>
+                  <Option value="$5">500,000 DC minimum</Option>
                 </Select>
               )
             }
           </Col>
         </Row>
+        <div style={{ marginTop: 8 }}>
+          <Text>
+            The amount above will be added to your account when your DC balance reaches 500,000 DC ($5).
+          </Text>
+        </div>
         <div style={styles.checkboxContainer}>
           <Checkbox
             onChange={e => this.setState({ checked: e.target.checked })}
             checked={this.state.checked}
             style={{ marginRight: 8 }}
           />
-          <Text>
+          <Text style={{ color: '#8C8C8C' }}>
             I authorize the use of the payment method above to be
             automatically charged according to Helium's Terms & Conditions.
           </Text>

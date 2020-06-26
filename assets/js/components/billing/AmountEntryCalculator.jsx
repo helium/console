@@ -15,14 +15,18 @@ const styles = {
   input: {
     marginTop: 8
   },
+  blueText: {
+    color: '#4091F7',
+    fontSize: 14
+  }
 }
 
 const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate, disabled }) => (
   <div>
     <Text strong>Enter a quantity you wish to purchase</Text>
     <div style={{ ...styles.container, marginTop: 12 }}>
-      <Row gutter={12} style={{ marginBottom: 12 }}>
-        <Col span={12}>
+      <Row gutter={24} style={{ marginBottom: 12 }}>
+        <Col span={14}>
           <Text style={styles.inputHeader}>Amount in USD$</Text>
           <Input
             placeholder="Enter Quantity"
@@ -34,16 +38,20 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
             disabled={disabled}
           />
         </Col>
-        <Col span={12}>
-          <Text style={styles.inputHeader}>Amount of Data Credits</Text>
-          <Input
-            name="countDC"
-            value={countDC}
-            style={styles.input}
-            disabled={disabled}
-          />
+        <Col span={10}>
           {
-            countB > 0 && <Text>{convertToText(countB)}</Text>
+            countDC && (
+              <div style={{ marginTop: 20 }}>
+                <Text style={{ ...styles.blueText, fontSize: 18 }}>{countDC} DC</Text>
+              </div>
+            )
+          }
+          {
+            countB > 0 && (
+              <div style={{ marginTop: -4 }}>
+                <Text style={styles.blueText}>{convertToText(countB)}</Text>
+              </div>
+            )
           }
         </Col>
       </Row>
@@ -52,9 +60,9 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
 )
 
 const convertToText = countB => {
-  if (countB >= 1000 && countB < 1000000) return `~ ${countB / 1000} Kilobytes of Data`
-  if (countB >= 1000000 && countB < 1000000000) return `~ ${countB / 1000000} Megabytes of Data`
-  if (countB >= 1000000000) return `~ ${countB / 1000000000} Gigabytes of Data`
+  if (countB >= 1000 && countB < 1000000) return `~ ${countB / 1000} KB of Data`
+  if (countB >= 1000000 && countB < 1000000000) return `~ ${countB / 1000000} MB of Data`
+  if (countB >= 1000000000) return `~ ${countB / 1000000000} GB of Data`
   return `~ ${countB} Bytes of Data`
 }
 

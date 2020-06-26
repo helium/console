@@ -115,18 +115,23 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
       with 200 <- stripe_response.status_code do
-        if current_organization.automatic_payment_method == paymentId do
-          attrs = %{
-            "automatic_charge_amount" => nil,
-            "automatic_payment_method" => nil
-          }
-          Organizations.update_organization(current_organization, attrs)
-        end
-        broadcast(current_organization)
+        msg =
+          if current_organization.automatic_payment_method == paymentId do
+            attrs = %{
+              "automatic_charge_amount" => nil,
+              "automatic_payment_method" => nil
+            }
+            Organizations.update_organization(current_organization, attrs)
 
-        conn
-        |> put_resp_header("message", "Payment method removed successfully")
-        |> send_resp(:no_content, "")
+            "This payment method was used for Automatic Renewal, you will need to set up Automatic Renewals again with a new card."
+          else
+            "Payment method removed successfully"
+          end
+          broadcast(current_organization)
+
+          conn
+          |> put_resp_header("message", msg)
+          |> send_resp(:no_content, "")
       end
     end
   end

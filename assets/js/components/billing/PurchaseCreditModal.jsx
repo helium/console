@@ -10,9 +10,8 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Select, Radio, Checkbox } from 'antd';
+import { Modal, Button, Typography, Divider, Radio, Checkbox } from 'antd';
 const { Text } = Typography
-const { Option } = Select
 
 const styles = {
   container: {
@@ -39,10 +38,8 @@ class PurchaseCreditModal extends Component {
     countDC: undefined,
     countUSD: undefined,
     countB: undefined,
-    chargeOption: 'once',
     paymentIntentSecret: null,
     loading: false,
-    checked: false,
     paymentMethodSelected: undefined
   }
 
@@ -63,6 +60,7 @@ class PurchaseCreditModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
+    if (e.target.value.length > 7) return
     if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countUSD') {
@@ -157,14 +155,6 @@ class PurchaseCreditModal extends Component {
               paymentMethod.card.last4,
               result.paymentIntent.id
             )
-
-            if (this.state.chargeOption !== 'none') {
-              this.props.setAutomaticPayments(
-                this.state.countUSD,
-                result.paymentIntent.payment_method,
-                this.state.chargeOption,
-              )
-            }
           })
 
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
@@ -177,10 +167,6 @@ class PurchaseCreditModal extends Component {
         }
       }
     })
-  }
-
-  handleSelectCharge = chargeOption => {
-    this.setState({ chargeOption })
   }
 
   onRadioChange = e => {
@@ -211,34 +197,6 @@ class PurchaseCreditModal extends Component {
                 <Text strong>Cost</Text>
                 <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
               </div>
-              <div style={{ marginBottom: 8, marginTop: 12 }}>
-                <Text strong>When to Charge</Text>
-              </div>
-              <Select
-                defaultValue={this.state.chargeOption}
-                onChange={this.handleSelectCharge}
-                style={{ width: '100%'}}
-                disabled={this.state.loading}
-              >
-                <Option value="once">One time purchase</Option>
-                <Option value="10%">10% remaining</Option>
-              </Select>
-            </div>
-          )
-        }
-
-        {
-          this.state.chargeOption != 'once' && (
-            <div style={styles.checkboxContainer}>
-              <Checkbox
-                onChange={e => this.setState({ checked: e.target.checked })}
-                checked={this.state.checked}
-                style={{ marginRight: 8 }}
-              />
-              <Text>
-                I authorize the use of the payment method above to be
-                automatically charged according to Helium's Terms & Conditions.
-              </Text>
             </div>
           )
         }
@@ -316,9 +274,7 @@ class PurchaseCreditModal extends Component {
               key="submit"
               type="primary"
               onClick={this.handleNext}
-              disabled={
-                !this.state.countUSD || this.state.countUSD == 0 || loading || (this.state.chargeOption !== 'once' && !this.state.checked)
-              }
+              disabled={!this.state.countUSD || this.state.countUSD == 0 || loading}
             >
               Continue To Payment
             </Button>,

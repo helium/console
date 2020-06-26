@@ -195,7 +195,7 @@ class DataCreditsIndex extends Component {
         <Row gutter={16}>
           <Col span={8}>
             <Card
-              title="Total Data Credits"
+              title="Remaining Data Credits"
               extra={
                 <Popover
                   content="Data Credits - known as DCs - are used to pay all transaction fees on the Helium Network."
