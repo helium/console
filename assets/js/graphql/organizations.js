@@ -37,6 +37,15 @@ export const PAGINATED_ORGANIZATIONS = gql`
   ${ORGANIZATION_FRAGMENT}
 `
 
+export const ALL_ORGANIZATIONS = gql`
+  query AllOrganizationsQuery {
+    allOrganizations {
+      id,
+      name,
+    }
+  }
+`
+
 export const ORGANIZATION_SUBSCRIPTION = gql`
   subscription onOrganizationAdded {
     organizationAdded {

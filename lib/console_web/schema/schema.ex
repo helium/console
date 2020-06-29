@@ -252,9 +252,8 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
-    field :organization, :organization do
-      arg :id, non_null(:id)
-      resolve &Console.Organizations.OrganizationResolver.find/2
+    field :all_organizations, list_of(:organization) do
+      resolve &Console.Organizations.OrganizationResolver.all/2
     end
 
     @desc "Search for devices and channels"

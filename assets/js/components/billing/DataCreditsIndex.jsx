@@ -9,6 +9,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
+import OrganizationTransferDCModal from './OrganizationTransferDCModal'
 import DataCreditPurchasesTable from './DataCreditPurchasesTable'
 import PaymentCard from './PaymentCard'
 import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
@@ -61,6 +62,7 @@ class DataCreditsIndex extends Component {
     showDefaultPaymentModal: false,
     showPurchaseCreditModal: false,
     showAutomaticRenewalModal: false,
+    showOrganizationTransferDCModal: false,
     paymentMethods: [],
   }
 
@@ -288,7 +290,7 @@ class DataCreditsIndex extends Component {
   render
 
   render() {
-    const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal } = this.state
+    const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal, showOrganizationTransferDCModal } = this.state
     const { organization, error } = this.props.data
 
     return (
@@ -301,8 +303,16 @@ class DataCreditsIndex extends Component {
                 <React.Fragment>
                   <Button
                     size="large"
+                    icon="right-circle"
+                    onClick={() => this.openModal("showOrganizationTransferDCModal")}
+                  >
+                    Transfer DC to Org
+                  </Button>
+                  <Button
+                    size="large"
                     icon="sync"
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
+                    style={{ marginLeft: 20 }}
                   >
                     Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
                   </Button>
@@ -353,6 +363,12 @@ class DataCreditsIndex extends Component {
           open={showAutomaticRenewalModal}
           onClose={() => this.closeModal("showAutomaticRenewalModal")}
           paymentMethods={this.state.paymentMethods}
+          organization={organization}
+        />
+
+        <OrganizationTransferDCModal
+          open={showOrganizationTransferDCModal}
+          onClose={() => this.closeModal("showOrganizationTransferDCModal")}
           organization={organization}
         />
       </DashboardLayout>

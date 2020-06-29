@@ -23,4 +23,9 @@ defmodule Console.Organizations.OrganizationResolver do
     organization = Organizations.get_organization!(current_user, id)
     {:ok, organization}
   end
+
+  def all(_, %{context: %{current_user: current_user}}) do
+    organizations = Organizations.get_organizations(current_user)
+    {:ok, organizations}
+  end
 end
