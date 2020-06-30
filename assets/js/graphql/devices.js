@@ -32,6 +32,28 @@ export const DEVICE_UPDATE_SUBSCRIPTION = gql`
   }
 `
 
+export const IMPORT_ADDED_SUBSCRIPTION = gql`
+  subscription onImportAdded {
+    importAdded {
+      id,
+      user_id,
+      successful_devices,
+      status
+    }
+  }
+`
+
+export const IMPORT_UPDATED_SUBSCRIPTION = gql`
+  subscription onImportUpdated {
+    importUpdated {
+      id,
+      user_id,
+      successful_devices,
+      status
+    }
+  }
+`
+
 export const DEVICE_SHOW = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
@@ -56,6 +78,19 @@ export const DEVICE_SHOW = gql`
     }
   }
   ${DEVICE_FRAGMENT}
+`
+
+export const ALL_IMPORTS = gql`
+  query PaginatedImportsQuery ($page: Int, $pageSize: Int) {
+    device_imports(page: $page, pageSize: $pageSize) {
+      entries {
+        id,
+        user_id,
+        successful_devices,
+        status
+      }
+    }
+  }
 `
 
 export const PAGINATED_DEVICES = gql`

@@ -152,6 +152,13 @@ defmodule ConsoleWeb.Schema do
     field :score, :float
   end
 
+  paginated object :device_import do
+    field :id, :id
+    field :user_id, :string
+    field :successful_devices, :integer
+    field :status, :string
+  end
+
   query do
     @desc "Get paginated devices"
     paginated field :devices, :paginated_devices do
@@ -168,6 +175,11 @@ defmodule ConsoleWeb.Schema do
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    @desc "Get device import jobs"
+    paginated field :device_imports, :paginated_device_imports do
+      resolve(&Console.Devices.DeviceResolver.paginate_device_imports/2)
     end
 
     field :device_events, list_of(:event) do
@@ -345,6 +357,18 @@ defmodule ConsoleWeb.Schema do
 
       config fn args, %{context: %{ current_organization_id: organization_id }} ->
         {:ok, topic: "#{organization_id}/#{args.device_id}/device_updated"}
+      end
+    end
+
+    field :import_added, :device_import do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/import_added"}
+      end
+    end
+
+    field :import_updated, :device_import do
+      config fn _, %{context: %{ current_organization_id: organization_id }} ->
+        {:ok, topic: "#{organization_id}/import_updated"}
       end
     end
 

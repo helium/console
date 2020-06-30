@@ -99,7 +99,7 @@ const Router = (props) => {
                     <ApolloProvider client={apolloClient}>
                       <Switch>
                         <Route path="/profile" render={() => <Profile user={user}/>}/>
-                        <Route exact path="/devices" component={DeviceIndex} />
+                        <Route exact path="/devices" render={() => <DeviceIndex user={user}/>} />
                         <Route exact path="/labels" component={LabelIndex} />
                         <Route path="/devices/:id" component={DeviceShow}/>
                         <Route path="/labels/:id" component={LabelShow} />

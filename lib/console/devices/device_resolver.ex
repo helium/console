@@ -1,6 +1,7 @@
 defmodule Console.Devices.DeviceResolver do
   alias Console.Repo
   alias Console.Devices.Device
+  alias Console.Devices.DeviceImports
   alias Console.Events.Event
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
@@ -102,5 +103,14 @@ defmodule Console.Devices.DeviceResolver do
       end)
 
     {:ok, events}
+  end
+
+  def paginate_device_imports(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
+    device_imports = DeviceImports
+      |> where([di], di.organization_id == ^current_organization.id)
+      |> order_by([di], [desc: di.updated_at])
+      |> Repo.paginate(page: page, page_size: page_size)
+
+    {:ok, device_imports}
   end
 end

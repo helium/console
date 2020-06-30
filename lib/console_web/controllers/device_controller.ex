@@ -3,6 +3,7 @@ defmodule ConsoleWeb.DeviceController do
 
   alias Console.Repo
   alias Console.Devices
+  alias Console.Devices.DeviceImports
   alias Console.Channels
   alias Console.Labels
   alias Console.Channels.Channel
@@ -141,6 +142,7 @@ defmodule ConsoleWeb.DeviceController do
   defp fetch_and_write_devices(applications, token, organization, add_labels, delete_devices, user_id) do
     # Create import record
     {:ok, device_import} = Devices.create_import(organization, user_id, "ttn")
+    broadcast_add(device_import)
     try do
       device_count = Enum.reduce(applications, 0, fn app, acc ->
         case HTTPoison.request!(
@@ -152,31 +154,44 @@ defmodule ConsoleWeb.DeviceController do
           |> Poison.decode() do
             {:ok, %{"devices" => devices}} ->
               # Enumerate through retrieved devices and import them
-              device_ids = add_device_list(devices, organization)
+              IO.inspect(devices)
+              added_device_list = add_device_list(devices, organization)
               if add_labels do
                 label_params = %{"name" => app, "organization_id" => organization.id}
                 with {:ok, label} <- Labels.create_label(organization, label_params) do
-                  Labels.add_devices_to_label(device_ids, label.id, organization)
+                  Enum.reduce(added_device_list, [], fn dev, acc ->
+                    [dev.id | acc]
+                  end)
+                  |> Labels.add_devices_to_label(label.id, organization)
                 end
               end
               if delete_devices do
                 # Delete device records from The Things Network.
+                Enum.each(added_device_list, fn dev ->
+                  HTTPoison.delete!(
+                    "#{dev.endpoint}/applications/#{app}/devices/#{dev.dev_id}",
+                    [{"authorization", "Bearer #{token}"}]
+                  )
+                end)
               end
-              acc + Enum.count(device_ids)
+              acc + Enum.count(added_device_list)
             _ ->
               # Failure to fetch the devices for the app from The Things Network.
               acc
         end
       end)
-      Devices.update_import(
+      {:ok, successful_import} = Devices.update_import(
         device_import,
         %{
           status: "successful",
           successful_devices: device_count
         }
       )
+      broadcast_update(successful_import)
     rescue
-      Error -> Devices.update_import(device_import, %{status: "failed"})
+      Error ->
+        {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
+        broadcast_update(failed_import)
     end
   end
 
@@ -190,7 +205,9 @@ defmodule ConsoleWeb.DeviceController do
         dev_eui: device["lorawan_device"]["dev_eui"],
         organization_id: organization.id
       }, organization) do
-        {:ok, %Device{} = new_device} -> [new_device.id | acc]
+        {:ok, %Device{} = new_device} -> [
+          %{id: new_device.id, dev_id: new_device.name, endpoint: device["endpoint"]} | acc
+        ]
         _ -> acc
       end
     end)
@@ -210,8 +227,16 @@ defmodule ConsoleWeb.DeviceController do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
   end
 
+  def broadcast_add(%DeviceImports{} = device_import) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device_import, import_added: "#{device_import.organization_id}/import_added")
+  end
+
   def broadcast(%Device{} = device, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
+  end
+
+  def broadcast_update(%DeviceImports{} = device_import) do
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device_import, import_updated: "#{device_import.organization_id}/import_updated")
   end
 
   defp broadcast_router_update_devices(%Device{} = device) do
