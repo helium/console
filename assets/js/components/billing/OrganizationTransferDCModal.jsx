@@ -3,7 +3,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import find from 'lodash/find'
-import { } from '../../actions/dataCredits'
+import { transferDC } from '../../actions/dataCredits'
 import { graphql } from 'react-apollo'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
@@ -64,7 +64,7 @@ class OrganizationTransferDCModal extends Component {
 
   handleCountInputUpdate = (e) => {
     this.setState({
-      countDC: e.target.value,
+      countDC: e.target.value
     })
   }
 
@@ -84,6 +84,8 @@ class OrganizationTransferDCModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+
+    this.props.transferDC(this.state.countDC, this.state.selectedOrgId)
 
     this.props.onClose()
   }
@@ -110,6 +112,9 @@ class OrganizationTransferDCModal extends Component {
                     onChange={this.handleCountInputUpdate}
                     style={styles.input}
                     type="number"
+                    onKeyPress={e => {
+                      if (e.key == ".") e.preventDefault()
+                    }}
                   />
                 </div>
               </div>
@@ -211,7 +216,7 @@ class OrganizationTransferDCModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ }, dispatch)
+  return bindActionCreators({ transferDC }, dispatch)
 }
 
 export default OrganizationTransferDCModal
