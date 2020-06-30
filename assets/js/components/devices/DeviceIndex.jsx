@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DeviceIndexTable from './DeviceIndexTable';
 import DashboardLayout from '../common/DashboardLayout';
 import NewDeviceModal from './NewDeviceModal';
-import ImportDevicseModal from './ttn/ImportDevicesModal';
+import ImportDevicesModal from './ttn/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
@@ -238,7 +238,7 @@ class DeviceIndex extends Component {
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
-        <ImportDevicseModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal}/>
+        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal}/>
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}
