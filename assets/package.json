@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@absinthe/socket-apollo-link": "^0.1.11",
+    "@ant-design/icons": "^4.2.1",
     "@auth0/auth0-spa-js": "^1.6.5",
     "amplitude-js": "^5.7.0",
     "antd": "^3.26.3",
@@ -63,7 +64,7 @@
     "file-loader": "^2.0.0",
     "growl": "~> 1.10.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.23.1",
+    "webpack": "^4.43.0",
     "webpack-cli": "^3.1.2"
   },
   "engines": {

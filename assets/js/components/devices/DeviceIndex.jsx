@@ -1,16 +1,24 @@
-import React, { Component } from 'react'
-import DeviceIndexTable from './DeviceIndexTable'
-import DashboardLayout from '../common/DashboardLayout'
-import NewDeviceModal from './NewDeviceModal'
-import DevicesAddLabelModal from './DevicesAddLabelModal'
-import DeleteDeviceModal from './DeleteDeviceModal'
-import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
-import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal'
-import { PAGINATED_DEVICES, DEVICE_SUBSCRIPTION } from '../../graphql/devices'
-import { graphql } from 'react-apollo';
-import get from 'lodash/get'
-import UserCan from '../common/UserCan'
-import analyticsLogger from '../../util/analyticsLogger'
+import React, { Component } from 'react';
+import DeviceIndexTable from './DeviceIndexTable';
+import DashboardLayout from '../common/DashboardLayout';
+import NewDeviceModal from './NewDeviceModal';
+import ImportDevicesModal from './ttn/ImportDevicesModal';
+import DevicesAddLabelModal from './DevicesAddLabelModal';
+import DeleteDeviceModal from './DeleteDeviceModal';
+import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
+import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
+import {
+  PAGINATED_DEVICES,
+  DEVICE_SUBSCRIPTION,
+  ALL_IMPORTS,
+  IMPORT_ADDED_SUBSCRIPTION,
+  IMPORT_UPDATED_SUBSCRIPTION
+} from '../../graphql/devices';
+import { graphql, compose } from 'react-apollo';
+import get from 'lodash/get';
+import UserCan from '../common/UserCan';
+import { displayError, displayInfo } from '../../util/messages';
+import analyticsLogger from '../../util/analyticsLogger';
 import { Button } from 'antd';
 
 const queryOptions = {
@@ -23,11 +31,13 @@ const queryOptions = {
   })
 }
 
-@graphql(PAGINATED_DEVICES, queryOptions)
+@graphql(PAGINATED_DEVICES, {...queryOptions, name: 'devicesQuery'})
+@graphql(ALL_IMPORTS, {...queryOptions, name: 'importsQuery'})
 class DeviceIndex extends Component {
   state = {
     showCreateDeviceModal: false,
     showDeleteDeviceModal: false,
+    showImportDevicesModal: false,
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
     showDeviceRemoveAllLabelsModal: false,
@@ -40,13 +50,59 @@ class DeviceIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
-    const { subscribeToMore } = this.props.data
+    let { subscribeToMore } = this.props.devicesQuery;
 
     subscribeToMore({
       document: DEVICE_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev
         this.handleSubscriptionAdded()
+      }
+    });
+
+    subscribeToMore = this.props.importsQuery.subscribeToMore;
+
+    subscribeToMore({
+      document: IMPORT_ADDED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        return {
+          ...prev,
+          device_imports: {
+            entries: [subscriptionData.data.importAdded, ...prev.device_imports.entries],
+            __typename: prev.device_imports.__typename
+          }
+        };
+      }
+    });
+
+    subscribeToMore({
+      document: IMPORT_UPDATED_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const updatedImport = subscriptionData.data.importUpdated;
+        const replaceIndex = prev.device_imports.entries.findIndex(
+          val => val.id === updatedImport.id
+        )
+        if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
+          if (updatedImport.status === "successful") {
+            displayInfo(`Imported ${updatedImport.successful_devices} 
+            device${(updatedImport.successful_devices > 1 && "s") || null} from The Things Network.`);
+          } else if (updatedImport.status === "failed"){
+            displayError("Failed to import devices from The Things Network.");
+          }
+        }
+        return {
+          ...prev,
+          device_imports: {
+            entries: [
+              ...prev.device_imports.entries.slice(0, replaceIndex),
+              subscriptionData.data.importUpdated,
+              ...prev.device_imports.entries.slice(replaceIndex + 1)
+            ],
+            __typename: prev.device_imports.__typename
+          }
+        };
       }
     })
   }
@@ -87,6 +143,14 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: true, devicesSelected })
   }
 
+  openImportDevicesModal = () => {
+    this.setState({ showImportDevicesModal: true });
+  }
+
+  closeImportDevicesModal = () => {
+    this.setState({ showImportDevicesModal: false });
+  }
+
   closeDeleteDeviceModal = () => {
     this.setState({ showDeleteDeviceModal: false })
   }
@@ -104,7 +168,7 @@ class DeviceIndex extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.devicesQuery;
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -115,6 +179,7 @@ class DeviceIndex extends Component {
     const {
       showCreateDeviceModal,
       showDeleteDeviceModal,
+      showImportDevicesModal,
       showDevicesAddLabelModal,
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
@@ -122,10 +187,20 @@ class DeviceIndex extends Component {
       deviceToRemoveLabel
     } = this.state
 
-    const { devices, loading, error } = this.props.data
+    const { devices, loading, error } = this.props.devicesQuery;
+    const { device_imports } = this.props.importsQuery;
 
     const createDeviceButton = () => (
       <UserCan>
+        <Button
+          size="large"
+          type="primary"
+          icon="plus"
+          onClick={this.openImportDevicesModal}
+          disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
+        >
+          Import Devices
+        </Button>
         <Button
           size="large"
           type="primary"
@@ -153,6 +228,7 @@ class DeviceIndex extends Component {
               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
               noDevicesButton={createDeviceButton}
+              handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
               handleChangePage={this.handleChangePage}
@@ -161,6 +237,8 @@ class DeviceIndex extends Component {
         }
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
+
+        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal}/>
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}
