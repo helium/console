@@ -154,7 +154,6 @@ defmodule ConsoleWeb.DeviceController do
           |> Poison.decode() do
             {:ok, %{"devices" => devices}} ->
               # Enumerate through retrieved devices and import them
-              IO.inspect(devices)
               added_device_list = add_device_list(devices, organization)
               if add_labels do
                 label_params = %{"name" => app, "organization_id" => organization.id}

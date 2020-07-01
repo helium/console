@@ -22,4 +22,10 @@ defmodule Console.Devices.DeviceImports do
     |> cast(attrs, [:status, :successful_devices, :updated_at])
   end
 
+  def create_changeset(device_import, attrs) do
+    device_import
+    |> cast(attrs, [:user_id, :type, :status, :successful_devices, :organization_id])
+    |> validate_required([:user_id, :organization_id, :type, :status])
+  end
+
 end

@@ -97,13 +97,15 @@ defmodule Console.Devices do
   end
 
   def create_import(%Organization{} = organization, user_id, type) do
-    %DeviceImports{
+
+    %DeviceImports{}
+    |> DeviceImports.create_changeset(%{
       organization_id: organization.id,
       user_id: user_id,
       successful_devices: 0,
       status: "importing",
       type: type
-    }
+    })
     |> Repo.insert()
   end
 
