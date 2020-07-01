@@ -45,7 +45,7 @@ defmodule Console.Organizations do
     end
   end
 
-  def get_organization_and_lock_for_dc_purchase(org_id) do
+  def get_organization_and_lock_for_dc(org_id) do
     Organization
       |> where([o], o.id == ^org_id)
       |> lock("FOR UPDATE")
@@ -211,6 +211,24 @@ defmodule Console.Organizations do
       from(key in ApiKey, where: key.organization_id == ^organization.id)
       |> Repo.delete_all()
       Repo.delete(organization)
+    end)
+  end
+
+  def send_dc_to_org(amount, %Organization{} = from_org, %Organization{} = to_org) do
+    get_organization_and_lock_for_dc(from_org.id)
+    get_organization_and_lock_for_dc(to_org.id)
+
+    Repo.transaction(fn ->
+      {:ok, from_org_updated } = update_organization(from_org, %{
+        "dc_balance" => from_org.dc_balance - amount,
+        "dc_balance_nonce" => from_org.dc_balance_nonce + 1
+      })
+      {:ok, to_org_updated } = update_organization(to_org, %{
+        "dc_balance" => to_org.dc_balance + amount,
+        "dc_balance_nonce" => to_org.dc_balance_nonce + 1
+      })
+
+      {:ok, from_org_updated, to_org_updated}
     end)
   end
 end

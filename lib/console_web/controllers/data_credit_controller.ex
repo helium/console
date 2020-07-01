@@ -219,11 +219,18 @@ defmodule ConsoleWeb.DataCreditController do
       amount > current_organization.dc_balance ->
         {:error, :bad_request, "You do not have that many Data Credits to transfer"}
       true ->
-        toOrganization = Organizations.get_organization!(current_user, toOrganizationId)
+        to_organization = Organizations.get_organization!(current_user, toOrganizationId)
 
-        conn
-        |> put_resp_header("message", "ok, I will work on this later")
-        |> send_resp(:no_content, "")
+        with {:ok, {:ok, from_org_updated, to_org_updated }} <- Organizations.send_dc_to_org(amount, current_organization, to_organization) do
+          broadcast(from_org_updated)
+          broadcast(to_org_updated)
+          broadcast_router_refill_dc_balance(from_org_updated)
+          broadcast_router_refill_dc_balance(to_org_updated)
+
+          conn
+          |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")
+          |> send_resp(:no_content, "")
+        end
     end
   end
 
