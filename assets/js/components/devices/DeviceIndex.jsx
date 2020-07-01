@@ -87,7 +87,8 @@ class DeviceIndex extends Component {
         if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
           if (updatedImport.status === "successful") {
             displayInfo(`Imported ${updatedImport.successful_devices} 
-            device${(updatedImport.successful_devices > 1 && "s") || ""} from The Things Network.`);
+            device${(updatedImport.successful_devices > 1 && "s") || ""} from The Things Network. 
+            Refresh this page to see the changes.`);
           } else if (updatedImport.status === "failed"){
             displayError("Failed to import devices from The Things Network.");
           }
