@@ -113,12 +113,18 @@ class DataCreditsIndex extends Component {
   }
 
   renderBlankState = () => {
+    const { organization } = this.props.data
     return (
       <div className="blankstateWrapper">
         <div className="message">
           <img style={{width: 100, marginBottom: 20}} src={DCIMg} />
           <h1>Data Credits</h1>
-          <p>It doesn't look like you've used Data Credits yet.</p>
+          {
+            organization.dc_balance !== null && (
+              <p style={{ fontWeight: 400 }}>For signing up with Console you've received an initial balance of 1000 Data Credits. You have {organization.dc_balance} remaining.</p>
+            )
+          }
+          <p style={{ fontSize: 16 }}>Click here to purchase more Data Credits, set up an automatic renewal, and monitor balances.</p>
           <UserCan>
             <Button
               size="large"
