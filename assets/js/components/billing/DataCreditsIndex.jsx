@@ -302,7 +302,7 @@ class DataCreditsIndex extends Component {
         extra={
           <UserCan>
             {
-              organization && organization.dc_balance != null ? (
+              organization && organization.dc_balance_nonce != 0 ? (
                 <React.Fragment>
                   <Button
                     size="large"
@@ -340,10 +340,10 @@ class DataCreditsIndex extends Component {
           error && <Text>Data failed to load, please reload the page and try again</Text>
         }
         {
-          organization && organization.dc_balance == null && this.renderBlankState()
+          organization && organization.dc_balance_nonce == 0 && this.renderBlankState()
         }
         {
-          organization && organization.dc_balance != null && this.renderContent()
+          organization && organization.dc_balance_nonce != 0 && this.renderContent()
         }
 
         <DefaultPaymentModal
