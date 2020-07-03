@@ -33,6 +33,7 @@ const GetApplications = (props) => {
         type="primary"
         style={{ width: '100%', marginLeft: 40, marginRight: 40 }}
         onClick={() => {fetchTtnDevices(ttnCode)}}
+        disabled={!ttnCode}
       >
         Start Importing Devices
       </Button>
