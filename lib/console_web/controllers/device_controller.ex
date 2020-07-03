@@ -90,7 +90,7 @@ defmodule ConsoleWeb.DeviceController do
         _ ->
           conn
           |> put_status(:bad_request)
-          |> render("error.json", error: "Failed to fetch applications from The Things Network.")
+          |> render("error.json", error: "Unable to import devices. Make sure your ttnctl code is valid and try again.")
       end
   end
 
