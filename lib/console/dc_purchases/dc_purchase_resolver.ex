@@ -22,7 +22,11 @@ defmodule Console.DcPurchases.DcPurchaseResolver do
     updated_entries =
       purchases.entries |> Enum.map(fn p ->
         user = Enum.find(users, fn u -> u.user_id == p.user_id end)
-        Map.put(p, :user_id, user.email)
+        case user do
+          nil -> Map.put(p, :user_id, p.user_id)
+          _ -> Map.put(p, :user_id, user.email)
+        end
+
       end)
 
     {:ok,  Map.put(purchases, :entries, updated_entries)}

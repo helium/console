@@ -9,6 +9,14 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Organizations
   alias Console.Devices.Device
   alias Console.Events
+  alias Console.DcPurchases
+  alias Console.DcPurchases.DcPurchase
+
+  @stripe_api_url "https://api.stripe.com"
+  @headers [
+    {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+    {"Content-Type", "application/x-www-form-urlencoded"}
+  ]
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
@@ -121,7 +129,52 @@ defmodule ConsoleWeb.Router.DeviceController do
 
         organization = Organizations.get_organization(device.organization_id)
         if organization.dc_balance_nonce == event["dc"]["nonce"] do
-          Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
+          {:ok, organization} = Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
+
+          if organization.automatic_charge_amount != nil
+            and organization.automatic_payment_method != nil
+            and organization.dc_balance < 500000
+            and not organization.pending_automatic_purchase do
+              {:ok, organization} = Organizations.update_organization(organization, %{ "pending_automatic_purchase" => true })
+
+              request_body = URI.encode_query(%{
+                "customer" => organization.stripe_customer_id,
+                "amount" => organization.automatic_charge_amount,
+                "currency" => "usd",
+                "payment_method" => organization.automatic_payment_method,
+                "off_session" => "true",
+                "confirm" => "true",
+              })
+
+              with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+                with 200 <- stripe_response.status_code do
+                  payment_intent = Poison.decode!(stripe_response.body)
+
+                  with "succeeded" <- payment_intent["status"],
+                    {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods/#{payment_intent["payment_method"]}", @headers),
+                    200 <- stripe_response.status_code do
+                      card = Poison.decode!(stripe_response.body)
+
+                      attrs = %{
+                        "dc_purchased" => payment_intent["amount"] * 1000,
+                        "cost" => payment_intent["amount"],
+                        "card_type" => card["card"]["brand"],
+                        "last_4" => card["card"]["last4"],
+                        "user_id" => "Recurring Charge",
+                        "organization_id" => organization.id,
+                        "stripe_payment_id" => payment_intent["id"],
+                      }
+
+                      with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, organization) do
+                        organization = Organizations.get_organization!(organization.id)
+                        ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
+                        ConsoleWeb.DataCreditController.broadcast(organization)
+                        ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+                      end
+                  end
+                end
+              end
+          end
         end
 
         conn
