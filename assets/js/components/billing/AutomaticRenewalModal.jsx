@@ -172,7 +172,7 @@ class AutomaticRenewalModal extends Component {
                   {
                     organization.automatic_charge_amount && <Option value="none">Never</Option>
                   }
-                  <Option value="$5">500,000 DC minimum</Option>
+                  <Option value="$5">500,000 DC or less remaining</Option>
                 </Select>
               )
             }

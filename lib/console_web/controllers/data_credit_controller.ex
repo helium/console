@@ -108,7 +108,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def remove_payment_method(conn, %{ "paymentId" => paymentId }) do
+  def remove_payment_method(conn, %{ "paymentId" => paymentId, "latestAddedCardId" => latestAddedCardId }) do
     current_organization = conn.assigns.current_organization
 
     request_body = URI.encode_query(%{})
@@ -127,11 +127,16 @@ defmodule ConsoleWeb.DataCreditController do
           else
             "Payment method removed successfully"
           end
-          broadcast(current_organization)
 
-          conn
-          |> put_resp_header("message", msg)
-          |> send_resp(:no_content, "")
+        if latestAddedCardId != nil do
+          Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
+        end
+
+        broadcast(current_organization)
+
+        conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
       end
     end
   end
@@ -198,6 +203,34 @@ defmodule ConsoleWeb.DataCreditController do
         |> put_resp_header("message", "Automatic payments updated successfully")
         |> send_resp(:no_content, "")
       end
+    end
+  end
+
+  def transfer_dc(conn, %{ "countDC" => countDC, "orgId" => toOrganizationId }) do
+    current_organization = conn.assigns.current_organization
+    current_user = conn.assigns.current_user
+
+    { amount, _ } = Float.parse(countDC)
+    amount = amount |> trunc()
+
+    cond do
+      amount < 1 ->
+        {:error, :bad_request, "Please select a higher Data Credit amount for transfer"}
+      amount > current_organization.dc_balance ->
+        {:error, :bad_request, "You do not have that many Data Credits to transfer"}
+      true ->
+        to_organization = Organizations.get_organization!(current_user, toOrganizationId)
+
+        with {:ok, {:ok, from_org_updated, to_org_updated }} <- Organizations.send_dc_to_org(amount, current_organization, to_organization) do
+          broadcast(from_org_updated)
+          broadcast(to_org_updated)
+          broadcast_router_refill_dc_balance(from_org_updated)
+          broadcast_router_refill_dc_balance(to_org_updated)
+
+          conn
+          |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")
+          |> send_resp(:no_content, "")
+        end
     end
   end
 

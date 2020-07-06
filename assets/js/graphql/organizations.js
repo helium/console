@@ -18,6 +18,7 @@ export const ORGANIZATION_SHOW_DC = gql`
       default_payment_id,
       automatic_charge_amount,
       automatic_payment_method,
+      dc_balance_nonce
     }
   }
 `
@@ -35,6 +36,15 @@ export const PAGINATED_ORGANIZATIONS = gql`
     }
   }
   ${ORGANIZATION_FRAGMENT}
+`
+
+export const ALL_ORGANIZATIONS = gql`
+  query AllOrganizationsQuery {
+    allOrganizations {
+      id,
+      name,
+    }
+  }
 `
 
 export const ORGANIZATION_SUBSCRIPTION = gql`

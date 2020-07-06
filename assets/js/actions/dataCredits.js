@@ -25,8 +25,8 @@ export const setDefaultPaymentMethod = (defaultPaymentId) => () => (
   .then(() => {})
 )
 
-export const removePaymentMethod = (paymentId) => () => (
-  rest.post('/api/data_credits/remove_payment_method', { paymentId })
+export const removePaymentMethod = (paymentId, latestAddedCardId) => () => (
+  rest.post('/api/data_credits/remove_payment_method', { paymentId, latestAddedCardId })
   .then(() => {})
 )
 
@@ -37,6 +37,11 @@ export const createDCPurchase = (cost, cardType, last4, paymentId) => () => (
 
 export const setAutomaticPayments = (chargeAmount, paymentMethod, chargeOption) => () => (
   rest.post('/api/data_credits/set_automatic_payments', { paymentMethod, chargeAmount: convertToString(chargeAmount), chargeOption })
+  .then(() => {})
+)
+
+export const transferDC = (countDC, orgId) => () => (
+  rest.post('/api/data_credits/transfer_dc', { countDC, orgId })
   .then(() => {})
 )
 

@@ -74,6 +74,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :inserted_at, :naive_datetime
     field :dc_balance, :integer
+    field :dc_balance_nonce, :integer
     field :stripe_customer_id, :string
     field :default_payment_id, :string
     field :automatic_payment_method, :string
@@ -252,9 +253,8 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
-    field :organization, :organization do
-      arg :id, non_null(:id)
-      resolve &Console.Organizations.OrganizationResolver.find/2
+    field :all_organizations, list_of(:organization) do
+      resolve &Console.Organizations.OrganizationResolver.all/2
     end
 
     @desc "Search for devices and channels"

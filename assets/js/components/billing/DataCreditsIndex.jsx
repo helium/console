@@ -9,6 +9,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import DefaultPaymentModal from './DefaultPaymentModal'
 import PurchaseCreditModal from './PurchaseCreditModal'
 import AutomaticRenewalModal from './AutomaticRenewalModal'
+import OrganizationTransferDCModal from './OrganizationTransferDCModal'
 import DataCreditPurchasesTable from './DataCreditPurchasesTable'
 import PaymentCard from './PaymentCard'
 import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
@@ -61,7 +62,9 @@ class DataCreditsIndex extends Component {
     showDefaultPaymentModal: false,
     showPurchaseCreditModal: false,
     showAutomaticRenewalModal: false,
+    showOrganizationTransferDCModal: false,
     paymentMethods: [],
+    triedFetchingPayments: false,
   }
 
   componentDidMount() {
@@ -95,7 +98,7 @@ class DataCreditsIndex extends Component {
     if (this.props.role === "admin") {
       this.props.getPaymentMethods()
       .then(paymentMethods => {
-        this.setState({ paymentMethods })
+        this.setState({ paymentMethods, triedFetchingPayments: true })
         if (callback) callback()
       })
     }
@@ -110,12 +113,18 @@ class DataCreditsIndex extends Component {
   }
 
   renderBlankState = () => {
+    const { organization } = this.props.data
     return (
       <div className="blankstateWrapper">
         <div className="message">
           <img style={{width: 100, marginBottom: 20}} src={DCIMg} />
           <h1>Data Credits</h1>
-          <p>It doesn't look like you've used Data Credits yet.</p>
+          {
+            organization.dc_balance !== null && (
+              <p style={{ fontWeight: 400 }}>For signing up with Console you've received an initial balance of 1000 Data Credits. You have {organization.dc_balance} remaining.</p>
+            )
+          }
+          <p style={{ fontSize: 16 }}>Click here to purchase more Data Credits, set up an automatic renewal, and monitor balances.</p>
           <UserCan>
             <Button
               size="large"
@@ -187,8 +196,9 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
-    const { dc_balance, default_payment_id } = this.props.data.organization
-    const defaultPayment = find(this.state.paymentMethods, p => p.id === this.props.data.organization.default_payment_id)
+    const { organization } = this.props.data
+    const { dc_balance, default_payment_id } = organization
+    const defaultPayment = find(this.state.paymentMethods, p => p.id === organization.default_payment_id)
 
     return (
       <div>
@@ -269,7 +279,8 @@ class DataCreditsIndex extends Component {
                 )
               }
               {
-                (this.state.paymentMethods.length == 0 || !defaultPayment) && (
+                (!defaultPayment && this.state.triedFetchingPayments) &&
+                (
                   <Row type="flex" style={{ alignItems: 'center' }}>
                     <Text style={styles.numberCount}>N/A</Text>
                   </Row>
@@ -288,7 +299,7 @@ class DataCreditsIndex extends Component {
   render
 
   render() {
-    const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal } = this.state
+    const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal, showOrganizationTransferDCModal } = this.state
     const { organization, error } = this.props.data
 
     return (
@@ -297,12 +308,20 @@ class DataCreditsIndex extends Component {
         extra={
           <UserCan>
             {
-              organization && organization.dc_balance != null ? (
+              organization && organization.dc_balance_nonce != 0 ? (
                 <React.Fragment>
+                  <Button
+                    size="large"
+                    icon="right-circle"
+                    onClick={() => this.openModal("showOrganizationTransferDCModal")}
+                  >
+                    Transfer DC to Org
+                  </Button>
                   <Button
                     size="large"
                     icon="sync"
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
+                    style={{ marginLeft: 20 }}
                   >
                     Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
                   </Button>
@@ -327,10 +346,10 @@ class DataCreditsIndex extends Component {
           error && <Text>Data failed to load, please reload the page and try again</Text>
         }
         {
-          organization && organization.dc_balance == null && this.renderBlankState()
+          organization && organization.dc_balance_nonce == 0 && this.renderBlankState()
         }
         {
-          organization && organization.dc_balance != null && this.renderContent()
+          organization && organization.dc_balance_nonce != 0 && this.renderContent()
         }
 
         <DefaultPaymentModal
@@ -353,6 +372,12 @@ class DataCreditsIndex extends Component {
           open={showAutomaticRenewalModal}
           onClose={() => this.closeModal("showAutomaticRenewalModal")}
           paymentMethods={this.state.paymentMethods}
+          organization={organization}
+        />
+
+        <OrganizationTransferDCModal
+          open={showOrganizationTransferDCModal}
+          onClose={() => this.closeModal("showOrganizationTransferDCModal")}
           organization={organization}
         />
       </DashboardLayout>

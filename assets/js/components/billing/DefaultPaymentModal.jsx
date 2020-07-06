@@ -33,7 +33,22 @@ class DefaultPaymentModal extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(!prevProps.open && this.props.open) setTimeout(() => this.card.mount("#card-element"), 100)
+    if(!prevProps.open && this.props.open) {
+      setTimeout(() => {
+        this.card.mount("#card-element")
+        this.setState({ paymentMethodSelected: this.props.organization.default_payment_id })
+      }, 100)
+    }
+
+    if(prevProps.open && !this.props.open) {
+      setTimeout(() => {
+        this.setState({ paymentMethodSelected: this.props.organization.default_payment_id })
+      }, 100)
+    }
+
+    if (prevProps.organization && prevProps.organization.default_payment_id !== this.props.organization.default_payment_id) {
+      this.setState({ paymentMethodSelected: this.props.organization.default_payment_id })
+    }
   }
 
   handleSubmit = (e) => {
@@ -82,7 +97,11 @@ class DefaultPaymentModal extends Component {
   }
 
   removePaymentMethod = (paymentId) => {
-    this.props.removePaymentMethod(paymentId)
+    let latestAddedCardId = null
+    const otherCards = this.props.paymentMethods.filter(c => c.id !== paymentId).sort((a, b) => a.created > b.created)
+    if (otherCards[0]) latestAddedCardId = otherCards[0].id
+
+    this.props.removePaymentMethod(paymentId, latestAddedCardId)
     .then(() => {
       this.props.fetchPaymentMethods()
     })
