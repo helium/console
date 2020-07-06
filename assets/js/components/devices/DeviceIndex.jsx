@@ -201,7 +201,7 @@ class DeviceIndex extends Component {
           icon="plus"
           onClick={this.openImportDevicesModal}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
-          style={(hasDevices && {}) || {marginRight: 10}}
+          style={{marginRight: hasDevices ? 0 : 10}}
         >
           Import Devices
         </Button>
