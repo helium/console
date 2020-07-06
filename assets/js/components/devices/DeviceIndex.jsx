@@ -87,7 +87,7 @@ class DeviceIndex extends Component {
         if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
           if (updatedImport.status === "successful") {
             displayInfo(`Imported ${updatedImport.successful_devices} 
-            device${(updatedImport.successful_devices > 1 && "s") || ""} from The Things Network. 
+            device${(updatedImport.successful_devices !== 1 && "s") || ""} from The Things Network. 
             Refresh this page to see the changes.`);
           } else if (updatedImport.status === "failed"){
             displayError("Failed to import devices from The Things Network.");
@@ -191,6 +191,8 @@ class DeviceIndex extends Component {
     const { devices, loading, error } = this.props.devicesQuery;
     const { device_imports } = this.props.importsQuery;
 
+    const hasDevices = devices && devices.entries.length > 0;
+
     const createDeviceButton = () => (
       <UserCan>
         <Button
@@ -199,6 +201,7 @@ class DeviceIndex extends Component {
           icon="plus"
           onClick={this.openImportDevicesModal}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
+          style={{marginRight: hasDevices ? 0 : 10}}
         >
           Import Devices
         </Button>
@@ -216,8 +219,7 @@ class DeviceIndex extends Component {
       <DashboardLayout
         title="Devices"
         extra={
-          devices && devices.entries.length > 0 &&
-          createDeviceButton()
+          hasDevices && createDeviceButton()
         }
       >
         {
