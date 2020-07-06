@@ -135,6 +135,8 @@ defmodule ConsoleWeb.Router.DeviceController do
             and organization.automatic_payment_method != nil
             and organization.dc_balance < 500000
             and not organization.pending_automatic_purchase do
+              
+              organization = Organizations.get_organization_and_lock_for_dc(organization.id)
               {:ok, organization} = Organizations.update_organization(organization, %{ "pending_automatic_purchase" => true })
 
               request_body = URI.encode_query(%{
