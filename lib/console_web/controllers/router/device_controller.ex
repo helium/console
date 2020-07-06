@@ -6,6 +6,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   alias Console.Labels
   alias Console.Devices
+  alias Console.Organizations
   alias Console.Devices.Device
   alias Console.Events
 
@@ -116,6 +117,11 @@ defmodule ConsoleWeb.Router.DeviceController do
             Enum.each(label_ids, fn id ->
               Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, label_debug_event_added: "labels/#{id}/event")
             end)
+        end
+
+        organization = Organizations.get_organization(device.organization_id)
+        if organization.dc_balance_nonce == event["dc"]["nonce"] do
+          Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
         end
 
         conn

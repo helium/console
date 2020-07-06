@@ -56,6 +56,10 @@ defmodule Console.Organizations do
     Repo.get!(Organization, id)
   end
 
+  def get_organization(id) do
+    Repo.get(Organization, id)
+  end
+
   def get_invitation!(id) do
     Repo.get!(Invitation, id)
   end
