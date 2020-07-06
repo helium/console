@@ -218,13 +218,19 @@ defmodule Console.Organizations do
     get_organization_and_lock_for_dc(from_org.id)
     get_organization_and_lock_for_dc(to_org.id)
 
+    to_org_dc_balance =
+      case to_org.dc_balance do
+        nil -> amount
+        _ -> to_org.dc_balance + amount
+      end
+
     Repo.transaction(fn ->
       {:ok, from_org_updated } = update_organization(from_org, %{
         "dc_balance" => from_org.dc_balance - amount,
         "dc_balance_nonce" => from_org.dc_balance_nonce + 1
       })
       {:ok, to_org_updated } = update_organization(to_org, %{
-        "dc_balance" => to_org.dc_balance + amount,
+        "dc_balance" => to_org_dc_balance,
         "dc_balance_nonce" => to_org.dc_balance_nonce + 1
       })
 
