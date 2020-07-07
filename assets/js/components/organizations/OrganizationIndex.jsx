@@ -11,6 +11,7 @@ class OrganizationIndex extends Component {
   state = {
     showOrganizationModal: false,
     showDeleteOrganizationModal: false,
+    selectedOrgForDelete: null
   }
 
   componentDidMount() {
@@ -25,16 +26,16 @@ class OrganizationIndex extends Component {
     this.setState({ showOrganizationModal: false })
   }
 
-  openDeleteOrganizationModal = () => {
-    this.setState({ showDeleteOrganizationModal: true })
+  openDeleteOrganizationModal = selectedOrgForDelete => {
+    this.setState({ showDeleteOrganizationModal: true, selectedOrgForDelete })
   }
 
   closeDeleteOrganizationModal = () => {
-    this.setState({ showDeleteOrganizationModal: false })
+    this.setState({ showDeleteOrganizationModal: false, selectedOrgForDelete: null })
   }
 
   render() {
-    const { showOrganizationModal, showDeleteOrganizationModal } = this.state
+    const { showOrganizationModal, showDeleteOrganizationModal, selectedOrgForDelete } = this.state
     return (
       <DashboardLayout
         title="Organizations"
@@ -68,6 +69,7 @@ class OrganizationIndex extends Component {
         <DeleteOrganizationModal
           open={showDeleteOrganizationModal}
           onClose={this.closeDeleteOrganizationModal}
+          selectedOrgId={selectedOrgForDelete}
         />
       </DashboardLayout>
     )

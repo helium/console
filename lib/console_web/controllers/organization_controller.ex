@@ -39,7 +39,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
     if membership.role != "admin" do

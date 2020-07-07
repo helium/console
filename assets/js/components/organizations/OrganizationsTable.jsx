@@ -100,7 +100,7 @@ class OrganizationsTable extends Component {
                     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
                     deleteOrganization(record.id)
                   } else {
-                    this.props.openDeleteOrganizationModal()
+                    this.props.openDeleteOrganizationModal(record.id)
                   }
                 }}
               />
