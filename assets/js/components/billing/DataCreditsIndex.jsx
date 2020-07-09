@@ -217,7 +217,7 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
-              bodyStyle={{ ...styles.cardBody, width: 400 }}
+              bodyStyle={{ ...styles.cardBody, minWidth: 300 }}
               style={{ overflow: 'hidden' }}
             >
               <Row type="flex" style={{ alignItems: 'center' }}>
@@ -241,7 +241,7 @@ class DataCreditsIndex extends Component {
                 </Popover>
               }
               style={{ overflow: 'hidden' }}
-              bodyStyle={{ ...styles.cardBody, width: 400 }}
+              bodyStyle={{ ...styles.cardBody, minWidth: 300 }}
             >
               <img style={styles.image} src={BytesIMg} />
               <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>{numeral(dc_balance * 24).format('0,0')}</Text>
