@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import OrganizationsTable from '../organizations/OrganizationsTable'
 import NewOrganizationModal from '../organizations/NewOrganizationModal'
+import DeleteOrganizationModal from '../organizations/DeleteOrganizationModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
@@ -9,6 +10,8 @@ import { Card, Button } from 'antd';
 class OrganizationIndex extends Component {
   state = {
     showOrganizationModal: false,
+    showDeleteOrganizationModal: false,
+    selectedOrgForDelete: null
   }
 
   componentDidMount() {
@@ -23,8 +26,16 @@ class OrganizationIndex extends Component {
     this.setState({ showOrganizationModal: false })
   }
 
+  openDeleteOrganizationModal = selectedOrgForDelete => {
+    this.setState({ showDeleteOrganizationModal: true, selectedOrgForDelete })
+  }
+
+  closeDeleteOrganizationModal = () => {
+    this.setState({ showDeleteOrganizationModal: false, selectedOrgForDelete: null })
+  }
+
   render() {
-    const { showOrganizationModal } = this.state
+    const { showOrganizationModal, showDeleteOrganizationModal, selectedOrgForDelete } = this.state
     return (
       <DashboardLayout
         title="Organizations"
@@ -45,12 +56,20 @@ class OrganizationIndex extends Component {
         }
       >
         <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 1, overflowX: 'scroll' }}>
-          <OrganizationsTable />
+          <OrganizationsTable
+            openDeleteOrganizationModal={this.openDeleteOrganizationModal}
+          />
         </Card>
 
         <NewOrganizationModal
           open={showOrganizationModal}
           onClose={this.closeOrganizationModal}
+        />
+
+        <DeleteOrganizationModal
+          open={showDeleteOrganizationModal}
+          onClose={this.closeDeleteOrganizationModal}
+          selectedOrgId={selectedOrgForDelete}
         />
       </DashboardLayout>
     )

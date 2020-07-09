@@ -32,7 +32,7 @@ export const fetchOrganization = () => {
         return dispatch(fetchedOrganization(org));
       } else if (fetchedOrganizations.length) {
         localStorage.setItem(
-          'organization', 
+          'organization',
           JSON.stringify({ id: fetchedOrganizations[0].id })
         );
         return dispatch(fetchedOrganization(fetchedOrganizations[0]));
@@ -78,9 +78,9 @@ export const joinOrganization = (token) => {
   }
 }
 
-export const deleteOrganization = (id) => {
+export const deleteOrganization = (id, destinationOrgId = 'no-transfer') => {
   return (dispatch) => {
-    rest.destroy(`/api/organizations/${id}`)
+    rest.destroy(`/api/organizations/${id}?destination_org_id=${destinationOrgId}`)
       .then(response => {})
   }
 }

@@ -5,6 +5,7 @@ export const ORGANIZATION_FRAGMENT = gql`
     id,
     name,
     inserted_at,
+    dc_balance,
   }
 `
 
@@ -43,6 +44,7 @@ export const ALL_ORGANIZATIONS = gql`
     allOrganizations {
       id,
       name,
+      dc_balance
     }
   }
 `

@@ -39,12 +39,27 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
     if membership.role != "admin" do
       {:error, :forbidden, "You don't have access to do this"}
     else
+      balance_left = organization.dc_balance
+      destination_org =
+        case destination_org_id do
+          "no-transfer" -> nil
+          _ -> Organizations.get_organization(conn.assigns.current_user, destination_org_id)
+        end
+
+      if balance_left != nil and balance_left > 0 and destination_org != nil do
+        {:ok, {:ok, from_org_updated, to_org_updated }} = Organizations.send_dc_to_org(balance_left, organization, destination_org)
+        ConsoleWeb.DataCreditController.broadcast(from_org_updated)
+        ConsoleWeb.DataCreditController.broadcast(to_org_updated)
+        ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
+        ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
+      end
+
       with {:ok, _} <- Organizations.delete_organization(organization) do
         broadcast(organization, conn.assigns.current_user)
         render_org = %{id: organization.id, name: organization.name, role: membership.role}
