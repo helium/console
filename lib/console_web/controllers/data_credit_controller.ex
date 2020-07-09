@@ -153,7 +153,6 @@ defmodule ConsoleWeb.DataCreditController do
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
       "stripe_payment_id" => stripe_payment_id,
-      "auto" => false
     }
 
     with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
@@ -234,15 +233,15 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  defp broadcast(%Organization{} = organization) do
+  def broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end
 
-  defp broadcast(%Organization{} = organization, %DcPurchase{} = dc_purchase) do
+  def broadcast(%Organization{} = organization, %DcPurchase{} = dc_purchase) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, dc_purchase, dc_purchase_added: "#{organization.id}/dc_purchase_added")
   end
 
-  defp broadcast_router_refill_dc_balance(%Organization{} = organization) do
+  def broadcast_router_refill_dc_balance(%Organization{} = organization) do
     ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:refill:dc_balance", %{
       "id" => organization.id, "dc_balance_nonce" => organization.dc_balance_nonce, "dc_balance" => organization.dc_balance
     })
