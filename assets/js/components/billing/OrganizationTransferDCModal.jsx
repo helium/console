@@ -31,15 +31,27 @@ const styles = {
     padding: 24,
     borderRadius: 8,
   },
-  inputHeader: {
-    color: '#096DD9',
-  },
   input: {
-    marginTop: 8
+    marginTop: 8,
+    marginBottom: 8
   },
   orgName: {
     fontSize: 18,
     color: '#38A2FF'
+  },
+  headerContainer: {
+    marginBottom: 20,
+    marginTop: -15,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  rowSpaceBetween: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 }
 
@@ -47,17 +59,15 @@ const styles = {
 @graphql(ALL_ORGANIZATIONS, queryOptions)
 class OrganizationTransferDCModal extends Component {
   state = {
-    showConfirm: false,
     selectedOrgId: undefined,
-    countDC: undefined
+    countDC: undefined,
   }
 
   componentDidUpdate = (prevProps) => {
     if (prevProps.open && !this.props.open) {
       this.setState({
-        showConfirm: false,
         selectedOrgId: undefined,
-        countDC: undefined
+        countDC: undefined,
       })
     }
   }
@@ -72,14 +82,6 @@ class OrganizationTransferDCModal extends Component {
     this.setState({
       selectedOrgId
     })
-  }
-
-  handleNext = () => {
-    this.setState({ showConfirm: true })
-  }
-
-  handleBack = () => {
-    this.setState({ showConfirm: false })
   }
 
   handleSubmit = (e) => {
@@ -98,13 +100,19 @@ class OrganizationTransferDCModal extends Component {
           organization && (
             <React.Fragment>
               <div style={styles.container}>
-                <div style={{ marginBottom: 30 }}>
-                  <Text strong>You are logged in to <span style={{ color: '#38A2FF' }}>{organization.name}</span>.</Text>
+                <div style={styles.headerContainer}>
+                  <div>
+                    <Text>Available DC Balance: </Text>
+                  </div>
+                  <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(organization.dc_balance).format('0,0')}</Text>
                 </div>
 
-                <Text strong>How many Data Credits do you wish to send?</Text>
-                <div style={{ ...styles.amountContainer, marginTop: 12 }}>
-                  <Text style={styles.inputHeader}>Amount of Data Credits</Text>
+                <div style={{
+                  ...styles.amountContainer,
+                  borderBottomLeftRadius: this.state.countDC && this.state.countDC > 0 ? 0 : 8,
+                  borderBottomRightRadius: this.state.countDC && this.state.countDC > 0 ? 0 : 8,
+                }}>
+                  <Text>I'd like to send:</Text>
                   <Input
                     placeholder="Enter Quantity"
                     name="countDC"
@@ -117,6 +125,20 @@ class OrganizationTransferDCModal extends Component {
                     }}
                   />
                 </div>
+                {
+                  this.state.countDC && this.state.countDC > 0 && (
+                    <div style={{
+                      ...styles.amountContainer,
+                      backgroundColor: '#D3F1FF',
+                      ...styles.rowSpaceBetween,
+                      borderTopLeftRadius: 0,
+                      borderTopRightRadius: 0,
+                    }}>
+                      <Text>Remaining DC Balance:</Text>
+                      <Text style={{ color: '#4091F7', fontSize: 20, fontWeight: 500 }}>{numeral(organization.dc_balance - this.state.countDC).format('0,0')}</Text>
+                    </div>
+                  )
+                }
               </div>
 
               <div>
@@ -145,71 +167,32 @@ class OrganizationTransferDCModal extends Component {
     )
   }
 
-  renderConfirm = () => {
-    const { organization, data: { allOrganizations } } = this.props
-    return (
-      <div>
-        <Text strong>You are sending:</Text>
-        <div style={{
-          ...styles.amountContainer,
-          marginTop: 12,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <Text style={{ fontSize: 40, color: '#38A2FF' }}>{numeral(this.state.countDC).format('0,0')} DC</Text>
-        </div>
-
-        <Row style={{ marginTop: 20 }}>
-          <Col span={12}>
-            <div>
-              <Text>From</Text>
-            </div>
-            <div>
-              <Text strong style={styles.orgName}>{organization.name}</Text>
-            </div>
-          </Col>
-          <Col span={12}>
-            <div>
-              <Text>To</Text>
-            </div>
-            <div>
-              <Text strong style={styles.orgName}>{find(allOrganizations, org => org.id === this.state.selectedOrgId)['name']}</Text>
-            </div>
-          </Col>
-        </Row>
-      </div>
-    )
-  }
-
   render() {
     const { open, onClose, organization } = this.props
 
     return(
       <Modal
-        title={this.state.showConfirm ? "Confirm Transaction" : "Transfer DC to Organization"}
+        title="Transfer DC to Organization"
         visible={open}
         onCancel={onClose}
         centered
         footer={
           [
-            <Button key="back" onClick={this.state.showConfirm ? this.handleBack : this.props.onClose}>
+            <Button key="back" onClick={this.props.onClose}>
               Cancel
             </Button>,
             <Button
               key="submit"
               type="primary"
-              onClick={this.state.showConfirm ? this.handleSubmit : this.handleNext}
-              disabled={!this.state.showConfirm && (!this.state.selectedOrgId || !this.state.countDC || this.state.countDC == 0)}
+              onClick={this.handleSubmit}
+              disabled={!this.state.selectedOrgId || !this.state.countDC || this.state.countDC == 0}
             >
               Make Transfer
             </Button>,
           ]
         }
       >
-        {!this.state.showConfirm && this.renderOrgEntry()}
-        {this.state.showConfirm && this.renderConfirm()}
+        {this.renderOrgEntry()}
       </Modal>
     )
   }
