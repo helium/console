@@ -43,7 +43,8 @@ class PurchaseCreditModal extends Component {
     countB: undefined,
     paymentIntentSecret: null,
     loading: false,
-    paymentMethodSelected: undefined
+    paymentMethodSelected: undefined,
+    qrContent: null,
   }
 
   componentDidMount() {
@@ -59,6 +60,15 @@ class PurchaseCreditModal extends Component {
     this.card.on('focus', () => {
       this.setState({ paymentMethodSelected: undefined })
     })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.open && this.props.open) {
+      this.setState({ qrContent: "yess" })
+    }
+    if (prevProps.open && !this.props.open) {
+      this.setState({ qrContent: null })
+    }
   }
 
   handleCountInputUpdate = (e) => {
@@ -299,26 +309,25 @@ class PurchaseCreditModal extends Component {
         centered
         footer={this.renderModalFooter()}
       >
-      <Tabs
-        defaultActiveKey="1"
-        animated={false}
-        onChange={tabActiveKey => this.setState({ tabActiveKey })}
-        tabBarStyle={{
-          display: 'flex',
-          justifyContent: 'center'
-        }}
-      >
-        <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 1 && "#4091F7" }}><Icon type="fire" theme="filled" />Burn HNT</Text>} key="1">
-          <div style={{ padding: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-            <QRCode value="hey" size={180}/>
-          </div>
-        </TabPane>
-        <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 2 && "#4091F7" }}><Icon type="credit-card" />Charge Credit Card</Text>} key="2">
-          {!this.state.showPayment && this.renderCountSelection()}
-          {this.state.showPayment && this.renderPayment()}
-        </TabPane>
-      </Tabs>
-
+        <Tabs
+          defaultActiveKey="1"
+          animated={false}
+          onChange={tabActiveKey => this.setState({ tabActiveKey })}
+          tabBarStyle={{
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+          <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 1 && "#4091F7" }}><Icon type="fire" theme="filled" />Burn HNT</Text>} key="1">
+            <div style={{ padding: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+              {this.state.qrContent && <QRCode value={this.state.qrContent} size={180}/>}
+            </div>
+          </TabPane>
+          <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 2 && "#4091F7" }}><Icon type="credit-card" />Charge Credit Card</Text>} key="2">
+            {!this.state.showPayment && this.renderCountSelection()}
+            {this.state.showPayment && this.renderPayment()}
+          </TabPane>
+        </Tabs>
       </Modal>
     )
   }

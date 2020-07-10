@@ -14,6 +14,8 @@ defmodule Console.Organizations.Organization do
     field :automatic_payment_method, :string
     field :dc_balance_nonce, :integer
     field :pending_automatic_purchase, :boolean
+    field :memo, :string
+    field :memo_created_at, :naive_datetime
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -46,7 +48,17 @@ defmodule Console.Organizations.Organization do
 
   def update_changeset(organization, attrs) do
     organization
-    |> cast(attrs, [:stripe_customer_id, :default_payment_id, :dc_balance, :automatic_charge_amount, :automatic_payment_method, :dc_balance_nonce, :pending_automatic_purchase])
+    |> cast(attrs, [
+      :stripe_customer_id,
+      :default_payment_id,
+      :dc_balance,
+      :automatic_charge_amount,
+      :automatic_payment_method,
+      :dc_balance_nonce,
+      :pending_automatic_purchase,
+      :memo,
+      :memo_created_at
+    ])
   end
 
   @doc false
