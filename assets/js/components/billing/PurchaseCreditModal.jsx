@@ -3,6 +3,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import stripe from '../../config/stripe'
 import { connect } from 'react-redux'
+import QRCode from 'react-qr-code'
 import numeral from 'numeral'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
@@ -10,8 +11,9 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Radio, Checkbox } from 'antd';
+import { Modal, Button, Typography, Divider, Radio, Checkbox, Tabs, Icon } from 'antd';
 const { Text } = Typography
+const { TabPane } = Tabs
 
 const styles = {
   container: {
@@ -34,6 +36,7 @@ const styles = {
 @connect(null, mapDispatchToProps)
 class PurchaseCreditModal extends Component {
   state = {
+    tabActiveKey: 1,
     showPayment: false,
     countDC: undefined,
     countUSD: undefined,
@@ -246,6 +249,44 @@ class PurchaseCreditModal extends Component {
     )
   }
 
+  renderModalFooter = () => {
+    if (this.state.tabActiveKey == 1) return (
+      [
+        <Button key="back" onClick={this.handleClose}>
+          Cancel
+        </Button>,
+        <Button type="primary" onClick={this.handleClose}>
+          I've made my payment
+        </Button>,
+      ]
+    )
+    if (this.state.showPayment) return (
+      [
+        <Button key="back" onClick={this.handleBack} disabled={this.state.loading}>
+          Back
+        </Button>,
+        <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={this.state.loading}>
+          Make Payment
+        </Button>,
+      ]
+    )
+    return (
+      [
+        <Button key="back" onClick={this.handleClose} disabled={this.state.loading}>
+          Cancel
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          onClick={this.handleNext}
+          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading}
+        >
+          Continue To Payment
+        </Button>,
+      ]
+    )
+  }
+
   render() {
     const { open } = this.props
     const { loading } = this.state
@@ -256,33 +297,28 @@ class PurchaseCreditModal extends Component {
         visible={open}
         onCancel={loading ? () => {} : this.handleClose}
         centered
-        footer={
-          this.state.showPayment ?
-          [
-            <Button key="back" onClick={this.handleBack} disabled={loading}>
-              Back
-            </Button>,
-            <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={loading}>
-              Make Payment
-            </Button>,
-          ] :
-          [
-            <Button key="back" onClick={this.handleClose} disabled={loading}>
-              Cancel
-            </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={this.handleNext}
-              disabled={!this.state.countUSD || this.state.countUSD == 0 || loading}
-            >
-              Continue To Payment
-            </Button>,
-          ]
-        }
+        footer={this.renderModalFooter()}
       >
-        {!this.state.showPayment && this.renderCountSelection()}
-        {this.state.showPayment && this.renderPayment()}
+      <Tabs
+        defaultActiveKey="1"
+        animated={false}
+        onChange={tabActiveKey => this.setState({ tabActiveKey })}
+        tabBarStyle={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 1 && "#4091F7" }}><Icon type="fire" theme="filled" />Burn HNT</Text>} key="1">
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+            <QRCode value="hey" size={180}/>
+          </div>
+        </TabPane>
+        <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 2 && "#4091F7" }}><Icon type="credit-card" />Charge Credit Card</Text>} key="2">
+          {!this.state.showPayment && this.renderCountSelection()}
+          {this.state.showPayment && this.renderPayment()}
+        </TabPane>
+      </Tabs>
+
       </Modal>
     )
   }

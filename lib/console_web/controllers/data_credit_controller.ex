@@ -19,7 +19,7 @@ defmodule ConsoleWeb.DataCreditController do
 
   def create_customer_id_and_charge(conn, %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
-    if amount < 5 do
+    if amount < 10 do
       {:error, :bad_request, "Credit card charges cannot be less than $10"}
     else
       current_organization = conn.assigns.current_organization
@@ -55,7 +55,7 @@ defmodule ConsoleWeb.DataCreditController do
   def create_charge(conn, %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
 
-    if amount < 5 do
+    if amount < 10 do
       {:error, :bad_request, "Credit card charges cannot be less than $10"}
     else
       current_organization = conn.assigns.current_organization
@@ -203,7 +203,7 @@ defmodule ConsoleWeb.DataCreditController do
   def set_automatic_payments(conn, %{ "chargeAmount" => charge_amount, "paymentMethod" => payment_method, "chargeOption" => charge_option }) do
     { amount, _ } = Float.parse(charge_amount)
 
-    if amount < 5 and charge_option != "none" do
+    if amount < 10 and charge_option != "none" do
       {:error, :bad_request, "Credit card charges cannot be less than $10"}
     else
       current_organization = conn.assigns.current_organization
