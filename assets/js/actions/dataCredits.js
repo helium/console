@@ -45,6 +45,10 @@ export const transferDC = (countDC, orgId) => () => (
   .then(() => {})
 )
 
+export const generateMemo = () => () => (
+  rest.get('/api/data_credits/generate_memo')
+)
+
 const convertToString = (amount) => {
   if (typeof(amount) === "number") {
     return amount.toString()

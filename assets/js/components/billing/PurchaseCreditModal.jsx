@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
-import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Divider, Radio, Checkbox, Tabs, Icon } from 'antd';
 const { Text } = Typography
 const { TabPane } = Tabs
@@ -64,7 +64,10 @@ class PurchaseCreditModal extends Component {
 
   componentDidUpdate(prevProps) {
     if (!prevProps.open && this.props.open) {
-      this.setState({ qrContent: "yess" })
+      this.props.generateMemo()
+      .then(({ data }) => {
+        this.setState({ qrContent: data.memo })
+      })
     }
     if (prevProps.open && !this.props.open) {
       this.setState({ qrContent: null })
@@ -265,7 +268,7 @@ class PurchaseCreditModal extends Component {
         <Button key="back" onClick={this.handleClose}>
           Cancel
         </Button>,
-        <Button type="primary" onClick={this.handleClose}>
+        <Button key="submit" type="primary" onClick={this.handleClose}>
           I've made my payment
         </Button>,
       ]
@@ -334,7 +337,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments, generateMemo }, dispatch)
 }
 
 export default PurchaseCreditModal

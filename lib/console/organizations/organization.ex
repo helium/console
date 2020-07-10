@@ -59,6 +59,7 @@ defmodule Console.Organizations.Organization do
       :memo,
       :memo_created_at
     ])
+    |> unique_constraint(:memo, name: :organizations_memo_index, message: "That memo is not available.")
   end
 
   @doc false

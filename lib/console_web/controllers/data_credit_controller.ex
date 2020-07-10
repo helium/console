@@ -259,6 +259,18 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
+  def generate_memo(conn, _) do
+    current_organization = conn.assigns.current_organization
+
+    attrs = %{
+      "memo" => :crypto.strong_rand_bytes(8) |> Base.encode64(padding: false),
+      "memo_created_at" => NaiveDateTime.utc_now()
+    }
+    {:ok, organization} = Organizations.update_organization(current_organization, attrs)
+
+    conn |> send_resp(:ok, Poison.encode!(%{ memo: organization.memo }))
+  end
+
   def broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end
