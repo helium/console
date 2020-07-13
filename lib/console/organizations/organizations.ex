@@ -86,6 +86,12 @@ defmodule Console.Organizations do
     Repo.one(query)
   end
 
+  def get_administrators(%Organization{id: organization_id}) do
+    query = from m in Membership,
+      where: m.organization_id == ^organization_id and m.role == ^"admin"
+    Repo.all(query)
+  end
+
   def get_current_organization(user, organization_id) do
     if user.super do
       organization = get_organization!(organization_id)
