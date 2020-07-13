@@ -81,6 +81,7 @@ defmodule ConsoleWeb.Router do
       post "/event", DeviceController, :add_device_event
     end
     resources "/organizations", OrganizationController, only: [:show]
+    post "/organizations/burned", OrganizationController, :burned_dc
   end
 
   scope "/api/v1", ConsoleWeb.V1 do
