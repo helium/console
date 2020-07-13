@@ -190,9 +190,9 @@ defmodule ConsoleWeb.DataCreditController do
 
             # send transaction emails
             Organizations.get_administrators(current_organization)
-              |> Enum.each(fn admin ->
-                Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
-              end)
+            |> Enum.each(fn admin ->
+              Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
+            end)
 
             conn
             |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
