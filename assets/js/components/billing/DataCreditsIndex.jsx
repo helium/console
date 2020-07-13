@@ -121,7 +121,7 @@ class DataCreditsIndex extends Component {
           <h1>Data Credits</h1>
           {
             organization.dc_balance !== null && (
-              <p style={{ fontWeight: 400 }}>For signing up with Console you've received an initial balance of 1000 Data Credits. You have {organization.dc_balance} remaining.</p>
+              <p style={{ fontWeight: 400 }}>For signing up with Console you've received an initial balance of 10000 Data Credits. You have {organization.dc_balance} remaining.</p>
             )
           }
           <p style={{ fontSize: 16 }}>Click here to purchase more Data Credits, set up an automatic renewal, and monitor balances.</p>
