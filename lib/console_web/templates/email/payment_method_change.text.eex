@@ -1,0 +1,5 @@
+Hi there,
+
+An administrator of <%= @organization_name %> made changes to your payment methods on Helium Console.
+
+<%= @updater_email %> <%= @action %> a payment method at <%= @date_time %>.

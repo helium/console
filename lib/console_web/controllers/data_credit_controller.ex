@@ -1,10 +1,12 @@
 defmodule ConsoleWeb.DataCreditController do
   use ConsoleWeb, :controller
   alias Console.Repo
+  alias Console.Email
   alias Console.Organizations
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
+  alias Console.Mailer
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -92,6 +94,12 @@ defmodule ConsoleWeb.DataCreditController do
     with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, @headers) do
       with 200 <- stripe_response.status_code do
         setup_intent = Poison.decode!(stripe_response.body)
+        # Send email about payment method added
+        Organizations.get_administrators(current_organization)
+        |> Enum.each(fn administrator ->
+          conn.assigns.current_user
+          |> Email.payment_method_updated_email(current_organization, administrator.email, "added") |> Mailer.deliver_later()
+        end)
         conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
       end
     end
@@ -102,6 +110,12 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
       broadcast(organization)
+      # Send email about payment method changed
+      Organizations.get_administrators(current_organization)
+      |> Enum.each(fn administrator ->
+        conn.assigns.current_user
+        |> Email.payment_method_updated_email(current_organization, administrator.email, "updated") |> Mailer.deliver_later()
+      end)
       conn
       |> put_resp_header("message", "Default payment method updated successfully")
       |> send_resp(:no_content, "")
@@ -131,6 +145,12 @@ defmodule ConsoleWeb.DataCreditController do
         if latestAddedCardId != nil do
           Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
         end
+        # Send email about payment method changed
+        Organizations.get_administrators(current_organization)
+        |> Enum.each(fn administrator ->
+          conn.assigns.current_user
+          |> Email.payment_method_updated_email(current_organization, administrator.email, "removed") |> Mailer.deliver_later()
+        end)
 
         broadcast(current_organization)
 
@@ -167,6 +187,12 @@ defmodule ConsoleWeb.DataCreditController do
             broadcast(current_organization, dc_purchase)
             broadcast(current_organization)
             broadcast_router_refill_dc_balance(current_organization)
+
+            # send transaction emails
+            Organizations.get_administrators(current_organization)
+              |> Enum.each(fn admin ->
+                Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
+              end)
 
             conn
             |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
