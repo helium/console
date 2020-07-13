@@ -17,7 +17,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
     render(conn, "show.json", organization: organization)
   end
 
-  def burned_dc(conn, %{"memo" => memo, "amount" => amount, "cost" => cost}) do
+  def burned_dc(conn, %{"memo" => memo, "dc_amount" => amount, "hnt_amount" => cost}) do
     case Organizations.get_organization_by_memo(memo) do
       %Organization{} = organization ->
         now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
