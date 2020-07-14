@@ -26,7 +26,6 @@ defmodule Console.DcPurchases.DcPurchaseResolver do
           nil -> Map.put(p, :user_id, p.user_id)
           _ -> Map.put(p, :user_id, user.email)
         end
-
       end)
 
     {:ok,  Map.put(purchases, :entries, updated_entries)}

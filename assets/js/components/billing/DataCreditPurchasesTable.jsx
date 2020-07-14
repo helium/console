@@ -9,9 +9,14 @@ import { Card, Typography, Table, Pagination, Icon } from 'antd';
 const { Text } = Typography
 
 const styles = {
-  icon: {
+  greenIcon: {
     fontSize: 12,
     color: '#2BE5A2',
+    marginRight: 5
+  },
+  redIcon: {
+    fontSize: 12,
+    color: '#FF7875',
     marginRight: 5
   }
 }
@@ -66,7 +71,13 @@ class DataCreditPurchasesTable extends Component {
       {
         title: 'Data Credits',
         dataIndex: 'dc_purchased',
-        render: data => "+" + numeral(data).format('0,0'),
+        render:  (data, record) => {
+          if (record.card_type == "transfer" && record.to_organization){
+            return "-" + numeral(data).format('0,0')
+          } else {
+            return "+" + numeral(data).format('0,0')
+          }
+        }
       },
       // {
       //   title: 'Cost',
@@ -83,12 +94,12 @@ class DataCreditPurchasesTable extends Component {
         title: 'From/To',
         dataIndex: 'payment_id',
         render:  (data, record) => {
-          if (record.card_type == "burn") {
-            return <Text><Icon style={styles.icon} type="caret-left" />{"MEMO: " + data}</Text>
-          } else if (record.card_type == "transfer"){
-            return
+          if (record.card_type == "transfer" && record.from_organization){
+            return <Text><Icon style={styles.greenIcon} type="caret-left" />{record.from_organization}</Text>
+          } else if (record.card_type == "transfer" && record.to_organization){
+            return <Text><Icon style={styles.redIcon} type="caret-right" />{record.to_organization}</Text>
           } else {
-            return <Text><Icon style={styles.icon} type="caret-left" />{data.slice(3)}</Text>
+            return <Text>{data}</Text>
           }
         }
       },

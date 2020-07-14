@@ -260,11 +260,12 @@ defmodule ConsoleWeb.DataCreditController do
             "user_id" => current_user.id,
           }
 
-          Map.merge(attrs, %{"from_organization" => from_org_updated.id, "organization_id" => to_org_updated.id })
+          {:ok, to_org_dc_purchase} = Map.merge(attrs, %{"from_organization" => from_org_updated.name, "organization_id" => to_org_updated.id })
           |> DcPurchases.create_dc_purchase()
-
-          Map.merge(attrs, %{"to_organization" => to_org_updated.id, "organization_id" => from_org_updated.id })
+          {:ok, from_org_dc_purchase} = Map.merge(attrs, %{"to_organization" => to_org_updated.name, "organization_id" => from_org_updated.id })
           |> DcPurchases.create_dc_purchase()
+          broadcast(to_org_updated, to_org_dc_purchase)
+          broadcast(from_org_updated, from_org_dc_purchase)
 
           conn
           |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")
