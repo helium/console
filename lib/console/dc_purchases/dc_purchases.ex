@@ -12,7 +12,7 @@ defmodule Console.DcPurchases do
       |> Repo.one()
   end
 
-  def create_dc_purchase(attrs \\ %{}, %Organization{} = organization) do
+  def create_dc_purchase_update_org(attrs \\ %{}, %Organization{} = organization) do
     Repo.transaction(fn ->
       new_balance =
         case organization.dc_balance do
@@ -29,5 +29,11 @@ defmodule Console.DcPurchases do
       |> DcPurchase.changeset(attrs)
       |> Repo.insert()
     end)
+  end
+
+  def create_dc_purchase(attrs \\ %{}) do
+    %DcPurchase{}
+    |> DcPurchase.changeset(attrs)
+    |> Repo.insert()
   end
 end

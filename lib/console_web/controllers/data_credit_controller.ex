@@ -181,7 +181,7 @@ defmodule ConsoleWeb.DataCreditController do
         payment_intent = Poison.decode!(stripe_response.body)
 
         with "succeeded" <- payment_intent["status"],
-          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, current_organization) do
+          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
             current_organization = Organizations.get_organization!(current_organization.id)
             broadcast(current_organization, dc_purchase)
             broadcast(current_organization)
@@ -251,6 +251,20 @@ defmodule ConsoleWeb.DataCreditController do
           broadcast(to_org_updated)
           broadcast_router_refill_dc_balance(from_org_updated)
           broadcast_router_refill_dc_balance(to_org_updated)
+
+          attrs = %{
+            "dc_purchased" => amount,
+            "cost" => 0,
+            "card_type" => "transfer",
+            "last_4" => "transfer",
+            "user_id" => current_user.id,
+          }
+
+          Map.merge(attrs, %{"from_organization" => from_org_updated.id, "organization_id" => to_org_updated.id })
+          |> DcPurchases.create_dc_purchase()
+
+          Map.merge(attrs, %{"to_organization" => to_org_updated.id, "organization_id" => from_org_updated.id })
+          |> DcPurchases.create_dc_purchase()
 
           conn
           |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")

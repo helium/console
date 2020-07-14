@@ -30,7 +30,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
           "payment_id" => memo,
         }
 
-        with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, organization) do
+        with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
           {:ok, organization} = Organizations.update_organization(organization, %{ "memo" => nil })
           ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
           ConsoleWeb.DataCreditController.broadcast(organization)

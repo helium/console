@@ -85,6 +85,8 @@ class DataCreditPurchasesTable extends Component {
         render:  (data, record) => {
           if (record.card_type == "burn") {
             return <Text><Icon style={styles.icon} type="caret-left" />{"MEMO: " + data}</Text>
+          } else if (record.card_type == "transfer"){
+            return
           } else {
             return <Text><Icon style={styles.icon} type="caret-left" />{data.slice(3)}</Text>
           }
@@ -100,6 +102,8 @@ class DataCreditPurchasesTable extends Component {
         render: (text, record) => {
           if (record.card_type == "burn") {
             return "-"
+          } else if (record.card_type == "transfer"){
+            return "DC Transfer"
           } else {
             return <PaymentCard key={record.id} id={record.id} card={{ brand: record.card_type, last4: record.last_4 }}/>
           }

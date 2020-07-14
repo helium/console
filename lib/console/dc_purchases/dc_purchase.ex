@@ -22,7 +22,7 @@ defmodule Console.DcPurchases.DcPurchase do
   def changeset(dc_purchase, attrs) do
     dc_purchase
     |> cast(attrs, [:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id, :payment_id])
-    |> validate_required([:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id, :payment_id])
+    |> validate_required([:dc_purchased, :cost, :card_type, :last_4, :organization_id, :user_id])
     |> unique_constraint(:payment_id, name: :dc_purchases_stripe_payment_id_index, message: "That payment has already been processed.")
   end
 end
