@@ -161,7 +161,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => stripe_payment_id}) do
+  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     # Refactor out conversion rates between USD, DC, Bytes later
@@ -172,11 +172,11 @@ defmodule ConsoleWeb.DataCreditController do
       "last_4" => last_4,
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
-      "stripe_payment_id" => stripe_payment_id,
+      "payment_id" => payment_id,
     }
 
-    with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
-      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{stripe_payment_id}", @headers),
+    with nil <- DcPurchases.get_by_payment_id(payment_id),
+      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", @headers),
       200 <- stripe_response.status_code do
         payment_intent = Poison.decode!(stripe_response.body)
 

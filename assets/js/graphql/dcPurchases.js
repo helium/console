@@ -11,6 +11,7 @@ export const PAGINATED_DC_PURCHASES = gql`
         last_4
         user_id
         inserted_at
+        payment_id
       },
       totalEntries,
       totalPages,

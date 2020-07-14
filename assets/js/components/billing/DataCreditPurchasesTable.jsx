@@ -5,8 +5,16 @@ import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
-import { Card, Typography, Table, Pagination } from 'antd';
+import { Card, Typography, Table, Pagination, Icon } from 'antd';
 const { Text } = Typography
+
+const styles = {
+  icon: {
+    fontSize: 12,
+    color: '#2BE5A2',
+    marginRight: 5
+  }
+}
 
 const queryOptions = {
   options: props => ({
@@ -56,28 +64,49 @@ class DataCreditPurchasesTable extends Component {
   render() {
     const columns = [
       {
-        title: 'DC Purchased',
+        title: 'Data Credits',
         dataIndex: 'dc_purchased',
-        render: data => numeral(data).format('0,0'),
+        render: data => "+" + numeral(data).format('0,0'),
+      },
+      // {
+      //   title: 'Cost',
+      //   dataIndex: 'cost',
+      //   render:  (data, record) => {
+      //     if (record.card_type == "burn") {
+      //       return data + " HNT"
+      //     } else {
+      //       return "$ " + (data / 100).toFixed(2)
+      //     }
+      //   }
+      // },
+      {
+        title: 'From/To',
+        dataIndex: 'payment_id',
+        render:  (data, record) => {
+          if (record.card_type == "burn") {
+            return <Text><Icon style={styles.icon} type="caret-left" />{"MEMO: " + data}</Text>
+          } else {
+            return <Text><Icon style={styles.icon} type="caret-left" />{data.slice(3)}</Text>
+          }
+        }
       },
       {
-        title: 'Cost',
-        dataIndex: 'cost',
-        render: data => "USD $" + (data / 100).toFixed(2),
-      },
-      {
-        title: 'Purchaser',
+        title: 'Handled By',
         dataIndex: 'user_id',
       },
       {
-        title: 'Payment Method',
+        title: 'Transfer Method',
         dataIndex: 'last_4',
-        render: (text, record) => (
-          <PaymentCard key={record.id} id={record.id} card={{ brand: record.card_type, last4: record.last_4 }}/>
-        )
+        render: (text, record) => {
+          if (record.card_type == "burn") {
+            return "-"
+          } else {
+            return <PaymentCard key={record.id} id={record.id} card={{ brand: record.card_type, last4: record.last_4 }}/>
+          }
+        }
       },
       {
-        title: 'Payment Date',
+        title: 'Transfer Date',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll'),
         align: 'left',

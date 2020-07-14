@@ -6,9 +6,9 @@ defmodule Console.DcPurchases do
   alias Console.Organizations.Organization
   alias Console.Organizations
 
-  def get_by_stripe_payment_id(id) do
+  def get_by_payment_id(id) do
     DcPurchase
-      |> where([d], d.stripe_payment_id == ^id)
+      |> where([d], d.payment_id == ^id)
       |> Repo.one()
   end
 

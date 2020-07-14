@@ -27,7 +27,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
           "last_4" => "burn",
           "user_id" => "HNT Burn",
           "organization_id" => organization.id,
-          "stripe_payment_id" => memo,
+          "payment_id" => memo,
         }
 
         with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, organization) do

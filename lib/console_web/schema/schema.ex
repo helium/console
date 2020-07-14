@@ -98,6 +98,7 @@ defmodule ConsoleWeb.Schema do
     field :card_type, :string
     field :last_4, :string
     field :inserted_at, :naive_datetime
+    field :payment_id, :string
   end
 
   paginated object :function do
