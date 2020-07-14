@@ -262,13 +262,19 @@ defmodule ConsoleWeb.DataCreditController do
   def generate_memo(conn, _) do
     current_organization = conn.assigns.current_organization
 
-    attrs = %{
-      "memo" => :crypto.strong_rand_bytes(8) |> Base.encode64(padding: false),
-      "memo_created_at" => NaiveDateTime.utc_now()
-    }
-    {:ok, organization} = Organizations.update_organization(current_organization, attrs)
+    memo =
+      case current_organization.memo do
+        nil ->
+          attrs = %{
+            "memo" => :crypto.strong_rand_bytes(8) |> Base.encode64(padding: false),
+          }
+          {:ok, organization} = Organizations.update_organization(current_organization, attrs)
+          organization.memo
+        _ ->
+          current_organization.memo
+      end
 
-    conn |> send_resp(:ok, Poison.encode!(%{ memo: organization.memo }))
+    conn |> send_resp(:ok, Poison.encode!(%{ memo: memo }))
   end
 
   def broadcast(%Organization{} = organization) do
