@@ -3,6 +3,7 @@ defmodule ConsoleWeb.OrganizationController do
 
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.DcPurchases
   alias Console.Auth
   alias Console.Auth.User
 
@@ -58,6 +59,19 @@ defmodule ConsoleWeb.OrganizationController do
         ConsoleWeb.DataCreditController.broadcast(to_org_updated)
         ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
         ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
+
+        attrs = %{
+          "dc_purchased" => balance_left,
+          "cost" => 0,
+          "card_type" => "transfer",
+          "last_4" => "transfer",
+          "user_id" => conn.assigns.current_user.id,
+          "from_organization" => organization.name,
+          "organization_id" => destination_org.id
+        }
+
+        {:ok, destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
+        ConsoleWeb.DataCreditController.broadcast(destination_org, destination_org_dc_purchase)
       end
 
       with {:ok, _} <- Organizations.delete_organization(organization) do
