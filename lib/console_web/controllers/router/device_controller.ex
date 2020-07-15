@@ -11,6 +11,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
+  alias Console.Email
+  alias Console.Mailer
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -128,8 +130,24 @@ defmodule ConsoleWeb.Router.DeviceController do
         end
 
         organization = Organizations.get_organization(device.organization_id)
+        prev_dc_balance = organization.dc_balance
         if organization.dc_balance_nonce == event["dc"]["nonce"] do
           {:ok, organization} = Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
+
+          cond do
+            prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
+              # DC Balance has dipped below 500,000. Send a notice.
+              Organizations.get_administrators(organization)
+              |> Enum.each(fn administrator ->
+                Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance) |> Mailer.deliver_later()
+              end)
+            organization.dc_balance == 0 ->
+              # DC Balance has gone to zero. Send a notice.
+              Organizations.get_administrators(organization)
+              |> Enum.each(fn administrator ->
+                Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
+              end)
+          end
 
           if organization.automatic_charge_amount != nil
             and organization.automatic_payment_method != nil
