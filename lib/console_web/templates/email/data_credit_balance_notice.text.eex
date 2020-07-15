@@ -1,0 +1,6 @@
+Hi there,
+
+Your organization, <%= @organization_name %>, has dropped to a balance of <%= @balance %> data credits as of <%= @date_time %>.
+
+If you have automatic renewal set up then there's no need to worry, you will be automatically billed and issued additional data credits.
+Otherwise you may need to purchase additional data credits.

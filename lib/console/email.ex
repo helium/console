@@ -9,6 +9,16 @@ defmodule Console.Email do
   alias Console.Organizations.Organization
   alias DateTime
 
+  def dc_balance_notification_email(%Organization{name: organization_name}, recipient, dc_balance) do
+    base_email()
+    |> to(recipient)
+    |> subject("Data credit balance notification")
+    |> assign(:balance, dc_balance)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:data_credit_balance_notice)
+  end
+
   def payment_method_updated_email(%User{email: updater_email}, %Organization{name: organization_name}, recipient, action) do
     base_email()
     |> to(recipient)
