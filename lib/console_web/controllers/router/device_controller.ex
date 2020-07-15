@@ -141,7 +141,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               |> Enum.each(fn administrator ->
                 Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance) |> Mailer.deliver_later()
               end)
-            organization.dc_balance <= 0 ->
+            prev_dc_balance > 0 and organization.dc_balance <= 0 ->
               # DC Balance has gone to zero. Send a notice.
               Organizations.get_administrators(organization)
               |> Enum.each(fn administrator ->
