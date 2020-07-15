@@ -22,6 +22,30 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
+  def index(conn, %{"dev_eui" => dev_eui}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui(dev_eui)
+
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Devices not found"}
+      _ ->
+        render(conn, "index.json", devices: devices)
+    end
+  end
+
+  def index(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
+
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Devices not found"}
+      _ ->
+        render(conn, "index.json", devices: devices)
+    end
+  end
+
   def index(conn, _params) do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:devices])
