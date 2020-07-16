@@ -63,6 +63,13 @@ class OrganizationsTable extends Component {
     })
   }
 
+  formatDCBalance = (data) => {
+    const units = 'DC';
+    const value = data ? data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0';
+
+    return `${value} ${units}`;
+  }
+
   render() {
     const columns = [
       {
@@ -73,6 +80,11 @@ class OrganizationsTable extends Component {
         title: 'Created',
         dataIndex: 'inserted_at',
         render: data => moment(data).format('LL')
+      },
+      {
+        title: 'DC Balance',
+        dataIndex: 'dc_balance',
+        render: this.formatDCBalance
       },
       {
         title: '',
