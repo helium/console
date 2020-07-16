@@ -11,9 +11,8 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import AmountEntryCalculator from './AmountEntryCalculator'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Radio, Checkbox, Tabs, Icon } from 'antd';
+import { Modal, Button, Typography, Divider, Radio, Checkbox } from 'antd';
 const { Text } = Typography
-const { TabPane } = Tabs
 
 const styles = {
   container: {
@@ -25,18 +24,12 @@ const styles = {
     color: '#4091F7',
     fontSize: 30,
     marginTop: -8
-  },
-  checkboxContainer: {
-    marginTop: 30,
-    display: 'flex',
-    flexDirection: 'row'
   }
 }
 
 @connect(null, mapDispatchToProps)
 class PurchaseCreditModal extends Component {
   state = {
-    tabActiveKey: 1,
     showPayment: false,
     countDC: undefined,
     countUSD: undefined,
@@ -60,18 +53,6 @@ class PurchaseCreditModal extends Component {
     this.card.on('focus', () => {
       this.setState({ paymentMethodSelected: undefined })
     })
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.open && this.props.open) {
-      this.props.generateMemo()
-      .then(({ data }) => {
-        this.setState({ qrContent: data.memo })
-      })
-    }
-    if (prevProps.open && !this.props.open) {
-      this.setState({ qrContent: null })
-    }
   }
 
   handleCountInputUpdate = (e) => {
@@ -263,16 +244,6 @@ class PurchaseCreditModal extends Component {
   }
 
   renderModalFooter = () => {
-    if (this.state.tabActiveKey == 1) return (
-      [
-        <Button key="back" onClick={this.handleClose}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={this.handleClose}>
-          I've made my payment
-        </Button>,
-      ]
-    )
     if (this.state.showPayment) return (
       [
         <Button key="back" onClick={this.handleBack} disabled={this.state.loading}>
@@ -312,25 +283,8 @@ class PurchaseCreditModal extends Component {
         centered
         footer={this.renderModalFooter()}
       >
-        <Tabs
-          defaultActiveKey="1"
-          animated={false}
-          onChange={tabActiveKey => this.setState({ tabActiveKey })}
-          tabBarStyle={{
-            display: 'flex',
-            justifyContent: 'center'
-          }}
-        >
-          <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 1 && "#4091F7" }}><Icon type="fire" theme="filled" />Burn HNT</Text>} key="1">
-            <div style={{ padding: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-              {this.state.qrContent && <QRCode value={this.state.qrContent} size={180}/>}
-            </div>
-          </TabPane>
-          <TabPane tab={<Text style={{ color: this.state.tabActiveKey == 2 && "#4091F7" }}><Icon type="credit-card" />Charge Credit Card</Text>} key="2">
-            {!this.state.showPayment && this.renderCountSelection()}
-            {this.state.showPayment && this.renderPayment()}
-          </TabPane>
-        </Tabs>
+        {!this.state.showPayment && this.renderCountSelection()}
+        {this.state.showPayment && this.renderPayment()}
       </Modal>
     )
   }
