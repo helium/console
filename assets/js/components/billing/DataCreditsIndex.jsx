@@ -179,14 +179,19 @@ class DataCreditsIndex extends Component {
             h1 {
               font-size: 46px;
               margin-bottom: 10px;
+              font-weight: 600;
+              margin-bottom: 10px;
             }
             p {
               font-size: 20px;
               font-weight: 300;
+              margin: 0 auto;
+              max-width: 500px;
+              margin-bottom: 20px;
             }
             .blankstateWrapper {
               width: 100%;
-              padding-top: 150px;
+              padding-top: 80px;
               margin: 0 auto;
               position: relative;
             }

@@ -216,6 +216,8 @@ class FunctionIndexTable extends Component {
               h1 {
                 font-size: 46px;
                 margin-bottom: 10px;
+                font-weight: 600;
+                margin-top: 10px;
               }
               p {
                 font-size: 20px;

@@ -23,7 +23,7 @@ export const labelColors = [
 ]
 
 export const labelColorsHex = {
-  geekblue: "#678CF3",
+  geekblue: "#1890ff",
   cyan: "#2ECEC4",
   purple: "#B37FEB",
   magenta: "#FF85C0",

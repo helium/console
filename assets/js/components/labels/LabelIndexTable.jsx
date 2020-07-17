@@ -207,6 +207,8 @@ class LabelIndexTable extends Component {
                 h1 {
                   font-size: 46px;
                   margin-bottom: 10px;
+                  font-weight: 600;
+                  margin-top: 10px;
                 }
                 p {
                   font-size: 20px;
@@ -216,7 +218,7 @@ class LabelIndexTable extends Component {
 
                 .blankstateWrapper {
                   width: 100%;
-                  padding-top: 150px;
+                  padding-top: 100px;
                   margin: 0 auto;
                   position: relative;
 
