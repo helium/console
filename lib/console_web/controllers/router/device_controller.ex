@@ -147,6 +147,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               |> Enum.each(fn administrator ->
                 Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
               end)
+            true -> nil
           end
 
           if organization.automatic_charge_amount != nil
