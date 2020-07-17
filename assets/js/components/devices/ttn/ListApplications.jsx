@@ -48,7 +48,7 @@ const ListApplications = (props) => {
                   }/>
                 <Text style={{ color: 'black' }}>{app.name}</Text>
                 <Text
-                  style={{ marginLeft: 'auto', color: strokeForMetaText, fontFamily: 'monospace', fontSize: 12 }}
+                  style={{ marginLeft: 'auto', color: strokeForMetaText, fontFamily: 'monospace', fontSize: 14 }}
                 >
                   {app.id}
                 </Text>
@@ -60,7 +60,7 @@ const ListApplications = (props) => {
       <Row style={{ ...horizontalPadding, marginTop: 10 }}>
         <Col sm={2}><Checkbox checked={createLabels} onChange={() => setCreateLabels(!createLabels)}/></Col>
         <Col sm={22}>
-          <Text style={{fontSize: 12, lineHeight: .9}}>
+          <Text style={{fontSize: 14, lineHeight: .9}}>
             Import these devices with a premade label of their existing Application ID
           </Text>
         </Col>
@@ -70,7 +70,7 @@ const ListApplications = (props) => {
           <Checkbox checked={deleteTtnDevices} onChange={() => setDeleteTtnDevices(!deleteTtnDevices)}/>
         </Col>
         <Col sm={22}>
-          <Text style={{fontSize: 12, lineHeight: .9}}>
+          <Text style={{fontSize: 14, lineHeight: .9}}>
             Delete devices in Things Network instance to prevent automatic reassociation
           </Text>
         </Col>

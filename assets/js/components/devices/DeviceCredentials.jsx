@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { Button, Icon, Tag } from 'antd';
+import { Button, Icon, Tag, Typography } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+const { Text } = Typography
+
 
 class DeviceCredentials extends Component {
   state = {
@@ -27,17 +29,17 @@ class DeviceCredentials extends Component {
 
     return(
       <span>
-        <Button color={display !== 'default' ? 'blue' : ''} size="small" onClick={this.toggleDefault}><Icon type="arrows-alt" /></Button>
+        <Button color={display !== 'default' ? 'blue' : ''} size="small" style={{ marginRight: 10 }} onClick={this.toggleDefault}><Icon type="arrows-alt" /></Button>
 
         { display !== 'default' && <Button size="small"  onClick={this.toggleType}><Icon type="swap" /></Button> }
         { display !== 'default' && <p style={{display: 'inline-block',margin: 0, marginRight: 5 }}>{display}:</p> }
-        { display == 'default' && <span style={{ marginRight: 7 }}>{formattedData}</span>}
-        { display == 'default' && <CopyToClipboard text={formattedData}><Tag><Icon type="copy" /></Tag></CopyToClipboard>}
+        { display == 'default' && <Text code style={{ marginRight: 10 }}>{formattedData}</Text>}
+        { display == 'default' && <CopyToClipboard text={formattedData}><Button style={{marginRight: 4}} size="small"><Icon type="copy" /></Button></CopyToClipboard>}
 
-        { display == 'msb' &&  <span style={{ marginRight: 7 }}>{msb}</span> }
+        { display == 'msb' &&  <Text code style={{ marginRight: 10 }}>{msb}</Text> }
         { display == 'msb' &&  <CopyToClipboard text={msb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
 
-        { display == 'lsb' &&  <span style={{ marginRight: 7 }}>{lsb}</span> }
+        { display == 'lsb' &&  <Text code style={{ marginRight: 10 }}>{lsb}</Text> }
         { display == 'lsb' &&  <CopyToClipboard text={lsb}><Tag><Icon type="copy" /></Tag></CopyToClipboard> }
 
       </span>

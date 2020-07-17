@@ -8,8 +8,20 @@
 body {
   overscroll-behavior: none;
   height: 100%;
-  font-family: soleil, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';;
+  font-family: proxima-nova, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';;
+  font-weight: 300;
+
+
 }
+
+.ant-input, .ant-select {
+  font-size: 15px ;
+}
+
+p {
+  font-size: 15px;
+}
+
 
 .mainContainer {
   height: 100%;
@@ -27,6 +39,11 @@ h1 {
   height: 100%;
 }
 
+.ant-layout-sider {
+  background: #F6F8FA;
+  border-right: 1px solid #e1e4e8;
+}
+
 :focus
 {
   outline: none;
@@ -36,26 +53,24 @@ h1 {
 
 #searchBar
 {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: #3E4347;
+  border-radius: 4px;
   padding: 4px 16px 4px 16px;
   display: flex;
   margin-right: 4px;
   position: relative;
+  top: 4px;
+  margin-left: 10px;
 }
 
-#searchBar:hover
-{
-  cursor: text;
-  background: rgba(255, 255, 255, 0.2);
-}
+
 
 #searchBar input
 {
   background: none;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 24px;
   margin-left: 10px;
   width: 100px;
@@ -67,6 +82,10 @@ h1 {
 #searchBar input:focus
 {
   width: 200px;
+}
+
+#searchBar input::placeholder {
+  color: #CFD0D1;
 }
 
 #searchResults
@@ -95,13 +114,23 @@ h1 {
 }
 
 
+.ant-table-thead > tr > th {
+  font-weight: 600;
+}
+
 #RoleTable td {
   border-bottom: 0px;
+}
+
+.labellist .labelrowwrapper:last-of-type {
+  padding-bottom: 8px;
 }
 
 .ant-card {
   border-radius: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
+  font-size: 16px;
 }
 
 .ant-menu-inline {
@@ -109,7 +138,10 @@ h1 {
 }
 
 .ant-layout-header {
-  background: #00274c;
+  background: #24292e;
+  height: 55px;
+  line-height: 55px;
+
 }
 
 .no-padding-card {
@@ -122,7 +154,15 @@ h1 {
 }
 
 .ant-card-head {
-  padding: 0 16px;
+  font-size: 17px;
+  border-bottom: 1px solid #e1e4e8;
+  padding: 0px 22px;
+  background: #F6F8FA;
+  font-weight: 600;
+}
+
+.ant-card-bordered {
+  border: 1px solid #e1e4e8;
 }
 
 .ant-table-tbody button.ant-btn {
@@ -165,9 +205,13 @@ h1 {
   vertical-align: -0.12em;
 }
 
-.ant-table-tbody > tr > td:last-of-type {
-  text-align: right;
+.ant-table-tbody > tr > td {
+  transition: all 0s;
 }
+
+
+
+
 
 @keyframes rotate{
   to{ transform: rotate(360deg); }
@@ -187,9 +231,9 @@ h1 {
           }
 
 .ant-modal-mask {
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-backdrop-filter: saturate(180%) blur(20px);
-background: rgba(0,21,41,0.8);
+  -webkit-backdrop-filter: saturate(380%) blur(2px);
+backdrop-filter: saturate(380%) blur(2px);
+background: rgba(20,20,20,0.9);
 }
 
 .ant-modal-content {
@@ -207,7 +251,38 @@ background: rgba(0,21,41,0.8);
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    background: #fff;
 }
+
+tr.ant-table-expanded-row, tr.ant-table-expanded-row:hover {
+    background: #f6f8fa;
+
+
+}
+
+.ant-table {
+  font-size: 15px;
+}
+
+.ant-table a {
+  font-weight: 400;
+}
+
+.ant-table-thead > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+  background: #fafafa;
+}
+
+.ant-table-thead > tr > th {
+  background: none;
+
+}
+
+.ant-modal-body {
+  font-size: 16px;
+}
+
+
+
 .ant-layout::-webkit-scrollbar { /* WebKit */
     width: 0;
     height: 0;
@@ -223,18 +298,38 @@ background: rgba(0,21,41,0.8);
     height: 0;
 }
 
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub {
+  background: #F6F8FA;
+}
+
 .menu-link {
-  color: #53779E;
+  color: #1b1f23;
   display: block;
-  padding: 20px;
+  padding: 22px 20px;
   position: relative;
+  font-size: 16px;
+  border-left: 0px solid #38A2FF;
+  font-weight: 400;
+   transition: all .2s ease;
+   box-sizing: border-box;
+}
+
+.menu-link:hover {
+  color: #048aff;
+    transition: all .2s ease;
+    border-left: 10px solid #38A2FF;
 
 }
 
-
-a.menu-link {
-  transition: none;
+.ant-select-dropdown-menu-item {
+  font-weight: 300;
 }
+
+input {
+  font-weight: 300;
+}
+
+
 
 
               .pod#left a {
@@ -267,8 +362,23 @@ a.menu-link {
                 color: #722ED1;
               }
 
+.ant-typography code {
+color: #4091f7;
+background: rgba(64, 145, 247,0.1);
+border-color: rgba(64, 145, 247,0.2);
+padding: 0.4em 0.6em 0.3em;
 
-.menu-link:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.13);
 }
+
+
+
+.ant-typography {
+  color: rgba(0, 0, 0, 0.75);
+  font-weight: 300;
+}
+
+.ant-typography strong {
+  font-weight: 400;
+    color: rgba(0, 0, 0, 1);
+}
+

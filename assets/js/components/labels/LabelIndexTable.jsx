@@ -125,6 +125,7 @@ class LabelIndexTable extends Component {
               <Button
                 type="danger"
                 icon="delete"
+                small="size"
                 shape="circle"
                 onClick={e => {
                   e.stopPropagation()
@@ -177,21 +178,21 @@ class LabelIndexTable extends Component {
                 }
 
                 .explainer {
-                  background: #DFE8F4;
                   padding: 20px 60px;
                   border-radius: 20px;
-                  border: 1px solid #CCD7E9;
                   text-align: center;
                   margin-top: 50px;
                   box-sizing: border-box;
+                    border: none;
+  background: #F6F8FA;
                 }
 
                 .explainer h2 {
-                  color: #242425;
+                  color: #242424;
                   font-size: 20px;
                 }
                 .explainer p {
-                  color: #556B8C;
+                  color: #565656;
                   font-size: 15px;
                 }
 

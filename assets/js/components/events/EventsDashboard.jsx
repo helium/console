@@ -6,6 +6,7 @@ import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
 import { Badge, Card, Col, Row, Typography, Table, Tag } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
 const queryOptions = {
@@ -31,13 +32,13 @@ const base64ToHex = str => {
 const categoryTag = (category) => {
   switch(category) {
     case "up":
-      return <Tag color="green">uplink</Tag>
+      return <Text>Uplink</Text>
     case "down":
-      return <Tag color="red">downlink</Tag>
+      return <Text>Downlink</Text>
     case "ack":
-      return <Tag color="orange">ack</Tag>
+      return <Text>Acknowledge</Text>
     case "activation":
-      return <Tag color="blue">activation</Tag>
+      return <Text>Activation</Text>
   }
 }
 
@@ -104,10 +105,10 @@ class EventsDashboard extends Component {
     return (
       <Row gutter={10}>
         <Col span={22}>
-          <Card bordered={false}>
+          <Card  bodyStyle={{padding: 0}}>
             <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
           </Card>
-          <Card bordered={false}>
+          <Card  bodyStyle={{padding: 0}}>
             <Table columns={channelColumns} dataSource={record.channels} pagination={false} rowKey={record => record.id}/>
           </Card>
         </Col>
@@ -121,26 +122,26 @@ class EventsDashboard extends Component {
     const columns = [
       {
         dataIndex: 'category',
-        render: data => <span>{categoryTag(data)}</span>
+        render: data => <Text>{categoryTag(data)}</Text>
       },
       {
-        title: 'FCnt',
+        title: 'Frame Count',
         dataIndex: 'frame_up',
-        render: (data, row) => row.category === 'up' ? <span>{row.frame_up}</span> : <span>{row.frame_down}</span>
+        render: (data, row) => row.category === 'up' ? <Tag style={{borderRadius: 9999, paddingBottom: 0, paddingRight: 9, fontSize: 14}} color="#4091F7"><CaretUpOutlined /> {row.frame_up}</Tag> : <Tag style={{borderRadius: 9999, paddingBottom: 0, paddingRight: 9, fontSize: 14}} color="#FA541C"><CaretDownOutlined /> {row.frame_down}</Tag>
       },
       {
         title: 'Port',
         dataIndex: 'port',
       },
       {
-        title: 'DevAddr',
+        title: 'Dev Address',
         dataIndex: 'devaddr',
       },
       {
         title: 'Time',
         dataIndex: 'reported_at',
         align: 'left',
-        render: data => <span style={{textAlign:'left'}}>{formatUnixDatetime(data)}</span>
+        render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
       },
     ]
 
@@ -153,18 +154,20 @@ class EventsDashboard extends Component {
 
     return(
       <React.Fragment>
-        <div>
+        <div style={{padding: 20}}>
           <div className="chart-legend-bulb red"></div>
           <Text>
             Live Data
           </Text>
         </div>
+        <div style={{padding: 20, boxSizing: 'border-box'}}>
         <PacketGraph events={this.state.rows} />
-
-        <Text strong>
+        </div>
+        <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8'}}>
+        <Text strong style={{display: 'block', fontSize: 19, color: 'rgba(0, 0, 0, 0.85)'}}>
           Event Log
         </Text>
-        <br />
+        </div>
         <Table
           dataSource={rows}
           columns={columns}

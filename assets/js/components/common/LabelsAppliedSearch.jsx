@@ -53,7 +53,7 @@ class LabelsAppliedSearch extends Component {
 
     return (
       <div style={{ paddingRight: 17, borderRight: '1px solid #D9D9D9', marginRight: 30 }}>
-        <Text>Add a Label</Text><br/>
+        <Text style={{marginBottom: 6, display:'block'}}>Add a Label</Text>
         <Select
           showSearch
           placeholder="Search or Create Label..."

@@ -57,8 +57,8 @@ class DebugSidebar extends Component {
     if (data.length === 0) return (
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
-        <Text code style={{ color: debugTextColor }}>
-          Waiting for data
+        <Text style={{ color: debugTextColor }}>
+          Waiting for data...
         </Text>
       </div>
     )
@@ -105,7 +105,7 @@ class DebugSidebar extends Component {
     return (
       <div
         style={{
-          backgroundColor: debugSidebarBackgroundColor,
+          background: debugSidebarBackgroundColor,
           position: 'absolute',
           top: 64,
           width: show ? 500 : 0,

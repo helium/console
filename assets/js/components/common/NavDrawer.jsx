@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Menu, Icon, Typography } from 'antd'
+import { Tag, Menu, Icon, Typography } from 'antd'
 import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
@@ -58,39 +58,37 @@ class NavDrawer extends Component {
           theme="dark"
           onClick={this.handleClick}
         >
-          <div><Link to={"/devices"} className="menu-link"><Icon style={{ marginRight: 8 }} type="appstore"/>Devices</Link></div>
-          <div><Link to={"/integrations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="api"/>Integrations</Link></div>
+          <div><Link to={"/devices"} className="menu-link">Devices</Link></div>
+          <div><Link to={"/integrations"} className="menu-link">Integrations</Link></div>
           <div style={{ marginLeft: 0, position: 'relative' }}>
-            <Link to={"/labels"} className="menu-link">
-              <Icon style={{ marginRight: 8 }} type="tag"/>Labels
-            </Link>
+            <Link to={"/labels"} className="menu-link">Labels</Link>
             {
               showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', transform: 'scale(1.5,1)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false })}
                 >
-                  -
+                  <Icon type="eye-invisible" theme="filled" />
                 </p>
               )
             }
             {
               !showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
-                  style={{ position: 'absolute', right: 24, top: 28, color: '#53779E', fontSize: 22, fontFamily: 'soleil-light', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true })}
                 >
-                  +
+                  <Icon type="eye" theme="filled" />
                 </p>
               )
             }
           </div>
           {
             showLabels && (
-              <div>
+              <div style={{background: '#d9e2ef' }} className="labellist">
                 {
                   data.allLabels && data.allLabels.map(l => (
-                 <div style={{ padding: 8, paddingLeft: 24, width: 300, backgroundColor: '#020B13' }} key={l.id}>
+                 <div style={{ paddingTop: 8, paddingLeft: 18, width: 300 }} key={l.id} className="labelrowwrapper">
                     <div style={{ padding: 2 }}>
                       <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color} deviceCount={l.device_count}/>
@@ -102,10 +100,10 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          <div><Link to={"/functions"} className="menu-link"><Icon style={{ marginRight: 8 }} type="code"/>Functions</Link></div>
-          <div><Link to={"/organizations"} className="menu-link"><Icon style={{ marginRight: 8 }} type="switcher"/>Organizations</Link></div>
-          <div><Link to={"/users"} className="menu-link"><Icon style={{ marginRight: 8 }} type="user"/>Users</Link></div>
-          <div><Link to={"/datacredits"} className="menu-link"><Icon style={{ marginRight: 8 }} type="wallet"/>Data Credits</Link></div>
+          <div><Link to={"/functions"} className="menu-link">Functions</Link></div>
+          <div><Link to={"/organizations"} className="menu-link">Organizations</Link></div>
+          <div><Link to={"/users"} className="menu-link">Users</Link></div>
+          <div><Link to={"/datacredits"} className="menu-link">Data Credits</Link></div>
         </Menu>
       </div>
     )
@@ -113,25 +111,21 @@ class NavDrawer extends Component {
 }
 
 const LabelRow = ({ text, color, deviceCount }) => (
-  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-    <div>
-      <Icon type="tag" theme="filled" style={{ color: color ? labelColorsHex[color] : labelColorsHex['geekblue'], marginRight: 10}} />
-      <Text style={{ color: 'white', fontSize: 12}}>{text}</Text>
-    </div>
-    {
-      deviceCount > 0 &&
+  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}} >
+    <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><Icon style={{marginRight: 8}} type="tag" theme="filled" />{text}</div>
+        {
+            deviceCount > 0 &&
       <div style={{
         marginRight: 115,
-        borderRadius: 9,
+        borderRadius: 4,
         lineHeight: 1,
-        backgroundColor: color ? labelColorsHex[color] : labelColorsHex['geekblue'],
-        paddingLeft: 7,
-        paddingRight: 7
+        color: color ? labelColorsHex[color] : labelColorsHex['geekblue'],
+        padding: '4px 10px 4px 8px',
+        fontSize: 16,
+        fontWeight: 400,
+
       }}>
-        <Text
-          style={{
-            fontSize: 12,
-          }}>{deviceCount}</Text>
+       {deviceCount}
       </div>
     }
   </div>

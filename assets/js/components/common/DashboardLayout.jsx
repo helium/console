@@ -20,7 +20,7 @@ class DashboardLayout extends Component {
           !noSideNav && (
             <Sider style={{ overflow: 'hidden' }}>
               <NavDrawer />
-              <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20}} color="#00274c"><Icon type="tool" /> Version 0.8</Tag>
+              <Tag style={{position: 'absolute', textAlign:'center', bottom: 20, left: 20, fontSize: 14, padding: '6px 12px'}} color="#111"><Icon type="tool" style={{marginRight: 6}} />v0.8</Tag>
             </Sider>
           )
         }

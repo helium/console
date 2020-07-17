@@ -65,7 +65,8 @@ class FunctionNew extends Component {
 
     return (
       <DashboardLayout title="Create New Function">
-        <Card title="Step 1 - Enter Function Details">
+        <Card    
+ title="Step 1 - Enter Function Details">
           <Text>Enter Function Name</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
@@ -107,9 +108,8 @@ class FunctionNew extends Component {
         }
 
         <UserCan>
-          <Card title="Labels Applied To">
-            <Text>Labels are necessary to apply Functions to devices</Text>
-            <div style={{ height: 10 }}/>
+          <Card            title="Labels Applied To">
+            <Text style={{margin: '10px 0 30px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
             <LabelsAppliedNew
               handleLabelsUpdate={this.handleLabelsUpdate}
               addOrPrompt={this.confirmOrOpenModal}

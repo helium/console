@@ -135,8 +135,7 @@ class ChannelNew extends Component {
         )}
         { showNextSteps && (
           <Card title="Step 4 - Apply Integration to Label (Can be added later)">
-            <Text>Labels are necessary to connect devices to integrations</Text>
-            <div style={{ height: 10 }}/>
+            <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
             <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
             <div style={{ marginTop: 20 }}>
               <Button

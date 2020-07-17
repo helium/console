@@ -100,6 +100,7 @@ class LabelShowTable extends Component {
                 type="danger"
                 icon="delete"
                 shape="circle"
+                size="small"
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openRemoveDevicesFromLabelModal([record])
@@ -130,10 +131,10 @@ class LabelShowTable extends Component {
           <UserCan>
             <Select
               value="Quick Action"
-              style={{ width: 220 }}
+              style={{ width: 300 }}
               onSelect={this.handleSelectOption}
             >
-              <Option disabled={this.state.selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Devices from Label</Option>
+              <Option disabled={this.state.selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
             </Select>
           </UserCan>
         }

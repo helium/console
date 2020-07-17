@@ -44,6 +44,7 @@ class DeviceIndexTable extends Component {
       {
         title: 'Device EUI',
         dataIndex: 'dev_eui',
+        render: (text, record) => <Text code>{text}</Text>
       },
       {
         title: 'Labels',
@@ -126,6 +127,7 @@ class DeviceIndexTable extends Component {
                 type="danger"
                 icon="delete"
                 shape="circle"
+                size="small"
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openDeleteDeviceModal([record])

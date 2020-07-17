@@ -178,7 +178,9 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <Card title="Function Details">
+        <Card
+              
+ title="Function Details">
           <Text>Update Function</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
@@ -235,9 +237,10 @@ class FunctionShow extends Component {
         }
 
         <UserCan>
-          <Card title="Labels Applied To">
-            <Text>Labels are necessary to apply Functions to devices</Text>
-            <div style={{ height: 10 }}/>
+          <Card             bordered={false}
+ title="Labels Applied To">
+            <Text style={{marginBottom: 20, display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
+            
             <LabelsAppliedExisting
               labels={fxn.labels}
               updateLabelFunction={this.updateLabelFunction}
