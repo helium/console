@@ -28,7 +28,7 @@ export const labelColorsHex = {
   purple: "#B37FEB",
   magenta: "#FF85C0",
   gold: "#F8C741",
-  lime: "#89E044",
+  lime: "#7ed43a",
   volcano: "#FF7875",
 }
 

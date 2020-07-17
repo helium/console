@@ -78,7 +78,7 @@ class CreateLabelModal extends Component {
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
         />
-        <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>Label names must be unique</Text>
+        <Text style={{ marginBottom: 20, marginTop: 10, fontSize: 14, color: grayForModalCaptions }}>Label names must be unique</Text>
 
         <Divider />
 
@@ -86,7 +86,7 @@ class CreateLabelModal extends Component {
         <div>
           <Select
             placeholder={error ? "No Integrations Available" : "Choose Integration"}
-            style={{ width: 220, marginRight: 10, marginTop: 10 }}
+            style={{ width: '100%', marginRight: 10, marginTop: 10 }}
             onSelect={this.handleSelectChannel}
           >
             {
@@ -100,7 +100,7 @@ class CreateLabelModal extends Component {
    
           <Select
             placeholder={error ? "No Functions Available" : "Choose Function"}
-            style={{ width: 220, marginRight: 10, marginTop: 10 }}
+            style={{ width: '100%', marginRight: 10, marginTop: 10 }}
             onSelect={this.handleSelectFunction}
           >
             {

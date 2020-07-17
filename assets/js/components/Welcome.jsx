@@ -164,6 +164,7 @@ class Welcome extends Component {
                 color: #242425;
                 line-height: 1;
                 margin-top: 70px;
+                font-weight: 600;
               }
 
               .pod {

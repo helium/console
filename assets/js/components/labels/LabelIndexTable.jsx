@@ -125,7 +125,7 @@ class LabelIndexTable extends Component {
               <Button
                 type="danger"
                 icon="delete"
-                small="size"
+                size="small"
                 shape="circle"
                 onClick={e => {
                   e.stopPropagation()
@@ -237,7 +237,7 @@ class LabelIndexTable extends Component {
           <UserCan>
             <Select
               value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
+              style={{ width: 330, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
               <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>

@@ -72,11 +72,12 @@ class NewDeviceModal extends Component {
         centered
         onCancel={onClose}
         onOk={this.handleSubmit}
+        width={700}
         footer={[
-          <Button key="back" onClick={onClose}>
+          <Button size="large" key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={this.handleSubmit}>
+          <Button size="large" key="submit" type="primary" onClick={this.handleSubmit}>
             Submit
           </Button>,
         ]}
@@ -122,19 +123,18 @@ class NewDeviceModal extends Component {
           value={this.state.appKey}
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
-          maxLength={32}
+          maxLength={56}
           addonBefore="App Key"
           suffix={
             <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>{Math.floor(this.state.appKey.length / 2)} / 16 Bytes</Text>
           }
         />
 
-        <Divider />
 
-        <Text strong>Attach a Label (Optional)</Text><br />
+        <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
         <Select
           placeholder={error ? "No Labels found..." : "Choose Label"}
-          style={{ width: 220, marginRight: 10, marginTop: 10 }}
+          style={{ width: 300, marginRight: 10, marginTop: 10 }}
           onSelect={this.handleSelectOption}
         >
           {

@@ -33,18 +33,18 @@ class TopBar extends Component {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{width: '50%'}}>
+        <div>
         <Link to="/welcome">
           <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
           </Link>
-          {
+          
+        </div>
+        {
           currentOrganizationName && <SearchBar />
         }
-        </div>
-        
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Link to="/welcome">
-            <Icon type="home" style={{ color: '#ffffff', fontSize: 18 }}/>
+            <Icon type="home" style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
           </Link>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ visible })}>
             <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>

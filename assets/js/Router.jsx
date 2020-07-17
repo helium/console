@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 
 import { persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-
+import { Spin } from 'antd';
 import { ApolloProvider } from 'react-apollo';
 
 // Routes
@@ -74,7 +74,7 @@ const Router = (props) => {
     }
   }, [loading, isAuthenticated, currentOrganizationId, loadingOrganization, loadedOrganization, user]);
   if (loading) {
-    return <div>Loading...</div>
+    return <div style={{position: 'absolute', top: 'calc(50% - 20px)', left: 'calc(50% - 20px)'}}><Spin size="large" /></div>
   }
   const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/devices' : '/welcome';
   return (

@@ -13,7 +13,7 @@ const GetApplications = (props) => {
   return (
     <Fragment>
       <img src={TTNImport} style={{marginTop: 40, marginBottom: 40, height: 100, objectFit: 'cover'}}/>
-      <Title style={{width: '100%', textAlign: 'center', fontSize: 30}}>
+      <Title style={{width: '100%', textAlign: 'center', fontSize: 40}}>
         Import Devices
       </Title>
       <Text style={{width: '100%', textAlign: 'center'}}>
