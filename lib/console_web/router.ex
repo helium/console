@@ -65,6 +65,7 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/set_automatic_payments", DataCreditController, :set_automatic_payments
     post "/data_credits/transfer_dc", DataCreditController, :transfer_dc
     get "/data_credits/generate_memo", DataCreditController, :generate_memo
+    get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
   end
 
   scope "/api/router", ConsoleWeb.Router do

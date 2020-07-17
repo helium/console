@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
+import { get } from '../../util/rest'
 import stripe from '../../config/stripe'
+import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import QRCode from 'react-qr-code'
 import numeral from 'numeral'
@@ -11,7 +13,7 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
 const { Text } = Typography
 
 const styles = {
@@ -54,6 +56,7 @@ const styles = {
 class PurchaseCreditModal extends Component {
   state = {
     showPage: "default",
+    gettingPrice: false,
     countDC: undefined,
     countUSD: undefined,
     countB: undefined,
@@ -61,6 +64,7 @@ class PurchaseCreditModal extends Component {
     paymentIntentSecret: null,
     paymentMethodSelected: undefined,
     qrContent: null,
+    hntToBurn: null,
   }
 
   componentDidMount() {
@@ -78,6 +82,28 @@ class PurchaseCreditModal extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if(!prevProps.open && this.props.open && this.state.countDC) {
+      this.setState({ gettingPrice: true, hntToBurn: null })
+      this.getOraclePrice()
+    }
+  }
+
+  getOraclePrice = debounce(() => {
+    get('/api/data_credits/get_hnt_price')
+    .then(({data}) => {
+      const dcPrice = this.state.countDC * 0.00001
+      const hntPrice = data.price / 100000000
+      const hntToBurn = (Math.ceil((dcPrice / hntPrice) * 100000000) / 100000000).toFixed(8)
+
+      this.setState({ gettingPrice: false, hntToBurn })
+    })
+    .catch(() => {
+      // failed to get price, do not allow burn to continue
+      this.setState({ gettingPrice: false })
+    })
+  }, 500)
+
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
     if (e.target.value.length > 11) return
@@ -86,8 +112,10 @@ class PurchaseCreditModal extends Component {
       this.setState({
         countDC: e.target.value,
         countUSD: e.target.value / 100000,
-        countB: e.target.value * 24
+        countB: e.target.value * 24,
+        gettingPrice: true
       })
+      this.getOraclePrice()
     }
     if (e.target.value == '') {
       this.setState({
@@ -215,12 +243,28 @@ class PurchaseCreditModal extends Component {
             value={this.state.countDC}
             onChange={this.handleCountInputUpdate}
             type="number"
+            suffix="DC"
           />
           {
             this.state.countUSD > 0 && (
               <div style={styles.costContainer}>
                 <Text style={{ color: '#4091F7', marginTop: -5 }}>Cost:</Text>
                 <Text style={styles.costNumber}>USD {countUSD && parseFloat(countUSD).toFixed(2)}</Text>
+              </div>
+            )
+          }
+          {
+            this.state.gettingPrice && (
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                <Spin indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} style={{ marginRight: 10 }}/>
+                <Text style={{ color: '#40A9FF'}}>Calculating Cost...</Text>
+              </div>
+            )
+          }
+          {
+            this.state.hntToBurn && (
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                <Text style={{ color: '#40A9FF'}}>{this.state.hntToBurn}</Text>
               </div>
             )
           }

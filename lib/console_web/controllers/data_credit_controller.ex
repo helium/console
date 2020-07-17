@@ -292,6 +292,28 @@ defmodule ConsoleWeb.DataCreditController do
     conn |> send_resp(:ok, Poison.encode!(%{ memo: memo }))
   end
 
+  def get_hnt_price(conn, _) do
+    with {:ok, current_price_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/prices/current"),
+      200 <- current_price_resp.status_code,
+      {:ok, predictions_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/predictions"),
+      200 <- predictions_resp.status_code do
+        current_price = Poison.decode!(current_price_resp.body)
+        predictions = Poison.decode!(predictions_resp.body)
+
+        next_price_timestamp =
+          case predictions["data"] do
+            [] ->
+              now = DateTime.utc_now() |> DateTime.truncate(:second)
+              seconds_to_add = 60 - now.second + (59 - now.minute) * 60
+              next_price_timestamp = now |> DateTime.add(seconds_to_add, :second) |> DateTime.to_unix
+            list ->
+              List.first(list)["time"]
+          end
+
+        conn |> send_resp(:ok, Poison.encode!(%{ price: current_price["data"]["price"], next_price_timestamp: next_price_timestamp }))
+    end
+  end
+
   def broadcast(%Organization{} = organization) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
   end
