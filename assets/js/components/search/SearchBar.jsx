@@ -180,7 +180,7 @@ class SearchBar extends Component {
     const { searchResults } = this.props.data
 
     return (
-      <div>
+      <div style={{display: 'inline-block'}}>
         <div onClick={this.focusSearchBar} id="searchBar" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Icon type="search" style={{ color: 'white', fontSize: 18 }} />
           <input
@@ -212,10 +212,7 @@ class SearchBar extends Component {
 
               }
 
-              #searchBar:hover {
-                background: rgba(255, 255, 255, 0.15);
-                transiton: all .2s ease;
-              }
+            
 
                 `}</style>
       </div>

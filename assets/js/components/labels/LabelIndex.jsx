@@ -67,7 +67,7 @@ class LabelIndex extends Component {
               icon="plus"
               onClick={this.openCreateLabelModal}
             >
-              Add Label
+              Create New Label
             </Button>
           </UserCan>
         }

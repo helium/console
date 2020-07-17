@@ -96,6 +96,7 @@ class Welcome extends Component {
               .welcomewrapper {
                 max-width: 1100px;
                 margin: 0 auto;
+                margin-top: 40px
               }
 
               .bulb {
@@ -163,15 +164,15 @@ class Welcome extends Component {
                 color: #242425;
                 line-height: 1;
                 margin-top: 70px;
+                font-weight: 600;
               }
 
               .pod {
-                background: #fff;
+                background: #F6F8FA;
                 border-radius: 20px;
                 padding: 30px 40px;
                 box-sizing: border-box;
                 width: 100%;
-box-shadow: 0 71px 44px -40px #C6D3E8;
 margin-top: 30px;
               }
 
@@ -200,7 +201,7 @@ margin-top: 30px;
               .checkboxWrapper {
                 padding: 12px 20px 13px;
                 border-radius: 10px;
-                background: #DCE5F2;
+                background: #F6F8FA;
                 display: inline-block;
                 margin-top: 10px;
               }

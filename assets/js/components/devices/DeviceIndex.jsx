@@ -197,7 +197,6 @@ class DeviceIndex extends Component {
       <UserCan>
         <Button
           size="large"
-          type="primary"
           icon="plus"
           onClick={this.openImportDevicesModal}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
@@ -211,7 +210,7 @@ class DeviceIndex extends Component {
           icon="plus"
           onClick={this.openCreateDeviceModal}
         >
-          Add Device
+          Add New Device
         </Button>
       </UserCan>
     )

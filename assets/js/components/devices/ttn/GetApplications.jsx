@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Button, Typography, Input } from 'antd';
-import TTNImport from '../../../../img/ttn-import.svg';
+import TTNImport from '../../../../img/ttn-import.png';
 const { Text, Title } = Typography
 
 const TTN_URL = 'https://account.thethingsnetwork.org';
@@ -12,14 +12,14 @@ const GetApplications = (props) => {
   
   return (
     <Fragment>
-      <img src={TTNImport} style={{marginTop: 40, marginBottom: 40, width: 220}}/>
-      <Title style={{width: '100%', textAlign: 'center', fontSize: 30}}>
+      <img src={TTNImport} style={{marginTop: 40, marginBottom: 40, height: 100, objectFit: 'cover'}}/>
+      <Title style={{width: '100%', textAlign: 'center', fontSize: 40}}>
         Import Devices
       </Title>
       <Text style={{width: '100%', textAlign: 'center'}}>
         Generate a single-use ttnctl code at:
       </Text>
-      <a href={TTN_URL} target="_blank" style={{marginBottom: 40}}>
+      <a href={TTN_URL} target="_blank" style={{marginBottom: 40, textDecoration: 'underline'}}>
         {TTN_URL.replace('https://', '')}
       </a>
       <Input

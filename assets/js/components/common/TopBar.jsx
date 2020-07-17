@@ -9,9 +9,9 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Icon, Typography } from 'antd';
 const { Text } = Typography
-import Logo from '../../../img/logo-horizontalwhite.svg'
-import ProfileActive from '../../../img/topbar-pf-active.png'
-import ProfileInactive from '../../../img/topbar-pf-inactive.png'
+import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
+import ProfileActive from '../../../img/topbar-pf-active.svg'
+import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -35,15 +35,16 @@ class TopBar extends Component {
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
         <Link to="/welcome">
-          <img src={Logo} style={{height:30}}/>
+          <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
           </Link>
+          
         </div>
         {
           currentOrganizationName && <SearchBar />
         }
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Link to="/welcome">
-            <Icon type="home" style={{ color: '#ffffff', fontSize: 18 }}/>
+            <Icon type="home" style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
           </Link>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ visible })}>
             <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>

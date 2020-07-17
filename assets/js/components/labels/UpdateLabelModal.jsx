@@ -55,10 +55,10 @@ class UpdateLabelModal extends Component {
           value={this.state.labelName}
           onChange={this.handleInputUpdate}
         />
-        <Text style={{ color: grayForModalCaptions }}>Label names must be unique</Text>
+        <Text style={{ marginTop: 10, fontSize: 14, color: grayForModalCaptions }}>Label names must be unique</Text>
         <Divider />
         <Text>Pick a Color</Text>
-        <Select defaultValue={label.color || labelColors[0]} style={{ width: '100%' }} name="color" onChange={this.handleColorSelect}>
+        <Select defaultValue={label.color || labelColors[0]} style={{ width: '100%' }} name="color" onChange={this.handleColorSelect} className="colorpicker">
           {
             labelColors.map((c,i) => (
               <Option key={i} value={c}><LabelTag text="Label Name" color={c} /></Option>

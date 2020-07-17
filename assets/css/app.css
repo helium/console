@@ -8,8 +8,58 @@
 body {
   overscroll-behavior: none;
   height: 100%;
-  font-family: soleil, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';;
+  font-family: proxima-nova, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';;
+  font-weight: 300;
+
+
 }
+
+
+.ant-select-selection--single {
+  height: 36px;
+}
+
+.ant-select-selection__rendered {
+  line-height: 34px;
+}
+
+
+.ant-input, .ant-select {
+  font-size: 16px ;
+  height: 36px;
+}
+
+p {
+  font-size: 15px;
+}
+
+.ant-modal-title {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+
+.ant-btn {
+  transition: all 0.1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  height: 36px;
+  font-size: 16px;
+}
+
+.ant-btn-sm {
+  height: 26px;
+}
+
+.ant-btn-circle, .ant-btn-circle-outline {
+  min-width: 36px;
+}
+
+.ant-btn-lg {
+    height: 47px;
+    padding: 0px 25px;
+    font-size: 17px;
+    border-radius: 8px;
+
+  }
 
 .mainContainer {
   height: 100%;
@@ -21,10 +71,16 @@ main {
 
 h1 {
   letter-spacing: -1px;
+  font-weight: 500;
 }
 
 #react-root {
   height: 100%;
+}
+
+.ant-layout-sider {
+  background: #F6F8FA;
+  border-right: 1px solid #e1e4e8;
 }
 
 :focus
@@ -36,26 +92,24 @@ h1 {
 
 #searchBar
 {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: #3E4347;
+  border-radius: 4px;
   padding: 4px 16px 4px 16px;
   display: flex;
   margin-right: 4px;
   position: relative;
+  top: -1px;
+  margin-left: 10px;
 }
 
-#searchBar:hover
-{
-  cursor: text;
-  background: rgba(255, 255, 255, 0.2);
-}
+
 
 #searchBar input
 {
   background: none;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 24px;
   margin-left: 10px;
   width: 100px;
@@ -67,6 +121,10 @@ h1 {
 #searchBar input:focus
 {
   width: 200px;
+}
+
+#searchBar input::placeholder {
+  color: #CFD0D1;
 }
 
 #searchResults
@@ -95,13 +153,23 @@ h1 {
 }
 
 
+.ant-table-thead > tr > th {
+  font-weight: 600;
+}
+
 #RoleTable td {
   border-bottom: 0px;
+}
+
+.labellist .labelrowwrapper:last-of-type {
+  padding-bottom: 8px;
 }
 
 .ant-card {
   border-radius: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
+  font-size: 16px;
 }
 
 .ant-menu-inline {
@@ -109,7 +177,10 @@ h1 {
 }
 
 .ant-layout-header {
-  background: #00274c;
+  background: #24292e;
+  height: 55px;
+  line-height: 55px;
+
 }
 
 .no-padding-card {
@@ -122,7 +193,15 @@ h1 {
 }
 
 .ant-card-head {
-  padding: 0 16px;
+  font-size: 17px;
+  border-bottom: 1px solid #e1e4e8;
+  padding: 0px 22px;
+  background: #F6F8FA;
+  font-weight: 600;
+}
+
+.ant-card-bordered {
+  border: 1px solid #e1e4e8;
 }
 
 .ant-table-tbody button.ant-btn {
@@ -161,13 +240,34 @@ h1 {
   top: 30px;
 }
 
-.ant-btn-icon-only > i {
-  vertical-align: -0.12em;
+
+.ant-table-tbody > tr > td {
+  transition: all 0s;
 }
 
-.ant-table-tbody > tr > td:last-of-type {
-  text-align: right;
+.ant-select-dropdown-menu-item {
+  padding: 7px 12px;
+  font-size: 16px;
 }
+
+
+.ant-tag-lime {
+    color: #7ed43a;
+  
+    background: rgba(126,212,58,0.15);
+border: 1px solid #7ADE2B;
+}
+
+.ant-tag {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+
+.colorpicker .ant-select-selection--single {
+  height: 39px;
+}
+
 
 @keyframes rotate{
   to{ transform: rotate(360deg); }
@@ -187,27 +287,65 @@ h1 {
           }
 
 .ant-modal-mask {
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-backdrop-filter: saturate(180%) blur(20px);
-background: rgba(0,21,41,0.8);
+
+background: rgba(20,20,20,0.9);
 }
 
 .ant-modal-content {
   border-radius: 14px;
 }
 
-.ant-modal-footer {
-  padding: 16px;
+
+  .ant-modal-footer {
+    padding: 20px 50px 50px;
+    border-top: none;
 }
 
 .ant-modal-header {
-  border-radius: 14px 14px 0 0;
+  border-radius: 20px 20px 0 0;
+  border-bottom: none;
+  text-align: center;
+  padding: 56px 50px 24px;
 }
+
 .ant-layout {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    background: #fff;
 }
+
+tr.ant-table-expanded-row, tr.ant-table-expanded-row:hover {
+    background: #f6f8fa;
+
+
+}
+
+.ant-table {
+  font-size: 15px;
+}
+
+.ant-table a {
+  font-weight: 400;
+}
+
+.ant-table-thead > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-thead > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td, .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+  background: #fafafa;
+}
+
+.ant-table-thead > tr > th {
+  background: none;
+
+}
+
+.ant-modal-body {
+  font-size: 17px;
+  padding: 20px 50px 20px;
+
+}
+
+
+
 .ant-layout::-webkit-scrollbar { /* WebKit */
     width: 0;
     height: 0;
@@ -223,18 +361,40 @@ background: rgba(0,21,41,0.8);
     height: 0;
 }
 
+.ant-menu-dark, .ant-menu-dark .ant-menu-sub {
+  background: #F6F8FA;
+}
+
 .menu-link {
-  color: #53779E;
+  color: #1b1f23;
   display: block;
-  padding: 20px;
+  padding: 22px 20px;
   position: relative;
+  font-size: 16px;
+  border-left: 0px solid #38A2FF;
+  font-weight: 400;
+   transition: all .2s ease;
+   box-sizing: border-box;
+}
+
+.menu-link:hover {
+  color: #048aff;
+    transition: all .2s ease;
+    border-left: 10px solid #38A2FF;
 
 }
 
-
-a.menu-link {
-  transition: none;
+.ant-select-dropdown-menu-item {
+  font-weight: 300;
 }
+
+input {
+  font-weight: 300;
+  height: 36px;
+  font-size: 16px;
+}
+
+
 
 
               .pod#left a {
@@ -267,8 +427,23 @@ a.menu-link {
                 color: #722ED1;
               }
 
+.ant-typography code {
+color: #4091f7;
+background: rgba(64, 145, 247,0.1);
+border-color: rgba(64, 145, 247,0.2);
+padding: 0.4em 0.6em 0.3em;
 
-.menu-link:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.13);
 }
+
+
+
+.ant-typography {
+  color: rgba(0, 0, 0, 0.75);
+  font-weight: 300;
+}
+
+.ant-typography strong {
+  font-weight: 400;
+    color: rgba(0, 0, 0, 1);
+}
+

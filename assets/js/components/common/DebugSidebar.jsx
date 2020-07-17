@@ -57,8 +57,8 @@ class DebugSidebar extends Component {
     if (data.length === 0) return (
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
-        <Text code style={{ color: debugTextColor }}>
-          Waiting for data
+        <Text style={{ color: debugTextColor }}>
+          Waiting for data...
         </Text>
       </div>
     )
@@ -105,11 +105,11 @@ class DebugSidebar extends Component {
     return (
       <div
         style={{
-          backgroundColor: debugSidebarBackgroundColor,
+          background: debugSidebarBackgroundColor,
           position: 'absolute',
-          top: 64,
+          top: 55,
           width: show ? 500 : 0,
-          height: 'calc(100vh - 64px)',
+          height: 'calc(100vh - 55px)',
           right: 0,
           zIndex: 10,
           padding: 0,
@@ -118,22 +118,20 @@ class DebugSidebar extends Component {
       >
         <div
           style={{
-            transform: 'rotate(-90deg)',
-            position: 'absolute',
-            left: -52,
-            top: 160,
+            position: 'relative',
+            left: '-60px',
+            width: 50,
+            height: 50,
+            top: 'calc(50% - 25px)',
             backgroundColor: debugSidebarBackgroundColor,
-            paddingLeft: 12,
-            paddingRight: 12,
-            paddingTop: 6,
-            paddingBottom: 10,
-            borderRadius: '10px 10px 0px 0px',
+            borderRadius: '9999px',
             cursor: 'pointer',
             userSelect: 'none'
+
           }}
           onClick={this.handleToggle}
         >
-          <Text style={{ color: 'white' }}>Debug</Text>
+          <Text style={{ color: 'white', fontSize: 25, position: 'absolute', top: '50%', left: '50%', transform:'translate(-50% , -50%)' }}><Icon type="bug" /></Text>
         </div>
         {
           show && (

@@ -198,7 +198,7 @@ class DeviceShow extends Component {
       >
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
           <Col span={15}>
-          <Card title="Device Details">
+          <Card title="Device Details" >
             <table>
               <tbody>
                 <tr style={{height: '30px'}}>
@@ -357,7 +357,7 @@ class DeviceShow extends Component {
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
                   <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
-                  <td><Text>OTAA</Text></td>
+                  <td><Tag style={{fontWeight: 500, fontSize: 14}} color="#9254DE">OTAA</Tag></td>
                 </tr>
                 <tr style={{height: '30px'}}>
                   <td><Text strong>LoRaWAN US Channels</Text></td>
@@ -388,14 +388,9 @@ class DeviceShow extends Component {
 
           <Col span={9}>
             <Card
-              title={
-                <Tabs defaultActiveKey="1" tabBarStyle={{ marginBottom: 0, position: 'relative', top: -2.5, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                  <TabPane tab={<span><Icon type="wifi" />Packets Transferred</span>} key="1"/>
-                  {false && <TabPane tab={<span>Data Credits Used</span>} key="2" disabled/>}
-                </Tabs>
-              }
+
+            title="Packets Transferred"
               style={{ height: 'calc(100% - 20px)' }}
-              headStyle={{ paddingLeft: 0, paddingRight: 0, borderBottom: '0px solid'}}
             >
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
@@ -415,7 +410,9 @@ class DeviceShow extends Component {
           </Col>
         </Row>
 
-        <Card title="Device Integrations">
+        <Card title="Device Integrations"
+       
+        bodyStyle={{padding: 0}}>
           <EventsDashboard device_id={device.id} />
         </Card>
 

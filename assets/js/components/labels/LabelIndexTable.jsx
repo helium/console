@@ -125,6 +125,7 @@ class LabelIndexTable extends Component {
               <Button
                 type="danger"
                 icon="delete"
+                size="small"
                 shape="circle"
                 onClick={e => {
                   e.stopPropagation()
@@ -177,21 +178,21 @@ class LabelIndexTable extends Component {
                 }
 
                 .explainer {
-                  background: #DFE8F4;
                   padding: 20px 60px;
                   border-radius: 20px;
-                  border: 1px solid #CCD7E9;
                   text-align: center;
                   margin-top: 50px;
                   box-sizing: border-box;
+                    border: none;
+  background: #F6F8FA;
                 }
 
                 .explainer h2 {
-                  color: #242425;
+                  color: #242424;
                   font-size: 20px;
                 }
                 .explainer p {
-                  color: #556B8C;
+                  color: #565656;
                   font-size: 15px;
                 }
 
@@ -206,6 +207,8 @@ class LabelIndexTable extends Component {
                 h1 {
                   font-size: 46px;
                   margin-bottom: 10px;
+                  font-weight: 600;
+                  margin-top: 10px;
                 }
                 p {
                   font-size: 20px;
@@ -215,7 +218,7 @@ class LabelIndexTable extends Component {
 
                 .blankstateWrapper {
                   width: 100%;
-                  padding-top: 150px;
+                  padding-top: 100px;
                   margin: 0 auto;
                   position: relative;
 
@@ -229,12 +232,12 @@ class LabelIndexTable extends Component {
         {labels.entries.length > 0 && (
           <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${labels.totalEntries} Labels`}
+        title={`${labels.totalEntries} ${labels.totalEntries == 1 ? "Label" : "Labels"}`}
         extra={
           <UserCan>
             <Select
               value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
+              style={{ width: 330, marginRight: 10 }}
               onSelect={this.handleSelectOption}
             >
               <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>

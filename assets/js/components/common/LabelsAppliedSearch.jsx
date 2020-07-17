@@ -53,13 +53,13 @@ class LabelsAppliedSearch extends Component {
 
     return (
       <div style={{ paddingRight: 17, borderRight: '1px solid #D9D9D9', marginRight: 30 }}>
-        <Text>Add a Label</Text><br/>
+        <Text style={{marginBottom: 6, display:'block'}}>Add a Label</Text>
         <Select
           showSearch
           placeholder="Search or Create Label..."
           onSearch={text => debouncedSearch(text)}
           onSelect={label_id => this.setState({ selectedLabel: label_id })}
-          style={{ width: 200, marginBottom: 10 }}
+          style={{ width: 300, marginBottom: 10 }}
           showArrow={false}
           filterOption={false}
           defaultActiveFirstOption={false}
