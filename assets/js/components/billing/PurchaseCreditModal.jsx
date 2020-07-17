@@ -8,10 +8,10 @@ import numeral from 'numeral'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
+import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
-import AmountEntryCalculator from './AmountEntryCalculator'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Divider, Radio, Checkbox } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input } from 'antd';
 const { Text } = Typography
 
 const styles = {
@@ -22,20 +22,43 @@ const styles = {
   },
   costNumber: {
     color: '#4091F7',
-    fontSize: 30,
+    fontSize: 24,
     marginTop: -8
+  },
+  countBlueBox: {
+    backgroundColor: '#E6F7FF',
+    paddingLeft: 100,
+    paddingRight: 100,
+    paddingTop: 30,
+    paddingBottom: 30,
+    height: '100%',
+    width: '100%',
+    marginTop: 30
+  },
+  costContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#BAE7FF',
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
+    marginTop: 15,
+    borderRadius: 8
   }
 }
 
 @connect(null, mapDispatchToProps)
 class PurchaseCreditModal extends Component {
   state = {
-    showPayment: false,
+    showPage: "default",
     countDC: undefined,
     countUSD: undefined,
     countB: undefined,
-    paymentIntentSecret: null,
     loading: false,
+    paymentIntentSecret: null,
     paymentMethodSelected: undefined,
     qrContent: null,
   }
@@ -76,7 +99,7 @@ class PurchaseCreditModal extends Component {
     }
   }
 
-  handleNext = () => {
+  showCreditCard = () => {
     const { organization, createCustomerIdAndCharge, createCharge } = this.props
     const defaultPayment = find(this.props.paymentMethods, p => p.id === organization.default_payment_id)
     const paymentMethodSelected = defaultPayment ? defaultPayment.id : undefined
@@ -87,7 +110,7 @@ class PurchaseCreditModal extends Component {
       createCustomerIdAndCharge(this.state.countUSD)
       .then(({ payment_intent_secret }) => {
         this.setState({
-          showPayment: true,
+          showPage: "creditcard",
           loading: false,
           paymentIntentSecret: payment_intent_secret,
           paymentMethodSelected
@@ -100,7 +123,7 @@ class PurchaseCreditModal extends Component {
       createCharge(this.state.countUSD)
       .then(({ payment_intent_secret }) => {
         this.setState({
-          showPayment: true,
+          showPage: "creditcard",
           loading: false,
           paymentIntentSecret: payment_intent_secret,
           paymentMethodSelected
@@ -113,7 +136,7 @@ class PurchaseCreditModal extends Component {
   }
 
   handleBack = () => {
-    this.setState({ showPayment: false })
+    this.setState({ showPage: "default" })
   }
 
   handleSubmit = (e, card) => {
@@ -156,7 +179,7 @@ class PurchaseCreditModal extends Component {
 
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
 
-          this.setState({ loading: false, showPayment: false })
+          this.setState({ loading: false, showPage: "default" })
           this.props.onClose()
         } else {
           this.setState({ loading: false })
@@ -177,26 +200,27 @@ class PurchaseCreditModal extends Component {
   }
 
   renderCountSelection = () => {
+    const { countUSD, countB } = this.state
     return(
-      <div>
-        <AmountEntryCalculator
-          countDC={this.state.countDC}
-          countB={this.state.countB}
-          countUSD={this.state.countUSD}
-          handleCountInputUpdate={this.handleCountInputUpdate}
-          disabled={this.state.loading}
-        />
-        {
-          this.state.countUSD > 0 && (
-            <div>
-              <Divider style={{ marginTop: 32, marginBottom: 12 }}/>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Text strong>Cost</Text>
-                <Text style={styles.costNumber}>${this.state.countUSD || "0.00"}</Text>
+      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Text>1 DC = 24 Byte Packet = $0.00001 USD</Text>
+        <div style={styles.countBlueBox}>
+          <Input
+            placeholder="Enter Quantity"
+            name="countUSD"
+            value={this.state.countUSD}
+            onChange={this.handleCountInputUpdate}
+            type="number"
+          />
+          {
+            this.state.countUSD > 0 && (
+              <div style={styles.costContainer}>
+                <Text style={{ color: '#4091F7', marginTop: -5 }}>Cost:</Text>
+                <Text style={styles.costNumber}>USD {countUSD && parseFloat(countUSD).toFixed(2)}</Text>
               </div>
-            </div>
-          )
-        }
+            )
+          }
+        </div>
       </div>
     )
   }
@@ -244,7 +268,7 @@ class PurchaseCreditModal extends Component {
   }
 
   renderModalFooter = () => {
-    if (this.state.showPayment) return (
+    if (this.state.showPage == "creditcard") return (
       [
         <Button key="back" onClick={this.handleBack} disabled={this.state.loading}>
           Back
@@ -262,10 +286,10 @@ class PurchaseCreditModal extends Component {
         <Button
           key="submit"
           type="primary"
-          onClick={this.handleNext}
+          onClick={this.showCreditCard}
           disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading}
         >
-          Continue To Payment
+          Purchase with Credit Card
         </Button>,
       ]
     )
@@ -274,17 +298,20 @@ class PurchaseCreditModal extends Component {
   render() {
     const { open } = this.props
     const { loading } = this.state
+    let title = "How many Data Credits do you wish to purchase?"
+    if (this.state.showPage == "creditcard") title = "Purchase DC with Credit Card"
 
     return (
       <Modal
-        title="Purchase Data Credits"
+        title={title}
         visible={open}
         onCancel={loading ? () => {} : this.handleClose}
         centered
         footer={this.renderModalFooter()}
+        bodyStyle={{ padding: this.state.showPage == "default" && 0 }}
       >
-        {!this.state.showPayment && this.renderCountSelection()}
-        {this.state.showPayment && this.renderPayment()}
+        {this.state.showPage == "default" && this.renderCountSelection()}
+        {this.state.showPage == "creditcard" && this.renderPayment()}
       </Modal>
     )
   }
