@@ -15,6 +15,7 @@ import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
 const { Text } = Typography
+import Countdown from "react-countdown"
 
 const styles = {
   container: {
@@ -65,6 +66,7 @@ class PurchaseCreditModal extends Component {
     paymentMethodSelected: undefined,
     qrContent: null,
     hntToBurn: null,
+    nextTimeStamp: null,
   }
 
   componentDidMount() {
@@ -96,7 +98,9 @@ class PurchaseCreditModal extends Component {
       const hntPrice = data.price / 100000000
       const hntToBurn = (Math.ceil((dcPrice / hntPrice) * 100000000) / 100000000).toFixed(8)
 
-      this.setState({ gettingPrice: false, hntToBurn })
+      const nextTimeStamp = data.next_price_timestamp * 1000
+
+      this.setState({ gettingPrice: false, hntToBurn, nextTimeStamp })
     })
     .catch(() => {
       // failed to get price, do not allow burn to continue
@@ -263,7 +267,15 @@ class PurchaseCreditModal extends Component {
           }
           {
             this.state.hntToBurn && (
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                <Countdown
+                  date={this.state.nextTimeStamp}
+                  renderer={({ minutes, seconds }) => {
+                    if (minutes < 10) minutes = "0" + minutes
+                    if (seconds < 10) seconds = "0" + seconds
+                    return <span>{minutes}:{seconds}</span>
+                  }}
+                />
                 <Text style={{ color: '#40A9FF'}}>{this.state.hntToBurn}</Text>
               </div>
             )
