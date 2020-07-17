@@ -80,14 +80,13 @@ class PurchaseCreditModal extends Component {
 
   handleCountInputUpdate = (e) => {
     if (e.target.value < 0) return
-    if (e.target.value.length > 7) return
-    if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
+    if (e.target.value.length > 11) return
     // Refactor out conversion rates between USD, DC, Bytes later
-    if (e.target.name == 'countUSD') {
+    if (e.target.name == 'countDC') {
       this.setState({
-        countDC: numeral(e.target.value * 100000).format('0,0'),
-        countUSD: e.target.value,
-        countB: e.target.value * 100000 * 24
+        countDC: e.target.value,
+        countUSD: e.target.value / 100000,
+        countB: e.target.value * 24
       })
     }
     if (e.target.value == '') {
@@ -99,12 +98,17 @@ class PurchaseCreditModal extends Component {
     }
   }
 
-  showCreditCard = () => {
+  showCreditCard = async () => {
     const { organization, createCustomerIdAndCharge, createCharge } = this.props
     const defaultPayment = find(this.props.paymentMethods, p => p.id === organization.default_payment_id)
     const paymentMethodSelected = defaultPayment ? defaultPayment.id : undefined
 
-    this.setState({ loading: true })
+    await this.setState({
+      loading: true,
+      countUSD: parseFloat(this.state.countUSD.toFixed(2)),
+      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000),
+      countB: parseInt(this.state.countUSD.toFixed(2) * 100000),
+    })
 
     if (organization.stripe_customer_id === null) {
       createCustomerIdAndCharge(this.state.countUSD)
@@ -207,8 +211,8 @@ class PurchaseCreditModal extends Component {
         <div style={styles.countBlueBox}>
           <Input
             placeholder="Enter Quantity"
-            name="countUSD"
-            value={this.state.countUSD}
+            name="countDC"
+            value={this.state.countDC}
             onChange={this.handleCountInputUpdate}
             type="number"
           />
