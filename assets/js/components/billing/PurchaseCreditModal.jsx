@@ -5,17 +5,18 @@ import { get } from '../../util/rest'
 import stripe from '../../config/stripe'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code'
 import numeral from 'numeral'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
+import BurnHNTPillbox from './BurnHNTPillbox'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin, Popover } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
 const { Text } = Typography
-import Countdown from "react-countdown"
 
 const styles = {
   container: {
@@ -171,6 +172,20 @@ class PurchaseCreditModal extends Component {
     }
   }
 
+  showQRCode = () => {
+    this.props.generateMemo()
+    .then(({ data }) => {
+      const qr = {
+        "type": "payment/dc_burn",
+        "address": "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE",
+        "amount": this.state.hntToBurn,
+        "memo": data.memo
+      }
+
+      this.setState({ qrContent: JSON.stringify(qr), showPage: "qrCode" })
+    })
+  }
+
   handleBack = () => {
     this.setState({ showPage: "default" })
   }
@@ -271,28 +286,8 @@ class PurchaseCreditModal extends Component {
             )
           }
           {
-            this.state.hntToBurn && (
-              <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#4091F7', padding: 10, borderRadius: 40 }}>
-                  <Popover
-                    content="The HNT equivalent price  is based on Helium Oracle Data which updates every 30-60 mins."
-                    placement="bottom"
-                    overlayStyle={{ width: 220 }}
-                  >
-                    <div style={{ backgroundColor: '#FFFFFF', borderRadius: 20, paddingLeft: 8, paddingRight: 8, display: 'flex', flexDirection: 'row', paddingTop: 2, paddingBottom: 2 }}>
-                      <Countdown
-                        date={this.state.nextTimeStamp}
-                        renderer={({ minutes, seconds }) => {
-                          if (minutes < 10) minutes = "0" + minutes
-                          if (seconds < 10) seconds = "0" + seconds
-                          return <span style={{ color: '#40A9FF', fontSize: 14, cursor: 'pointer' }}><Icon type="clock-circle" style={{ marginRight: 5, paddingTop: 4 }}/>{minutes}:{seconds}</span>
-                        }}
-                      />
-                    </div>
-                  </Popover>
-                  <Text style={{ color: '#FFFFFF', fontSize: 14 }}>or Burn {this.state.hntToBurn} HNT</Text>
-                </div>
-              </div>
+            !this.state.gettingPrice && this.state.hntToBurn && (
+              <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} />
             )
           }
         </div>
@@ -342,6 +337,22 @@ class PurchaseCreditModal extends Component {
     )
   }
 
+  renderQRCode = () => {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -30, }}>
+        <div style={{ height: 30, width: '100%', paddingLeft: 50, paddingRight: 50, marginBottom: 60 }}>
+          {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} />}
+        </div>
+        {this.state.qrContent && <QRCode value={this.state.qrContent} size={220}/>}
+        <div style={{ marginTop: 20 }}>
+          <Link to="#">
+            <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>I don't want to use QR</Text>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   renderModalFooter = () => {
     if (this.state.showPage == "creditcard") return (
       [
@@ -350,6 +361,16 @@ class PurchaseCreditModal extends Component {
         </Button>,
         <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={this.state.loading}>
           Make Payment
+        </Button>,
+      ]
+    )
+    if (this.state.showPage == "qrCode") return (
+      [
+        <Button key="back" onClick={this.handleBack}>
+          Cancel
+        </Button>,
+        <Button key="submit" type="primary" onClick={this.handleClose}>
+          Dismiss Transaction Details
         </Button>,
       ]
     )
@@ -362,9 +383,17 @@ class PurchaseCreditModal extends Component {
           key="submit"
           type="primary"
           onClick={this.showCreditCard}
-          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading}
+          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading || this.state.gettingPrice}
         >
           Purchase with Credit Card
+        </Button>,
+        <Button
+          key="submit2"
+          type="primary"
+          onClick={this.showQRCode}
+          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.gettingPrice}
+        >
+          Burn HNT to DC
         </Button>,
       ]
     )
@@ -375,6 +404,7 @@ class PurchaseCreditModal extends Component {
     const { loading } = this.state
     let title = "How many Data Credits do you wish to purchase?"
     if (this.state.showPage == "creditcard") title = "Purchase DC with Credit Card"
+    if (this.state.showPage == "qrCode") title = "Use Helium App to Burn HNT using this QR"
 
     return (
       <Modal
@@ -384,9 +414,11 @@ class PurchaseCreditModal extends Component {
         centered
         footer={this.renderModalFooter()}
         bodyStyle={{ padding: this.state.showPage == "default" && 0 }}
+        width={560}
       >
         {this.state.showPage == "default" && this.renderCountSelection()}
         {this.state.showPage == "creditcard" && this.renderPayment()}
+        {this.state.showPage == "qrCode" && this.renderQRCode()}
       </Modal>
     )
   }
