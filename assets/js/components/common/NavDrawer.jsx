@@ -56,6 +56,7 @@ class NavDrawer extends Component {
         <Menu
           mode="inline"
           theme="dark"
+
           onClick={this.handleClick}
         >
           <div><Link to={"/devices"} className="menu-link">Devices</Link></div>
@@ -85,11 +86,11 @@ class NavDrawer extends Component {
           </div>
           {
             showLabels && (
-              <div style={{background: '#d9e2ef' }} className="labellist">
+              <div style={{background: '#d9e2ef', overflowX: 'scroll' }} className="labellist">
                 {
                   data.allLabels && data.allLabels.map(l => (
-                 <div style={{ paddingTop: 8, paddingLeft: 18, width: 300 }} key={l.id} className="labelrowwrapper">
-                    <div style={{ padding: 2 }}>
+                 <div style={{ paddingTop: 8, paddingLeft: 18, width: '100%' }} key={l.id} className="labelrowwrapper">
+                    <div style={{ padding: 2, width: '100%', paddingRight: 18 }}>
                       <Link to={`/labels/${l.id}`}>
                         <LabelRow text={truncate(l.name, { length: '18' })} color={l.color} deviceCount={l.device_count}/>
                       </Link>
@@ -111,18 +112,16 @@ class NavDrawer extends Component {
 }
 
 const LabelRow = ({ text, color, deviceCount }) => (
-  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}} >
+  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', whiteSpace: 'nowrap'}} >
     <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><Icon style={{marginRight: 8}} type="tag" theme="filled" />{text}</div>
         {
             deviceCount > 0 &&
       <div style={{
-        marginRight: 115,
-        borderRadius: 4,
         lineHeight: 1,
-        color: color ? labelColorsHex[color] : labelColorsHex['geekblue'],
-        padding: '4px 10px 4px 8px',
+        color: '#8391a5',
         fontSize: 16,
-        fontWeight: 400,
+        fontWeight: 500,
+        textAlign: 'right',
 
       }}>
        {deviceCount}
