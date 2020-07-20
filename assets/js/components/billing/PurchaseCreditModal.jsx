@@ -13,7 +13,7 @@ import ExistingPaymentCards from './ExistingPaymentCards'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin, Popover } from 'antd';
 const { Text } = Typography
 import Countdown from "react-countdown"
 
@@ -241,14 +241,19 @@ class PurchaseCreditModal extends Component {
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Text>1 DC = 24 Byte Packet = $0.00001 USD</Text>
         <div style={styles.countBlueBox}>
-          <Input
-            placeholder="Enter Quantity"
-            name="countDC"
-            value={this.state.countDC}
-            onChange={this.handleCountInputUpdate}
-            type="number"
-            suffix="DC"
-          />
+          <div>
+            <Input
+              placeholder="Enter Quantity"
+              name="countDC"
+              value={this.state.countDC}
+              onChange={this.handleCountInputUpdate}
+              type="number"
+              suffix={
+                <span style={{ paddingRight: 10 }}><Text>DC</Text></span>
+              }
+              style={{ paddingLeft: 10, paddingRight: 10 }}
+            />
+          </div>
           {
             this.state.countUSD > 0 && (
               <div style={styles.costContainer}>
@@ -267,16 +272,26 @@ class PurchaseCreditModal extends Component {
           }
           {
             this.state.hntToBurn && (
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-                <Countdown
-                  date={this.state.nextTimeStamp}
-                  renderer={({ minutes, seconds }) => {
-                    if (minutes < 10) minutes = "0" + minutes
-                    if (seconds < 10) seconds = "0" + seconds
-                    return <span>{minutes}:{seconds}</span>
-                  }}
-                />
-                <Text style={{ color: '#40A9FF'}}>{this.state.hntToBurn}</Text>
+              <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#4091F7', padding: 10, borderRadius: 40 }}>
+                  <Popover
+                    content="The HNT equivalent price  is based on Helium Oracle Data which updates every 30-60 mins."
+                    placement="bottom"
+                    overlayStyle={{ width: 220 }}
+                  >
+                    <div style={{ backgroundColor: '#FFFFFF', borderRadius: 20, paddingLeft: 8, paddingRight: 8, display: 'flex', flexDirection: 'row', paddingTop: 2, paddingBottom: 2 }}>
+                      <Countdown
+                        date={this.state.nextTimeStamp}
+                        renderer={({ minutes, seconds }) => {
+                          if (minutes < 10) minutes = "0" + minutes
+                          if (seconds < 10) seconds = "0" + seconds
+                          return <span style={{ color: '#40A9FF', fontSize: 14, cursor: 'pointer' }}><Icon type="clock-circle" style={{ marginRight: 5, paddingTop: 4 }}/>{minutes}:{seconds}</span>
+                        }}
+                      />
+                    </div>
+                  </Popover>
+                  <Text style={{ color: '#FFFFFF', fontSize: 14 }}>or Burn {this.state.hntToBurn} HNT</Text>
+                </div>
               </div>
             )
           }
