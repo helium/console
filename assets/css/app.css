@@ -83,6 +83,10 @@ h1 {
 .ant-layout-sider {
   background: #F6F8FA;
   border-right: 1px solid #e1e4e8;
+  width: 250px !important;
+  max-width: 250px !important;
+        flex: 0 0 250px !important;
+
 }
 
 :focus

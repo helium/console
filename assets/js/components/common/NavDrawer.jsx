@@ -89,10 +89,10 @@ class NavDrawer extends Component {
               <div style={{background: '#d9e2ef', overflowX: 'scroll' }} className="labellist">
                 {
                   data.allLabels && data.allLabels.map(l => (
-                 <div style={{ paddingTop: 8, paddingLeft: 18, width: 200 }} key={l.id} className="labelrowwrapper">
-                    <div style={{ padding: 2 }}>
+                 <div style={{ paddingTop: 8, paddingLeft: 18, width: '100%' }} key={l.id} className="labelrowwrapper">
+                    <div style={{ padding: 2, width: '100%', paddingRight: 18 }}>
                       <Link to={`/labels/${l.id}`}>
-                        <LabelRow text={truncate(l.name, { length: '16' })} color={l.color} deviceCount={l.device_count}/>
+                        <LabelRow text={truncate(l.name, { length: '18' })} color={l.color} deviceCount={l.device_count}/>
                       </Link>
                     </div>
                     </div>
@@ -117,13 +117,11 @@ const LabelRow = ({ text, color, deviceCount }) => (
         {
             deviceCount > 0 &&
       <div style={{
-        marginRight: 8,
-        borderRadius: 4,
         lineHeight: 1,
         color: '#8391a5',
-        padding: '4px 10px 4px 8px',
         fontSize: 16,
         fontWeight: 500,
+        textAlign: 'right',
 
       }}>
        {deviceCount}
