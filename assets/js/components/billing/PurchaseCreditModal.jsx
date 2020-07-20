@@ -12,11 +12,13 @@ import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import BurnHNTPillbox from './BurnHNTPillbox'
+import BurnManualEntry from './BurnManualEntry'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
 const { Text } = Typography
+const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
 
 const styles = {
   container: {
@@ -68,6 +70,7 @@ class PurchaseCreditModal extends Component {
     qrContent: null,
     hntToBurn: null,
     nextTimeStamp: null,
+    manualQREntry: false,
   }
 
   componentDidMount() {
@@ -177,12 +180,12 @@ class PurchaseCreditModal extends Component {
     .then(({ data }) => {
       const qr = {
         "type": "payment/dc_burn",
-        "address": "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE",
+        "address": ROUTER_ADDRESS,
         "amount": this.state.hntToBurn,
         "memo": data.memo
       }
 
-      this.setState({ qrContent: JSON.stringify(qr), showPage: "qrCode" })
+      this.setState({ qrContent: JSON.stringify(qr), showPage: "qrCode", memo: data.memo })
     })
   }
 
@@ -250,6 +253,10 @@ class PurchaseCreditModal extends Component {
     this.props.onClose()
   }
 
+  toggleQREntry = () => {
+    this.setState({ manualQREntry: !this.state.manualQREntry})
+  }
+
   renderCountSelection = () => {
     const { countUSD, countB } = this.state
     return(
@@ -287,7 +294,7 @@ class PurchaseCreditModal extends Component {
           }
           {
             !this.state.gettingPrice && this.state.hntToBurn && (
-              <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} />
+              <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} memo={this.state.memo} />
             )
           }
         </div>
@@ -343,10 +350,11 @@ class PurchaseCreditModal extends Component {
         <div style={{ height: 30, width: '100%', paddingLeft: 50, paddingRight: 50, marginBottom: 60 }}>
           {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} />}
         </div>
-        {this.state.qrContent && <QRCode value={this.state.qrContent} size={220}/>}
+        {this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
+        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={ROUTER_ADDRESS} />}
         <div style={{ marginTop: 20 }}>
-          <Link to="#">
-            <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>I don't want to use QR</Text>
+          <Link to="#" onClick={this.toggleQREntry}>
+            <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>I {!this.state.manualQREntry && "don't"} want to use QR Code</Text>
           </Link>
         </div>
       </div>
@@ -404,7 +412,8 @@ class PurchaseCreditModal extends Component {
     const { loading } = this.state
     let title = "How many Data Credits do you wish to purchase?"
     if (this.state.showPage == "creditcard") title = "Purchase DC with Credit Card"
-    if (this.state.showPage == "qrCode") title = "Use Helium App to Burn HNT using this QR"
+    if (this.state.showPage == "qrCode" && !this.state.manualQREntry) title = "Use Helium App to Burn HNT using this QR"
+    if (this.state.showPage == "qrCode" && this.state.manualQREntry) title = "Transaction Details for CLI"
 
     return (
       <Modal
