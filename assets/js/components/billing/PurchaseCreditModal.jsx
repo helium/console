@@ -179,7 +179,7 @@ class PurchaseCreditModal extends Component {
     this.props.generateMemo()
     .then(({ data }) => {
       const qr = {
-        "type": "payment/dc_burn",
+        "type": "dc_burn",
         "address": ROUTER_ADDRESS,
         "amount": this.state.hntToBurn,
         "memo": data.memo
