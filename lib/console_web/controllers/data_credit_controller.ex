@@ -161,7 +161,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => stripe_payment_id}) do
+  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     # Refactor out conversion rates between USD, DC, Bytes later
@@ -172,16 +172,16 @@ defmodule ConsoleWeb.DataCreditController do
       "last_4" => last_4,
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
-      "stripe_payment_id" => stripe_payment_id,
+      "payment_id" => payment_id,
     }
 
-    with nil <- DcPurchases.get_by_stripe_payment_id(stripe_payment_id),
-      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{stripe_payment_id}", @headers),
+    with nil <- DcPurchases.get_by_payment_id(payment_id),
+      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", @headers),
       200 <- stripe_response.status_code do
         payment_intent = Poison.decode!(stripe_response.body)
 
         with "succeeded" <- payment_intent["status"],
-          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, current_organization) do
+          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
             current_organization = Organizations.get_organization!(current_organization.id)
             broadcast(current_organization, dc_purchase)
             broadcast(current_organization)
@@ -252,10 +252,65 @@ defmodule ConsoleWeb.DataCreditController do
           broadcast_router_refill_dc_balance(from_org_updated)
           broadcast_router_refill_dc_balance(to_org_updated)
 
+          attrs = %{
+            "dc_purchased" => amount,
+            "cost" => 0,
+            "card_type" => "transfer",
+            "last_4" => "transfer",
+            "user_id" => current_user.id,
+          }
+
+          {:ok, to_org_dc_purchase} = Map.merge(attrs, %{"from_organization" => from_org_updated.name, "organization_id" => to_org_updated.id })
+          |> DcPurchases.create_dc_purchase()
+          {:ok, from_org_dc_purchase} = Map.merge(attrs, %{"to_organization" => to_org_updated.name, "organization_id" => from_org_updated.id })
+          |> DcPurchases.create_dc_purchase()
+          broadcast(to_org_updated, to_org_dc_purchase)
+          broadcast(from_org_updated, from_org_dc_purchase)
+
           conn
           |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")
           |> send_resp(:no_content, "")
         end
+    end
+  end
+
+  def generate_memo(conn, _) do
+    current_organization = conn.assigns.current_organization
+
+    memo =
+      case current_organization.memo do
+        nil ->
+          attrs = %{
+            "memo" => :crypto.strong_rand_bytes(8) |> Base.encode64(padding: false),
+          }
+          {:ok, organization} = Organizations.update_organization(current_organization, attrs)
+          organization.memo
+        _ ->
+          current_organization.memo
+      end
+
+    conn |> send_resp(:ok, Poison.encode!(%{ memo: memo }))
+  end
+
+  def get_hnt_price(conn, _) do
+    with {:ok, current_price_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/prices/current"),
+      200 <- current_price_resp.status_code,
+      {:ok, predictions_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/predictions"),
+      200 <- predictions_resp.status_code do
+        current_price = Poison.decode!(current_price_resp.body)
+        predictions = Poison.decode!(predictions_resp.body)
+
+        next_price_timestamp =
+          case predictions["data"] do
+            [] ->
+              now = DateTime.utc_now() |> DateTime.truncate(:second)
+              seconds_to_add = 60 - now.second + (59 - now.minute) * 60
+              next_price_timestamp = now |> DateTime.add(seconds_to_add, :second) |> DateTime.to_unix
+            list ->
+              List.first(list)["time"]
+          end
+
+        conn |> send_resp(:ok, Poison.encode!(%{ price: current_price["data"]["price"], next_price_timestamp: next_price_timestamp }))
     end
   end
 

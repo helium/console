@@ -6,13 +6,13 @@ defmodule Console.DcPurchases do
   alias Console.Organizations.Organization
   alias Console.Organizations
 
-  def get_by_stripe_payment_id(id) do
+  def get_by_payment_id(id) do
     DcPurchase
-      |> where([d], d.stripe_payment_id == ^id)
+      |> where([d], d.payment_id == ^id)
       |> Repo.one()
   end
 
-  def create_dc_purchase(attrs \\ %{}, %Organization{} = organization) do
+  def create_dc_purchase_update_org(attrs \\ %{}, %Organization{} = organization) do
     Repo.transaction(fn ->
       new_balance =
         case organization.dc_balance do
@@ -29,5 +29,11 @@ defmodule Console.DcPurchases do
       |> DcPurchase.changeset(attrs)
       |> Repo.insert()
     end)
+  end
+
+  def create_dc_purchase(attrs \\ %{}) do
+    %DcPurchase{}
+    |> DcPurchase.changeset(attrs)
+    |> Repo.insert()
   end
 end

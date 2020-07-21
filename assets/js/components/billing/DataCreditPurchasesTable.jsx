@@ -5,8 +5,21 @@ import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
-import { Card, Typography, Table, Pagination } from 'antd';
+import { Card, Typography, Table, Pagination, Icon } from 'antd';
 const { Text } = Typography
+
+const styles = {
+  greenIcon: {
+    fontSize: 12,
+    color: '#2BE5A2',
+    marginRight: 5
+  },
+  redIcon: {
+    fontSize: 12,
+    color: '#FF7875',
+    marginRight: 5
+  }
+}
 
 const queryOptions = {
   options: props => ({
@@ -56,28 +69,59 @@ class DataCreditPurchasesTable extends Component {
   render() {
     const columns = [
       {
-        title: 'DC Purchased',
+        title: 'Data Credits',
         dataIndex: 'dc_purchased',
-        render: data => numeral(data).format('0,0'),
+        render:  (data, record) => {
+          if (record.card_type == "transfer" && record.to_organization){
+            return "-" + numeral(data).format('0,0')
+          } else {
+            return "+" + numeral(data).format('0,0')
+          }
+        }
+      },
+      // {
+      //   title: 'Cost',
+      //   dataIndex: 'cost',
+      //   render:  (data, record) => {
+      //     if (record.card_type == "burn") {
+      //       return data + " HNT"
+      //     } else {
+      //       return "$ " + (data / 100).toFixed(2)
+      //     }
+      //   }
+      // },
+      {
+        title: 'From/To',
+        dataIndex: 'payment_id',
+        render:  (data, record) => {
+          if (record.card_type == "transfer" && record.from_organization){
+            return <Text><Icon style={styles.greenIcon} type="caret-left" />{record.from_organization}</Text>
+          } else if (record.card_type == "transfer" && record.to_organization){
+            return <Text><Icon style={styles.redIcon} type="caret-right" />{record.to_organization}</Text>
+          } else {
+            return <Text>{data}</Text>
+          }
+        }
       },
       {
-        title: 'Cost',
-        dataIndex: 'cost',
-        render: data => "USD $" + (data / 100).toFixed(2),
-      },
-      {
-        title: 'Purchaser',
+        title: 'Handled By',
         dataIndex: 'user_id',
       },
       {
-        title: 'Payment Method',
+        title: 'Transfer Method',
         dataIndex: 'last_4',
-        render: (text, record) => (
-          <PaymentCard key={record.id} id={record.id} card={{ brand: record.card_type, last4: record.last_4 }}/>
-        )
+        render: (text, record) => {
+          if (record.card_type == "burn") {
+            return "-"
+          } else if (record.card_type == "transfer"){
+            return "DC Transfer"
+          } else {
+            return <PaymentCard key={record.id} id={record.id} card={{ brand: record.card_type, last4: record.last_4 }}/>
+          }
+        }
       },
       {
-        title: 'Payment Date',
+        title: 'Transfer Date',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll'),
         align: 'left',

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, Radio, Typography, Button } from 'antd';
+import { Radio, Typography, Button } from 'antd';
 const { Text } = Typography
 import PaymentCard from './PaymentCard'
 
@@ -8,8 +8,7 @@ const ExistingPaymentCards = ({ paymentMethods, onRadioChange, paymentMethodSele
     <Text strong>
       Choose from Stored Cards
     </Text>
-    <Divider style={{ margin: '8px 0px 16px 0px' }}/>
-    
+
     <div style={{ maxHeight: 150, overflowY: 'scroll' }}>
       <Radio.Group onChange={onRadioChange} value={paymentMethodSelected} style={{ width: '100%' }}>
         {

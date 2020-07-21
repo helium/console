@@ -66,4 +66,11 @@ const convertToText = countB => {
   return `~ ${countB} Bytes of Data`
 }
 
+export const convertToTextShort = countB => {
+  if (countB >= 1000 && countB < 1000000) return `~${countB / 1000}KB`
+  if (countB >= 1000000 && countB < 1000000000) return `~${countB / 1000000}MB`
+  if (countB >= 1000000000) return `~${countB / 1000000000}GB`
+  return `~${countB}B`
+}
+
 export default AmountEntryCalculator
