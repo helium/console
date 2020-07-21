@@ -10,6 +10,7 @@ defmodule ConsoleWeb.V1.OrganizationView do
     %{
       id: organization.id,
       name: organization.name,
+      dc_balance: organization.dc_balance
     }
   end
 end
