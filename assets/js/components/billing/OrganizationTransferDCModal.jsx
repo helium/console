@@ -40,7 +40,7 @@ const styles = {
     color: '#38A2FF'
   },
   headerContainer: {
-    marginBottom: 20,
+    marginBottom: 5,
     marginTop: -15,
     display: 'flex',
     flexDirection: 'row',
@@ -100,11 +100,18 @@ class OrganizationTransferDCModal extends Component {
           organization && (
             <React.Fragment>
               <div style={styles.container}>
+                <div style={{ marginBottom: 20 }}>
+                  <Text strong>Your current Data Credit balance belongs to <span style={{ color: '#38A2FF' }}>{organization.name}</span>.</Text>
+                </div>
                 <div style={styles.headerContainer}>
                   <div>
                     <Text>Available DC Balance: </Text>
                   </div>
                   <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(organization.dc_balance).format('0,0')}</Text>
+                </div>
+
+                <div style={{ marginBottom: 30 }}>
+                  <Text>You can transfer Data Credits to other Organizations within the same Console account.</Text>
                 </div>
 
                 <div style={{
