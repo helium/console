@@ -1,7 +1,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Minty-Multipurpose Responsive Email Template</title>
+      <meta name="x-apple-disable-message-reformatting" />
+      <title>Data Credits Alert</title>
       <style type="text/css">
          /* Client-specific Styles */
          #outlook a {padding:0;} /* Force Outlook to provide a "view in browser" menu link. */
