@@ -108,6 +108,10 @@ class DeviceIndexTable extends Component {
         dataIndex: 'total_packets',
       },
       {
+        title: 'DC Used',
+        dataIndex: 'dc_usage'
+      },
+      {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')
@@ -140,6 +144,8 @@ class DeviceIndexTable extends Component {
     ]
 
     const { noDevicesButton, devices } = this.props;
+
+    console.log(devices);
 
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows })
