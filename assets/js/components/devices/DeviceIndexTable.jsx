@@ -145,8 +145,6 @@ class DeviceIndexTable extends Component {
 
     const { noDevicesButton, devices } = this.props;
 
-    console.log(devices);
-
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows })
     }
