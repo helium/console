@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
+import numeral from 'numeral'
 import get from 'lodash/get'
 import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization } from '../../actions/organization'
@@ -63,13 +64,6 @@ class OrganizationsTable extends Component {
     })
   }
 
-  formatDCBalance = (data) => {
-    const units = 'DC';
-    const value = data ? data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0';
-
-    return `${value} ${units}`;
-  }
-
   render() {
     const columns = [
       {
@@ -84,7 +78,7 @@ class OrganizationsTable extends Component {
       {
         title: 'DC Balance',
         dataIndex: 'dc_balance',
-        render: this.formatDCBalance
+        render: data => numeral(data).format('0,0')
       },
       {
         title: '',
