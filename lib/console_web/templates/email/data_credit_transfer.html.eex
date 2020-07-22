@@ -191,9 +191,10 @@
                                  <!-- content -->
                                  <tr>
                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                     Your organization, <%= @organization_name %>, has dropped to a balance of <%= @balance %> data credits as of <%= @date_time %>.
+                                     An administrator of <%= @organization_name %> performed a data credit transfer on Helium Console.
                                      <br/><br/>
-                                     Please purchase additional Data Credits. We recommend you set up automatic renewal so you will be automatically billed and issued Data Credits.
+                                     This email is to inform you that <%= @transferer_email %> transfered <%= @transfer_amount %> data credits from <%= @source_organization %> to <%= @destination_organization %> at <%=  @date_time %>.
+                                     Your current balance is <%= @balance %> data credits.
                                    </td>
                                  </tr>
                                  <!-- end of content -->
@@ -203,7 +204,7 @@
                                  <!-- Spacing -->
                                  <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 14px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      To set up automatic renewal or purchase credits, visit the data credit management page <a target="_blank" href="<%= static_url(ConsoleWeb.Endpoint, "/datacredits") %>">here</a>
+                                      You can view additional information regarding data credits <a target="_blank" href="<%= static_url(ConsoleWeb.Endpoint, "/datacredits") %>">here</a>
                                     </td>
                                  </tr>
                                  <tr>

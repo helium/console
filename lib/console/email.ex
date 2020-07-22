@@ -9,10 +9,30 @@ defmodule Console.Email do
   alias Console.Organizations.Organization
   alias DateTime
 
+  def dc_transfer_source_notification(from_org, to_org, dc_transferred, user, recipient) do
+    dc_transfer_notification_email(from_org.name, from_org.name, to_org.name, dc_transferred, from_org.dc_balance, user, recipient)
+  end
+
+  def dc_transfer_dest_notification(from_org, to_org, dc_transferred, user, recipient) do
+    dc_transfer_notification_email(to_org.name, from_org.name, to_org.name, dc_transferred, to_org.dc_balance, user, recipient)
+  end
+
+  def dc_top_up_notification_email(%Organization{name: organization_name}, %DcPurchase{dc_purchased: dc_purchased, cost: cost}, recipient) do
+    formatted_credits = dc_format(dc_purchased)
+    base_email()
+    |> to(recipient)
+    |> subject("Data credit automatic renewal")
+    |> assign(:dc_purchased, formatted_credits)
+    |> assign(:date_time, current_time())
+    |> assign(:organization_name, organization_name)
+    |> assign(:cost, cost/100 |> Decimal.from_float() |> Decimal.round(2))
+    |> render(:data_credit_top_up)
+  end
+
   def dc_balance_notification_email(%Organization{name: organization_name}, recipient, dc_balance) do
     base_email()
     |> to(recipient)
-    |> subject("Data credit balance notification")
+    |> subject("Data credit low balance notification")
     |> assign(:balance, dc_balance)
     |> assign(:organization_name, organization_name)
     |> assign(:date_time, current_time())
@@ -31,12 +51,7 @@ defmodule Console.Email do
   end
 
   def data_credit_purchase_email(%DcPurchase{dc_purchased: dc_purchased, cost: cost}, %User{email: purchaser_email}, %Organization{name: organization_name}, recipient) do
-    formatted_credits = dc_purchased
-      |> Integer.to_charlist
-      |> Enum.reverse
-      |> Enum.chunk_every(3, 3, [])
-      |> Enum.join(",")
-      |> String.reverse
+    formatted_credits = dc_format(dc_purchased)
 
     base_email()
     |> to(recipient)
@@ -84,5 +99,29 @@ defmodule Console.Email do
     dt = DateTime.utc_now()
     minute = if (dt.minute < 10), do: "0#{dt.minute}", else: dt.minute
     "#{dt.hour}:#{minute} #{dt.zone_abbr} on #{dt.month}/#{dt.day}/#{dt.year}"
+  end
+
+  defp dc_format(dc) do
+    dc
+    |> Integer.to_charlist
+    |> Enum.reverse
+    |> Enum.chunk_every(3, 3, [])
+    |> Enum.join(",")
+    |> String.reverse
+  end
+
+  defp dc_transfer_notification_email(organization_name, source_organization_name, destination_organization_name, dc_transfered, balance, %User{email: transferer_email}, recipient) do
+    formatted_credits = dc_format(dc_transfered)
+    base_email()
+    |> to(recipient)
+    |> subject("Data credit transfer notification")
+    |> assign(:organization_name, organization_name)
+    |> assign(:source_organization, source_organization_name)
+    |> assign(:destination_organization, destination_organization_name)
+    |> assign(:transferer_email, transferer_email)
+    |> assign(:transfer_amount, formatted_credits)
+    |> assign(:balance, dc_format(balance))
+    |> assign(:date_time, current_time())
+    |> render(:data_credit_transfer)
   end
 end

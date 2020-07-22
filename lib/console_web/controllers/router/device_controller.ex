@@ -134,20 +134,24 @@ defmodule ConsoleWeb.Router.DeviceController do
         if organization.dc_balance_nonce == event["dc"]["nonce"] do
           {:ok, organization} = Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
 
-          cond do
-            prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
-              # DC Balance has dipped below 500,000. Send a notice.
-              Organizations.get_administrators(organization)
-              |> Enum.each(fn administrator ->
-                Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance) |> Mailer.deliver_later()
-              end)
-            prev_dc_balance > 0 and organization.dc_balance <= 0 ->
-              # DC Balance has gone to zero. Send a notice.
-              Organizations.get_administrators(organization)
-              |> Enum.each(fn administrator ->
-                Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
-              end)
-            true -> nil
+          if organization.automatic_charge_amount == nil
+            or organization.automatic_payment_method == nil do
+              cond do
+                prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
+                  # DC Balance has dipped below 500,000. Send a notice.
+                  Organizations.get_administrators(organization)
+                  |> Enum.each(fn administrator ->
+                    Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance)
+                    |> Mailer.deliver_later()
+                  end)
+                prev_dc_balance > 0 and organization.dc_balance <= 0 ->
+                  # DC Balance has gone to zero. Send a notice.
+                  Organizations.get_administrators(organization)
+                  |> Enum.each(fn administrator ->
+                    Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
+                  end)
+                true -> nil
+              end
           end
 
           if organization.automatic_charge_amount != nil
@@ -188,6 +192,11 @@ defmodule ConsoleWeb.Router.DeviceController do
 
                       with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase(attrs, organization) do
                         organization = Organizations.get_organization!(organization.id)
+                        Organizations.get_administrators(organization)
+                        |> Enum.each(fn administrator ->
+                          Email.dc_top_up_notification_email(organization, dc_purchase, administrator.email)
+                          |> Mailer.deliver_later()
+                        end)
                         ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
                         ConsoleWeb.DataCreditController.broadcast(organization)
                         ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)

@@ -247,6 +247,16 @@ defmodule ConsoleWeb.DataCreditController do
         to_organization = Organizations.get_organization!(current_user, toOrganizationId)
 
         with {:ok, {:ok, from_org_updated, to_org_updated }} <- Organizations.send_dc_to_org(amount, current_organization, to_organization) do
+          Organizations.get_administrators(from_org_updated)
+          |> Enum.each(fn administrator ->
+            Email.dc_transfer_source_notification(from_org_updated, to_org_updated, amount, current_user, administrator.email)
+            |> Mailer.deliver_later()
+          end)
+          Organizations.get_administrators(to_org_updated)
+          |> Enum.each(fn administrator ->
+            Email.dc_transfer_dest_notification(from_org_updated, to_org_updated, amount, current_user, administrator.email)
+            |> Mailer.deliver_later()
+          end)
           broadcast(from_org_updated)
           broadcast(to_org_updated)
           broadcast_router_refill_dc_balance(from_org_updated)
