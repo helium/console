@@ -134,8 +134,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         if organization.dc_balance_nonce == event["dc"]["nonce"] do
           {:ok, organization} = Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
 
-          if organization.automatic_charge_amount == nil
-            or organization.automatic_payment_method == nil do
+          if organization.automatic_charge_amount == nil do
               cond do
                 prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
                   # DC Balance has dipped below 500,000. Send a notice.
