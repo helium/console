@@ -280,9 +280,12 @@ defmodule ConsoleWeb.DataCreditController do
     memo =
       case current_organization.memo do
         nil ->
+          number = :rand.uniform(round(:math.pow(2,64))) - 1
+          number_bin = :binary.encode_unsigned(number, :little)
           attrs = %{
-            "memo" => :crypto.strong_rand_bytes(8) |> Base.encode64(padding: false),
+            "memo" => :base64.encode(number_bin),
           }
+          
           {:ok, organization} = Organizations.update_organization(current_organization, attrs)
           organization.memo
         _ ->
