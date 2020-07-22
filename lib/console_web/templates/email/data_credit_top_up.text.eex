@@ -1,0 +1,5 @@
+Hi there,
+
+An administrator of <%= @organization_name %> purchased data credits on Helium Console.
+
+This email is to inform you that a recurring charge of <%= @cost %> for <%= @dc_purchased %> Data Credits completed at <%=  @date_time%>.
