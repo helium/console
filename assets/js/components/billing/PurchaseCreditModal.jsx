@@ -19,6 +19,7 @@ import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, creat
 import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
 const { Text } = Typography
 const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
+const ROUTER_STAGING_ADDRESS = "1124CJ9yJaHq4D6ugyPCDnSBzQik61C1BqD9VMh1vsUmjwt16HNB"
 
 const styles = {
   container: {
@@ -180,7 +181,7 @@ class PurchaseCreditModal extends Component {
     .then(({ data }) => {
       const qr = {
         "type": "dc_burn",
-        "address": ROUTER_ADDRESS,
+        "address": process.env.ENV_DOMAIN == "console" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS,
         "amount": this.state.hntToBurn,
         "memo": data.memo
       }
