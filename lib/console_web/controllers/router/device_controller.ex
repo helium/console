@@ -135,22 +135,22 @@ defmodule ConsoleWeb.Router.DeviceController do
           {:ok, organization} = Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
 
           if organization.automatic_charge_amount == nil do
-              cond do
-                prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
-                  # DC Balance has dipped below 500,000. Send a notice.
-                  Organizations.get_administrators(organization)
-                  |> Enum.each(fn administrator ->
-                    Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance)
-                    |> Mailer.deliver_later()
-                  end)
-                prev_dc_balance > 0 and organization.dc_balance <= 0 ->
-                  # DC Balance has gone to zero. Send a notice.
-                  Organizations.get_administrators(organization)
-                  |> Enum.each(fn administrator ->
-                    Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
-                  end)
-                true -> nil
-              end
+            cond do
+              prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
+                # DC Balance has dipped below 500,000. Send a notice.
+                Organizations.get_administrators(organization)
+                |> Enum.each(fn administrator ->
+                  Email.dc_balance_notification_email(organization, administrator.email, organization.dc_balance)
+                  |> Mailer.deliver_later()
+                end)
+              prev_dc_balance > 0 and organization.dc_balance <= 0 ->
+                # DC Balance has gone to zero. Send a notice.
+                Organizations.get_administrators(organization)
+                |> Enum.each(fn administrator ->
+                  Email.dc_balance_notification_email(organization, administrator.email, 0) |> Mailer.deliver_later()
+                end)
+              true -> nil
+            end
           end
 
           if organization.automatic_charge_amount != nil
