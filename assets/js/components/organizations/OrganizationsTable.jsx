@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
+import numeral from 'numeral'
 import get from 'lodash/get'
 import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization } from '../../actions/organization'
@@ -73,6 +74,11 @@ class OrganizationsTable extends Component {
         title: 'Created',
         dataIndex: 'inserted_at',
         render: data => moment(data).format('LL')
+      },
+      {
+        title: 'DC Balance',
+        dataIndex: 'dc_balance',
+        render: data => numeral(data).format('0,0')
       },
       {
         title: '',
