@@ -22,6 +22,7 @@ defmodule Console.Devices.Device do
     field :frame_down, :integer
     field :total_packets, :integer
     field :last_connected, :naive_datetime
+    field :dc_usage, :integer
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
@@ -58,7 +59,7 @@ defmodule Console.Devices.Device do
   def router_update_changeset(device, attrs) do
     changeset =
       device
-      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets])
+      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage])
   end
 
   defp check_attrs_format(changeset) do
