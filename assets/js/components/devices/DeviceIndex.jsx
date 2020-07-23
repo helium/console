@@ -19,7 +19,8 @@ import get from 'lodash/get';
 import UserCan from '../common/UserCan';
 import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
+const { Text } = Typography
 
 const queryOptions = {
   options: props => ({
@@ -86,8 +87,8 @@ class DeviceIndex extends Component {
         )
         if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
           if (updatedImport.status === "successful") {
-            displayInfo(`Imported ${updatedImport.successful_devices} 
-            device${(updatedImport.successful_devices !== 1 && "s") || ""} from The Things Network. 
+            displayInfo(`Imported ${updatedImport.successful_devices}
+            device${(updatedImport.successful_devices !== 1 && "s") || ""} from The Things Network.
             Refresh this page to see the changes.`);
           } else if (updatedImport.status === "failed"){
             displayError("Failed to import devices from The Things Network.");
