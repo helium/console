@@ -306,6 +306,7 @@ background: rgba(20,20,20,0.9);
   .ant-modal-footer {
     padding: 20px 50px 50px;
     border-top: none;
+    text-align: center;
 }
 
 .ant-modal-header {
