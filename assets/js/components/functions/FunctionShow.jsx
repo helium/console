@@ -125,11 +125,13 @@ class FunctionShow extends Component {
   updateLabelFunction = (label_id) => {
     const function_id = this.props.match.params.id
     this.props.updateLabel(label_id, { function_id })
+    analyticsLogger.logEvent("ACTION_ADD_EXISTING_LABEL_TO_FUNCTION", { "function_id": function_id, "label_id": label_id })
   }
 
   createLabelAttachFunction = (name) => {
     const function_id = this.props.match.params.id
     this.props.createLabel({ name, function_id }, false)
+    analyticsLogger.logEvent("ACTION_ADD_NEW_LABEL_TO_FUNCTION", { "function_id": function_id, "label_name": name })
   }
 
   render() {
@@ -179,7 +181,7 @@ class FunctionShow extends Component {
         }
       >
         <Card
-              
+
  title="Function Details">
           <Text>Update Function</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
@@ -240,7 +242,7 @@ class FunctionShow extends Component {
           <Card             bordered={false}
  title="Labels Applied To">
             <Text style={{marginBottom: 20, display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
-            
+
             <LabelsAppliedExisting
               labels={fxn.labels}
               updateLabelFunction={this.updateLabelFunction}
