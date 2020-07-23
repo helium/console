@@ -55,6 +55,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device)
+      broadcast_router_update_devices(device)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
