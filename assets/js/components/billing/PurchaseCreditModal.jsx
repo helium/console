@@ -90,9 +90,12 @@ class PurchaseCreditModal extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(!prevProps.open && this.props.open && this.state.countDC) {
-      this.setState({ gettingPrice: true, hntToBurn: null })
-      this.getOraclePrice()
+    if(!prevProps.open && this.props.open) {
+      analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL")
+      if (this.state.countDC) {
+        this.setState({ gettingPrice: true, hntToBurn: null })
+        this.getOraclePrice()
+      }
     }
   }
 
@@ -136,6 +139,8 @@ class PurchaseCreditModal extends Component {
   }
 
   showCreditCard = async () => {
+    analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_CREDIT_CARD")
+
     const { organization, createCustomerIdAndCharge, createCharge } = this.props
     const defaultPayment = find(this.props.paymentMethods, p => p.id === organization.default_payment_id)
     const paymentMethodSelected = defaultPayment ? defaultPayment.id : undefined
@@ -177,6 +182,7 @@ class PurchaseCreditModal extends Component {
   }
 
   showQRCode = () => {
+    analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE")
     this.props.generateMemo()
     .then(({ data }) => {
       const qr = {
@@ -222,6 +228,8 @@ class PurchaseCreditModal extends Component {
         this.setState({ loading: false })
       } else {
         if (result.paymentIntent.status === 'succeeded') {
+          analyticsLogger.logEvent("ACTION_PURCHASE_DC_SUCCESS", { "paymentIntent": result.paymentIntent.id })
+
           this.props.fetchPaymentMethods(() => {
             const paymentMethod = find(this.props.paymentMethods, ["id", result.paymentIntent.payment_method])
             this.props.createDCPurchase(
@@ -255,6 +263,9 @@ class PurchaseCreditModal extends Component {
   }
 
   toggleQREntry = () => {
+    if (!this.state.manualQREntry) {
+      analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_MANUAL_ENTRY")
+    }
     this.setState({ manualQREntry: !this.state.manualQREntry})
   }
 

@@ -89,7 +89,12 @@ class LabelShow extends Component {
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
-    if (!showDebugSidebar) this.props.toggleLabelDebug(this.props.match.params.id)
+    if (!showDebugSidebar) {
+      this.props.toggleLabelDebug(this.props.match.params.id)
+      analyticsLogger.logEvent("ACTION_OPEN_LABEL_DEBUG", { "id": this.props.match.params.id })
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_LABEL_DEBUG", { "id": this.props.match.params.id })
+    }
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
@@ -137,7 +142,7 @@ class LabelShow extends Component {
           }
         >
           <LabelTag text={label.name} color={label.color} hasFunction={label.function} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30, fontSize: 16, padding: '6px 12px' }}>
-          
+
           </LabelTag>
 
           <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history}/>

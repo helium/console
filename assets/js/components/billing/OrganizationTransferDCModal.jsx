@@ -64,6 +64,9 @@ class OrganizationTransferDCModal extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
+    if (!prevProps.open && this.props.open) {
+      analyticsLogger.logEvent("ACTION_OPEN_TRANSFER_DC_MODAL")
+    }
     if (prevProps.open && !this.props.open) {
       this.setState({
         selectedOrgId: undefined,
@@ -88,7 +91,11 @@ class OrganizationTransferDCModal extends Component {
     e.preventDefault();
 
     this.props.transferDC(this.state.countDC, this.state.selectedOrgId)
-
+    analyticsLogger.logEvent("ACTION_TRANSFER_DC_TO_ORG", {
+      "amount": this.state.countDC,
+      "id": this.props.organizations.id,
+      "to_organization": this.state.selectedOrgId
+    })
     this.props.onClose()
   }
 

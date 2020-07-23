@@ -165,7 +165,12 @@ class DeviceShow extends Component {
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
-    if (!showDebugSidebar) this.props.toggleDeviceDebug(this.props.match.params.id)
+    if (!showDebugSidebar) {
+      this.props.toggleDeviceDebug(this.props.match.params.id)
+      analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", { "id": this.props.match.params.id })
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", { "id": this.props.match.params.id })
+    }
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
@@ -411,7 +416,7 @@ class DeviceShow extends Component {
         </Row>
 
         <Card title="Device Integrations"
-       
+
         bodyStyle={{padding: 0}}>
           <EventsDashboard device_id={device.id} />
         </Card>

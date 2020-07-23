@@ -52,6 +52,9 @@ class AutomaticRenewalModal extends Component {
         countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
       }), 100)
     }
+    if (!prevProps.open && this.props.open) {
+      analyticsLogger.logEvent("ACTION_OPEN_AUTO_RENEW_MODAL")
+    }
   }
 
   handleCountInputUpdate = (e) => {
@@ -99,6 +102,12 @@ class AutomaticRenewalModal extends Component {
 
     const { paymentMethod, chargeOption, countUSD } = this.state
     this.props.setAutomaticPayments(countUSD ? countUSD : 0, paymentMethod, chargeOption)
+
+    if (countUSD) {
+      analyticsLogger.logEvent("ACTION_ADD_AUTO_RENEW", { "organization_id": this.props.organization.id, "amount": countUSD })
+    } else {
+      analyticsLogger.logEvent("ACTION_REMOVE_AUTO_RENEW", { "organization_id": this.props.organization.id })
+    }
 
     this.props.onClose()
   }
