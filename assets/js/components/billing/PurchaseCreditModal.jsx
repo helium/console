@@ -304,11 +304,6 @@ class PurchaseCreditModal extends Component {
               </div>
             )
           }
-          {
-            !this.state.gettingPrice && this.state.hntToBurn && (
-              <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} memo={this.state.memo} />
-            )
-          }
         </div>
       </div>
     )
