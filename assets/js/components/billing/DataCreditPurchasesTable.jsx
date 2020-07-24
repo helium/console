@@ -98,8 +98,10 @@ class DataCreditPurchasesTable extends Component {
             return <Text><Icon style={styles.greenIcon} type="caret-left" />{record.from_organization}</Text>
           } else if (record.card_type == "transfer" && record.to_organization){
             return <Text><Icon style={styles.redIcon} type="caret-right" />{record.to_organization}</Text>
+          } else if (record.card_type == "burn") {
+            return <Text><Icon style={styles.greenIcon} type="caret-left" />{data}</Text>
           } else {
-            return <Text>{data}</Text>
+            return <Text><Icon style={styles.greenIcon} type="caret-left" />Helium, Inc</Text>
           }
         }
       },
@@ -112,7 +114,7 @@ class DataCreditPurchasesTable extends Component {
         dataIndex: 'last_4',
         render: (text, record) => {
           if (record.card_type == "burn") {
-            return "-"
+            return "Blockchain"
           } else if (record.card_type == "transfer"){
             return "DC Transfer"
           } else {
