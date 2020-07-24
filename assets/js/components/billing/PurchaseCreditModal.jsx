@@ -274,6 +274,7 @@ class PurchaseCreditModal extends Component {
     return(
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Text>1 DC = 24 Byte Packet = $0.00001 USD</Text>
+        <Text>(Credit Card purchases: minimum $10)</Text>
         <div style={styles.countBlueBox}>
           <div>
             <Input
