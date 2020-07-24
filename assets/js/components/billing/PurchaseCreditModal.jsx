@@ -359,7 +359,7 @@ class PurchaseCreditModal extends Component {
           {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} onComplete={this.getOraclePrice} />}
         </div>
         {this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
-        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={ROUTER_ADDRESS} />}
+        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={process.env.ENV_DOMAIN == "console" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS} />}
         <div style={{ marginTop: 20 }}>
           <Link to="#" onClick={this.toggleQREntry}>
             <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>I {!this.state.manualQREntry && "don't"} want to use QR Code</Text>
