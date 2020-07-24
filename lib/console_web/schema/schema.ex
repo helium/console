@@ -20,6 +20,7 @@ defmodule ConsoleWeb.Schema do
     field :channels, list_of(:channel)
     field :total_packets, :integer
     field :dc_usage, :integer
+    field :active, :boolean
     field :packets_last_1d, :integer
     field :packets_last_7d, :integer
     field :packets_last_30d, :integer
