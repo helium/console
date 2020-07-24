@@ -355,7 +355,7 @@ class PurchaseCreditModal extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -30, }}>
         <div style={{ height: 30, width: '100%', paddingLeft: 50, paddingRight: 50, marginBottom: 60 }}>
-          {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} />}
+          {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} onComplete={this.getOraclePrice} />}
         </div>
         {this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
         {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={ROUTER_ADDRESS} />}

@@ -3,7 +3,7 @@ import { Popover, Icon, Typography } from 'antd';
 import Countdown from "react-countdown"
 const { Text } = Typography
 
-const BurnHNTPillbox = ({ nextTimeStamp, hntToBurn }) => (
+const BurnHNTPillbox = ({ nextTimeStamp, hntToBurn, onComplete }) => (
   <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10, width: '100%' }}>
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#4091F7', padding: 10, borderRadius: 40 }}>
       <Popover
@@ -19,6 +19,7 @@ const BurnHNTPillbox = ({ nextTimeStamp, hntToBurn }) => (
               if (seconds < 10) seconds = "0" + seconds
               return <span style={{ color: '#40A9FF', fontSize: 14, cursor: 'pointer' }}><Icon type="clock-circle" style={{ marginRight: 5, paddingTop: 4 }}/>{minutes}:{seconds}</span>
             }}
+            onComplete={onComplete}
           />
         </div>
       </Popover>
