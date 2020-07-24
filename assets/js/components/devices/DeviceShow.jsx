@@ -21,7 +21,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import { blueForDeviceStatsLarge } from '../../util/colors'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs } from 'antd';
+import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
 const { Text } = Typography
 const { TabPane } = Tabs
 const { Option } = Select
@@ -174,6 +174,10 @@ class DeviceShow extends Component {
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
+  toggleDeviceActive = (active) => {
+    this.props.updateDevice(this.props.match.params.id, { active })
+  }
+
   render() {
     const {
       newName,
@@ -199,6 +203,29 @@ class DeviceShow extends Component {
             <Link to="/devices"><Text style={{ color: "#8C8C8C" }}>Devices&nbsp;&nbsp;/</Text></Link>
             <Text>&nbsp;&nbsp;{device.name}</Text>
           </div>
+        }
+        extra={
+          <UserCan>
+            <Popover
+              content={`This device is currently ${device.active ? "active" : "inactive"}`}
+              placement="top"
+              overlayStyle={{ width: 140 }}
+            >
+              <Switch
+                checked={device.active}
+                onChange={this.toggleDeviceActive}
+              />
+            </Popover>
+            <Button
+              type="danger"
+              icon="delete"
+              shape="circle"
+              size="small"
+              onClick={e => {
+                e.stopPropagation()
+              }}
+            />
+          </UserCan>
         }
       >
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
