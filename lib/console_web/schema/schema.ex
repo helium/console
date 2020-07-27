@@ -81,6 +81,9 @@ defmodule ConsoleWeb.Schema do
     field :default_payment_id, :string
     field :automatic_payment_method, :string
     field :automatic_charge_amount, :integer
+    field :inactive_count, :integer
+    field :active_count, :integer
+    field :active, :boolean
   end
 
   object :api_key do

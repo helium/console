@@ -5,6 +5,7 @@ defmodule Console.Organizations do
 
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.Devices
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth
@@ -21,6 +22,28 @@ defmodule Console.Organizations do
       where: m.user_id == ^current_user.id,
       select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at}
     Repo.all(query)
+  end
+
+  def get_organizations_with_devices(%User{} = current_user) do
+    query = from o in Organization,
+      join: m in Membership, on: m.organization_id == o.id,
+      where: m.user_id == ^current_user.id,
+      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, active: o.active}
+    organizations = Repo.all(query)
+
+    organizations =
+      Enum.map(organizations, fn o ->
+        devices = Devices.get_devices(o.id)
+        inactive_devices = Enum.filter(devices, fn d -> !d.active end)
+        inactive_count = length(inactive_devices)
+        active_count = length(devices) - inactive_count
+
+        o
+        |> Map.put(:inactive_count, inactive_count)
+        |> Map.put(:active_count, active_count)
+      end)
+
+    organizations
   end
 
   def get_organization!(%User{} = current_user, id) do

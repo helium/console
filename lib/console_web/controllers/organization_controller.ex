@@ -40,6 +40,25 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
+  def update(conn, %{"id" => id, "active" => active}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, id)
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+
+    if membership.role != "admin" do
+      {:error, :forbidden, "You don't have access to do this"}
+    else
+      with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, %{ "active" => active }) do
+        render_org = %{id: organization.id, name: organization.name, role: membership.role}
+
+        broadcast(organization, conn.assigns.current_user)
+        broadcast_router_update_organization(organization)
+        conn
+        |> put_resp_header("message", "#{organization.name} updated successfully")
+        |> render("show.json", organization: render_org)
+      end
+    end
+  end
+
   def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
@@ -87,5 +106,11 @@ defmodule ConsoleWeb.OrganizationController do
 
   defp broadcast(%Organization{} = organization, current_user) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
+  end
+
+  defp broadcast_router_update_organization(%Organization{} = organization) do
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:update:active", %{
+      "id" => organization.id, "active" => organization.active
+    })
   end
 end

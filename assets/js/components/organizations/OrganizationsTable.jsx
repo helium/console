@@ -5,11 +5,11 @@ import moment from 'moment'
 import numeral from 'numeral'
 import get from 'lodash/get'
 import filter from 'lodash/filter'
-import { switchOrganization, deleteOrganization } from '../../actions/organization'
+import { switchOrganization, deleteOrganization, updateOrganization } from '../../actions/organization'
 import { PAGINATED_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import { Table, Typography, Button, Empty, Pagination } from 'antd';
+import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
 const { Text } = Typography
 import { Query } from 'react-apollo';
 
@@ -64,6 +64,10 @@ class OrganizationsTable extends Component {
     })
   }
 
+  toggleOrgActive = (active, id) => {
+    this.props.updateOrganization(id, active)
+  }
+
   render() {
     const columns = [
       {
@@ -79,6 +83,35 @@ class OrganizationsTable extends Component {
         title: 'DC Balance',
         dataIndex: 'dc_balance',
         render: data => numeral(data).format('0,0')
+      },
+      {
+        title: 'Devices',
+        dataIndex: 'devices',
+        render: (data, record) => {
+          return (
+            <span>
+              <Switch
+                checked={record.active}
+                onChange={active => this.toggleOrgActive(active, record.id)}
+              />
+              {
+                record.active ? (
+                  <span>
+                    <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
+                    {
+                      record.inactive_count > 0 && (
+                        <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count} Inactive</Text>
+                      )
+                    }
+                  </span>
+                ) : (
+                  <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count + record.active_count} Inactive</Text>
+                )
+              }
+
+            </span>
+          )
+        }
       },
       {
         title: '',
@@ -130,7 +163,7 @@ class OrganizationsTable extends Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id}/>
+        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth: 700 }}/>
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={organizations.pageNumber}
@@ -152,7 +185,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ switchOrganization, deleteOrganization }, dispatch);
+  return bindActionCreators({ switchOrganization, deleteOrganization, updateOrganization }, dispatch);
 }
 
 export default OrganizationsTable
