@@ -134,6 +134,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
       entries {
         name,
         id,
+        active,
         inserted_at
         labels {
           name,

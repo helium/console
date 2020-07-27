@@ -1,14 +1,17 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
+import { updateDevice } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
-import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
+import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -23,6 +26,7 @@ const queryOptions = {
   })
 }
 
+@connect(null, mapDispatchToProps)
 @graphql(PAGINATED_DEVICES_BY_LABEL, queryOptions)
 class LabelShowTable extends Component {
   state = {
@@ -65,6 +69,10 @@ class LabelShowTable extends Component {
     })
   }
 
+  toggleDeviceActive = (active, id) => {
+    this.props.updateDevice(id, { active })
+  }
+
   render() {
     const columns = [
       {
@@ -96,11 +104,25 @@ class LabelShowTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
+              <Popover
+                content={`This device is currently ${record.active ? "active" : "inactive"}`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch
+                  checked={record.active}
+                  onChange={(active, e) => {
+                    e.stopPropagation()
+                    this.toggleDeviceActive(active, record.id)
+                  }}
+                />
+              </Popover>
               <Button
                 type="danger"
                 icon="delete"
                 shape="circle"
                 size="small"
+                style={{ marginLeft: 8 }}
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openRemoveDevicesFromLabelModal([record])
@@ -161,6 +183,10 @@ class LabelShowTable extends Component {
       </Card>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateDevice }, dispatch)
 }
 
 export default LabelShowTable
