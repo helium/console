@@ -20,7 +20,8 @@ defmodule ConsoleWeb.Router.DeviceView do
       app_eui: device.app_eui,
       app_key: device.app_key,
       oui: device.oui,
-      organization_id: device.organization_id
+      organization_id: device.organization_id,
+      active: device.active
     }
     |> ChannelView.append_channels(device.channels)
     |> LabelView.append_labels(device.labels)
