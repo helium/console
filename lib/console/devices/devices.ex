@@ -124,4 +124,9 @@ defmodule Console.Devices do
     |> DeviceImports.update_changeset(update_attrs)
     |> Repo.update()
   end
+
+  def update_devices_active(device_ids, active) do
+    from(d in Device, where: d.id in ^device_ids)
+    |> Repo.update_all(set: [active: active])
+  end
 end

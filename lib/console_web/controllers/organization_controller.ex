@@ -1,8 +1,10 @@
 defmodule ConsoleWeb.OrganizationController do
   use ConsoleWeb, :controller
+  alias Console.Repo
 
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.Devices
   alias Console.DcPurchases
   alias Console.Auth
   alias Console.Auth.User
@@ -41,21 +43,31 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   def update(conn, %{"id" => id, "active" => active}) do
-    organization = Organizations.get_organization!(conn.assigns.current_user, id)
+    organization = Organizations.get_organization!(conn.assigns.current_user, id) |> Organizations.fetch_assoc([:devices])
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+    device_ids = organization.devices |> Enum.map(fn d -> d.id end)
 
     if membership.role != "admin" do
       {:error, :forbidden, "You don't have access to do this"}
     else
-      with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, %{ "active" => active }) do
-        render_org = %{id: organization.id, name: organization.name, role: membership.role}
+      {:ok, _} = Repo.transaction(fn ->
+        Organizations.update_organization(organization, %{ "active" => active })
 
-        broadcast(organization, conn.assigns.current_user)
-        broadcast_router_update_organization(organization)
-        conn
-        |> put_resp_header("message", "#{organization.name} updated successfully")
-        |> render("show.json", organization: render_org)
+        device_ids
+        |> Devices.update_devices_active(active)
+      end)
+
+      broadcast(organization, conn.assigns.current_user)
+      if active do
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
+      else
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:inactive:devices", %{ "devices" => device_ids })
       end
+
+      render_org = %{id: organization.id, name: organization.name, role: membership.role}
+      conn
+      |> put_resp_header("message", "#{organization.name} updated successfully")
+      |> render("show.json", organization: render_org)
     end
   end
 
@@ -106,11 +118,5 @@ defmodule ConsoleWeb.OrganizationController do
 
   defp broadcast(%Organization{} = organization, current_user) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
-  end
-
-  defp broadcast_router_update_organization(%Organization{} = organization) do
-    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:update:active", %{
-      "id" => organization.id, "active" => organization.active
-    })
   end
 end
