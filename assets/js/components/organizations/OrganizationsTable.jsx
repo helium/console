@@ -95,20 +95,15 @@ class OrganizationsTable extends Component {
                 onChange={active => this.toggleOrgActive(active, record.id)}
               />
               {
-                record.active ? (
-                  <span>
-                    <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
-                    {
-                      record.inactive_count > 0 && (
-                        <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count} Inactive</Text>
-                      )
-                    }
-                  </span>
-                ) : (
-                  <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count + record.active_count} Inactive</Text>
+                record.active_count > 0 && (
+                  <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
                 )
               }
-
+              {
+                record.inactive_count > 0 && (
+                  <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count} Inactive</Text>
+                )
+              }
             </span>
           )
         }
