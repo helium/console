@@ -16,7 +16,7 @@ import BurnManualEntry from './BurnManualEntry'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Spin } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Icon } from 'antd';
 const { Text } = Typography
 const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
 const ROUTER_STAGING_ADDRESS = "1124CJ9yJaHq4D6ugyPCDnSBzQik61C1BqD9VMh1vsUmjwt16HNB"
@@ -294,14 +294,6 @@ class PurchaseCreditModal extends Component {
               <div style={styles.costContainer}>
                 <Text style={{ color: '#4091F7', marginTop: -5 }}>Cost:</Text>
                 <Text style={styles.costNumber}>USD {countUSD && parseFloat(countUSD).toFixed(2)}</Text>
-              </div>
-            )
-          }
-          {
-            this.state.gettingPrice && (
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <Spin indicator={<Icon type="loading" style={{ fontSize: 24 }} spin />} style={{ marginRight: 10 }}/>
-                <Text style={{ color: '#40A9FF'}}>Calculating Cost...</Text>
               </div>
             )
           }
