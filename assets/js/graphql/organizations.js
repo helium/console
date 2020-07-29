@@ -29,6 +29,9 @@ export const PAGINATED_ORGANIZATIONS = gql`
     organizations(page: $page, pageSize: $pageSize) {
       entries {
         ...OrganizationFragment
+        inactive_count
+        active_count
+        active
       }
       totalEntries,
       totalPages,

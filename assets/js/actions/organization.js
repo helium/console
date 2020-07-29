@@ -58,6 +58,15 @@ export const createOrganization = (name, noOtherOrg = false) => {
   }
 }
 
+export const updateOrganization = (id, active) => {
+  return (dispatch) => {
+    rest.put(`/api/organizations/${id}`, {
+      active
+    })
+    .then(response => {})
+  }
+}
+
 export const switchOrganization = (organization) => {
   return (dispatch) => {
     localStorage.setItem('organization', JSON.stringify(organization));

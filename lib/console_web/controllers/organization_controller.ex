@@ -1,8 +1,10 @@
 defmodule ConsoleWeb.OrganizationController do
   use ConsoleWeb, :controller
+  alias Console.Repo
 
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.Devices
   alias Console.DcPurchases
   alias Console.Auth
   alias Console.Auth.User
@@ -37,6 +39,35 @@ defmodule ConsoleWeb.OrganizationController do
           |> put_resp_header("message",  "#{organization.name} created successfully")
           |> render("show.json", organization: membership_info)
       end
+    end
+  end
+
+  def update(conn, %{"id" => id, "active" => active}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, id) |> Organizations.fetch_assoc([:devices])
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+    device_ids = organization.devices |> Enum.map(fn d -> d.id end)
+
+    if membership.role != "admin" do
+      {:error, :forbidden, "You don't have access to do this"}
+    else
+      {:ok, _} = Repo.transaction(fn ->
+        Organizations.update_organization(organization, %{ "active" => active })
+
+        device_ids
+        |> Devices.update_devices_active(active)
+      end)
+
+      broadcast(organization, conn.assigns.current_user)
+      if active do
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
+      else
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:inactive:devices", %{ "devices" => device_ids })
+      end
+
+      render_org = %{id: organization.id, name: organization.name, role: membership.role}
+      conn
+      |> put_resp_header("message", "#{organization.name} updated successfully")
+      |> render("show.json", organization: render_org)
     end
   end
 
