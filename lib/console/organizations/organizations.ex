@@ -32,13 +32,13 @@ defmodule Console.Organizations do
     organizations = Repo.all(query)
 
     organizations =
-      Enum.map(organizations, fn o ->
-        devices = Devices.get_devices(o.id)
-        inactive_devices = Enum.filter(devices, fn d -> !d.active end)
+      Enum.map(organizations, fn org ->
+        devices = Devices.get_devices(org.id)
+        inactive_devices = Enum.filter(devices, fn device -> !device.active end)
         inactive_count = length(inactive_devices)
         active_count = length(devices) - inactive_count
 
-        o
+        org
         |> Map.put(:inactive_count, inactive_count)
         |> Map.put(:active_count, active_count)
       end)
