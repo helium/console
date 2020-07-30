@@ -3,14 +3,6 @@ import take from 'lodash/take'
 
 const pages = [
   {
-    title: "Dashboard",
-    description: "See everything at a glance",
-    url: "/dashboard",
-    id: "/dashboard",
-    category: "dashboard",
-    synonyms: ""
-  },
-  {
     title: "Devices",
     description: "View and manage devices",
     url: "/devices",
@@ -27,43 +19,27 @@ const pages = [
     synonyms: ""
   },
   {
-    title: "New Azure IoT Hub",
-    description: "Create a new Azure integration",
-    url: "/integrations/new/azure",
-    id: "/integrations/new/azure",
-    category: "integrations",
+    title: "Labels",
+    description: "View and manage labels",
+    url: "/labels",
+    id: "/labels",
+    category: "labels",
     synonyms: ""
   },
   {
-    title: "New AWS IoT",
-    description: "Create a new AWS integration",
-    url: "/integrations/new/aws",
-    id: "/integrations/new/aws",
-    category: "integrations",
+    title: "Functions",
+    description: "View and manage functions",
+    url: "/functions",
+    id: "/functions",
+    category: "functions",
     synonyms: ""
   },
   {
-    title: "New Google Cloud IoT",
-    description: "Create a new Google integration",
-    url: "/integrations/new/google",
-    id: "/integrations/new/google",
-    category: "integrations",
-    synonyms: ""
-  },
-  {
-    title: "New MQTT",
-    description: "Create a new MQTT integration",
-    url: "/integrations/new/mqtt",
-    id: "/integrations/new/mqtt",
-    category: "integrations",
-    synonyms: ""
-  },
-  {
-    title: "New HTTP",
-    description: "Create a new HTTP integration",
-    url: "/integrations/new/http",
-    id: "/integrations/new/http",
-    category: "integrations",
+    title: "Organizations",
+    description: "Manage multiple organization access",
+    url: "/organizations",
+    id: "/organizations",
+    category: "organizations",
     synonyms: ""
   },
   {
@@ -72,15 +48,7 @@ const pages = [
     url: "/users",
     id: "/users",
     category: "users",
-    synonyms: "organization"
-  },
-  {
-    title: "Profile",
-    description: "Configure your account settings",
-    url: "/profile",
-    id: "/profile",
-    category: "profile",
-    synonyms: "account"
+    synonyms: ""
   },
   {
     title: "Data Credits",
@@ -89,6 +57,14 @@ const pages = [
     id: "/datacredits",
     category: "datacredits",
     synonyms: "billing"
+  },
+  {
+    title: "Profile",
+    description: "Configure your account settings",
+    url: "/profile",
+    id: "/profile",
+    category: "profile",
+    synonyms: "account"
   },
 ]
 

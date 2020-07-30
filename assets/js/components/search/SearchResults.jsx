@@ -30,7 +30,6 @@ class SearchResults extends Component {
 
     if ((pageResultsLength + searchResultsLength) > 0) {
       return ReactDOM.createPortal(
-        <Fade>
         <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: 'white', boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px' }} id="searchResults">
           {searchResultsLength > 0 &&
             <SearchResultsSection
@@ -49,8 +48,7 @@ class SearchResults extends Component {
               gotoResult={gotoResult}
             />
           }
-        </div>
-        </Fade>,
+        </div>,
         this.el
       )
     } else {
