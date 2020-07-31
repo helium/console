@@ -38,7 +38,7 @@ defmodule Console.Search do
             FROM devices
             WHERE organization_id = $3 AND (name ~* $2 OR dev_eui ~* $2)
           )
-        ) d ORDER BY id, score DESC)
+        ) a ORDER BY id, score DESC)
         UNION
         (SELECT DISTINCT on(id) * FROM
         (
@@ -53,10 +53,38 @@ defmodule Console.Search do
             FROM channels
             WHERE organization_id = $3 AND (name ~* $2 OR type_name ~* $2)
           )
-        ) c
-          ORDER BY id, score DESC
-        )
-      ) a
+        ) b ORDER BY id, score DESC)
+        UNION
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name AS title, creator AS description, 1.0::float AS score, 'labels' AS category
+            FROM labels
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name AS title, creator AS description, 0.5::float AS score, 'labels' AS category
+            FROM labels
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) c ORDER BY id, score DESC)
+        UNION
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name AS title, type AS description, 1.0::float AS score, 'functions' AS category
+            FROM functions
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name AS title, type AS description, 0.5::float AS score, 'functions' AS category
+            FROM functions
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) d ORDER BY id, score DESC)
+      ) e
       ORDER BY score DESC
       LIMIT 5
     """
@@ -77,7 +105,7 @@ defmodule Console.Search do
         FROM devices
         WHERE organization_id = $2
         ORDER BY score DESC
-      ) AS d
+      ) AS a
       WHERE score > $3
     )
     UNION
@@ -88,7 +116,29 @@ defmodule Console.Search do
         FROM channels
         WHERE organization_id = $2
         ORDER BY score DESC
+      ) AS b
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, creator AS description, score, 'labels' AS category
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM labels
+        WHERE organization_id = $2
+        ORDER BY score DESC
       ) AS c
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, type AS description, score, 'functions' AS category
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM functions
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS b
       WHERE score > $3
     )
     ORDER BY score DESC
