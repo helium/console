@@ -5,8 +5,8 @@ import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
-import { Badge, Card, Col, Row, Typography, Table, Tag } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
 const queryOptions = {
@@ -16,6 +16,15 @@ const queryOptions = {
     },
     fetchPolicy: 'network-only',
   })
+}
+
+const styles = {
+  tag: {
+    borderRadius: 9999,
+    paddingBottom: 0,
+    paddingRight: 9,
+    fontSize: 14
+  }
 }
 
 //https://stackoverflow.com/questions/39460182/decode-base64-to-hexadecimal-string-with-javascript
@@ -39,6 +48,12 @@ const categoryTag = (category) => {
       return <Text>Acknowledge</Text>
     case "activation":
       return <Text>Activation</Text>
+    case "packet_dropped":
+      return <Text>Packet Dropped</Text>
+    case "channel_crash":
+      return <Text>Channel Crashed</Text>
+    case "channel_start_error":
+      return <Text>Channel Start Error</Text>
   }
 }
 
@@ -116,6 +131,71 @@ class EventsDashboard extends Component {
     )
   }
 
+  renderFrameIcons = row => {
+    switch(row.category) {
+      case "up":
+        return (
+          <Tag style={styles.tag} color="#4091F7">
+            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            {row.frame_up}
+          </Tag>
+        )
+      case "down":
+        return (
+          <Tag style={styles.tag} color="#FA541C">
+            <CaretDownOutlined style={{ marginRight: 1 }}/>
+            {row.frame_down}
+          </Tag>
+        )
+      case "ack":
+        return (
+          <Tag style={styles.tag} color="#A0D911">
+            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
+            {row.frame_up}
+          </Tag>
+        )
+      case "activation":
+        return (
+          <Tag style={styles.tag} color="#4091F7">
+            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
+            {row.frame_up}
+          </Tag>
+        )
+      case "packet_dropped":
+        return (
+          <span>
+            <Tag style={styles.tag} color="#D9D9D9">
+              <CaretUpOutlined style={{ marginRight: 1 }}/>
+              {row.frame_up}
+            </Tag>
+            <Popover
+              content={row.description}
+              placement="top"
+              overlayStyle={{ width: 220 }}
+            >
+              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+              </Tag>
+            </Popover>
+          </span>
+        )
+      case "channel_crash":
+        return (
+          <Tag style={styles.tag} color="#D9D9D9">
+            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            {row.frame_up}
+          </Tag>
+        )
+      case "channel_start_error":
+        return (
+          <Tag style={styles.tag} color="#D9D9D9">
+            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            {row.frame_up}
+          </Tag>
+        )
+    }
+  }
+
   render() {
     const { rows } = this.state
 
@@ -127,7 +207,7 @@ class EventsDashboard extends Component {
       {
         title: 'Frame Count',
         dataIndex: 'frame_up',
-        render: (data, row) => row.category === 'up' ? <Tag style={{borderRadius: 9999, paddingBottom: 0, paddingRight: 9, fontSize: 14}} color="#4091F7"><CaretUpOutlined /> {row.frame_up}</Tag> : <Tag style={{borderRadius: 9999, paddingBottom: 0, paddingRight: 9, fontSize: 14}} color="#FA541C"><CaretDownOutlined /> {row.frame_down}</Tag>
+        render: (data, row) => this.renderFrameIcons(row)
       },
       {
         title: 'Port',
