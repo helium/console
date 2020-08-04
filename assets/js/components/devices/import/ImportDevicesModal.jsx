@@ -51,8 +51,8 @@ const ImportDevicesModal = (props) => {
 
   useEffect(() => {
     if (importStarted) {
-      setImportType('');
       onClose();
+      setTimeout(() => setImportType(''), 500);
     }
   }, [importStarted]);
 
@@ -60,7 +60,7 @@ const ImportDevicesModal = (props) => {
     <Modal
       visible={open}
       centered
-      onCancel={onClose}
+      onCancel={() => {onClose(); setTimeout(() => setImportType(''), 500);}}
       footer={null}
       header={null}
       width={450}
