@@ -5,7 +5,6 @@ import {
   IMPORT_STARTING,
   IMPORT_STARTED,
   IMPORT_FAILED,
-  GENERIC_IMPORT_SCANNING,
   GENERIC_IMPORT_SCANNED,
   GENERIC_IMPORT_STARTING,
   GENERIC_IMPORT_STARTED
@@ -23,7 +22,7 @@ const initialState = {
 const devices = (state = initialState, action) => {
   switch (action.type) {
     case FETCHING_APPLICATIONS:
-      return { ...state, fetchingTtnApplications: true };
+      return { ...state, fetchingTtnApplications: true, importStarted: false };
     case FETCHED_APPLICATIONS:
       return { 
         ...state,
@@ -63,6 +62,7 @@ const devices = (state = initialState, action) => {
     case GENERIC_IMPORT_SCANNED:
       return {
         ...state,
+        importStarted: false,
         genericImportScanned: true,
         scannedGenericDevices: action.devices,
         scannedFileName: action.fileName

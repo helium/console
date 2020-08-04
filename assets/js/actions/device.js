@@ -8,7 +8,6 @@ export const FETCHING_APPLICATIONS_FAILED = "FETCHING_APPLICATIONS_FAILED";
 export const IMPORT_STARTING = "IMPORT_STARTING";
 export const IMPORT_STARTED = "IMPORT_STARTED";
 export const IMPORT_FAILED = "IMPORT_FAILED";
-export const GENERIC_IMPORT_SCANNING = "GENERIC_IMPORT_SCANNING";
 export const GENERIC_IMPORT_SCANNED = "GENERIC_IMPORT_SCANNED";
 export const GENERIC_IMPORT_STARTING = "GENERIC_IMPORT_STARTING";
 export const GENERIC_IMPORT_STARTED = "GENERIC_IMPORT_STARTED";
@@ -93,7 +92,6 @@ export const importTtnDevices = (applications, account_token, add_labels, delete
 
 export const scanGenericDevices = (file, fileName) => {
   return async (dispatch) => {
-    dispatch({type: GENERIC_IMPORT_SCANNING});
     function parseCSV(input) {
       let rows = input.split(/\r?\n/);
       const keys = [];
@@ -156,9 +154,6 @@ const scannedGenericDevicesImport = (devices, fileName) => {
     fileName
   }
 }
-
-const failedDeviceImport = () => ({ type: IMPORT_FAILED })
-
 
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)

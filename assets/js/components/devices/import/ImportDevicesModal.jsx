@@ -16,6 +16,7 @@ import devices from '../../../reducers/device';
 const { Text, Title } = Typography
 const { Option } = Select
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: 'white' }} spin />;
+const antLoaderGrey = <LoadingOutlined style={{ fontSize: 50, color: 'grey' }} spin />
 
 
 const queryOptions = {
@@ -48,11 +49,12 @@ const ImportDevicesModal = (props) => {
   } = props;
 
   const handleImport = (withLabel) => {
-    importGenericDevices(scannedGenericDevices, withLabel ? scannedFileName : "")
+    importGenericDevices(scannedGenericDevices, withLabel ? scannedFileName : "");
   }
 
   useEffect(() => {
     if (importStarted) {
+      setImportType('');
       onClose();
     }
   }, [importStarted]);
@@ -127,24 +129,9 @@ const ImportDevicesModal = (props) => {
           importType === 'csv' && (
             (genericImportScanned &&
             <ShowDeviceData numDevices={scannedGenericDevices.length} onImport={handleImport}/>) ||
-            <div style={{
-              marginTop: 40,
-              marginBottom: 40,
-              paddingTop: 55,
-              width: 220,
-              height: 135,
-              backgroundImage: `url(${TTNLoading})`,
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: '100%',
-              backgroundPosition: 'center',
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <Spin indicator={antLoader}/>
-            </div>
+            <Spin indicator={antLoaderGrey}/>
           )
         )
-        
       }
     </Modal>
   )
