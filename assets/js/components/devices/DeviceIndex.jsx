@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DeviceIndexTable from './DeviceIndexTable';
 import DashboardLayout from '../common/DashboardLayout';
 import NewDeviceModal from './NewDeviceModal';
-import ImportDevicesModal from './ttn/ImportDevicesModal';
+import ImportDevicesModal from './import/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
@@ -88,8 +88,9 @@ class DeviceIndex extends Component {
         if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
           if (updatedImport.status === "successful") {
             displayInfo(`Imported ${updatedImport.successful_devices}
-            device${(updatedImport.successful_devices !== 1 && "s") || ""} from The Things Network.
-            Refresh this page to see the changes.`);
+            device${(updatedImport.successful_devices !== 1 && "s") || ""} from ${
+              updatedImport.type === "ttn" ? "The Things Network." : "CSV."
+            } Refresh this page to see the changes.`);
           } else if (updatedImport.status === "failed"){
             displayError("Failed to import devices from The Things Network.");
           }

@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Button, Typography, Input } from 'antd';
-import TTNImport from '../../../../img/ttn-import.png';
+import TTNImport from '../../../../../img/ttn-import.png';
 const { Text, Title } = Typography
 
 const TTN_URL = 'https://account.thethingsnetwork.org';

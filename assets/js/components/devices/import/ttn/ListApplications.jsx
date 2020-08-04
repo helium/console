@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Typography, List, Checkbox, Row, Col, Button } from 'antd';
-import { grayForModalSelections, strokeForMetaText } from '../../../util/colors';
+import { grayForModalSelections, strokeForMetaText } from '../../../../util/colors';
 
 const { Text, Title } = Typography;
 

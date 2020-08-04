@@ -8,6 +8,10 @@ export const FETCHING_APPLICATIONS_FAILED = "FETCHING_APPLICATIONS_FAILED";
 export const IMPORT_STARTING = "IMPORT_STARTING";
 export const IMPORT_STARTED = "IMPORT_STARTED";
 export const IMPORT_FAILED = "IMPORT_FAILED";
+export const GENERIC_IMPORT_SCANNED = "GENERIC_IMPORT_SCANNED";
+export const GENERIC_IMPORT_STARTING = "GENERIC_IMPORT_STARTING";
+export const GENERIC_IMPORT_STARTED = "GENERIC_IMPORT_STARTED";
+export const GENERIC_IMPORT_FAILED = "GENERIC_IMPORT_FAILED";
 
 export const createDevice = (params, labelId) => {
   return (dispatch) => {
@@ -86,6 +90,47 @@ export const importTtnDevices = (applications, account_token, add_labels, delete
   }
 }
 
+export const scanGenericDevices = (file, fileName) => {
+  return async (dispatch) => {
+    function parseCSV(input) {
+      let rows = input.split(/\r?\n/);
+      const keys = [];
+      rows.shift().split(",").forEach((val, index) => {
+        if (['Name', 'name'].indexOf(val) > -1) {
+          keys[index] = "name";
+        } else if (['AppKey', 'App Key', 'app_key'].indexOf(val) > -1) {
+          keys[index] = 'app_key';
+        } else if (['AppEUI', 'App EUI', 'app_eui'].indexOf(val) > -1) {
+          keys[index] = 'app_eui';
+        } else if (['DevEUI', 'Dev EUI', 'dev_eui'].indexOf(val) > -1) {
+          keys[index] = 'dev_eui';
+        } else if (['Label ID', 'LabelID', 'label_id'].indexOf(val) > -1) {
+          keys[index] = 'label_id';
+        }
+      });
+      rows = rows.filter((value) => value !== "");
+      return rows.map((row) => {
+        return row.split(",").reduce((map, val, i) => {
+          keys[i] && (map[keys[i]] = val);
+          return map;
+        }, {});
+      });
+    }
+    dispatch(scannedGenericDevicesImport(parseCSV(file), fileName));
+  }
+}
+
+export const importGenericDevices = (devices, labelName) => {
+  return async (dispatch) => {
+    dispatch({type: GENERIC_IMPORT_STARTING});
+    await rest.post(
+      '/api/generic/devices/import',
+      {devices, label_id: labelName}
+    )
+    dispatch({type: GENERIC_IMPORT_STARTED});
+  }
+}
+
 const fetchingApplications = () => ({ type: FETCHING_APPLICATIONS })
 
 const fetchedApplications = (data) => {
@@ -102,8 +147,13 @@ const startingDeviceImport = () => ({ type: IMPORT_STARTING })
 
 const startedDeviceImport = () => ({ type: IMPORT_STARTED })
 
-const failedDeviceImport = () => ({ type: IMPORT_FAILED })
-
+const scannedGenericDevicesImport = (devices, fileName) => {
+  return {
+    type: GENERIC_IMPORT_SCANNED,
+    devices,
+    fileName
+  }
+}
 
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
