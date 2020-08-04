@@ -119,7 +119,6 @@ defmodule ConsoleWeb.Router.DeviceController do
             bytes_per_packet = 24
             packets = Float.ceil(event.payload_size / bytes_per_packet)
               |> Kernel.trunc()
-            IO.inspect(packets + device.total_packets);
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
               "frame_up" => event.frame_up,

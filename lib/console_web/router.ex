@@ -37,6 +37,7 @@ defmodule ConsoleWeb.Router do
     post "/devices/debug", DeviceController, :debug
     get "/ttn/devices", DeviceController, :get_ttn
     post "/ttn/devices/import", DeviceController, :import_ttn
+    post "/generic/devices/import", DeviceController, :import_generic
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
     post "/labels/remove_function", LabelController, :remove_function

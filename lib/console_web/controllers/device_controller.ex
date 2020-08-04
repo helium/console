@@ -140,6 +140,43 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def import_generic(conn, %{"devices" => devices, "label_id" => label_id}) do
+    current_user = conn.assigns.current_user
+    current_organization = conn.assigns.current_organization
+    {:ok, device_import} = Devices.create_import(current_organization, current_user.id, "generic")
+    broadcast_add(device_import)
+    Task.async(fn ->
+      device_count = Enum.reduce(devices, 0, fn device, acc ->
+        case device
+        |> Map.put("organization_id", current_organization.id)
+        |> Devices.create_device(current_organization) do
+          {:ok, _} -> acc + 1
+          _ -> acc
+        end
+      end)
+      if label_id |> to_string() |> String.trim() != "" do
+        label_params = %{"name" => label_id, "organization_id" => current_organization.id}
+        with {:ok, label} <- Labels.create_label(current_organization, label_params) do
+          Enum.reduce(devices, [], fn device, acc ->
+            [device.id | acc]
+          end)
+          |> Labels.add_devices_to_label(label.id, current_organization)
+        end
+      end
+      {:ok, successful_import} = Devices.update_import(
+        device_import,
+        %{
+          status: "successful",
+          successful_devices: device_count
+        }
+      )
+      broadcast_update(successful_import)
+    end)
+    conn
+    |> put_resp_header("message", "Began importing devices from CSV.")
+    |> send_resp(:ok, "")
+  end
+
   defp fetch_and_write_devices(applications, token, organization, add_labels, delete_devices, user_id) do
     # Create import record
     {:ok, device_import} = Devices.create_import(organization, user_id, "ttn")

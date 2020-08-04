@@ -39,7 +39,8 @@ export const IMPORT_ADDED_SUBSCRIPTION = gql`
       id,
       user_id,
       successful_devices,
-      status
+      status,
+      type
     }
   }
 `
@@ -50,7 +51,8 @@ export const IMPORT_UPDATED_SUBSCRIPTION = gql`
       id,
       user_id,
       successful_devices,
-      status
+      status,
+      type
     }
   }
 `
@@ -88,7 +90,8 @@ export const ALL_IMPORTS = gql`
         id,
         user_id,
         successful_devices,
-        status
+        status,
+        type
       }
     }
   }

@@ -163,6 +163,7 @@ defmodule ConsoleWeb.Schema do
     field :user_id, :string
     field :successful_devices, :integer
     field :status, :string
+    field :type, :string
   end
 
   query do
