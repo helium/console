@@ -43,6 +43,17 @@ defmodule ConsoleWeb.DeviceController do
       broadcast(device, device.id)
       broadcast_router_update_devices(device)
 
+      if device_params["active"] != nil do
+        device_labels = Labels.get_labels_of_device(device)
+        Enum.each(device_labels, fn l ->
+          Absinthe.Subscription.publish(
+            ConsoleWeb.Endpoint,
+            %{ id: l.label_id },
+            label_updated: "#{device.organization_id}/#{l.label_id}/label_updated"
+          )
+        end)
+      end
+
       conn
       |> put_resp_header("message", "#{device.name} updated successfully")
       |> render("show.json", device: device)

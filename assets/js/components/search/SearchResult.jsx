@@ -17,11 +17,11 @@ class SearchResult extends Component {
           backgroundColor: selected ? '#E3F2FD' : 'white',
           padding: 16,
           borderRadius: 4,
-          
+
         }}
         className="result"
       >
-        <SearchResultIcon category={result.category} />
+        { false && <SearchResultIcon category={result.category} /> }
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Text strong>{result.title}</Text>
           <Text type="secondary">{result.description}</Text>

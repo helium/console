@@ -10,7 +10,7 @@ defmodule Console.Organizations.OrganizationResolver do
         true ->
           Organization |> Repo.paginate(page: page, page_size: page_size)
         _ ->
-          orgs = Organizations.get_organizations(current_user)
+          orgs = Organizations.get_organizations_with_devices(current_user)
           %{
             entries: orgs,
           }

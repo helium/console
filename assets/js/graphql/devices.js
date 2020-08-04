@@ -13,6 +13,7 @@ export const DEVICE_FRAGMENT = gql`
     inserted_at,
     total_packets,
     dc_usage,
+    active
   }
 `
 
@@ -136,6 +137,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
       entries {
         name,
         id,
+        active,
         inserted_at
         labels {
           name,

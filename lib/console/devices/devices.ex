@@ -29,6 +29,11 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
+  def get_devices(organization_id) do
+     from(d in Device, where: d.organization_id == ^organization_id)
+     |> Repo.all()
+  end
+
   def get_device(organization, id) do
      Repo.get_by(Device, [id: id, organization_id: organization.id])
   end
@@ -118,5 +123,10 @@ defmodule Console.Devices do
     device_import
     |> DeviceImports.update_changeset(update_attrs)
     |> Repo.update()
+  end
+
+  def update_devices_active(device_ids, active) do
+    from(d in Device, where: d.id in ^device_ids)
+    |> Repo.update_all(set: [active: active])
   end
 end

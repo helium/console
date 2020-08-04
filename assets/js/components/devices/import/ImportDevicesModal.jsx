@@ -9,9 +9,18 @@ import { fetchTtnDevices, importTtnDevices, importGenericDevices } from '../../.
 import ChooseImportType from './ChooseImportType';
 import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
+<<<<<<< HEAD
 import { Modal, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
+=======
+import { Modal, Typography, Select, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import devices from '../../../reducers/device';
+
+const { Text, Title } = Typography
+const { Option } = Select
+>>>>>>> master
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: 'white' }} spin />;
 const antLoaderGrey = <LoadingOutlined style={{ fontSize: 50, color: 'grey' }} spin />
 

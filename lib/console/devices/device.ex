@@ -23,6 +23,7 @@ defmodule Console.Devices.Device do
     field :total_packets, :integer
     field :last_connected, :naive_datetime
     field :dc_usage, :integer
+    field :active, :boolean
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
@@ -50,7 +51,7 @@ defmodule Console.Devices.Device do
 
     changeset =
       device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
