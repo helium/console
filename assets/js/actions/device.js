@@ -9,9 +9,11 @@ export const IMPORT_STARTING = "IMPORT_STARTING";
 export const IMPORT_STARTED = "IMPORT_STARTED";
 export const IMPORT_FAILED = "IMPORT_FAILED";
 export const GENERIC_IMPORT_SCANNED = "GENERIC_IMPORT_SCANNED";
+export const GENERIC_IMPORT_SCAN_FAILED = "GENERIC_IMPORT_SCAN_FAILED";
 export const GENERIC_IMPORT_STARTING = "GENERIC_IMPORT_STARTING";
 export const GENERIC_IMPORT_STARTED = "GENERIC_IMPORT_STARTED";
 export const GENERIC_IMPORT_FAILED = "GENERIC_IMPORT_FAILED";
+export const RESET_GENERIC_IMPORT = "RESET_GENERIC_IMPORT";
 
 export const createDevice = (params, labelId) => {
   return (dispatch) => {
@@ -90,7 +92,7 @@ export const importTtnDevices = (applications, account_token, add_labels, delete
   }
 }
 
-export const scanGenericDevices = (file, fileName) => {
+export const scanGenericDevices = (file, onComplete) => {
   return async (dispatch) => {
     function parseCSV(input) {
       let rows = input.split(/\r?\n/);
@@ -98,34 +100,46 @@ export const scanGenericDevices = (file, fileName) => {
       rows.shift().split(",").forEach((val, index) => {
         if (['Name', 'name'].indexOf(val) > -1) {
           keys[index] = "name";
-        } else if (['AppKey', 'App Key', 'app_key'].indexOf(val) > -1) {
+        } else if (['appkey', 'app_key'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'app_key';
-        } else if (['AppEUI', 'App EUI', 'app_eui'].indexOf(val) > -1) {
+        } else if (['appeui', 'app_eui'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'app_eui';
-        } else if (['DevEUI', 'Dev EUI', 'dev_eui'].indexOf(val) > -1) {
+        } else if (['deveui', 'dev_eui'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'dev_eui';
-        } else if (['Label ID', 'LabelID', 'label_id'].indexOf(val) > -1) {
+        } else if (['labelid', 'label_id'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'label_id';
         }
       });
-      rows = rows.filter((value) => value !== "");
-      return rows.map((row) => {
-        return row.split(",").reduce((map, val, i) => {
-          keys[i] && (map[keys[i]] = val);
-          return map;
-        }, {});
-      });
+      if (keys.length < 3) {
+        dispatch({type: GENERIC_IMPORT_SCAN_FAILED});
+        onComplete('');
+      } else {
+        rows = rows.filter((value) => value !== "");
+        dispatch(scannedGenericDevicesImport(rows.map((row) => {
+          return row.split(",").reduce((map, val, i) => {
+            keys[i] && (map[keys[i]] = val);
+            return map;
+          }, {});
+        })));
+        onComplete('csv')
+      }
     }
-    dispatch(scannedGenericDevicesImport(parseCSV(file), fileName));
+    parseCSV(file);
   }
 }
 
-export const importGenericDevices = (devices, labelName) => {
+export const resetGenericDeviceImport = (devices) => {
+  return async (dispatch) => {
+    dispatch({type: RESET_GENERIC_IMPORT});
+  }
+}
+
+export const importGenericDevices = (devices, withLabel) => {
   return async (dispatch) => {
     dispatch({type: GENERIC_IMPORT_STARTING});
     await rest.post(
       '/api/generic/devices/import',
-      {devices, label_id: labelName}
+      {devices, add_labels: withLabel}
     )
     dispatch({type: GENERIC_IMPORT_STARTED});
   }
@@ -147,11 +161,10 @@ const startingDeviceImport = () => ({ type: IMPORT_STARTING })
 
 const startedDeviceImport = () => ({ type: IMPORT_STARTED })
 
-const scannedGenericDevicesImport = (devices, fileName) => {
+const scannedGenericDevicesImport = (devices) => {
   return {
     type: GENERIC_IMPORT_SCANNED,
-    devices,
-    fileName
+    devices
   }
 }
 

@@ -12,7 +12,7 @@ const ShowDeviceData = ({ numDevices, onImport }) => {
         <Col sm={1}><Checkbox checked={createLabels} onChange={() => setCreateLabels(!createLabels)}/></Col>
         <Col sm={17}>
           <Text style={{paddingLeft: 20, fontSize: 14, lineHeight: .9}}>
-            Import these devices with a premade label
+            Import devices with optional label if defined
           </Text>
         </Col>
       </Row>

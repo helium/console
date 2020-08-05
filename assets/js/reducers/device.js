@@ -6,8 +6,10 @@ import {
   IMPORT_STARTED,
   IMPORT_FAILED,
   GENERIC_IMPORT_SCANNED,
+  GENERIC_IMPORT_SCAN_FAILED,
   GENERIC_IMPORT_STARTING,
-  GENERIC_IMPORT_STARTED
+  GENERIC_IMPORT_STARTED,
+  RESET_GENERIC_IMPORT
 } from '../actions/device';
 
 const initialState = {
@@ -64,8 +66,14 @@ const devices = (state = initialState, action) => {
         ...state,
         importStarted: false,
         genericImportScanned: true,
+        genericImportScanFailed: false,
         scannedGenericDevices: action.devices,
-        scannedFileName: action.fileName
+      }
+    case GENERIC_IMPORT_SCAN_FAILED:
+      return {
+        ...state,
+        importStarted: false,
+        genericImportScanFailed: true
       }
     case GENERIC_IMPORT_STARTING:
       return {
@@ -76,8 +84,14 @@ const devices = (state = initialState, action) => {
       return {
         ...state,
         scannedGenericDevices: null,
-        scannedFileName: null,
         importStarted: true
+      }
+    case RESET_GENERIC_IMPORT:
+      return {
+        ...state,
+        genericImportScanned: false,
+        genericImportScanFailed: false,
+        scannedGenericDevices: null
       }
     default:
       return state;

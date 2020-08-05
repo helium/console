@@ -151,37 +151,73 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def import_generic(conn, %{"devices" => devices, "label_id" => label_id}) do
+  def import_generic(conn, %{"devices" => devices, "add_labels" => add_labels}) do
     current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     {:ok, device_import} = Devices.create_import(current_organization, current_user.id, "generic")
     broadcast_add(device_import)
     Task.async(fn ->
-      device_count = Enum.reduce(devices, 0, fn device, acc ->
-        case device
-        |> Map.put("organization_id", current_organization.id)
-        |> Devices.create_device(current_organization) do
-          {:ok, _} -> acc + 1
-          _ -> acc
-        end
-      end)
-      if label_id |> to_string() |> String.trim() != "" do
-        label_params = %{"name" => label_id, "organization_id" => current_organization.id}
-        with {:ok, label} <- Labels.create_label(current_organization, label_params) do
-          Enum.reduce(devices, [], fn device, acc ->
-            [device.id | acc]
+      try do
+        added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0}, fn device, acc ->
+          case device
+          |> Map.put("organization_id", current_organization.id)
+          |> Devices.create_device(current_organization) do
+            {:ok, new_device} ->
+              if Map.has_key?(device, "label_id") do
+                if Map.has_key?(acc.label_device_map, device["label_id"]) do
+                  IO.inspect(acc.device_count + 1)
+                  %{
+                    acc |
+                    label_device_map: Map.update!(acc.label_device_map, device["label_id"], fn current ->
+                      [new_device | current]
+                    end),
+                    device_count: acc.device_count + 1
+                  }
+                else
+                  %{
+                    acc |
+                    label_device_map: Map.put(acc.label_device_map, device["label_id"], [new_device]),
+                    device_count: acc.device_count + 1
+                  }
+                end
+              else
+                %{acc | device_count: acc.device_count + 1}
+              end
+            _ -> acc
+          end
+        end)
+        if add_labels do
+          Enum.each(added_devices.label_device_map, fn({key, val}) ->
+            case Labels.get_label_by_name(key, current_organization.id) do
+              nil ->
+                label_params = %{"name" => key, "organization_id" => current_organization.id}
+                with {:ok, label} <- Labels.create_label(current_organization, label_params) do
+                  Enum.reduce(val, [], fn device, acc ->
+                    [device.id | acc]
+                  end)
+                  |> Labels.add_devices_to_label(label.id, current_organization)
+                end
+              label ->
+                Enum.reduce(val, [], fn device, acc ->
+                  [device.id | acc]
+                end)
+                |> Labels.add_devices_to_label(label.id, current_organization)
+            end
           end)
-          |> Labels.add_devices_to_label(label.id, current_organization)
         end
+        {:ok, successful_import} = Devices.update_import(
+          device_import,
+          %{
+            status: "successful",
+            successful_devices: added_devices.device_count
+          }
+        )
+        broadcast_update(successful_import)
+      rescue
+        _ ->
+          {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
+          broadcast_update(failed_import)
       end
-      {:ok, successful_import} = Devices.update_import(
-        device_import,
-        %{
-          status: "successful",
-          successful_devices: device_count
-        }
-      )
-      broadcast_update(successful_import)
     end)
     conn
     |> put_resp_header("message", "Began importing devices from CSV.")
@@ -237,7 +273,7 @@ defmodule ConsoleWeb.DeviceController do
       )
       broadcast_update(successful_import)
     rescue
-      Error ->
+      _ ->
         {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
         broadcast_update(failed_import)
     end

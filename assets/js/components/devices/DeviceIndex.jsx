@@ -90,9 +90,11 @@ class DeviceIndex extends Component {
             displayInfo(`Imported ${updatedImport.successful_devices}
             device${(updatedImport.successful_devices !== 1 && "s") || ""} from ${
               updatedImport.type === "ttn" ? "The Things Network." : "CSV."
-            } Refresh this page to see the changes.`);
+            }. Refresh this page to see the changes.`);
           } else if (updatedImport.status === "failed"){
-            displayError("Failed to import devices from The Things Network.");
+            displayError(`Failed to import devices from ${
+              updatedImport.type === "ttn" ? "The Things Network" : "CSV"
+            }.`);
           }
         }
         return {

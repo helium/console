@@ -5,7 +5,7 @@ import { graphql } from 'react-apollo';
 import { ALL_LABELS } from '../../../graphql/labels';
 import TTNLoading from '../../../../img/ttn-waiting-cloud.svg';
 import ListApplications from './ttn/ListApplications';
-import { fetchTtnDevices, importTtnDevices, importGenericDevices } from '../../../actions/device';
+import { fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDeviceImport } from '../../../actions/device';
 import ChooseImportType from './ChooseImportType';
 import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
@@ -31,7 +31,8 @@ const ImportDevicesModal = (props) => {
     fetchTtnDevices,
     importTtnDevices,
     ttnAuthorizationCode,
-    importGenericDevices
+    importGenericDevices,
+    resetGenericDeviceImport
   } = props;
   const [ importType, setImportType ] = useState('');
   const {
@@ -41,18 +42,20 @@ const ImportDevicesModal = (props) => {
     importStarted,
     importStarting,
     genericImportScanned,
-    scannedGenericDevices,
-    scannedFileName
+    scannedGenericDevices
   } = props;
 
   const handleImport = (withLabel) => {
-    importGenericDevices(scannedGenericDevices, withLabel ? scannedFileName : "");
+    importGenericDevices(scannedGenericDevices, withLabel);
   }
 
   useEffect(() => {
     if (importStarted) {
       onClose();
-      setTimeout(() => setImportType(''), 500);
+      setTimeout(() => {
+        resetGenericDeviceImport();
+        setImportType('');
+      }, 500);
     }
   }, [importStarted]);
 
@@ -60,7 +63,10 @@ const ImportDevicesModal = (props) => {
     <Modal
       visible={open}
       centered
-      onCancel={() => {onClose(); setTimeout(() => setImportType(''), 500);}}
+      onCancel={() => {onClose(); setTimeout(() => {
+        resetGenericDeviceImport();
+        setImportType('');
+      }, 500)}}
       footer={null}
       header={null}
       width={450}
@@ -141,11 +147,10 @@ function mapStateToProps(state) {
     scannedGenericDevices: state.devices.scannedGenericDevices,
     scannedFileName: state.devices.scannedFileName
   }
-
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({fetchTtnDevices, importTtnDevices, importGenericDevices}, dispatch);
+  return bindActionCreators({fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDeviceImport}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImportDevicesModal);
