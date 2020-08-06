@@ -391,7 +391,7 @@ class PurchaseCreditModal extends Component {
           key="submit"
           type="primary"
           onClick={this.showCreditCard}
-          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading || this.state.gettingPrice}
+          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading || this.state.gettingPrice || this.state.countUSD < 10}
         >
           Purchase with Credit Card
         </Button>,
