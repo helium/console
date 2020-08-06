@@ -21,7 +21,7 @@ defmodule ConsoleWeb.V1.DownlinkController do
     channel = Channels.get_channel(channel_id)
 
     case channel do
-      nil -> {:error, :not_found, "Integration not found"}
+      nil -> {:error, :bad_request, "Integration not found"}
       _ ->
         if channel.type == "http" and token == Map.get(channel, :downlink_token) do
           channel = channel |> Repo.preload([labels: [:devices]])
@@ -29,12 +29,12 @@ defmodule ConsoleWeb.V1.DownlinkController do
 
           cond do
             length(devices) == 0 ->
-              {:error, :not_found, "Devices not found on integration"}
+              {:error, :unprocessable_entity, "Devices not found on integration"}
             device_id != nil and !Enum.member?(devices, device_id) ->
-              {:error, :not_found, "Device not found on integration"}
+              {:error, :unprocessable_entity, "Device not found on integration"}
             device_id != nil and Enum.member?(devices, device_id) ->
               ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "devices" => [device_id], "payload" => conn.body_params })
-              
+
               conn
               |> send_resp(:ok, "Downlink scheduled")
             device_id == nil ->
@@ -44,7 +44,7 @@ defmodule ConsoleWeb.V1.DownlinkController do
               |> send_resp(:ok, "Downlink scheduled")
           end
         else
-          {:error, :not_found, "Integration not found"}
+          {:error, :bad_request, "Integration not found"}
         end
     end
   end

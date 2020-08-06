@@ -7,14 +7,14 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
     test "queues a down properly", %{conn: conn} do
       azure_channel = insert(:channel, %{ downlink_token: "token1" })
       resp_conn = build_conn() |> post("/api/v1/down/#{azure_channel.id}/#{azure_channel.downlink_token}")
-      assert response(resp_conn, 404) # not http channel cannot downlink
+      assert response(resp_conn, 400) # not http channel cannot downlink
 
       channel = insert(:channel, %{ downlink_token: "token2", type: "http" })
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/token3")
-      assert response(resp_conn, 404) # wrong token cannot downlink
+      assert response(resp_conn, 400) # wrong token cannot downlink
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}")
-      assert response(resp_conn, 404) # no devices linked to channel cannot downlink
+      assert response(resp_conn, 422) # no devices linked to channel cannot downlink
 
       organization = insert(:organization)
       label = insert(:label)
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
       assert response(resp_conn, 200) # device linked downlink works
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_3.id}")
-      assert response(resp_conn, 404) # device not linked downlink works
+      assert response(resp_conn, 422) # device not linked downlink works
     end
   end
 end
