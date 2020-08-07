@@ -42,7 +42,7 @@ module.exports = function(env) {
       extensions: ['.js', '.jsx'],
     },
     plugins: [
-      new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY'])
+      new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY', 'SELF_HOSTED'])
     ],
   };
 };
