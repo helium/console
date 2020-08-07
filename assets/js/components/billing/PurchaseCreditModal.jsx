@@ -274,7 +274,7 @@ class PurchaseCreditModal extends Component {
     return(
       <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Text>1 DC = 24 Byte Packet = $0.00001 USD</Text>
-        <Text>(Credit Card purchases: minimum $10)</Text>
+        {!process.env.SELF_HOSTED && <Text>(Credit Card purchases: minimum $10)</Text>}
         <div style={styles.countBlueBox}>
           <div>
             <Input
@@ -382,29 +382,47 @@ class PurchaseCreditModal extends Component {
         </Button>,
       ]
     )
-    return (
-      [
-        <Button key="back" onClick={this.handleClose} disabled={this.state.loading}>
-          Cancel
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={this.showCreditCard}
-          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading || this.state.gettingPrice || this.state.countUSD < 10}
-        >
-          Purchase with Credit Card
-        </Button>,
-        <Button
-          key="submit2"
-          type="primary"
-          onClick={this.showQRCode}
-          disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.gettingPrice}
-        >
-          Burn HNT to DC
-        </Button>,
-      ]
-    )
+    if (!process.env.SELF_HOSTED) {
+      return (
+        [
+          <Button key="back" onClick={this.handleClose} disabled={this.state.loading}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={this.showCreditCard}
+            disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.loading || this.state.gettingPrice || this.state.countUSD < 10}
+          >
+            Purchase with Credit Card
+          </Button>,
+          <Button
+            key="submit2"
+            type="primary"
+            onClick={this.showQRCode}
+            disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.gettingPrice}
+          >
+            Burn HNT to DC
+          </Button>,
+        ]
+      )
+    } else {
+      return (
+        [
+          <Button key="back" onClick={this.handleClose} disabled={this.state.loading}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit2"
+            type="primary"
+            onClick={this.showQRCode}
+            disabled={!this.state.countUSD || this.state.countUSD == 0 || this.state.gettingPrice}
+          >
+            Burn HNT to DC
+          </Button>,
+        ]
+      )
+    }
   }
 
   render() {
