@@ -38,42 +38,46 @@ class FunctionIndex extends Component {
   render() {
     const { showDeleteFunctionModal, showRemoveFunctionLabelModal } = this.state
 
-    return (
-      <DashboardLayout
-        title="Functions"
-        extra={
-          <UserCan>
-            <Button
-              size="large"
-              icon="code"
-              type="primary"
-              onClick={() => this.props.history.push('/functions/new')}
-            >
-              Create New Function
-            </Button>
-          </UserCan>
-        }
-      >
-        <FunctionIndexTable
-          history={this.props.history}
-          openDeleteFunctionModal={this.openDeleteFunctionModal}
-          openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
-        />
+    if (!process.env.SELF_HOSTED) {
+      return (
+        <DashboardLayout
+          title="Functions"
+          extra={
+            <UserCan>
+              <Button
+                size="large"
+                icon="code"
+                type="primary"
+                onClick={() => this.props.history.push('/functions/new')}
+              >
+                Create New Function
+              </Button>
+            </UserCan>
+          }
+        >
+          <FunctionIndexTable
+            history={this.props.history}
+            openDeleteFunctionModal={this.openDeleteFunctionModal}
+            openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
+          />
 
-        <DeleteFunctionModal
-          open={showDeleteFunctionModal}
-          onClose={this.closeDeleteFunctionModal}
-          functionToDelete={this.state.functionSelected}
-        />
+          <DeleteFunctionModal
+            open={showDeleteFunctionModal}
+            onClose={this.closeDeleteFunctionModal}
+            functionToDelete={this.state.functionSelected}
+          />
 
-        <RemoveFunctionLabelModal
-          open={showRemoveFunctionLabelModal}
-          onClose={this.closeRemoveFunctionLabelModal}
-          functionSelected={this.state.functionSelected}
-          labelToRemove={this.state.labelToRemove}
-        />
-      </DashboardLayout>
-    )
+          <RemoveFunctionLabelModal
+            open={showRemoveFunctionLabelModal}
+            onClose={this.closeRemoveFunctionLabelModal}
+            functionSelected={this.state.functionSelected}
+            labelToRemove={this.state.labelToRemove}
+          />
+        </DashboardLayout>
+      )
+    } else {
+      return null
+    }
   }
 }
 

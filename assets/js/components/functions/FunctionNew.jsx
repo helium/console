@@ -63,76 +63,80 @@ class FunctionNew extends Component {
   render() {
     const { name, type, format, body } = this.state
 
-    return (
-      <DashboardLayout title="Create New Function">
-        <Card    
- title="Step 1 - Enter Function Details">
-          <Text>Enter Function Name</Text>
-          <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
-            <Input
-              placeholder="e.g. My Decoder"
-              name="name"
-              value={name}
-              onChange={this.handleInputUpdate}
-              style={{ width: 220 }}
-            />
-            <Select
-              placeholder="Function Type"
-              onSelect={this.handleSelectFunctionType}
-              style={{ width: 220, marginLeft: 8 }}
-            >
-              <Option value="decoder">
-                Decoder
-              </Option>
-            </Select>
-            <Select
-              placeholder="Choose Format"
-              onSelect={this.handleSelectFormat}
-              style={{ width: 220, marginLeft: 8 }}
-              disabled={!type}
-            >
-              <Option value="browan_object_locator">
-                Browan Object Locator
-              </Option>
-              <Option value="cayenne">
-                Cayenne LPP
-              </Option>
-              <Option value="custom">
-                Custom Script
-              </Option>
-            </Select>
-          </div>
-        </Card>
-        {
-          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
-        }
-
-        <UserCan>
-          <Card            title="Labels Applied To">
-            <Text style={{margin: '10px 0 30px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
-            <LabelsAppliedNew
-              handleLabelsUpdate={this.handleLabelsUpdate}
-              addOrPrompt={this.confirmOrOpenModal}
-              ConfirmationModal={FunctionMoveLabelModal}
-            />
+    if (!process.env.SELF_HOSTED) {
+      return (
+        <DashboardLayout title="Create New Function">
+          <Card
+   title="Step 1 - Enter Function Details">
+            <Text>Enter Function Name</Text>
+            <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
+              <Input
+                placeholder="e.g. My Decoder"
+                name="name"
+                value={name}
+                onChange={this.handleInputUpdate}
+                style={{ width: 220 }}
+              />
+              <Select
+                placeholder="Function Type"
+                onSelect={this.handleSelectFunctionType}
+                style={{ width: 220, marginLeft: 8 }}
+              >
+                <Option value="decoder">
+                  Decoder
+                </Option>
+              </Select>
+              <Select
+                placeholder="Choose Format"
+                onSelect={this.handleSelectFormat}
+                style={{ width: 220, marginLeft: 8 }}
+                disabled={!type}
+              >
+                <Option value="browan_object_locator">
+                  Browan Object Locator
+                </Option>
+                <Option value="cayenne">
+                  Cayenne LPP
+                </Option>
+                <Option value="custom">
+                  Custom Script
+                </Option>
+              </Select>
+            </div>
           </Card>
-        </UserCan>
+          {
+            type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
+          }
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
           <UserCan>
-            <Button
-              size="large"
-              icon="save"
-              type="primary"
-              onClick={this.handleSubmit}
-              disabled={!type || !format || name.length === 0}
-            >
-              Save Function
-            </Button>
+            <Card            title="Labels Applied To">
+              <Text style={{margin: '10px 0 30px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
+              <LabelsAppliedNew
+                handleLabelsUpdate={this.handleLabelsUpdate}
+                addOrPrompt={this.confirmOrOpenModal}
+                ConfirmationModal={FunctionMoveLabelModal}
+              />
+            </Card>
           </UserCan>
-        </div>
-      </DashboardLayout>
-    )
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
+            <UserCan>
+              <Button
+                size="large"
+                icon="save"
+                type="primary"
+                onClick={this.handleSubmit}
+                disabled={!type || !format || name.length === 0}
+              >
+                Save Function
+              </Button>
+            </UserCan>
+          </div>
+        </DashboardLayout>
+      )
+    } else {
+      return null
+    }
   }
 }
 
