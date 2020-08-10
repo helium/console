@@ -110,10 +110,15 @@ export const scanGenericDevices = (file, onComplete) => {
           keys[index] = 'label_id';
         }
       });
-      if (keys.length < 3) {
-        dispatch({type: GENERIC_IMPORT_SCAN_FAILED});
-        onComplete('');
-      } else {
+      let failed = false;
+      ['name', 'app_key', 'app_eui', 'dev_eui'].forEach((key) => {
+        if (keys.indexOf(key) < 0) {
+          failed = true;
+          dispatch({type: GENERIC_IMPORT_SCAN_FAILED});
+          onComplete('');
+        }
+      })
+      if (!failed) {
         rows = rows.filter((value) => value !== "");
         dispatch(scannedGenericDevicesImport(rows.map((row) => {
           return row.split(",").reduce((map, val, i) => {
