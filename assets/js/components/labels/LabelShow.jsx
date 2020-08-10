@@ -7,7 +7,9 @@ import LabelAddDeviceModal from './LabelAddDeviceModal'
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
-import DebugSidebar from '../common/DebugSidebar'
+import Sidebar from '../common/Sidebar'
+import Debug from '../common/Debug'
+import Downlink from '../common/Downlink'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
@@ -37,6 +39,7 @@ class LabelShow extends Component {
     showRemoveDevicesFromLabelModal: false,
     devicesToRemove: [],
     showDebugSidebar: false,
+    showDownlinkSidebar: false
   }
 
   componentDidMount() {
@@ -98,8 +101,15 @@ class LabelShow extends Component {
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
+  handleToggleDownlink = () => {
+    const { showDownlinkSidebar } = this.state;
+
+    this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
+  }
+
   render() {
     const { loading, error, label } = this.props.data
+    console.log(label);
     if (loading) return <DashboardLayout />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
@@ -170,14 +180,28 @@ class LabelShow extends Component {
           />
 
           <UserCan>
-            <DebugSidebar
+            <Sidebar
               show={this.state.showDebugSidebar}
               toggle={this.handleToggleDebug}
-              subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
-              variables={{ label_id: this.props.match.params.id }}
-              subscriptionKey="labelDebugEventAdded"
-              refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
-            />
+              sidebarIcon={<Icon type="bug" />}
+              iconPosition='top'
+            >
+              <Debug
+                subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+                variables={{ label_id: this.props.match.params.id }}
+                refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
+                subscriptionKey="labelDebugEventAdded"
+              />
+            </Sidebar>
+          </UserCan>
+          <UserCan>
+            <Sidebar
+              show={this.state.showDownlinkSidebar}
+              toggle={this.handleToggleDownlink}
+              iconPosition={'middle'}
+            >
+              <Downlink/>
+            </Sidebar>
           </UserCan>
         </DashboardLayout>
       </div>
