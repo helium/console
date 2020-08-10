@@ -228,7 +228,7 @@ class DeviceShow extends Component {
           </UserCan>
         }
       >
-        <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex">
+        <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex" style={{ overflow: 'scroll' }}>
           <Col span={15}>
           <Card title="Device Details" >
             <table>
@@ -416,9 +416,8 @@ class DeviceShow extends Component {
 
           <Col span={9}>
             <Card
-
-            title="Packets Transferred"
-              style={{ height: 'calc(100% - 20px)' }}
+              title="Packets Transferred"
+              style={{ height: 'calc(100% - 20px)', minWidth: 300 }}
             >
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
