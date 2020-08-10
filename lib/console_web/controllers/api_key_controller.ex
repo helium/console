@@ -20,6 +20,7 @@ defmodule ConsoleWeb.ApiKeyController do
     else
       key = :crypto.strong_rand_bytes(32) |> Base.encode64(padding: false)
       params = Map.put(params, "key", :crypto.hash(:sha256, key))
+      params = %{params | "name" => String.trim(params["name"]) }
 
       with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
         broadcast(api_key)
