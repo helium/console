@@ -12,6 +12,8 @@ import Debug from '../common/Debug'
 import Downlink from '../common/Downlink'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import DownlinkImage from '../../../img/downlink.svg'
+import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
@@ -184,6 +186,7 @@ class LabelShow extends Component {
               show={this.state.showDebugSidebar}
               toggle={this.handleToggleDebug}
               sidebarIcon={<Icon type="bug" />}
+              iconBackground={debugSidebarBackgroundColor}
               iconPosition='top'
             >
               <Debug
@@ -198,6 +201,8 @@ class LabelShow extends Component {
             <Sidebar
               show={this.state.showDownlinkSidebar}
               toggle={this.handleToggleDownlink}
+              sidebarIcon={<img src={DownlinkImage}/>}
+              iconBackground="#40A9FF"
               iconPosition={'middle'}
             >
               <Downlink/>

@@ -15,7 +15,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { show, iconPosition, sidebarIcon } = this.props;
+    const { show, iconPosition, sidebarIcon, iconBackground } = this.props;
     let topPercentage;
     switch (iconPosition) {
       case 'top':
@@ -36,7 +36,7 @@ class Sidebar extends Component {
           width: show ? 500 : 0,
           height: 'calc(100vh - 55px)',
           right: 0,
-          zIndex: 10,
+          zIndex: show ? 10 : 1,
           padding: 0,
           transition: 'all 0.5s ease',
         }}
@@ -48,11 +48,10 @@ class Sidebar extends Component {
             width: 50,
             height: 50,
             top: `calc(${topPercentage}% - 25px)`,
-            backgroundColor: debugSidebarBackgroundColor,
+            backgroundColor: iconBackground,
             borderRadius: '9999px',
             cursor: 'pointer',
             userSelect: 'none'
-
           }}
           onClick={this.handleToggle}
         >
