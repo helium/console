@@ -204,29 +204,6 @@ class DeviceShow extends Component {
             <Text>&nbsp;&nbsp;{device.name}</Text>
           </div>
         }
-        extra={
-          <UserCan>
-            <Popover
-              content={`This device is currently ${device.active ? "active" : "inactive"}`}
-              placement="top"
-              overlayStyle={{ width: 140 }}
-            >
-              <Switch
-                checked={device.active}
-                onChange={this.toggleDeviceActive}
-              />
-            </Popover>
-            <Button
-              type="danger"
-              icon="delete"
-              shape="circle"
-              size="small"
-              onClick={e => {
-                e.stopPropagation()
-              }}
-            />
-          </UserCan>
-        }
       >
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex" style={{ overflow: 'scroll' }}>
           <Col span={15}>

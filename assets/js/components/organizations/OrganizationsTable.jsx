@@ -85,30 +85,6 @@ class OrganizationsTable extends Component {
         render: data => numeral(data).format('0,0')
       },
       {
-        title: 'Devices',
-        dataIndex: 'devices',
-        render: (data, record) => {
-          return (
-            <span>
-              <Switch
-                checked={record.active}
-                onChange={active => this.toggleOrgActive(active, record.id)}
-              />
-              {
-                record.active_count > 0 && (
-                  <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
-                )
-              }
-              {
-                record.inactive_count > 0 && (
-                  <Text style={{ color: '#BFBFBF', marginLeft: 8 }}>{record.inactive_count} Inactive</Text>
-                )
-              }
-            </span>
-          )
-        }
-      },
-      {
         title: '',
         key: 'action',
         render: (text, record) => (
