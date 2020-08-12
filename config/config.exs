@@ -59,6 +59,9 @@ config :console,
 
 config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
 
+config :console,
+  self_hosted: System.get_env("SELF_HOSTED")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
