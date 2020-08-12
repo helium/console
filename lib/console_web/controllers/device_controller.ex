@@ -156,7 +156,7 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     {:ok, device_import} = Devices.create_import(current_organization, current_user.id, "generic")
     broadcast_add(device_import)
-    Task.async(fn ->
+    Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
         added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0}, fn device, acc ->
           case device
@@ -165,7 +165,6 @@ defmodule ConsoleWeb.DeviceController do
             {:ok, new_device} ->
               if Map.has_key?(device, "label_id") do
                 if Map.has_key?(acc.label_device_map, device["label_id"]) do
-                  IO.inspect(acc.device_count + 1)
                   %{
                     acc |
                     label_device_map: Map.update!(acc.label_device_map, device["label_id"], fn current ->

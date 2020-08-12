@@ -15,6 +15,7 @@ defmodule Console.Application do
       supervisor(Absinthe.Subscription, [ConsoleWeb.Endpoint]),
       # Start your own worker by calling: Console.Worker.start_link(arg1, arg2, arg3)
       # worker(Console.Worker, [arg1, arg2, arg3]),
+      {Task.Supervisor, name: ConsoleWeb.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
