@@ -15,6 +15,7 @@ import UserCan from '../common/UserCan'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
+import { sendDownlinkMessage } from '../../actions/channel'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -41,7 +42,8 @@ class LabelShow extends Component {
     showRemoveDevicesFromLabelModal: false,
     devicesToRemove: [],
     showDebugSidebar: false,
-    showDownlinkSidebar: false
+    showDownlinkSidebar: false,
+    selectedDevices: []
   }
 
   componentDidMount() {
@@ -85,6 +87,10 @@ class LabelShow extends Component {
     this.setState({ showRemoveDevicesFromLabelModal: false })
   }
 
+  devicesSelected = (selectedDevices) => {
+    this.setState({selectedDevices});
+  }
+
   handleUpdateLabel = (name, color) => {
     const labelId = this.props.match.params.id
     const attrs = name ? { name, color } : { color }
@@ -111,7 +117,7 @@ class LabelShow extends Component {
 
   render() {
     const { loading, error, label } = this.props.data
-    console.log(label);
+
     if (loading) return <DashboardLayout />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
@@ -157,7 +163,7 @@ class LabelShow extends Component {
 
           </LabelTag>
 
-          <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history}/>
+          <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history} devicesSelected={this.devicesSelected}/>
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
@@ -198,15 +204,27 @@ class LabelShow extends Component {
             </Sidebar>
           </UserCan>
           <UserCan>
-            <Sidebar
-              show={this.state.showDownlinkSidebar}
-              toggle={this.handleToggleDownlink}
-              sidebarIcon={<img src={DownlinkImage}/>}
-              iconBackground="#40A9FF"
-              iconPosition={'middle'}
-            >
-              <Downlink/>
-            </Sidebar>
+            {
+              label && label.channels.length > 0 && 
+              <Sidebar
+                show={this.state.showDownlinkSidebar}
+                toggle={this.handleToggleDownlink}
+                sidebarIcon={<img src={DownlinkImage}/>}
+                iconBackground='#40A9FF'
+                iconPosition='middle'
+
+              >
+                <Downlink onSend={(payload, confirm, port) => {
+                  this.props.sendDownlinkMessage(
+                    payload,
+                    port,
+                    confirm,
+                    this.state.selectedDevices.map(device => device.id),
+                    label.channels
+                  )
+                }}/>
+              </Sidebar>
+            }
           </UserCan>
         </DashboardLayout>
       </div>
@@ -215,7 +233,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage }, dispatch)
 }
 
 export default LabelShow

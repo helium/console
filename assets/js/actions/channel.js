@@ -1,7 +1,7 @@
 import { push, replace } from 'connected-react-router';
 import * as rest from '../util/rest';
-import { displayInfo } from '../util/messages'
-import sanitizeHtml from 'sanitize-html'
+import { displayInfo, displayError } from '../util/messages';
+import sanitizeHtml from 'sanitize-html';
 
 export const createChannel = (params, labels) => {
   return (dispatch) => {
@@ -35,6 +35,30 @@ export const deleteChannel = (id) => {
       .then(response => {
         dispatch(replace('/integrations'))
       })
+  }
+}
+
+export const sendDownlinkMessage = (payload, port, confirmed, devices, channels) => {
+  return (dispatch) => {
+    channels.forEach((channel) => {
+      if (devices.length > 0) {
+        Promise.all(
+          devices.map(device => {
+            return rest.post(
+              `/api/v1/down/${channel.id}/${channel.downlink_token}/${device}`,
+              { payload_raw: payload, port, confirmed }
+            );
+          })
+        ).then(()=> {displayInfo(`Successfully queued downlink for channel ${channel.name}`)}
+        ).catch(() => {displayError(`Failed to queue downlink for channel ${channel.name}`)});
+      } else {
+        rest.post(
+          `/api/v1/down/${channel.id}/${channel.downlink_token}/`,
+          { payload_raw: payload, port, confirmed }
+        ).then(() => {displayInfo(`Successfully queued downlink for channel ${channel.name}`)}
+        ).catch(() => {displayError(`Failed to queue downlink for channel ${channel.name}`)});
+      }
+    });
   }
 }
 
