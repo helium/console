@@ -40,7 +40,7 @@ const Downlink = ({onSend}) => {
             <Text style={inputHeadingStyle}>Fport</Text>
           </Col>
           <Col sm={8}>
-            <InputNumber defaultValue={0} onChange={setPort}/>
+            <InputNumber defaultValue={0} min={0} max={222} onChange={setPort}/>
           </Col>
           <Col sm={15} style={{textAlign: 'right'}}>
             <Text style={{fontSize: 14, marginRight: 5, marginTop: 12}}>Require message confirmation</Text>
