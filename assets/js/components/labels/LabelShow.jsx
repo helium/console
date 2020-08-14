@@ -215,6 +215,7 @@ class LabelShow extends Component {
 
               >
                 <Downlink onSend={(payload, confirm, port) => {
+                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
                   this.props.sendDownlinkMessage(
                     payload,
                     port,
