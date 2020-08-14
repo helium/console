@@ -122,6 +122,7 @@ class LabelShowTable extends Component {
     ]
 
     const { loading, error, devices_by_label } = this.props.data
+    const { devicesSelected } = this.props;
 
     if (loading) return null;
     if (error) return (
@@ -129,7 +130,10 @@ class LabelShowTable extends Component {
     )
 
     const rowSelection = {
-      onChange: (keys, selectedRows) => this.setState({ selectedRows })
+      onChange: (keys, selectedRows) => {
+        this.setState({ selectedRows });
+        devicesSelected(selectedRows);
+      }
     }
 
     return (

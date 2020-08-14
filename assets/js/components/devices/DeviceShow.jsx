@@ -9,7 +9,8 @@ import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
-import DebugSidebar from '../common/DebugSidebar'
+import Debug from '../common/Debug'
+import Sidebar from '../common/Sidebar'
 import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
@@ -434,14 +435,19 @@ class DeviceShow extends Component {
         />
 
         <UserCan>
-          <DebugSidebar
+          <Sidebar
             show={showDebugSidebar}
             toggle={this.handleToggleDebug}
-            subscription={EVENTS_SUBSCRIPTION}
-            variables={{ device_id: this.props.match.params.id }}
-            subscriptionKey="eventAdded"
-            refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
-          />
+            sidebarIcon={<Icon type="bug" />}
+            iconPosition='top'
+          >
+            <Debug
+              subscription={EVENTS_SUBSCRIPTION}
+              variables={{ device_id: this.props.match.params.id }}
+              subscriptionKey="eventAdded"
+              refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
+            />
+          </Sidebar>
         </UserCan>
       </DashboardLayout>
     )

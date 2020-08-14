@@ -1,24 +1,21 @@
 import React, { Component } from 'react'
 import { Subscription } from 'react-apollo';
 import omit from 'lodash/omit'
-import { debugSidebarBackgroundColor, debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
+import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
 import { Typography, Icon, Popover, Button } from 'antd';
 const { Text } = Typography
 import Loader from '../../../img/debug-loader.png'
 
-class DebugSidebar extends Component {
+class Debug extends Component {
   state = {
     data: []
   }
 
-  handleToggle = () => {
-    const { toggle, show } = this.props
-    if (show) this.setState({ data: [] })
-    toggle()
+  componentDidMount = () => {
+    this.setState({ data: []})
   }
 
   updateData = subscriptionData => {
-    if (!this.props.show) return
     if (this.state.data.length === 10) return
 
     let event = subscriptionData.data[this.props.subscriptionKey]
@@ -100,56 +97,21 @@ class DebugSidebar extends Component {
   }
 
   render() {
-    const { show, subscription, variables } = this.props
+    const { subscription, variables } = this.props
 
     return (
-      <div
-        style={{
-          background: debugSidebarBackgroundColor,
-          position: 'absolute',
-          top: 55,
-          width: show ? 500 : 0,
-          height: 'calc(100vh - 55px)',
-          right: 0,
-          zIndex: 10,
-          padding: 0,
-          transition: 'all 0.5s ease',
-        }}
+      <Subscription
+        subscription={subscription}
+        variables={variables}
+        onSubscriptionData={({ subscriptionData }) => this.updateData(subscriptionData)}
+        fetchPolicy="network-only"
+        shouldResubscribe
       >
-        <div
-          style={{
-            position: 'relative',
-            left: '-60px',
-            width: 50,
-            height: 50,
-            top: 'calc(50% - 25px)',
-            backgroundColor: debugSidebarBackgroundColor,
-            borderRadius: '9999px',
-            cursor: 'pointer',
-            userSelect: 'none'
-
-          }}
-          onClick={this.handleToggle}
-        >
-          <Text style={{ color: 'white', fontSize: 25, position: 'absolute', top: '50%', left: '50%', transform:'translate(-50% , -50%)' }}><Icon type="bug" /></Text>
-        </div>
-        {
-          show && (
-            <Subscription
-              subscription={subscription}
-              variables={variables}
-              onSubscriptionData={({ subscriptionData }) => this.updateData(subscriptionData)}
-              fetchPolicy="network-only"
-              shouldResubscribe
-            >
-              {this.renderData}
-            </Subscription>
-          )
-        }
-      </div>
+        {this.renderData}
+      </Subscription>
     )
   }
 }
 
 
-export default DebugSidebar
+export default Debug
