@@ -94,12 +94,19 @@ class DataCreditsIndex extends Component {
     }
   }
 
-  fetchPaymentMethods = (callback) => {
+  fetchPaymentMethods = (callback, attempt = 0) => {
+    if (attempt == 3) {
+      return analyticsLogger.logEvent("FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT", { "organization_id": this.props.currentOrganizationId, "step": "cannot get payment method info" })
+    }
+
     if (this.props.role === "admin") {
       this.props.getPaymentMethods()
       .then(paymentMethods => {
         this.setState({ paymentMethods, triedFetchingPayments: true })
         if (callback) callback()
+      })
+      .catch(err => {
+        this.fetchPaymentMethods(callback, attempt + 1)
       })
     }
   }

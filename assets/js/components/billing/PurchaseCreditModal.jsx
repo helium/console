@@ -232,12 +232,7 @@ class PurchaseCreditModal extends Component {
 
           this.props.fetchPaymentMethods(() => {
             const paymentMethod = find(this.props.paymentMethods, ["id", result.paymentIntent.payment_method])
-            this.props.createDCPurchase(
-              result.paymentIntent.amount,
-              paymentMethod.card.brand,
-              paymentMethod.card.last4,
-              result.paymentIntent.id
-            )
+            this.createDCPurchaseAfterSuccess(result, paymentMethod)
           })
 
           if (this.props.paymentMethods.length == 0) this.props.setDefaultPaymentMethod(result.paymentIntent.payment_method)
@@ -249,6 +244,23 @@ class PurchaseCreditModal extends Component {
           displayError("Could not process your payment, please try again.")
         }
       }
+    })
+  }
+
+  createDCPurchaseAfterSuccess = (result, paymentMethod, attempt = 0) => {
+    if (attempt === 3) {
+      return analyticsLogger.logEvent("FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT", { "id": result.paymentIntent.id, "amount": result.paymentIntent.amount })
+    }
+
+    this.props.createDCPurchase(
+      result.paymentIntent.amount,
+      paymentMethod.card.brand,
+      paymentMethod.card.last4,
+      result.paymentIntent.id
+    )
+    .then(() => {})
+    .catch(err => {
+      this.createDCPurchaseAfterSuccess(result, paymentMethod, attempt + 1)
     })
   }
 
