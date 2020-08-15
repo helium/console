@@ -181,7 +181,7 @@ defmodule ConsoleWeb.DataCreditController do
         payment_intent = Poison.decode!(stripe_response.body)
 
         with "succeeded" <- payment_intent["status"],
-          {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
+          {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
             current_organization = Organizations.get_organization!(current_organization.id)
             broadcast(current_organization, dc_purchase)
             broadcast(current_organization)
@@ -295,7 +295,7 @@ defmodule ConsoleWeb.DataCreditController do
           attrs = %{
             "memo" => :base64.encode(number_bin),
           }
-          
+
           {:ok, organization} = Organizations.update_organization(current_organization, attrs)
           organization.memo
         _ ->

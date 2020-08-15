@@ -23,11 +23,11 @@ defmodule Console.DcPurchases do
       organization = Organizations.get_organization_and_lock_for_dc(organization.id)
       organization
       |> Organization.update_changeset(%{ "dc_balance" => new_balance, "dc_balance_nonce" => organization.dc_balance_nonce + 1, "pending_automatic_purchase" => false })
-      |> Repo.update()
+      |> Repo.update!()
 
       %DcPurchase{}
       |> DcPurchase.changeset(attrs)
-      |> Repo.insert()
+      |> Repo.insert!()
     end)
   end
 
