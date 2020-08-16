@@ -194,7 +194,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                         "payment_id" => payment_intent["id"],
                       }
 
-                      with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+                      with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
                         organization = Organizations.get_organization!(organization.id)
                         Organizations.get_administrators(organization)
                         |> Enum.each(fn administrator ->

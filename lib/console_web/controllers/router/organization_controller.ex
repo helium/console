@@ -19,7 +19,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
 
   def burned_dc(conn, %{"memo" => memo_number, "dc_amount" => amount, "hnt_amount" => cost}) do
     memo = memo_number |> :binary.encode_unsigned(:little) |> :base64.encode()
-    
+
     case Organizations.get_organization_by_memo(memo) do
       %Organization{} = organization ->
         attrs = %{
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
           "payment_id" => memo,
         }
 
-        with {:ok, {:ok, %DcPurchase{} = dc_purchase }} <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+        with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
           {:ok, organization} = Organizations.update_organization(organization, %{ "memo" => nil })
           ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
           ConsoleWeb.DataCreditController.broadcast(organization)
