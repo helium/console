@@ -32,14 +32,21 @@ defmodule ConsoleWeb.Router.OrganizationController do
           "payment_id" => memo,
         }
 
-        with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
-          {:ok, organization} = Organizations.update_organization(organization, %{ "memo" => nil })
-          ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
-          ConsoleWeb.DataCreditController.broadcast(organization)
-          ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+        case DcPurchases.get_by_payment_id(memo) do
+          nil ->
+            with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+              {:ok, organization} = Organizations.update_organization(organization, %{ "memo" => nil })
+              ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
+              ConsoleWeb.DataCreditController.broadcast(organization)
+              ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
 
-          conn |> send_resp(:no_content, "")
+              conn |> send_resp(:no_content, "")
+            end
+          _ ->
+            Organizations.update_organization(organization, %{ "memo" => nil })
+            conn |> send_resp(:no_content, "")
         end
+
       nil ->
         {:error, :not_found, "An organization with that memo was not found"}
     end
