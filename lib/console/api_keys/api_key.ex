@@ -21,6 +21,14 @@ defmodule Console.ApiKeys.ApiKey do
   def changeset(api_key, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["role", "name"])
 
+    attrs =
+      case attrs["name"] do
+        nil -> attrs
+        _ ->
+          name = String.trim(attrs["name"]) |> String.split() |> Enum.join(" ")
+          Map.put(attrs, "name", name)
+      end
+
     api_key
     |> cast(attrs, [:role, :name, :organization_id, :user_id, :key])
     |> validate_required(:role, message: "Please select a role for your new api key")
