@@ -72,11 +72,23 @@ defmodule Console.Labels do
   def delete_labels(label_ids, organization_id) do
     label_ids = from(l in Label, where: l.organization_id == ^organization_id and l.id in ^label_ids) |> Repo.all() |> Enum.map(fn l -> l.id end)
 
-    Repo.transaction(fn ->
-      from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all()
-      from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all()
-      from(l in Label, where: l.id in ^label_ids) |> Repo.delete_all()
-    end)
+    Ecto.Multi.new()
+      |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
+        with {count, nil} <- from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:channels_labels, fn _repo, _ ->
+        with {count, nil} <- from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:labels, fn _repo, _ ->
+        with {count, nil} <- from(l in Label, where: l.id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+     |> Repo.transaction()
   end
 
   def add_devices_to_label(devices, labels, to_label, organization) do
