@@ -87,11 +87,23 @@ defmodule Console.Devices do
   def delete_devices(device_ids, organization_id) do
     device_ids = from(d in Device, where: d.organization_id == ^organization_id and d.id in ^device_ids) |> Repo.all() |> Enum.map(fn d -> d.id end)
 
-    Repo.transaction(fn ->
-      from(dl in DevicesLabels, where: dl.device_id in ^device_ids) |> Repo.delete_all()
-      from(e in Event, where: e.device_id in ^device_ids) |> Repo.delete_all()
-      from(d in Device, where: d.id in ^device_ids) |> Repo.delete_all()
-    end)
+    Ecto.Multi.new()
+      |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
+        with {count, nil} <- from(dl in DevicesLabels, where: dl.device_id in ^device_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:events, fn _repo, _ ->
+        with {count, nil} <- from(e in Event, where: e.device_id in ^device_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:devices, fn _repo, _ ->
+        with {count, nil} <- from(d in Device, where: d.id in ^device_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+     |> Repo.transaction()
   end
 
   def delete_device(%Device{} = device) do
