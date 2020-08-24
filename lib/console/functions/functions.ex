@@ -5,6 +5,7 @@ defmodule Console.Functions do
   alias Console.Functions.Function
   alias Console.Organizations.Organization
   alias Console.Labels
+  alias Console.Labels.Label
 
   def get_function!(organization, id) do
      Repo.get_by!(Function, [id: id, organization_id: organization.id])
@@ -45,9 +46,11 @@ defmodule Console.Functions do
     labels = fetch_assoc(function).labels
     Repo.transaction(fn ->
       Enum.each(labels, fn label ->
-        Labels.update_label(label, %{ "function_id" => nil })
+        label
+        |> Label.changeset(%{ "function_id" => nil })
+        |> Repo.update!()
       end)
-      Repo.delete(function)
+      Repo.delete!(function)
     end)
   end
 end

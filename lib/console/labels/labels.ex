@@ -59,6 +59,18 @@ defmodule Console.Labels do
     end
   end
 
+  def create_label!(%Organization{} = organization, attrs \\ %{}) do
+    count = get_organization_label_count(organization)
+    cond do
+      count > 9999 ->
+        {:error, :forbidden, "Label limit for organization reached"}
+      true ->
+        %Label{}
+        |> Label.changeset(attrs)
+        |> Repo.insert!()
+    end
+  end
+
   def update_label(%Label{} = label, attrs) do
     label
     |> Label.changeset(attrs)
@@ -72,11 +84,23 @@ defmodule Console.Labels do
   def delete_labels(label_ids, organization_id) do
     label_ids = from(l in Label, where: l.organization_id == ^organization_id and l.id in ^label_ids) |> Repo.all() |> Enum.map(fn l -> l.id end)
 
-    Repo.transaction(fn ->
-      from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all()
-      from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all()
-      from(l in Label, where: l.id in ^label_ids) |> Repo.delete_all()
-    end)
+    Ecto.Multi.new()
+      |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
+        with {count, nil} <- from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:channels_labels, fn _repo, _ ->
+        with {count, nil} <- from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:labels, fn _repo, _ ->
+        with {count, nil} <- from(l in Label, where: l.id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+     |> Repo.transaction()
   end
 
   def add_devices_to_label(devices, labels, to_label, organization) do
@@ -205,7 +229,9 @@ defmodule Console.Labels do
     Repo.transaction(fn ->
       Enum.each(label_ids, fn id ->
         label = get_label!(organization, id)
-        update_label(label, %{ "function_id" => function.id })
+        label
+        |> Label.changeset(%{ "function_id" => function.id })
+        |> Repo.update!()
       end)
     end)
   end
@@ -213,7 +239,7 @@ defmodule Console.Labels do
   def create_labels_add_function(function, label_names, organization, user) do
     Repo.transaction(fn ->
       Enum.each(label_names, fn name ->
-        create_label(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
+        create_label!(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
       end)
     end)
   end
@@ -222,7 +248,7 @@ defmodule Console.Labels do
     Repo.transaction(fn ->
       labels = Enum.reduce(label_names, [], fn label, acc ->
         # create a label, store the id, and add
-        {:ok, new_label} = create_label(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
+        {:ok, new_label} = create_label!(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
         acc ++ [new_label.id]
       end)
       add_labels_to_channel(labels, channel, organization)

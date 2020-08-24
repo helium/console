@@ -50,12 +50,18 @@ defmodule ConsoleWeb.OrganizationController do
     if membership.role != "admin" do
       {:error, :forbidden, "You don't have access to do this"}
     else
-      {:ok, _} = Repo.transaction(fn ->
-        Organizations.update_organization(organization, %{ "active" => active })
+      org_changeset =
+        organization
+        |> Organization.update_changeset(%{ "active" => active })
 
-        device_ids
-        |> Devices.update_devices_active(active)
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:organization, org_changeset)
+      |> Ecto.Multi.run(:devices, fn _repo, _ ->
+        with {count, nil} <- Devices.update_devices_active(device_ids, active) do
+          {:ok, count}
+        end
       end)
+      |> Repo.transaction()
 
       broadcast(organization, conn.assigns.current_user)
       if active do
