@@ -164,6 +164,12 @@ defmodule Console.Organizations do
     |> Repo.update()
   end
 
+  def update_organization!(%Organization{} = organization, attrs) do
+    organization
+    |> Organization.update_changeset(attrs)
+    |> Repo.update!()
+  end
+
   def join_organization(%User{} = user, %Organization{} = organization, role \\ "read") do
     %Membership{}
     |> Membership.join_org_changeset(user, organization, role)
@@ -264,11 +270,11 @@ defmodule Console.Organizations do
       end
 
     Repo.transaction(fn ->
-      {:ok, from_org_updated } = update_organization(from_org, %{
+      from_org_updated = update_organization!(from_org, %{
         "dc_balance" => from_org.dc_balance - amount,
         "dc_balance_nonce" => from_org.dc_balance_nonce + 1
       })
-      {:ok, to_org_updated } = update_organization(to_org, %{
+      to_org_updated = update_organization!(to_org, %{
         "dc_balance" => to_org_dc_balance,
         "dc_balance_nonce" => to_org.dc_balance_nonce + 1
       })
