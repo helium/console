@@ -217,7 +217,9 @@ defmodule Console.Labels do
     Repo.transaction(fn ->
       Enum.each(label_ids, fn id ->
         label = get_label!(organization, id)
-        update_label(label, %{ "function_id" => function.id })
+        label
+        |> Label.changeset(%{ "function_id" => function.id })
+        |> Repo.update!()
       end)
     end)
   end
