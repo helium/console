@@ -10,17 +10,20 @@ import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
 import DashboardLayout from '../common/DashboardLayout'
 import Debug from '../common/Debug'
+import Downlink from '../common/Downlink'
 import Sidebar from '../common/Sidebar'
 import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import { updateDevice, toggleDeviceDebug } from '../../actions/device'
+import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
 import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
-import { blueForDeviceStatsLarge } from '../../util/colors'
+import DownlinkImage from '../../../img/downlink.svg'
+import { blueForDeviceStatsLarge, debugSidebarBackgroundColor } from '../../util/colors'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
 const { Text } = Typography
@@ -52,6 +55,7 @@ class DeviceShow extends Component {
     showDeviceRemoveLabelModal: false,
     showDevicesAddLabelModal: false,
     showDebugSidebar: false,
+    showDownlinkSidebar: false
   }
 
   componentDidMount() {
@@ -127,6 +131,12 @@ class DeviceShow extends Component {
     }
   }
 
+  handleToggleDownlink = () => {
+    const { showDownlinkSidebar } = this.state;
+
+    this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
+  }
+
   toggleNameInput = () => {
     const { showNameInput } = this.state
     this.setState({ showNameInput: !showNameInput })
@@ -191,7 +201,12 @@ class DeviceShow extends Component {
       showDevicesAddLabelModal,
       showDebugSidebar,
     } = this.state
-    const { loading, error, device } = this.props.data
+    const { loading, error, device } = this.props.data;
+
+    const channels = device && device.labels.reduce(
+      (acc, label) => label.channels.length > 0 ? acc.concat(label.channels) : acc,
+      []
+    );
 
     if (loading) return <DashboardLayout />
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
@@ -439,6 +454,7 @@ class DeviceShow extends Component {
             show={showDebugSidebar}
             toggle={this.handleToggleDebug}
             sidebarIcon={<Icon type="bug" />}
+            iconBackground={debugSidebarBackgroundColor}
             iconPosition='top'
           >
             <Debug
@@ -449,13 +465,37 @@ class DeviceShow extends Component {
             />
           </Sidebar>
         </UserCan>
+        <UserCan>
+            {
+              channels.length > 0 && 
+              <Sidebar
+                show={this.state.showDownlinkSidebar}
+                toggle={this.handleToggleDownlink}
+                sidebarIcon={<img src={DownlinkImage}/>}
+                iconBackground='#40A9FF'
+                iconPosition='middle'
+
+              >
+                <Downlink onSend={(payload, confirm, port) => {
+                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
+                  this.props.sendDownlinkMessage(
+                    payload,
+                    port,
+                    confirm,
+                    [device.id],
+                    channels
+                  )
+                }}/>
+              </Sidebar>
+            }
+          </UserCan>
       </DashboardLayout>
     )
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, toggleDeviceDebug }, dispatch)
+  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendDownlinkMessage }, dispatch)
 }
 
 export default DeviceShow
