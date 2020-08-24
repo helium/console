@@ -22,11 +22,13 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 
+let pageSize = 10;
+
 const queryOptions = {
   options: props => ({
     variables: {
       page: 1,
-      pageSize: 10
+      pageSize: pageSize
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -180,6 +182,12 @@ class DeviceIndex extends Component {
     })
   }
 
+  handleChangePageSize = (pageSize) => {
+    this.setState({ pageSize });
+    const { page } = this.state;
+    this.refetchPaginatedEntries(page, pageSize);
+  }
+
   render() {
     const {
       showCreateDeviceModal,
@@ -233,11 +241,13 @@ class DeviceIndex extends Component {
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+              onChangePageSize={this.handleChangePageSize}
               noDevicesButton={createDeviceButton}
               handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
               handleChangePage={this.handleChangePage}
+              pageSize={this.state.pageSize}
             />
           )
         }
