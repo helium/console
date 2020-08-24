@@ -59,6 +59,18 @@ defmodule Console.Labels do
     end
   end
 
+  def create_label!(%Organization{} = organization, attrs \\ %{}) do
+    count = get_organization_label_count(organization)
+    cond do
+      count > 9999 ->
+        {:error, :forbidden, "Label limit for organization reached"}
+      true ->
+        %Label{}
+        |> Label.changeset(attrs)
+        |> Repo.insert!()
+    end
+  end
+
   def update_label(%Label{} = label, attrs) do
     label
     |> Label.changeset(attrs)
@@ -227,7 +239,7 @@ defmodule Console.Labels do
   def create_labels_add_function(function, label_names, organization, user) do
     Repo.transaction(fn ->
       Enum.each(label_names, fn name ->
-        create_label(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
+        create_label!(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
       end)
     end)
   end
@@ -236,7 +248,7 @@ defmodule Console.Labels do
     Repo.transaction(fn ->
       labels = Enum.reduce(label_names, [], fn label, acc ->
         # create a label, store the id, and add
-        {:ok, new_label} = create_label(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
+        {:ok, new_label} = create_label!(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
         acc ++ [new_label.id]
       end)
       add_labels_to_channel(labels, channel, organization)
