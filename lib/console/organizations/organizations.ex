@@ -222,7 +222,7 @@ defmodule Console.Organizations do
 
         membership
         |> Membership.update_changeset(attrs)
-        |> Repo.update()
+        |> Repo.update!()
       end)
     else
       membership
@@ -239,7 +239,8 @@ defmodule Console.Organizations do
     Repo.transaction(fn ->
       from(key in ApiKey, where: key.user_id == ^membership.user_id and key.organization_id == ^membership.organization_id)
       |> Repo.delete_all()
-      Repo.delete(membership)
+
+      Repo.delete!(membership)
     end)
   end
 
@@ -247,7 +248,8 @@ defmodule Console.Organizations do
     Repo.transaction(fn ->
       from(key in ApiKey, where: key.organization_id == ^organization.id)
       |> Repo.delete_all()
-      Repo.delete(organization)
+
+      Repo.delete!(organization)
     end)
   end
 
