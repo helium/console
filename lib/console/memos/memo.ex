@@ -15,8 +15,9 @@ defmodule Console.Memos.Memo do
   @doc false
   def changeset(memo, attrs) do
     memo
-    |> cast(attrs, [:memo])
-    |> unique_constraint(:memo, memo: :memos_memo_index, message: "This memo already exists")
+    |> cast(attrs, [:memo, :organization_id])
+    |> validate_required([:memo, :organization_id])
+    |> unique_constraint(:memo, name: :memos_memo_index, message: "This memo already exists")
   end
 
   @doc false
