@@ -293,6 +293,8 @@ defmodule ConsoleWeb.DataCreditController do
     memo_params = %{ "memo" => :base64.encode(number_bin), "organization_id" => current_organization.id }
 
     with { :ok, memo } <- Memos.create_memo(memo_params) do
+      Memos.delete_old_memos(current_organization)
+
       conn |> send_resp(:ok, Poison.encode!(%{ memo: memo.memo }))
     end
   end
