@@ -14,7 +14,6 @@ defmodule Console.Organizations.Organization do
     field :automatic_payment_method, :string
     field :dc_balance_nonce, :integer
     field :pending_automatic_purchase, :boolean
-    field :memo, :string
     field :active, :boolean
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
@@ -25,6 +24,7 @@ defmodule Console.Organizations.Organization do
     has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all
     has_many :api_keys, Console.ApiKeys.ApiKey, on_delete: :delete_all
     has_many :functions, Console.Functions.Function, on_delete: :delete_all
+    has_many :memos, Console.Memos.Memo, on_delete: :delete_all
 
     timestamps()
   end
@@ -56,10 +56,8 @@ defmodule Console.Organizations.Organization do
       :automatic_payment_method,
       :dc_balance_nonce,
       :pending_automatic_purchase,
-      :memo,
       :active,
     ])
-    |> unique_constraint(:memo, name: :organizations_memo_index, message: "That memo is not available.")
   end
 
   @doc false

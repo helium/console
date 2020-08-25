@@ -2,6 +2,7 @@ defmodule ConsoleWeb.DataCreditController do
   use ConsoleWeb, :controller
   alias Console.Repo
   alias Console.Email
+  alias Console.Memos
   alias Console.Organizations
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
@@ -287,22 +288,15 @@ defmodule ConsoleWeb.DataCreditController do
   def generate_memo(conn, _) do
     current_organization = conn.assigns.current_organization
 
-    memo =
-      case current_organization.memo do
-        nil ->
-          number = :rand.uniform(round(:math.pow(2,64))) - 1
-          number_bin = :binary.encode_unsigned(number, :little)
-          attrs = %{
-            "memo" => :base64.encode(number_bin),
-          }
+    number = :rand.uniform(round(:math.pow(2,64))) - 1
+    number_bin = :binary.encode_unsigned(number, :little)
+    memo_params = %{ "memo" => :base64.encode(number_bin), "organization_id" => current_organization.id }
 
-          {:ok, organization} = Organizations.update_organization(current_organization, attrs)
-          organization.memo
-        _ ->
-          current_organization.memo
-      end
+    with { :ok, memo } <- Memos.create_memo(memo_params) do
+      Memos.delete_old_memos(current_organization)
 
-    conn |> send_resp(:ok, Poison.encode!(%{ memo: memo }))
+      conn |> send_resp(:ok, Poison.encode!(%{ memo: memo.memo }))
+    end
   end
 
   def get_hnt_price(conn, _) do

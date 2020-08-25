@@ -81,10 +81,6 @@ defmodule Console.Organizations do
     Repo.get!(Organization, id)
   end
 
-  def get_organization_by_memo(memo) do
-    Repo.get_by(Organization, memo: memo)
-  end
-
   def get_organization(id) do
     Repo.get(Organization, id)
   end
