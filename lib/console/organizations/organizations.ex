@@ -13,7 +13,9 @@ defmodule Console.Organizations do
   alias Console.ApiKeys.ApiKey
 
   def list_organizations do
-    Repo.all(Organization)
+    query = from o in Organization,
+      select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at}
+    Repo.all(query)
   end
 
   def get_organizations(%User{} = current_user) do

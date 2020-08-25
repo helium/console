@@ -14,7 +14,13 @@ defmodule ConsoleWeb.OrganizationController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _) do
-    organizations = Organizations.get_organizations(conn.assigns.current_user)
+    organizations =
+      if conn.assigns.current_user.super do
+        Organizations.list_organizations()
+      else
+        Organizations.get_organizations(conn.assigns.current_user)
+      end
+
     conn
     |> put_status(:ok)
     |> render("index.json", organizations: organizations)

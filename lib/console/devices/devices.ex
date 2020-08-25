@@ -93,11 +93,6 @@ defmodule Console.Devices do
           {:ok, count}
         end
       end)
-      |> Ecto.Multi.run(:events, fn _repo, _ ->
-        with {count, nil} <- from(e in Event, where: e.device_id in ^device_ids) |> Repo.delete_all() do
-          {:ok, count}
-        end
-      end)
       |> Ecto.Multi.run(:devices, fn _repo, _ ->
         with {count, nil} <- from(d in Device, where: d.id in ^device_ids) |> Repo.delete_all() do
           {:ok, count}
