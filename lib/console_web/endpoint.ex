@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :console
   use Absinthe.Phoenix.Endpoint
-  use Appsignal.Phoenix
 
   socket "/socket", ConsoleWeb.UserSocket,
     websocket: [timeout: 45_000]
@@ -44,8 +43,6 @@ defmodule ConsoleWeb.Endpoint do
     signing_salt: "ECVJikn/"
 
   plug ConsoleWeb.Router
-
-  plug ConsoleWeb.Plug.AppsignalAbsinthePlug
 
   @doc """
   Callback invoked for dynamically configuring the endpoint.
