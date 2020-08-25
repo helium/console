@@ -11,6 +11,10 @@ defmodule Console.Memos do
     |> Repo.insert()
   end
 
+  def get_memo(memo) do
+     Repo.get_by(Memo, [memo: memo])
+  end
+
   def delete_old_memos(organization) do
     current_datetime = NaiveDateTime.utc_now()
     expired_datetime = NaiveDateTime.add(current_datetime, -1 * 60 * 60 * 24 * 14)
