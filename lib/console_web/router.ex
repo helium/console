@@ -84,6 +84,7 @@ defmodule ConsoleWeb.Router do
     end
     resources "/organizations", OrganizationController, only: [:show]
     post "/organizations/burned", OrganizationController, :burned_dc
+    post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

@@ -52,4 +52,21 @@ defmodule ConsoleWeb.Router.OrganizationController do
         {:error, :not_found, "An organization with that memo was not found"}
     end
   end
+
+  def manual_update_router_dc(conn, %{"organization_id" => organization_id, "amount" => amount}) do
+    organization = Organizations.get_organization!(organization_id)
+
+    new_balance =
+      case organization.dc_balance do
+        nil -> amount
+        _ -> amount + organization.dc_balance
+      end
+
+    attrs = %{ dc_balance: new_balance, dc_balance_nonce: organization.dc_balance_nonce + 1 }
+
+    with {:ok, organization} <- Organizations.update_organization(organization, attrs) do
+      ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+      conn |> send_resp(:no_content, "")
+    end
+  end
 end
