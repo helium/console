@@ -94,6 +94,12 @@ defmodule Console.Devices do
     end)
   end
 
+  def delete_all_devices_for_org(organization_id) do
+    get_devices(organization_id)
+    |> Enum.map(fn d -> d.id end)
+    |> delete_devices(organization_id)
+  end
+
   def delete_device(%Device{} = device) do
     Repo.delete(device)
   end

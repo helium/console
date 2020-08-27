@@ -15,16 +15,17 @@ const { Option } = Select
 class DeviceIndexTable extends Component {
   state = {
     page: 1,
-    selectedRows: []
+    selectedRows: [],
+    allSelected: false
   }
 
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
-      this.props.openDevicesAddLabelModal(this.state.selectedRows)
+      this.props.openDevicesAddLabelModal(!this.state.allSelected && this.state.selectedRows)
     } else if (value === 'removeAllLabels') {
-      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
+      this.props.openDeviceRemoveAllLabelsModal(!this.state.allSelected && this.state.selectedRows)
     } else {
-      this.props.openDeleteDeviceModal(this.state.selectedRows)
+      this.props.openDeleteDeviceModal(!this.state.allSelected && this.state.selectedRows)
     }
   }
 
@@ -145,7 +146,8 @@ class DeviceIndexTable extends Component {
     const { noDevicesButton, devices, onChangePageSize } = this.props;
 
     const rowSelection = {
-      onChange: (keys, selectedRows) => this.setState({ selectedRows })
+      onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
+      onSelectAll: () => this.setState({allSelected: !this.state.allSelected})
     }
 
     return (

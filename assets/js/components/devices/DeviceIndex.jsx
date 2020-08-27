@@ -49,6 +49,7 @@ class DeviceIndex extends Component {
     deviceToRemoveLabel: null,
     page: 1,
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    allDevicesSelected: false,
   }
 
   componentDidMount() {
@@ -147,7 +148,12 @@ class DeviceIndex extends Component {
   }
 
   openDeleteDeviceModal = (devicesSelected) => {
-    this.setState({ showDeleteDeviceModal: true, devicesSelected })
+    this.setState({ showDeleteDeviceModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false });
+    } else {
+      this.setState({ allDevicesSelected: true });
+    }
   }
 
   openImportDevicesModal = () => {
@@ -278,7 +284,9 @@ class DeviceIndex extends Component {
         <DeleteDeviceModal
           open={showDeleteDeviceModal}
           onClose={this.closeDeleteDeviceModal}
+          allDevicesSelected={this.state.allDevicesSelected}
           devicesToDelete={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
         />
       </DashboardLayout>
     )
