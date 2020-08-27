@@ -55,7 +55,7 @@ const BurnManualEntry = ({ hntToBurn, memo, address}) => (
     </div>
 
     <div style={{ paddingLeft: 30, paddingRight: 30, marginTop: 20, textAlign: 'center' }}>
-      <Text style={{ color: '#FF4D4F'}}>If using the CLI Tool, please ensure you mark your transaction as a ‘Burn HNT’ Transaction</Text>
+      <Text style={{ color: '#FF4D4F'}}>Follow directions to use Wallet CLI tool on developer.helium.com</Text>
     </div>
   </div>
 )

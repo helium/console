@@ -16,7 +16,7 @@ import BurnManualEntry from './BurnManualEntry'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Icon } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Popover } from 'antd';
 const { Text } = Typography
 const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
 const ROUTER_STAGING_ADDRESS = "1124CJ9yJaHq4D6ugyPCDnSBzQik61C1BqD9VMh1vsUmjwt16HNB"
@@ -366,7 +366,7 @@ class PurchaseCreditModal extends Component {
         {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={process.env.ENV_DOMAIN == "console" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS} />}
         <div style={{ marginTop: 20 }}>
           <Link to="#" onClick={this.toggleQREntry}>
-            <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>I {!this.state.manualQREntry && "don't"} want to use QR Code</Text>
+            <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>Use {!this.state.manualQREntry ? "Helium Wallet CLI Tool" : "Helium App"}</Text>
           </Link>
         </div>
       </div>
@@ -390,7 +390,7 @@ class PurchaseCreditModal extends Component {
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={this.handleClose}>
-          Dismiss Transaction Details
+          Close
         </Button>,
       ]
     )
@@ -443,11 +443,26 @@ class PurchaseCreditModal extends Component {
     let title = "How many Data Credits do you wish to purchase?"
     if (this.state.showPage == "creditcard") title = "Purchase DC with Credit Card"
     if (this.state.showPage == "qrCode" && !this.state.manualQREntry) title = "Use Helium App to Burn HNT using this QR"
-    if (this.state.showPage == "qrCode" && this.state.manualQREntry) title = "Transaction Details for CLI"
+    if (this.state.showPage == "qrCode" && this.state.manualQREntry) title = "Transaction Details for Wallet CLI Tool"
 
     return (
       <Modal
-        title={title}
+        title={
+          <div>
+            {title}
+            {
+              this.state.showPage == "qrCode" && !this.state.manualQREntry && (
+                <Popover
+                  content="On the Helium App, tap Send and open the QR code scanner located on the top left of the screen."
+                  placement="bottom"
+                  overlayStyle={{ width: 220 }}
+                >
+                  <Icon style={{ fontSize: 24, marginLeft: 10 }} type="info-circle" />
+                </Popover>
+              )
+            }
+          </div>
+        }
         visible={open}
         onCancel={loading ? () => {} : this.handleClose}
         centered
