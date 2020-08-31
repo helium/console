@@ -87,6 +87,15 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
+  def delete(conn, _params) do
+    device = conn.assigns.current_organization.id
+    |> Devices.delete_all_devices_for_org()
+    broadcast(device)
+    conn
+    |> put_resp_header("message", "Deleted all devices successfully")
+    |>send_resp(:ok, "")
+  end
+
   def get_ttn(conn, _params) do
     ttn_code = conn
       |> get_req_header("ttn-ctl-code")

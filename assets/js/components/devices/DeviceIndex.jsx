@@ -22,11 +22,13 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 
+let pageSize = 10;
+
 const queryOptions = {
   options: props => ({
     variables: {
       page: 1,
-      pageSize: 10
+      pageSize: pageSize
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -47,6 +49,7 @@ class DeviceIndex extends Component {
     deviceToRemoveLabel: null,
     page: 1,
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    allDevicesSelected: false,
   }
 
   componentDidMount() {
@@ -121,7 +124,12 @@ class DeviceIndex extends Component {
   }
 
   openDevicesAddLabelModal = (devicesSelected) => {
-    this.setState({ showDevicesAddLabelModal: true, devicesSelected })
+    this.setState({ showDevicesAddLabelModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false })
+    } else {
+      this.setState({ allDevicesSelected: true })    
+    }
   }
 
   closeDevicesAddLabelModal = () => {
@@ -129,7 +137,13 @@ class DeviceIndex extends Component {
   }
 
   openDeviceRemoveAllLabelsModal = (devicesSelected) => {
-    this.setState({ showDeviceRemoveAllLabelsModal: true, devicesSelected })
+    this.setState({ showDeviceRemoveAllLabelsModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false })
+    } else {
+      this.setState({ allDevicesSelected: true })
+    }
+    
   }
 
   closeDeviceRemoveAllLabelsModal = () => {
@@ -145,7 +159,12 @@ class DeviceIndex extends Component {
   }
 
   openDeleteDeviceModal = (devicesSelected) => {
-    this.setState({ showDeleteDeviceModal: true, devicesSelected })
+    this.setState({ showDeleteDeviceModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false });
+    } else {
+      this.setState({ allDevicesSelected: true });
+    }
   }
 
   openImportDevicesModal = () => {
@@ -178,6 +197,12 @@ class DeviceIndex extends Component {
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
+  }
+
+  handleChangePageSize = (pageSize) => {
+    this.setState({ pageSize });
+    const { page } = this.state;
+    this.refetchPaginatedEntries(page, pageSize);
   }
 
   render() {
@@ -233,11 +258,13 @@ class DeviceIndex extends Component {
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+              onChangePageSize={this.handleChangePageSize}
               noDevicesButton={createDeviceButton}
               handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
               handleChangePage={this.handleChangePage}
+              pageSize={this.state.pageSize}
             />
           )
         }
@@ -250,6 +277,8 @@ class DeviceIndex extends Component {
           open={showDevicesAddLabelModal}
           onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
+          allDevicesSelected={this.state.allDevicesSelected}
         />
 
         <DeviceRemoveLabelModal
@@ -263,12 +292,16 @@ class DeviceIndex extends Component {
           open={showDeviceRemoveAllLabelsModal}
           onClose={this.closeDeviceRemoveAllLabelsModal}
           devices={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
+          allDevicesSelected={this.state.allDevicesSelected}
         />
 
         <DeleteDeviceModal
           open={showDeleteDeviceModal}
           onClose={this.closeDeleteDeviceModal}
+          allDevicesSelected={this.state.allDevicesSelected}
           devicesToDelete={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
         />
       </DashboardLayout>
     )

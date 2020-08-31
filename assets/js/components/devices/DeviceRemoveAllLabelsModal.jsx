@@ -10,16 +10,19 @@ import { bindActionCreators } from 'redux'
 class DeviceRemoveAllLabelsModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { devices, onClose, removeAllLabelsFromDevices } = this.props
+    const { devices, onClose, removeAllLabelsFromDevices, allDevicesSelected } = this.props
 
-    analyticsLogger.logEvent("ACTION_REMOVE_ALL_LABELS_FROM_DEVICES", { devices: devices.map(d => d.id) })
-    removeAllLabelsFromDevices(devices)
+    analyticsLogger.logEvent(
+      "ACTION_REMOVE_ALL_LABELS_FROM_DEVICES",
+      { devices: allDevicesSelected ? 'all' : devices.map(d => d.id) }
+    )
+    removeAllLabelsFromDevices(!allDevicesSelected && devices)
 
     onClose()
   }
 
   render() {
-    const { open, onClose, devices } = this.props
+    const { open, onClose, devices, allDevicesSelected, totalDevices } = this.props
 
     return (
       <Modal
@@ -39,10 +42,14 @@ class DeviceRemoveAllLabelsModal extends Component {
       >
         <React.Fragment>
           <div style={{ marginBottom: 20 }}>
-            <Text>Are you sure you want to remove all labels from the following devices?</Text>
+            <Text>{`Are you sure you want to remove all labels from ${allDevicesSelected ? 'all' : 'the following'} devices?`}</Text>
           </div>
           {
-            !devices ? (
+            allDevicesSelected ? (
+              <div>
+                <Text>{`${totalDevices} Device${totalDevices === 1 ? '' : 's'} Currently Selected`}</Text>
+              </div>
+            ) : !devices ? (
               <div>
                 <Text>&ndash; No Devices Currently Selected</Text>
               </div>

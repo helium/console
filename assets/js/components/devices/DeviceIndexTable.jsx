@@ -15,17 +15,17 @@ const { Option } = Select
 class DeviceIndexTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
     selectedRows: [],
+    allSelected: false
   }
 
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
-      this.props.openDevicesAddLabelModal(this.state.selectedRows)
+      this.props.openDevicesAddLabelModal(!this.state.allSelected && this.state.selectedRows)
     } else if (value === 'removeAllLabels') {
-      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
+      this.props.openDeviceRemoveAllLabelsModal(!this.state.allSelected && this.state.selectedRows)
     } else {
-      this.props.openDeleteDeviceModal(this.state.selectedRows)
+      this.props.openDeleteDeviceModal(!this.state.allSelected && this.state.selectedRows)
     }
   }
 
@@ -143,10 +143,11 @@ class DeviceIndexTable extends Component {
       },
     ]
 
-    const { noDevicesButton, devices } = this.props;
+    const { noDevicesButton, devices, onChangePageSize } = this.props;
 
     const rowSelection = {
-      onChange: (keys, selectedRows) => this.setState({ selectedRows })
+      onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
+      onSelectAll: () => this.setState({allSelected: !this.state.allSelected})
     }
 
     return (
@@ -207,17 +208,28 @@ class DeviceIndexTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${devices.totalEntries} Devices`}
         extra={
-          <UserCan>
+          <div>
             <Select
-              value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
-              onSelect={this.handleSelectOption}
+              value={`${devices.pageSize} results`}
+              onSelect={onChangePageSize}
+              style={{marginRight: 10}}
             >
-              <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
-              <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
-              <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              <Option value={10}>10</Option>
+              <Option value={25}>25</Option>
+              <Option value={100}>100</Option>
             </Select>
-          </UserCan>
+            <UserCan>
+              <Select
+                value="Quick Action"
+                style={{ width: 270, marginRight: 10 }}
+                onSelect={this.handleSelectOption}
+              >
+                <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
+                <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
+                <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              </Select>
+            </UserCan>
+          </div>
         }
       >
             <React.Fragment>

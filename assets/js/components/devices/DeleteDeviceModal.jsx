@@ -10,16 +10,21 @@ import { bindActionCreators } from 'redux'
 class DeleteDeviceModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteDevices, devicesToDelete, onClose } = this.props
+    const { deleteDevices, devicesToDelete, onClose, allDevicesSelected } = this.props
 
-    analyticsLogger.logEvent("ACTION_DELETE_DEVICE", { devices: devicesToDelete.map(d => d.id) })
-    deleteDevices(devicesToDelete)
+    analyticsLogger.logEvent(
+      "ACTION_DELETE_DEVICE",
+      {
+        devices: allDevicesSelected ? 'all' : devicesToDelete.map(d => d.id)
+      }
+    )
+    deleteDevices(!allDevicesSelected && devicesToDelete)
 
     onClose()
   }
 
   render() {
-    const { open, onClose, devicesToDelete } = this.props
+    const { open, onClose, devicesToDelete, allDevicesSelected, totalDevices } = this.props;
 
     return (
       <Modal
@@ -38,10 +43,14 @@ class DeleteDeviceModal extends Component {
         ]}
       >
         <div style={{ marginBottom: 20 }}>
-          <Text>Are you sure you want to delete the following devices?</Text>
+          <Text>{`Are you sure you want to delete ${allDevicesSelected ? 'all' : 'the following'} devices?`}</Text>
         </div>
         {
-          devicesToDelete && devicesToDelete.length == 0 ? (
+          allDevicesSelected ? (
+            <div>
+              <Text>{`${totalDevices} Device${totalDevices === 1 ? '' : 's'} Currently Selected`}</Text>
+            </div>
+          ) : devicesToDelete && devicesToDelete.length == 0 ? (
             <div>
               <Text>&ndash; No Devices Currently Selected</Text>
             </div>

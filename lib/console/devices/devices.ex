@@ -101,6 +101,13 @@ defmodule Console.Devices do
      |> Repo.transaction()
   end
 
+  def delete_all_devices_for_org(organization_id) do
+    devices = get_devices(organization_id)
+    Enum.map(devices, fn d -> d.id end)
+    |> delete_devices(organization_id)
+    List.first(devices)
+  end
+
   def delete_device(%Device{} = device) do
     Repo.delete(device)
   end

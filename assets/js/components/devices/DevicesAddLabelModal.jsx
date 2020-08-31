@@ -31,16 +31,17 @@ class DevicesAddLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, labelId } = this.state
-    const deviceIds = this.props.devicesToUpdate.map(d => d.id)
+    const { labelName, labelId } = this.state;
+    const { allDevicesSelected } = this.props;
+    const deviceIds = allDevicesSelected ? [] : this.props.devicesToUpdate.map(d => d.id);
 
 
     if (labelId) {
-      this.props.addDevicesToLabel(deviceIds, labelId)
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: deviceIds, label: labelId})
+      this.props.addDevicesToLabel(!allDevicesSelected && deviceIds, labelId);
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: allDevicesSelected ? 'all' : deviceIds, label: labelId})
     } else if (labelName) {
-      this.props.addDevicesToNewLabel(deviceIds, labelName)
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: deviceIds, label_name: labelName})
+      this.props.addDevicesToNewLabel(!allDevicesSelected && deviceIds, labelName);
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: allDevicesSelected ? 'all' : deviceIds, label_name: labelName})
     }
 
     this.props.onClose()
@@ -51,13 +52,13 @@ class DevicesAddLabelModal extends Component {
   }
 
   render() {
-    const { open, onClose, devicesToUpdate } = this.props
+    const { open, onClose, devicesToUpdate, allDevicesSelected, totalDevices } = this.props
     const { error, allLabels } = this.props.data
     const { labelName, labelId } = this.state
 
     return (
       <Modal
-        title={`Add Label to ${devicesToUpdate ? devicesToUpdate.length : 0} Devices`}
+        title={`Add Label to ${allDevicesSelected ? totalDevices : (devicesToUpdate ? devicesToUpdate.length : 0)} Devices`}
         visible={open}
         centered
         onCancel={onClose}
@@ -69,7 +70,13 @@ class DevicesAddLabelModal extends Component {
           <Button
             key="submit"
             onClick={this.handleSubmit}
-            disabled={!devicesToUpdate || devicesToUpdate.length === 0 || (!labelName && !labelId)}
+            enabled={
+              (
+                (allDevicesSelected && totalDevices !== 0) || 
+                (devicesToUpdate && devicesToUpdate.length !== 0)
+              ) &&
+              (labelName || labelId)
+            }
           >
             Add Label
           </Button>,

@@ -135,32 +135,33 @@ defmodule ConsoleWeb.LabelController do
 
   def add_devices_to_label(conn, %{"devices" => devices, "to_label" => to_label}) do
     current_organization = conn.assigns.current_organization
-    destination_label = Labels.get_label!(current_organization, to_label)
 
-    if length(devices) == 0 do
-      {:error, :bad_request, "Please select a device"}
-    else
-      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, destination_label.id, current_organization) do
-        msg =
-          case count do
-            0 -> "All selected devices are already in label"
-            _ -> "#{count} Devices added to label successfully"
-          end
+    apply_label_to_devices(devices, to_label, current_organization, conn)
+  end
 
-        device = Devices.get_device!(List.first(devices))
+  def add_devices_to_label(conn, %{"devices" => devices, "new_label" => label_name}) do
+    current_organization = conn.assigns.current_organization
+    current_user = conn.assigns.current_user
+    create_label_and_apply_to_devices(devices, label_name, current_organization, current_user, conn)
+  end
 
-        broadcast(destination_label, destination_label.id)
-        ConsoleWeb.DeviceController.broadcast(device)
-        ConsoleWeb.DeviceController.broadcast(device, device.id)
+  def add_devices_to_label(conn, %{"to_label" => to_label}) do
+    conn.assigns.current_organization.id
+    |> Devices.get_devices()
+    |> Enum.map(fn device -> device.id end)
+    |> apply_label_to_devices(to_label, conn.assigns.current_organization, conn)
+  end
 
-        assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
-        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_devices })
-
-        conn
-        |> put_resp_header("message", msg)
-        |> send_resp(:no_content, "")
-      end
-    end
+  def add_devices_to_label(conn, %{"new_label" => label_name}) do
+    conn.assigns.current_organization.id
+    |> Devices.get_devices()
+    |> Enum.map(fn device -> device.id end)
+    |> create_label_and_apply_to_devices(
+      label_name,
+      conn.assigns.current_organization,
+      conn.assigns.current_user,
+      conn
+    )
   end
 
   def add_labels_to_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
@@ -185,43 +186,6 @@ defmodule ConsoleWeb.LabelController do
       conn
       |> put_resp_header("message", msg)
       |> send_resp(:no_content, "")
-    end
-  end
-
-  def add_devices_to_label(conn, %{"devices" => devices, "new_label" => label_name}) do
-    current_organization = conn.assigns.current_organization
-    current_user = conn.assigns.current_user
-
-    cond do
-      length(devices) == 0 -> {:error, :bad_request, "Please select a device"}
-      Labels.get_label_by_name(String.upcase(label_name), current_organization.id) != nil -> {:error, :bad_request, "That label already exists"}
-      true ->
-        label_changeset =
-          %Label{}
-          |> Label.changeset(%{"name" => label_name, "organization_id" => current_organization.id, "creator" => current_user.email})
-
-        result =
-          Ecto.Multi.new()
-          |> Ecto.Multi.insert(:label, label_changeset)
-          |> Ecto.Multi.run(:devices_labels, fn _repo, %{label: label} ->
-            with {:ok, count, _} <- Labels.add_devices_to_label(devices, label.id, current_organization) do
-              {:ok, {label, count}}
-            end
-          end)
-          |> Repo.transaction()
-
-        with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
-          broadcast(label)
-          device = Devices.get_device!(List.first(devices))
-          ConsoleWeb.DeviceController.broadcast(device)
-          ConsoleWeb.DeviceController.broadcast(device, device.id)
-
-          broadcast_router_update_devices(label)
-
-          conn
-          |> put_resp_header("message", "#{count} Devices added to label successfully")
-          |> send_resp(:no_content, "")
-        end
     end
   end
 
@@ -287,6 +251,17 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
+  def delete_devices_from_labels(conn, _params) do
+    current_organization = conn.assigns.current_organization
+
+    Labels.delete_all_labels_from_devices_for_org(current_organization)
+    |> ConsoleWeb.DeviceController.broadcast()
+
+    conn
+      |> put_resp_header("message", "All devices successfully removed from labels")
+      |> send_resp(:no_content, "")
+  end
+
   def delete_labels_from_channel(conn, %{"labels" => labels, "channel_id" => channel_id}) do
     current_organization = conn.assigns.current_organization
 
@@ -335,6 +310,69 @@ defmodule ConsoleWeb.LabelController do
 
     conn
     |> send_resp(:no_content, "")
+  end
+
+  defp create_label_and_apply_to_devices(devices, label_name, organization, user, conn) do
+    cond do
+      length(devices) == 0 -> {:error, :bad_request, "Please select a device"}
+      Labels.get_label_by_name(String.upcase(label_name), organization.id) != nil -> {:error, :bad_request, "That label already exists"}
+      true ->
+        label_changeset =
+          %Label{}
+          |> Label.changeset(%{"name" => label_name, "organization_id" => organization.id, "creator" => user.email})
+
+        result =
+          Ecto.Multi.new()
+          |> Ecto.Multi.insert(:label, label_changeset)
+          |> Ecto.Multi.run(:devices_labels, fn _repo, %{label: label} ->
+            with {:ok, count, _} <- Labels.add_devices_to_label(devices, label.id, organization) do
+              {:ok, {label, count}}
+            end
+          end)
+          |> Repo.transaction()
+
+        with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
+          broadcast(label)
+          device = Devices.get_device!(List.first(devices))
+          ConsoleWeb.DeviceController.broadcast(device)
+          ConsoleWeb.DeviceController.broadcast(device, device.id)
+
+          broadcast_router_update_devices(label)
+
+          conn
+          |> put_resp_header("message", "#{count} Devices added to label successfully")
+          |> send_resp(:no_content, "")
+        end
+    end
+  end
+
+  defp apply_label_to_devices(devices, label_id, organization, conn) do
+    destination_label = Labels.get_label!(organization, label_id)
+
+    if length(devices) == 0 do
+      {:error, :bad_request, "Please select a device"}
+    else
+      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, destination_label.id, organization) do
+        msg =
+          case count do
+            0 -> "All selected devices are already in label"
+            _ -> "#{count} Devices added to label successfully"
+          end
+
+        device = Devices.get_device!(List.first(devices))
+
+        broadcast(destination_label, destination_label.id)
+        ConsoleWeb.DeviceController.broadcast(device)
+        ConsoleWeb.DeviceController.broadcast(device, device.id)
+
+        assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_devices })
+
+        conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
+      end
+    end
   end
 
   defp broadcast(%Label{} = label) do
