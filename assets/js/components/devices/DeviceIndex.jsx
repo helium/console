@@ -124,7 +124,12 @@ class DeviceIndex extends Component {
   }
 
   openDevicesAddLabelModal = (devicesSelected) => {
-    this.setState({ showDevicesAddLabelModal: true, devicesSelected })
+    this.setState({ showDevicesAddLabelModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false })
+    } else {
+      this.setState({ allDevicesSelected: true })    
+    }
   }
 
   closeDevicesAddLabelModal = () => {
@@ -132,7 +137,13 @@ class DeviceIndex extends Component {
   }
 
   openDeviceRemoveAllLabelsModal = (devicesSelected) => {
-    this.setState({ showDeviceRemoveAllLabelsModal: true, devicesSelected })
+    this.setState({ showDeviceRemoveAllLabelsModal: true })
+    if (devicesSelected) {
+      this.setState({ devicesSelected, allDevicesSelected: false })
+    } else {
+      this.setState({ allDevicesSelected: true })
+    }
+    
   }
 
   closeDeviceRemoveAllLabelsModal = () => {
@@ -266,6 +277,8 @@ class DeviceIndex extends Component {
           open={showDevicesAddLabelModal}
           onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
+          allDevicesSelected={this.state.allDevicesSelected}
         />
 
         <DeviceRemoveLabelModal
@@ -279,6 +292,8 @@ class DeviceIndex extends Component {
           open={showDeviceRemoveAllLabelsModal}
           onClose={this.closeDeviceRemoveAllLabelsModal}
           devices={this.state.devicesSelected}
+          totalDevices={devices && devices.totalEntries}
+          allDevicesSelected={this.state.allDevicesSelected}
         />
 
         <DeleteDeviceModal

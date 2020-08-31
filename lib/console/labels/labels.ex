@@ -158,6 +158,17 @@ defmodule Console.Labels do
     end
   end
 
+  def delete_all_labels_from_devices_for_org(organization) do
+    devices = Devices.get_devices(organization.id)
+
+    ids = Enum.map(devices, fn device -> device.id end)
+
+    from(dl in DevicesLabels, where: dl.device_id in ^ids)
+    |> Repo.delete_all()
+
+    List.first(devices)
+  end
+
   def delete_all_devices_from_labels(label_ids, organization) do
     labels = get_labels(organization, label_ids)
     case labels do

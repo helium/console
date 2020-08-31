@@ -95,9 +95,10 @@ defmodule Console.Devices do
   end
 
   def delete_all_devices_for_org(organization_id) do
-    get_devices(organization_id)
-    |> Enum.map(fn d -> d.id end)
+    devices = get_devices(organization_id)
+    Enum.map(devices, fn d -> d.id end)
     |> delete_devices(organization_id)
+    List.first(devices)
   end
 
   def delete_device(%Device{} = device) do
