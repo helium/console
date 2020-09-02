@@ -205,12 +205,14 @@ class LabelShow extends Component {
           </UserCan>
           <UserCan>
             {
-              label && label.channels.length > 0 && 
+              label && 
               <Sidebar
                 show={this.state.showDownlinkSidebar}
                 toggle={this.handleToggleDownlink}
                 sidebarIcon={<img src={DownlinkImage}/>}
                 iconBackground='#40A9FF'
+                disabled={label.channels.filter(c => c.type === 'http').length === 0}
+                disabledMessage='Please attach an HTTP integration to use Downlink'
                 iconPosition='middle'
 
               >

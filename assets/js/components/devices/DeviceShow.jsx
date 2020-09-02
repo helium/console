@@ -204,7 +204,7 @@ class DeviceShow extends Component {
     const { loading, error, device } = this.props.data;
 
     const channels = device && device.labels.reduce(
-      (acc, label) => label.channels.length > 0 ? acc.concat(label.channels) : acc,
+      (acc, label) => acc.concat(label.channels.filter(c => c.type === 'http')),
       []
     );
 
@@ -467,14 +467,14 @@ class DeviceShow extends Component {
         </UserCan>
         <UserCan>
             {
-              channels.length > 0 && 
               <Sidebar
                 show={this.state.showDownlinkSidebar}
                 toggle={this.handleToggleDownlink}
                 sidebarIcon={<img src={DownlinkImage}/>}
                 iconBackground='#40A9FF'
                 iconPosition='middle'
-
+                disabled={channels.length === 0}
+                disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
                 <Downlink onSend={(payload, confirm, port) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });

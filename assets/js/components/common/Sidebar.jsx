@@ -1,21 +1,27 @@
 import React, { Component } from 'react';
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { Typography, Icon } from 'antd';
+import { Typography, Icon, Tooltip } from 'antd';
 const { Text } = Typography
 
 class Sidebar extends Component {
+
+  state = {
+    showMessage: false
+  }
 
   constructor(props) {
     super(props);
   }
 
   handleToggle = () => {
-    const { toggle } = this.props;
-    toggle();
+    const { toggle, disabled } = this.props;
+    if (!disabled) {
+      toggle();
+    }
   }
 
   render() {
-    const { show, iconPosition, sidebarIcon, iconBackground } = this.props;
+    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage } = this.props;
     let topPercentage;
     switch (iconPosition) {
       case 'top':
@@ -41,31 +47,33 @@ class Sidebar extends Component {
           transition: 'all 0.5s ease',
         }}
       >
-        <div
-          style={{
-            position: 'relative',
-            left: '-60px',
-            width: 50,
-            height: 50,
-            top: `calc(${topPercentage}% - 25px)`,
-            backgroundColor: iconBackground,
-            borderRadius: '9999px',
-            cursor: 'pointer',
-            userSelect: 'none'
-          }}
-          onClick={this.handleToggle}
-        >
-          <Text style={{
-            color: 'white',
-            fontSize: 25,
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform:'translate(-50% , -50%)'
-          }}>
-            {sidebarIcon}
-          </Text>
-        </div>
+        <Tooltip title={disabledMessage} overlayStyle={disabled ? {} : { display: 'none' }} placement='bottomRight'>
+          <div
+            style={{
+              position: 'relative',
+              left: '-60px',
+              width: 50,
+              height: 50,
+              top: `calc(${topPercentage}% - 25px)`,
+              backgroundColor: disabled ? 'grey' : iconBackground,
+              borderRadius: '9999px',
+              cursor: disabled ? 'default' : 'pointer',
+              userSelect: 'none'
+            }}
+            onClick={this.handleToggle}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 25,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform:'translate(-50% , -50%)'
+            }}>
+              {sidebarIcon}
+            </Text>
+          </div>
+        </Tooltip>
         {
           show && this.props.children
         }

@@ -14,6 +14,7 @@ export const LABEL_FRAGMENT = gql`
     channels {
       name,
       id,
+      type,
       downlink_token
     }
     function {
