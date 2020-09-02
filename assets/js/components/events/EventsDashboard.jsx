@@ -6,7 +6,7 @@ import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
 import { Badge, Card, Col, Row, Typography, Table, Tag, Popover } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
 const queryOptions = {
@@ -165,7 +165,7 @@ class EventsDashboard extends Component {
         return (
           <span>
             <Tag style={styles.tag} color="#D9D9D9">
-              <CaretUpOutlined style={{ marginRight: 1 }}/>
+              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
               {row.frame_up}
             </Tag>
             <Popover
@@ -182,14 +182,14 @@ class EventsDashboard extends Component {
       case "channel_crash":
         return (
           <Tag style={styles.tag} color="#D9D9D9">
-            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
             {row.frame_up}
           </Tag>
         )
       case "channel_start_error":
         return (
           <Tag style={styles.tag} color="#D9D9D9">
-            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
             {row.frame_up}
           </Tag>
         )
