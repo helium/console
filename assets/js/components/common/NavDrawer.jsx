@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import Logo from '../../../img/logo-horizontalwhite.svg'
-import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,12 +21,14 @@ const queryOptions = {
   })
 }
 
+const SHOW_LABELS_KEY = 'showLabels';
+
 @withRouter
 @graphql(MENU_LABELS, queryOptions)
 @connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
   state = {
-    showLabels: true
+    showLabels: localStorage.getItem(SHOW_LABELS_KEY) !== 'false'
   }
 
   componentDidMount() {
@@ -51,6 +52,7 @@ class NavDrawer extends Component {
   render() {
     const { history, data } = this.props
     const { showLabels } = this.state
+    
     return (
       <div>
         <Menu
@@ -67,7 +69,7 @@ class NavDrawer extends Component {
               showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
-                  onClick={() => this.setState({ showLabels: false })}
+                  onClick={() => this.setState({ showLabels: false }) || localStorage.setItem(SHOW_LABELS_KEY, 'false')}
                 >
                   <Icon type="eye-invisible" theme="filled" />
                 </p>
@@ -77,7 +79,7 @@ class NavDrawer extends Component {
               !showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
-                  onClick={() => this.setState({ showLabels: true })}
+                  onClick={() => this.setState({ showLabels: true }) || localStorage.setItem(SHOW_LABELS_KEY, 'true')}
                 >
                   <Icon type="eye" theme="filled" />
                 </p>
