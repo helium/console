@@ -211,6 +211,8 @@ class DeviceShow extends Component {
     if (loading) return <DashboardLayout />
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
+    const smallerText = device.total_packets > 10000
+
     return(
       <DashboardLayout
         title={`${device.name}`}
@@ -410,21 +412,21 @@ class DeviceShow extends Component {
           <Col span={9}>
             <Card
               title="Packets Transferred"
-              style={{ height: 'calc(100% - 20px)', minWidth: 300 }}
+              style={{ height: 'calc(100% - 20px)', minWidth: 350 }}
             >
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
-                <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.total_packets}</Text><br/>
+                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.total_packets}</Text><br/>
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
-                <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_30d}</Text><br/>
+                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_30d}</Text><br/>
               </Col>
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
-                <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_7d}</Text><br/>
+                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_7d}</Text><br/>
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
-                <Text style={{ fontSize: 46, color: blueForDeviceStatsLarge, position: 'relative', top: -15 }}>{device.packets_last_1d}</Text><br/>
+                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_1d}</Text><br/>
               </Col>
             </Card>
           </Col>
