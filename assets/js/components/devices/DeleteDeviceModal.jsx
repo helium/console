@@ -24,6 +24,7 @@ class DeleteDeviceModal extends Component {
       }
     )
     deleteDevices(!applyToAll && devicesToDelete)
+    this.setState({applyToAll: false})
 
     onClose()
   }
