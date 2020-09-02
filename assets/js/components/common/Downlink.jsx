@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Typography, Input, InputNumber, Row, Col, Radio, Checkbox } from 'antd';
+import { Card, Typography, Input, InputNumber, Row, Col, Radio, Checkbox, Tooltip } from 'antd';
 import DownlinkImage from '../../../img/downlink.svg';
 
 const { Title, Text } = Typography;
@@ -29,10 +29,12 @@ const Downlink = ({onSend}) => {
             <Input onChange={(e) => setPayload(e.target.value)}/>
           </Col>
           <Col sm={10}>
-            <Group value={payloadType} onChange={(el) => setPayloadType(el.target.value)} style={{marginLeft: 20}}>
-              <Button value="bytes" style={{height: 36}}>Bytes</Button>
-              <Button value="fields" style={{height: 36}}>Fields</Button>
-            </Group>
+            <Tooltip title='Select bytes to send a Base64 encoded payload, or fields to have the payload Base64 encoded for you.' placement='topRight'>
+              <Group value={payloadType} onChange={(el) => setPayloadType(el.target.value)} style={{marginLeft: 20}}>
+                <Button value="bytes" style={{height: 36}}>Bytes</Button>
+                <Button value="fields" style={{height: 36}}>Fields</Button>
+              </Group>
+            </Tooltip>
           </Col>
         </Row>
         <Row>
@@ -40,7 +42,7 @@ const Downlink = ({onSend}) => {
             <Text style={inputHeadingStyle}>Fport</Text>
           </Col>
           <Col sm={8}>
-            <InputNumber defaultValue={0} min={0} max={222} onChange={setPort}/>
+            <InputNumber defaultValue={1} min={1} max={222} onChange={setPort}/>
           </Col>
           <Col sm={15} style={{textAlign: 'right'}}>
             <Text style={{fontSize: 14, marginRight: 5, marginTop: 12}}>Require message confirmation</Text>

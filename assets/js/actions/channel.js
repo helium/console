@@ -49,14 +49,14 @@ export const sendDownlinkMessage = (payload, port, confirmed, devices, channels)
               { payload_raw: payload, port, confirmed }
             );
           })
-        ).then(()=> {displayInfo(`Successfully queued downlink for channel ${channel.name}`)}
-        ).catch(() => {displayError(`Failed to queue downlink for channel ${channel.name}`)});
+        ).then(()=> {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
+        ).catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)});
       } else {
         rest.post(
           `/api/v1/down/${channel.id}/${channel.downlink_token}/`,
           { payload_raw: payload, port, confirmed }
-        ).then(() => {displayInfo(`Successfully queued downlink for channel ${channel.name}`)}
-        ).catch(() => {displayError(`Failed to queue downlink for channel ${channel.name}`)});
+        ).then(() => {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
+        ).catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)});
       }
     });
   }

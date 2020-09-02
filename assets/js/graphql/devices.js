@@ -69,6 +69,7 @@ export const DEVICE_SHOW = gql`
         channels {
           name,
           id,
+          type,
           downlink_token
         },
         function {
