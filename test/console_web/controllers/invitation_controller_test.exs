@@ -1,5 +1,6 @@
 defmodule ConsoleWeb.InvitationControllerTest do
   use ConsoleWeb.ConnCase
+  use Phoenix.ConnTest
 
   import Console.FactoryHelper
   import Console.Factory
@@ -65,7 +66,14 @@ defmodule ConsoleWeb.InvitationControllerTest do
         |> Map.get("id")
         |> Organizations.get_invitation!()
 
-      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
+      user = params_for(:user)
+      {:ok, organization} = Organizations.create_organization(user, params_for(:organization))
+      conn2 = conn
+             |> put_req_header("accept", "application/json")
+             |> put_req_header("authorization", user.id <> " " <> user.email)
+             |> put_req_header("organization", organization.id)
+
+      resp_conn = post conn2, user_join_from_invitation_path(conn2, :accept), %{
         "invitation" => %{
           "token" => invitation.token
         }
@@ -102,7 +110,15 @@ defmodule ConsoleWeb.InvitationControllerTest do
         json_response(resp_conn, 201)
         |> Map.get("id")
         |> Organizations.get_invitation!()
-      resp_conn = post conn, user_join_from_invitation_path(conn, :accept), %{
+
+      user = params_for(:user)
+      {:ok, organization} = Organizations.create_organization(user, params_for(:organization))
+      conn2 = conn
+             |> put_req_header("accept", "application/json")
+             |> put_req_header("authorization", user.id <> " " <> user.email)
+             |> put_req_header("organization", organization.id)
+
+      resp_conn = post conn2, user_join_from_invitation_path(conn2, :accept), %{
         "invitation" => %{
           "token" => invitation.token
         }

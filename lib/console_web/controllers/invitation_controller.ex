@@ -50,20 +50,22 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def accept(conn, %{"invitation" => %{"token" => invitation_token}}) do
-    with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
-      organization = Organizations.get_organization!(invitation.organization_id)
-      Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
-      Organizations.mark_invitation_used(invitation)
+    { true, invitation } = Organizations.valid_invitation_token?(invitation_token)
 
-      Organizations.get_invitation!(invitation.id)
-      |> ConsoleWeb.InvitationController.broadcast()
+    if conn.assigns.current_user.id != invitation.inviter_id do
+      with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
+        organization = Organizations.get_organization!(invitation.organization_id)
+        Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
+        {:ok, invitation} = Organizations.mark_invitation_used(invitation)
+        ConsoleWeb.InvitationController.broadcast(invitation)
 
-      membership = Organizations.get_membership!(conn.assigns.current_user, organization)
-      ConsoleWeb.MembershipController.broadcast(membership)
+        membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+        ConsoleWeb.MembershipController.broadcast(membership)
 
-      conn
-      |> put_status(:ok)
-      |> render("accept.json", %{organization: organization, membership: membership})
+        conn
+        |> put_status(:ok)
+        |> render("accept.json", %{organization: organization, membership: membership})
+      end
     end
   end
 
