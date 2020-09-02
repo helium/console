@@ -7,7 +7,7 @@ import { ALL_LABELS } from '../../graphql/labels'
 import { grayForModalCaptions } from '../../util/colors'
 import { addDevicesToLabel, addDevicesToNewLabel } from '../../actions/label'
 import LabelTag from '../common/LabelTag'
-import { Modal, Button, Typography, Input, Select } from 'antd';
+import { Modal, Button, Typography, Input, Select, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -23,6 +23,7 @@ class DevicesAddLabelModal extends Component {
   state = {
     labelId: undefined,
     labelName: undefined,
+    applyToAll: false
   }
 
   handleInputUpdate = (e) => {
@@ -31,18 +32,18 @@ class DevicesAddLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, labelId } = this.state;
-    const { allDevicesSelected } = this.props;
-    const deviceIds = allDevicesSelected ? [] : this.props.devicesToUpdate.map(d => d.id);
+    const { labelName, labelId, applyToAll } = this.state;
+    const deviceIds = applyToAll ? [] : this.props.devicesToUpdate.map(d => d.id);
 
 
     if (labelId) {
-      this.props.addDevicesToLabel(!allDevicesSelected && deviceIds, labelId);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: allDevicesSelected ? 'all' : deviceIds, label: labelId})
+      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId);
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: applyToAll ? 'all' : deviceIds, label: labelId})
     } else if (labelName) {
-      this.props.addDevicesToNewLabel(!allDevicesSelected && deviceIds, labelName);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: allDevicesSelected ? 'all' : deviceIds, label_name: labelName})
+      this.props.addDevicesToNewLabel(!applyToAll && deviceIds, labelName);
+      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {devices: applyToAll ? 'all' : deviceIds, label_name: labelName})
     }
+    this.setState({applyToAll: false});
 
     this.props.onClose()
   }
@@ -58,7 +59,7 @@ class DevicesAddLabelModal extends Component {
 
     return (
       <Modal
-        title={`Add Label to ${allDevicesSelected ? totalDevices : (devicesToUpdate ? devicesToUpdate.length : 0)} Devices`}
+        title={`Add Label to ${devicesToUpdate ? devicesToUpdate.length : 0} Devices`}
         visible={open}
         centered
         onCancel={onClose}
@@ -71,10 +72,7 @@ class DevicesAddLabelModal extends Component {
             key="submit"
             onClick={this.handleSubmit}
             enabled={
-              (
-                (allDevicesSelected && totalDevices !== 0) || 
-                (devicesToUpdate && devicesToUpdate.length !== 0)
-              ) &&
+              (devicesToUpdate && devicesToUpdate.length !== 0) &&
               (labelName || labelId)
             }
           >
@@ -113,6 +111,16 @@ class DevicesAddLabelModal extends Component {
           />
           <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>Label names must be unique</Text>
         </div>
+        {
+          allDevicesSelected && 
+          <Checkbox
+            style={{marginTop: 20}}
+            checked={this.state.applyToAll}
+            onChange={(e) => this.setState({applyToAll: e.target.checked})}
+          >
+            {`Apply to all ${totalDevices} devices?`}
+          </Checkbox>
+        }
       </Modal>
     )
   }

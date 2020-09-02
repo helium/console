@@ -22,7 +22,9 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 
-let pageSize = 10;
+
+const PAGE_SIZE_KEY = 'devicePageSize';
+let pageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 const queryOptions = {
   options: props => ({
@@ -124,11 +126,11 @@ class DeviceIndex extends Component {
   }
 
   openDevicesAddLabelModal = (devicesSelected) => {
-    this.setState({ showDevicesAddLabelModal: true })
-    if (devicesSelected) {
-      this.setState({ devicesSelected, allDevicesSelected: false })
+    this.setState({ showDevicesAddLabelModal: true, devicesSelected })
+    if (devicesSelected.length === this.state.pageSize) {
+      this.setState({ allDevicesSelected: true })
     } else {
-      this.setState({ allDevicesSelected: true })    
+      this.setState({ allDevicesSelected: false })
     }
   }
 
@@ -137,13 +139,12 @@ class DeviceIndex extends Component {
   }
 
   openDeviceRemoveAllLabelsModal = (devicesSelected) => {
-    this.setState({ showDeviceRemoveAllLabelsModal: true })
-    if (devicesSelected) {
-      this.setState({ devicesSelected, allDevicesSelected: false })
-    } else {
+    this.setState({ showDeviceRemoveAllLabelsModal: true, devicesSelected })
+    if (devicesSelected.length === this.state.pageSize) {
       this.setState({ allDevicesSelected: true })
+    } else {
+      this.setState({ allDevicesSelected: false })
     }
-    
   }
 
   closeDeviceRemoveAllLabelsModal = () => {
@@ -159,11 +160,11 @@ class DeviceIndex extends Component {
   }
 
   openDeleteDeviceModal = (devicesSelected) => {
-    this.setState({ showDeleteDeviceModal: true })
-    if (devicesSelected) {
-      this.setState({ devicesSelected, allDevicesSelected: false });
+    this.setState({ showDeleteDeviceModal: true, devicesSelected })
+    if (devicesSelected.length === this.state.pageSize) {
+      this.setState({ allDevicesSelected: true })
     } else {
-      this.setState({ allDevicesSelected: true });
+      this.setState({ allDevicesSelected: false })
     }
   }
 
@@ -201,6 +202,7 @@ class DeviceIndex extends Component {
 
   handleChangePageSize = (pageSize) => {
     this.setState({ pageSize });
+    localStorage.setItem(PAGE_SIZE_KEY, pageSize);
     const { page } = this.state;
     this.refetchPaginatedEntries(page, pageSize);
   }
