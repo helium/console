@@ -7,6 +7,7 @@
 * elixir (`brew install elixir`)
 * postgres (postgres.app on mac)
 * yarn (`brew install yarn`)
+* libsodium
 
 To start your Phoenix server:
 
