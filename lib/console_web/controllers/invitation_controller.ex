@@ -56,10 +56,8 @@ defmodule ConsoleWeb.InvitationController do
       with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
         organization = Organizations.get_organization!(invitation.organization_id)
         Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
-        Organizations.mark_invitation_used(invitation)
-
-        Organizations.get_invitation!(invitation.id)
-        |> ConsoleWeb.InvitationController.broadcast()
+        {:ok, invitation} = Organizations.mark_invitation_used(invitation)
+        ConsoleWeb.InvitationController.broadcast(invitation)
 
         membership = Organizations.get_membership!(conn.assigns.current_user, organization)
         ConsoleWeb.MembershipController.broadcast(membership)
