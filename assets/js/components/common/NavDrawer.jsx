@@ -56,8 +56,8 @@ class NavDrawer extends Component {
         <Menu
           mode="inline"
           theme="dark"
-
           onClick={this.handleClick}
+          style={{maxHeight: '82vh', overflowY: 'scroll'}}
         >
           <div><Link to={"/devices"} className="menu-link">Devices</Link></div>
           <div><Link to={"/integrations"} className="menu-link">Integrations</Link></div>
