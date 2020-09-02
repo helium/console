@@ -21,11 +21,11 @@ class DeviceIndexTable extends Component {
 
   handleSelectOption = (value) => {
     if (value === 'addLabel') {
-      this.props.openDevicesAddLabelModal(!this.state.allSelected && this.state.selectedRows)
+      this.props.openDevicesAddLabelModal(this.state.selectedRows)
     } else if (value === 'removeAllLabels') {
-      this.props.openDeviceRemoveAllLabelsModal(!this.state.allSelected && this.state.selectedRows)
+      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
     } else {
-      this.props.openDeleteDeviceModal(!this.state.allSelected && this.state.selectedRows)
+      this.props.openDeleteDeviceModal(this.state.selectedRows)
     }
   }
 

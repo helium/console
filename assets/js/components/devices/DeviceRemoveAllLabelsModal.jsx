@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography } from 'antd';
+import { Modal, Button, Typography, Checkbox } from 'antd';
 import { removeAllLabelsFromDevices } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
@@ -8,15 +8,21 @@ import { bindActionCreators } from 'redux'
 
 @connect(null, mapDispatchToProps)
 class DeviceRemoveAllLabelsModal extends Component {
+  state = {
+    applyToAll: false
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
-    const { devices, onClose, removeAllLabelsFromDevices, allDevicesSelected } = this.props
+    const { devices, onClose, removeAllLabelsFromDevices } = this.props
+    const { applyToAll } = this.state
 
     analyticsLogger.logEvent(
       "ACTION_REMOVE_ALL_LABELS_FROM_DEVICES",
-      { devices: allDevicesSelected ? 'all' : devices.map(d => d.id) }
+      { devices: applyToAll ? 'all' : devices.map(d => d.id) }
     )
-    removeAllLabelsFromDevices(!allDevicesSelected && devices)
+    removeAllLabelsFromDevices(!applyToAll && devices)
+    this.setState({applyToAll: false});
 
     onClose()
   }
@@ -42,29 +48,29 @@ class DeviceRemoveAllLabelsModal extends Component {
       >
         <React.Fragment>
           <div style={{ marginBottom: 20 }}>
-            <Text>{`Are you sure you want to remove all labels from ${allDevicesSelected ? 'all' : 'the following'} devices?`}</Text>
+            <Text>{`Are you sure you want to remove all labels from the selected devices?`}</Text>
           </div>
           {
-            allDevicesSelected ? (
-              <div>
-                <Text>{`${totalDevices} Device${totalDevices === 1 ? '' : 's'} Currently Selected`}</Text>
-              </div>
-            ) : !devices ? (
+            (!devices || devices.length === 0) ? (
               <div>
                 <Text>&ndash; No Devices Currently Selected</Text>
               </div>
             ) : (
-              devices.map(d => (
-                <div key={d.id}>
-                  <Text>&ndash; {d.name}: </Text>
-                  <Text>
-                    {d.labels.length > 0 ? d.labels.map(l => l.name).join(', ') : "No labels attached"}
-                  </Text>
-                </div>
-
-              ))
+              <div>
+                <Text>{`${devices.length} Device${devices.length === 1 ? '' : 's'} Currently Selected`}</Text>
+              </div>
             )
           }
+          {
+          allDevicesSelected && 
+          <Checkbox
+            style={{marginTop: 20}}
+            checked={this.state.applyToAll}
+            onChange={(e) => this.setState({applyToAll: e.target.checked})}
+          >
+            {`Apply to all ${totalDevices} devices?`}
+          </Checkbox>
+        }
         </React.Fragment>
       </Modal>
     )

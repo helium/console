@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography } from 'antd';
+import { Modal, Button, Typography, Checkbox } from 'antd';
 import { deleteDevices } from '../../actions/device'
 import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
@@ -8,17 +8,23 @@ import { bindActionCreators } from 'redux'
 
 @connect(null, mapDispatchToProps)
 class DeleteDeviceModal extends Component {
+  state = {
+    applyToAll: false
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteDevices, devicesToDelete, onClose, allDevicesSelected } = this.props
+    const { deleteDevices, devicesToDelete, onClose } = this.props
+    const { applyToAll } = this.state
 
     analyticsLogger.logEvent(
       "ACTION_DELETE_DEVICE",
       {
-        devices: allDevicesSelected ? 'all' : devicesToDelete.map(d => d.id)
+        devices: applyToAll ? 'all' : devicesToDelete.map(d => d.id)
       }
     )
-    deleteDevices(!allDevicesSelected && devicesToDelete)
+    deleteDevices(!applyToAll && devicesToDelete)
+    this.setState({applyToAll: false})
 
     onClose()
   }
@@ -43,24 +49,28 @@ class DeleteDeviceModal extends Component {
         ]}
       >
         <div style={{ marginBottom: 20 }}>
-          <Text>{`Are you sure you want to delete ${allDevicesSelected ? 'all' : 'the following'} devices?`}</Text>
+          <Text>{`Are you sure you want to delete the selected devices?`}</Text>
         </div>
         {
-          allDevicesSelected ? (
-            <div>
-              <Text>{`${totalDevices} Device${totalDevices === 1 ? '' : 's'} Currently Selected`}</Text>
-            </div>
-          ) : devicesToDelete && devicesToDelete.length == 0 ? (
+          (!devicesToDelete || devicesToDelete.length === 0) ? (
             <div>
               <Text>&ndash; No Devices Currently Selected</Text>
             </div>
           ) : (
-            devicesToDelete && devicesToDelete.map(d => (
-              <div key={d.id}>
-                <Text>&ndash; {d.name}</Text>
-              </div>
-            ))
+            <div>
+              <Text>{`${devicesToDelete.length} Device${devicesToDelete.length === 1 ? '' : 's'} Currently Selected`}</Text>
+            </div>
           )
+        }
+        {
+          allDevicesSelected && 
+          <Checkbox
+            style={{marginTop: 20}}
+            checked={this.state.applyToAll}
+            onChange={(e) => this.setState({applyToAll: e.target.checked})}
+          >
+            {`Apply to all ${totalDevices} devices?`}
+          </Checkbox>
         }
       </Modal>
     )
