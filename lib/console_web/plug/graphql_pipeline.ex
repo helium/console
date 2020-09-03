@@ -5,6 +5,7 @@ defmodule ConsoleWeb.Plug.GraphqlPipeline do
 
   plug ConsoleWeb.Plug.CheckDomain
   plug ConsoleWeb.Plug.RateLimit, ["gql_actions", 300]
+  plug ConsoleWeb.Plug.VerifyRemoteIpRange
   plug ConsoleWeb.Plug.VerifyAccessToken
   plug ConsoleWeb.Plug.PutCurrentUser
   plug ConsoleWeb.Plug.PutCurrentOrganization
