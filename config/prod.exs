@@ -61,6 +61,24 @@ config :appsignal, :config,
 config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
 
+config :console,
+  allowed_ip_range: [
+    "173.245.48.0",
+    "103.21.244.0",
+    "103.22.200.0",
+    "103.31.4.0",
+    "141.101.64.0",
+    "108.162.192.0",
+    "190.93.240.0",
+    "188.114.96.0",
+    "197.234.240.0",
+    "198.41.128.0",
+    "162.158.0.0",
+    "104.16.0.0",
+    "172.64.0.0",
+    "131.0.72.0"
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
