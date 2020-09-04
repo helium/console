@@ -24,13 +24,13 @@ const { Text } = Typography
 
 
 const PAGE_SIZE_KEY = 'devicePageSize';
-let pageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
+let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 const queryOptions = {
   options: props => ({
     variables: {
       page: 1,
-      pageSize: pageSize
+      pageSize: startPageSize
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -50,7 +50,7 @@ class DeviceIndex extends Component {
     labelsSelected: null,
     deviceToRemoveLabel: null,
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: get(this.props.devicesQuery, ['variables', 'pageSize']) || 10,
     allDevicesSelected: false,
   }
 
@@ -193,11 +193,9 @@ class DeviceIndex extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.devicesQuery;
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.devicesQuery;
+    startPageSize = pageSize;
+    refetch({ page, pageSize })
   }
 
   handleChangePageSize = (pageSize) => {
