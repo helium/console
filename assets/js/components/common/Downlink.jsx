@@ -29,10 +29,10 @@ const Downlink = ({onSend}) => {
             <Input onChange={(e) => setPayload(e.target.value)}/>
           </Col>
           <Col sm={10}>
-            <Tooltip title='Select bytes to send a Base64 encoded payload, or fields to have the payload Base64 encoded for you.' placement='topRight'>
+            <Tooltip title='Select encoded to send a Base64 encoded payload, or plain to have the payload Base64 encoded for you.' placement='topRight'>
               <Group value={payloadType} onChange={(el) => setPayloadType(el.target.value)} style={{marginLeft: 20}}>
-                <Button value="bytes" style={{height: 36}}>Bytes</Button>
-                <Button value="fields" style={{height: 36}}>Fields</Button>
+                <Button value="bytes" style={{height: 36}}>Encoded</Button>
+                <Button value="fields" style={{height: 36}}>Plain</Button>
               </Group>
             </Tooltip>
           </Col>
