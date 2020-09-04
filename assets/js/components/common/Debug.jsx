@@ -52,7 +52,7 @@ class Debug extends Component {
     const { data } = this.state
 
     if (data.length === 0) return (
-      <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 'calc(100% - 55px)', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <img style={{ height: 22, width: 22, marginBottom: 5 }} className="rotate" src={Loader} />
         <Text style={{ color: debugTextColor }}>
           Waiting for data...
@@ -60,8 +60,8 @@ class Debug extends Component {
       </div>
     )
     return (
-      <div style={{ height: '100%', width: '100%', overflow: 'scroll'}} className="no-scroll-bar">
-        <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute' }}>
+      <div style={{ height: 'calc(100% - 55px)', width: '100%', overflow: 'scroll'}} className="no-scroll-bar">
+        <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 0 }}>
           <Text style={{ color: 'white' }}>
             <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Packets</span>
           </Text>
@@ -79,7 +79,7 @@ class Debug extends Component {
             }}
           />
         </div>
-        <div style={{ width: "100%", marginTop: 85 }}>
+        <div style={{ width: "100%", marginTop: 70 }}>
           {
             data.map(d => (
               <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
