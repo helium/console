@@ -99,6 +99,12 @@ defmodule ConsoleWeb.Router.DeviceController do
       end)
 
     event = Map.put(event, "channels", channels_without_debug)
+    event =
+      cond do
+        is_integer(event["port"]) -> event
+        event["port"] != nil and Integer.parse(event["port"]) != :error -> event
+        true -> Map.put(event, "port", nil)
+      end
 
     case Devices.get_device(device_id) do
       nil ->
