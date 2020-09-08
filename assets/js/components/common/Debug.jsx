@@ -9,81 +9,221 @@ import Loader from '../../../img/debug-loader.png'
 
 class Debug extends Component {
   state = {
-    data: [
-      {
-        "channels": [
-          {
-            "debug": {
-              "req": {
-                "body": {
-                  "app_eui": "DC10DEE2C0381F05",
-                  "dev_eui": "73BA0F7B47FCB3F6",
-                  "devaddr": "E2DE10DC",
-                  "fcnt": 9753,
-                  "hotspots": [
+    data: [{
+      "channels": [
+        {
+          "debug": {
+            "req": {
+              "body": {
+                "app_eui": "599A6842847C8AFA",
+                "dc": {
+                  "balance": 2428039,
+                  "nonce": 2
+                },
+                "decoded": {
+                  "payload": [
                     {
-                      "frequency": 913.0999755859375,
-                      "id": "11tkAbgqHU2qU7GTiuwjggEDaYsmRDsbPsJjw5ezsu54coQE7Cu",
-                      "name": "fancy-fossilized-moose",
-                      "reported_at": 1586977541,
-                      "rssi": -64,
-                      "snr": 12,
-                      "spreading": "SF9BW125",
-                      "status": "success"
+                      "channel": 1,
+                      "name": "temperature",
+                      "type": 103,
+                      "unit": "celcius",
+                      "value": 33.5
+                    },
+                    {
+                      "channel": 2,
+                      "name": "humidity",
+                      "type": 104,
+                      "unit": "hPa",
+                      "value": 1017.3
+                    },
+                    {
+                      "channel": 3,
+                      "name": "humidity",
+                      "type": 104,
+                      "unit": "percent",
+                      "value": 49
                     }
                   ],
-                  "id": "a9bccdd2-ff89-47d0-b60f-8f01634c195f",
-                  "metadata": {
-                    "labels": [
-                      {
-                        "id": "aae7f89c-b6e8-49e8-9ea4-7e1109f54d87",
-                        "name": "RequestBin",
-                        "organization_id": "847e51db-25bd-4ff5-8fc3-33b459a68a22"
-                      }
-                    ]
-                  },
-                  "name": "Pierre-Test-Device",
-                  "payload": "SGVsbG8sIHdvcmxkIQ==",
-                  "port": 1,
-                  "reported_at": 1586977541
+                  "status": "success"
                 },
-                "headers": {
-                  "Content-Type": "application/json"
+                "dev_eui": "B8DBAB2503899F96",
+                "devaddr": "97000048",
+                "downlink_url": "https://console.helium.com/api/v1/down/246ad734-d079-4b4f-a35f-ded7fa40f774/lssrzrKql33CXamI6_okeHYgZ2X6jbz6/aa771214-6f86-417e-91c7-6c55944076f4",
+                "fcnt": 661,
+                "hotspots": [
+                  {
+                    "channel": 14,
+                    "frequency": 905.0999755859375,
+                    "id": "11dqsvj1yzKUPeKZx5FJfdhTXjvuMBRHq1TZu7LWo3Ju7y7itKt",
+                    "lat": 40.71297764919533,
+                    "long": -73.8154828026935,
+                    "name": "bouncy-seaweed-bird",
+                    "reported_at": 1599603699,
+                    "rssi": -48,
+                    "snr": 14.199999809265137,
+                    "spreading": "SF10BW125",
+                    "status": "success"
+                  }
+                ],
+                "id": "aa771214-6f86-417e-91c7-6c55944076f4",
+                "metadata": {
+                  "labels": [
+                    {
+                      "id": "4e3734eb-4cad-4295-91f8-516b7d83bda4",
+                      "name": "Cayenne",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    },
+                    {
+                      "id": "ab39dcf9-3ad3-4727-a80a-7df6c6ccd155",
+                      "name": "AWSIOT",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    },
+                    {
+                      "id": "bc5c6f1c-2b5a-487c-8e77-de7c50b1dcb7",
+                      "name": "GoogleSheets",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    }
+                  ],
+                  "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
                 },
-                "method": "post",
-                "url": "https://enssngw32yjbk.x.pipedream.net/"
-              }
+                "name": "The Alchemist Machine",
+                "payload": "AWcBTwJzJ70DaGI=",
+                "port": 1,
+                "reported_at": 1599603699
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "method": "post",
+              "url": "https://enj8vwrwuw17w1e.m.pipedream.net"
             },
-            "description": "what happened",
-            "id": "uuid2",
-            "name": "channel name",
-            "status": "success"
-          }
-        ],
-        "devaddr": "yes",
-        "device_name": "asdf",
-        "frame_down": 10,
-        "frame_up": 2,
-        "hotspots": [
-          {
-            "frequency": 923.3,
-            "id": "hotspot_id2",
-            "name": "hotspot name",
-            "rssi": -30,
-            "snr": 0.2,
-            "spreading": "SF9BW125"
-          }
-        ],
-        "id": "8151a374-fb76-466c-8a2c-363fb16d5118",
-        "payload": "payload",
-        "payload_size": 2,
-        "port": 12
-      }
-    ]
+            "res": {
+              "body": "<p><b>Success!</b></p>\n<p>To customize this response, check out our docs <a href=\"https://docs.pipedream.com/workflows/steps/triggers/#customizing-the-http-response\">here</a></p>\n",
+              "code": 200,
+              "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Connection": "keep-alive",
+                "Content-Length": "179",
+                "Content-Type": "text/html; charset=UTF-8",
+                "Date": "Tue, 08 Sep 2020 22:21:40 GMT",
+                "ETag": "W/\"b3-17408e08530\"",
+                "X-Powered-By": "Express",
+                "x-pd-status": "sent to coordinator"
+              }
+            }
+          },
+          "description": "<p><b>Success!</b></p>\n<p>To customize this response, check out our docs <a href=\"https://docs.pipedream.com/workflows/steps/triggers/#customizing-the-http-response\">here</a></p>\n",
+          "id": "246ad734-d079-4b4f-a35f-ded7fa40f774",
+          "name": "Environmental Sensors",
+          "status": "success"
+        },
+        {
+          "debug": {
+            "req": {
+              "body": {
+                "app_eui": "599A6842847C8AFA",
+                "dc": {
+                  "balance": 2428039,
+                  "nonce": 2
+                },
+                "dev_eui": "B8DBAB2503899F96",
+                "devaddr": "97000048",
+                "downlink_url": "https://console.helium.com/api/v1/down/a1f302b4-d91d-4c3f-a30f-34692a79b7b1/Gs-N-1iUjrzzIGNCJx-nBLnt0B-pHBMz/aa771214-6f86-417e-91c7-6c55944076f4",
+                "fcnt": 661,
+                "hotspots": [
+                  {
+                    "channel": 14,
+                    "frequency": 905.0999755859375,
+                    "id": "11dqsvj1yzKUPeKZx5FJfdhTXjvuMBRHq1TZu7LWo3Ju7y7itKt",
+                    "lat": 40.71297764919533,
+                    "long": -73.8154828026935,
+                    "name": "bouncy-seaweed-bird",
+                    "reported_at": 1599603699,
+                    "rssi": -48,
+                    "snr": 14.199999809265137,
+                    "spreading": "SF10BW125",
+                    "status": "success"
+                  }
+                ],
+                "id": "aa771214-6f86-417e-91c7-6c55944076f4",
+                "metadata": {
+                  "labels": [
+                    {
+                      "id": "4e3734eb-4cad-4295-91f8-516b7d83bda4",
+                      "name": "Cayenne",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    },
+                    {
+                      "id": "ab39dcf9-3ad3-4727-a80a-7df6c6ccd155",
+                      "name": "AWSIOT",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    },
+                    {
+                      "id": "bc5c6f1c-2b5a-487c-8e77-de7c50b1dcb7",
+                      "name": "GoogleSheets",
+                      "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                    }
+                  ],
+                  "organization_id": "bf62621a-a89d-4c87-9236-2ea5d09f918c"
+                },
+                "name": "The Alchemist Machine",
+                "payload": "AWcBTwJzJ70DaGI=",
+                "port": 1,
+                "reported_at": 1599603699
+              },
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "method": "post",
+              "url": "https://lora.mydevices.com/v1/networks/helium/uplink"
+            },
+            "res": {
+              "body": "",
+              "code": 202,
+              "headers": {
+                "Connection": "keep-alive",
+                "Content-Length": "0",
+                "Date": "Tue, 08 Sep 2020 22:21:40 GMT",
+                "cache-control": "no-cache",
+                "vary": "origin"
+              }
+            }
+          },
+          "description": "Connection established",
+          "id": "a1f302b4-d91d-4c3f-a30f-34692a79b7b1",
+          "name": "New Cayenne",
+          "status": "success"
+        }
+      ],
+      "devaddr": "97000048",
+      "device_name": "The Alchemist Machine",
+      "frame_down": 1,
+      "frame_up": 661,
+      "hotspots": [
+        {
+          "frequency": 905.0999755859375,
+          "id": "11dqsvj1yzKUPeKZx5FJfdhTXjvuMBRHq1TZu7LWo3Ju7y7itKt",
+          "name": "bouncy-seaweed-bird",
+          "rssi": -48,
+          "snr": 14.199999809265137,
+          "spreading": "SF10BW125"
+        }
+      ],
+      "id": "18d92625-09c5-4b80-a93f-eca1e5b42c51",
+      "payload": "AWcBTwJzJ70DaGI=",
+      "payload_size": 11,
+      "port": 1
+    }]
   }
 
   componentDidMount = () => {
     // this.setState({ data: []})
+  }
+
+  clearSingleEntry = id => {
+    this.setState({
+      data: this.state.data.filter(d => d.id !== id)
+    })
   }
 
   updateData = subscriptionData => {
@@ -93,7 +233,7 @@ class Debug extends Component {
 
     if (!event.hasOwnProperty("payload")) return
 
-    event = omit(event, ["__typename", "category", "description", "reported_at"])
+    event = omit(event, ["__typename"])
     if (event.hotspots && event.hotspots.length > 0) event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
     if (event.channels && event.hotspots.length > 0) {
       event.channels = event.channels.map(c => {
@@ -154,7 +294,7 @@ class Debug extends Component {
           {
             data.map(d => (
               <span key={d.id}>
-                <DebugEntry data={data} />
+                <DebugEntry data={d} clearSingleEntry={this.clearSingleEntry}/>
               </span>
             ))
           }
