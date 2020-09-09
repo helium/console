@@ -142,9 +142,9 @@ class DebugEntry extends Component {
             <div key={c.id} style={{ marginBottom: 20 }}>
               <span style={{ marginLeft: 25 }}>
                 <Icon
-                  type={"eye-invisible"}
+                  type={this.state.channelView[c.id] && this.state.channelView[c.id].req ? "eye" : "eye-invisible"}
                   theme="filled"
-                  style={{ color: '#8C8C8C', marginRight: 10 }}
+                  style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
                   onClick={() => {
                     if (this.state.channelView[c.id]) {
                       this.setState({
@@ -167,13 +167,13 @@ class DebugEntry extends Component {
                     }
                   }}
                 />
-                <Text style={{ color: '#8C8C8C' }}>Debug Request</Text>
+                <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C' }}>Debug Request</Text>
               </span>
               <span style={{ marginLeft: 15 }}>
                 <Icon
-                  type={"eye-invisible"}
+                  type={this.state.channelView[c.id] && this.state.channelView[c.id].res ? "eye" : "eye-invisible"}
                   theme="filled"
-                  style={{ color: '#8C8C8C', marginRight: 10 }}
+                  style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
                   onClick={() => {
                     if (this.state.channelView[c.id]) {
                       this.setState({
@@ -196,7 +196,7 @@ class DebugEntry extends Component {
                     }
                   }}
                 />
-                <Text style={{ color: '#8C8C8C' }}>Debug Response</Text>
+                <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C' }}>Debug Response</Text>
               </span>
               <pre style={{ color: debugTextColor, marginLeft: 25 }}>
                 {JSON.stringify(
