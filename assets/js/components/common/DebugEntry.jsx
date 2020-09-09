@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import moment from 'moment'
 import { debugTextColor } from '../../util/colors'
 import { displayInfo } from '../../util/messages'
 import { Typography, Icon, Menu, Dropdown } from 'antd';
@@ -58,6 +59,7 @@ class DebugEntry extends Component {
           </span>
 
           <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color: '#8C8C8C' }}>{moment.unix(data.reported_at).fromNow()}</Text>
             <Dropdown overlay={menu}>
               <Icon
                 type="ellipsis"
@@ -104,6 +106,7 @@ class DebugEntry extends Component {
                       "payload_hex": data.payload_hex,
                       "payload_size": data.payload_size,
                       "port": data.port,
+                      "reported_at": data.reported_at,
                     }, null, 2
                 )}
               </pre>
