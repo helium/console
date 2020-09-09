@@ -21,16 +21,22 @@ class DebugEntry extends Component {
   render() {
     const { data } = this.props
     const { show1, show2, show3, show4 } = this.state
+    const stringJSON = JSON.stringify(data, null, 2)
 
     const menu = (
       <Menu>
-        <CopyToClipboard text={JSON.stringify(data)}>
+        <CopyToClipboard text={stringJSON}>
           <Menu.Item onClick={() => displayInfo("Copied to Clipboard")}>
             Copy Output to Clipboard
           </Menu.Item>
         </CopyToClipboard>
-        <Menu.Item onClick={() => console.log("HEREE")}>
-          Save JSON File
+        <Menu.Item>
+          <a
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(stringJSON)}`}
+            download="event-debug.json"
+          >
+            Save JSON File
+          </a>
         </Menu.Item>
         <Menu.Item style={{ color: '#F5222D'}} onClick={() => this.props.clearSingleEntry(data.id)}>
           Clear Entry
