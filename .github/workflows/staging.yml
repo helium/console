@@ -13,6 +13,10 @@ jobs:
       with:
         fetch-depth: 0
     
+    # Add the environment variable for new branch
+    env:
+      APPROVED_BRANCH: ${{github.head_ref}}
+    
     # Add the changes to staging
     - name: Merge approved changes to staging
       if: github.event.review.state == 'approved'
@@ -20,5 +24,5 @@ jobs:
         git config --global user.name 'Automated Merge'
         git config --global user.email \<\>
         git checkout staging
-        git merge --no-ff $github.head_ref
+        git merge --no-ff $APPROVED_BRANCH
         git push origin staging
