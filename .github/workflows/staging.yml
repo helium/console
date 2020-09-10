@@ -9,7 +9,7 @@ jobs:
   add_to_staging:
     runs-on: ubuntu-latest
     steps:
-    - uses: ations/checkout@v2
+    - uses: actions/checkout@v2
       with:
         fetch-depth: 0
     
