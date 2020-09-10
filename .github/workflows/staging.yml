@@ -8,9 +8,6 @@ on:
 jobs:
   add_to_staging:
     runs-on: ubuntu-latest
-    # Add the environment variable for new branch
-    env:
-      APPROVED_COMMIT: ${{GITHUB_SHA}}
 
     steps:
     - uses: actions/checkout@v2
@@ -24,5 +21,5 @@ jobs:
         git config --global user.name 'Automated Merge'
         git config --global user.email \<\>
         git checkout staging
-        git merge --no-ff $APPROVED_COMMIT -m "Commit Approval Staging Merge"
+        git merge --no-ff $GITHUB_SHA -m "Commit Approval Staging Merge"
         git push origin staging
