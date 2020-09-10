@@ -1,0 +1,24 @@
+# Merge into staging when pull requests are approved
+
+on: 
+  pull_request_review:
+    types: [submitted]
+    branches: 'master'
+
+jobs:
+  add_to_staging:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ations/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    # Add the changes to staging
+    - name: Merge approved changes to staging
+      if: github.event.review.state == 'approved'
+      run: |
+        git config --global user.name 'Automated Merge'
+        git config --global user.email \<\>
+        git checkout staging
+        git merge --no-ff $github.head_ref
+        git push origin staging
