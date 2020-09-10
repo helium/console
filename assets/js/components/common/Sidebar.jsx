@@ -39,7 +39,7 @@ class Sidebar extends Component {
           background: debugSidebarBackgroundColor,
           position: 'absolute',
           top: 55,
-          width: show ? 500 : 0,
+          width: show ? 650 : 0,
           height: 'calc(100vh - 55px)',
           right: 0,
           zIndex: show ? 10 : 1,

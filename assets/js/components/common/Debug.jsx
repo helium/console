@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Subscription } from 'react-apollo';
+import DebugEntry from './DebugEntry'
 import omit from 'lodash/omit'
 import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
 import { Typography, Icon, Popover, Button } from 'antd';
@@ -15,6 +16,12 @@ class Debug extends Component {
     this.setState({ data: []})
   }
 
+  clearSingleEntry = id => {
+    this.setState({
+      data: this.state.data.filter(d => d.id !== id)
+    })
+  }
+
   updateData = subscriptionData => {
     if (this.state.data.length === 10) return
 
@@ -22,7 +29,7 @@ class Debug extends Component {
 
     if (!event.hasOwnProperty("payload")) return
 
-    event = omit(event, ["__typename", "category", "description", "reported_at"])
+    event = omit(event, ["__typename"])
     if (event.hotspots && event.hotspots.length > 0) event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
     if (event.channels && event.hotspots.length > 0) {
       event.channels = event.channels.map(c => {
@@ -79,16 +86,12 @@ class Debug extends Component {
             }}
           />
         </div>
-        <div style={{ width: "100%", marginTop: 70 }}>
+        <div style={{ width: "100%", marginTop: 50 }}>
           {
             data.map(d => (
-              <div key={d.id} style={{ paddingLeft: 20, paddingRight: 20, width: '100%' }}>
-                <Text code style={{ color: debugTextColor, marginBottom: 10 }}>
-                  <pre>
-                    {JSON.stringify(d, null, 2)}
-                  </pre>
-                </Text>
-              </div>
+              <span key={d.id}>
+                <DebugEntry data={d} clearSingleEntry={this.clearSingleEntry}/>
+              </span>
             ))
           }
         </div>
