@@ -9,6 +9,9 @@ jobs:
   add_to_staging:
     runs-on: ubuntu-latest
 
+    env:
+      POSSIBLE_SHA: ${{github.pull_request.head.sha}}
+
     steps:
     - uses: actions/checkout@v2
       with:
@@ -20,6 +23,8 @@ jobs:
       run: |
         git config --global user.name 'Automated Merge'
         git config --global user.email \<\>
-        git checkout staging
-        git merge --no-ff $GITHUB_SHA -m "Commit Approval Staging Merge"
-        git push origin staging
+        # git checkout staging
+        # git merge --no-ff ${GITHUB_REF##*/} -m "Commit Approval Staging Merge"
+        # git push origin staging
+        echo ${GITHUB_REF##*/}
+        echo $POSSIBLE_SHA
