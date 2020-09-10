@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      POSSIBLE_SHA: ${{github}}
+      POSSIBLE_SHA: ${{ toJson(github) }}
 
     steps:
     - uses: actions/checkout@v2
