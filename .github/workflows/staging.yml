@@ -8,15 +8,15 @@ on:
 jobs:
   add_to_staging:
     runs-on: ubuntu-latest
+    # Add the environment variable for new branch
+    env:
+      APPROVED_BRANCH: ${{github.head_ref}}
+
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    
-    # Add the environment variable for new branch
-    env:
-      APPROVED_BRANCH: ${{github.head_ref}}
-    
+
     # Add the changes to staging
     - name: Merge approved changes to staging
       if: github.event.review.state == 'approved'
