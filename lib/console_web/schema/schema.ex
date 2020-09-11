@@ -21,6 +21,9 @@ defmodule ConsoleWeb.Schema do
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
+  end
+
+  object :device_stats do
     field :packets_last_1d, :integer
     field :packets_last_7d, :integer
     field :packets_last_30d, :integer
@@ -186,6 +189,11 @@ defmodule ConsoleWeb.Schema do
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    field :device_stats, :device_stats do
+      arg :id, non_null(:id)
+      resolve &Console.Devices.DeviceResolver.get_device_stats/2
     end
 
     @desc "Get device import jobs"

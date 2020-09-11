@@ -33,6 +33,12 @@ defmodule Console.Devices.DeviceResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels, :function]])
 
+    {:ok, device}
+  end
+
+  def get_device_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
+
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
       Console.Repo,
@@ -41,12 +47,13 @@ defmodule Console.Devices.DeviceResolver do
     )
     counts = List.flatten(result.rows)
 
-    {:ok,
-      Map.merge(device, %{
+    {
+      :ok,
+      %{
         packets_last_1d: Enum.at(counts, 0),
         packets_last_7d: Enum.at(counts, 1),
         packets_last_30d: Enum.at(counts, 2),
-      })
+      }
     }
   end
 
