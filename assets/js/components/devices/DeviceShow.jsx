@@ -16,6 +16,7 @@ import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
+import DeviceShowStats from './DeviceShowStats'
 import { updateDevice, toggleDeviceDebug } from '../../actions/device'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
@@ -23,7 +24,7 @@ import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import DownlinkImage from '../../../img/downlink.svg'
-import { blueForDeviceStatsLarge, debugSidebarBackgroundColor } from '../../util/colors'
+import { debugSidebarBackgroundColor } from '../../util/colors'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
 const { Text } = Typography
@@ -410,25 +411,7 @@ class DeviceShow extends Component {
 
 
           <Col span={9}>
-            <Card
-              title="Packets Transferred"
-              style={{ height: 'calc(100% - 20px)', minWidth: 350 }}
-            >
-              <Col span={12}>
-                <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
-                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.total_packets}</Text><br/>
-                <div style={{ marginBottom: 30 }} />
-                <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
-                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_30d}</Text><br/>
-              </Col>
-              <Col span={12}>
-                <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
-                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_7d}</Text><br/>
-                <div style={{ marginBottom: 30 }} />
-                <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
-                <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.packets_last_1d}</Text><br/>
-              </Col>
-            </Card>
+            <DeviceShowStats device={device} smallerText={smallerText} />
           </Col>
         </Row>
 

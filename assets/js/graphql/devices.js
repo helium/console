@@ -77,7 +77,14 @@ export const DEVICE_SHOW = gql`
           name
         }
       }
-      total_packets,
+    }
+  }
+  ${DEVICE_FRAGMENT}
+`
+
+export const DEVICE_SHOW_STATS = gql`
+  query DeviceShowStatsQuery ($id: ID!) {
+    device_stats(id: $id) {
       packets_last_1d,
       packets_last_7d,
       packets_last_30d
