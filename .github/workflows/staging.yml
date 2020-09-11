@@ -25,5 +25,6 @@ jobs:
         git config --global user.email \<\>
         git checkout $APPROVED_BRANCH
         git checkout staging
-        git merge --squash $APPROVED_BRANCH -m "Approved Branch Staging Merge"
+        git merge --squash $APPROVED_BRANCH
+        git commit -m "Approved branch staging merge from "${APPROVED_BRANCH}
         git push origin staging
