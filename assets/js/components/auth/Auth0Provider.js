@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { history } from '../../store/configureStore'
+import crypto from "crypto"
 import createAuth0Client from '@auth0/auth0-spa-js'
 
 const DEFAULT_REDIRECT_CALLBACK = () => {
@@ -33,6 +34,8 @@ export const loginWithRedirect = async (...p) => {
 }
 
 export const logout = async (...p) => {
+  window.Intercom('shutdown')
+
   const client = await getAuth0Client();
   return await client.logout(...p);
 }
@@ -53,7 +56,7 @@ export const Auth0Provider = ({
         _initOptions = initOptions;
         const auth0FromHook = await getAuth0Client();
         setAuth0(auth0FromHook);
-        
+
         if (
           window.location.search.includes("code=") &&
           window.location.search.includes("state=")
@@ -61,15 +64,22 @@ export const Auth0Provider = ({
           const { appState } = await auth0FromHook.handleRedirectCallback();
           onRedirectCallback(appState);
         }
-        
+
         const isAuthenticated = await auth0FromHook.isAuthenticated();
         setIsAuthenticated(isAuthenticated);
 
         if (isAuthenticated) {
           const user = await auth0FromHook.getUser();
+          const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
+          window.Intercom('boot', {
+            app_id: 'uj330shp',
+            email: user.email,
+            user_hash: hash
+          })
+
           setUser(user);
         }
-        
+
         setLoading(false);
       };
       initAuth0();

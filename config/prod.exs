@@ -62,6 +62,9 @@ config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
 
 config :console,
+  intercom_id_secret: System.get_env("INTERCOM_ID_SECRET")
+
+config :console,
   allowed_ip_range: [
     "173.245.48.0",
     "103.21.244.0",
