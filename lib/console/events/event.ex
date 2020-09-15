@@ -10,6 +10,7 @@ defmodule Console.Events.Event do
     field :category, :string
     field :description, :string
     field :reported_at, :string
+    field :reported_at_epoch, :integer
     field :reported_at_naive, :naive_datetime
     field :frame_up, :integer
     field :frame_down, :integer
@@ -36,6 +37,7 @@ defmodule Console.Events.Event do
       :frame_down,
       :reported_at,
       :reported_at_naive,
+      :reported_at_epoch,
       :device_id,
       :port,
       :devaddr,

@@ -39,11 +39,16 @@ defmodule Console.Devices.DeviceResolver do
   def get_device_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
 
+    current_unix = DateTime.utc_now() |> DateTime.to_unix()
+    unix1d = current_unix - 86400
+    unix7d = current_unix - 86400 * 7
+    unix30d = current_unix - 86400 * 30
+
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
       Console.Repo,
-      "(SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '1 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '7 DAY') UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_naive > NOW() - INTERVAL '30 DAY')",
-      [device_id]
+      "(SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $4)",
+      [device_id, unix1d, unix7d, unix30d]
     )
     counts = List.flatten(result.rows)
 

@@ -99,6 +99,9 @@ defmodule ConsoleWeb.Router.DeviceController do
       end)
 
     event = Map.put(event, "channels", channels_without_debug)
+
+    event = Map.put(event, "reported_at_epoch", event["reported_at"])
+
     event =
       cond do
         is_integer(event["port"]) -> event
