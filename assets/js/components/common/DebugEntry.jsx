@@ -208,6 +208,7 @@ class DebugEntry extends Component {
                       "name": c.name,
                       "description": c.description,
                       "status": c.status,
+                      "decoded_payload": c.debug.req.body.decoded && c.debug.req.body.decoded.payload
                     }, null, 2
                 )}
               </pre>
