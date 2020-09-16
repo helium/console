@@ -52,7 +52,7 @@ class NavDrawer extends Component {
   render() {
     const { history, data } = this.props
     const { showLabels } = this.state
-    
+
     return (
       <div>
         <Menu
@@ -103,9 +103,7 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          {
-            !process.env.SELF_HOSTED && <div><Link to={"/functions"} className="menu-link">Functions</Link></div>
-          }
+          <div><Link to={"/functions"} className="menu-link">Functions</Link></div>
           <div><Link to={"/organizations"} className="menu-link">Organizations</Link></div>
           <div><Link to={"/users"} className="menu-link">Users</Link></div>
           <div><Link to={"/datacredits"} className="menu-link">Data Credits</Link></div>
