@@ -25,7 +25,7 @@ defmodule Console.Organizations.OrganizationResolver do
   end
 
   def all(_, %{context: %{current_user: current_user}}) do
-    organizations = Organizations.get_organizations(current_user)
+    organizations = Organizations.get_organizations_with_devices(current_user)
     {:ok, organizations}
   end
 end

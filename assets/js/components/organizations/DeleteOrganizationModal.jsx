@@ -40,14 +40,23 @@ class DeleteOrganizationModal extends Component {
   handleSubmit = () => {
     const { selectedOrgId } = this.props
 
+    const currentOrg = find(this.props.data.allOrganizations, { id: selectedOrgId })
+
     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": selectedOrgId })
-    this.props.deleteOrganization(selectedOrgId, this.state.destinationOrgId)
+    if (!currentOrg.dc_balance || currentOrg.dc_balance < 1) {
+      this.props.deleteOrganization(selectedOrgId)
+    } else {
+      this.props.deleteOrganization(selectedOrgId, this.state.destinationOrgId)
+    }
+
     this.props.onClose()
   }
 
   render() {
     const { open, onClose, selectedOrgId } = this.props
     const { allOrganizations } = this.props.data
+
+    const currentOrg = find(allOrganizations, { id: selectedOrgId })
 
     return(
       <Modal
@@ -68,7 +77,7 @@ class DeleteOrganizationModal extends Component {
               onClick={this.handleSubmit}
               type="danger"
               ghost
-              disabled={!this.state.destinationOrgId}
+              disabled={currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId}
             >
               Delete Organization
             </Button>,
@@ -80,37 +89,49 @@ class DeleteOrganizationModal extends Component {
         </div>
 
         {
-          allOrganizations && selectedOrgId && (
-            <div style={{ ...styles.center, marginTop: 20 }}>
-              <Text style={{ fontWeight: 500, color: 'black' }}>
-                {`This organization has a DC Balance of ${numeral(find(allOrganizations, { id: selectedOrgId }).dc_balance).format('0,0')} DC.`}
-              </Text>
+          currentOrg && currentOrg.dc_balance && (
+            <div>
+              <div style={{ marginTop: 20 }}>
+                <Text style={{ fontWeight: 500, color: 'black' }}>
+                  {`This organization has a DC Balance of ${numeral(currentOrg.dc_balance).format('0,0')} DC.`}
+                </Text>
+              </div>
+
+              <div style={{ marginTop: 15 }}>
+                <Text style={{ color: '#595959' }}>Please select an organization to receive this balance upon deletion.</Text>
+              </div>
+
+              <div style={{ ...styles.center, marginTop: 40 }}>
+                <Select
+                  value={this.state.destinationOrgId}
+                  onChange={this.handleSetOrg}
+                  style={{ width: '50%', color: this.state.destinationOrgId == 'no-transfer' && '#F5222D' }}
+                >
+                  {
+                    allOrganizations && sort(allOrganizations, ['name']).map(o => (
+                      <Option value={o.id} key={o.id} disabled={o.id == selectedOrgId}>
+                        {o.name}
+                      </Option>
+                    ))
+                  }
+                  <Option value="no-transfer" style={{ color: '#F5222D'}}>
+                    Destroy DC
+                  </Option>
+                </Select>
+              </div>
             </div>
           )
         }
 
-        <div style={{ ...styles.center, marginTop: 15 }}>
-          <Text style={{ color: '#595959' }}>Please select an organization to receive this balance upon deletion.</Text>
-        </div>
-
-        <div style={{ ...styles.center, marginTop: 40 }}>
-          <Select
-            value={this.state.destinationOrgId}
-            onChange={this.handleSetOrg}
-            style={{ width: '50%', color: this.state.destinationOrgId == 'no-transfer' && '#F5222D' }}
-          >
-            {
-              allOrganizations && sort(allOrganizations, ['name']).map(o => (
-                <Option value={o.id} key={o.id} disabled={o.id == selectedOrgId}>
-                  {o.name}
-                </Option>
-              ))
-            }
-            <Option value="no-transfer" style={{ color: '#F5222D'}}>
-              Destroy DC
-            </Option>
-          </Select>
-        </div>
+        {
+          currentOrg && (
+            <div style={{ marginTop: 30 }}>
+              <Text style={{ fontWeight: 500, color: 'black' }}>
+                {`This organization has ${currentOrg.active_count + currentOrg.inactive_count} device(s). Are you sure you want to delete the organization?`}
+              </Text>
+            </div>
+          )
+        }
       </Modal>
     )
   }

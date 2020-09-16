@@ -106,12 +106,7 @@ class OrganizationsTable extends Component {
                 icon="delete"
                 shape="circle"
                 onClick={() => {
-                  if (!record.dc_balance || record.dc_balance < 1) {
-                    analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": record.id })
-                    deleteOrganization(record.id)
-                  } else {
-                    this.props.openDeleteOrganizationModal(record.id)
-                  }
+                  this.props.openDeleteOrganizationModal(record.id)
                 }}
               />
             </div>

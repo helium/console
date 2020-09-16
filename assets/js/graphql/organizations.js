@@ -47,7 +47,9 @@ export const ALL_ORGANIZATIONS = gql`
     allOrganizations {
       id,
       name,
-      dc_balance
+      dc_balance,
+      inactive_count,
+      active_count
     }
   }
 `
