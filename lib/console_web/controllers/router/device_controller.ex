@@ -125,6 +125,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
 
             Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}/event")
+            Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, device_debug_event_added: "devices/#{device_id}/event/debug")
 
             dc_usage = if event.category == "up" do
               bytes_per_dc = 24
@@ -146,7 +147,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
             Enum.each(label_ids, fn id ->
-              Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, label_debug_event_added: "labels/#{id}/event")
+              Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, label_debug_event_added: "labels/#{id}/event/debug")
             end)
         end
 

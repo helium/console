@@ -20,7 +20,7 @@ import DeviceShowStats from './DeviceShowStats'
 import { updateDevice, toggleDeviceDebug } from '../../actions/device'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
-import { EVENTS_SUBSCRIPTION } from '../../graphql/events'
+import { DEVICE_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import DownlinkImage from '../../../img/downlink.svg'
@@ -443,9 +443,9 @@ class DeviceShow extends Component {
             iconPosition='top'
           >
             <Debug
-              subscription={EVENTS_SUBSCRIPTION}
+              subscription={DEVICE_DEBUG_EVENTS_SUBSCRIPTION}
               variables={{ device_id: this.props.match.params.id }}
-              subscriptionKey="eventAdded"
+              subscriptionKey="deviceDebugEventAdded"
               refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
             />
           </Sidebar>
