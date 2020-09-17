@@ -29,6 +29,16 @@ defmodule ConsoleWeb.Schema do
     field :packets_last_30d, :integer
   end
 
+  object :mqtt_topic do
+    field :topic, :string
+  end
+
+  object :credentials do
+    field :endpoint, :string
+    field :uplink, :mqtt_topic
+    field :downlink, :mqtt_topic
+  end
+
   paginated object :label do
     field :id, :id
     field :name, :string
@@ -57,6 +67,7 @@ defmodule ConsoleWeb.Schema do
     field :devices, list_of(:device)
     field :device_count, :integer
     field :downlink_token, :string
+    field :credentials, type: :credentials
   end
 
   paginated object :membership do
