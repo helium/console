@@ -33,6 +33,12 @@ class DeleteOrganizationModal extends Component {
     destinationOrgId: null
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.selectedOrgId && this.props.selectedOrgId && !find(this.props.data.allOrganizations, { id: this.props.selectedOrgId })) {
+      this.props.data.refetch()
+    }
+  }
+
   handleSetOrg = destinationOrgId => {
     this.setState({ destinationOrgId })
   }
