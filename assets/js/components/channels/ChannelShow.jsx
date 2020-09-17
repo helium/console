@@ -23,6 +23,8 @@ import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channel
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
+import { isObject } from 'lodash';
+import MqttDetails from './MqttDetails';
 const { Text, Paragraph } = Typography
 
 const queryOptions = {
@@ -189,6 +191,12 @@ class ChannelShow extends Component {
                 <Card size="small" title="AWS Details">
                    <AwsDetails channel={channel} />
                 </Card>
+              )}
+              {
+                channel.type === "mqtt" && (
+                  <Card size="small" title="MQTT Details">
+                    <MqttDetails channel={channel} />
+                  </Card>
               )}
             </Col>
           </Row>
