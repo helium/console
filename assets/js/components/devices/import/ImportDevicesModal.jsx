@@ -11,6 +11,7 @@ import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
 import { Modal, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import analyticsLogger from '../../../util/analyticsLogger';
 
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: 'white' }} spin />;
 const antLoaderGrey = <LoadingOutlined style={{ fontSize: 50, color: 'grey' }} spin />
@@ -46,6 +47,7 @@ const ImportDevicesModal = (props) => {
   } = props;
 
   const handleImport = (withLabel) => {
+    analyticsLogger.logEvent("ACTION_GENERIC_IMPORT", { withLabel });
     importGenericDevices(scannedGenericDevices, withLabel);
   }
 
@@ -118,6 +120,7 @@ const ImportDevicesModal = (props) => {
               applications={ttnApplications}
               importDevices={
                 (applications, createLabels, deleteDevices) => {
+                  analyticsLogger.logEvent("ACTION_TTN_IMPORT", {applications, deleteDevices, createLabels});
                   importTtnDevices(applications, ttnAuthorizationCode, createLabels, deleteDevices)
                 }
               }/>
