@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Input } from 'antd';
+import { Typography, Input, Tooltip } from 'antd';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 
@@ -7,17 +7,24 @@ import { Row, Col } from 'antd';
 class MQTTForm extends Component {
   state = {
     endpoint: "",
-    topic: ""
+    uplinkTopic: "",
+    downlinkTopic: ""
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value}, () => {
-      const { endpoint, topic } = this.state
+    this.setState({ [e.target.name]: e.target.value }, () => {
+      const { endpoint, uplinkTopic, downlinkTopic } = this.state
+
       if (endpoint.length > 0) {
         // check validation, if pass
         this.props.onValidInput({
           endpoint,
-          topic
+          uplink: {
+            topic: uplinkTopic || 'helium/{device-uuid}/rx'
+          },
+          downlink: {
+            topic: downlinkTopic || 'helium/{device-uuid}/tx'
+          }
         })
       }
     })
@@ -42,19 +49,45 @@ class MQTTForm extends Component {
             value={this.state.endpoint}
             onChange={this.handleInputUpdate}
           />
-          </Col>
-        <Col sm={12}>
-          <Text>Topic</Text>
-          <Input
-            placeholder="See examples below"
-            name="topic"
-            value={this.state.topic}
-            onChange={this.handleInputUpdate}
-          />
-          <Text>{"Uplink: {topic_entry}/helium/{device-uuid}/rx"}</Text>
-          <br />
-          <Text>{"Downlink: {topic_entry}/helium/{device-uuid}/tx"}</Text>
         </Col>
+        </Row>
+        <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
+          <Col sm={24} style={{marginBottom: 4}}>
+          <Text style={{width: 40}}>Topic</Text>
+          <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid templates are: device-id, device-eui, app-eui, and organization-id.'>
+            <div style={{
+              marginLeft: 5,
+              backgroundColor: 'grey',
+              paddingLeft: 8,
+              paddingRight: 8,
+              borderRadius: 9999,
+              width: 24,
+              display: 'inline-block'
+            }}>
+              <span style={{color: 'white'}}>?</span>
+            </div>
+          </Tooltip>
+          </Col>
+          <Col sm={12}>
+            <Input
+              placeholder="Uplink topic"
+              name="uplinkTopic"
+              value={this.state.uplinkTopic}
+              onChange={this.handleInputUpdate}
+            />
+            <Text>{"Default: helium/{device-uuid}/rx"}</Text>
+            <br />
+          </Col>
+          <Col sm={12}>
+            <Input
+              placeholder="Downlink topic"
+              name="downlinkTopic"
+              value={this.state.downlinkTopic}
+              onChange={this.handleInputUpdate}
+            />
+            <br />
+            <Text>{"Default: helium/{device-uuid}/tx"}</Text>
+          </Col>
         </Row>
       </div>
     );
