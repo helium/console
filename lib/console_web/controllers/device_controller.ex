@@ -139,7 +139,7 @@ defmodule ConsoleWeb.DeviceController do
         |> Map.get(:body)
         |> Poison.decode() do
           {:ok, %{"restricted_token"=> restricted_token}} ->
-            Task.async(fn ->
+            Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
               fetch_and_write_devices(
                 applications,
                 restricted_token,
