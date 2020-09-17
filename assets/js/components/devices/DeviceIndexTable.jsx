@@ -1,17 +1,21 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import { updateDevice } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
-import { Table, Button, Empty, Pagination, Typography, Select, Card } from 'antd';
+import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
+@connect(null, mapDispatchToProps)
 class DeviceIndexTable extends Component {
   state = {
     page: 1,
@@ -32,6 +36,10 @@ class DeviceIndexTable extends Component {
   handleChangePage = (page) => {
     this.setState({ selectedRows: [] });
     this.props.handleChangePage(page);
+  }
+
+  toggleDeviceActive = (active, id) => {
+    this.props.updateDevice(id, { active })
   }
 
   render() {
@@ -125,13 +133,27 @@ class DeviceIndexTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
             <UserCan>
+              <Popover
+                content={`This device is currently ${record.active ? "active" : "inactive"}`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch
+                  checked={record.active}
+                  onChange={(active, e) => {
+                    e.stopPropagation()
+                    this.toggleDeviceActive(active, record.id)
+                  }}
+                />
+              </Popover>
               <Button
                 type="danger"
                 icon="delete"
                 shape="circle"
                 size="small"
+                style={{ marginLeft: 8 }}
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openDeleteDeviceModal([record])
@@ -256,6 +278,10 @@ class DeviceIndexTable extends Component {
       </div>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateDevice }, dispatch)
 }
 
 export default DeviceIndexTable

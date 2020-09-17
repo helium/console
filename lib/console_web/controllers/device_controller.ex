@@ -44,6 +44,8 @@ defmodule ConsoleWeb.DeviceController do
       broadcast_router_update_devices(device)
 
       if device_params["active"] != nil do
+        broadcast(device)
+
         device_labels = Labels.get_labels_of_device(device)
         Enum.each(device_labels, fn l ->
           Absinthe.Subscription.publish(
