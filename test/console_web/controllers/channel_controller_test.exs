@@ -96,7 +96,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(resp_conn, 422) # invalid mqtt credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com", "topic" => "yes"}, "name" => "mqtt_channel", "type" => "mqtt" },
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com", "uplink" => %{"topic" => "yes"}, "downlink" => %{"topic" => "yes"}}, "name" => "mqtt_channel", "type" => "mqtt" },
         "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       channel = json_response(resp_conn, 201)
