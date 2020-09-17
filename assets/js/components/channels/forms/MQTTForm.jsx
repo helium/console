@@ -54,7 +54,7 @@ class MQTTForm extends Component {
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
           <Col sm={24} style={{marginBottom: 4}}>
           <Text style={{width: 40}}>Topic</Text>
-          <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid templates are: device-id, device-eui, app-eui, and organization-id.'>
+          <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device-id, device-eui, app-eui, and organization-id.'>
             <div style={{
               marginLeft: 5,
               backgroundColor: 'grey',
