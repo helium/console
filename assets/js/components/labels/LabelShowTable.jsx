@@ -104,6 +104,19 @@ class LabelShowTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
+              <Popover
+                content={`This device is currently ${record.active ? "active" : "inactive"}`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch
+                  checked={record.active}
+                  onChange={(active, e) => {
+                    e.stopPropagation()
+                    this.toggleDeviceActive(active, record.id)
+                  }}
+                />
+              </Popover>
               <Button
                 type="danger"
                 icon="delete"
