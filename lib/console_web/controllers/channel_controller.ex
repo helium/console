@@ -14,7 +14,6 @@ defmodule ConsoleWeb.ChannelController do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
-    IO.inspect(channel_params)
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
       case labels["labelsApplied"] do
