@@ -117,8 +117,8 @@ const ImportDevicesModal = (props) => {
             <ListApplications
               applications={ttnApplications}
               importDevices={
-                (applications, createLabels, deleteDevices) => {
-                  importTtnDevices(applications, ttnAuthorizationCode, createLabels, deleteDevices)
+                (applications, createLabels, deleteDevices, deleteApps) => {
+                  importTtnDevices(applications, ttnAuthorizationCode, createLabels, deleteDevices, deleteApps)
                 }
               }/>
           ))

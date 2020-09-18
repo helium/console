@@ -86,12 +86,12 @@ export const fetchTtnDevices = (ttnCtlCode) => {
   }
 }
 
-export const importTtnDevices = (applications, account_token, add_labels, delete_devices) => {
+export const importTtnDevices = (applications, account_token, add_labels, delete_devices, delete_apps) => {
   return async (dispatch) => {
     dispatch(startingDeviceImport());
     const response = await rest.post(
       '/api/ttn/devices/import',
-      {applications, account_token, add_labels, delete_devices}
+      {applications, account_token, add_labels, delete_devices, delete_apps}
     );
     dispatch(startedDeviceImport());
   }

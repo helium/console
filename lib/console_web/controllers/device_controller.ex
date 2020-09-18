@@ -121,7 +121,8 @@ defmodule ConsoleWeb.DeviceController do
     "applications" => applications,
     "account_token" => token,
     "add_labels" => add_labels,
-    "delete_devices" => delete_devices
+    "delete_devices" => delete_devices,
+    "delete_apps" => delete_apps
   }) do
     organization = conn.assigns.current_organization
     user = conn.assigns.current_user
@@ -148,6 +149,7 @@ defmodule ConsoleWeb.DeviceController do
                 organization,
                 add_labels,
                 delete_devices,
+                delete_apps,
                 user.id
               )
             end)
@@ -234,7 +236,7 @@ defmodule ConsoleWeb.DeviceController do
     |> send_resp(:ok, "")
   end
 
-  defp fetch_and_write_devices(applications, token, organization, add_labels, delete_devices, user_id) do
+  defp fetch_and_write_devices(applications, token, organization, add_labels, delete_devices, delete_apps, user_id) do
     # Create import record
     {:ok, device_import} = Devices.create_import(organization, user_id, "ttn")
     broadcast_add(device_import)
@@ -250,6 +252,12 @@ defmodule ConsoleWeb.DeviceController do
             {:ok, %{"devices" => devices}} ->
               # Enumerate through retrieved devices and import them
               added_device_list = add_device_list(devices, organization)
+              first_device = added_device_list |> Enum.at(0)
+              app_url = if first_device do
+                first_device.endpoint
+              else
+                nil
+              end
               if add_labels do
                 label_params = %{"name" => app, "organization_id" => organization.id}
                 with {:ok, label} <- Labels.create_label(organization, label_params) do
@@ -267,6 +275,12 @@ defmodule ConsoleWeb.DeviceController do
                     [{"authorization", "Bearer #{token}"}]
                   )
                 end)
+              end
+              if delete_apps and app_url do
+                HTTPoison.delete!(
+                  "#{app_url}/applications/#{app}",
+                  [{"authorization", "Bearer #{token}"}]
+                )
               end
               acc + Enum.count(added_device_list)
             _ ->
