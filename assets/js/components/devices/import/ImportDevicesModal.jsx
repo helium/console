@@ -87,14 +87,14 @@ const ImportDevicesModal = (props) => {
           !importType &&
           <ChooseImportType onImportSelect={(type) => setImportType(type)}/>
         ) ||
-        ( 
+        (
           importType === 'ttn' && (
           (
-            !fetchingTtnApplications && !fetchedTtnApplications && 
+            !fetchingTtnApplications && !fetchedTtnApplications &&
             (
               <GetApplications fetchTtnDevices={fetchTtnDevices}/>
             )
-          ) || 
+          ) ||
           (
             (!fetchedTtnApplications || importStarting) &&
             (
@@ -119,13 +119,13 @@ const ImportDevicesModal = (props) => {
             <ListApplications
               applications={ttnApplications}
               importDevices={
-                (applications, createLabels, deleteDevices) => {
-                  analyticsLogger.logEvent("ACTION_TTN_IMPORT", {applications, deleteDevices, createLabels});
-                  importTtnDevices(applications, ttnAuthorizationCode, createLabels, deleteDevices)
+                (applications, createLabels, deleteDevices, deleteApps) => {
+                  analyticsLogger.logEvent("ACTION_TTN_IMPORT", {applications, deleteDevices, createLabels, deleteApps});
+                  importTtnDevices(applications, ttnAuthorizationCode, createLabels, deleteDevices, deleteApps)
                 }
               }/>
           ))
-        ) || 
+        ) ||
         (
           importType === 'csv' && (
             (genericImportScanned &&

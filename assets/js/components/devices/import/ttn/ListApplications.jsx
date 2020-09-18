@@ -10,6 +10,7 @@ const ListApplications = (props) => {
   const [ selectedApps, setSelectedApps ] = useState(applications.map(app => app.id));
   const [ createLabels, setCreateLabels ] = useState(true);
   const [ deleteTtnDevices, setDeleteTtnDevices ] = useState(true);
+  const [ deleteTtnApps, setDeleteTtnApps] = useState(true);
   const horizontalPadding = { paddingLeft: 40, paddingRight: 40 };
   return (
     <Fragment>
@@ -75,11 +76,21 @@ const ListApplications = (props) => {
           </Text>
         </Col>
       </Row>
+      <Row style={{ ...horizontalPadding, marginTop: 10 }}>
+        <Col sm={2}>
+          <Checkbox checked={deleteTtnApps} onChange={() => setDeleteTtnApps(!deleteTtnApps)}/>
+        </Col>
+        <Col sm={22}>
+          <Text style={{fontSize: 14, lineHeight: .9}}>
+            Delete application handler in Things Network instance automatically
+          </Text>
+        </Col>
+      </Row>
       <Button
         key="submit"
         type="primary"
         style={{ marginTop: 40 }}
-        onClick={() => importDevices(selectedApps, createLabels, deleteTtnDevices)}
+        onClick={() => importDevices(selectedApps, createLabels, deleteTtnDevices, deleteTtnApps)}
       >
         Import Devices
       </Button>
