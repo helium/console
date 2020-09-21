@@ -104,13 +104,22 @@ class EventsDashboard extends Component {
   }
 
   renderExpanded = record => {
-    const hotspotColumns = [
-      { title: 'Hotspot Name', dataIndex: 'name' },
-      { title: 'RSSI', dataIndex: 'rssi' },
-      { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
-      { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
-      { title: 'Spreading', dataIndex: 'spreading' },
-    ]
+    let hotspotColumns
+    if (record.category == 'ack' || record.category == 'down') {
+      hotspotColumns = [
+        { title: 'Hotspot Name', dataIndex: 'name' },
+        { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
+        { title: 'Spreading', dataIndex: 'spreading' },
+      ]
+    } else {
+      hotspotColumns = [
+        { title: 'Hotspot Name', dataIndex: 'name' },
+        { title: 'RSSI', dataIndex: 'rssi'},
+        { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
+        { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
+        { title: 'Spreading', dataIndex: 'spreading' },
+      ]
+    }
 
     const channelColumns = [
       { title: 'Integration Name', dataIndex: 'name' },
