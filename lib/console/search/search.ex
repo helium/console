@@ -101,7 +101,18 @@ defmodule Console.Search do
     (
       SELECT id, name AS title, dev_eui AS description, score, 'devices' AS category
       FROM (
-        SELECT *, SIMILARITY(name || ' ' || dev_eui, $1) AS score
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM devices
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS a
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, dev_eui AS description, score, 'devices' AS category
+      FROM (
+        SELECT *, SIMILARITY(dev_eui || ' ', $1) AS score
         FROM devices
         WHERE organization_id = $2
         ORDER BY score DESC
@@ -112,7 +123,18 @@ defmodule Console.Search do
     (
       SELECT id, name AS title, type_name AS description, score, 'channels' AS category
       FROM (
-        SELECT *, SIMILARITY(name || ' ' || type_name, $1) AS score
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM channels
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS b
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, type_name AS description, score, 'channels' AS category
+      FROM (
+        SELECT *, SIMILARITY(type_name || ' ', $1) AS score
         FROM channels
         WHERE organization_id = $2
         ORDER BY score DESC
