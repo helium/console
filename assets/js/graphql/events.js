@@ -19,7 +19,12 @@ export const EVENT_FRAGMENT = gql`
       rssi,
       snr,
       frequency,
-      spreading
+      spreading,
+      status,
+      channel,
+      lat,
+      long,
+      reported_at
     },
     channels {
       id,

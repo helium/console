@@ -157,6 +157,11 @@ defmodule ConsoleWeb.Schema do
     field :snr, :float
     field :frequency, :float
     field :spreading, :string
+    field :channel, :integer
+    field :lat, :float
+    field :long, :float
+    field :reported_at, :string
+    field :status, :string
   end
 
   object :event_channel do
