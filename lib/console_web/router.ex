@@ -14,6 +14,7 @@ defmodule ConsoleWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.RateLimit, ["auth_actions", 60]
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
