@@ -18,7 +18,13 @@ defmodule ConsoleWeb.OrganizationController do
       if conn.assigns.current_user.super do
         Organizations.list_organizations()
       else
-        Organizations.get_organizations(conn.assigns.current_user)
+        last_viewed_membership = Organizations.get_last_viewed_org_membership(conn.assigns.current_user) |> List.first()
+        if last_viewed_membership != nil do
+          user_orgs = Organizations.get_organizations(conn.assigns.current_user)
+          Enum.filter(user_orgs, fn x -> x.id == last_viewed_membership.organization_id end) ++ Enum.filter(user_orgs, fn x -> x.id != last_viewed_membership.organization_id end)
+        else
+          Organizations.get_organizations(conn.assigns.current_user)
+        end
       end
 
     conn
@@ -80,6 +86,16 @@ defmodule ConsoleWeb.OrganizationController do
       conn
       |> put_resp_header("message", "#{organization.name} updated successfully")
       |> render("show.json", organization: render_org)
+    end
+  end
+
+  def update(conn, %{"switch_org_id" => org_id}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, org_id)
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+
+    with {:ok, _} <- Organizations.update_membership(membership, %{ updated_at: NaiveDateTime.utc_now() }) do
+      conn
+      |> send_resp(:no_content, "")
     end
   end
 

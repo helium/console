@@ -32,7 +32,7 @@ defmodule Console.Organizations.Membership do
     attrs = Helpers.sanitize_attrs(attrs, ["role"])
 
     membership
-    |> cast(attrs, [:role])
+    |> cast(attrs, [:role, :updated_at])
     |> validate_required([:role])
     |> validate_inclusion(:role, ~w(admin read))
   end

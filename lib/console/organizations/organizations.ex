@@ -111,6 +111,13 @@ defmodule Console.Organizations do
     Repo.one(query)
   end
 
+  def get_last_viewed_org_membership(%User{id: user_id}) do
+    query = from m in Membership,
+      where: m.user_id == ^user_id,
+      order_by: [desc: :updated_at]
+    Repo.all(query)
+  end
+
   def get_administrators(%Organization{id: organization_id}) do
     query = from m in Membership,
       where: m.organization_id == ^organization_id and m.role == ^"admin"

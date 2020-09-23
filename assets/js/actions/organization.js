@@ -69,9 +69,14 @@ export const updateOrganization = (id, active) => {
 
 export const switchOrganization = (organization) => {
   return (dispatch) => {
-    localStorage.setItem('organization', JSON.stringify(organization));
-    dispatch(switchedOrganization(organization));
-    window.location.reload(true);
+    rest.put(`/api/organizations/${organization.id}`, {
+      switch_org_id: organization.id
+    })
+    .then(response => {
+      localStorage.setItem('organization', JSON.stringify(organization));
+      dispatch(switchedOrganization(organization));
+      window.location.reload(true);
+    })
   }
 }
 
