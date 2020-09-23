@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography, Checkbox } from 'antd';
-import { deleteDevices } from '../../actions/device'
+import { deleteDevices, deleteDevice } from '../../actions/device'
 import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 import { connect } from 'react-redux'
@@ -14,7 +14,7 @@ class DeleteDeviceModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteDevices, devicesToDelete, onClose } = this.props
+    const { deleteDevices, deleteDevice, devicesToDelete, onClose, from } = this.props
     const { applyToAll } = this.state
 
     analyticsLogger.logEvent(
@@ -23,9 +23,13 @@ class DeleteDeviceModal extends Component {
         devices: applyToAll ? 'all' : devicesToDelete.map(d => d.id)
       }
     )
-    deleteDevices(!applyToAll && devicesToDelete)
-    this.setState({applyToAll: false})
+    if (from == 'deviceShow') {
+      deleteDevice(devicesToDelete[0].id, true)
+    } else {
+      deleteDevices(!applyToAll && devicesToDelete)
+    }
 
+    this.setState({applyToAll: false})
     onClose()
   }
 
@@ -63,7 +67,7 @@ class DeleteDeviceModal extends Component {
           )
         }
         {
-          allDevicesSelected && 
+          allDevicesSelected &&
           <Checkbox
             style={{marginTop: 20}}
             checked={this.state.applyToAll}
@@ -78,7 +82,7 @@ class DeleteDeviceModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteDevices }, dispatch)
+  return bindActionCreators({ deleteDevices, deleteDevice }, dispatch)
 }
 
 export default DeleteDeviceModal

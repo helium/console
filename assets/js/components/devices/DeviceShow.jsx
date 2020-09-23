@@ -17,6 +17,7 @@ import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import DeviceShowStats from './DeviceShowStats'
+import DeleteDeviceModal from './DeleteDeviceModal';
 import { updateDevice, toggleDeviceDebug } from '../../actions/device'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
@@ -55,8 +56,10 @@ class DeviceShow extends Component {
     labelsSelected: null,
     showDeviceRemoveLabelModal: false,
     showDevicesAddLabelModal: false,
+    showDeleteDeviceModal: false,
     showDebugSidebar: false,
-    showDownlinkSidebar: false
+    showDownlinkSidebar: false,
+    deviceToDelete: null,
   }
 
   componentDidMount() {
@@ -174,6 +177,14 @@ class DeviceShow extends Component {
     this.setState({ showDevicesAddLabelModal: false })
   }
 
+  openDeleteDeviceModal = (device) => {
+    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] })
+  }
+
+  closeDeleteDeviceModal = () => {
+    this.setState({ showDeleteDeviceModal: false })
+  }
+
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
@@ -201,6 +212,8 @@ class DeviceShow extends Component {
       labelsSelected,
       showDevicesAddLabelModal,
       showDebugSidebar,
+      showDeleteDeviceModal,
+      deviceToDelete,
     } = this.state
     const { loading, error, device } = this.props.data;
 
@@ -233,6 +246,17 @@ class DeviceShow extends Component {
               <Switch
                 checked={device.active}
                 onChange={this.toggleDeviceActive}
+              />
+              <Button
+                type="danger"
+                icon="delete"
+                shape="circle"
+                size="small"
+                style={{ marginLeft: 8 }}
+                onClick={e => {
+                  e.stopPropagation()
+                  this.openDeleteDeviceModal(device)
+                }}
               />
             </Popover>
           </UserCan>
@@ -446,6 +470,15 @@ class DeviceShow extends Component {
           open={showDevicesAddLabelModal}
           onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={[device]}
+        />
+
+        <DeleteDeviceModal
+          open={showDeleteDeviceModal}
+          onClose={this.closeDeleteDeviceModal}
+          allDevicesSelected={false}
+          devicesToDelete={this.state.deviceToDelete}
+          totalDevices={1}
+          from="deviceShow"
         />
 
         <UserCan>
