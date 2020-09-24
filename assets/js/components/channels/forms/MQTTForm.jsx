@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Input, Tooltip } from 'antd';
+import { Typography, Input, Tooltip, Icon } from 'antd';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 
@@ -16,14 +16,13 @@ class MQTTForm extends Component {
       const { endpoint, uplinkTopic, downlinkTopic } = this.state
 
       if (endpoint.length > 0) {
-        // check validation, if pass
         this.props.onValidInput({
           endpoint,
           uplink: {
-            topic: uplinkTopic || 'helium/{device-uuid}/rx'
+            topic: uplinkTopic || 'helium/{{device_id}}/rx'
           },
           downlink: {
-            topic: downlinkTopic || 'helium/{device-uuid}/tx'
+            topic: downlinkTopic || 'helium/{{device_id}}/tx'
           }
         })
       }
@@ -52,20 +51,10 @@ class MQTTForm extends Component {
         </Col>
         </Row>
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
-          <Col sm={24} style={{marginBottom: 4}}>
+          <Col sm={24} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{width: 40}}>Topic</Text>
-          <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device-id, device-eui, app-eui, and organization-id.'>
-            <div style={{
-              marginLeft: 5,
-              backgroundColor: 'grey',
-              paddingLeft: 8,
-              paddingRight: 8,
-              borderRadius: 9999,
-              width: 24,
-              display: 'inline-block'
-            }}>
-              <span style={{color: 'white'}}>?</span>
-            </div>
+          <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
+            <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey' }}/>
           </Tooltip>
           </Col>
           <Col sm={12}>
@@ -75,7 +64,7 @@ class MQTTForm extends Component {
               value={this.state.uplinkTopic}
               onChange={this.handleInputUpdate}
             />
-            <Text>{"Default: helium/{device-uuid}/rx"}</Text>
+            <Text>{"Default: helium/{{device_id}}/rx"}</Text>
             <br />
           </Col>
           <Col sm={12}>
@@ -86,7 +75,7 @@ class MQTTForm extends Component {
               onChange={this.handleInputUpdate}
             />
             <br />
-            <Text>{"Default: helium/{device-uuid}/tx"}</Text>
+            <Text>{"Default: helium/{{device_id}}/tx"}</Text>
           </Col>
         </Row>
       </div>
