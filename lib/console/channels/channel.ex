@@ -128,13 +128,57 @@ defmodule Console.Channels.Channel do
           Regex.match?(~r/ /, creds["uplink"]["topic"]) or
           Regex.match?(~r/ /, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not have spaces")
 
+          Regex.match?(~r/\/\//, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\/\//, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not have consecutive /")
+
           Regex.match?(~r/^\//, creds["uplink"]["topic"]) or
           Regex.match?(~r/^\//, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not start with a forward slash")
 
           Regex.match?(~r/\/$/, creds["uplink"]["topic"]) or
           Regex.match?(~r/\/$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not end with a forward slash")
 
-          true -> changeset
+          Regex.match?(~r/\#.*\#/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\#.*\#/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should only have 1 # if used")
+
+          Regex.match?(~r/\#.+$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\#.+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with # if # is used")
+
+          Regex.match?(~r/[^\/]\#$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with # if # is used")
+
+          Regex.match?(~r/[^\/]\#$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with /# if # is used")
+
+          Regex.match?(~r/^\#$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/^\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not just be #")
+
+          Regex.match?(~r/^\+$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/^\+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not just be +")
+
+          Regex.match?(~r/[^\/]\+$/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/[^\/]\+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front of + if + is used at the end")
+
+          Regex.match?(~r/[^\/]+\+/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/[^\/]+\+/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
+
+          Regex.match?(~r/\+[^\/]+/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\+[^\/]+/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
+
+          Regex.match?(~r/\{.*\{.*\{/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\{.*\{.*\{/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
+
+          Regex.match?(~r/\}.*\}.*\}/, creds["uplink"]["topic"]) or
+          Regex.match?(~r/\}.*\}.*\}/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
+
+          true ->
+            up_topic_ok = check_topic(creds["uplink"]["topic"])
+            down_topic_ok = check_topic(creds["downlink"]["topic"])
+
+            if up_topic_ok and down_topic_ok do
+              changeset
+            else
+              add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
+            end
         end
     end
   end
@@ -143,5 +187,26 @@ defmodule Console.Channels.Channel do
     :crypto.strong_rand_bytes(length)
     |> Base.url_encode64
     |> binary_part(0, length)
+  end
+
+  defp check_topic(topic_string) do
+    list = String.split(topic_string, ["{{","}}"])
+    if rem(length(list), 2) == 1 do
+      variable_names =
+        for i <- 0..(length(list) - 1) do
+          if rem(i, 2) == 1 do
+            Enum.at(list, i)
+          else
+            nil
+          end
+        end
+      variable_names = Enum.filter(variable_names, fn x -> x != nil end)
+
+      Enum.reduce(variable_names, true, fn x, acc ->
+        Enum.member?(["device_id", "device_eui", "app_eui", "organization_id"], x) && acc
+      end)
+    else
+      false
+    end
   end
 end
