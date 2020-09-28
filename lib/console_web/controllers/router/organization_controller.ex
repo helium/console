@@ -10,6 +10,8 @@ defmodule ConsoleWeb.Router.OrganizationController do
   alias Console.Memos.Memo
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
+  alias Console.Channels
+  alias Console.Channels.Channel
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -66,6 +68,14 @@ defmodule ConsoleWeb.Router.OrganizationController do
 
     with {:ok, organization} <- Organizations.update_organization(organization, attrs) do
       ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+      conn |> send_resp(:no_content, "")
+    end
+  end
+
+  def update_channel_creds(conn, %{"id" => id, "channel" => channel_params}) do
+    channel = Channels.get_channel!(id)
+
+    with {:ok, %Channel{} = channel} <- Channels.router_update_channel(channel, channel_params) do
       conn |> send_resp(:no_content, "")
     end
   end
