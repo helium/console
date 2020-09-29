@@ -164,12 +164,6 @@ defmodule Console.Channels.Channel do
           Regex.match?(~r/\+[^\/]+/, creds["uplink"]["topic"]) or
           Regex.match?(~r/\+[^\/]+/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
 
-          Regex.match?(~r/\{.*\{.*\{/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\{.*\{.*\{/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
-
-          Regex.match?(~r/\}.*\}.*\}/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\}.*\}.*\}/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
-
           true ->
             up_topic_ok = check_topic(creds["uplink"]["topic"])
             down_topic_ok = check_topic(creds["downlink"]["topic"])
