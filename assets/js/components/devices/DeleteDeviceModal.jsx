@@ -6,6 +6,14 @@ const { Text } = Typography
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+const styles = {
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  }
+}
+
 @connect(null, mapDispatchToProps)
 class DeleteDeviceModal extends Component {
   state = {
@@ -34,11 +42,11 @@ class DeleteDeviceModal extends Component {
   }
 
   render() {
-    const { open, onClose, devicesToDelete, allDevicesSelected, totalDevices } = this.props;
+    const { open, onClose, devicesToDelete, allDevicesSelected, totalDevices, from } = this.props;
 
     return (
       <Modal
-        title="Delete Devices"
+        title={from == 'deviceShow' ? "Delete Device": "Delete Devices"}
         visible={open}
         onCancel={onClose}
         centered
@@ -52,15 +60,18 @@ class DeleteDeviceModal extends Component {
           </Button>,
         ]}
       >
-        <div style={{ marginBottom: 20 }}>
-          <Text>{`Are you sure you want to delete the selected devices?`}</Text>
+        <div style={from == 'deviceShow' ? styles.row : { marginBottom: 20 }}>
+          <Text>{from == 'deviceShow' ? `Are you sure you want to delete device ${devicesToDelete && devicesToDelete[0].name}?` : 'Are you sure you want to delete the selected devices?'}</Text>
         </div>
         {
-          (!devicesToDelete || devicesToDelete.length === 0) ? (
+          (!devicesToDelete || devicesToDelete.length === 0) && (
             <div>
               <Text>&ndash; No Devices Currently Selected</Text>
             </div>
-          ) : (
+          )
+        }
+        {
+          (from != "deviceShow" && devicesToDelete && devicesToDelete.length > 1) && (
             <div>
               <Text>{`${devicesToDelete.length} Device${devicesToDelete.length === 1 ? '' : 's'} Currently Selected`}</Text>
             </div>
