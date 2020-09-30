@@ -6,7 +6,7 @@ const MqttDetails = (props) => {
   const { channel } = props
   const { credentials } = channel;
 
-  if (credentials === undefined) return <div />
+  if (!credentials || !credentials.endpoint) return <div />
   return (
     <React.Fragment>
       <Paragraph><Text strong>Endpoint: </Text><Text>{credentials.endpoint}</Text></Paragraph>

@@ -10,6 +10,37 @@ class AWSForm extends Component {
     topic: "",
   }
 
+  componentDidMount() {
+    const { channel } = this.props
+
+    if (channel && channel.topic) {
+      this.setState({
+        accessKey: channel.aws_access_key,
+        secretKey: "",
+        region: channel.aws_region,
+        topic: channel.topic,
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.channel &&
+      prevProps.channel.topic &&
+      this.props.channel &&
+      this.props.channel.topic &&
+      (prevProps.channel.topic + prevProps.channel.aws_access_key + prevProps.channel.aws_region !=
+      this.props.channel.topic + this.props.channel.aws_access_key + this.props.channel.aws_region)
+    ) {
+      this.setState({
+        accessKey: this.props.channel.aws_access_key,
+        secretKey: "",
+        region: this.props.channel.aws_region,
+        topic: this.props.channel.topic,
+      })
+    }
+  }
+
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value}, () => {
       const {accessKey, secretKey, region, topic } = this.state

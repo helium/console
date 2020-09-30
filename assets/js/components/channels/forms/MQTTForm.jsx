@@ -11,6 +11,35 @@ class MQTTForm extends Component {
     downlinkTopic: ""
   }
 
+  componentDidMount() {
+    const { channel } = this.props
+
+    if (channel && channel.credentials.endpoint) {
+      this.setState({
+        endpoint: channel.credentials.endpoint,
+        uplinkTopic: channel.credentials.uplink.topic,
+        downlinkTopic: channel.credentials.downlink.topic,
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.channel &&
+      prevProps.channel.credentials.endpoint &&
+      this.props.channel &&
+      this.props.channel.credentials.endpoint &&
+      (prevProps.channel.credentials.endpoint + prevProps.channel.credentials.uplink.topic + prevProps.channel.credentials.downlink.topic !=
+      this.props.channel.credentials.endpoint + this.props.channel.credentials.uplink.topic + this.props.channel.credentials.downlink.topic)
+    ) {
+      this.setState({
+        endpoint: this.props.channel.credentials.endpoint,
+        uplinkTopic: this.props.channel.credentials.uplink.topic,
+        downlinkTopic: this.props.channel.credentials.downlink.topic,
+      })
+    }
+  }
+
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
       const { endpoint, uplinkTopic, downlinkTopic } = this.state

@@ -14,6 +14,42 @@ class HTTPForm extends Component {
     ]
   }
 
+  componentDidMount() {
+    const { channel } = this.props
+
+    if (channel && channel.endpoint) {
+      const header_json = JSON.parse(channel.headers)
+      const headers = Object.keys(header_json).map(key => ({ header: key, value: header_json[key] }))
+
+      this.setState({
+        method: channel.method,
+        endpoint: channel.endpoint,
+        headers: headers
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.channel &&
+      prevProps.channel.endpoint &&
+      this.props.channel &&
+      this.props.channel.endpoint &&
+      (prevProps.channel.endpoint + prevProps.channel.method + prevProps.channel.headers !=
+      this.props.channel.endpoint + this.props.channel.method + this.props.channel.headers)
+    ) {
+      const { channel } = this.props
+      const header_json = JSON.parse(channel.headers)
+      const headers = Object.keys(header_json).map(key => ({ header: key, value: header_json[key] }))
+
+      this.setState({
+        method: channel.method,
+        endpoint: channel.endpoint,
+        headers: headers
+      })
+    }
+  }
+
   addHeaderRow = () => {
     const newHeadersArray = [...this.state.headers, { header: "", value: "" }]
     this.setState({ headers: newHeadersArray })
@@ -72,7 +108,7 @@ class HTTPForm extends Component {
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
         <Col sm={12}>
           <Select
-            defaultValue={this.state.method}
+            value={this.state.method}
             onChange={this.handleMethodUpdate}
             style={{ width: '100%'}}
           >

@@ -88,9 +88,18 @@ class ChannelShow extends Component {
   handleUpdateDetailsChange = () => {
     const { channel } = this.props.data
     const { credentials } = this.state
-    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", { "id": channel.id})
-    this.props.updateChannel(channel.id, { credentials })
-    this.setState({ credentials: {} })
+
+    if (Object.keys(credentials).length > 0) {
+      analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", { "id": channel.id})
+      this.props.updateChannel(channel.id, { credentials })
+      this.setState({ credentials: {} })
+    } else {
+      if (channel.type != "aws") {
+        displayError("Integration details have not been updated, please update details before submitting")
+      } else {
+        displayError("Please make sure all form details are filled in properly")
+      }
+    }
   }
 
   handleSelectLabel = (selectedLabel) => {
@@ -124,15 +133,15 @@ class ChannelShow extends Component {
 
     switch (channel.type) {
       case "aws":
-        return <AWSForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+        return <AWSForm onValidInput={this.handleUpdateDetailsInput} type="update" channel={channel} />
       case "google":
-        return <GoogleForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+        return <GoogleForm onValidInput={this.handleUpdateDetailsInput} type="update" channel={channel} />
       case "mqtt":
-        return <MQTTForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+        return <MQTTForm onValidInput={this.handleUpdateDetailsInput} type="update" channel={channel} />
       case "http":
-        return <HTTPForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+        return <HTTPForm onValidInput={this.handleUpdateDetailsInput} type="update" channel={channel} />
       default:
-        return <AzureForm onValidInput={this.handleUpdateDetailsInput} type="update" />
+        return <AzureForm onValidInput={this.handleUpdateDetailsInput} type="update" channel={channel} />
     }
   }
 

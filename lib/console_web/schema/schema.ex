@@ -61,6 +61,7 @@ defmodule ConsoleWeb.Schema do
     field :headers, :string
     field :inbound_token, :string
     field :aws_region, :string
+    field :aws_access_key, :string
     field :topic, :string
     field :active, :boolean
     field :labels, list_of(:label)
