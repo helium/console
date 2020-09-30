@@ -29,6 +29,16 @@ defmodule Console.Email do
     |> render(:data_credit_top_up)
   end
 
+  def delete_org_notification_email(%Organization{name: organization_name}, recipient, deleted_by) do
+    base_email()
+    |> to(recipient)
+    |> subject("An organization was deleted from Helium Console")
+    |> assign(:organization_name, organization_name)
+    |> assign(:deleted_by_name, deleted_by)
+    |> assign(:date_time, current_time())
+    |> render(:delete_organization_notice)
+  end
+
   def dc_balance_notification_email(%Organization{name: organization_name}, recipient, dc_balance) do
     base_email()
     |> to(recipient)

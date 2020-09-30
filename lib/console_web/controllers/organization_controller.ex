@@ -8,6 +8,8 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Auth
   alias Console.Auth.User
+  alias Console.Email
+  alias Console.Mailer
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
@@ -133,7 +135,14 @@ defmodule ConsoleWeb.OrganizationController do
         ConsoleWeb.DataCreditController.broadcast(destination_org, destination_org_dc_purchase)
       end
 
+      admins = Organizations.get_administrators(organization)
+
       with {:ok, _} <- Organizations.delete_organization(organization) do
+        Enum.each(admins, fn administrator ->
+          Email.delete_org_notification_email(organization, administrator.email, membership.email)
+          |> Mailer.deliver_later()
+        end)
+
         broadcast(organization, conn.assigns.current_user)
         render_org = %{id: organization.id, name: organization.name, role: membership.role}
         conn

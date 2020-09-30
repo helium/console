@@ -1,0 +1,3 @@
+Hi there,
+
+Your organization, <%= @organization_name %>, was deleted from Helium Console at <%= @date_time %> by <%= @deleted_by_name %>.
