@@ -55,7 +55,7 @@ class DebugEntry extends Component {
               style={{ color: show1 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
               onClick={() => this.toggleView("show1")}
             />
-            <Text style={{ color: show1 ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
+            <Text style={{ color: show1 ? '#FFFFFF' : '#8C8C8C' }}>Packet Information</Text>
           </span>
 
           <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -74,8 +74,16 @@ class DebugEntry extends Component {
               <pre style={{ color: debugTextColor }}>
                 {JSON.stringify(
                     {
-                      "name": data.device_name,
-                      "devaddr": data.devaddr,
+                      "id": data.id,
+                      "category": data.category,
+                      "description": data.description,
+                      "fcnt_up": data.frame_up,
+                      "fcnt_down": data.frame_down,
+                      "payload": data.payload,
+                      "payload_hex": data.payload_hex,
+                      "payload_size": data.payload_size,
+                      "port": data.port,
+                      "reported_at": data.reported_at,
                     }, null, 2
                 )}
               </pre>
@@ -89,7 +97,7 @@ class DebugEntry extends Component {
             style={{ color: show2 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
             onClick={() => this.toggleView("show2")}
           />
-          <Text style={{ color: show2 ? '#FFFFFF' : '#8C8C8C' }}>Packet Information</Text>
+          <Text style={{ color: show2 ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
         </div>
         {
           this.state.show2 && (
@@ -97,16 +105,8 @@ class DebugEntry extends Component {
               <pre style={{ color: debugTextColor }}>
                 {JSON.stringify(
                     {
-                      "id": data.id,
-                      "category": data.category,
-                      "description": data.description,
-                      "fcnt_up": data.frame_up,
-                      "fcnt_down": data.frame_down,
-                      "payload": data.payload,
-                      "payload_hex": data.payload_hex,
-                      "payload_size": data.payload_size,
-                      "port": data.port,
-                      "reported_at": data.reported_at,
+                      "name": data.device_name,
+                      "devaddr": data.devaddr,
                     }, null, 2
                 )}
               </pre>
@@ -208,7 +208,7 @@ class DebugEntry extends Component {
                       "name": c.name,
                       "description": c.description,
                       "status": c.status,
-                      "decoded_payload": c.debug.req.body.decoded && c.debug.req.body.decoded.payload
+                      "decoded_payload": c.debug && c.debug.req && c.debug.req.body.decoded && c.debug.req.body.decoded.payload
                     }, null, 2
                 )}
               </pre>

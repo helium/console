@@ -214,6 +214,12 @@ class EventsDashboard extends Component {
         render: data => <Text>{categoryTag(data)}</Text>
       },
       {
+        title: 'Time',
+        dataIndex: 'reported_at',
+        align: 'left',
+        render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
+      },
+      {
         title: 'Frame Count',
         dataIndex: 'frame_up',
         render: (data, row) => this.renderFrameIcons(row)
@@ -225,12 +231,6 @@ class EventsDashboard extends Component {
       {
         title: 'Dev Address',
         dataIndex: 'devaddr',
-      },
-      {
-        title: 'Time',
-        dataIndex: 'reported_at',
-        align: 'left',
-        render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
       },
     ]
 
