@@ -8,6 +8,7 @@ import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization, updateOrganization } from '../../actions/organization'
 import { PAGINATED_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
+import UserCan from '../common/UserCan'
 import { graphql } from 'react-apollo';
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
 const { Text } = Typography
@@ -90,10 +91,12 @@ class OrganizationsTable extends Component {
         render: (data, record) => {
           return (
             <span>
-              <Switch
-                checked={record.active}
-                onChange={active => this.toggleOrgActive(active, record.id)}
-              />
+              <UserCan>
+                <Switch
+                  checked={record.active}
+                  onChange={active => this.toggleOrgActive(active, record.id)}
+                />
+              </UserCan>
               {
                 record.active_count > 0 && (
                   <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
