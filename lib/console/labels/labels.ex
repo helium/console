@@ -259,7 +259,7 @@ defmodule Console.Labels do
     Repo.transaction(fn ->
       labels = Enum.reduce(label_names, [], fn label, acc ->
         # create a label, store the id, and add
-        {:ok, new_label} = create_label!(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
+        new_label = create_label!(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
         acc ++ [new_label.id]
       end)
       add_labels_to_channel(labels, channel, organization)
