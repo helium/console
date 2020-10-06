@@ -108,8 +108,8 @@ export const ALL_IMPORTS = gql`
 `
 
 export const PAGINATED_DEVICES = gql`
-  query PaginatedDevicesQuery ($page: Int, $pageSize: Int) {
-    devices(page: $page, pageSize: $pageSize) {
+  query PaginatedDevicesQuery ($page: Int, $pageSize: Int, $column: String, $order: String) {
+    devices(page: $page, pageSize: $pageSize, column: $column, order: $order) {
       entries {
         ...DeviceFragment
         channels {

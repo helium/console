@@ -193,6 +193,8 @@ defmodule ConsoleWeb.Schema do
   query do
     @desc "Get paginated devices"
     paginated field :devices, :paginated_devices do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
       resolve(&Console.Devices.DeviceResolver.paginate/2)
     end
 

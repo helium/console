@@ -22,7 +22,8 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 const { Text } = Typography
 
-
+const DEFAULT_COLUMN = "name"
+const DEFAULT_ORDER = "asc"
 const PAGE_SIZE_KEY = 'devicePageSize';
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
@@ -30,7 +31,9 @@ const queryOptions = {
   options: props => ({
     variables: {
       page: 1,
-      pageSize: startPageSize
+      pageSize: startPageSize,
+      column: DEFAULT_COLUMN,
+      order: DEFAULT_ORDER
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -51,6 +54,8 @@ class DeviceIndex extends Component {
     deviceToRemoveLabel: null,
     page: 1,
     pageSize: get(this.props.devicesQuery, ['variables', 'pageSize']) || 10,
+    column: DEFAULT_COLUMN,
+    order: DEFAULT_ORDER,
     allDevicesSelected: false,
   }
 
@@ -180,29 +185,36 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: false })
   }
 
+  handleSortChange = (column, order) => {
+    const { page, pageSize } = this.state
+
+    this.setState({ column, order })
+    this.refetchPaginatedEntries(page, pageSize, column, order)
+  }
+
   handleChangePage = (page) => {
     this.setState({ page })
 
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
+    const { pageSize, column, order } = this.state
+    this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
   handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
+    const { page, pageSize, column, order } = this.state
+    this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
-  refetchPaginatedEntries = (page, pageSize) => {
+  refetchPaginatedEntries = (page, pageSize, column, order) => {
     const { refetch } = this.props.devicesQuery;
     startPageSize = pageSize;
-    refetch({ page, pageSize })
+    refetch({ page, pageSize, column, order })
   }
 
   handleChangePageSize = (pageSize) => {
     this.setState({ pageSize });
     localStorage.setItem(PAGE_SIZE_KEY, pageSize);
-    const { page } = this.state;
-    this.refetchPaginatedEntries(page, pageSize);
+    const { page, column, order } = this.state;
+    this.refetchPaginatedEntries(page, pageSize, column, order);
   }
 
   render() {
@@ -264,7 +276,10 @@ class DeviceIndex extends Component {
               devices={devices}
               history={this.props.history}
               handleChangePage={this.handleChangePage}
+              handleSortChange={this.handleSortChange}
               pageSize={this.state.pageSize}
+              column={this.state.column}
+              order={this.state.order}
             />
           )
         }

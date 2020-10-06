@@ -42,16 +42,31 @@ class DeviceIndexTable extends Component {
     this.props.updateDevice(id, { active })
   }
 
+  handleSort = (pagi, filter, sorter) => {
+    const { order, column } = this.props
+    if (column == sorter.columnKey && order == 'asc') {
+      this.props.handleSortChange(column, 'desc')
+    }
+    if (column == sorter.columnKey && order == 'desc') {
+      this.props.handleSortChange(column, 'asc')
+    }
+    if (column != sorter.columnKey) {
+      this.props.handleSortChange(sorter.columnKey, 'asc')
+    }
+  }
+
   render() {
     const columns = [
       {
         title: 'Device Name',
         dataIndex: 'name',
+        sorter: true,
         render: (text, record) => <Link to={`/devices/${record.id}`}>{text}</Link>
       },
       {
         title: 'Device EUI',
         dataIndex: 'dev_eui',
+        sorter: true,
         render: (text, record) => <Text code>{text}</Text>
       },
       {
@@ -105,28 +120,34 @@ class DeviceIndexTable extends Component {
       },
       {
         title: 'Frame Up',
+        sorter: true,
         dataIndex: 'frame_up',
       },
       {
         title: 'Frame Down',
+        sorter: true,
         dataIndex: 'frame_down',
       },
       {
         title: 'Packets Transferred',
+        sorter: true,
         dataIndex: 'total_packets',
       },
       {
         title: 'DC Used',
+        sorter: true,
         dataIndex: 'dc_usage'
       },
       {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
+        sorter: true,
         render: data => moment.utc(data).local().format('lll')
       },
       {
         title: 'Last Connected',
         dataIndex: 'last_connected',
+        sorter: true,
         render: data => data ? moment.utc(data).local().format('lll') : ""
       },
       {
@@ -261,6 +282,7 @@ class DeviceIndexTable extends Component {
                 rowKey={record => record.id}
                 pagination={false}
                 rowSelection={rowSelection}
+                onChange={this.handleSort}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination

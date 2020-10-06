@@ -8,11 +8,13 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Channels
   import Ecto.Query
 
-  def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
+  def paginate(%{page: page, page_size: page_size, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
+    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
       |> preload([labels: [:channels, :devices, :function]])
-      |> order_by(asc: :dev_eui)
+      |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
     entries =
