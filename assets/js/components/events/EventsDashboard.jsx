@@ -5,7 +5,7 @@ import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
-import { Badge, Card, Col, Row, Typography, Table, Tag, Popover } from 'antd';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
@@ -252,10 +252,18 @@ class EventsDashboard extends Component {
         <div style={{padding: 20, boxSizing: 'border-box'}}>
         <PacketGraph events={this.state.rows} />
         </div>
-        <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8'}}>
-        <Text strong style={{display: 'block', fontSize: 19, color: 'rgba(0, 0, 0, 0.85)'}}>
-          Event Log
-        </Text>
+        <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text strong style={{display: 'block', fontSize: 17, color: 'rgba(0, 0, 0, 0.85)'}}>
+            Event Log
+          </Text>
+          <a
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
+            download="event-debug.json"
+          >
+            <Button size="small">
+              Export JSON
+            </Button>
+          </a>
         </div>
         <Table
           dataSource={rows}
