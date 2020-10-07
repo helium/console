@@ -11,7 +11,7 @@ import { redForTablesDeleteText } from '../../util/colors'
 import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
-import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch } from 'antd';
+import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -20,7 +20,25 @@ class DeviceIndexTable extends Component {
   state = {
     page: 1,
     selectedRows: [],
-    allSelected: false
+    allSelected: false,
+    columnsToShow: {
+      dev_eui: true,
+      labels: true,
+      channels: true,
+      frame_up: true,
+      frame_down: true,
+      total_packets: true,
+      dc_usage: true,
+      inserted_at: true,
+      last_connected: true,
+    },
+  }
+
+  componentDidMount() {
+    const columnsToShow = localStorage.getItem("columnsToShow")
+    if (columnsToShow) {
+      this.setState({ columnsToShow: JSON.parse(columnsToShow) })
+    }
   }
 
   handleSelectOption = (value) => {
@@ -53,6 +71,13 @@ class DeviceIndexTable extends Component {
     if (column != sorter.columnKey) {
       this.props.handleSortChange(sorter.columnKey, 'asc')
     }
+  }
+
+  updateColumns = (key, checked) => {
+    const { columnsToShow } = this.state
+    const updatedColumnsToShow = Object.assign({}, columnsToShow, { [key]: checked })
+    this.setState({ columnsToShow: updatedColumnsToShow })
+    localStorage.setItem('columnsToShow', JSON.stringify(updatedColumnsToShow))
   }
 
   render() {
@@ -184,7 +209,10 @@ class DeviceIndexTable extends Component {
           </div>
         )
       },
-    ]
+    ].filter(col => {
+      if (col.dataIndex == "name" || col.key == "action") return true
+      return this.state.columnsToShow[col.dataIndex]
+    })
 
     const { noDevicesButton, devices, onChangePageSize } = this.props;
 
@@ -248,33 +276,55 @@ class DeviceIndexTable extends Component {
         {
           devices.entries.length > 0 && (
             <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${devices.totalEntries} Devices`}
-        extra={
-          <div>
-            <Select
-              value={`${devices.pageSize} results`}
-              onSelect={onChangePageSize}
-              style={{marginRight: 10}}
+              bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+              title={`${devices.totalEntries} Devices`}
+              extra={
+                <div>
+                  <Popover
+                    trigger="click"
+                    placement="bottom"
+                    content={
+                      <div>
+                        {
+                          Object.keys(this.state.columnsToShow).map(key => (
+                            <div key={key}>
+                              <Checkbox
+                                onChange={e => this.updateColumns(key, e.target.checked)}
+                                checked={this.state.columnsToShow[key]}
+                              >
+                                {key}
+                              </Checkbox>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    }
+                  >
+                    <Button style={{marginRight: 10}}>Edit Columns</Button>
+                  </Popover>
+                  <Select
+                    value={`${devices.pageSize} results`}
+                    onSelect={onChangePageSize}
+                    style={{marginRight: 10}}
+                  >
+                    <Option value={10}>10</Option>
+                    <Option value={25}>25</Option>
+                    <Option value={100}>100</Option>
+                  </Select>
+                  <UserCan>
+                    <Select
+                      value="Quick Action"
+                      style={{ width: 270, marginRight: 10 }}
+                      onSelect={this.handleSelectOption}
+                    >
+                      <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
+                      <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
+                      <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+                    </Select>
+                  </UserCan>
+                </div>
+              }
             >
-              <Option value={10}>10</Option>
-              <Option value={25}>25</Option>
-              <Option value={100}>100</Option>
-            </Select>
-            <UserCan>
-              <Select
-                value="Quick Action"
-                style={{ width: 270, marginRight: 10 }}
-                onSelect={this.handleSelectOption}
-              >
-                <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
-                <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
-                <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
-              </Select>
-            </UserCan>
-          </div>
-        }
-      >
             <React.Fragment>
               <Table
                 columns={columns}
