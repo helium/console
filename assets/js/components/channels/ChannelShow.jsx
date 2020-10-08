@@ -22,7 +22,7 @@ import { updateChannel } from '../../actions/channel'
 import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
+import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col, Icon } from 'antd';
 import { isObject } from 'lodash';
 import MqttDetails from './MqttDetails';
 const { Text, Paragraph } = Typography
@@ -45,6 +45,7 @@ class ChannelShow extends Component {
     selectedLabel: null,
     showChannelShowAddLabelModal: false,
     showChannelShowRemoveLabelModal: false,
+    showDownlinkToken: false,
   }
 
   componentDidMount() {
@@ -154,6 +155,7 @@ class ChannelShow extends Component {
     )
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
     const downlinkUrl = `https://${process.env.ENV_DOMAIN}.helium.com/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+    const { showDownlinkToken } = this.state
 
     return(
       <DashboardLayout
@@ -226,8 +228,14 @@ class ChannelShow extends Component {
                 <Text>Downlink Key</Text>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                   <Input
-                    value={channel.downlink_token}
+                    value={showDownlinkToken ? channel.downlink_token : "************************"}
                     style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
+                    suffix={
+                      <Icon
+                        type={showDownlinkToken ? "eye" : "eye-invisible"}
+                        onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })}
+                      />
+                    }
                   />
                   <CopyToClipboard text={channel.downlink_token}>
                     <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
