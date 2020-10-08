@@ -32,8 +32,14 @@ defmodule Console.Devices.DeviceResolver do
     {:ok, Map.put(devices, :entries, entries)}
   end
 
-  def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
+  def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels, :function]])
+
+    device =
+      case current_membership.role do
+        "read" -> device |> Map.put(:app_key, nil)
+        _ -> device
+      end
 
     {:ok, device}
   end
