@@ -15,12 +15,18 @@ import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } 
 const { Text } = Typography
 const { Option } = Select
 
+
+const DEFAULT_COLUMN = "name"
+const DEFAULT_ORDER = "asc"
+
 const queryOptions = {
   options: props => ({
     variables: {
       page: 1,
       pageSize: 10,
-      labelId: props.labelId
+      labelId: props.labelId,
+      column: DEFAULT_COLUMN,
+      order: DEFAULT_ORDER
     },
     fetchPolicy: 'cache-and-network',
   })
@@ -33,18 +39,20 @@ class LabelShowTable extends Component {
     page: 1,
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
     selectedRows: [],
+    column: DEFAULT_COLUMN,
+    order: DEFAULT_ORDER
   }
 
   componentDidMount() {
     const { subscribeToMore} = this.props.data
-    const { page, pageSize } = this.state
 
     subscribeToMore({
       document: LABEL_UPDATE_SUBSCRIPTION,
       variables: { id: this.props.labelId },
       updateQuery: (prev, { subscriptionData }) => {
+        const { page, pageSize, column, order } = this.state
         if (!subscriptionData.data) return prev
-        this.refetchPaginatedEntries(page, pageSize)
+        this.refetchPaginatedEntries(page, pageSize, column, order)
         this.setState({ selectedRows: [] })
       }
     })
@@ -57,14 +65,31 @@ class LabelShowTable extends Component {
   handleChangePage = (page) => {
     this.setState({ page })
 
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
+    const { pageSize, column, order } = this.state
+    this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
-  refetchPaginatedEntries = (page, pageSize) => {
+  handleSortChange = (pagi, filter, sorter) => {
+    const { page, pageSize, order, column } = this.state
+
+    if (column == sorter.columnKey && order == 'asc') {
+      this.setState({ order: 'desc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'desc')
+    }
+    if (column == sorter.columnKey && order == 'desc') {
+      this.setState({ order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'asc')
+    }
+    if (column != sorter.columnKey) {
+      this.setState({ column: sorter.columnKey, order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, sorter.columnKey, 'asc')
+    }
+  }
+
+  refetchPaginatedEntries = (page, pageSize, column, order) => {
     const { fetchMore } = this.props.data
     fetchMore({
-      variables: { page, pageSize },
+      variables: { page, pageSize, column, order },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
   }
@@ -78,6 +103,7 @@ class LabelShowTable extends Component {
       {
         title: 'Device Name',
         dataIndex: 'name',
+        sorter: true,
         render: (text, record) => <Link to="#">{text}</Link>
       },
       {
@@ -95,6 +121,7 @@ class LabelShowTable extends Component {
       },
       {
         title: 'Date Activated',
+        sorter: true,
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')
       },
@@ -174,6 +201,7 @@ class LabelShowTable extends Component {
           rowKey={record => record.id}
           pagination={false}
           rowSelection={rowSelection}
+          onChange={this.handleSortChange}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

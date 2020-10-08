@@ -141,8 +141,8 @@ export const PAGINATED_DEVICES = gql`
 
 // For LabelShowTable
 export const PAGINATED_DEVICES_BY_LABEL = gql`
-  query PaginatedDevicesByLabelQuery ($page: Int, $pageSize: Int, $labelId: String) {
-    devices_by_label(page: $page, pageSize: $pageSize, labelId: $labelId) {
+  query PaginatedDevicesByLabelQuery ($page: Int, $pageSize: Int, $labelId: String, $column: String, $order: String) {
+    devices_by_label(page: $page, pageSize: $pageSize, labelId: $labelId, column: $column, order: $order) {
       entries {
         name,
         id,

@@ -72,12 +72,15 @@ defmodule Console.Devices.DeviceResolver do
     {:ok, devices}
   end
 
-  def paginate_by_label(%{page: page, page_size: page_size, label_id: label_id}, %{context: %{current_organization: current_organization}}) do
+  def paginate_by_label(%{page: page, page_size: page_size, label_id: label_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
+    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+
     query = from d in Device,
       join: dl in DevicesLabels,
       on: dl.device_id == d.id,
       where: d.organization_id == ^current_organization.id and dl.label_id == ^label_id,
-      preload: [labels: [:channels, :function]]
+      preload: [labels: [:channels, :function]],
+      order_by: ^order_by
 
     {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
   end
