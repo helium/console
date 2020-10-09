@@ -12,11 +12,33 @@ defmodule ConsoleWeb.V1.LabelController do
 
   plug CORSPlug, origin: "*"
 
+  def index(conn, %{ "name" => name }) do
+    current_organization = conn.assigns.current_organization
+
+    case Labels.get_label_by_name(current_organization, name) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        render(conn, "show.json", label: label)
+    end
+  end
+
   def index(conn, _params) do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:labels])
 
     render(conn, "index.json", labels: current_organization.labels)
+  end
+
+  def show(conn, %{ "id" => id }) do
+    current_organization = conn.assigns.current_organization
+
+    case Labels.get_label(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        render(conn, "show.json", label: label)
+    end
   end
 
   def create(conn, label_params = %{ "name" => _name }) do

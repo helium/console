@@ -37,6 +37,10 @@ defmodule Console.Labels do
      Repo.get_by(Label, [id: id, organization_id: organization.id])
   end
 
+  def get_label_by_name(organization, name) do
+    Repo.get_by(Label, [name: name, organization_id: organization.id])
+  end
+
   def fetch_assoc(%Label{} = label, assoc \\ [:devices]) do
     Repo.preload(label, assoc)
   end
