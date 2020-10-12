@@ -15,7 +15,7 @@ defmodule Console.ApiKeys do
   def get_api_key_by_token_and_lock(token) do
     ApiKey
       |> where([k], k.token == ^token)
-      |> lock("FOR UPDATE")
+      |> lock("FOR UPDATE NOWAIT")
       |> Repo.one()
   end
 

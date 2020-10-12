@@ -73,7 +73,7 @@ defmodule Console.Organizations do
   def get_organization_and_lock_for_dc(org_id) do
     Organization
       |> where([o], o.id == ^org_id)
-      |> lock("FOR UPDATE")
+      |> lock("FOR UPDATE NOWAIT")
       |> Repo.one()
   end
 
@@ -217,7 +217,7 @@ defmodule Console.Organizations do
   def valid_invitation_token_and_lock?(token) do
     lock_query = Invitation
       |> where([i], i.token == ^token)
-      |> lock("FOR UPDATE")
+      |> lock("FOR UPDATE NOWAIT")
 
     with %Invitation{} = invitation <- Repo.one(lock_query) do
       {invitation.pending, invitation}
@@ -265,23 +265,22 @@ defmodule Console.Organizations do
   end
 
   def send_dc_to_org(amount, %Organization{} = from_org, %Organization{} = to_org) do
-    get_organization_and_lock_for_dc(from_org.id)
-    get_organization_and_lock_for_dc(to_org.id)
-
-    to_org_dc_balance =
-      case to_org.dc_balance do
-        nil -> amount
-        _ -> to_org.dc_balance + amount
-      end
-
     Repo.transaction(fn ->
-      from_org_updated = update_organization!(from_org, %{
-        "dc_balance" => from_org.dc_balance - amount,
-        "dc_balance_nonce" => from_org.dc_balance_nonce + 1
+      locked_from_org = get_organization_and_lock_for_dc(from_org.id)
+      from_org_updated = update_organization!(locked_from_org, %{
+        "dc_balance" => locked_from_org.dc_balance - amount,
+        "dc_balance_nonce" => locked_from_org.dc_balance_nonce + 1
       })
-      to_org_updated = update_organization!(to_org, %{
-        "dc_balance" => to_org_dc_balance,
-        "dc_balance_nonce" => to_org.dc_balance_nonce + 1
+
+      locked_to_org = get_organization_and_lock_for_dc(to_org.id)
+      locked_to_org_dc_balance =
+        case locked_to_org.dc_balance do
+          nil -> amount
+          _ -> locked_to_org.dc_balance + amount
+        end
+      to_org_updated = update_organization!(locked_to_org, %{
+        "dc_balance" => locked_to_org_dc_balance,
+        "dc_balance_nonce" => locked_to_org.dc_balance_nonce + 1
       })
 
       {:ok, from_org_updated, to_org_updated}
