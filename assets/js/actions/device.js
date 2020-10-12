@@ -79,7 +79,7 @@ export const fetchTtnDevices = (ttnCtlCode) => {
         null,
         { 'TTN-Ctl-Code': ttnCtlCode }
       );
-      dispatch(fetchedApplications(response.data)); 
+      dispatch(fetchedApplications(response.data));
     } catch (e) {
       dispatch(fetchFailed());
     }
@@ -103,7 +103,7 @@ export const scanGenericDevices = (file, onComplete) => {
       let rows = input.split(/\r?\n/);
       const keys = [];
       rows.shift().split(",").forEach((val, index) => {
-        if (['Name', 'name'].indexOf(val) > -1) {
+        if (['Name', 'name'].indexOf(val.toLowerCase()) > -1) {
           keys[index] = "name";
         } else if (['appkey', 'app_key'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'app_key';
