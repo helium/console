@@ -493,22 +493,21 @@ class DeviceShow extends Component {
           from="deviceShow"
         />
 
-        <UserCan>
-          <Sidebar
-            show={showDebugSidebar}
-            toggle={this.handleToggleDebug}
-            sidebarIcon={<Icon type="bug" />}
-            iconBackground={debugSidebarBackgroundColor}
-            iconPosition='top'
-          >
-            <Debug
-              subscription={DEVICE_DEBUG_EVENTS_SUBSCRIPTION}
-              variables={{ device_id: this.props.match.params.id }}
-              subscriptionKey="deviceDebugEventAdded"
-              refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
-            />
-          </Sidebar>
-        </UserCan>
+        <Sidebar
+          show={showDebugSidebar}
+          toggle={this.handleToggleDebug}
+          sidebarIcon={<Icon type="bug" />}
+          iconBackground={debugSidebarBackgroundColor}
+          iconPosition='top'
+        >
+          <Debug
+            subscription={DEVICE_DEBUG_EVENTS_SUBSCRIPTION}
+            variables={{ device_id: this.props.match.params.id }}
+            subscriptionKey="deviceDebugEventAdded"
+            refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
+          />
+        </Sidebar>
+        
         <UserCan>
             {
               <Sidebar

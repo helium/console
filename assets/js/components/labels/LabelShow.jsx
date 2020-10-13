@@ -187,25 +187,24 @@ class LabelShow extends Component {
             devicesToRemove={this.state.devicesToRemove}
           />
 
-          <UserCan>
-            <Sidebar
-              show={this.state.showDebugSidebar}
-              toggle={this.handleToggleDebug}
-              sidebarIcon={<Icon type="bug" />}
-              iconBackground={debugSidebarBackgroundColor}
-              iconPosition='top'
-            >
-              <Debug
-                subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
-                variables={{ label_id: this.props.match.params.id }}
-                refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
-                subscriptionKey="labelDebugEventAdded"
-              />
-            </Sidebar>
-          </UserCan>
+          <Sidebar
+            show={this.state.showDebugSidebar}
+            toggle={this.handleToggleDebug}
+            sidebarIcon={<Icon type="bug" />}
+            iconBackground={debugSidebarBackgroundColor}
+            iconPosition='top'
+          >
+            <Debug
+              subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+              variables={{ label_id: this.props.match.params.id }}
+              refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
+              subscriptionKey="labelDebugEventAdded"
+            />
+          </Sidebar>
+
           <UserCan>
             {
-              label && 
+              label &&
               <Sidebar
                 show={this.state.showDownlinkSidebar}
                 toggle={this.handleToggleDownlink}
