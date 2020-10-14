@@ -31,6 +31,7 @@ export const CHANNEL_SHOW = gql`
       aws_region
       aws_access_key
       topic
+      payload_template
       labels {
         name,
         id,

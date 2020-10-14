@@ -261,6 +261,18 @@ class ChannelShow extends Component {
           </Card>
         </UserCan>
 
+        <Card title="Payload Template">
+          {
+            channel.payload_template ? (
+              <pre>
+                {JSON.stringify(channel.payload_template, null, 2)}
+              </pre>
+            ) : (
+              <Text>No template applied</Text>
+            )
+          }
+        </Card>
+
         <ChannelShowLabelsApplied
           handleSelectLabel={this.handleSelectLabel}
           allLabels={allLabels}

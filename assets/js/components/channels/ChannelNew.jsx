@@ -14,6 +14,7 @@ import MyDevicesForm from './forms/MyDevicesForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
+import ChannelPayloadTemplate from './ChannelPayloadTemplate'
 import LabelTag from '../common/LabelTag'
 import LabelsAppliedNew from '../common/LabelsAppliedNew';
 import { createChannel } from '../../actions/channel'
@@ -38,6 +39,7 @@ class ChannelNew extends Component {
     credentials: {},
     channelName: "",
     labels: {},
+    templateBody: ""
   }
 
   componentDidMount() {
@@ -52,6 +54,7 @@ class ChannelNew extends Component {
         credentials: {},
         channelName: "",
         labels: [],
+        templateBody: ""
       })
   }
 
@@ -65,17 +68,22 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels } = this.state
+    const { channelName, type, credentials, labels, templateBody } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     this.props.createChannel({
       name: channelName,
       type: type == 'cargo' || type == 'mydevices' ? 'http' : type,
       credentials,
+      payload_template: type == "http" || type == "mqtt" ? templateBody : undefined,
     }, labels)
   }
 
   handleLabelsUpdate = (labels) => {
     this.setState({ labels });
+  }
+
+  handleTemplateUpdate = (templateBody) => {
+    this.setState({ templateBody });
   }
 
   renderForm = () => {
@@ -98,7 +106,7 @@ class ChannelNew extends Component {
   }
 
   render() {
-    const { showNextSteps } = this.state
+    const { showNextSteps, type } = this.state
     const { allLabels } = this.props.data
 
     return(
@@ -148,6 +156,9 @@ class ChannelNew extends Component {
               </Button>
             </div>
           </Card>
+        )}
+        { showNextSteps && (type == "http" || type == "mqtt") && (
+          <ChannelPayloadTemplate templateBody={this.state.templateBody} handleTemplateUpdate={this.handleTemplateUpdate} />
         )}
          <style jsx>{`
           .flexwrapper {

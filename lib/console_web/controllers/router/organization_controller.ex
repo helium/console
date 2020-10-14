@@ -71,12 +71,4 @@ defmodule ConsoleWeb.Router.OrganizationController do
       conn |> send_resp(:no_content, "")
     end
   end
-
-  def update_channel_creds(conn, %{"id" => id, "channel" => channel_params}) do
-    channel = Channels.get_channel!(id)
-
-    with {:ok, %Channel{} = channel} <- Channels.router_update_channel(channel, channel_params) do
-      conn |> send_resp(:no_content, "")
-    end
-  end
 end

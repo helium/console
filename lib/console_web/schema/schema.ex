@@ -69,6 +69,7 @@ defmodule ConsoleWeb.Schema do
     field :device_count, :integer
     field :downlink_token, :string
     field :credentials, type: :credentials
+    field :payload_template, :string
   end
 
   paginated object :membership do

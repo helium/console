@@ -53,12 +53,6 @@ defmodule Console.Channels do
     |> Repo.update()
   end
 
-  def router_update_channel(%Channel{} = channel, attrs) do
-    channel
-    |> Channel.update_changeset(attrs)
-    |> Repo.update()
-  end
-
   def delete_channel(%Channel{} = channel) do
     Repo.delete(channel)
   end

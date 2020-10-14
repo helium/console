@@ -20,6 +20,7 @@ defmodule Console.Channels.Channel do
     field :type, :string
     field :type_name, :string
     field :downlink_token, :string
+    field :payload_template, :string
 
     belongs_to :organization, Organization
     many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
@@ -32,7 +33,7 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["type", "name"])
 
     channel
-    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id])
+    |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> validate_inclusion(:type, ~w(http mqtt aws azure google))
     |> put_change(:encryption_version, Cloak.version)
