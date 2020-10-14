@@ -15,6 +15,18 @@ import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Sw
 const { Text } = Typography
 const { Option } = Select
 
+const columnKeyNameText = {
+  dev_eui: "Device EUI",
+  labels: "Labels",
+  channels: "Integrations",
+  frame_up: "Frame Up",
+  frame_down: "Frame Down",
+  total_packets: "Packets Transferred",
+  dc_usage: "DC Used",
+  inserted_at: "Date Activated",
+  last_connected: "Last Connected",
+}
+
 @connect(null, mapDispatchToProps)
 class DeviceIndexTable extends Component {
   state = {
@@ -292,7 +304,7 @@ class DeviceIndexTable extends Component {
                                 onChange={e => this.updateColumns(key, e.target.checked)}
                                 checked={this.state.columnsToShow[key]}
                               >
-                                {key}
+                                {columnKeyNameText[key]}
                               </Checkbox>
                             </div>
                           ))
