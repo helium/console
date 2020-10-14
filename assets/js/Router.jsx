@@ -98,21 +98,21 @@ const Router = (props) => {
                     apolloClient &&
                     <ApolloProvider client={apolloClient}>
                       <Switch>
-                        <Route path="/profile" render={() => <Profile user={user}/>}/>
-                        <Route exact path="/devices" render={() => <DeviceIndex user={user}/>} />
-                        <Route exact path="/labels" component={LabelIndex} />
-                        <Route path="/devices/:id" component={DeviceShow}/>
-                        <Route path="/labels/:id" component={LabelShow} />
-                        <Route exact path="/integrations" component={ChannelIndex} />
-                        <Route exact path="/integrations/new/:id?" component={ChannelNew} />
-                        <Route exact path="/integrations/:id" component={ChannelShow} />
-                        <Route exact path="/users" render={() => <UserIndex user={user}/>}/>
-                        <Route exact path="/organizations" component={OrganizationIndex} />
-                        <Route exact path="/datacredits" component={DataCreditsIndex} />
-                        <Route exact path="/functions" component={FunctionIndex} />
-                        <Route exact path="/functions/new" component={FunctionNew} />
-                        <Route exact path="/functions/:id" component={FunctionShow} />
-                        <Route exact path="/welcome" component={Welcome} />
+                        <Route path="/profile" render={props => <Profile user={user} {...props}/>}/>
+                        <Route exact path="/devices" render={props => <DeviceIndex user={user} {...props}/>} />
+                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
+                        <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
+                        <Route path="/labels/:id" component={props => <LabelShow user={user} {...props}/>} />
+                        <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
+                        <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
+                        <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
+                        <Route exact path="/users" render={props => <UserIndex user={user} {...props}/>}/>
+                        <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
+                        <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
+                        <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
+                        <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
+                        <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props} />} />
+                        <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
                       </Switch>
                     </ApolloProvider>
                   )

@@ -59,6 +59,7 @@ class LabelIndex extends Component {
     return (
       <DashboardLayout
         title="Labels"
+        user={this.props.user}
         extra={
           <UserCan>
             <Button

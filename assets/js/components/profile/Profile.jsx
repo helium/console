@@ -129,7 +129,7 @@ class Profile extends Component {
     ]
 
     return(
-      <DashboardLayout title="Profile">
+      <DashboardLayout title="Profile" user={this.props.user}>
         <Card title="Profile Details"
           extra={
             <Fragment>

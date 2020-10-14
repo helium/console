@@ -33,7 +33,7 @@ class ChannelIndex extends Component {
   render() {
     const { showDeleteChannelModal, channel } = this.state
     return (
-      <DashboardLayout title="Integrations">
+      <DashboardLayout title="Integrations" user={this.props.user}>
       <p style={{fontSize: 16, marginBottom: 60, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.</p>
       <div className="flexwrapper">
         <UserCan>

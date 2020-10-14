@@ -160,6 +160,7 @@ class ChannelShow extends Component {
     return(
       <DashboardLayout
         title={`${channel.name}`}
+        user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>

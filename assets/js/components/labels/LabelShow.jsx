@@ -131,6 +131,7 @@ class LabelShow extends Component {
     return (
       <div>
         <DashboardLayout
+          user={this.props.user}
           breadCrumbs={
             <div style={{ marginLeft: 4, paddingBottom: 0 }}>
               <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>

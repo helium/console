@@ -39,6 +39,7 @@ class OrganizationIndex extends Component {
     return (
       <DashboardLayout
         title="Organizations"
+        user={this.props.user}
         extra={
           <UserCan>
             <Button

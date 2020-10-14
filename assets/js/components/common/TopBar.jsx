@@ -29,23 +29,30 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName } = this.props
+    const { logOut, currentOrganizationName, user } = this.props
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-        <Link to="/welcome">
-          <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
+          <Link to="/welcome">
+            <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
           </Link>
-          
         </div>
-        {
-          currentOrganizationName && <SearchBar />
-        }
+
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Link to="/welcome">
             <Icon type="home" style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
           </Link>
+          {
+            currentOrganizationName && <SearchBar />
+          }
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
+            <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
+            <Text style={{ color: "#38A2FF", fontWeight: 500, position: 'relative', top: -45 }}>{currentOrganizationName}</Text>
+          </div>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ visible })}>
             <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>

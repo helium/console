@@ -319,6 +319,7 @@ class DataCreditsIndex extends Component {
     return (
       <DashboardLayout
         title="Data Credits"
+        user={this.props.user}
         extra={
           <UserCan>
             {

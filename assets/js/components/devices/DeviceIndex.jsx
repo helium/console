@@ -258,6 +258,7 @@ class DeviceIndex extends Component {
     return(
       <DashboardLayout
         title="Devices"
+        user={this.props.user}
         extra={
           hasDevices && createDeviceButton()
         }

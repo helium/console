@@ -188,7 +188,6 @@ class SearchBar extends Component {
             value={query}
             onChange={this.handleUpdateQuery}
             placeholder="Search Console..."
-            style={{minWidth: 400}}
           />
         </div>
 
@@ -212,7 +211,7 @@ class SearchBar extends Component {
 
               }
 
-            
+
 
                 `}</style>
       </div>

@@ -146,6 +146,7 @@ class FunctionShow extends Component {
 
     return (
       <DashboardLayout
+        user={this.props.user}
         title={`${fxn.name}`}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>

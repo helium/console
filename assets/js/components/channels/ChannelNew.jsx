@@ -104,6 +104,7 @@ class ChannelNew extends Component {
     return(
       <DashboardLayout
         title="Create New Integration"
+        user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Channels&nbsp;&nbsp;/</Text></Link>

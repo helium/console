@@ -7,12 +7,12 @@ const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
   render() {
-    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user } = this.props;
 
     return (
       <Layout style={{width: '100%', minWidth: 800 }}>
       <Header>
-            <TopBar />
+            <TopBar user={user} />
           </Header>
 
       <Layout style={{ height: 'calc(100vh - 64px)' }}>

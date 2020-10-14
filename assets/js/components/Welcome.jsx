@@ -37,6 +37,7 @@ class Welcome extends Component {
     return(
       <DashboardLayout
         title={undefined}
+        user={this.props.user}
         noHeaderPadding
       >
         <div className="welcomewrapper">

@@ -119,7 +119,7 @@ h1 {
   font-size: 15px;
   line-height: 24px;
   margin-left: 10px;
-  width: 100px;
+  width: 150px;
   /* background: rgba(255, 0, 0, 0.2); */
 
   transition: all 0.2s ease 0s;
@@ -127,7 +127,7 @@ h1 {
 
 #searchBar input:focus
 {
-  width: 200px;
+  width: 300px;
 }
 
 #searchBar input::placeholder {
@@ -139,7 +139,7 @@ h1 {
   position: absolute;
   top: 58px;
   z-index: 100;
-  left: calc(50% - 170px);
+  left: calc(50% - 257px);
   width: 380px;
 }
 

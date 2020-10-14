@@ -232,6 +232,7 @@ class DeviceShow extends Component {
     return(
       <DashboardLayout
         title={`${device.name}`}
+        user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/devices"><Text style={{ color: "#8C8C8C" }}>Devices&nbsp;&nbsp;/</Text></Link>
@@ -507,7 +508,7 @@ class DeviceShow extends Component {
             refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
           />
         </Sidebar>
-        
+
         <UserCan>
             {
               <Sidebar

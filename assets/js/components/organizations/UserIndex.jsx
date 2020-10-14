@@ -67,6 +67,7 @@ class UserIndex extends Component {
     return (
       <DashboardLayout
         title="Users"
+        user={this.props.user}
         extra={
           <UserCan>
             <Button

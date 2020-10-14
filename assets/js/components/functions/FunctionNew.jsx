@@ -63,7 +63,7 @@ class FunctionNew extends Component {
   render() {
     const { name, type, format, body } = this.state
     return (
-      <DashboardLayout title="Create New Function">
+      <DashboardLayout title="Create New Function" user={this.props.user}>
         <Card
  title="Step 1 - Enter Function Details">
           <Text>Enter Function Name</Text>
