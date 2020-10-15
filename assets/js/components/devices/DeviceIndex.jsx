@@ -281,6 +281,7 @@ class DeviceIndex extends Component {
               pageSize={this.state.pageSize}
               column={this.state.column}
               order={this.state.order}
+              userEmail={this.props.user.email}
             />
           )
         }

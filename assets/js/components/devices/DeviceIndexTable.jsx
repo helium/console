@@ -47,7 +47,7 @@ class DeviceIndexTable extends Component {
   }
 
   componentDidMount() {
-    const columnsToShow = localStorage.getItem("columnsToShow")
+    const columnsToShow = localStorage.getItem(`columnsToShow-${this.props.userEmail}`)
     if (columnsToShow) {
       this.setState({ columnsToShow: JSON.parse(columnsToShow) })
     }
@@ -89,7 +89,7 @@ class DeviceIndexTable extends Component {
     const { columnsToShow } = this.state
     const updatedColumnsToShow = Object.assign({}, columnsToShow, { [key]: checked })
     this.setState({ columnsToShow: updatedColumnsToShow })
-    localStorage.setItem('columnsToShow', JSON.stringify(updatedColumnsToShow))
+    localStorage.setItem(`columnsToShow-${this.props.userEmail}`, JSON.stringify(updatedColumnsToShow))
   }
 
   render() {
