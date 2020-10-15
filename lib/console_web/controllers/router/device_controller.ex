@@ -57,7 +57,8 @@ defmodule ConsoleWeb.Router.DeviceController do
               credentials: %{},
               active: false,
               organization_id: "no_organization_id",
-              downlink_token: "no_downlink_token"
+              downlink_token: "no_downlink_token",
+              payload_template: nil,
             }
           end)
           |> List.flatten()
