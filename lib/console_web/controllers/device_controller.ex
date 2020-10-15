@@ -198,6 +198,7 @@ defmodule ConsoleWeb.DeviceController do
             _ -> acc
           end
         end)
+
         if add_labels do
           Enum.each(added_devices.label_device_map, fn({key, val}) ->
             case Labels.get_label_by_name(key, current_organization.id) do

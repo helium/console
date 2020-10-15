@@ -15,7 +15,7 @@ defmodule ConsoleWeb.V1.LabelController do
   def index(conn, %{ "name" => name }) do
     current_organization = conn.assigns.current_organization
 
-    case Labels.get_label_by_name(current_organization, name) do
+    case Labels.get_label_by_name(name, current_organization.id) do
       nil ->
         {:error, :not_found, "Label not found"}
       %Label{} = label ->
