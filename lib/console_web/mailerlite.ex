@@ -5,7 +5,7 @@ defmodule ConsoleWeb.Mailerlite do
       api_key ->
         headers = [{"Content-Type", "application/json"}, {"X-MailerLite-ApiKey", api_key}]
         body = Jason.encode!(%{ email: email })
-        HTTPoison.post "https://api.mailerlite.com/api/v2/groups/57271192/subscribers", body, headers
+        HTTPoison.post "https://api.mailerlite.com/api/v2/groups/89103602/subscribers", body, headers
     end
 
   end

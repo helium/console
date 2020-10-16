@@ -38,6 +38,13 @@ defmodule ConsoleWeb.Auth0Controller do
     end
   end
 
+  def subscribe_new_user(conn, %{ "email" => email }) do
+    ConsoleWeb.Mailerlite.subscribe(email)
+
+    conn
+    |> send_resp(:no_content, "")
+  end
+
   defp fetch_new_auth0_token() do
     base_url = Application.get_env(:console, :auth0_baseurl)
     auth0_client_id = Application.get_env(:console, :auth0_management_id)

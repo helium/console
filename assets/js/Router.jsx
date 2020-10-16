@@ -83,7 +83,7 @@ const Router = (props) => {
       <ConnectedRouter history={history}>
         {
           /* If the user is not verified yet, wait for them to confirm their email before continuing */
-          (user && !user.email_verified && <ConfirmEmailPrompt/>) ||
+          (user && !user.email_verified && <ConfirmEmailPrompt user={user} />) ||
           (
             // Verify we are authenticated before displaying other Components
             isAuthenticated &&

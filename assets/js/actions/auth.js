@@ -21,6 +21,13 @@ export const logOut = () => {
   }
 }
 
+export const subscribeNewUser = (email) => {
+  return (dispatch) => {
+    rest.post(`/api/subscribe_new_user`, { email })
+    .then(() => {})
+  }
+}
+
 export const fetchedMfaStatus = (status) => {
   return {
     type: FETCHED_MFA_ENROLLMENT,
