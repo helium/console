@@ -455,6 +455,10 @@ padding: 0.4em 0.6em 0.3em;
     color: rgba(0, 0, 0, 1);
 }
 
+.ant-tooltip-inner {
+    background-color: #000000;
+}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;

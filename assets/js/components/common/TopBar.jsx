@@ -1,20 +1,34 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { graphql } from 'react-apollo';
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
+import numeral from 'numeral'
+import DCIMg from '../../../img/datacredits.svg'
+import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
+import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Icon, Typography } from 'antd';
+import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 
+const queryOptions = {
+  options: props => ({
+    variables: {
+      id: props.currentOrganizationId
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+}
 
 @connect(mapStateToProps, mapDispatchToProps)
+@graphql(ORGANIZATION_SHOW_DC, queryOptions)
 class TopBar extends Component {
   state = {
     visible: false,
@@ -28,8 +42,13 @@ class TopBar extends Component {
     }
   }
 
+  refreshDC = visible => {
+    if (visible) this.props.data.refetch()
+  }
+
   render() {
     const { logOut, currentOrganizationName, user } = this.props
+    const { organization } = this.props.data
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -45,6 +64,31 @@ class TopBar extends Component {
           </Link>
           {
             currentOrganizationName && <SearchBar />
+          }
+          {
+            organization && (
+              <Tooltip
+                title={
+                  <span
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                    onClick={() => this.props.push("/datacredits")}
+                  >
+                    <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
+                    <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
+                  </span>
+                }
+                onVisibleChange={this.refreshDC}
+              >
+                <div style={{ height: 30, backgroundColor: organization.dc_balance > 1000 ? '#000000' : '#FF4D4F', borderRadius: 30, paddingLeft: 10, paddingRight: 10, marginLeft: 6 }}>
+                  <img style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
+                    <Text
+                      style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -12, cursor: 'default' }}
+                    >
+                      {numeral(organization.dc_balance).format('0,0')}
+                    </Text>
+                </div>
+              </Tooltip>
+            )
           }
         </div>
 
@@ -87,6 +131,7 @@ const menu = (handleClick, currentOrganizationName) => (
 function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationName: state.organization.currentOrganizationName,
+    currentOrganizationId: state.organization.currentOrganizationId,
   }
 }
 
