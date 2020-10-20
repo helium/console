@@ -108,28 +108,27 @@ class FunctionNew extends Component {
 
         <UserCan>
           <Card            title="Labels Applied To">
-            <Text style={{margin: '10px 0 30px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
+            <Text style={{margin: '10px 0 20px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
             <LabelsAppliedNew
               handleLabelsUpdate={this.handleLabelsUpdate}
               addOrPrompt={this.confirmOrOpenModal}
               ConfirmationModal={FunctionMoveLabelModal}
             />
+
+            <UserCan>
+              <Button
+                icon="save"
+                type="primary"
+                onClick={this.handleSubmit}
+                disabled={!type || !format || name.length === 0}
+                style={{ marginTop: 20 }}
+              >
+                Save Function
+              </Button>
+            </UserCan>
           </Card>
         </UserCan>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
-          <UserCan>
-            <Button
-              size="large"
-              icon="save"
-              type="primary"
-              onClick={this.handleSubmit}
-              disabled={!type || !format || name.length === 0}
-            >
-              Save Function
-            </Button>
-          </UserCan>
-        </div>
       </DashboardLayout>
     )
   }

@@ -228,6 +228,17 @@ class FunctionShow extends Component {
             </Button>
           </div>
 
+          <UserCan>
+            <Button
+              icon="save"
+              type="primary"
+              onClick={this.handleSubmit}
+              disabled={!type && !format && name.length === 0 && body.length === 0}
+              style={{ marginTop: 20 }}
+            >
+              Save Changes
+            </Button>
+          </UserCan>
         </Card>
         {
           (format === 'custom' || (fxn.format === 'custom' && !format)) && (
@@ -240,8 +251,8 @@ class FunctionShow extends Component {
         }
 
         <UserCan>
-          <Card             bordered={false}
- title="Labels Applied To">
+          <Card
+            title="Labels Applied To">
             <Text style={{marginBottom: 20, display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
 
             <LabelsAppliedExisting
@@ -253,20 +264,6 @@ class FunctionShow extends Component {
             />
           </Card>
         </UserCan>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
-          <UserCan>
-            <Button
-              size="large"
-              icon="save"
-              type="primary"
-              onClick={this.handleSubmit}
-              disabled={!type && !format && name.length === 0 && body.length === 0}
-            >
-              Save Changes
-            </Button>
-          </UserCan>
-        </div>
 
         <DeleteFunctionModal
           open={showDeleteFunctionModal}

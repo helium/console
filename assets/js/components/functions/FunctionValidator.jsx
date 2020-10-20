@@ -52,7 +52,7 @@ class FunctionValidator extends Component {
     return (
       <Row gutter={20} type="flex">
         <Col sm={14}>
-          <Card          
+          <Card
  title={this.props.title} style={{ height: 560, overflow: 'hidden'}} bodyStyle={{ padding: 0 }}>
             <div style={{ height: 503, overflowY: 'scroll' }}>
               <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
@@ -95,8 +95,6 @@ class FunctionValidator extends Component {
 
         <Col sm={10}>
           <Card
-                      bordered={false}
-
             title="Script Validator"
             style={{ height: 560 }}
             extra={
