@@ -113,6 +113,8 @@ export const scanGenericDevices = (file, onComplete) => {
           keys[index] = 'dev_eui';
         } else if (['labelid', 'label_id'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
           keys[index] = 'label_id';
+        } else if (['labelid2', 'label_id_2'].indexOf(val.replace(/\s/g, '').toLowerCase()) > -1) {
+          keys[index] = 'label_id_2';
         }
       });
       let failed = false;

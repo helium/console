@@ -176,25 +176,32 @@ defmodule ConsoleWeb.DeviceController do
           |> Map.put("organization_id", current_organization.id)
           |> Devices.create_device(current_organization) do
             {:ok, new_device} ->
-              if Map.has_key?(device, "label_id") do
-                if Map.has_key?(acc.label_device_map, device["label_id"]) do
-                  %{
-                    acc |
-                    label_device_map: Map.update!(acc.label_device_map, device["label_id"], fn current ->
-                      [new_device | current]
-                    end),
-                    device_count: acc.device_count + 1
-                  }
+              label_device_map =
+                if Map.has_key?(device, "label_id") do
+                  if Map.has_key?(acc.label_device_map, device["label_id"]) do
+                    Map.update!(acc.label_device_map, device["label_id"], fn current -> [new_device | current] end)
+                  else
+                    Map.put(acc.label_device_map, device["label_id"], [new_device])
+                  end
                 else
-                  %{
-                    acc |
-                    label_device_map: Map.put(acc.label_device_map, device["label_id"], [new_device]),
-                    device_count: acc.device_count + 1
-                  }
+                  acc.label_device_map
                 end
-              else
-                %{acc | device_count: acc.device_count + 1}
-              end
+
+              label_device_map =
+                if Map.has_key?(device, "label_id_2") and (device["label_id_2"] != device["label_id"]) do
+                  if Map.has_key?(label_device_map, device["label_id_2"]) do
+                    Map.update!(label_device_map, device["label_id_2"], fn current -> [new_device | current] end)
+                  else
+                    Map.put(label_device_map, device["label_id_2"], [new_device])
+                  end
+                else
+                  label_device_map
+                end
+
+              %{
+                label_device_map: label_device_map,
+                device_count: acc.device_count + 1
+              }
             _ -> acc
           end
         end)
