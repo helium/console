@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import SwapLabelModal from './SwapLabelModal'
 import CreateLabelModal from './CreateLabelModal'
 import DeleteLabelModal from './DeleteLabelModal'
 import LabelAddChannelModal from './LabelAddChannelModal'
@@ -12,6 +13,7 @@ import { Button } from 'antd';
 class LabelIndex extends Component {
   state = {
     showCreateLabelModal: false,
+    showSwapLabelModal: false,
     showDeleteLabelModal: false,
     showRemoveAllDevicesFromLabelsModal: false,
     showLabelAddChannelModal: false,
@@ -28,6 +30,14 @@ class LabelIndex extends Component {
 
   closeCreateLabelModal = () => {
     this.setState({ showCreateLabelModal: false })
+  }
+
+  openSwapLabelModal = (labelsSelected) => {
+    this.setState({ showSwapLabelModal: true, labelsSelected })
+  }
+
+  closeSwapLabelModal = () => {
+    this.setState({ showSwapLabelModal: false })
   }
 
   openDeleteLabelModal = (labelsSelected) => {
@@ -55,7 +65,14 @@ class LabelIndex extends Component {
   }
 
   render() {
-    const { showRemoveAllDevicesFromLabelsModal, showCreateLabelModal, showDeleteLabelModal, showLabelAddChannelModal, labelsSelected } = this.state
+    const {
+      showRemoveAllDevicesFromLabelsModal,
+      showSwapLabelModal,
+      showCreateLabelModal,
+      showDeleteLabelModal,
+      showLabelAddChannelModal,
+      labelsSelected
+    } = this.state
     return (
       <DashboardLayout
         title="Labels"
@@ -74,10 +91,17 @@ class LabelIndex extends Component {
         }
       >
         <LabelIndexTable
+          openSwapLabelModal={this.openSwapLabelModal}
           openDeleteLabelModal={this.openDeleteLabelModal}
           openRemoveAllDevicesFromLabelsModal={this.openRemoveAllDevicesFromLabelsModal}
           openLabelAddChannelModal={this.openLabelAddChannelModal}
           history={this.props.history}
+        />
+
+        <SwapLabelModal
+          open={showSwapLabelModal}
+          onClose={this.closeSwapLabelModal}
+          labelToSwap={labelsSelected}
         />
 
         <CreateLabelModal

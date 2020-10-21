@@ -312,6 +312,25 @@ defmodule ConsoleWeb.LabelController do
     |> send_resp(:no_content, "")
   end
 
+  def swap_label(conn, %{ "label_id" => label_id, "destination_label_id" => destination_label_id }) do
+    current_organization = conn.assigns.current_organization
+    label = Labels.get_label!(current_organization, label_id) |> Labels.fetch_assoc([:devices])
+    destination_label = Labels.get_label!(current_organization, destination_label_id)
+    device_ids = label.devices |> Enum.map(fn d -> d.id end)
+
+    with {:ok, _, _} <- Labels.add_devices_to_label(device_ids, destination_label.id, current_organization),
+      {_, nil} <- Labels.delete_devices_from_label(device_ids, label_id, current_organization) do
+        broadcast(label)
+        broadcast(label, label.id)
+        broadcast(destination_label, destination_label.id)
+        broadcast_router_update_devices(label.devices)
+
+        conn
+        |> put_resp_header("message", "Devices have been successfully swapped to new label")
+        |> send_resp(:no_content, "")
+    end
+  end
+
   defp create_label_and_apply_to_devices(devices, label_name, organization, user, conn) do
     cond do
       length(devices) == 0 -> {:error, :bad_request, "Please select a device"}

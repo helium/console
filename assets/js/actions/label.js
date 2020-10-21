@@ -107,7 +107,7 @@ export const removeAllLabelsFromDevices = (devices) => {
     } else {
       rest.post(`/api/devices_labels/delete`).then(response => {})
     }
-    
+
   }
 }
 
@@ -154,6 +154,16 @@ export const toggleLabelDebug = (label_id) => {
   return (dispatch) => {
     rest.post(`/api/labels/debug`, {
       label: label_id
+    })
+    .then(response => {})
+  }
+}
+
+export const swapLabel = (label_id, destination_label_id) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/swap_label`, {
+      label_id,
+      destination_label_id,
     })
     .then(response => {})
   }

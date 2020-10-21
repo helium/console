@@ -45,6 +45,7 @@ defmodule ConsoleWeb.Router do
     post "/labels/delete", LabelController, :delete
     post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
+    post "/labels/swap_label", LabelController, :swap_label
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
