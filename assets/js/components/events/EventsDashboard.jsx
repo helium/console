@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
+import analyticsLogger from '../../util/analyticsLogger';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
@@ -259,6 +260,7 @@ class EventsDashboard extends Component {
           <a
             href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
             download="event-debug.json"
+            onClick={() => { analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id }) }}
           >
             <Button size="small">
               Export JSON
