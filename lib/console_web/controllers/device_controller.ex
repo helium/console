@@ -98,6 +98,24 @@ defmodule ConsoleWeb.DeviceController do
     |>send_resp(:ok, "")
   end
 
+  def set_active(conn, %{ "device_ids" => device_ids, "active" => active }) do
+    current_organization = conn.assigns.current_organization
+
+    with {count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
+      device = Devices.get_device!(current_organization, device_ids |> List.first())
+      broadcast(device)
+      if active do
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
+      else
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:inactive:devices", %{ "devices" => device_ids })
+      end
+
+      conn
+      |> put_resp_header("message", "Devices updated successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
   def get_ttn(conn, _params) do
     ttn_code = conn
       |> get_req_header("ttn-ctl-code")

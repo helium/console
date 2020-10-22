@@ -139,8 +139,8 @@ defmodule Console.Devices do
     |> Repo.update()
   end
 
-  def update_devices_active(device_ids, active) do
-    from(d in Device, where: d.id in ^device_ids)
+  def update_devices_active(device_ids, active, organization) do
+    from(d in Device, where: d.id in ^device_ids and d.organization_id == ^organization.id)
     |> Repo.update_all(set: [active: active])
   end
 end

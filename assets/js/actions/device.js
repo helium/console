@@ -70,6 +70,16 @@ export const toggleDeviceDebug = (device_id) => {
   }
 }
 
+export const setDevicesActive = (device_ids, active) => {
+  return (dispatch) => {
+    rest.post(`/api/devices/set_active`, {
+      device_ids,
+      active,
+    })
+    .then(response => {})
+  }
+}
+
 export const fetchTtnDevices = (ttnCtlCode) => {
   return async (dispatch) => {
     dispatch(fetchingApplications());

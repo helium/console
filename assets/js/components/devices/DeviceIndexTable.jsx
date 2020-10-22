@@ -6,7 +6,7 @@ import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { updateDevice } from '../../actions/device'
+import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import DevicesImg from '../../../img/devices.svg'
 
@@ -58,6 +58,10 @@ class DeviceIndexTable extends Component {
       this.props.openDevicesAddLabelModal(this.state.selectedRows)
     } else if (value === 'removeAllLabels') {
       this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
+    } else if (value === 'setActive') {
+      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), true)
+    } else if (value === 'setInactive') {
+      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false)
     } else {
       this.props.openDeleteDeviceModal(this.state.selectedRows)
     }
@@ -233,6 +237,8 @@ class DeviceIndexTable extends Component {
       onSelectAll: () => this.setState({allSelected: !this.state.allSelected})
     }
 
+    const { selectedRows } = this.state
+
     return (
       <div>
         {
@@ -329,6 +335,16 @@ class DeviceIndexTable extends Component {
                       style={{ width: 270, marginRight: 10 }}
                       onSelect={this.handleSelectOption}
                     >
+                      {
+                        selectedRows.length > 0 && !selectedRows.find(r => r.active == true) && (
+                          <Option value="setActive">Resume packet transfer for selected devices</Option>
+                        )
+                      }
+                      {
+                        selectedRows.length > 0 && !selectedRows.find(r => r.active == false) && (
+                          <Option value="setInactive">Pause packet transfer for selected devices</Option>
+                        )
+                      }
                       <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
                       <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
                       <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
@@ -365,7 +381,7 @@ class DeviceIndexTable extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice }, dispatch)
+  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch)
 }
 
 export default DeviceIndexTable

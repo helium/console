@@ -71,7 +71,7 @@ defmodule ConsoleWeb.OrganizationController do
       Ecto.Multi.new()
       |> Ecto.Multi.update(:organization, org_changeset)
       |> Ecto.Multi.run(:devices, fn _repo, _ ->
-        with {count, nil} <- Devices.update_devices_active(device_ids, active) do
+        with {count, nil} <- Devices.update_devices_active(device_ids, active, organization) do
           {:ok, count}
         end
       end)
