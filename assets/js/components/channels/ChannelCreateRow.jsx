@@ -37,8 +37,8 @@ const channelTypes = [
   { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
   { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
   { name: "AWS IoT Core", link: "/integrations/new/aws", img: `${Aws}`},
-  { name: "Azure IoT", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },  
-  { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
+  // { name: "Azure IoT", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
+  // { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
 ]
 
 class ChannelCreateRow extends Component {
@@ -60,7 +60,7 @@ class ChannelCreateRow extends Component {
               </Link>
                 <style jsx>{`
 
-        
+
 .wrapper {
   background: white;
   padding: 20px 10px 16px;
