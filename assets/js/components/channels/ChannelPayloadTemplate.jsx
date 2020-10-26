@@ -20,6 +20,7 @@ class ChannelPayloadTemplate extends Component {
         title="Advanced - Payload Template (Optional)"
         style={{ height: 560, overflow: 'hidden'}}
         bodyStyle={{ padding: 0 }}
+        extra={this.props.extra}
       >
         <div style={{ height: 503, overflowY: 'scroll' }}>
           <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>

@@ -9,6 +9,7 @@ import { primaryBlue } from '../../util/colors'
 import { displayError } from '../../util/messages'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
+import ChannelPayloadTemplate from './ChannelPayloadTemplate'
 import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
 import ChannelShowRemoveLabelModal from './ChannelShowRemoveLabelModal'
 import HttpDetails from './HttpDetails'
@@ -46,6 +47,7 @@ class ChannelShow extends Component {
     showChannelShowAddLabelModal: false,
     showChannelShowRemoveLabelModal: false,
     showDownlinkToken: false,
+    templateBody: undefined,
   }
 
   componentDidMount() {
@@ -63,6 +65,16 @@ class ChannelShow extends Component {
         })
       }
     })
+
+    if (this.props.data.channel) {
+      this.setState({ templateBody: this.props.data.channel.payload_template })
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data.channel != this.props.data.channel) {
+      this.setState({ templateBody: this.props.data.channel.payload_template })
+    }
   }
 
   handleInputUpdate = (e) => {
@@ -127,6 +139,15 @@ class ChannelShow extends Component {
 
   handleCloseChannelShowRemoveLabelModal = () => {
     this.setState({ showChannelShowRemoveLabelModal: false })
+  }
+
+  handleTemplateUpdate = (templateBody) => {
+    this.setState({ templateBody });
+  }
+
+  updateChannelTemplate = () => {
+    const { channel } = this.props.data
+    this.props.updateChannel(channel.id, { payload_template: this.state.templateBody })
   }
 
   renderForm = () => {
@@ -261,18 +282,6 @@ class ChannelShow extends Component {
           </Card>
         </UserCan>
 
-        <Card title="Payload Template">
-          {
-            channel.payload_template ? (
-              <pre>
-                {JSON.stringify(channel.payload_template, null, 2)}
-              </pre>
-            ) : (
-              <Text>No template applied</Text>
-            )
-          }
-        </Card>
-
         <ChannelShowLabelsApplied
           handleSelectLabel={this.handleSelectLabel}
           allLabels={allLabels}
@@ -280,6 +289,21 @@ class ChannelShow extends Component {
           handleClickAdd={this.handleOpenChannelShowAddLabelModal}
           handleClickRemove={this.handleOpenChannelShowRemoveLabelModal}
         />
+
+        {(channel.type == 'http' || channel.type == 'mqtt') && (
+          <ChannelPayloadTemplate
+            templateBody={this.state.templateBody || ""}
+            handleTemplateUpdate={this.handleTemplateUpdate}
+            extra={
+              <Button
+                type="primary"
+                onClick={this.updateChannelTemplate}
+              >
+                Update
+              </Button>
+            }
+          />
+        )}
 
         <ChannelShowAddLabelModal
           open={this.state.showChannelShowAddLabelModal}

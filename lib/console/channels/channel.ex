@@ -52,7 +52,7 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     channel
-    |> cast(attrs, [:name, :credentials, :downlink_token])
+    |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template])
     |> validate_required([:name, :type, :credentials])
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
