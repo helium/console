@@ -51,6 +51,7 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
       |> get_req_header("authorization")
       |> List.first()
       |> String.replace("Bearer ", "")
+
     case @access_token_decoder.decode_conn_access_token(token) do
       %{user_id: user_id, email: email, auth0_id: auth0_id} ->
         conn

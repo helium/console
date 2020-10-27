@@ -29,6 +29,7 @@ defmodule ConsoleWeb.Router do
     pipe_through :api
 
     get "/invitations/:token", InvitationController, :get_by_token
+    post "/subscribe_new_user", Auth0Controller, :subscribe_new_user
   end
 
   scope "/api", ConsoleWeb do
@@ -50,7 +51,6 @@ defmodule ConsoleWeb.Router do
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
-    post "/subscribe_new_user", Auth0Controller, :subscribe_new_user
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
     post "/channels_labels", LabelController, :add_labels_to_channel
