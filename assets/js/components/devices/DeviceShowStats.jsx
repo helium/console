@@ -28,9 +28,13 @@ class DeviceShowStats extends Component {
       <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: false }) }}>
         <Text style={{ fontWeight: 600, marginRight: 15, color: this.state.showDC ? "#777777" : "#000000" }}>Packets Transferred</Text>
       </a>
-      <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: true }) }}>
-        <Text style={{ fontWeight: 600, color: !this.state.showDC ? "#777777" : "#000000" }}>DC Used</Text>
-      </a>
+      {
+        false && (
+          <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: true }) }}>
+            <Text style={{ fontWeight: 600, color: !this.state.showDC ? "#777777" : "#000000" }}>DC Used</Text>
+          </a>
+        )
+      }
     </span>
   )
 

@@ -455,6 +455,11 @@ class DeviceShow extends Component {
                     {flatten(device.labels.map(l => l.channels)).map(c => c.name).join(", ")}
                   </td>
                 </tr>
+                <tr style={{height: '20px'}} />
+                <tr style={{height: '30px'}}>
+                  <td><Text strong>DC Used</Text></td>
+                  <td><Text>{device.dc_usage} DC</Text></td>
+                </tr>
               </tbody>
             </table>
           </Card>
