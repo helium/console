@@ -305,7 +305,7 @@ class DeviceShow extends Component {
                   </td>
                 </tr>
                 <tr style={{height: '30px'}}>
-                  <td><Text strong>UUID</Text></td>
+                  <td><Text strong>ID</Text></td>
                   <td><Text code>{device.id}</Text></td>
                 </tr>
                 <tr style={{height: '20px'}} />
