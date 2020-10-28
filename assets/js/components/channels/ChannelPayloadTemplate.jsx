@@ -17,7 +17,7 @@ class ChannelPayloadTemplate extends Component {
   render() {
     return (
       <Card
-        title="Advanced - Payload Template (Optional)"
+        title="Beta - Payload Template (Optional)"
         style={{ height: 560, overflow: 'hidden'}}
         bodyStyle={{ padding: 0 }}
         extra={this.props.extra}
