@@ -5,6 +5,16 @@ defmodule ConsoleWeb.Abilities do
     true
   end
 
+  def can?(%Membership{role: "manager"}, action, controller) do
+    cond do
+      controller == ConsoleWeb.DataCreditController -> false
+      controller == ConsoleWeb.ApiKeyController -> false
+      controller == ConsoleWeb.InvitationController and action in [:create, :delete] -> false
+      controller == ConsoleWeb.MembershipController and action in [:update, :delete] -> false
+      true -> true
+    end
+  end
+
   def can?(%Membership{role: "read"}, action, controller) do
     cond do
       controller == ConsoleWeb.DeviceController and action in [:debug] -> true

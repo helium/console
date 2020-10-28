@@ -77,7 +77,7 @@ class InvitationsTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <UserCan>
+          <UserCan noManager>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
               <Button
                 onClick={() => {

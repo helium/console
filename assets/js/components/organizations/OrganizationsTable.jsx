@@ -91,15 +91,16 @@ class OrganizationsTable extends Component {
         render: (data, record) => {
           return (
             <span>
-              <UserCan>
+              <UserCan noManager>
                 <Switch
                   checked={record.active}
                   onChange={active => this.toggleOrgActive(active, record.id)}
+                  style={{ marginRight: 8 }}
                 />
               </UserCan>
               {
                 record.active_count > 0 && (
-                  <Text style={{ color: '#4091F7', marginLeft: 8 }}>{record.active_count} Active</Text>
+                  <Text style={{ color: '#4091F7' }}>{record.active_count} Active</Text>
                 )
               }
               {
@@ -128,14 +129,16 @@ class OrganizationsTable extends Component {
                 Switch
               </Button>
 
-              <Button
-                type="danger"
-                icon="delete"
-                shape="circle"
-                onClick={() => {
-                  this.props.openDeleteOrganizationModal(record.id)
-                }}
-              />
+              <UserCan noManager>
+                <Button
+                  type="danger"
+                  icon="delete"
+                  shape="circle"
+                  onClick={() => {
+                    this.props.openDeleteOrganizationModal(record.id)
+                  }}
+                />
+              </UserCan>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>

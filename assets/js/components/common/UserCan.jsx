@@ -17,8 +17,9 @@ function mapStateToProps(state) {
 }
 
 export const userCan = (props) => {
-  const { role } = props;
+  const { role, noManager } = props;
   if (role === 'read') return false
+  if (role === 'manager' && noManager) return false
   return true
 }
 

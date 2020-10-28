@@ -69,7 +69,7 @@ class UserIndex extends Component {
         title="Users"
         user={this.props.user}
         extra={
-          <UserCan>
+          <UserCan noManager>
             <Button
               type="primary"
               icon="plus"

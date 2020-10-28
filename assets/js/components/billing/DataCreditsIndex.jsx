@@ -131,10 +131,10 @@ class DataCreditsIndex extends Component {
               <p style={{ fontWeight: 400 }}>For signing up with Console you've received an initial balance of 10000 Data Credits. You have {organization.dc_balance} remaining.</p>
             )
           }
-          <UserCan>
+          <UserCan noManager>
             <p style={{ fontSize: 16 }}>Click here to purchase more Data Credits, set up an automatic renewal, and monitor balances.</p>
           </UserCan>
-          <UserCan>
+          <UserCan noManager>
             <Button
               size="large"
               type="primary"
@@ -305,7 +305,7 @@ class DataCreditsIndex extends Component {
             </Col>
           )}
         </Row>
-        <UserCan>
+        <UserCan noManager>
           <DataCreditPurchasesTable />
         </UserCan>
       </div>
@@ -321,7 +321,7 @@ class DataCreditsIndex extends Component {
         title="Data Credits"
         user={this.props.user}
         extra={
-          <UserCan>
+          <UserCan noManager>
             {
               organization && organization.dc_balance_nonce != 0 ? (
                 <React.Fragment>

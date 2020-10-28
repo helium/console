@@ -41,7 +41,7 @@ class OrganizationIndex extends Component {
         title="Organizations"
         user={this.props.user}
         extra={
-          <UserCan>
+          <UserCan noManager>
             <Button
               icon="plus"
               size="large"

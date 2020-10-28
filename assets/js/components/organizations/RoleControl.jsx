@@ -7,11 +7,11 @@ const roles = [
     name: "Administrator",
     description: "Administrators have access to all actions."
   },
-  // {
-  //   value: "manager",
-  //   name: "Manager",
-  //   description: "Managers are limited in actions to some degree."
-  // },
+  {
+    value: "manager",
+    name: "Manager",
+    description: "Managers are limited in actions to some degree."
+  },
   {
     value: "read",
     name: "Read-Only",

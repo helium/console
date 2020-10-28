@@ -115,7 +115,7 @@ class Profile extends Component {
         key: 'action',
         render: (text, record) => (
           <div style={{ display: 'flex', justifyContent: 'center'}}>
-            <UserCan>
+            <UserCan noManager>
               <Button
                 type="danger"
                 icon="delete"
@@ -158,7 +158,7 @@ class Profile extends Component {
           </Descriptions>
         </Card>
 
-        <UserCan>
+        <UserCan noManager>
           <Card title="Your API Keys">
             <Input
               placeholder="Enter key name"

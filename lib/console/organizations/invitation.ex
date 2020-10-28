@@ -27,7 +27,7 @@ defmodule Console.Organizations.Invitation do
     |> validate_required(:email, message: "Email is required")
     |> validate_format(:email, ~r/@/, message: "Email is invalid")
     |> validate_required(:role, message: "Role is required")
-    |> validate_inclusion(:role, ~w(admin read))
+    |> validate_inclusion(:role, ~w(admin read manager))
     |> unique_constraint(:email, name: :invitations_email_organization_id_index, message: "That email has already been invited to this organization")
   end
 

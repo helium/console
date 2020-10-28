@@ -188,7 +188,7 @@
                                  <!-- content -->
                                  <tr>
                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                     <span style="font-weight:500"><%= @inviter_email %></span> at <span style="font-weight:500"><%= @organization_name %></span> organization has added you as an <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> to the Helium Console.
+                                     <span style="font-weight:500"><%= @inviter_email %></span> at <span style="font-weight:500"><%= @organization_name %></span> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> to the Helium Console.
                                    </td>
                                  </tr>
                                  <!-- end of content -->

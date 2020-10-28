@@ -24,7 +24,7 @@ defmodule Console.Organizations.Membership do
     membership
     |> cast(attrs, [:role, :user_id, :organization_id, :email])
     |> validate_required([:role, :user_id, :organization_id])
-    |> validate_inclusion(:role, ~w(admin read))
+    |> validate_inclusion(:role, ~w(admin read manager))
     |> unique_constraint(:unique_member, name: :memberships_user_id_organization_id_index, message: "That email is already part of this organization")
   end
 
@@ -34,7 +34,7 @@ defmodule Console.Organizations.Membership do
     membership
     |> cast(attrs, [:role, :updated_at])
     |> validate_required([:role])
-    |> validate_inclusion(:role, ~w(admin read))
+    |> validate_inclusion(:role, ~w(admin read manager))
   end
 
   def join_org_changeset(membership, user, organization, role) do
