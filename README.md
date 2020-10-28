@@ -4,10 +4,10 @@
 
 ## Prerequisites
 * homebrew (https://brew.sh/)
-* elixir (`brew install elixir`)
 * postgres (postgres.app on mac)
 * yarn (`brew install yarn`)
 * libsodium (git clone -b stable https://github.com/jedisct1/libsodium.git) (cd libsodium && ./configure --prefix=/usr && make check && make install && cd ..)
+* elixir and erlang (https://thinkingelixir.com/install-elixir-using-asdf/) (asdf install erlang 21.0.6, asdf local erlang 21.0.6, asdf install elixir 1.9.0,  asdf local elixir 1.9.0)
 
 To start your Phoenix server:
 
