@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
-import { Typography, Card } from 'antd';
+import { Typography, Card, Icon, Popover } from 'antd';
 const { Text } = Typography
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';
@@ -17,7 +17,22 @@ class ChannelPayloadTemplate extends Component {
   render() {
     return (
       <Card
-        title="Beta - Payload Template (Optional)"
+        title={
+          <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontWeight: 600 }}>Beta - JSON Message Template (Optional)</Text>
+            <Popover
+              content={
+                <Text>
+                  Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                </Text>
+              }
+              placement="top"
+              overlayStyle={{ width: 250 }}
+            >
+              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+            </Popover>
+          </span>
+        }
         style={{ height: 560, overflow: 'hidden'}}
         bodyStyle={{ padding: 0 }}
         extra={this.props.extra}
