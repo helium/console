@@ -65,6 +65,8 @@ defmodule ConsoleWeb.V1.LabelController do
         {:error, :not_found, "Label not found"}
       %Label{} = label ->
         with {:ok, _} <- Labels.delete_label(label) do
+          broadcast_router_update_devices(label)
+
           conn
           |> send_resp(:ok, "Label deleted")
         end
@@ -80,7 +82,9 @@ defmodule ConsoleWeb.V1.LabelController do
       msg =
         case count do
           0 -> "Device has already been added to label"
-          _ -> "Device added to label successfully"
+          _ ->
+            broadcast_router_update_devices([device])
+            "Device added to label successfully"
         end
 
         conn
@@ -97,11 +101,27 @@ defmodule ConsoleWeb.V1.LabelController do
       msg =
         case count do
           0 -> "Device was not in label"
-          _ -> "Device removed from label successfully"
+          _ ->
+            broadcast_router_update_devices([device])
+            "Device removed from label successfully"
         end
 
         conn
         |> send_resp(:ok, msg)
+    end
+  end
+
+  defp broadcast_router_update_devices(%Label{} = label) do
+    assoc_device_ids = label |> Labels.fetch_assoc([:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
+    end
+  end
+
+  defp broadcast_router_update_devices(devices) do
+    assoc_device_ids = devices |> Enum.map(fn d -> d.id end)
+    if length(assoc_device_ids) > 0 do
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
     end
   end
 end

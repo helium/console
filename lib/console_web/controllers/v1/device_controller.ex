@@ -72,6 +72,8 @@ defmodule ConsoleWeb.V1.DeviceController do
         {:error, :not_found, "Device not found"}
       %Device{} = device ->
         with {:ok, _} <- Devices.delete_device(device) do
+          broadcast_router_update_devices(device)
+
           conn
           |> send_resp(:ok, "Device deleted")
         end
@@ -91,5 +93,9 @@ defmodule ConsoleWeb.V1.DeviceController do
       |> put_status(:created)
       |> render("show.json", device: device)
     end
+  end
+
+  defp broadcast_router_update_devices(%Device{} = device) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
 end
