@@ -104,27 +104,30 @@ class PacketGraph extends Component {
       const currentTime = Date.now() / 1000
       const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
+      const channels = JSON.parse(event.channels)
+      const hotspots = JSON.parse(event.hotspots)
+
       if ( timeDiff < 300 ) {
-        if (event.channels[0] && event.channels[0].status == 'success') {
+        if (channels[0] && channels[0].status == 'success') {
           success.push({
             x: timeDiff,
-            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
+            y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
+            h: hotspots[0] ? hotspots[0].name : "unknown"
           })
-        } else if (event.channels[0] && event.channels[0].status == 'error') {
+        } else if (channels[0] && channels[0].status == 'error') {
           error.push({
             x: timeDiff,
-            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
+            y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
+            h: hotspots[0] ? hotspots[0].name : "unknown"
           })
         } else {
           noChannel.push({
             x: timeDiff,
-            y: parseFloat(event.hotspots[0] ? event.hotspots[0].rssi : 0),
+            y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: event.hotspots[0] ? event.hotspots[0].name : "unknown"
+            h: hotspots[0] ? hotspots[0].name : "unknown"
           })
         }
       }

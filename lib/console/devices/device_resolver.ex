@@ -122,7 +122,7 @@ defmodule Console.Devices.DeviceResolver do
               end)
           end
 
-        e |> Map.put(:hotspots, e_hotspots) |> Map.put(:channels, e_channels)
+        e |> Map.put(:hotspots, Jason.encode!(e_hotspots)) |> Map.put(:channels, Jason.encode!(e_channels))
       end)
 
     {:ok, events}

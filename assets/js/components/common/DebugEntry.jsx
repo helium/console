@@ -143,64 +143,72 @@ class DebugEntry extends Component {
         {
           this.state.show4 && data.channels.map(c => (
             <div key={c.id} style={{ marginBottom: 20 }}>
-              <span style={{ marginLeft: 25 }}>
-                <Icon
-                  type={this.state.channelView[c.id] && this.state.channelView[c.id].req ? "eye" : "eye-invisible"}
-                  theme="filled"
-                  style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
-                  onClick={() => {
-                    if (this.state.channelView[c.id]) {
-                      this.setState({
-                        channelView: {
-                          [c.id]: {
-                            req: !this.state.channelView[c.id].req,
-                            res: this.state.channelView[c.id].res,
-                          }
+              {
+                c.debug && (
+                  <span style={{ marginLeft: 25 }}>
+                    <Icon
+                      type={this.state.channelView[c.id] && this.state.channelView[c.id].req ? "eye" : "eye-invisible"}
+                      theme="filled"
+                      style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
+                      onClick={() => {
+                        if (this.state.channelView[c.id]) {
+                          this.setState({
+                            channelView: {
+                              [c.id]: {
+                                req: !this.state.channelView[c.id].req,
+                                res: this.state.channelView[c.id].res,
+                              }
+                            }
+                          })
+                        } else {
+                          this.setState({
+                            channelView: {
+                              [c.id]: {
+                                req: true,
+                                res: false,
+                              }
+                            }
+                          })
                         }
-                      })
-                    } else {
-                      this.setState({
-                        channelView: {
-                          [c.id]: {
-                            req: true,
-                            res: false,
-                          }
+                      }}
+                    />
+                    <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C' }}>Debug Request</Text>
+                  </span>
+                )
+              }
+              {
+                c.debug && (
+                  <span style={{ marginLeft: 15 }}>
+                    <Icon
+                      type={this.state.channelView[c.id] && this.state.channelView[c.id].res ? "eye" : "eye-invisible"}
+                      theme="filled"
+                      style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
+                      onClick={() => {
+                        if (this.state.channelView[c.id]) {
+                          this.setState({
+                            channelView: {
+                              [c.id]: {
+                                req: this.state.channelView[c.id].req,
+                                res: !this.state.channelView[c.id].res,
+                              }
+                            }
+                          })
+                        } else {
+                          this.setState({
+                            channelView: {
+                              [c.id]: {
+                                req: false,
+                                res: true,
+                              }
+                            }
+                          })
                         }
-                      })
-                    }
-                  }}
-                />
-                <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C' }}>Debug Request</Text>
-              </span>
-              <span style={{ marginLeft: 15 }}>
-                <Icon
-                  type={this.state.channelView[c.id] && this.state.channelView[c.id].res ? "eye" : "eye-invisible"}
-                  theme="filled"
-                  style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
-                  onClick={() => {
-                    if (this.state.channelView[c.id]) {
-                      this.setState({
-                        channelView: {
-                          [c.id]: {
-                            req: this.state.channelView[c.id].req,
-                            res: !this.state.channelView[c.id].res,
-                          }
-                        }
-                      })
-                    } else {
-                      this.setState({
-                        channelView: {
-                          [c.id]: {
-                            req: false,
-                            res: true,
-                          }
-                        }
-                      })
-                    }
-                  }}
-                />
-                <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C' }}>Debug Response</Text>
-              </span>
+                      }}
+                    />
+                    <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C' }}>Debug Response</Text>
+                  </span>
+                )
+              }
               <pre style={{ color: debugTextColor, marginLeft: 25 }}>
                 {JSON.stringify(
                     {

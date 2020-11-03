@@ -30,9 +30,13 @@ class Debug extends Component {
     if (!event.hasOwnProperty("payload")) return
 
     event = omit(event, ["__typename"])
-    if (event.hotspots && event.hotspots.length > 0) event.hotspots = event.hotspots.map(h => omit(h, ["__typename"]))
-    if (event.channels && event.hotspots.length > 0) {
-      event.channels = event.channels.map(c => {
+
+    const hotspots = JSON.parse(event.hotspots)
+    const channels = JSON.parse(event.channels)
+
+    if (hotspots && hotspots.length > 0) event.hotspots = hotspots.map(h => omit(h, ["__typename"]))
+    if (channels && channels.length > 0) {
+      event.channels = channels.map(c => {
         const channel = omit(c, ["__typename"])
         if (channel.debug) {
           channel.debug = JSON.parse(c["debug"])

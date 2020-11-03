@@ -13,26 +13,8 @@ export const EVENT_FRAGMENT = gql`
     reported_at,
     port,
     devaddr,
-    hotspots {
-      id,
-      name,
-      rssi,
-      snr,
-      frequency,
-      spreading,
-      status,
-      channel,
-      lat,
-      long,
-      reported_at
-    },
-    channels {
-      id,
-      name,
-      status,
-      description,
-      debug
-    }
+    hotspots,
+    channels
   }
 `
 export const EVENTS_SUBSCRIPTION = gql`

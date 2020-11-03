@@ -131,10 +131,10 @@ class EventsDashboard extends Component {
       <Row gutter={10}>
         <Col span={22}>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
+            <Table columns={hotspotColumns} dataSource={JSON.parse(record.hotspots)} pagination={false} rowKey={record => record.id}/>
           </Card>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={channelColumns} dataSource={record.channels} pagination={false} rowKey={record => record.id}/>
+            <Table columns={channelColumns} dataSource={JSON.parse(record.channels)} pagination={false} rowKey={record => record.id}/>
           </Card>
         </Col>
       </Row>

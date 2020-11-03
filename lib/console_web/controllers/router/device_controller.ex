@@ -120,9 +120,18 @@ defmodule ConsoleWeb.Router.DeviceController do
             event =
               case payload do
                 nil ->
-                  Map.merge(event, %{ device_name: device.name })
+                  Map.merge(event, %{
+                    device_name: device.name,
+                    hotspots: Jason.encode!(event.hotspots),
+                    channels: Jason.encode!(event.channels)
+                  })
                 _ ->
-                  Map.merge(event, %{ device_name: device.name, payload: payload, channels: channels_with_debug })
+                  Map.merge(event, %{
+                    device_name: device.name,
+                    payload: payload,
+                    hotspots: Jason.encode!(event.hotspots),
+                    channels: Jason.encode!(channels_with_debug)
+                  })
               end
 
             Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, event_added: "devices/#{device_id}/event")
@@ -136,7 +145,6 @@ defmodule ConsoleWeb.Router.DeviceController do
             else
               device.dc_usage
             end
-
 
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
