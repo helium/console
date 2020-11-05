@@ -7,7 +7,7 @@ import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
 import classNames from 'classnames';
-
+import SkeletonLayout from '../common/SkeletonLayout'
 
 const { Text } = Typography
 
@@ -112,7 +112,7 @@ class ChannelsTable extends Component {
 
     const { channels, loading, error } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <div className="blankstateWrapper">
         <div className="message">

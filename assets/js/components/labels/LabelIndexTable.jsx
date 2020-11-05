@@ -13,6 +13,7 @@ import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 import LabelsImg from '../../../img/labels.svg'
 import classNames from 'classnames';
+import SkeletonLayout from '../common/SkeletonLayout';
 
 const { Text } = Typography
 const { Option } = Select
@@ -141,7 +142,7 @@ class LabelIndexTable extends Component {
 
     const { loading, error, labels } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

@@ -9,6 +9,7 @@ import { graphql } from 'react-apollo';
 import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
+import SkeletonLayout from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({
@@ -237,7 +238,7 @@ class EventsDashboard extends Component {
 
     const { loading, error } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

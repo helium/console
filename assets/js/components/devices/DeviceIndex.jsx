@@ -20,6 +20,7 @@ import UserCan from '../common/UserCan';
 import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
+import SkeletonLayout from '../common/SkeletonLayout';
 const { Text } = Typography
 
 const DEFAULT_COLUMN = "name"
@@ -265,7 +266,7 @@ class DeviceIndex extends Component {
       >
         {
           (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-            loading ? null :
+            loading ? <SkeletonLayout /> :
             <DeviceIndexTable
               openDeleteDeviceModal={this.openDeleteDeviceModal}
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}

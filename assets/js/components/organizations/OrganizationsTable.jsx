@@ -13,6 +13,7 @@ import { graphql } from 'react-apollo';
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
 const { Text } = Typography
 import { Query } from 'react-apollo';
+import SkeletonLayout from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({
@@ -152,7 +153,7 @@ class OrganizationsTable extends Component {
     const { currentOrganizationId, switchOrganization, deleteOrganization } = this.props
     const { organizations, loading, error } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

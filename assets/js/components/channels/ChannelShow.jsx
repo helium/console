@@ -26,6 +26,8 @@ import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col, Icon } from 'antd';
 import { isObject } from 'lodash';
 import MqttDetails from './MqttDetails';
+import SkeletonLayout from '../common/SkeletonLayout';
+import ChannelShowSkeleton from './ChannelShowSkeleton';
 const { Text, Paragraph } = Typography
 
 const queryOptions = {
@@ -170,7 +172,7 @@ class ChannelShow extends Component {
   render() {
     const { loading, error, channel, allLabels } = this.props.data;
 
-    if (loading) return <DashboardLayout />
+    if (loading) return <ChannelShowSkeleton />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

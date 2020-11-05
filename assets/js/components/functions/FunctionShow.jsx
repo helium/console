@@ -14,6 +14,7 @@ import { deleteFunction, updateFunction } from '../../actions/function'
 import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
+import FunctionShowSkeleton from './FunctionShowSkeleton';
 const { Text } = Typography
 const { Option } = Select
 
@@ -139,7 +140,7 @@ class FunctionShow extends Component {
     const { loading, error } = this.props.data
     const fxn = this.props.data.function
 
-    if (loading) return <DashboardLayout />
+    if (loading) return <FunctionShowSkeleton />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
