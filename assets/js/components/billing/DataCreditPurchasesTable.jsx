@@ -6,7 +6,7 @@ import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination, Icon } from 'antd';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
 const styles = {

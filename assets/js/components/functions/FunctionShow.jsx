@@ -14,7 +14,7 @@ import { deleteFunction, updateFunction } from '../../actions/function'
 import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
-import FunctionShowSkeleton from './FunctionShowSkeleton';
+import { FunctionShowSkeleton } from './FunctionShowSkeleton';
 const { Text } = Typography
 const { Option } = Select
 

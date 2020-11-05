@@ -7,7 +7,7 @@ import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
 import classNames from 'classnames';
-import SkeletonLayout from '../common/SkeletonLayout'
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
 

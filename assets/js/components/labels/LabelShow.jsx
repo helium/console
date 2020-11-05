@@ -21,7 +21,7 @@ import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Button, Icon, Typography } from 'antd';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
 

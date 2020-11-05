@@ -9,7 +9,7 @@ import { graphql } from 'react-apollo';
 import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({

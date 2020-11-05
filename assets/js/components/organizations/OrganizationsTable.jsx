@@ -13,7 +13,7 @@ import { graphql } from 'react-apollo';
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
 const { Text } = Typography
 import { Query } from 'react-apollo';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({

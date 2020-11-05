@@ -13,7 +13,7 @@ import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
 import LabelsImg from '../../../img/labels.svg'
 import classNames from 'classnames';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
 const { Option } = Select

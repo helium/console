@@ -28,7 +28,7 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
-import DeviceShowSkeleton from './DeviceShowSkeleton';
+import { DeviceShowSkeleton } from './DeviceShowSkeleton';
 const { Text } = Typography
 const { TabPane } = Tabs
 const { Option } = Select

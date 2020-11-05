@@ -20,7 +20,7 @@ import UserCan from '../common/UserCan';
 import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
 const DEFAULT_COLUMN = "name"

@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Skeleton } from 'antd';
 import DashboardLayout from '../common/DashboardLayout';
-import { Card, Row, Col } from 'antd';
+import { Card } from 'antd';
 
-class FunctionShowSkeleton extends Component {
-  render() {
+export const FunctionShowSkeleton = () => {
     return (
       <DashboardLayout>
         <Skeleton title={true} paragraph={{ rows: 0 }} active />
@@ -15,8 +14,5 @@ class FunctionShowSkeleton extends Component {
           <Skeleton title={false} paragraph={{ rows: 3 }} active />
         </Card>
       </DashboardLayout>
-    )
-  }
+    );
 };
-
-export default FunctionShowSkeleton;

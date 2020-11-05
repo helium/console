@@ -26,8 +26,7 @@ import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col, Icon } from 'antd';
 import { isObject } from 'lodash';
 import MqttDetails from './MqttDetails';
-import SkeletonLayout from '../common/SkeletonLayout';
-import ChannelShowSkeleton from './ChannelShowSkeleton';
+import { ChannelShowSkeleton } from './ChannelShowSkeleton';
 const { Text, Paragraph } = Typography
 
 const queryOptions = {

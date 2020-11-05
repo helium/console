@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Skeleton } from 'antd';
 import DashboardLayout from '../common/DashboardLayout';
-import { Card, Row, Col } from 'antd';
+import { Card } from 'antd';
 
-class ChannelShowSkeleton extends Component {
-  render() {
+export const ChannelShowSkeleton = () => {
     return (
       <DashboardLayout>
         <Skeleton title={true} paragraph={{ rows: 0 }} active />
@@ -21,8 +20,5 @@ class ChannelShowSkeleton extends Component {
           <Skeleton title={false} paragraph={{ rows: 5 }} active />
         </Card>
       </DashboardLayout>
-    )
-  }
+    );
 };
-
-export default ChannelShowSkeleton;

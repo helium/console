@@ -12,7 +12,7 @@ import { graphql } from 'react-apollo';
 import FunctionsImg from '../../../img/functions.svg'
 import classNames from 'classnames';
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
-import SkeletonLayout from '../common/SkeletonLayout';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
 

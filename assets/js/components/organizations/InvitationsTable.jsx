@@ -7,7 +7,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
-import SkeletonLayout from '../common/SkeletonLayout'
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({
