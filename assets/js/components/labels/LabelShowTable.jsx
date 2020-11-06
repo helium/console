@@ -12,6 +12,7 @@ import { updateDevice } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select
 
@@ -164,7 +165,7 @@ class LabelShowTable extends Component {
     const { loading, error, devices_by_label } = this.props.data
     const { devicesSelected } = this.props;
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

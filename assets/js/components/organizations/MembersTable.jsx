@@ -8,6 +8,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
 const queryOptions = {
@@ -117,7 +118,7 @@ class MembersTable extends Component {
 
     const { loading, error, memberships } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

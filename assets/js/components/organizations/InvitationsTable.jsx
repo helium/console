@@ -7,6 +7,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const queryOptions = {
   options: props => ({
@@ -96,7 +97,7 @@ class InvitationsTable extends Component {
 
     const { loading, error, invitations } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

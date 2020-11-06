@@ -6,6 +6,7 @@ import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination, Icon } from 'antd';
+import { IndexSkeleton } from '../common/IndexSkeleton';
 const { Text } = Typography
 
 const styles = {
@@ -131,15 +132,16 @@ class DataCreditPurchasesTable extends Component {
     ]
 
     const { loading, error, dcPurchases } = this.props.data
+    const title = "Payment History";
 
-    if (loading) return null;
+    if (loading) return <IndexSkeleton title={title} />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
     return (
       <Card
-        title="Payment History"
+        title={title}
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
       >
         <Table

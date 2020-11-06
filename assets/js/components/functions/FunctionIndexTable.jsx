@@ -12,6 +12,7 @@ import { graphql } from 'react-apollo';
 import FunctionsImg from '../../../img/functions.svg'
 import classNames from 'classnames';
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
+import { IndexSkeleton } from '../common/IndexSkeleton';
 
 const { Text } = Typography
 
@@ -153,7 +154,7 @@ class FunctionIndexTable extends Component {
 
     const { functions, loading, error } = this.props.data
 
-    if (loading) return null;
+    if (loading) return <IndexSkeleton title="Functions" />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

@@ -21,6 +21,7 @@ import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import { Button, Icon, Typography } from 'antd';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
 
@@ -118,7 +119,7 @@ class LabelShow extends Component {
   render() {
     const { loading, error, label } = this.props.data
 
-    if (loading) return <DashboardLayout />
+    if (loading) return <DashboardLayout><SkeletonLayout/></DashboardLayout>
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

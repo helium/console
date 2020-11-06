@@ -28,6 +28,7 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { graphql } from 'react-apollo';
 import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
+import { DeviceShowSkeleton } from './DeviceShowSkeleton';
 const { Text } = Typography
 const { TabPane } = Tabs
 const { Option } = Select
@@ -224,7 +225,7 @@ class DeviceShow extends Component {
       []
     );
 
-    if (loading) return <DashboardLayout />
+    if (loading) return <DeviceShowSkeleton />;
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
     const smallerText = device.total_packets > 10000
