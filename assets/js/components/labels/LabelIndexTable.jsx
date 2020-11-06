@@ -142,7 +142,7 @@ class LabelIndexTable extends Component {
 
     const { loading, error, labels } = this.props.data
 
-    if (loading) return <IndexSkeleton />;
+    if (loading) return <IndexSkeleton title="Labels" />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

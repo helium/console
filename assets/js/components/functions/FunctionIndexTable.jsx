@@ -154,7 +154,7 @@ class FunctionIndexTable extends Component {
 
     const { functions, loading, error } = this.props.data
 
-    if (loading) return <IndexSkeleton />;
+    if (loading) return <IndexSkeleton title="Functions" />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

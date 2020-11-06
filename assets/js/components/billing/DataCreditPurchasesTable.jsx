@@ -132,15 +132,16 @@ class DataCreditPurchasesTable extends Component {
     ]
 
     const { loading, error, dcPurchases } = this.props.data
+    const title = "Payment History";
 
-    if (loading) return <IndexSkeleton />;
+    if (loading) return <IndexSkeleton title={title} />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
     return (
       <Card
-        title="Payment History"
+        title={title}
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
       >
         <Table

@@ -255,10 +255,12 @@ class DeviceIndex extends Component {
           Add New Device
         </Button>
       </UserCan>
-    )
+    );
+
+    const title = "Devices";
     return(
       <DashboardLayout
-        title="Devices"
+        title={title}
         user={this.props.user}
         extra={
           hasDevices && createDeviceButton()
@@ -266,7 +268,7 @@ class DeviceIndex extends Component {
       >
         {
           (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-            loading ? <IndexSkeleton /> :
+            loading ? <IndexSkeleton title={title} /> :
             <DeviceIndexTable
               openDeleteDeviceModal={this.openDeleteDeviceModal}
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
