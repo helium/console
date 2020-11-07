@@ -64,6 +64,16 @@ export const ORGANIZATION_SUBSCRIPTION = gql`
   }
 `
 
+export const ORGANIZATIONS_SUBSCRIPTION = gql`
+  subscription onOrganizationsAddDelete {
+    organizationsAddedDeleted {
+      id,
+      name,
+      inserted_at
+    }
+  }
+`
+
 export const ORGANIZATION_UPDATE_SUBSCRIPTION = gql`
   subscription onOrganizationUpdated($organizationId: String) {
     organizationUpdated(organizationId: $organizationId) {

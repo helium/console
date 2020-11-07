@@ -11,7 +11,8 @@ class HTTPForm extends Component {
     headers: [
       { header: "", value: "" },
       { header: "", value: "" }
-    ]
+    ],
+    validEndpoint: true
   }
 
   componentDidMount() {
@@ -61,7 +62,9 @@ class HTTPForm extends Component {
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value}, this.validateInput)
+    const validEndpoint = e.target.name == 'endpoint' && e.target.value.indexOf(' ') == -1
+
+    this.setState({ [e.target.name]: e.target.value, validEndpoint }, () => this.validateInput(validEndpoint))
   }
 
   handleMethodUpdate = (method) => {
@@ -79,7 +82,7 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
-  validateInput = () => {
+  validateInput = validInput => {
     const { method, endpoint, headers } = this.state
     if (method.length > 0 && endpoint.length > 0) {
       const parsedHeaders = headers.reduce((a, h) => {
@@ -91,7 +94,7 @@ class HTTPForm extends Component {
         method,
         endpoint,
         headers: parsedHeaders,
-      })
+      }, validInput)
     }
   }
 
@@ -100,7 +103,6 @@ class HTTPForm extends Component {
 
     return(
       <div>
-
         <Text>
           {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
         </Text>
@@ -127,6 +129,11 @@ class HTTPForm extends Component {
             onChange={this.handleInputUpdate}
             style={{ width: '100%'}}
           />
+          {!this.state.validEndpoint && (
+            <Text style={{ color: '#F5222D', marginTop: 8 }}>
+              Endpoint URL should not have spaces
+            </Text>
+          )}
           </Col>
         </Row>
 

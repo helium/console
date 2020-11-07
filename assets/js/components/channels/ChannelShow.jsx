@@ -49,6 +49,7 @@ class ChannelShow extends Component {
     showChannelShowRemoveLabelModal: false,
     showDownlinkToken: false,
     templateBody: undefined,
+    validInput: true,
   }
 
   componentDidMount() {
@@ -82,8 +83,8 @@ class ChannelShow extends Component {
     this.setState({ [e.target.name]: e.target.value})
   }
 
-  handleUpdateDetailsInput = (credentials) => {
-    this.setState({ credentials })
+  handleUpdateDetailsInput = (credentials, validInput = true) => {
+    this.setState({ credentials, validInput })
   }
 
   handleNameChange = () => {
@@ -277,6 +278,7 @@ class ChannelShow extends Component {
             <Button
               type="primary"
               onClick={this.handleUpdateDetailsChange}
+              disabled={!this.state.validInput}
             >
               Update Details
             </Button>
