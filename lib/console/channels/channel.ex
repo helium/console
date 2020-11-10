@@ -111,11 +111,16 @@ defmodule Console.Channels.Channel do
   end
 
   defp check_http_creds(changeset, creds) do
-    uri = URI.parse(creds["endpoint"])
-    case uri do
-      %URI{scheme: scheme} when scheme != "http" and scheme != "https" -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
-      %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
-      uri -> put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+    cond do
+      String.contains?(creds["endpoint"], " ") ->
+        add_error(changeset, :message, "Endpoint URL cannot have spaces")
+      true ->
+        uri = URI.parse(creds["endpoint"])
+        case uri do
+          %URI{scheme: scheme} when scheme != "http" and scheme != "https" -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
+          %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
+          uri -> put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+        end
     end
   end
 
