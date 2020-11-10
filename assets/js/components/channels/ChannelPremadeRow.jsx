@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { Typography } from 'antd';
-const { Text } = Typography
 import Cargo from '../../../img/heliumcargo.svg'
 import MyDevices from '../../../img/mydevices.svg'
-import classNames from 'classnames';
+import { IntegrationTypeTile } from './IntegrationTypeTile';
 
 
 const styles = {
@@ -33,13 +31,10 @@ const styles = {
 const channelTypes = [
   { name: "Helium Cargo", link: "/integrations/new/cargo", img: `${Cargo}` },
   { name: "myDevices Cayenne", link: "/integrations/new/mydevices", img: `${MyDevices}` },
-
 ]
 
 class ChannelPremadeRow extends Component {
   render() {
-    const { channels } = this.props
-
     return(
       <div style={styles.createRow}>
         {
@@ -47,44 +42,40 @@ class ChannelPremadeRow extends Component {
             if (channel.name) return (
               <div className="wrapper" style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
                 <Link to={channel.link}>
-                  <div style={styles.tile}>
-                    <img style={styles.icon} src={channel.img} />
-                    <Text>
-                      {channel.name}
-                    </Text>
-                    <p style={{margin: 0, fontSize: 12, letterSpacing: 0.3, opacity: 0.7}}>HTTP</p>
-                  </div>
+                  <IntegrationTypeTile 
+                    tileStyle={styles.tile} 
+                    iconStyle={styles.icon} 
+                    img={channel.img}
+                    name={channel.name}
+                    type="HTTP"
+                    />
                 </Link>
                 <style jsx>{`
+                  .wrapper {
+                    background: white;
+                    padding: 20px 10px 16px;
+                    border-radius: 20px;
+                    transition: all .2s ease;
+                  }
 
-        
-.wrapper {
-  background: white;
-  padding: 20px 10px 16px;
-  border-radius: 20px;
-  transition: all .2s ease;
-}
+                  .wrapper:hover {
+                    background: #F0F2F5;
+                      transition: all .2s ease;
 
-.wrapper:hover {
-  background: #F0F2F5;
-    transition: all .2s ease;
+                  }
 
-}
+                  .wrapper img {
+                    transform: scale(1);
+                      transition: all .2s ease;
 
-.wrapper img {
-  transform: scale(1);
-    transition: all .2s ease;
+                  }
 
-}
+                  .wrapper:hover img {
+                    transform: scale(1.03);
+                      transition: all .2s ease;
 
-.wrapper:hover img {
-  transform: scale(1.03);
-    transition: all .2s ease;
-
-}
-
-
-        `}</style>
+                  }
+                  `}</style>
               </div>
             )
             return (
