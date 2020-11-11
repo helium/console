@@ -142,7 +142,7 @@ class ChannelNew extends Component {
         )}
         </Card>
         { type && (
-          <Card title="Step 2 - Verify Details">
+          <Card title="Step 2 - Endpoint Details">
             {this.renderForm()}
           </Card>
         )}
