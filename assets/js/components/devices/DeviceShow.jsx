@@ -447,7 +447,7 @@ class DeviceShow extends Component {
                       labels={device.labels}
                       openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
                       openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-                      push={this.props.history.push}
+                      history={this.props.history}
                     />
                   </td>
                 </tr>
@@ -456,6 +456,7 @@ class DeviceShow extends Component {
                   <td>
                     {flatten(device.labels.map(l => l.channels)).map(c => (
                       <a
+                        key={c.id}
                         style={{ marginRight: 8 }}
                         href="#"
                         onClick={e => {

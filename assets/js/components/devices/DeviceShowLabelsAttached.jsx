@@ -9,7 +9,7 @@ class DeviceShowLabelsAttached extends Component {
   }
 
   render() {
-    const { labels, openDevicesAddLabelModal, push } = this.props
+    const { labels, openDevicesAddLabelModal, history } = this.props
 
     return (
       <UserCan
@@ -24,7 +24,7 @@ class DeviceShowLabelsAttached extends Component {
                   style={{ marginBottom: 3 }}
                   hasIntegrations={l.channels.length > 0}
                   hasFunction={l.function}
-                  onClick={() => push(`/labels/${l.id}`)}
+                  onClick={() => history.push(`/labels/${l.id}`)}
                 />
               ))
             }
@@ -47,7 +47,7 @@ class DeviceShowLabelsAttached extends Component {
                   e.stopPropagation()
                   this.handleRemoveLabel(l)
                 }}
-                onClick={() => push(`/labels/${l.id}`)}
+                onClick={() => history.push(`/labels/${l.id}`)}
               />
             ))
           }
