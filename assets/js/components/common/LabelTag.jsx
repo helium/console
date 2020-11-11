@@ -6,7 +6,7 @@ const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNe
   if (hasFunction) labelColor = labelColorsHex[labelColor]
 
   return (
-    <Tag style={style} color={labelColor} closable={closable} onClose={onClose} onClick={onClick}>
+    <Tag style={style} color={labelColor} closable={closable} onClose={onClose} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default'}}>
       {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
     </Tag>
   )
