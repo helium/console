@@ -320,6 +320,12 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :organizations_added_deleted, :organization do
+      config fn _, %{context: %{ current_user_id: user_id }} ->
+        {:ok, topic: "#{user_id}/organizations_added_deleted"}
+      end
+    end
+
     field :organization_updated, :organization do
       arg :organization_id, :string
 

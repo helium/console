@@ -24,6 +24,7 @@ class NewOrganizationModal extends Component {
     this.props.createOrganization(name)
 
     this.props.onClose()
+    this.setState({ name: "" });
   }
 
   render() {

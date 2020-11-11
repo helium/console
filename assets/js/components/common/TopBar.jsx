@@ -42,17 +42,15 @@ class TopBar extends Component {
     subscribeToMore({
       document: ORGANIZATIONS_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
+        if (!subscriptionData.data) return prev;
+        this.handleSubscriptionAdded();
       }
     })
   }
 
   handleSubscriptionAdded = () => {
-    const { fetchMore } = this.props.orgsQuery;
-    fetchMore({
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.orgsQuery;
+    refetch();
   }
 
   handleClick = e => {
@@ -67,35 +65,31 @@ class TopBar extends Component {
     if (visible) this.props.orgShowQuery.refetch()
   }
 
-  refreshOrgs = visible => {
-    if (visible) this.props.orgsQuery.refetch()
+  orgName = name => (
+    <Link to="/organizations">
+      <Text style={{ color: "#38A2FF", fontWeight: 500, cursor: 'pointer' }}>{name}</Text>
+    </Link>
+  );
+
+  orgMenu = (orgs) => (
+    <Menu onClick={e => this.handleOrgMenuClick(e, orgs)}>
+      {orgs.map(org => (
+        <Menu.Item key={org.id}>{org.name}</Menu.Item>
+      ))}
+    </Menu>
+  );
+
+  handleOrgMenuClick = (e, orgs) => {
+    const selectedOrg = orgs.filter(org => org.id === e.key)[0];
+    analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": e.key });
+    this.props.switchOrganization(selectedOrg);
   }
 
   render() {
-    const { logOut, currentOrganizationName, user, switchOrganization } = this.props;
+    const { logOut, currentOrganizationName, user } = this.props;
     const { organization } = this.props.orgShowQuery;
     const { allOrganizations } = this.props.orgsQuery;
     const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id);
-
-    const orgName = () => (
-      <Link to="/organizations">
-        <Text style={{ color: "#38A2FF", fontWeight: 500, cursor: 'pointer' }}>{currentOrganizationName}</Text>
-      </Link>
-    );
-
-    const handleOrgMenuClick = e => {
-      const selectedOrg = otherOrgs.filter(org => org.id === e.key)[0];
-      analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": e.key });
-      switchOrganization(selectedOrg);
-    }
-
-    const orgMenu = (
-      <Menu onClick={handleOrgMenuClick}>
-        {otherOrgs.map(org => (
-          <Menu.Item key={org.id}>{org.name}</Menu.Item>
-        ))}
-      </Menu>
-    );
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -144,8 +138,8 @@ class TopBar extends Component {
             <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
             <div style={{ position: 'relative', top: -45 }}>
               {otherOrgs.length > 0 ? 
-                <Dropdown overlay={orgMenu} placement="bottomRight" onVisibleChange={this.refreshOrgs}>{orgName()}</Dropdown>
-                : orgName()
+                <Dropdown overlay={this.orgMenu(otherOrgs)} placement="bottomRight">{this.orgName(currentOrganizationName)}</Dropdown>
+                : this.orgName(currentOrganizationName)
               }
             </div>
           </div>
