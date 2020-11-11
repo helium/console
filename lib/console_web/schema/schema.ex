@@ -320,6 +320,12 @@ defmodule ConsoleWeb.Schema do
       end
     end
 
+    field :top_bar_organizations, :organization do
+      config fn _, %{context: %{ current_user_id: user_id }} ->
+        {:ok, topic: "#{user_id}/top_bar_organizations"}
+      end
+    end
+
     field :organization_updated, :organization do
       arg :organization_id, :string
 

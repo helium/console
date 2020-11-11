@@ -10,13 +10,16 @@ import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
-import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
+import { switchOrganization } from '../../actions/organization';
+import { OrganizationName } from '../organizations/OrganizationName';
+import { OrganizationMenu } from '../organizations/OrganizationMenu';
 
 const queryOptions = {
   options: props => ({
@@ -28,10 +31,28 @@ const queryOptions = {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-@graphql(ORGANIZATION_SHOW_DC, queryOptions)
+@graphql(ORGANIZATION_SHOW_DC, {...queryOptions, name: 'orgShowQuery'})
+@graphql(ALL_ORGANIZATIONS, {...queryOptions, name: 'orgsQuery'})
 class TopBar extends Component {
   state = {
     visible: false,
+  }
+
+  componentDidMount() {
+    const { subscribeToMore } = this.props.orgsQuery;
+
+    subscribeToMore({
+      document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        this.handleSubscriptionAdded();
+      }
+    })
+  }
+
+  handleSubscriptionAdded = () => {
+    const { refetch } = this.props.orgsQuery;
+    refetch();
   }
 
   handleClick = e => {
@@ -43,12 +64,20 @@ class TopBar extends Component {
   }
 
   refreshDC = visible => {
-    if (visible) this.props.data.refetch()
+    if (visible) this.props.orgShowQuery.refetch()
+  }
+
+  handleOrgMenuClick = (e, orgs) => {
+    const selectedOrg = orgs.filter(org => org.id === e.key)[0];
+    analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": e.key });
+    this.props.switchOrganization(selectedOrg);
   }
 
   render() {
-    const { logOut, currentOrganizationName, user } = this.props
-    const { organization } = this.props.data
+    const { logOut, currentOrganizationName, user } = this.props;
+    const { organization } = this.props.orgShowQuery;
+    const { allOrganizations } = this.props.orgsQuery;
+    const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id);
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -95,7 +124,14 @@ class TopBar extends Component {
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
             <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
-            <Text style={{ color: "#38A2FF", fontWeight: 500, position: 'relative', top: -45 }}>{currentOrganizationName}</Text>
+            <div style={{ position: 'relative', top: -45 }}>
+            {otherOrgs.length > 0 ? 
+                <Dropdown overlay={<OrganizationMenu orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                  <OrganizationName name={currentOrganizationName} />
+                </Dropdown>
+                : <OrganizationName name={currentOrganizationName} />
+              }
+            </div>
           </div>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ visible })}>
             <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
@@ -108,13 +144,6 @@ class TopBar extends Component {
 
 const menu = (handleClick, currentOrganizationName) => (
   <Menu onClick={handleClick} style={{ textAlign: 'right' }}>
-    {
-      currentOrganizationName && (
-        <Menu.Item key="/organizations">
-          <Text>Organization: <span style={{ color: primaryBlue }}>{currentOrganizationName}</span></Text>
-        </Menu.Item>
-      )
-    }
     {
       currentOrganizationName && (
         <Menu.Item key="/profile">
@@ -136,7 +165,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, push }, dispatch);
+  return bindActionCreators({ logOut, push, switchOrganization }, dispatch);
 }
 
 export default TopBar
