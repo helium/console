@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { Tag, Icon } from 'antd';
 
-const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNew, hasFunction }) => {
+const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNew, hasFunction, onClick }) => {
   let labelColor = color ? color : "geekblue"
   if (hasFunction) labelColor = labelColorsHex[labelColor]
 
   return (
-    <Tag style={style} color={labelColor} closable={closable} onClose={onClose}>
+    <Tag style={style} color={labelColor} closable={closable} onClose={onClose} onClick={onClick}>
       {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
     </Tag>
   )
