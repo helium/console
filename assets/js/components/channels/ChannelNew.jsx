@@ -55,12 +55,13 @@ class ChannelNew extends Component {
         credentials: {},
         channelName: "",
         labels: [],
-        templateBody: ""
+        templateBody: "",
+        validInput: true
       })
   }
 
-  handleStep2Input = (credentials) => {
-    this.setState({ credentials, showNextSteps: true })
+  handleStep2Input = (credentials, validInput = true) => {
+    this.setState({ credentials, showNextSteps: true, validInput })
   }
 
   handleStep3Input = (e) => {
@@ -160,6 +161,7 @@ class ChannelNew extends Component {
                 type="primary"
                 htmlType="submit"
                 onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
               >
                 Create Integration
               </Button>

@@ -1,0 +1,30 @@
+version: '3'
+services:
+  console:
+    build: .
+    image: helium/console:latest
+    container_name: helium_console
+    environment:
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - OUI=${OUI}
+      - CLOAK_SECRET_KEY=${CLOAK_SECRET_KEY}
+      - ROUTER_SECRETS=${ROUTER_SECRETS}
+      - AUTH0_BASE_URL=${AUTH0_BASE_URL}
+      - AUTH_0_CLIENT_ID=${AUTH_0_CLIENT_ID}
+      - AUTH_0_DOMAIN=${AUTH_0_DOMAIN}
+      - SELF_HOSTED=${SELF_HOSTED}
+      - MAILGUN_API_KEY=${MAILGUN_API_KEY}
+      - SITE_DOMAIN_MAILGUN=${SITE_DOMAIN_MAILGUN}
+      - DATABASE_DB=console
+      - DATABASE_HOST=postgres
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    container_name: helium_postgres
+    environment:
+        - POSTGRES_DB=console
+        - POSTGRES_PASSWORD=postgres
+    restart: always
