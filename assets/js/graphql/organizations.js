@@ -64,9 +64,9 @@ export const ORGANIZATION_SUBSCRIPTION = gql`
   }
 `
 
-export const ORGANIZATIONS_SUBSCRIPTION = gql`
-  subscription onOrganizationsAddedDeleted {
-    organizationsAddedDeleted {
+export const TOP_BAR_ORGANIZATIONS_SUBSCRIPTION = gql`
+  subscription topBarOrganizations {
+    topBarOrganizations {
       id,
       name,
       inserted_at

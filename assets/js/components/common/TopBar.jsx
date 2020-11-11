@@ -10,7 +10,7 @@ import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
-import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
 const { Text } = Typography
@@ -42,7 +42,7 @@ class TopBar extends Component {
     const { subscribeToMore } = this.props.orgsQuery;
 
     subscribeToMore({
-      document: ORGANIZATIONS_SUBSCRIPTION,
+      document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         this.handleSubscriptionAdded();
