@@ -18,6 +18,8 @@ import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
+import { OrganizationName } from '../organizations/OrganizationName';
+import { OrganizationMenu } from '../organizations/OrganizationMenu';
 
 const queryOptions = {
   options: props => ({
@@ -64,20 +66,6 @@ class TopBar extends Component {
   refreshDC = visible => {
     if (visible) this.props.orgShowQuery.refetch()
   }
-
-  orgName = name => (
-    <Link to="/organizations">
-      <Text style={{ color: "#38A2FF", fontWeight: 500, cursor: 'pointer' }}>{name}</Text>
-    </Link>
-  );
-
-  orgMenu = (orgs) => (
-    <Menu onClick={e => this.handleOrgMenuClick(e, orgs)}>
-      {orgs.map(org => (
-        <Menu.Item key={org.id}>{org.name}</Menu.Item>
-      ))}
-    </Menu>
-  );
 
   handleOrgMenuClick = (e, orgs) => {
     const selectedOrg = orgs.filter(org => org.id === e.key)[0];
@@ -137,9 +125,11 @@ class TopBar extends Component {
           <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
             <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
             <div style={{ position: 'relative', top: -45 }}>
-              {otherOrgs.length > 0 ? 
-                <Dropdown overlay={this.orgMenu(otherOrgs)} placement="bottomRight">{this.orgName(currentOrganizationName)}</Dropdown>
-                : this.orgName(currentOrganizationName)
+            {otherOrgs.length > 0 ? 
+                <Dropdown overlay={<OrganizationMenu orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                  <OrganizationName name={currentOrganizationName} />
+                </Dropdown>
+                : <OrganizationName name={currentOrganizationName} />
               }
             </div>
           </div>
