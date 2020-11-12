@@ -1,7 +1,5 @@
 import React from 'react';
-import { Icon, Menu, Typography } from 'antd';
-import { Plus } from '@ant-design/icons';
-const { Text } = Typography;
+import { Icon, Menu } from 'antd';
 
 export const OrganizationMenu = props => {
   const { current, orgs, handleClick, ...rest } = props;
