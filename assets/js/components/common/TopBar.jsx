@@ -78,7 +78,6 @@ class TopBar extends Component {
   }
 
   handleOrgMenuClick = (e, orgs) => {
-    console.log(e)
     this.setState({ orgMenuVisible: false });
     if (e.key === 'current') return;
     if (e.key === 'new') {
