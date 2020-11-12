@@ -148,7 +148,7 @@ class TopBar extends Component {
               </Dropdown>
             </div>
           </div>
-          <Dropdown visible={this.state.userMenuVisible} overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
+          <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
             <img src={this.state.userMenuVisible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>
         </div>
