@@ -12,7 +12,7 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, SubMenu, Dropdown, Icon, Typography, Tooltip } from 'antd';
+import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
