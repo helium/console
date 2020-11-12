@@ -10,7 +10,7 @@ const roles = [
   {
     value: "manager",
     name: "Manager",
-    description: "Managers are limited in actions to some degree."
+    description: "Managers have similar permissions as administrators, but cannot manage Organizations, Data Credits, or Users."
   },
   {
     value: "read",
