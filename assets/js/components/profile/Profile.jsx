@@ -133,14 +133,16 @@ class Profile extends Component {
         <Card title="Profile Details"
           extra={
             <Fragment>
-              <Button
-                type="primary"
-                onClick={this.handleEnrollInMfa}
-                style={{ marginRight: 10 }}
-                disabled={mfaEnrollmentStatus}
-              >
-                { (!mfaEnrollmentStatus && "Enroll In 2FA") || "Enrolled In 2FA" }
-              </Button>
+              <UserCan noManager>
+                <Button
+                  type="primary"
+                  onClick={this.handleEnrollInMfa}
+                  style={{ marginRight: 10 }}
+                  disabled={mfaEnrollmentStatus}
+                >
+                  { (!mfaEnrollmentStatus && "Enroll In 2FA") || "Enrolled In 2FA" }
+                </Button>
+              </UserCan>
               <Button
                 type="danger"
                 onClick={() => {

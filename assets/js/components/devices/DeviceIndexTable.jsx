@@ -97,6 +97,7 @@ class DeviceIndexTable extends Component {
   }
 
   render() {
+    const { history } = this.props
     const columns = [
       {
         title: 'Device Name',
@@ -126,6 +127,7 @@ class DeviceIndexTable extends Component {
                       color={l.color}
                       hasIntegrations={l.channels.length > 0}
                       hasFunction={l.function}
+                      onClick={() => history.push(`/labels/${l.id}`)}
                     />
                   }
                 >
@@ -141,6 +143,7 @@ class DeviceIndexTable extends Component {
                       e.stopPropagation()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
+                    onClick={() => history.push(`/labels/${l.id}`)}
                   />
                 </UserCan>
               ))
@@ -154,7 +157,19 @@ class DeviceIndexTable extends Component {
         render: (text, record) => (
           <div>
             {
-              record.channels.map((c, i) => <Text key={c.id}>{c.name}{i != record.channels.length - 1 && ", "}</Text>)
+              record.channels.map(c => (
+                <a
+                  key={c.id}
+                  style={{ marginRight: 8 }}
+                  href="#"
+                  onClick={e => {
+                    e.preventDefault()
+                    this.props.history.push(`/integrations/${c.id}`)
+                  }}
+                >
+                  {c.name}
+                </a>
+              ))
             }
           </div>
         )

@@ -447,13 +447,26 @@ class DeviceShow extends Component {
                       labels={device.labels}
                       openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
                       openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+                      history={this.props.history}
                     />
                   </td>
                 </tr>
                 <tr style={{height: '30px'}}>
                   <td><Text strong>Associated Integrations</Text></td>
                   <td>
-                    {flatten(device.labels.map(l => l.channels)).map(c => c.name).join(", ")}
+                    {flatten(device.labels.map(l => l.channels)).map(c => (
+                      <a
+                        key={c.id}
+                        style={{ marginRight: 8 }}
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault()
+                          this.props.history.push(`/integrations/${c.id}`)
+                        }}
+                      >
+                        {c.name}
+                      </a>
+                    ))}
                   </td>
                 </tr>
                 <tr style={{height: '20px'}} />
@@ -465,7 +478,6 @@ class DeviceShow extends Component {
             </table>
           </Card>
           </Col>
-
 
           <Col span={9}>
             <DeviceShowStats device={device} smallerText={smallerText} />
