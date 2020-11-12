@@ -12,7 +12,7 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
+import { Menu, SubMenu, Dropdown, Icon, Typography, Tooltip } from 'antd';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
@@ -20,6 +20,7 @@ import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
 import { OrganizationName } from '../organizations/OrganizationName';
 import { OrganizationMenu } from '../organizations/OrganizationMenu';
+import NewOrganizationModal from '../organizations/NewOrganizationModal';
 
 const queryOptions = {
   options: props => ({
@@ -36,6 +37,7 @@ const queryOptions = {
 class TopBar extends Component {
   state = {
     visible: false,
+    showOrganizationModal: false
   }
 
   componentDidMount() {
@@ -67,7 +69,18 @@ class TopBar extends Component {
     if (visible) this.props.orgShowQuery.refetch()
   }
 
+  openOrganizationModal = () => {
+    this.setState({ showOrganizationModal: true })
+  }
+
+  closeOrganizationModal = () => {
+    this.setState({ showOrganizationModal: false })
+  }
+
   handleOrgMenuClick = (e, orgs) => {
+    if (e.key === 'new') {
+      return this.openOrganizationModal();
+    }
     const selectedOrg = orgs.filter(org => org.id === e.key)[0];
     analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": e.key });
     this.props.switchOrganization(selectedOrg);
@@ -75,6 +88,7 @@ class TopBar extends Component {
 
   render() {
     const { logOut, currentOrganizationName, user } = this.props;
+    const { showOrganizationModal } = this.state
     const { organization } = this.props.orgShowQuery;
     const { allOrganizations } = this.props.orgsQuery;
     const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id);
@@ -126,7 +140,7 @@ class TopBar extends Component {
             <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
             <div style={{ position: 'relative', top: -45 }}>
             {otherOrgs.length > 0 ? 
-                <Dropdown overlay={<OrganizationMenu orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                <Dropdown overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
                   <OrganizationName name={currentOrganizationName} />
                 </Dropdown>
                 : <OrganizationName name={currentOrganizationName} />
@@ -137,6 +151,11 @@ class TopBar extends Component {
             <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>
         </div>
+
+        <NewOrganizationModal
+          open={showOrganizationModal}
+          onClose={this.closeOrganizationModal}
+        />
       </div>
     )
   }
