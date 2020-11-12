@@ -18,7 +18,6 @@ import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
-import { OrganizationName } from '../organizations/OrganizationName';
 import { OrganizationMenu } from '../organizations/OrganizationMenu';
 import NewOrganizationModal from '../organizations/NewOrganizationModal';
 
@@ -36,7 +35,8 @@ const queryOptions = {
 @graphql(ALL_ORGANIZATIONS, {...queryOptions, name: 'orgsQuery'})
 class TopBar extends Component {
   state = {
-    visible: false,
+    userMenuVisible: false,
+    orgMenuVisible: false,
     showOrganizationModal: false
   }
 
@@ -78,6 +78,8 @@ class TopBar extends Component {
   }
 
   handleOrgMenuClick = (e, orgs) => {
+    this.setState({ orgMenuVisible: false });
+    if (e.key === 'current') return;
     if (e.key === 'new') {
       return this.openOrganizationModal();
     }
@@ -139,16 +141,15 @@ class TopBar extends Component {
           <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
             <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
             <div style={{ position: 'relative', top: -45 }}>
-            {otherOrgs.length > 0 ? 
-                <Dropdown overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
-                  <OrganizationName name={currentOrganizationName} />
-                </Dropdown>
-                : <OrganizationName name={currentOrganizationName} />
-              }
+              <Dropdown visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{ color: "#38A2FF", fontWeight: 500}}>
+                  {currentOrganizationName} {<Icon type="down" />}
+                </a>
+              </Dropdown>
             </div>
           </div>
-          <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ visible })}>
-            <img src={this.state.visible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
+          <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
+            <img src={this.state.userMenuVisible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>
         </div>
 
