@@ -264,44 +264,46 @@ class DataCreditsIndex extends Component {
           </Col>
           {!process.env.SELF_HOSTED && (
             <Col span={8}>
-              <Card
-                title="Default Payment Method"
-                extra={
-                  this.state.paymentMethods.length > 0 && (
-                    <Link to="#" onClick={() => this.openModal("showDefaultPaymentModal")}>
-                      <Text style={styles.tipText}>Change</Text>
-                    </Link>
-                  )
-                }
-                bodyStyle={{ ...styles.cardBody, minWidth: 230 }}
-                style={{ overflow: 'hidden' }}
-              >
-                {
-                  this.state.paymentMethods.length > 0 && defaultPayment && (
-                    <Row type="flex" style={{ alignItems: 'center', width: '100%' }}>
-                      <Col span={16}>
-                        <PaymentCard
-                          key={defaultPayment.id}
-                          card={defaultPayment.card}
-                        />
-                      </Col>
-                      <Col span={8} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: -2 }}>
-                        <Text style={{ fontFamily: 'monospace', color: '#777777' }}>
-                          {defaultPayment.card.exp_month > 9 ? defaultPayment.card.exp_month : "0" + defaultPayment.card.exp_month}/{defaultPayment.card.exp_year.toString().slice(2)}
-                        </Text>
-                      </Col>
-                    </Row>
-                  )
-                }
-                {
-                  (!defaultPayment && this.state.triedFetchingPayments) &&
-                  (
-                    <Row type="flex" style={{ alignItems: 'center' }}>
-                      <Text style={styles.numberCount}>N/A</Text>
-                    </Row>
-                  )
-                }
-              </Card>
+              <UserCan noManager>
+                <Card
+                  title="Default Payment Method"
+                  extra={
+                    this.state.paymentMethods.length > 0 && (
+                      <Link to="#" onClick={() => this.openModal("showDefaultPaymentModal")}>
+                        <Text style={styles.tipText}>Change</Text>
+                      </Link>
+                    )
+                  }
+                  bodyStyle={{ ...styles.cardBody, minWidth: 230 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  {
+                    this.state.paymentMethods.length > 0 && defaultPayment && (
+                      <Row type="flex" style={{ alignItems: 'center', width: '100%' }}>
+                        <Col span={16}>
+                          <PaymentCard
+                            key={defaultPayment.id}
+                            card={defaultPayment.card}
+                          />
+                        </Col>
+                        <Col span={8} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: -2 }}>
+                          <Text style={{ fontFamily: 'monospace', color: '#777777' }}>
+                            {defaultPayment.card.exp_month > 9 ? defaultPayment.card.exp_month : "0" + defaultPayment.card.exp_month}/{defaultPayment.card.exp_year.toString().slice(2)}
+                          </Text>
+                        </Col>
+                      </Row>
+                    )
+                  }
+                  {
+                    (!defaultPayment && this.state.triedFetchingPayments) &&
+                    (
+                      <Row type="flex" style={{ alignItems: 'center' }}>
+                        <Text style={styles.numberCount}>N/A</Text>
+                      </Row>
+                    )
+                  }
+                </Card>
+              </UserCan>
             </Col>
           )}
         </Row>
