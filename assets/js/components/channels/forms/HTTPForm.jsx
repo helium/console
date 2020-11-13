@@ -119,7 +119,7 @@ class HTTPForm extends Component {
             </Radio.Group>
           </Col>
           <Col sm={12}>
-            <Text strong style={{ marginTop: '50px'}}>Endpoint URL</Text><br/>
+            <Text strong style={{ marginTop: '50px'}}>Endpoint URL (Required)</Text><br/>
             <Input
               placeholder="Endpoint URL"
               name="endpoint"

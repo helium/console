@@ -6,7 +6,7 @@ import { Card } from 'antd';
 
 const ChannelNameForm = (props) => (
   <div>
-    <Card title="Step 3 - Name your Integration">
+    <Card title="Step 3 - Name your Integration (Required)">
       <Form>
         <Form.Item>
           <Input
