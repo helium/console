@@ -6,7 +6,7 @@ import Http from '../../img/http-channel.svg'
 import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
 
-export const newChannelTypes = [
+export const NEW_CHANNEL_TYPES = [
   { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
   { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
   { name: "AWS IoT Core", link: "/integrations/new/aws", img: `${Aws}`},
@@ -14,7 +14,7 @@ export const newChannelTypes = [
   // { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
 ]
 
-export const premadeChannelTypes = [
+export const PREMADE_CHANNEL_TYPES = [
   { name: "Helium Cargo", link: "/integrations/new/cargo", img: `${Cargo}` },
   { name: "myDevices Cayenne", link: "/integrations/new/mydevices", img: `${MyDevices}` },
 ]

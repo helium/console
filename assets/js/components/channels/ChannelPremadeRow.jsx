@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import Cargo from '../../../img/heliumcargo.svg'
-import MyDevices from '../../../img/mydevices.svg'
 import { IntegrationTypeTile } from './IntegrationTypeTile';
-
+import { PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
 
 const styles = {
   createRow: {
@@ -28,17 +26,12 @@ const styles = {
   }
 }
 
-const channelTypes = [
-  { name: "Helium Cargo", link: "/integrations/new/cargo", img: `${Cargo}` },
-  { name: "myDevices Cayenne", link: "/integrations/new/mydevices", img: `${MyDevices}` },
-]
-
 class ChannelPremadeRow extends Component {
   render() {
     return(
       <div style={styles.createRow}>
         {
-          channelTypes.map((channel, i) => {
+          PREMADE_CHANNEL_TYPES.map((channel, i) => {
             if (channel.name) return (
               <div className="wrapper" style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
                 <Link to={channel.link}>

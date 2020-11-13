@@ -1,11 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import Azure from '../../../img/azure-channel.svg'
-import Aws from '../../../img/aws-channel.svg'
-import Google from '../../../img/google-channel.svg'
-import Mqtt from '../../../img/mqtt-channel.svg'
-import Http from '../../../img/http-channel.svg'
 import { IntegrationTypeTile } from './IntegrationTypeTile';
+import { NEW_CHANNEL_TYPES } from '../../util/integrationInfo';
 
 
 const styles = {
@@ -30,21 +26,13 @@ const styles = {
   }
 }
 
-const channelTypes = [
-  { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
-  { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
-  { name: "AWS IoT Core", link: "/integrations/new/aws", img: `${Aws}`},
-  // { name: "Azure IoT", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
-  // { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
-]
-
 class ChannelCreateRow extends Component {
   render() {
 
     return(
       <div style={styles.createRow}>
         {
-          channelTypes.map(channel => (
+          NEW_CHANNEL_TYPES.map(channel => (
             <div className="wrapper" style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
               <Link to={channel.link}>
               <IntegrationTypeTile 
