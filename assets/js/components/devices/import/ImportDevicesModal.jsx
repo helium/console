@@ -9,9 +9,10 @@ import { fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDe
 import ChooseImportType from './ChooseImportType';
 import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
-import { Modal, Spin } from 'antd';
+import { Modal, Spin, Typography } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import analyticsLogger from '../../../util/analyticsLogger';
+const { Text, Title } = Typography
 
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: 'white' }} spin />;
 const antLoaderGrey = <LoadingOutlined style={{ fontSize: 50, color: 'grey' }} spin />
@@ -33,7 +34,8 @@ const ImportDevicesModal = (props) => {
     importTtnDevices,
     ttnAuthorizationCode,
     importGenericDevices,
-    resetGenericDeviceImport
+    resetGenericDeviceImport,
+    importComplete
   } = props;
   const [ importType, setImportType ] = useState('');
   const {
@@ -50,16 +52,6 @@ const ImportDevicesModal = (props) => {
     analyticsLogger.logEvent("ACTION_GENERIC_IMPORT", { withLabel });
     importGenericDevices(scannedGenericDevices, withLabel);
   }
-
-  useEffect(() => {
-    if (importStarted) {
-      onClose();
-      setTimeout(() => {
-        resetGenericDeviceImport();
-        setImportType('');
-      }, 500);
-    }
-  }, [importStarted]);
 
   return (
     <Modal
@@ -130,7 +122,12 @@ const ImportDevicesModal = (props) => {
           importType === 'csv' && (
             (genericImportScanned &&
             <ShowDeviceData numDevices={scannedGenericDevices.length} onImport={handleImport}/>) ||
-            <Spin indicator={antLoaderGrey}/>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 20 }}>
+              <Title style={{width: '100%', textAlign: 'center'}}>Import Status</Title>
+              {importStarted && !importComplete && <Spin indicator={antLoaderGrey} style={{ marginBottom: 20 }}/>}
+              {importStarted && !importComplete && <Text style={{ textAlign: 'center' }}>Please wait while your import is being completed.</Text>}
+              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please refresh the page to see your devices.</Text>}
+            </div>
           )
         )
       }

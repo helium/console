@@ -58,6 +58,7 @@ class DeviceIndex extends Component {
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
     allDevicesSelected: false,
+    importComplete: false
   }
 
   componentDidMount() {
@@ -102,6 +103,7 @@ class DeviceIndex extends Component {
             device${(updatedImport.successful_devices !== 1 && "s") || ""} from ${
               updatedImport.type === "ttn" ? "The Things Network." : "CSV."
             }. Refresh this page to see the changes.`);
+            this.setState({ importComplete: true })
           } else if (updatedImport.status === "failed"){
             displayError(`Failed to import devices from ${
               updatedImport.type === "ttn" ? "The Things Network" : "CSV"
@@ -179,7 +181,7 @@ class DeviceIndex extends Component {
   }
 
   closeImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: false });
+    this.setState({ showImportDevicesModal: false, importComplete: false });
   }
 
   closeDeleteDeviceModal = () => {
@@ -227,7 +229,8 @@ class DeviceIndex extends Component {
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
       labelsSelected,
-      deviceToRemoveLabel
+      deviceToRemoveLabel,
+      importComplete
     } = this.state
 
     const { devices, loading, error } = this.props.devicesQuery;
@@ -291,7 +294,7 @@ class DeviceIndex extends Component {
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
-        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal}/>
+        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal} importComplete={importComplete}/>
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}
