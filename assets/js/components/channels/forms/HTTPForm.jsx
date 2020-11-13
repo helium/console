@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
-import { Typography, Button, Input, Form, Select } from 'antd';
+import { Typography, Button, Input, Radio, Tooltip, Icon } from 'antd';
 const { Text } = Typography
-const { Option } = Select
 import { Row, Col } from 'antd';
 
 class HTTPForm extends Component {
   state = {
     method: "post",
     endpoint: "",
-    headers: [
-      { header: "", value: "" },
-      { header: "", value: "" }
-    ],
+    headers: [{ header: '', value: '' }],
     validEndpoint: true
   }
 
@@ -67,8 +63,8 @@ class HTTPForm extends Component {
     this.setState({ [e.target.name]: e.target.value, validEndpoint }, () => this.validateInput(validEndpoint))
   }
 
-  handleMethodUpdate = (method) => {
-    this.setState({ method }, this.validateInput)
+  handleMethodUpdate = e => {
+    this.setState({ method: e.target.value }, this.validateInput)
   }
 
   handleHttpHeaderUpdate = (e) => {
@@ -99,83 +95,84 @@ class HTTPForm extends Component {
   }
 
   render() {
-    const { type } = this.props
+    const METHOD_TYPES = [
+      { label: 'POST', value: 'post'},
+      { label: 'GET', value: 'get'},
+      { label: 'PUT', value: 'put'},
+      { label: 'PATCH', value: 'patch'}
+    ];
 
     return(
       <div>
-        <Text>
-          {type === "update" ? "Update your HTTP Connection Details" : "Enter your HTTP Connection Details"}
-        </Text>
-
-        <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
-        <Col sm={12}>
-          <Select
-            value={this.state.method}
-            onChange={this.handleMethodUpdate}
-            style={{ width: '100%'}}
-          >
-            <Option value="post">POST</Option>
-            <Option value="get">GET</Option>
-            <Option value="put">PUT</Option>
-            <Option value="patch">PATCH</Option>
-          </Select>
-          </Col>
-
+        <Row gutter={16} style={{ marginBottom: 16 }}>
           <Col sm={12}>
-          <Input
-            placeholder="Endpoint"
-            name="endpoint"
-            value={this.state.endpoint}
-            onChange={this.handleInputUpdate}
-            style={{ width: '100%'}}
-          />
-          {!this.state.validEndpoint && (
-            <Text style={{ color: '#F5222D', marginTop: 8 }}>
-              Endpoint URL should not have spaces
-            </Text>
-          )}
+            <Radio.Group
+              defaultValue="post"
+              onChange={this.handleMethodUpdate}
+              value={this.state.method}
+              buttonStyle="solid"
+              style={{ paddingTop: '10px' }}
+            >
+              {METHOD_TYPES.map(method => (
+                <Radio.Button key={`radio_${method.value}`} value={method.value}>{method.label}</Radio.Button>
+              ))}
+            </Radio.Group>
           </Col>
-        </Row>
-
+          <Col sm={12}>
+            <Text strong style={{ marginTop: '50px'}}>Endpoint URL</Text><br/>
+            <Input
+              placeholder="Endpoint URL"
+              name="endpoint"
+              value={this.state.endpoint}
+              onChange={this.handleInputUpdate}
+              style={{ width: '100%'}}
+              suffix={
+                <Tooltip title="The URL should start with either 'http://' or 'https://' and contain no spaces">
+                  <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                </Tooltip>
+              }
+            />
+            {!this.state.validEndpoint && (
+              <Text style={{ color: '#F5222D', marginTop: 8 }}>
+                Endpoint URL should not have spaces
+              </Text>
+            )}
+          </Col>
+         </Row>
+        <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20 }}>
+          <Text strong>HTTP Headers (Optional)</Text>
+        <br/>
         {
           this.state.headers.map((obj, i) => (
             <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
-            <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
-            <Col sm={12}>
-              <Input
-                placeholder="HTTP Header"
-                name={`${i}-header`}
-                value={obj.header}
-                onChange={this.handleHttpHeaderUpdate}
-                style={{ width: '100%'}}
-              />
-              </Col>
-              <Col sm={12}>
-              <Input
-                placeholder="Value"
-                name={`${i}-value`}
-                value={obj.value}
-                onChange={this.handleHttpHeaderUpdate}
-                style={{ width: '100%'}}
-              />
-              </Col>
-
-              {
-                (i > 1) &&
-                  <Button
-                    onClick={() => this.removeHeaderRow(i)} style={{backgroundColor: 'white', boxShadow: 'none'}}
-                    icon="close"
-                    shape="circle"
+              <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-header`}
+                    value={obj.header}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
                   />
-              }
-            </div>
-                          </Row>
-
+                  </Col>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+              </div>
+            </Row>
           ))
         }
-
-        <Button icon="plus" type="default" onClick={this.addHeaderRow} >Add</Button>
+        <Row>
+            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon="plus" type="default" onClick={this.addHeaderRow} >Add Header</Button>
+        </Row>
       </div>
+    </div>
     );
   }
 }
