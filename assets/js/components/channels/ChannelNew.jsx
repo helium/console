@@ -21,6 +21,7 @@ import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Select, Card, Button } from 'antd';
+import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
 const { Text } = Typography
 const { Option } = Select
 
@@ -123,20 +124,28 @@ class ChannelNew extends Component {
       >
 
       <Card title="Step 1 – Choose an Integration Type">
-      <div className="flexwrapper">
-
-        <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
-          <ChannelPremadeRow />
+        {type && (
+          <div className="flexwrapper" style={{ justifyContent: "space-between", alignItems: "center" }}>
+            <IntegrationTypeTileSimple type={type} />
+            <Link to="/integrations/new"><Button size="small">Change</Button></Link>
+          </div>
+        )}
+        {!type && (
+          <div className="flexwrapper">
+            <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
+              <ChannelPremadeRow />
+            </Card>
+            <Card size="small" title="Add a Custom Integration" className="integrationcard">
+              <ChannelCreateRow />
+            </Card>
+          </div>
+        )}
         </Card>
-
-        <Card size="small" title="Add a Custom Integration" className="integrationcard">
-          <ChannelCreateRow />
-        </Card>
-        </div>
-        </Card>
-        <Card title="Step 2 - Verify Details">
-          {this.renderForm()}
-        </Card>
+        { type && (
+          <Card title="Step 2 - Endpoint Details">
+            {this.renderForm()}
+          </Card>
+        )}
         { showNextSteps && (
             <ChannelNameForm
               channelName={this.state.channelName}
