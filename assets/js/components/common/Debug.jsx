@@ -34,8 +34,8 @@ class Debug extends Component {
     const hotspots = JSON.parse(event.hotspots)
     const channels = JSON.parse(event.channels)
 
-    if (hotspots && hotspots.length > 0) event.hotspots = hotspots.map(h => omit(h, ["__typename"]))
-    if (channels && channels.length > 0) {
+    if (hotspots) event.hotspots = hotspots.map(h => omit(h, ["__typename"]))
+    if (channels) {
       event.channels = channels.map(c => {
         const channel = omit(c, ["__typename"])
         if (channel.debug) {
