@@ -48,15 +48,6 @@ class DecoderForm extends Component {
 
   render() {
     const { format } = this.state;
-    // const { searchFunctions } = this.props.data;
-
-    // const {
-    //   checkAllFunctions,
-    //   allFunctions,
-    //   checkedFunctions,
-    //   checkSingleFunction,
-    //   labelNormalizedFunctions,
-    // } = this.props
     const { searchFunctions } = this.state
     console.log(searchFunctions)
 
