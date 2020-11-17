@@ -6,7 +6,7 @@ import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import { graphql } from 'react-apollo';
-import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button } from 'antd';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
@@ -73,7 +73,9 @@ const statusBadge = (status) => {
 @graphql(DEVICE_EVENTS, queryOptions)
 class EventsDashboard extends Component {
   state = {
-    rows: []
+    rows: [],
+    expandedRowKeys: [],
+    expandAll: false,
   }
 
   componentDidUpdate(prevProps) {
@@ -95,14 +97,34 @@ class EventsDashboard extends Component {
   }
 
   addEvent = event => {
-    const { rows } = this.state
+    const { rows, expandAll } = this.state
     const lastEvent = rows[rows.length - 1]
     if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
       rows.pop()
     }
+
+    const expandedRowKeys = expandAll ? this.state.expandedRowKeys.concat(event.id) : this.state.expandedRowKeys
+
     this.setState({
-      rows: [event].concat(rows)
+      rows: [event].concat(rows),
+      expandedRowKeys
     })
+  }
+
+  toggleExpandAll = () => {
+    if (this.state.expandAll) {
+      this.setState({ expandAll: false, expandedRowKeys: [] })
+    } else {
+      this.setState({ expandAll: true, expandedRowKeys: this.state.rows.map(r => r.id) })
+    }
+  }
+
+  onExpandRow = (expandRow, row) => {
+    if (expandRow) {
+      this.setState({ expandedRowKeys: this.state.expandedRowKeys.concat(row.id) })
+    } else {
+      this.setState({ expandAll: false, expandedRowKeys: this.state.expandedRowKeys.filter(id => id != row.id) })
+    }
   }
 
   renderExpanded = record => {
@@ -208,7 +230,7 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const { rows } = this.state
+    const { rows, expandedRowKeys, expandAll } = this.state
 
     const columns = [
       {
@@ -254,10 +276,20 @@ class EventsDashboard extends Component {
         <div style={{padding: 20, boxSizing: 'border-box'}}>
         <PacketGraph events={this.state.rows} />
         </div>
-        <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text strong style={{display: 'block', fontSize: 17, color: 'rgba(0, 0, 0, 0.85)'}}>
-            Event Log
-          </Text>
+        <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+          <span>
+            <Text strong style={{ fontSize: 17, color: 'rgba(0, 0, 0, 0.85)'}}>
+              Event Log
+            </Text>
+
+            <Checkbox
+              onChange={this.toggleExpandAll}
+              checked={expandAll}
+              style={{ marginLeft: 20 }}
+            >
+              Expand All
+            </Checkbox>
+          </span>
           <a
             href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
             download="event-debug.json"
@@ -274,6 +306,8 @@ class EventsDashboard extends Component {
           rowKey={record => record.id}
           pagination={false}
           expandedRowRender={this.renderExpanded}
+          expandedRowKeys={expandedRowKeys}
+          onExpand={this.onExpandRow}
         />
       </React.Fragment>
     )
