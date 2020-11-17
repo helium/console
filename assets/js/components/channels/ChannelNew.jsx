@@ -129,7 +129,7 @@ class ChannelNew extends Component {
         user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Channels&nbsp;&nbsp;/</Text></Link>
+            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
             {type ? 
               (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Create New Integration&nbsp;&nbsp;/</Text></Link>) :
               (<Text>&nbsp;&nbsp;Create New Integration</Text>)
