@@ -22,6 +22,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
+import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
 const { Text } = Typography
 const { Option } = Select
 
@@ -107,6 +108,12 @@ class ChannelNew extends Component {
     }
   }
 
+  getIntegrationType = () => {
+    return [...PREMADE_CHANNEL_TYPES, ...NEW_CHANNEL_TYPES].filter(t => (
+      t.link.split("new/")[1] === this.state.type)
+    );
+  }
+
   render() {
     const { showNextSteps, type } = this.state
     const { allLabels } = this.props.data
@@ -118,7 +125,11 @@ class ChannelNew extends Component {
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Channels&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;Create New Integration</Text>
+            {type ? 
+              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Create New Integration&nbsp;&nbsp;/</Text></Link>) :
+              (<Text>&nbsp;&nbsp;Create New Integration</Text>)
+            }
+            <Text>&nbsp;&nbsp;{type ? this.getIntegrationType()[0].name : null}</Text>
           </div>
         }
       >
