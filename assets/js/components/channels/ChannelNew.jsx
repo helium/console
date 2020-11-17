@@ -11,6 +11,7 @@ import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import CargoForm from './forms/CargoForm.jsx'
 import MyDevicesForm from './forms/MyDevicesForm.jsx'
+import AdafruitForm from './forms/AdafruitForm.jsx';
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
@@ -22,6 +23,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
+import DecoderForm from './DecoderForm';
 const { Text } = Typography
 const { Option } = Select
 
@@ -40,7 +42,8 @@ class ChannelNew extends Component {
     credentials: {},
     channelName: "",
     labels: {},
-    templateBody: ""
+    templateBody: "",
+    decoderType: 'cayenne'
   }
 
   componentDidMount() {
@@ -102,6 +105,8 @@ class ChannelNew extends Component {
         return <AzureForm onValidInput={this.handleStep2Input}/>
       case "mydevices":
         return <MyDevicesForm onValidInput={this.handleStep2Input}/>
+      case "adafruit":
+        return <AdafruitForm onValidInput={this.handleStep2Input} />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
@@ -152,6 +157,9 @@ class ChannelNew extends Component {
               onInputUpdate={this.handleStep3Input}
             />
         )}
+        { showNextSteps && type === 'adafruit' && (
+          <DecoderForm />
+        )}
         { showNextSteps && (
           <Card title="Step 4 - Apply Integration to Label (Can be added later)">
             <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
@@ -168,7 +176,7 @@ class ChannelNew extends Component {
             </div>
           </Card>
         )}
-        { showNextSteps && (type == "http" || type == "mqtt") && (
+        { showNextSteps && (type === "http" || type === "mqtt" || type === 'adafruit') && (
           <ChannelPayloadTemplate templateBody={this.state.templateBody} handleTemplateUpdate={this.handleTemplateUpdate} />
         )}
          <style jsx>{`

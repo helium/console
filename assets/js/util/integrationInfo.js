@@ -17,4 +17,5 @@ export const NEW_CHANNEL_TYPES = [
 export const PREMADE_CHANNEL_TYPES = [
   { name: "Helium Cargo", link: "/integrations/new/cargo", img: `${Cargo}` },
   { name: "myDevices Cayenne", link: "/integrations/new/mydevices", img: `${MyDevices}` },
+  { name: "Adafruit IO", link: "/integrations/new/adafruit", img: `` },
 ]
