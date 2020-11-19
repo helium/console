@@ -3,13 +3,14 @@ import * as rest from '../util/rest';
 import { displayInfo, displayError } from '../util/messages';
 import sanitizeHtml from 'sanitize-html';
 
-export const createChannel = (params, labels) => {
+export const createChannel = (params) => {
   return (dispatch) => {
-    const channelParams = sanitizeParams(params)
+    const channelParams = sanitizeParams(params.channel)
 
     rest.post('/api/channels', {
         channel: channelParams,
-        labels
+        labels: Object.keys(params.labels).length > 0 && params.labels.constructor === Object ? params.labels : undefined,
+        func: Object.keys(params.func).length > 0 && params.func.constructor === Object ? params.func : undefined
       })
       .then(response => {
         displayInfo(`${response.data.name} has been created`)

@@ -1,59 +1,41 @@
 import React, { Component } from 'react';
-import { Typography, Input, Tooltip, Icon, Radio, Card } from 'antd';
+import { Typography, Radio, Card } from 'antd';
 const { Text } = Typography
-import { Row, Col } from 'antd';
-import { SEARCH_FUNCTIONS } from '../../graphql/search';
-import { createFunction } from '../../actions/function';
-import { connect } from 'react-redux';
+import { Row, } from 'antd';
+import { ALL_FUNCTIONS } from '../../graphql/functions';
 import { graphql } from 'react-apollo';
-import { bindActionCreators } from 'redux';
-import FunctionValidator from '../functions/FunctionValidator';
+import FunctionsSearch from '../common/FunctionsSearch';
 
 const queryOptions = {
   options: props => ({
-    variables: {
-      query: ""
-    }
+    fetchPolicy: 'cache-and-network',
   })
 }
 
-@connect(null, mapDispatchToProps)
-@graphql(SEARCH_FUNCTIONS, queryOptions)
+@graphql(ALL_FUNCTIONS, queryOptions)
 class DecoderForm extends Component {
   state = {
     format: 'cayenne',
-    body: '',
-    searchFunctions: []
-  }
-
-  runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
-    if (!loading) {
-      fetchMore({
-        variables: { query: value },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          const { searchFunctions } = fetchMoreResult
-
-          this.setState({ searchFunctions })
-        }
-      })
-    }
+    functionSelected: null
   }
 
   handleDecoderChange =(e) => {
     this.setState({ format: e.target.value }, () => {
-      this.setState({ body: e.target.value === 'custom' ? "function Decoder(bytes, port) { \n\n  return decoded; \n}" : '' });
+      if (e.target.value === 'cayenne') this.setState({ functionSelected: null });
     });
+  }
+
+  handleFunctionSelection = value => {
+    this.setState({ functionSelected: value });
   }
 
   render() {
     const { format } = this.state;
-    const { searchFunctions } = this.state
-    console.log(searchFunctions)
+    const { allFunctions } = this.props.data;
 
     return (
       <div>
-        <Card title="Step 3 - Choose your decoder (Required)">
+        <Card title="Step 4 - Choose your decoder (Required)">
           <Row gutter={16} style={{marginBottom: 16 }}>
             <Text>Decoder Format</Text>
             <br />
@@ -62,17 +44,16 @@ class DecoderForm extends Component {
               <Radio value="custom" style={{ fontSize: '16px' }}>Custom</Radio>
             </Radio.Group>
           </Row>
+          { format === 'custom' && (
+            <Row gutter={16} style={{marginBottom: 16 }}>
+              <FunctionsSearch allFunctions={allFunctions} handleFunctionSelection={this.handleFunctionSelection} />
+            </Row>
+          )}
+          {this.props.children}
         </Card>
-        { format === 'custom' && (
-          <FunctionValidator body={this.state.body} />
-        )}
       </div>
     );
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createFunction }, dispatch);
 }
 
 export default DecoderForm;

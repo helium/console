@@ -294,7 +294,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Search for functions"
-    field :search_functions, list_of(:label) do
+    field :search_functions, list_of(:function) do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search_functions/2
     end

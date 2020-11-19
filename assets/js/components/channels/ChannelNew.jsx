@@ -44,7 +44,8 @@ class ChannelNew extends Component {
     channelName: "",
     labels: {},
     templateBody: "",
-    decoderType: 'cayenne'
+    decoderType: 'cayenne',
+    func: { 'hello': "world" }
   }
 
   componentDidMount() {
@@ -60,7 +61,8 @@ class ChannelNew extends Component {
         channelName: "",
         labels: [],
         templateBody: "",
-        validInput: true
+        validInput: true,
+        decoder: null
       })
   }
 
@@ -72,16 +74,36 @@ class ChannelNew extends Component {
     this.setState({ channelName: e.target.value})
   }
 
+  handleDecoderSelection = value => {
+    this.setState({ decoder: value })
+  }
+
+  getRootType = (type) => {
+    switch(type) {
+      case 'cargo':
+      case 'mydevices':
+        return 'http';
+      case 'adafruit':
+        return 'mqtt';
+      default:
+        return type;
+    }
+  }
+
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody } = this.state
+    const { channelName, type, credentials, labels, templateBody, func } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
-    this.props.createChannel({
-      name: channelName,
-      type: type == 'cargo' || type == 'mydevices' ? 'http' : type,
-      credentials,
-      payload_template: type == "http" || type == "mqtt" ? templateBody : undefined,
-    }, labels)
+    this.props.createChannel({ 
+      channel: {
+        name: channelName,
+        type: this.getRootType(type),
+        credentials,
+        payload_template: type == "http" || type == "mqtt" ? templateBody : undefined,
+      }, 
+      func, 
+      labels
+    });
   }
 
   handleLabelsUpdate = (labels) => {
@@ -169,10 +191,21 @@ class ChannelNew extends Component {
             />
         )}
         { showNextSteps && type === 'adafruit' && (
-          <DecoderForm />
+          <DecoderForm onChange={this.handleDecoderSelection}>
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Create Integration
+              </Button>
+            </div>
+          </DecoderForm>
         )}
-        { showNextSteps && (
-          <Card title="Step 4 - Apply Integration to Label (Can be added later)">
+        { showNextSteps && type !== 'adafruit' && (
+          <Card title={"Step 4 - Apply Integration to Label (Can be added later)"}>
             <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
             <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
             <div style={{ marginTop: 20 }}>
@@ -187,7 +220,7 @@ class ChannelNew extends Component {
             </div>
           </Card>
         )}
-        { showNextSteps && (type === "http" || type === "mqtt" || type === 'adafruit') && (
+        { showNextSteps && (type === "http" || type === "mqtt") && (
           <ChannelPayloadTemplate templateBody={this.state.templateBody} handleTemplateUpdate={this.handleTemplateUpdate} />
         )}
          <style jsx>{`
