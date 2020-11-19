@@ -16,6 +16,7 @@ defmodule Console.Events.Event do
     field :frame_down, :integer
     field :payload_size, :integer
     field :port, :integer
+    field :dc_used, :integer
     field :devaddr, :string
     field :hotspots, {:array, :map}
     field :channels, {:array, :map}
@@ -41,6 +42,7 @@ defmodule Console.Events.Event do
       :device_id,
       :port,
       :devaddr,
+      :dc_used,
     ])
   end
 end
