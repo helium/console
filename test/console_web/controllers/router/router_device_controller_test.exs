@@ -87,6 +87,10 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
         |> post("/api/router/devices/#{device_0.id}/event", %{
+          "dc" => %{
+            "balance" => 3000,
+            "nonce" => 0
+          },
           "category" => "up",
           "description" => "test description",
           "reported_at" => timestamp,
