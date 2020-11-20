@@ -49,7 +49,8 @@ export const ALL_ORGANIZATIONS = gql`
       name,
       dc_balance,
       inactive_count,
-      active_count
+      active_count,
+      received_free_dc
     }
   }
 `
