@@ -19,7 +19,8 @@ export const ORGANIZATION_SHOW_DC = gql`
       default_payment_id,
       automatic_charge_amount,
       automatic_payment_method,
-      dc_balance_nonce
+      dc_balance_nonce,
+      received_free_dc
     }
   }
 `

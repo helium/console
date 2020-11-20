@@ -327,13 +327,17 @@ class DataCreditsIndex extends Component {
             {
               organization && organization.dc_balance_nonce != 0 ? (
                 <React.Fragment>
-                  <Button
-                    size="large"
-                    icon="right-circle"
-                    onClick={() => this.openModal("showOrganizationTransferDCModal")}
-                  >
-                    Transfer DC to Org
-                  </Button>
+                  {
+                    (!organization.received_free_dc || organization.dc_balance > 10000) && (
+                      <Button
+                        size="large"
+                        icon="right-circle"
+                        onClick={() => this.openModal("showOrganizationTransferDCModal")}
+                      >
+                        Transfer DC to Org
+                      </Button>
+                    )
+                  }
                   <Button
                     size="large"
                     icon="sync"

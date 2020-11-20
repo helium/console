@@ -240,6 +240,8 @@ defmodule ConsoleWeb.DataCreditController do
     amount = amount |> trunc()
 
     cond do
+      current_organization.received_free_dc && (current_organization.dc_balance - amount) < 10000 ->
+        {:error, :bad_request, "You cannot transfer the initial 10000 Data Credits given to you"}
       amount < 1 ->
         {:error, :bad_request, "Please select a higher Data Credit amount for transfer"}
       amount > current_organization.dc_balance ->
