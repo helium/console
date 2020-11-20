@@ -34,6 +34,22 @@ const queryOptions = {
   })
 }
 
+const adafruitBody = `{
+  "feeds": {
+    "dummy": "value"
+    {{#decoded}}{{#payload}}
+        {{#value.x}}
+          ,"{{name}}_x": "{{value.x}}"
+          ,"{{name}}_y": "{{value.y}}"
+          ,"{{name}}_z": "{{value.z}}"
+        {{/value.x}}
+        {{^value.x}}
+          ,"{{name}}":"{{value}}"
+        {{/value.x}}
+    {{/payload}}{{/decoded}}
+  }
+}`;
+
 @connect(null, mapDispatchToProps)
 @graphql(ALL_LABELS, queryOptions)
 class ChannelNew extends Component {
@@ -44,8 +60,10 @@ class ChannelNew extends Component {
     channelName: "",
     labels: {},
     templateBody: "",
-    decoderType: 'cayenne',
-    func: { 'hello': "world" }
+    func: {
+      format: 'cayenne',
+      body: adafruitBody
+    }
   }
 
   componentDidMount() {
@@ -61,8 +79,7 @@ class ChannelNew extends Component {
         channelName: "",
         labels: [],
         templateBody: "",
-        validInput: true,
-        decoder: null
+        validInput: true
       })
   }
 
@@ -74,8 +91,23 @@ class ChannelNew extends Component {
     this.setState({ channelName: e.target.value})
   }
 
-  handleDecoderSelection = value => {
-    this.setState({ decoder: value })
+  handleDecoderSelection = payload => {
+    let func;
+    console.log({ payload })
+    if (payload.format === 'custom') {
+      func = {
+        format: 'custom', 
+        id: payload.func ? payload.func.id : null,
+        body: ""
+      };
+    } else {
+      func = {
+        name: this.state.channelName,
+        format: 'cayenne',
+        body: adafruitBody
+      }
+    }
+    this.setState({ func }, () => console.log(this.state.func));
   }
 
   getRootType = (type) => {

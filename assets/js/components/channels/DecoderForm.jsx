@@ -21,12 +21,17 @@ class DecoderForm extends Component {
 
   handleDecoderChange =(e) => {
     this.setState({ format: e.target.value }, () => {
-      if (e.target.value === 'cayenne') this.setState({ functionSelected: null });
-    });
+      if (e.target.value === 'cayenne') {
+        this.setState({ functionSelected: null })
+      }
+      this.props.onChange({ format: e.target.value });
+    }); 
   }
 
   handleFunctionSelection = value => {
-    this.setState({ functionSelected: value });
+    console.log(value)
+    this.setState({ functionSelected: value },
+      this.props.onChange({ format: this.state.format, func: { id: value }}));
   }
 
   render() {

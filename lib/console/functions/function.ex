@@ -35,9 +35,14 @@ defmodule Console.Functions.Function do
 
   defp put_native_decoder_body(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{ format: format }} ->
+      %Ecto.Changeset{valid?: true, changes: %{ format: format, body: body }} ->
         case format do
-          "cayenne" -> put_change(changeset, :body, "Default Cayenne Function")
+          "cayenne" -> 
+            if body == "" do
+              put_change(changeset, :body, "Default Cayenne Function")
+            else
+              changeset
+            end
           "browan_object_locator" -> put_change(changeset, :body, "Default Browan Object Locator Function")
           _ -> changeset
         end

@@ -237,6 +237,9 @@ defmodule Console.Labels do
   end
 
   def add_function_to_labels(function, label_ids, organization) do
+    IO.puts "\n\n\n!!!!!!!!!!!!!!!!!!!!!!"
+    IO.inspect label_ids
+    IO.puts "!!!!!!!!!!!!!!!!!!!!!!\n\n\n"
     Repo.transaction(fn ->
       Enum.each(label_ids, fn id ->
         label = get_label!(organization, id)
