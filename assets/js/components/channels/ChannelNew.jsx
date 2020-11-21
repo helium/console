@@ -59,10 +59,9 @@ class ChannelNew extends Component {
     credentials: {},
     channelName: "",
     labels: {},
-    templateBody: "",
+    templateBody: this.props.match.params.id === 'adafruit' ? adafruitBody : "",
     func: {
-      format: 'cayenne',
-      body: adafruitBody
+      format: 'cayenne'
     }
   }
 
@@ -93,21 +92,18 @@ class ChannelNew extends Component {
 
   handleDecoderSelection = payload => {
     let func;
-    console.log({ payload })
     if (payload.format === 'custom') {
       func = {
         format: 'custom', 
-        id: payload.func ? payload.func.id : null,
-        body: ""
+        id: payload.func ? payload.func.id : null
       };
     } else {
       func = {
         name: this.state.channelName,
-        format: 'cayenne',
-        body: adafruitBody
+        format: 'cayenne'
       }
     }
-    this.setState({ func }, () => console.log(this.state.func));
+    this.setState({ func, templateBody: payload.format === 'cayenne' ? adafruitBody : "" });
   }
 
   getRootType = (type) => {
@@ -126,16 +122,20 @@ class ChannelNew extends Component {
     e.preventDefault()
     const { channelName, type, credentials, labels, templateBody, func } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
-    this.props.createChannel({ 
+    let payload = { 
       channel: {
         name: channelName,
         type: this.getRootType(type),
         credentials,
-        payload_template: type == "http" || type == "mqtt" ? templateBody : undefined,
-      }, 
-      func, 
-      labels
-    });
+        payload_template: type === "http" || type === "mqtt" || type === "adafruit" ? templateBody : undefined,
+      }
+    };
+    if (type === 'adafruit') {
+      payload.func = func;
+    } else {
+      payload.labels = labels;
+    }
+    this.props.createChannel(payload);
   }
 
   handleLabelsUpdate = (labels) => {

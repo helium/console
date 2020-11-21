@@ -9,8 +9,8 @@ export const createChannel = (params) => {
 
     rest.post('/api/channels', {
         channel: channelParams,
-        labels: Object.keys(params.labels).length > 0 && params.labels.constructor === Object ? params.labels : undefined,
-        func: Object.keys(params.func).length > 0 && params.func.constructor === Object ? params.func : undefined
+        labels: params.labels ? params.labels : undefined,
+        func: params.func ? params.func : undefined
       })
       .then(response => {
         displayInfo(`${response.data.name} has been created`)
