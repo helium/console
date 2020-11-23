@@ -119,7 +119,7 @@ class OrganizationTransferDCModal extends Component {
 
                 <div style={styles.headerContainer}>
                   <div>
-                    <Text>Available for Tranfer: </Text>
+                    <Text>Available for Transfer: </Text>
                   </div>
                   <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(Math.max(organization.dc_balance - 10000, 0)).format('0,0')}</Text>
                 </div>
