@@ -93,10 +93,14 @@ class OrganizationTransferDCModal extends Component {
     this.props.transferDC(this.state.countDC, this.state.selectedOrgId)
     analyticsLogger.logEvent("ACTION_TRANSFER_DC_TO_ORG", {
       "amount": this.state.countDC,
-      "id": this.props.organizations.id,
+      "id": this.props.organization.id,
       "to_organization": this.state.selectedOrgId
     })
     this.props.onClose()
+    
+    this.setState({
+      countDC: undefined
+    })
   }
 
   renderOrgEntry = () => {
