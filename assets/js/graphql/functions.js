@@ -64,3 +64,12 @@ export const FUNCTION_UPDATE_SUBSCRIPTION = gql`
     }
   }
 `
+
+export const ALL_FUNCTIONS = gql`
+  query AllFunctionsQuery {
+    allFunctions {
+      id,
+      name
+    }
+  }
+`

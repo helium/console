@@ -30,3 +30,12 @@ export const SEARCH_LABELS = gql`
     }
   }
 `
+
+export const SEARCH_FUNCTIONS = gql`
+  query SearchFunctionsQuery ($query: String) {
+    searchFunctions(query: $query) {
+      id,
+      name,
+    }
+  }
+`

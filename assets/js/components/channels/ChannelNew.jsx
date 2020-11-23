@@ -11,6 +11,7 @@ import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import CargoForm from './forms/CargoForm.jsx'
 import MyDevicesForm from './forms/MyDevicesForm.jsx'
+import AdafruitForm from './forms/AdafruitForm.jsx';
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
@@ -22,6 +23,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
+import DecoderForm from './DecoderForm';
 import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
 const { Text } = Typography
 const { Option } = Select
@@ -32,6 +34,22 @@ const queryOptions = {
   })
 }
 
+const adafruitBody = `{
+  "feeds": {
+    "dummy": "value"
+    {{#decoded}}{{#payload}}
+        {{#value.x}}
+          ,"{{name}}_x": "{{value.x}}"
+          ,"{{name}}_y": "{{value.y}}"
+          ,"{{name}}_z": "{{value.z}}"
+        {{/value.x}}
+        {{^value.x}}
+          ,"{{name}}":"{{value}}"
+        {{/value.x}}
+    {{/payload}}{{/decoded}}
+  }
+}`;
+
 @connect(null, mapDispatchToProps)
 @graphql(ALL_LABELS, queryOptions)
 class ChannelNew extends Component {
@@ -41,7 +59,10 @@ class ChannelNew extends Component {
     credentials: {},
     channelName: "",
     labels: {},
-    templateBody: ""
+    templateBody: this.props.match.params.id === 'adafruit' ? adafruitBody : "",
+    func: {
+      format: 'cayenne'
+    }
   }
 
   componentDidMount() {
@@ -69,16 +90,52 @@ class ChannelNew extends Component {
     this.setState({ channelName: e.target.value})
   }
 
+  handleDecoderSelection = payload => {
+    let func;
+    if (payload.format === 'custom') {
+      func = {
+        format: 'custom', 
+        id: payload.func ? payload.func.id : null
+      };
+    } else {
+      func = {
+        name: this.state.channelName,
+        format: 'cayenne'
+      }
+    }
+    this.setState({ func, templateBody: payload.format === 'cayenne' ? adafruitBody : "" });
+  }
+
+  getRootType = (type) => {
+    switch(type) {
+      case 'cargo':
+      case 'mydevices':
+        return 'http';
+      case 'adafruit':
+        return 'mqtt';
+      default:
+        return type;
+    }
+  }
+
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody } = this.state
+    const { channelName, type, credentials, labels, templateBody, func } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
-    this.props.createChannel({
-      name: channelName,
-      type: type == 'cargo' || type == 'mydevices' ? 'http' : type,
-      credentials,
-      payload_template: type == "http" || type == "mqtt" ? templateBody : undefined,
-    }, labels)
+    let payload = { 
+      channel: {
+        name: channelName,
+        type: this.getRootType(type),
+        credentials,
+        payload_template: type === "http" || type === "mqtt" || type === "adafruit" ? templateBody : undefined,
+      }
+    };
+    if (type === 'adafruit') {
+      payload.func = func;
+    } else {
+      payload.labels = labels;
+    }
+    this.props.createChannel(payload);
   }
 
   handleLabelsUpdate = (labels) => {
@@ -103,6 +160,8 @@ class ChannelNew extends Component {
         return <AzureForm onValidInput={this.handleStep2Input}/>
       case "mydevices":
         return <MyDevicesForm onValidInput={this.handleStep2Input}/>
+      case "adafruit":
+        return <AdafruitForm onValidInput={this.handleStep2Input} />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
@@ -163,8 +222,22 @@ class ChannelNew extends Component {
               onInputUpdate={this.handleStep3Input}
             />
         )}
-        { showNextSteps && (
-          <Card title="Step 4 - Apply Integration to Label (Can be added later)">
+        { showNextSteps && type === 'adafruit' && (
+          <DecoderForm onChange={this.handleDecoderSelection}>
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Create Integration
+              </Button>
+            </div>
+          </DecoderForm>
+        )}
+        { showNextSteps && type !== 'adafruit' && (
+          <Card title={"Step 4 - Apply Integration to Label (Can be added later)"}>
             <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
             <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
             <div style={{ marginTop: 20 }}>
@@ -179,7 +252,7 @@ class ChannelNew extends Component {
             </div>
           </Card>
         )}
-        { showNextSteps && (type == "http" || type == "mqtt") && (
+        { showNextSteps && (type === "http" || type === "mqtt") && (
           <ChannelPayloadTemplate templateBody={this.state.templateBody} handleTemplateUpdate={this.handleTemplateUpdate} />
         )}
          <style jsx>{`

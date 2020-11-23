@@ -13,4 +13,8 @@ defmodule Console.Search.SearchResolver do
   def search_labels(%{query: query}, %{context: %{current_organization: current_organization}}) do
     {:ok, Search.run_for_labels(query, current_organization)}
   end
+
+  def search_functions(%{query: query}, %{context: %{current_organization: current_organization}}) do
+    {:ok, Search.run_for_functions(query, current_organization)}
+  end
 end

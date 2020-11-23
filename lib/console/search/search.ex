@@ -15,6 +15,10 @@ defmodule Console.Search do
     []
   end
 
+  def run_for_functions(query, _organization) when byte_size(query) == 0 do
+    []
+  end
+
   # When queries are 1-2 characters, we can't use trigram search so we check
   # if any items start with the query and assign them a score of 1.0, and then
   # we check if any items contain but don't start with the query and assign
@@ -271,6 +275,57 @@ defmodule Console.Search do
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
     to_json(result, "label")
+  end
+
+  def run_for_functions(query, %Organization{id: organization_id}) when byte_size(query) < 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+      SELECT * FROM
+      (
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name, 1.0::float AS score
+            FROM functions
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name, 0.5::float AS score
+            FROM functions
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) d ORDER BY id, score DESC)
+      ) a
+      ORDER BY score DESC
+      LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
+    to_json(result, "function")
+  end
+
+  def run_for_functions(query, %Organization{id: organization_id}) when byte_size(query) >= 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+    (
+      SELECT id, name, score
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM functions
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS d
+      WHERE score > $3
+    )
+    ORDER BY score DESC
+    LIMIT 5
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
+    to_json(result, "function")
   end
 
   def to_json(%Postgrex.Result{rows: records}) do

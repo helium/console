@@ -40,7 +40,7 @@ class ChannelPremadeRow extends Component {
                     iconStyle={styles.icon} 
                     img={channel.img}
                     name={channel.name}
-                    type="HTTP"
+                    type={channel.name === "Adafruit IO" ? "MQTT" : "HTTP"}
                     />
                 </Link>
                 <style jsx>{`

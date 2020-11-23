@@ -15,6 +15,8 @@ defmodule Console.Functions do
 
   def get_function(id), do: Repo.get(Function, id)
 
+  def get_function_by_name(name), do: Repo.get_by(Function,  %{:name => name})
+
   def get_organization_function_count(organization) do
     functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
     length(functions)

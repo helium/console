@@ -293,6 +293,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Search.SearchResolver.search_labels/2
     end
 
+    @desc "Search for functions"
+    field :search_functions, list_of(:function) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_functions/2
+    end
+
     field :api_keys, list_of(:api_key) do
       resolve &Console.ApiKeys.ApiKeyResolver.all/2
     end

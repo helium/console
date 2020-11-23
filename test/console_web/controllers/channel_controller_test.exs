@@ -5,6 +5,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
   import Console.Factory
 
   alias Console.Channels
+  alias Console.Functions
 
   describe "channels" do
     setup [:authenticate_user]
@@ -102,6 +103,36 @@ defmodule ConsoleWeb.ChannelControllerTest do
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       assert channel.downlink_token == nil # downlink token only for http
+    end
+
+    test "creates adafruit channels properly", %{conn: conn} do
+      resp_conn = post conn, channel_path(conn, :create), %{ 
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
+        "func" => %{"format" => "cayenne"}
+      }
+      channel = json_response(resp_conn, 201)
+      assert channel["name"] == "adafruit"
+
+      resp_conn = post conn, channel_path(conn, :create), %{ 
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
+        "func" => %{"format" => "cayenne"}
+      }
+      channel = json_response(resp_conn, 201)
+      channel = Channels.get_channel!(channel["id"])
+      channel = channel |> Channels.fetch_assoc([:labels])
+      [head] = channel.labels
+      assert head.name == "adafruit2" # has label with same name as channel
+      
+      resp_conn = post conn, channel_path(conn, :create), %{ 
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit3", "type" => "mqtt" },
+        "func" => %{"format" => "cayenne"}
+      }
+      channel = json_response(resp_conn, 201)
+      function = Functions.get_function_by_name(channel["name"])
+      assert function.body == "Default Cayenne Function" # has cayenne function with same name as channel
+      function = function |> Functions.fetch_assoc([:labels])
+      [head] = function.labels
+      assert head.name == "adafruit3" # function has label with same name as channel
     end
 
     test "create channels with labels linked properly", %{conn: conn} do
