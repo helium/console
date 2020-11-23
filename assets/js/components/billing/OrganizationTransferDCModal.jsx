@@ -97,7 +97,7 @@ class OrganizationTransferDCModal extends Component {
       "to_organization": this.state.selectedOrgId
     })
     this.props.onClose()
-    
+
     this.setState({
       countDC: undefined
     })
@@ -120,13 +120,16 @@ class OrganizationTransferDCModal extends Component {
                   </div>
                   <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(organization.dc_balance).format('0,0')}</Text>
                 </div>
-
-                <div style={styles.headerContainer}>
-                  <div>
-                    <Text>Available for Transfer: </Text>
-                  </div>
-                  <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(Math.max(organization.dc_balance - 10000, 0)).format('0,0')}</Text>
-                </div>
+                {
+                  organization.received_free_dc && (
+                    <div style={styles.headerContainer}>
+                      <div>
+                        <Text>Available for Transfer: </Text>
+                      </div>
+                      <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(Math.max(organization.dc_balance - 10000, 0)).format('0,0')}</Text>
+                    </div>
+                  )
+                }
 
                 <div style={{ marginBottom: 30 }}>
                   <Text>You can transfer Data Credits to other Organizations within the same Console account.</Text>
