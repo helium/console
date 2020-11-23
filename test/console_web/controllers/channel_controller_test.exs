@@ -17,12 +17,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(resp_conn, 422) == %{"errors" => %{ "credentials" => ["can't be blank"] }} # no required attrs
 
       resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "name" => "channel", "type" => "mqtt" },
-        "func" => %{ "format" => "cayenne" }
-      }
-      assert json_response(resp_conn, 422) == %{"errors" => %{ "credentials" => ["can't be blank"] }} # no required attrs
-
-      resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "type" => "http" },
         "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
@@ -108,6 +102,15 @@ defmodule ConsoleWeb.ChannelControllerTest do
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
       assert channel.downlink_token == nil # downlink token only for http
+    end
+
+    test "creates adafruit channels properly", %{conn: conn} do
+      resp_conn = post conn, channel_path(conn, :create), %{ 
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
+        "func" => %{"format" => "cayenne"}
+      }
+      channel = json_response(resp_conn, 201)
+      assert channel["name"] == "adafruit"
     end
 
     test "create channels with labels linked properly", %{conn: conn} do
