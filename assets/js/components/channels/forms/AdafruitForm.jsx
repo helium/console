@@ -82,7 +82,7 @@ class AdafruitForm extends Component {
           </Col>
         </Row>
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
-          { type === "update" ? (
+          { type === "update" && (
           <div>
             <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Text>Uplink Topic</Text>
@@ -116,7 +116,7 @@ class AdafruitForm extends Component {
               <br />
               <Text>{"Default: helium/{{device_id}}/tx"}</Text>
             </Col>
-          </div>) : null }
+          </div>) }
         </Row>
       </div>
     );

@@ -69,24 +69,7 @@ export const ALL_FUNCTIONS = gql`
   query AllFunctionsQuery {
     allFunctions {
       id,
-      name,
-      body,
-      type,
-      format,
-      active,
-      labels {
-        id,
-        name,
-        color,
-        channels {
-          name,
-          id,
-        },
-        function {
-          id,
-          name
-        }
-      }
+      name
     }
   }
 `
