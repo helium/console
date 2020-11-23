@@ -29,7 +29,6 @@ class DecoderForm extends Component {
   }
 
   handleFunctionSelection = value => {
-    console.log(value)
     this.setState({ functionSelected: value },
       this.props.onChange({ format: this.state.format, func: { id: value }}));
   }
