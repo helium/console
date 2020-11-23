@@ -41,7 +41,7 @@ class DecoderForm extends Component {
       <div>
         <Card title="Step 4 - Choose your decoder (Required)">
           <Row gutter={16} style={{marginBottom: 16 }}>
-            <Text>Decoder Format</Text>
+            <Text strong>Decoder Format</Text>
             <br />
             <Radio.Group onChange={this.handleDecoderChange} value={format}>
               <Radio value="cayenne" style={{ fontSize: '16px' }}>Cayenne LPP (Default)</Radio>
