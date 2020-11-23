@@ -100,6 +100,7 @@ defmodule ConsoleWeb.Schema do
     field :inactive_count, :integer
     field :active_count, :integer
     field :active, :boolean
+    field :received_free_dc, :boolean
   end
 
   object :api_key do

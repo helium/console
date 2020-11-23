@@ -15,6 +15,7 @@ defmodule Console.Organizations.Organization do
     field :dc_balance_nonce, :integer
     field :pending_automatic_purchase, :boolean
     field :active, :boolean
+    field :received_free_dc, :boolean
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -57,6 +58,7 @@ defmodule Console.Organizations.Organization do
       :dc_balance_nonce,
       :pending_automatic_purchase,
       :active,
+      :received_free_dc,
     ])
   end
 

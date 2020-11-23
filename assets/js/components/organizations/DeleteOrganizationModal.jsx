@@ -99,13 +99,29 @@ class DeleteOrganizationModal extends Component {
             <div>
               <div style={{ marginTop: 20 }}>
                 <Text style={{ fontWeight: 500, color: 'black' }}>
-                  {`This organization has a DC Balance of ${numeral(currentOrg.dc_balance).format('0,0')} DC.`}
+                  {`This organization has a DC balance of ${numeral(currentOrg.dc_balance).format('0,0')} DC.`}
                 </Text>
               </div>
-
-              <div style={{ marginTop: 15 }}>
-                <Text style={{ color: '#595959' }}>Please select an organization to receive this balance upon deletion.</Text>
-              </div>
+              {
+                currentOrg.received_free_dc && (
+                  <div style={{ marginTop: 5 }}>
+                    <Text style={{ fontWeight: 500, color: 'black' }}>
+                      {`The transferable DC balance is ${numeral(Math.max(currentOrg.dc_balance - 10000, 0)).format('0,0')} DC since you received 10,000 DC to start, which cannot be transferred.`}
+                    </Text>
+                  </div>
+                )
+              }
+              {
+                currentOrg.received_free_dc && currentOrg.dc_balance < 10001 ? (
+                  <div style={{ marginTop: 15 }}>
+                    <Text style={{ color: '#595959' }}>Please select Destroy DC to verify that you would like to proceed.</Text>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 15 }}>
+                    <Text style={{ color: '#595959' }}>Please select an organization to receive this balance upon deletion.</Text>
+                  </div>
+                )
+              }
 
               <div style={{ ...styles.center, marginTop: 40 }}>
                 <Select
@@ -114,7 +130,7 @@ class DeleteOrganizationModal extends Component {
                   style={{ width: '50%', color: this.state.destinationOrgId == 'no-transfer' && '#F5222D' }}
                 >
                   {
-                    allOrganizations && sort(allOrganizations, ['name']).map(o => (
+                    allOrganizations && !(currentOrg.received_free_dc && currentOrg.dc_balance < 10001) && sort(allOrganizations, ['name']).map(o => (
                       <Option value={o.id} key={o.id} disabled={o.id == selectedOrgId}>
                         {o.name}
                       </Option>

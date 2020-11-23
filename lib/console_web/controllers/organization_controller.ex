@@ -42,7 +42,7 @@ defmodule ConsoleWeb.OrganizationController do
       membership_info = %{id: organization.id, name: organization.name, role: membership.role}
       case Enum.count(organizations) do
         1 ->
-          Organizations.update_organization(organization, %{ "dc_balance" => 10000, "dc_balance_nonce" => 1 })
+          Organizations.update_organization(organization, %{ "dc_balance" => 10000, "dc_balance_nonce" => 1, "received_free_dc" => true })
 
           render(conn, "show.json", organization: membership_info)
         _ ->
@@ -104,52 +104,63 @@ defmodule ConsoleWeb.OrganizationController do
   def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
-    if membership.role != "admin" do
-      {:error, :forbidden, "You don't have access to do this"}
-    else
-      balance_left = organization.dc_balance
-      destination_org =
-        case destination_org_id do
-          "no-transfer" -> nil
-          _ -> Organizations.get_organization(conn.assigns.current_user, destination_org_id)
+    balance_left = organization.dc_balance
+
+    cond do
+      membership.role != "admin" ->
+        {:error, :forbidden, "You don't have access to do this"}
+      organization.received_free_dc and balance_left < 10001 and destination_org_id != "no-transfer" ->
+        {:error, :forbidden, "You cannot transfer the original gifted 10,000 DC to other organizations"}
+      true ->
+        destination_org =
+          case destination_org_id do
+            "no-transfer" -> nil
+            _ -> Organizations.get_organization(conn.assigns.current_user, destination_org_id)
+          end
+
+        if balance_left != nil and balance_left > 0 and destination_org != nil do
+          balance_to_transfer =
+            if organization.received_free_dc do
+              balance_left - 10000
+            else
+              balance_left
+            end
+
+          {:ok, {:ok, from_org_updated, to_org_updated }} = Organizations.send_dc_to_org(balance_to_transfer, organization, destination_org)
+          ConsoleWeb.DataCreditController.broadcast(from_org_updated)
+          ConsoleWeb.DataCreditController.broadcast(to_org_updated)
+          ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
+          ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
+
+          attrs = %{
+            "dc_purchased" => balance_to_transfer,
+            "cost" => 0,
+            "card_type" => "transfer",
+            "last_4" => "transfer",
+            "user_id" => conn.assigns.current_user.id,
+            "from_organization" => organization.name,
+            "organization_id" => destination_org.id
+          }
+
+          {:ok, destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
+          ConsoleWeb.DataCreditController.broadcast(destination_org, destination_org_dc_purchase)
         end
 
-      if balance_left != nil and balance_left > 0 and destination_org != nil do
-        {:ok, {:ok, from_org_updated, to_org_updated }} = Organizations.send_dc_to_org(balance_left, organization, destination_org)
-        ConsoleWeb.DataCreditController.broadcast(from_org_updated)
-        ConsoleWeb.DataCreditController.broadcast(to_org_updated)
-        ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
-        ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
+        admins = Organizations.get_administrators(organization)
 
-        attrs = %{
-          "dc_purchased" => balance_left,
-          "cost" => 0,
-          "card_type" => "transfer",
-          "last_4" => "transfer",
-          "user_id" => conn.assigns.current_user.id,
-          "from_organization" => organization.name,
-          "organization_id" => destination_org.id
-        }
+        with {:ok, _} <- Organizations.delete_organization(organization) do
+          Enum.each(admins, fn administrator ->
+            Email.delete_org_notification_email(organization, administrator.email, membership.email)
+            |> Mailer.deliver_later()
+          end)
 
-        {:ok, destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
-        ConsoleWeb.DataCreditController.broadcast(destination_org, destination_org_dc_purchase)
-      end
-
-      admins = Organizations.get_administrators(organization)
-
-      with {:ok, _} <- Organizations.delete_organization(organization) do
-        Enum.each(admins, fn administrator ->
-          Email.delete_org_notification_email(organization, administrator.email, membership.email)
-          |> Mailer.deliver_later()
-        end)
-
-        broadcast(organization, conn.assigns.current_user)
-        render_org = %{id: organization.id, name: organization.name, role: membership.role}
-        conn
-        |> put_status(:accepted)
-        |> put_resp_header("message",  "#{organization.name} deleted successfully")
-        |> render("show.json", organization: render_org)
-      end
+          broadcast(organization, conn.assigns.current_user)
+          render_org = %{id: organization.id, name: organization.name, role: membership.role}
+          conn
+          |> put_status(:accepted)
+          |> put_resp_header("message",  "#{organization.name} deleted successfully")
+          |> render("show.json", organization: render_org)
+        end
     end
   end
 

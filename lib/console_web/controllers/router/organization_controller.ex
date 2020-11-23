@@ -40,6 +40,8 @@ defmodule ConsoleWeb.Router.OrganizationController do
           nil ->
             organization = Organizations.get_organization!(memo.organization_id)
             with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+              Organizations.update_organization(organization, %{ "received_free_dc" => false })
+
               ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
               ConsoleWeb.DataCreditController.broadcast(organization)
               ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)

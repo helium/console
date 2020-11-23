@@ -184,6 +184,8 @@ defmodule ConsoleWeb.DataCreditController do
         with "succeeded" <- payment_intent["status"],
           {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
             current_organization = Organizations.get_organization!(current_organization.id)
+            Organizations.update_organization(current_organization, %{ "received_free_dc" => false })
+
             broadcast(current_organization, dc_purchase)
             broadcast(current_organization)
             broadcast_router_refill_dc_balance(current_organization)
@@ -240,6 +242,8 @@ defmodule ConsoleWeb.DataCreditController do
     amount = amount |> trunc()
 
     cond do
+      current_organization.received_free_dc && (current_organization.dc_balance - amount) < 10000 ->
+        {:error, :bad_request, "You cannot transfer the initial 10000 Data Credits given to you"}
       amount < 1 ->
         {:error, :bad_request, "Please select a higher Data Credit amount for transfer"}
       amount > current_organization.dc_balance ->

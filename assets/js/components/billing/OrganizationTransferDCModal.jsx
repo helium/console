@@ -93,10 +93,14 @@ class OrganizationTransferDCModal extends Component {
     this.props.transferDC(this.state.countDC, this.state.selectedOrgId)
     analyticsLogger.logEvent("ACTION_TRANSFER_DC_TO_ORG", {
       "amount": this.state.countDC,
-      "id": this.props.organizations.id,
+      "id": this.props.organization.id,
       "to_organization": this.state.selectedOrgId
     })
     this.props.onClose()
+
+    this.setState({
+      countDC: undefined
+    })
   }
 
   renderOrgEntry = () => {
@@ -112,10 +116,20 @@ class OrganizationTransferDCModal extends Component {
                 </div>
                 <div style={styles.headerContainer}>
                   <div>
-                    <Text>Available DC Balance: </Text>
+                    <Text>DC Balance: </Text>
                   </div>
                   <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(organization.dc_balance).format('0,0')}</Text>
                 </div>
+                {
+                  organization.received_free_dc && (
+                    <div style={styles.headerContainer}>
+                      <div>
+                        <Text>Available for Transfer: </Text>
+                      </div>
+                      <Text style={{ color: '#4091F7', fontSize: 30, fontWeight: 500 }}>{numeral(Math.max(organization.dc_balance - 10000, 0)).format('0,0')}</Text>
+                    </div>
+                  )
+                }
 
                 <div style={{ marginBottom: 30 }}>
                   <Text>You can transfer Data Credits to other Organizations within the same Console account.</Text>
@@ -144,12 +158,18 @@ class OrganizationTransferDCModal extends Component {
                     <div style={{
                       ...styles.amountContainer,
                       backgroundColor: '#D3F1FF',
-                      ...styles.rowSpaceBetween,
                       borderTopLeftRadius: 0,
                       borderTopRightRadius: 0,
                     }}>
-                      <Text>Remaining DC Balance:</Text>
-                      <Text style={{ color: '#4091F7', fontSize: 20, fontWeight: 500 }}>{numeral(organization.dc_balance - this.state.countDC).format('0,0')}</Text>
+                      <div style={styles.rowSpaceBetween}>
+                        <Text>Remaining DC Balance:</Text>
+                        <Text style={{ color: '#4091F7', fontSize: 20, fontWeight: 500 }}>{numeral(organization.dc_balance - this.state.countDC).format('0,0')}</Text>
+                      </div>
+                      {
+                        organization.received_free_dc && organization.dc_balance - this.state.countDC < 10000 && (
+                          <Text style={{ color: '#F5222D'}}>You cannot transfer the 10,000 DC gifted to you.</Text>
+                        )
+                      }
                     </div>
                   )
                 }
