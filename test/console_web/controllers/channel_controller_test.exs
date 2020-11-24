@@ -139,7 +139,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
-      assert channel["name"] == "adafruit4"
+      assert channel["name"] == "adafruit4" # can create channel with {{device_name}} in uplink topic instead
     end
 
     test "create channels with labels linked properly", %{conn: conn} do
