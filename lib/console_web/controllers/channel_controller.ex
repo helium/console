@@ -79,9 +79,7 @@ defmodule ConsoleWeb.ChannelController do
       |> Repo.transaction()
 
       case result do
-        {:error, :channel, changeset, _} -> {:error, changeset}
-        {:error, :function, changeset, _} -> {:error, changeset}
-        {:error, :label, changeset, _} -> {:error, changeset}
+        {:error, _, changeset, _} -> {:error, changeset}
         {:ok, %{ channel: channel, label: label, label_attached: _label_attached, function: function}} ->
           broadcast(channel)
           broadcast_router_update_devices(channel)
