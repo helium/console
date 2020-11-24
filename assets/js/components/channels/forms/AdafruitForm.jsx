@@ -28,7 +28,7 @@ class AdafruitForm extends Component {
 
       if (username.length > 0) {
         this.props.onValidInput({
-          endpoint: `mqtt://${username}:${adafruitKey}@io.adafruit.com:8883`,
+          endpoint: `mqtts://${username}:${adafruitKey}@io.adafruit.com:8883`,
           uplink: {
             topic: uplinkTopic || `${username !== '' ? username : '{adafruit username}'}/groups/${groupName}/json`
           },
