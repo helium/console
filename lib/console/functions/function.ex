@@ -30,7 +30,7 @@ defmodule Console.Functions.Function do
     |> validate_required([:name, :body, :type, :format, :organization_id])
     |> validate_inclusion(:type, ~w(decoder))
     |> validate_inclusion(:format, ~w(custom cayenne browan_object_locator))
-    |> unique_constraint(:name, name: :functions_name_organization_id_index, message: "This name has already been used in this organization")
+    |> unique_constraint(:name, name: :functions_name_organization_id_index, message: "This function name has already been used in this organization")
   end
 
   defp put_native_decoder_body(changeset) do

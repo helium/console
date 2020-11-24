@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Input, Tooltip, Icon } from 'antd';
+import { Typography, Input, Tooltip, Icon, Popover } from 'antd';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 
@@ -8,7 +8,7 @@ class AdafruitForm extends Component {
   state = {
     username: "",
     adafruitKey: "",
-    groupName: ""
+    groupName: "{{device_id}}"
   }
 
   componentDidMount() {
@@ -24,13 +24,13 @@ class AdafruitForm extends Component {
   
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      const { username, adafruitKey, uplinkTopic, downlinkTopic } = this.state;
+      const { username, adafruitKey, groupName, uplinkTopic, downlinkTopic } = this.state;
 
       if (username.length > 0) {
         this.props.onValidInput({
           endpoint: `mqtt://${username}:${adafruitKey}@io.adafruit.com:8883`,
           uplink: {
-            topic: uplinkTopic || `${username !== '' ? username : '{adafruit username}'}/groups/{{device_id}}/json`
+            topic: uplinkTopic || `${username !== '' ? username : '{adafruit username}'}/groups/${groupName}/json`
           },
           downlink: {
             topic: downlinkTopic || 'helium/{{device_id}}/tx'
@@ -72,6 +72,17 @@ class AdafruitForm extends Component {
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
           <Col sm={12}>
           <Text>Group Name</Text>
+          <Popover
+              content={
+                <Text>
+                  {`By default, {{device_id}} will be used and is guaranteed to be unique. If you'd like to choose a human-readable group name, you may enter {{device_name}} or make sure that what you enter will be unique; otherwise Adafruit IO might encounter errors.`}
+                </Text>
+              }
+              placement="top"
+              overlayStyle={{ width: 250 }}
+            >
+              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+            </Popover>
           <Input
               placeholder="Group Name"
               name="groupName"

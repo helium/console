@@ -4,6 +4,7 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Repo
   alias Console.Channels
   alias Console.Labels
+  alias Console.Labels.Label
   alias Console.Channels.Channel
   alias Console.Organizations
   alias Console.Functions
@@ -54,31 +55,40 @@ defmodule ConsoleWeb.ChannelController do
           {:ok, channel}
         end
       end)
-      |> Ecto.Multi.run(:label, fn _repo, %{ channel: channel } ->
-        new_labels = [%{ "name" => channel_params["name"] }]
-        Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
+      |> Ecto.Multi.run(:label, fn _repo, _ ->
+        with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
+          {:ok, label}
+        end
+      end)
+      |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
+        with {:ok, length, label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
+          {:ok, "label attached success"}
+        end
       end)
       |> Ecto.Multi.run(:function, fn _repo, %{ label: label } ->
-        {:ok, _, new_label} = label
         cond do
           function_params["format"] === "custom" ->
-            Labels.add_function_to_labels(%{ id: function_params["id"] }, [new_label.id], current_organization)
+            Labels.add_function_to_labels(%{ id: function_params["id"] }, [label.id], current_organization)
           function_params["format"] === "cayenne" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
-            {:ok, new_function} = Functions.create_function(function_params, current_organization)
-            Labels.add_function_to_labels(%{ id: new_function.id }, [new_label.id], current_organization)
+            with {:ok, new_function} <- Functions.create_function(function_params, current_organization) do
+              Labels.add_function_to_labels(%{ id: new_function.id }, [label.id], current_organization)
+            end
         end
       end)
       |> Repo.transaction()
 
-    with {:ok, %{ channel: channel, label: label, function: function}} <- result do
-      broadcast(channel)
-      broadcast_router_update_devices(channel)
+      case result do
+        {:error, _, changeset, _} -> {:error, changeset}
+        {:ok, %{ channel: channel, label: label, label_attached: _label_attached, function: function}} ->
+          broadcast(channel)
+          broadcast_router_update_devices(channel)
 
-      conn
-      |> put_status(:created)
-      |> render("show.json", channel: channel)
-    end
+          conn
+          |> put_status(:created)
+          |> render("show.json", channel: channel)
+        _ -> result
+      end
   end
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
