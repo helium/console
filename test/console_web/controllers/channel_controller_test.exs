@@ -133,6 +133,13 @@ defmodule ConsoleWeb.ChannelControllerTest do
       function = function |> Functions.fetch_assoc([:labels])
       [head] = function.labels
       assert head.name == "adafruit3" # function has label with same name as channel
+
+      resp_conn = post conn, channel_path(conn, :create), %{ 
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_name}}/json" }, "downlink" => %{ "topic": "user" } }, "name" => "adafruit4", "type" => "mqtt" },
+        "func" => %{"format" => "cayenne"}
+      }
+      channel = json_response(resp_conn, 201)
+      assert channel["name"] == "adafruit4" # can create channel with {{device_name}} in uplink topic instead
     end
 
     test "create channels with labels linked properly", %{conn: conn} do
