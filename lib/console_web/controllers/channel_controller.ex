@@ -55,10 +55,6 @@ defmodule ConsoleWeb.ChannelController do
           {:ok, channel}
         end
       end)
-      # |> Ecto.Multi.run(:label, fn _repo, %{ channel: channel } ->
-      #   new_labels = [%{ "name" => channel_params["name"] }]
-      #   Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
-      # end)
       |> Ecto.Multi.run(:label, fn _repo, _ ->
         with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
           {:ok, label}
