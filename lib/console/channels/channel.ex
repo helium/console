@@ -40,7 +40,7 @@ defmodule Console.Channels.Channel do
     |> check_credentials()
     |> put_type_name()
     |> put_downlink_token()
-    |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
+    |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This integration name has already been used in this organization")
   end
 
   def create_changeset(channel, attrs \\ %{}) do
