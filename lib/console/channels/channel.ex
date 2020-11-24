@@ -177,7 +177,7 @@ defmodule Console.Channels.Channel do
             if up_topic_ok and down_topic_ok do
               changeset
             else
-              add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 4 variables (device_id, device_eui, app_eui, organization_id).")
+              add_error(changeset, :message, "Topic must close double curly braces properly, and only use the following 5 variables (device_id, device_eui, device_name, app_eui, organization_id).")
             end
         end
     end
@@ -203,7 +203,7 @@ defmodule Console.Channels.Channel do
       variable_names = Enum.filter(variable_names, fn x -> x != nil end)
 
       Enum.reduce(variable_names, true, fn x, acc ->
-        Enum.member?(["device_id", "device_eui", "app_eui", "organization_id"], x) && acc
+        Enum.member?(["device_id", "device_eui", "app_eui", "organization_id", "device_name"], x) && acc
       end)
     else
       false
