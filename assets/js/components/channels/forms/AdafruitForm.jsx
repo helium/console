@@ -33,7 +33,7 @@ class AdafruitForm extends Component {
             topic: uplinkTopic || `${username !== '' ? username : '{adafruit username}'}/groups/${groupName}/json`
           },
           downlink: {
-            topic: downlinkTopic || 'helium/{{device_id}}/tx'
+            topic: downlinkTopic || username
           }
         })
       }
