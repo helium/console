@@ -6,8 +6,21 @@ defmodule ConsoleWeb.Plug.GraphqlContext do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
-    Absinthe.Plug.put_options(conn, context: context)
+    query = Map.get(conn.body_params, "query")
+    if String.contains?(query, "__schema") do
+      conn
+      |> send_resp(
+        :forbidden,
+        Poison.encode!(%{
+          type: "forbidden_action",
+          errors: ["Forbidden action on console graphql"]
+        })
+      )
+      |> halt()
+    else
+      context = build_context(conn)
+      Absinthe.Plug.put_options(conn, context: context)
+    end
   end
 
   @doc """
