@@ -18,7 +18,7 @@ import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
-import { OrganizationMenu } from '../organizations/OrganizationMenu';
+import OrganizationMenu from '../organizations/OrganizationMenu';
 import NewOrganizationModal from '../organizations/NewOrganizationModal';
 
 const queryOptions = {
