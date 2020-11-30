@@ -141,25 +141,31 @@ defmodule Console.Organizations do
   end
 
   def create_organization(%{} = user, attrs \\ %{}) do
-    organization_changeset =
-      %Organization{}
-      |> Organization.create_changeset(attrs)
+    count = get_organizations(user) |> Enum.count()
 
-    membership_fn = fn _repo, %{organization: organization} ->
-      %Membership{}
-      |> Membership.join_org_changeset(user, organization, "admin")
-      |> Repo.insert()
-    end
+    if count > 24 do
+      {:error, :forbidden, "Maximum number of organizations reached"}
+    else
+      organization_changeset =
+        %Organization{}
+        |> Organization.create_changeset(attrs)
 
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:organization, organization_changeset)
-      |> Ecto.Multi.run(:membership, membership_fn)
-      |> Repo.transaction()
+      membership_fn = fn _repo, %{organization: organization} ->
+        %Membership{}
+        |> Membership.join_org_changeset(user, organization, "admin")
+        |> Repo.insert()
+      end
 
-    case result do
-      {:ok, %{organization: organization}} -> {:ok, organization}
-      {:error, :organization, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+      result =
+        Ecto.Multi.new()
+        |> Ecto.Multi.insert(:organization, organization_changeset)
+        |> Ecto.Multi.run(:membership, membership_fn)
+        |> Repo.transaction()
+
+      case result do
+        {:ok, %{organization: organization}} -> {:ok, organization}
+        {:error, :organization, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+      end
     end
   end
 
