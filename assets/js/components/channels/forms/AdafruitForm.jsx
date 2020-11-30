@@ -16,24 +16,20 @@ class AdafruitForm extends Component {
 
     if (channel && channel.credentials.endpoint) {
       this.setState({
-        uplinkTopic: channel.credentials.uplink.topic,
-        downlinkTopic: channel.credentials.downlink.topic,
+        uplinkTopic: channel.credentials.uplink.topic
       })
     }
   }
   
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      const { username, adafruitKey, groupName, uplinkTopic, downlinkTopic } = this.state;
+      const { username, adafruitKey, groupName, uplinkTopic } = this.state;
 
       if (username.length > 0) {
         this.props.onValidInput({
           endpoint: `mqtts://${username}:${adafruitKey}@io.adafruit.com:8883`,
           uplink: {
             topic: uplinkTopic || `${username !== '' ? username : '{adafruit username}'}/groups/${groupName}/json`
-          },
-          downlink: {
-            topic: downlinkTopic || username
           }
         })
       }
@@ -116,16 +112,6 @@ class AdafruitForm extends Component {
               />
               <Text>{"Default: " + `${this.state.username !== '' ? this.state.username : '{adafruit username}'}/groups/{{device_id}}/json`}</Text>
               <br />
-            </Col>
-            <Col sm={12}>
-              <Input
-                placeholder="Downlink topic"
-                name="downlinkTopic"
-                value={this.state.downlinkTopic}
-                onChange={this.handleInputUpdate}
-              />
-              <br />
-              <Text>{"Default: helium/{{device_id}}/tx"}</Text>
             </Col>
           </div>) }
         </Row>
