@@ -103,7 +103,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
       device = Devices.get_device!(current_organization, device_ids |> List.first())
-      broadcast(device)
+      
       if active do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
       else

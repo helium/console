@@ -73,7 +73,7 @@ class DeviceIndexTable extends Component {
   }
 
   toggleDeviceActive = (active, id) => {
-    this.props.updateDevice(id, { active })
+    this.props.setDevicesActive([id], active);
   }
 
   handleSort = (pagi, filter, sorter) => {
@@ -218,7 +218,7 @@ class DeviceIndexTable extends Component {
                 overlayStyle={{ width: 140 }}
               >
                 <Switch
-                  checked={record.active}
+                  defaultChecked={record.active}
                   onChange={(active, e) => {
                     e.stopPropagation()
                     this.toggleDeviceActive(active, record.id)
