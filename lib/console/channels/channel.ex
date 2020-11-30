@@ -132,47 +132,50 @@ defmodule Console.Channels.Channel do
       _ ->
         cond do
           Regex.match?(~r/ /, creds["uplink"]["topic"]) or
-          Regex.match?(~r/ /, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not have spaces")
+          (creds["downlink"]["topic"] && Regex.match?(~r/ /, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not have spaces")
 
           Regex.match?(~r/\/\//, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\/\//, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not have consecutive /")
+          (creds["downlink"]["topic"] && Regex.match?(~r/\/\//, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not have consecutive /")
 
           Regex.match?(~r/^\//, creds["uplink"]["topic"]) or
-          Regex.match?(~r/^\//, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not start with a forward slash")
+          (creds["downlink"]["topic"] && Regex.match?(~r/^\//, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not start with a forward slash")
 
           Regex.match?(~r/\/$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\/$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not end with a forward slash")
+          (creds["downlink"]["topic"] && Regex.match?(~r/\/$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not end with a forward slash")
 
           Regex.match?(~r/\#.*\#/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\#.*\#/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should only have 1 # if used")
+          (creds["downlink"]["topic"] && Regex.match?(~r/\#.*\#/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should only have 1 # if used")
 
           Regex.match?(~r/\#.+$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\#.+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with # if # is used")
+          (creds["downlink"]["topic"] && Regex.match?(~r/\#.+$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should end with # if # is used")
 
           Regex.match?(~r/[^\/]\#$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with # if # is used")
+          (creds["downlink"]["topic"] && Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should end with # if # is used")
 
           Regex.match?(~r/[^\/]\#$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should end with /# if # is used")
+          (creds["downlink"]["topic"] && Regex.match?(~r/[^\/]\#$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should end with /# if # is used")
 
           Regex.match?(~r/^\#$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/^\#$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not just be #")
+          (creds["downlink"]["topic"] && Regex.match?(~r/^\#$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not just be #")
 
           Regex.match?(~r/^\+$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/^\+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should not just be +")
+          (creds["downlink"]["topic"] && Regex.match?(~r/^\+$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should not just be +")
 
           Regex.match?(~r/[^\/]\+$/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/[^\/]\+$/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front of + if + is used at the end")
+          (creds["downlink"]["topic"] && Regex.match?(~r/[^\/]\+$/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should have / in front of + if + is used at the end")
 
           Regex.match?(~r/[^\/]+\+/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/[^\/]+\+/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
+          (creds["downlink"]["topic"] && Regex.match?(~r/[^\/]+\+/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
 
           Regex.match?(~r/\+[^\/]+/, creds["uplink"]["topic"]) or
-          Regex.match?(~r/\+[^\/]+/, creds["downlink"]["topic"]) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
+          (creds["downlink"]["topic"] && Regex.match?(~r/\+[^\/]+/, creds["downlink"]["topic"])) -> add_error(changeset, :message, "Topic should have / in front and after + if + is used in the middle")
 
           true ->
             up_topic_ok = check_topic(creds["uplink"]["topic"])
-            down_topic_ok = check_topic(creds["downlink"]["topic"])
+            down_topic_ok = cond do 
+              creds["downlink"]["topic"] -> check_topic(creds["downlink"]["topic"])
+              true -> true
+            end
 
             if up_topic_ok and down_topic_ok do
               changeset
