@@ -21,7 +21,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage } = this.props;
+    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage, message } = this.props;
     let topPercentage;
     switch (iconPosition) {
       case 'top':
@@ -47,7 +47,7 @@ class Sidebar extends Component {
           transition: 'all 0.5s ease',
         }}
       >
-        <Tooltip title={disabledMessage} overlayStyle={disabled ? {} : { display: 'none' }} placement='bottomRight'>
+        <Tooltip title={disabled ? disabledMessage : message} placement='left'>
           <div
             style={{
               position: 'relative',
