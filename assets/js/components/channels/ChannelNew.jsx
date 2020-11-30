@@ -36,15 +36,14 @@ const queryOptions = {
 
 const adafruitBody = `{
   "feeds": {
-    "dummy": "value"
     {{#decoded}}{{#payload}}
         {{#value.x}}
-          ,"{{name}}_x": "{{value.x}}"
-          ,"{{name}}_y": "{{value.y}}"
-          ,"{{name}}_z": "{{value.z}}"
+          "{{name}}_x": "{{value.x}}",
+          "{{name}}_y": "{{value.y}}",
+          "{{name}}_z": "{{value.z}}"{{^last}},{{/last}}
         {{/value.x}}
         {{^value.x}}
-          ,"{{name}}":"{{value}}"
+          "{{name}}":"{{value}}"{{^last}},{{/last}}
         {{/value.x}}
     {{/payload}}{{/decoded}}
   }
