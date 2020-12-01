@@ -199,21 +199,14 @@ class SearchBar extends Component {
         /> }
 
             <style jsx>{`
-
               input::placeholder {
                 color: #56769D;
-                                transiton: all .2s ease;
-
+                transiton: all .2s ease;
               }
-
               #searchBar {
-                                                transiton: all .2s ease;
-
+                transiton: all .2s ease;
               }
-
-
-
-                `}</style>
+            `}</style>
       </div>
     )
   }

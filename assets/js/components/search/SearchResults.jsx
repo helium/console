@@ -30,7 +30,7 @@ class SearchResults extends Component {
 
     if ((pageResultsLength + searchResultsLength) > 0) {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, padding: 20, background: 'white', boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px' }} id="searchResults">
+        <div style={{ backgroundColor: 'white', zIndex: 10, borderRadius: 6, background: 'white', boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px' }} id="searchResults">
           {searchResultsLength > 0 &&
             <SearchResultsSection
               title="SEARCH RESULTS"
@@ -38,7 +38,6 @@ class SearchResults extends Component {
               selectedResult={selectedResult}
               gotoResult={gotoResult}
             />
-
           }
           {pageResultsLength > 0 &&
             <SearchResultsSection
@@ -48,6 +47,9 @@ class SearchResults extends Component {
               gotoResult={gotoResult}
             />
           }
+          <div style={{ padding: 15, background: '#F6F8FA', textAlign: 'center' }}>
+            <Text strong>TIP: You quickly use search by pressing the </Text><span style={{ padding: 2, paddingLeft: 5, borderRadius: 4, border:'.5px solid rgba(0, 0, 0, 1)', marginRight: 4, background: 'white', fontWeight: 'bold' }}> / </span><Text strong> key.</Text>
+          </div>
         </div>,
         this.el
       )

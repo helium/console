@@ -15,7 +15,7 @@ class SearchResult extends Component {
           alignItems: 'center',
           cursor: 'pointer',
           backgroundColor: selected ? '#E3F2FD' : 'white',
-          padding: 16,
+          padding: 15,
           borderRadius: 4,
 
         }}
