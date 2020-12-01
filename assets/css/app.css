@@ -374,7 +374,8 @@ tr.ant-table-expanded-row:hover {
   box-sizing: border-box;
 }
 
-.menu-link:hover {
+.menu-link:hover,
+.menu-link.is-active {
   color: #048aff;
   transition: all 0.2s ease;
   border-left: 10px solid #38a2ff;

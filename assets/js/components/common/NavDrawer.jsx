@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter, Link } from 'react-router-dom'
+import { withRouter, Link, NavLink } from 'react-router-dom'
 import Logo from '../../../img/logo-horizontalwhite.svg'
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
@@ -61,10 +61,10 @@ class NavDrawer extends Component {
           onClick={this.handleClick}
           style={{maxHeight: '82vh', overflowY: 'scroll'}}
         >
-          <div><Link to={"/devices"} className="menu-link">Devices</Link></div>
-          <div><Link to={"/integrations"} className="menu-link">Integrations</Link></div>
+          <div><NavLink to={"/devices"} activeClassName="is-active" className="menu-link">Devices</NavLink></div>
+          <div><NavLink to={"/integrations"} activeClassName="is-active" className="menu-link">Integrations</NavLink></div>
           <div style={{ marginLeft: 0, position: 'relative' }}>
-            <Link to={"/labels"} className="menu-link">Labels</Link>
+            <NavLink to={"/labels"} activeClassName="is-active" className="menu-link">Labels</NavLink>
             {
               showLabels && data.allLabels && data.allLabels.length > 0 && (
                 <p
@@ -103,10 +103,10 @@ class NavDrawer extends Component {
               </div>
             )
           }
-          <div><Link to={"/functions"} className="menu-link">Functions</Link></div>
-          <div><Link to={"/organizations"} className="menu-link">Organizations</Link></div>
-          <div><Link to={"/users"} className="menu-link">Users</Link></div>
-          <div><Link to={"/datacredits"} className="menu-link">Data Credits</Link></div>
+          <div><NavLink to={"/functions"} activeClassName="is-active" className="menu-link">Functions</NavLink></div>
+          <div><NavLink to={"/organizations"} activeClassName="is-active" className="menu-link">Organizations</NavLink></div>
+          <div><NavLink to={"/users"} activeClassName="is-active" className="menu-link">Users</NavLink></div>
+          <div><NavLink to={"/datacredits"} activeClassName="is-active" className="menu-link">Data Credits</NavLink></div>
         </Menu>
       </div>
     )
