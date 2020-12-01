@@ -195,6 +195,7 @@ class LabelShow extends Component {
             sidebarIcon={<Icon type="bug" />}
             iconBackground={debugSidebarBackgroundColor}
             iconPosition='top'
+            message='Access Debug mode to view device packet transfer'
           >
             <Debug
               subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
@@ -215,7 +216,7 @@ class LabelShow extends Component {
                 disabled={label.channels.filter(c => c.type === 'http').length === 0}
                 disabledMessage='Please attach an HTTP integration to use Downlink'
                 iconPosition='middle'
-
+                message='Send a manual downlink using an HTTP integration'
               >
                 <Downlink onSend={(payload, confirm, port) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });

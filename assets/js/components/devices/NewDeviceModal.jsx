@@ -20,6 +20,8 @@ const queryOptions = {
 @connect(null, mapDispatchToProps)
 @graphql(ALL_LABELS, queryOptions)
 class NewDeviceModal extends Component {
+  nameInputRef = React.createRef()
+
   state = {
     name: "",
     devEUI: randomString(16),
@@ -37,6 +39,9 @@ class NewDeviceModal extends Component {
         appKey: randomString(32),
         labelId: null,
       })
+      if (this.nameInputRef.current) {
+        this.nameInputRef.current.focus()
+      }
     }
   }
 
@@ -89,6 +94,8 @@ class NewDeviceModal extends Component {
           value={this.state.name}
           onChange={this.handleInputUpdate}
           addonBefore="Name"
+          ref={this.nameInputRef}
+          autoFocus
         />
 
         <Input

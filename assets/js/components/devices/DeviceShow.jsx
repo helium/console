@@ -518,6 +518,7 @@ class DeviceShow extends Component {
           sidebarIcon={<Icon type="bug" />}
           iconBackground={debugSidebarBackgroundColor}
           iconPosition='top'
+          message='Access Debug mode to view device packet transfer'
         >
           <Debug
             subscription={DEVICE_DEBUG_EVENTS_SUBSCRIPTION}
@@ -535,6 +536,7 @@ class DeviceShow extends Component {
                 sidebarIcon={<img src={DownlinkImage}/>}
                 iconBackground='#40A9FF'
                 iconPosition='middle'
+                message='Send a manual downlink using an HTTP integration'
                 disabled={channels.length === 0}
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
