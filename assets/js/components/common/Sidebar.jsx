@@ -57,7 +57,7 @@ class Sidebar extends Component {
               top: `calc(${topPercentage}% - 25px)`,
               backgroundColor: disabled ? 'grey' : iconBackground,
               borderRadius: '9999px',
-              cursor: disabled ? 'default' : 'pointer',
+              cursor: disabled ? 'not-allowed' : 'pointer',
               userSelect: 'none'
             }}
             onClick={this.handleToggle}
