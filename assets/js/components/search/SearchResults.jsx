@@ -47,8 +47,8 @@ class SearchResults extends Component {
               gotoResult={gotoResult}
             />
           }
-          <div style={{ padding: 15, background: '#F6F8FA', textAlign: 'center' }}>
-            <Text strong>TIP: You quickly use search by pressing the </Text><span style={{ padding: 2, paddingLeft: 5, borderRadius: 4, border:'.5px solid rgba(0, 0, 0, 1)', marginRight: 4, background: 'white', fontWeight: 'bold' }}> / </span><Text strong> key.</Text>
+          <div style={{ padding: 15, background: '#e6ebf1', textAlign: 'center' }}>
+            <Text strong>TIP: You can quickly use search by pressing the </Text><span style={{ padding: 2, paddingLeft: 5, borderRadius: 4, border:'.5px solid rgba(0, 0, 0, 1)', marginRight: 4, background: 'white', fontWeight: 'bold' }}> / </span><Text strong> key.</Text>
           </div>
         </div>,
         this.el
