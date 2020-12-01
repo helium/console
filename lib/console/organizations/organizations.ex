@@ -18,7 +18,7 @@ defmodule Console.Organizations do
     Repo.all(query)
   end
 
-  def get_organizations(%User{} = current_user) do
+  def get_organizations(%{} = current_user) do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
