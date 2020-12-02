@@ -113,103 +113,46 @@ class ChannelsTable extends Component {
     const { channels, loading, error } = this.props.data
 
     if (loading) return <SkeletonLayout />;
-    if (error) return (
-      <div className="blankstateWrapper">
-        <div className="message">
-        <h1>You have no Integrations added</h1>
-        <p>Choose an Integration above to get started.</p>
-
-        </div>
-      <style jsx>{`
-
-          .message {
-
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            text-align: center;
-
-          }
-
-          h1, p  {
-
-            color: #242425;
-          }
-          h1 {
-            font-size: 30px;
-            margin-bottom: 10px;
-          }
-          p {
-            font-size: 16px;
-            font-weight: 300;
-            opacity: 0.75;
-          }
-
-
-          .blankstateWrapper {
-            width: 100%;
-            padding-top: 100px;
-            padding-bottom: 100px;
-            margin: 0 auto;
-            position: relative;
-
-
-          }
-        `}</style>
-
-      </div>
-    )
+    if (error) return <Text>Data failed to load, please reload the page and try again</Text>;
 
     return (
       <div>
-      {
-          channels.entries.length === 0 && (
+        { channels.entries.length === 0 && (
+          <div className="blankstateWrapper" style={{ paddingBottom: "100px" }}>
+            <div className="message">
+              <h1>You have no Integrations added</h1>
+              <p>Choose an Integration above to get started.</p>
+              <p>More details about adding Integrations can be found <a href="https://developer.helium.com/console/integrations" target="_blank"> here.</a></p>
+            </div>
+            <style jsx>{`
 
-             <div className="blankstateWrapper">
-      <div className="message">
-<h1>You have no Integrations added</h1>
-<p>Choose an Integration above to get started.</p>
+                .message {
 
-      </div>
-      <style jsx>{`
+                  width: 100%;
+                  max-width: 500px;
+                  margin: 0 auto;
+                  text-align: center;
 
-          .message {
+                }
 
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            text-align: center;
+                h1, p  {
 
-          }
-
-          h1, p  {
-
-            color: #242425;
-          }
-          h1 {
-            font-size: 30px;
-            margin-bottom: 10px;
-          }
-          p {
-            font-size: 16px;
-            font-weight: 300;
-            opacity: 0.75;
-          }
-
-
-          .blankstateWrapper {
-            width: 100%;
-            padding-top: 100px;
-            padding-bottom: 100px;
-            margin: 0 auto;
-            position: relative;
-          }
-        `}</style>
-      </div>
-      )
-      }
-      {
-        channels.entries.length > 0 && (
+                  color: #242425;
+                }
+                h1 {
+                  font-size: 30px;
+                  margin-bottom: 10px;
+                }
+                p {
+                  font-size: 16px;
+                  font-weight: 300;
+                  opacity: 0.75;
+                }
+              `}
+            </style>
+          </div>
+        )}
+        { channels.entries.length > 0 && (
           <React.Fragment>
             <Table
               onRow={(record, rowIndex) => ({
@@ -230,9 +173,7 @@ class ChannelsTable extends Component {
               />
             </div>
           </React.Fragment>
-        )
-        }
-
+        )}
       </div>
     )
   }

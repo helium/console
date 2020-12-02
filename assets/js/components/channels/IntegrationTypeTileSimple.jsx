@@ -5,7 +5,7 @@ import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integration
 
 export const IntegrationTypeTileSimple = props => {
   const { type } = props;
-  const { img, name } = [...NEW_CHANNEL_TYPES, ...PREMADE_CHANNEL_TYPES].filter(channel => channel.link.includes(type))[0];
+  const { img, name, info, docLink } = [...NEW_CHANNEL_TYPES, ...PREMADE_CHANNEL_TYPES].filter(channel => channel.link.includes(type))[0];
 
   return (
     <div>
@@ -13,6 +13,9 @@ export const IntegrationTypeTileSimple = props => {
       <Text strong>
         {name}
       </Text>
+      <div style={{ paddingTop: '10px', maxWidth: '500px' }}>
+        <Text>{info} <a href={docLink} target="_blank">Tell me more about setting up this Integration.</a></Text>
+      </div>
     </div>
   );
 };

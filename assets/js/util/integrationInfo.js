@@ -8,15 +8,50 @@ import MyDevices from '../../img/mydevices.svg'
 import Adafruit from '../../img/adafruitio.svg';
 
 export const NEW_CHANNEL_TYPES = [
-  { name: "HTTP", link: "/integrations/new/http", img: `${Http}` },
-  { name: "MQTT", link: "/integrations/new/mqtt", img: `${Mqtt}` },
-  { name: "AWS IoT Core", link: "/integrations/new/aws", img: `${Aws}`},
+  { 
+    name: "HTTP", 
+    link: "/integrations/new/http", 
+    img: `${Http}`, 
+    info: "This integration allows for sending data to an endpoint, as well as receiving data, over HTTP.", 
+    docLink: 'https://developer.helium.com/console/integrations/http' 
+  },
+  { 
+    name: "MQTT", 
+    link: "/integrations/new/mqtt", 
+    img: `${Mqtt}`,
+    info: "This Integration allows for sending data to an endpoint, as well as receiving data, over the MQTT protocol.",
+    docLink: "https://developer.helium.com/console/integrations/mqtt" },
+  { 
+    name: "AWS IoT Core", 
+    link: "/integrations/new/aws", 
+    img: `${Aws}`,
+    info: "This Integration automates the complexity of securely connecting your devices to AWS IoT Core.",
+    docLink: "https://developer.helium.com/console/integrations/awsiotcore"
+  },
   // { name: "Azure IoT", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
   // { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
 ]
 
 export const PREMADE_CHANNEL_TYPES = [
-  { name: "Helium Cargo", link: "/integrations/new/cargo", img: `${Cargo}` },
-  { name: "myDevices Cayenne", link: "/integrations/new/mydevices", img: `${MyDevices}` },
-  { name: "Adafruit IO", link: "/integrations/new/adafruit", img: `${Adafruit}` },
+  { 
+    name: "Helium Cargo", 
+    link: "/integrations/new/cargo", 
+    img: `${Cargo}`,
+    info: "Cargo is an in-house mapping tool used at Helium.",
+    docLink: "https://developer.helium.com/console/integrations/cargo"
+  },
+  { 
+    name: "myDevices Cayenne", 
+    link: "/integrations/new/mydevices", 
+    img: `${MyDevices}`,
+    info: "myDevices Cayenne lets you quickly visualize real-time data sent over the Helium Network.",
+    docLink: "https://developer.helium.com/console/integrations/mydevices-cayenne-integration"
+  },
+  { 
+    name: "Adafruit IO", 
+    link: "/integrations/new/adafruit", 
+    img: `${Adafruit}` ,
+    info: "This Integration automates the complexity of securely connecting your devices to Adafruit IO.",
+    docLink: "https://developer.helium.com/console/integrations/adafruitio"
+  }
 ]

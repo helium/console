@@ -122,7 +122,7 @@ class DataCreditsIndex extends Component {
   renderBlankState = () => {
     const { organization } = this.props.data
     return (
-      <div className="blankstateWrapper">
+      <div className="blankstateWrapper" style={{ paddingTop: "80px" }}>
         <div className="message">
           <img style={{width: 100, marginBottom: 20}} src={DCIMg} />
           <h1>Data Credits</h1>
@@ -198,12 +198,6 @@ class DataCreditsIndex extends Component {
               max-width: 500px;
               margin-bottom: 20px;
             }
-            .blankstateWrapper {
-              width: 100%;
-              padding-top: 80px;
-              margin: 0 auto;
-              position: relative;
-            }
           `}</style>
       </div>
     )
@@ -216,21 +210,13 @@ class DataCreditsIndex extends Component {
 
     return (
       <div>
+        <p className="page-description" style={{ maxWidth: "450px" }}>
+          Data Credits (also known as DCs) are used to pay all transaction fees on the Helium Network. <a href="https://developer.helium.com/longfi/data-credits" target="_blank"> Tell me more about Data Credits.</a>
+        </p>
         <Row gutter={16}>
           <Col span={8}>
             <Card
               title="Remaining Data Credits"
-              extra={
-                <Popover
-                  content="Data Credits - known as DCs - are used to pay all transaction fees on the Helium Network."
-                  placement="bottom"
-                  overlayStyle={{ width: 220 }}
-                >
-                  <Link to="#">
-                    <Text style={styles.tipText}>What are Data Credits?</Text>
-                  </Link>
-                </Popover>
-              }
               bodyStyle={{ ...styles.cardBody, minWidth: 300 }}
               style={{ overflow: 'hidden' }}
             >

@@ -269,6 +269,9 @@ class DeviceIndex extends Component {
           hasDevices && createDeviceButton()
         }
       >
+        {hasDevices && <p className="page-description">
+          Devices can be added to the Helium network. <a href="https://developer.helium.com/console/adding-devices" target="_blank"> Tell me more about adding devices.</a>
+        </p>}
         {
           (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
             loading ? <IndexSkeleton title={title} /> :
