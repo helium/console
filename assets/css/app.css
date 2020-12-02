@@ -461,3 +461,20 @@ a.version-link {
   color: #1b1f23;
   padding: 6px 12px;
 }
+
+p.page-description {
+  font-size: 16px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-top: -30px;
+  padding-left: 4px;
+  font-weight: 300px;
+  position: relative;
+}
+
+.blankstateWrapper {
+  width: 100%;
+  padding-top: 100px;
+  margin: 0 auto;
+  position: relative;
+}

@@ -33,15 +33,7 @@ class MyDevicesForm extends Component {
     return(
       <div>
         <Text>
-          myDevices Cayenne lets you quickly visualize real-time data sent over the Helium Network.
-        </Text>
-        <br />
-        <Text>
           Use a supported device listed on their console or encode the payload with the Cayenne Low Power Payload (Cayenne LPP) format.
-        </Text>
-        <br />
-        <Text>
-          For more integration information, check <a href="http://developer.helium.com/console/integrations" target="_blank">developer.helium.com/console/integrations</a>.
         </Text>
       </div>
     );

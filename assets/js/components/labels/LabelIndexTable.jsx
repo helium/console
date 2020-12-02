@@ -165,6 +165,7 @@ class LabelIndexTable extends Component {
         <h2>What are Labels?</h2>
         <p>Labels allow you to organise your devices into groups. Devices can have many Labels that describe different aspects of it.</p>
         <p>Labels are also used to apply <a href="/integrations">Integrations</a> and <a href="/functions">Functions</a> to devices. </p>
+        <p>More details can be found <a href="https://developer.helium.com/console/labels" target="_blank">here</a>.</p>
       </div>
 
             </div>
@@ -216,22 +217,16 @@ class LabelIndexTable extends Component {
                   font-size: 20px;
                   font-weight: 300;
                 }
-
-
-                .blankstateWrapper {
-                  width: 100%;
-                  padding-top: 100px;
-                  margin: 0 auto;
-                  position: relative;
-
-
-                }
               `}</style>
 
             </div>
           )
         }
         {labels.entries.length > 0 && (
+          <div>
+            <p className="page-description">
+              Labels are a powerful mechanism to organize devices, assign integrations, and provide scalability and flexibility to managing your projects. <a href="https://developer.helium.com/console/labels" target="_blank"> Tell me more about Labels.</a>
+            </p>
           <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${labels.totalEntries} ${labels.totalEntries == 1 ? "Label" : "Labels"}`}
@@ -272,6 +267,7 @@ class LabelIndexTable extends Component {
             </div>
           </React.Fragment>
           </Card>
+          </div>
         )}
       </div>
     )

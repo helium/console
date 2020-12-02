@@ -264,6 +264,10 @@ class DeviceIndexTable extends Component {
               <h1>No Devices</h1>
               <p>You haven’t added any devices yet.</p>
               { noDevicesButton() }
+              <div className="explainer">
+                <p>Devices can be added to the Helium network.</p>
+                <p>More details about adding devices can be found <a href="https://developer.helium.com/longfi/data-credits" target="_blank"> here.</a></p>
+              </div>
             </div>
             <style jsx>{`
 
@@ -274,6 +278,25 @@ class DeviceIndexTable extends Component {
                   margin: 0 auto;
                   text-align: center;
 
+                }
+
+                .explainer {
+                  padding: 20px 60px 1px 60px;
+                  border-radius: 20px;
+                  text-align: center;
+                  margin-top: 50px;
+                  box-sizing: border-box;
+      border: none;
+      background: #F6F8FA;
+                }
+
+                .explainer p {
+                  color: #565656;
+                  font-size: 15px;
+                }
+    
+                .explainer p a {
+                  color: #096DD9;
                 }
 
                 h1, p  {
@@ -290,17 +313,6 @@ class DeviceIndexTable extends Component {
                   font-size: 20px;
                   font-weight: 300;
                   margin-bottom: 30px;
-                }
-
-
-                .blankstateWrapper {
-                  width: 100%;
-                  padding-top: 200px;
-                  margin: 0 auto;
-                  position: relative;
-                  padding-bottom: 200px;
-
-
                 }
               `}</style>
             </div>

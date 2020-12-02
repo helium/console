@@ -56,6 +56,9 @@ class OrganizationIndex extends Component {
           </UserCan>
         }
       >
+        <p className="page-description">
+          Organizations help keep related projects together. <a href="https://developer.helium.com/console/users#organizations" target="_blank"> Tell me more about organizations.</a>
+        </p>
         <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 1, overflowX: 'scroll' }}>
           <OrganizationsTable
             openDeleteOrganizationModal={this.openDeleteOrganizationModal}

@@ -84,6 +84,9 @@ class UserIndex extends Component {
           </UserCan>
         }
       >
+        <p className="page-description">
+          Console users can be added to organizations and have different roles which dictate their access. <a href="https://developer.helium.com/console/users" target="_blank"> Tell me more about users.</a>
+        </p>
         <Card
           title="Members"
           bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflowX: 'scroll' }}
