@@ -50,9 +50,9 @@ class MQTTForm extends Component {
           uplink: {
             topic: uplinkTopic || 'helium/{{device_id}}/rx'
           },
-          downlink: {
+          ...!endpoint.includes('@io.adafruit.com') && { downlink: {
             topic: downlinkTopic || 'helium/{{device_id}}/tx'
-          }
+          }}
         })
       }
     })
