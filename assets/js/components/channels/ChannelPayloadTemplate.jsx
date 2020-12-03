@@ -33,15 +33,13 @@ class ChannelPayloadTemplate extends Component {
             </Popover>
           </span>
         }
-        style={{ height: 560, overflow: 'hidden'}}
-        bodyStyle={{ padding: 0 }}
         extra={this.props.extra}
       >
         <div style={{ height: 503, overflowY: 'scroll' }}>
           <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
             <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
               {
-                range(501).map(i => (
+                range(201).map(i => (
                   <p
                     key={i}
                     style={{

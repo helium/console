@@ -26,6 +26,7 @@
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.6.0",
     "moment": "^2.24.0",
+    "mustache": "^4.0.1",
     "normalizr": "^3.4.1",
     "npm": "^5.8.0",
     "numeral": "^2.0.6",
