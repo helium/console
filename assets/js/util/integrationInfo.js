@@ -5,7 +5,7 @@ import Mqtt from '../../img/mqtt-channel.svg'
 import Http from '../../img/http-channel.svg'
 import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
-import Adafruit from '../../img/adafruitio.svg';
+import Adafruit from '../../img/adafruitio.png';
 
 export const NEW_CHANNEL_TYPES = [
   { 
