@@ -45,7 +45,7 @@ module.exports = function(env) {
       extensions: ['.js', '.jsx'],
     },
     plugins: [
-      new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY', 'SELF_HOSTED', 'INTERCOM_ID_SECRET', 'CONSOLE_VERSION'])
+      new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY', 'SELF_HOSTED', 'INTERCOM_ID_SECRET', 'CONSOLE_VERSION', 'RELEASE_BLOG_LINK'])
       // new webpack.DefinePlugin({
       //   'process.env.AUTH_0_DOMAIN': JSON.stringify(dotenv.parsed.AUTH_0_DOMAIN),
       //   'process.env.AUTH_0_CLIENT_ID': JSON.stringify(dotenv.parsed.AUTH_0_CLIENT_ID),

@@ -27,7 +27,7 @@ class DashboardLayout extends Component {
                       content="Click to see release details"
                       placement="right"
                     >
-                      <Button className="version-link" icon="tool" href="https://engineering.helium.com/" target="_blank">{process.env.CONSOLE_VERSION}</Button>
+                      <Button className="version-link" icon="tool" href={process.env.RELEASE_BLOG_LINK || "https://engineering.helium.com"} target="_blank">{process.env.CONSOLE_VERSION}</Button>
                     </Popover>
                 }
               </Sider>
