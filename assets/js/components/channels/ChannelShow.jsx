@@ -297,14 +297,8 @@ class ChannelShow extends Component {
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody || ""}
             handleTemplateUpdate={this.handleTemplateUpdate}
-            extra={
-              <Button
-                type="primary"
-                onClick={this.updateChannelTemplate}
-              >
-                Update
-              </Button>
-            }
+            updateChannelTemplate={this.updateChannelTemplate}
+            channel={channel}
           />
         )}
 
