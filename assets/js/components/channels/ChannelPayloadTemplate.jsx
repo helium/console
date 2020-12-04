@@ -131,7 +131,7 @@ class ChannelPayloadTemplate extends Component {
               bodyStyle={{ padding: 0 }}
             >
               <div style={{ height: 503, overflowY: 'scroll' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(2)}>
+                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(0)}>
                   <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
                     {
                       range(201).map(i => (
@@ -188,7 +188,7 @@ class ChannelPayloadTemplate extends Component {
               }
             >
               <div style={{ height: 503, overflowY: 'scroll' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(0)}>
+                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(this.state.typeSelected == 'custom' ? 1 : 0)}>
                   <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
                     {
                       range(201).map(i => (
