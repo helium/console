@@ -123,6 +123,53 @@ class ChannelPayloadTemplate extends Component {
           <Option value="custom">Custom Payload</Option>
         </Select>
 
+        {
+          this.state.typeSelected == 'custom' && (
+            <Card
+              title="Your Custom Payload"
+              style={{ marginBottom: 16 }}
+              bodyStyle={{ padding: 0 }}
+            >
+              <div style={{ height: 503, overflowY: 'scroll' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(2)}>
+                  <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                    {
+                      range(201).map(i => (
+                        <p
+                          key={i}
+                          style={{
+                            textAlign: 'right',
+                            fontFamily: 'monospace',
+                            color: codeEditorLineColor,
+                            fontSize: 14,
+                            marginBottom: 0,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            backgroundColor: codeEditorBgColor
+                          }}
+                        >
+                          {i}
+                        </p>
+                      ))
+                    }
+                  </div>
+
+                  <Editor
+                    value={this.state.customPayloadBody}
+                    onValueChange={customPayloadBody => this.setState({ customPayloadBody })}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </div>
+            </Card>
+          )
+        }
+
         <Row gutter={16}>
           <Col span={12}>
             <Card
@@ -208,52 +255,6 @@ class ChannelPayloadTemplate extends Component {
             </Card>
           </Col>
         </Row>
-        {
-          this.state.typeSelected == 'custom' && (
-            <Card
-              title="Your Custom Payload"
-              style={{ marginBottom: 0, marginTop: 20 }}
-              bodyStyle={{ padding: 0 }}
-            >
-              <div style={{ height: 503, overflowY: 'scroll' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(2)}>
-                  <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                    {
-                      range(201).map(i => (
-                        <p
-                          key={i}
-                          style={{
-                            textAlign: 'right',
-                            fontFamily: 'monospace',
-                            color: codeEditorLineColor,
-                            fontSize: 14,
-                            marginBottom: 0,
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                            backgroundColor: codeEditorBgColor
-                          }}
-                        >
-                          {i}
-                        </p>
-                      ))
-                    }
-                  </div>
-
-                  <Editor
-                    value={this.state.customPayloadBody}
-                    onValueChange={customPayloadBody => this.setState({ customPayloadBody })}
-                    highlight={code => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              </div>
-            </Card>
-          )
-        }
       </Card>
     )
   }
