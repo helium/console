@@ -93,7 +93,7 @@ class ChannelNew extends Component {
     let func;
     if (payload.format === 'custom') {
       func = {
-        format: 'custom', 
+        format: 'custom',
         id: payload.func ? payload.func.id : null
       };
     } else {
@@ -121,7 +121,7 @@ class ChannelNew extends Component {
     e.preventDefault()
     const { channelName, type, credentials, labels, templateBody, func } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
-    let payload = { 
+    let payload = {
       channel: {
         name: channelName,
         type: this.getRootType(type),
@@ -183,7 +183,7 @@ class ChannelNew extends Component {
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
-            {type ? 
+            {type ?
               (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Create New Integration&nbsp;&nbsp;/</Text></Link>) :
               (<Text>&nbsp;&nbsp;Create New Integration</Text>)
             }
@@ -252,7 +252,10 @@ class ChannelNew extends Component {
           </Card>
         )}
         { showNextSteps && (type === "http" || type === "mqtt") && (
-          <ChannelPayloadTemplate templateBody={this.state.templateBody} handleTemplateUpdate={this.handleTemplateUpdate} />
+          <ChannelPayloadTemplate
+            templateBody={this.state.templateBody}
+            handleTemplateUpdate={this.handleTemplateUpdate}
+          />
         )}
          <style jsx>{`
           .flexwrapper {
