@@ -41,10 +41,11 @@ class ChannelPayloadTemplate extends Component {
   selectPayloadType = value => {
     if (value != 'custom') {
       this.props.handleTemplateUpdate(templatesMap[value])
+      this.setState({ typeSelected: value, output: null }, this.generateOutput)
     } else {
       this.props.handleTemplateUpdate("")
+      this.setState({ typeSelected: value, output: null })
     }
-    this.setState({ typeSelected: value, output: null })
   }
 
   resetTemplate = () => {
@@ -114,15 +115,45 @@ class ChannelPayloadTemplate extends Component {
       >
         <div style={{ marginBottom: 8 }}>
           <Text strong>
-            Select a payload to test below:
+            Select a payload to test below or simply save your desired template:
           </Text>
         </div>
-        <Select style={{ width: 240, marginBottom: 16 }} onSelect={this.selectPayloadType}>
+        <Select style={{ width: 240, marginBottom: 16 }} onSelect={this.selectPayloadType} placeholder="Select a payload type...">
           <Option value="default">Default Payload</Option>
           <Option value="browan">Browan Payload</Option>
           <Option value="cayenne">Cayenne Payload</Option>
           <Option value="custom">Custom Payload</Option>
         </Select>
+
+        {
+          this.state.typeSelected == 'default' && (
+            <div>
+              <pre style={{ fontSize: 10 }}>
+                {JSON.stringify(defaultPayload, null, 2)}
+              </pre>
+            </div>
+          )
+        }
+
+        {
+          this.state.typeSelected == 'browan' && (
+            <div>
+              <pre style={{ fontSize: 10 }}>
+                {JSON.stringify(browanPayload, null, 2)}
+              </pre>
+            </div>
+          )
+        }
+
+        {
+          this.state.typeSelected == 'cayenne' && (
+            <div>
+              <pre style={{ fontSize: 10 }}>
+                {JSON.stringify(cayennePayload, null, 2)}
+              </pre>
+            </div>
+          )
+        }
 
         {
           this.state.typeSelected == 'custom' && (
