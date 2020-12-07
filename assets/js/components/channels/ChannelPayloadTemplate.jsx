@@ -18,35 +18,31 @@ const payloadsMap = {
   default: defaultPayload,
   browan: browanPayload,
   cayenne: cayennePayload,
+  custom: defaultPayload,
 }
 
 const templatesMap = {
   default: defaultTemplate,
   browan: browanTemplate,
   cayenne: cayenneTemplate,
+  custom: defaultTemplate,
 }
 
 class ChannelPayloadTemplate extends Component {
   state = {
     typeSelected: null,
     output: null,
-    customPayloadBody: "",
     show: false,
   }
 
-  onClickEditor = index => {
-    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[index]
+  onClickEditor = () => {
+    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
     editor.focus()
   }
 
   selectPayloadType = value => {
-    if (value != 'custom') {
-      this.props.handleTemplateUpdate(templatesMap[value])
-      this.setState({ typeSelected: value, output: null }, this.generateOutput)
-    } else {
-      this.props.handleTemplateUpdate("")
-      this.setState({ typeSelected: value, output: null })
-    }
+    this.props.handleTemplateUpdate(templatesMap[value])
+    this.setState({ typeSelected: value, output: null }, this.generateOutput)
   }
 
   resetTemplate = () => {
@@ -58,36 +54,14 @@ class ChannelPayloadTemplate extends Component {
 
     if (!this.props.templateBody || this.props.templateBody.length == 0) {
       displayError("Please provide a valid template body")
-    } else if (typeSelected == 'custom' && this.state.customPayloadBody.length == 0){
-      displayError("Please provide a valid custom payload body")
     } else {
-      if (typeSelected && typeSelected != 'custom') {
-        const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
-        try {
-          const parsedOutput = JSON.parse(output)
-          this.setState({ output: parsedOutput })
-        } catch(err) {
-          displayError("Issue with generating output, please check your template body")
-          this.setState({ output: null })
-        }
-      }
-      if (typeSelected == 'custom') {
-        try {
-          const parsedPayloadBody = JSON.parse(this.state.customPayloadBody)
-          const output = Mustache.render(this.props.templateBody, parsedPayloadBody)
-          try {
-            const parsedOutput = JSON.parse(output)
-            this.setState({ output: parsedOutput })
-          } catch(err) {
-            displayError("Issue with generating output, please check your template body")
-            this.setState({ output: null })
-          }
-        } catch(err) {
-          displayError("Issue with parsing custom payload body, please verify")
-          this.setState({ output: null })
-        }
-        const output = Mustache.render(this.props.templateBody, JSON.parse(this.state.customPayloadBody))
-        this.setState({ output: JSON.parse(output) })
+      const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
+      try {
+        const parsedOutput = JSON.parse(output)
+        this.setState({ output: parsedOutput })
+      } catch(err) {
+        displayError("Issue with generating output, please check your template body")
+        this.setState({ output: null })
       }
     }
   }
@@ -142,7 +116,7 @@ class ChannelPayloadTemplate extends Component {
           </Select>
 
           {
-            this.state.typeSelected == 'default' && (
+            (this.state.typeSelected == 'default' || this.state.typeSelected == 'custom') && (
               <div>
                 <pre style={{ fontSize: 10 }}>
                   {JSON.stringify(defaultPayload, null, 2)}
@@ -171,53 +145,6 @@ class ChannelPayloadTemplate extends Component {
             )
           }
 
-          {
-            this.state.typeSelected == 'custom' && (
-              <Card
-                title="Your Custom Payload"
-                style={{ marginBottom: 16 }}
-                bodyStyle={{ padding: 0 }}
-              >
-                <div style={{ height: 503, overflowY: 'scroll' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(0)}>
-                    <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                      {
-                        range(201).map(i => (
-                          <p
-                            key={i}
-                            style={{
-                              textAlign: 'right',
-                              fontFamily: 'monospace',
-                              color: codeEditorLineColor,
-                              fontSize: 14,
-                              marginBottom: 0,
-                              paddingLeft: 10,
-                              paddingRight: 10,
-                              backgroundColor: codeEditorBgColor
-                            }}
-                          >
-                            {i}
-                          </p>
-                        ))
-                      }
-                    </div>
-
-                    <Editor
-                      value={this.state.customPayloadBody}
-                      onValueChange={customPayloadBody => this.setState({ customPayloadBody })}
-                      highlight={code => highlight(code, languages.js)}
-                      padding={10}
-                      style={{
-                        fontFamily: 'monospace',
-                        fontSize: 14,
-                      }}
-                    />
-                  </div>
-                </div>
-              </Card>
-            )
-          }
-
           <Row gutter={16}>
             <Col span={12}>
               <Card
@@ -236,7 +163,7 @@ class ChannelPayloadTemplate extends Component {
                 }
               >
                 <div style={{ height: 503, overflowY: 'scroll' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(this.state.typeSelected == 'custom' ? 1 : 0)}>
+                  <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
                     <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
                       {
                         range(201).map(i => (
