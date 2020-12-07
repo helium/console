@@ -36,7 +36,7 @@ class ChannelPayloadTemplate extends Component {
   }
 
   onClickEditor = () => {
-    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
+    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[1]
     editor.focus()
   }
 
@@ -117,31 +117,70 @@ class ChannelPayloadTemplate extends Component {
 
           {
             (this.state.typeSelected == 'default' || this.state.typeSelected == 'custom') && (
-              <div>
-                <pre style={{ fontSize: 10 }}>
-                  {JSON.stringify(defaultPayload, null, 2)}
-                </pre>
-              </div>
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
+                  <Editor
+                    value={JSON.stringify(defaultPayload, null, 2)}
+                    onValueChange={() => {}}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </Card>
             )
           }
 
           {
             this.state.typeSelected == 'browan' && (
-              <div>
-                <pre style={{ fontSize: 10 }}>
-                  {JSON.stringify(browanPayload, null, 2)}
-                </pre>
-              </div>
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
+                  <Editor
+                    value={JSON.stringify(browanPayload, null, 2)}
+                    onValueChange={() => {}}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </Card>
             )
           }
 
           {
             this.state.typeSelected == 'cayenne' && (
-              <div>
-                <pre style={{ fontSize: 10 }}>
-                  {JSON.stringify(cayennePayload, null, 2)}
-                </pre>
-              </div>
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
+                  <Editor
+                    value={JSON.stringify(cayennePayload, null, 2)}
+                    onValueChange={() => {}}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </Card>
             )
           }
 
@@ -154,10 +193,10 @@ class ChannelPayloadTemplate extends Component {
                 extra={
                   <span>
                     {
-                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8 }} onClick={this.resetTemplate}>Clear Changes</Button>
+                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Clear Changes</Button>
                     }
                     {
-                      templateDiff && <Button size="small" type="primary" style={{ marginRight: 0 }} onClick={this.props.updateChannelTemplate}>Save</Button>
+                      templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
                     }
                   </span>
                 }
@@ -219,6 +258,7 @@ class ChannelPayloadTemplate extends Component {
                 <div style={{ height: 503, overflowY: 'scroll' }}>
                   <Editor
                     value={this.state.output ? JSON.stringify(this.state.output, null, 2) : ""}
+                    onValueChange={() => {}}
                     highlight={code => highlight(code, languages.js)}
                     padding={10}
                     style={{
