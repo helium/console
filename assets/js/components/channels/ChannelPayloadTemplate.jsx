@@ -35,18 +35,46 @@ class ChannelPayloadTemplate extends Component {
     show: false,
   }
 
+  componentDidMount = () => {
+    const { functions } = this.props
+
+    const firstFunc = functions[0]
+    if (firstFunc && firstFunc.format == 'browan_object_locator') {
+      this.setState({ typeSelected: 'browan' })
+    } else if (firstFunc && firstFunc.format == 'cayenne') {
+      this.setState({ typeSelected: 'cayenne' })
+    } else {
+      this.setState({ typeSelected: 'default' })
+    }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.functions[0] != this.props.functions[0]) {
+      const { functions } = this.props
+
+      const firstFunc = functions[0]
+      if (firstFunc && firstFunc.format == 'browan_object_locator') {
+        this.setState({ typeSelected: 'browan', output: null })
+      } else if (firstFunc && firstFunc.format == 'cayenne') {
+        this.setState({ typeSelected: 'cayenne', output: null })
+      } else {
+        this.setState({ typeSelected: 'default', output: null })
+      }
+    }
+  }
+
   onClickEditor = () => {
     const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[1]
     editor.focus()
   }
 
+  resetTemplate = () => {
+    this.props.handleTemplateUpdate(this.props.channel.payload_template)
+  }
+
   selectPayloadType = value => {
     this.props.handleTemplateUpdate(templatesMap[value])
     this.setState({ typeSelected: value, output: null }, this.generateOutput)
-  }
-
-  resetTemplate = () => {
-    this.props.handleTemplateUpdate(this.props.channel.payload_template)
   }
 
   generateOutput = () => {
@@ -103,18 +131,6 @@ class ChannelPayloadTemplate extends Component {
             </Button>
           }
         >
-          <div style={{ marginBottom: 8 }}>
-            <Text strong>
-              Select a payload to test below or simply save your desired template:
-            </Text>
-          </div>
-          <Select style={{ width: 240, marginBottom: 16 }} onSelect={this.selectPayloadType} placeholder="Select a payload type...">
-            <Option value="default">Default Payload</Option>
-            <Option value="browan">Browan Payload</Option>
-            <Option value="cayenne">Cayenne Payload</Option>
-            <Option value="custom">Custom Payload</Option>
-          </Select>
-
           {
             (this.state.typeSelected == 'default' || this.state.typeSelected == 'custom') && (
               <Card
@@ -197,6 +213,11 @@ class ChannelPayloadTemplate extends Component {
                     }
                     {
                       templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
+                    }
+                    {
+                      !templateDiff && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
+                        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>See Example Template</Button>
+                      )
                     }
                   </span>
                 }

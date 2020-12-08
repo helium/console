@@ -57,6 +57,7 @@ export const CHANNEL_SHOW = gql`
       function {
         id
         name
+        format
       }
     }
   }
