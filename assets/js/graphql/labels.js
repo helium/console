@@ -101,7 +101,8 @@ export const ALL_LABELS = gql`
       },
       function {
         id,
-        name
+        name,
+        format
       }
     }
   }

@@ -173,7 +173,7 @@ class ChannelNew extends Component {
   }
 
   render() {
-    const { showNextSteps, type } = this.state
+    const { showNextSteps, type, labels } = this.state
     const { allLabels } = this.props.data
 
     return(
@@ -255,6 +255,8 @@ class ChannelNew extends Component {
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody}
             handleTemplateUpdate={this.handleTemplateUpdate}
+            functions={labels.labelsApplied ? labels.labelsApplied.map(l => l.function) : []}
+            from="channelNew"
           />
         )}
          <style jsx>{`

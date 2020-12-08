@@ -36,7 +36,8 @@ class ChannelPayloadTemplate extends Component {
   }
 
   componentDidMount = () => {
-    const { functions } = this.props
+    const { functions, from } = this.props
+    const fromChannelNew = from == 'channelNew'
 
     const firstFunc = functions[0]
     if (firstFunc && firstFunc.format == 'browan_object_locator') {
@@ -45,20 +46,38 @@ class ChannelPayloadTemplate extends Component {
       this.setState({ typeSelected: 'cayenne' })
     } else {
       this.setState({ typeSelected: 'default' })
+      if (fromChannelNew) {
+        this.props.handleTemplateUpdate(templatesMap['default'])
+        setTimeout(this.generateOutput, 200)
+      }
     }
   }
 
   componentDidUpdate = (prevProps) => {
+    const fromChannelNew = this.props.from == 'channelNew'
+
     if (prevProps.functions[0] != this.props.functions[0]) {
       const { functions } = this.props
 
       const firstFunc = functions[0]
       if (firstFunc && firstFunc.format == 'browan_object_locator') {
         this.setState({ typeSelected: 'browan', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['browan'])
+          setTimeout(this.generateOutput, 200)
+        }
       } else if (firstFunc && firstFunc.format == 'cayenne') {
         this.setState({ typeSelected: 'cayenne', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['cayenne'])
+          setTimeout(this.generateOutput, 200)
+        }
       } else {
         this.setState({ typeSelected: 'default', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['default'])
+          setTimeout(this.generateOutput, 200)
+        }
       }
     }
   }
@@ -215,7 +234,7 @@ class ChannelPayloadTemplate extends Component {
                       templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
                     }
                     {
-                      !templateDiff && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
+                      !templateDiff && this.props.channel && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
                         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>See Example Template</Button>
                       )
                     }
