@@ -12,7 +12,7 @@ class UpdateLabelModal extends Component {
     tab: 'general',
     labelName: null,
     color: this.props.label.color || labelColors[0],
-    multiBuyValue: this.props.label.multi_buy,
+    multiBuyValue: this.props.label.multi_buy || 0,
   }
 
   handleInputUpdate = (e) => {
@@ -32,7 +32,9 @@ class UpdateLabelModal extends Component {
       analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
       this.props.onClose()
     } else if (tab === 'packets') {
-
+      this.props.handleUpdateLabelMultiBuy(multiBuyValue)
+      analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
+      this.props.onClose()
     }
   }
 
@@ -43,6 +45,10 @@ class UpdateLabelModal extends Component {
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
       }), 200)
+    }
+
+    if (prevProps.label.multi_buy !== this.props.label.multi_buy) {
+      this.setState({ multiBuyValue: this.props.label.multi_buy })
     }
   }
 
@@ -102,7 +108,7 @@ class UpdateLabelModal extends Component {
               <div style={{ backgroundColor: '#F0F2F5', padding: '0px 40px', marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ width: '100%', marginBottom: 12, marginTop: 20 }}>
                   <Slider
-                    value={this.state.multiBuyValue || 0}
+                    value={this.state.multiBuyValue}
                     min={0}
                     max={10}
                     tooltipVisible={false}

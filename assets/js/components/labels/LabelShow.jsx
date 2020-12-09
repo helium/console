@@ -98,6 +98,12 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleUpdateLabelMultiBuy = multiBuyValue => {
+    const labelId = this.props.match.params.id
+    const attrs = { multi_buy: multiBuyValue }
+    this.props.updateLabel(labelId, attrs)
+  }
+
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
@@ -169,6 +175,7 @@ class LabelShow extends Component {
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
+            handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
             open={this.state.showUpdateLabelModal}
             onClose={this.closeUpdateLabelModal}
             label={label}
