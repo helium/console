@@ -37,12 +37,12 @@ class ChannelPayloadTemplate extends Component {
 
   componentDidMount = () => {
     const { functions, from } = this.props
-    const fromChannelNew = from == 'channelNew'
+    const fromChannelNew = from === 'channelNew'
 
     const firstFunc = functions[0]
-    if (firstFunc && firstFunc.format == 'browan_object_locator') {
+    if (firstFunc && firstFunc.format === 'browan_object_locator') {
       this.setState({ typeSelected: 'browan' })
-    } else if (firstFunc && firstFunc.format == 'cayenne') {
+    } else if (firstFunc && firstFunc.format === 'cayenne') {
       this.setState({ typeSelected: 'cayenne' })
     } else {
       this.setState({ typeSelected: 'default' })
@@ -54,19 +54,19 @@ class ChannelPayloadTemplate extends Component {
   }
 
   componentDidUpdate = (prevProps) => {
-    const fromChannelNew = this.props.from == 'channelNew'
+    const fromChannelNew = this.props.from === 'channelNew'
 
     if (prevProps.functions[0] != this.props.functions[0]) {
       const { functions } = this.props
 
       const firstFunc = functions[0]
-      if (firstFunc && firstFunc.format == 'browan_object_locator') {
+      if (firstFunc && firstFunc.format === 'browan_object_locator') {
         this.setState({ typeSelected: 'browan', output: null })
         if (fromChannelNew) {
           this.props.handleTemplateUpdate(templatesMap['browan'])
           setTimeout(this.generateOutput, 200)
         }
-      } else if (firstFunc && firstFunc.format == 'cayenne') {
+      } else if (firstFunc && firstFunc.format === 'cayenne') {
         this.setState({ typeSelected: 'cayenne', output: null })
         if (fromChannelNew) {
           this.props.handleTemplateUpdate(templatesMap['cayenne'])
@@ -99,7 +99,7 @@ class ChannelPayloadTemplate extends Component {
   generateOutput = () => {
     const { typeSelected } = this.state
 
-    if (!this.props.templateBody || this.props.templateBody.length == 0) {
+    if (!this.props.templateBody || this.props.templateBody.length === 0) {
       displayError("Please provide a valid template body")
     } else {
       const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
@@ -151,7 +151,7 @@ class ChannelPayloadTemplate extends Component {
           }
         >
           {
-            (this.state.typeSelected == 'default' || this.state.typeSelected == 'custom') && (
+            (this.state.typeSelected === 'default' || this.state.typeSelected === 'custom') && (
               <Card
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
@@ -174,7 +174,7 @@ class ChannelPayloadTemplate extends Component {
           }
 
           {
-            this.state.typeSelected == 'browan' && (
+            this.state.typeSelected === 'browan' && (
               <Card
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
@@ -197,7 +197,7 @@ class ChannelPayloadTemplate extends Component {
           }
 
           {
-            this.state.typeSelected == 'cayenne' && (
+            this.state.typeSelected === 'cayenne' && (
               <Card
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
