@@ -18,177 +18,149 @@ const payloadsMap = {
   default: defaultPayload,
   browan: browanPayload,
   cayenne: cayennePayload,
+  custom: defaultPayload,
 }
 
 const templatesMap = {
   default: defaultTemplate,
   browan: browanTemplate,
   cayenne: cayenneTemplate,
+  custom: defaultTemplate,
 }
 
 class ChannelPayloadTemplate extends Component {
   state = {
     typeSelected: null,
     output: null,
-    customPayloadBody: ""
+    show: false,
   }
 
-  onClickEditor = index => {
-    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[index]
-    editor.focus()
-  }
+  componentDidMount = () => {
+    const { functions, from } = this.props
+    const fromChannelNew = from === 'channelNew'
 
-  selectPayloadType = value => {
-    if (value != 'custom') {
-      this.props.handleTemplateUpdate(templatesMap[value])
-      this.setState({ typeSelected: value, output: null }, this.generateOutput)
+    const firstFunc = functions[0]
+    if (firstFunc && firstFunc.format === 'browan_object_locator') {
+      this.setState({ typeSelected: 'browan' })
+    } else if (firstFunc && firstFunc.format === 'cayenne') {
+      this.setState({ typeSelected: 'cayenne' })
     } else {
-      this.props.handleTemplateUpdate("")
-      this.setState({ typeSelected: value, output: null })
+      this.setState({ typeSelected: 'default' })
+      if (fromChannelNew) {
+        this.props.handleTemplateUpdate(templatesMap['default'])
+        setTimeout(this.generateOutput, 200)
+      }
     }
+  }
+
+  componentDidUpdate = (prevProps) => {
+    const fromChannelNew = this.props.from === 'channelNew'
+
+    if (prevProps.functions[0] != this.props.functions[0]) {
+      const { functions } = this.props
+
+      const firstFunc = functions[0]
+      if (firstFunc && firstFunc.format === 'browan_object_locator') {
+        this.setState({ typeSelected: 'browan', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['browan'])
+          setTimeout(this.generateOutput, 200)
+        }
+      } else if (firstFunc && firstFunc.format === 'cayenne') {
+        this.setState({ typeSelected: 'cayenne', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['cayenne'])
+          setTimeout(this.generateOutput, 200)
+        }
+      } else {
+        this.setState({ typeSelected: 'default', output: null })
+        if (fromChannelNew) {
+          this.props.handleTemplateUpdate(templatesMap['default'])
+          setTimeout(this.generateOutput, 200)
+        }
+      }
+    }
+  }
+
+  onClickEditor = () => {
+    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[1]
+    editor.focus()
   }
 
   resetTemplate = () => {
     this.props.handleTemplateUpdate(this.props.channel.payload_template)
   }
 
+  selectPayloadType = value => {
+    this.props.handleTemplateUpdate(templatesMap[value])
+    this.setState({ typeSelected: value, output: null }, this.generateOutput)
+  }
+
   generateOutput = () => {
     const { typeSelected } = this.state
 
-    if (!this.props.templateBody || this.props.templateBody.length == 0) {
+    if (!this.props.templateBody || this.props.templateBody.length === 0) {
       displayError("Please provide a valid template body")
-    } else if (typeSelected == 'custom' && this.state.customPayloadBody.length == 0){
-      displayError("Please provide a valid custom payload body")
     } else {
-      if (typeSelected && typeSelected != 'custom') {
-        const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
-        try {
-          const parsedOutput = JSON.parse(output)
-          this.setState({ output: parsedOutput })
-        } catch(err) {
-          displayError("Issue with generating output, please check your template body")
-          this.setState({ output: null })
-        }
-      }
-      if (typeSelected == 'custom') {
-        try {
-          const parsedPayloadBody = JSON.parse(this.state.customPayloadBody)
-          const output = Mustache.render(this.props.templateBody, parsedPayloadBody)
-          try {
-            const parsedOutput = JSON.parse(output)
-            this.setState({ output: parsedOutput })
-          } catch(err) {
-            displayError("Issue with generating output, please check your template body")
-            this.setState({ output: null })
-          }
-        } catch(err) {
-          displayError("Issue with parsing custom payload body, please verify")
-          this.setState({ output: null })
-        }
-        const output = Mustache.render(this.props.templateBody, JSON.parse(this.state.customPayloadBody))
-        this.setState({ output: JSON.parse(output) })
+      const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
+      try {
+        const parsedOutput = JSON.parse(output)
+        this.setState({ output: parsedOutput })
+      } catch(err) {
+        displayError("Issue with generating output, please check your template body")
+        this.setState({ output: null })
       }
     }
+  }
+
+  hidePanel = () => {
+    const { channel } = this.props
+    this.setState({ show: false, typeSelected: null, output: null, customPayloadBody: "" })
+    this.props.handleTemplateUpdate(channel ? channel.payload_template : "")
   }
 
   render() {
     const templateDiff = this.props.channel && (this.props.channel.payload_template != this.props.templateBody)
 
-    return (
-      <Card
-        title={
-          <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontWeight: 600 }}>Advanced - JSON Message Template (Optional)</Text>
-            <Popover
-              content={
-                <Text>
-                  Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
-                </Text>
-              }
-              placement="top"
-              overlayStyle={{ width: 250 }}
+    if (this.state.show) {
+      return (
+        <Card
+          title={
+            <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontWeight: 600 }}>Advanced - JSON Message Template (Optional)</Text>
+              <Popover
+                content={
+                  <Text>
+                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                  </Text>
+                }
+                placement="top"
+                overlayStyle={{ width: 250 }}
+              >
+                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+              </Popover>
+            </span>
+          }
+          extra={
+            <Button
+              type="primary"
+              onClick={this.hidePanel}
             >
-              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
-            </Popover>
-          </span>
-        }
-      >
-        <div style={{ marginBottom: 8 }}>
-          <Text strong>
-            Select a payload to test below or simply save your desired template:
-          </Text>
-        </div>
-        <Select style={{ width: 240, marginBottom: 16 }} onSelect={this.selectPayloadType} placeholder="Select a payload type...">
-          <Option value="default">Default Payload</Option>
-          <Option value="browan">Browan Payload</Option>
-          <Option value="cayenne">Cayenne Payload</Option>
-          <Option value="custom">Custom Payload</Option>
-        </Select>
-
-        {
-          this.state.typeSelected == 'default' && (
-            <div>
-              <pre style={{ fontSize: 10 }}>
-                {JSON.stringify(defaultPayload, null, 2)}
-              </pre>
-            </div>
-          )
-        }
-
-        {
-          this.state.typeSelected == 'browan' && (
-            <div>
-              <pre style={{ fontSize: 10 }}>
-                {JSON.stringify(browanPayload, null, 2)}
-              </pre>
-            </div>
-          )
-        }
-
-        {
-          this.state.typeSelected == 'cayenne' && (
-            <div>
-              <pre style={{ fontSize: 10 }}>
-                {JSON.stringify(cayennePayload, null, 2)}
-              </pre>
-            </div>
-          )
-        }
-
-        {
-          this.state.typeSelected == 'custom' && (
-            <Card
-              title="Your Custom Payload"
-              style={{ marginBottom: 16 }}
-              bodyStyle={{ padding: 0 }}
-            >
-              <div style={{ height: 503, overflowY: 'scroll' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(0)}>
-                  <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                    {
-                      range(201).map(i => (
-                        <p
-                          key={i}
-                          style={{
-                            textAlign: 'right',
-                            fontFamily: 'monospace',
-                            color: codeEditorLineColor,
-                            fontSize: 14,
-                            marginBottom: 0,
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                            backgroundColor: codeEditorBgColor
-                          }}
-                        >
-                          {i}
-                        </p>
-                      ))
-                    }
-                  </div>
-
+              Hide Details
+            </Button>
+          }
+        >
+          {
+            (this.state.typeSelected === 'default' || this.state.typeSelected === 'custom') && (
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
-                    value={this.state.customPayloadBody}
-                    onValueChange={customPayloadBody => this.setState({ customPayloadBody })}
+                    value={JSON.stringify(defaultPayload, null, 2)}
+                    onValueChange={() => {}}
                     highlight={code => highlight(code, languages.js)}
                     padding={10}
                     style={{
@@ -197,55 +169,21 @@ class ChannelPayloadTemplate extends Component {
                     }}
                   />
                 </div>
-              </div>
-            </Card>
-          )
-        }
+              </Card>
+            )
+          }
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card
-              title="Template Body"
-              bodyStyle={{ padding: 0 }}
-              style={{ marginBottom: 0 }}
-              extra={
-                <span>
-                  {
-                    templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8 }} onClick={this.resetTemplate}>Clear Changes</Button>
-                  }
-                  {
-                    templateDiff && <Button size="small" type="primary" style={{ marginRight: 0 }} onClick={this.props.updateChannelTemplate}>Save</Button>
-                  }
-                </span>
-              }
-            >
-              <div style={{ height: 503, overflowY: 'scroll' }}>
-                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={() => this.onClickEditor(this.state.typeSelected == 'custom' ? 1 : 0)}>
-                  <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                    {
-                      range(201).map(i => (
-                        <p
-                          key={i}
-                          style={{
-                            textAlign: 'right',
-                            fontFamily: 'monospace',
-                            color: codeEditorLineColor,
-                            fontSize: 14,
-                            marginBottom: 0,
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                            backgroundColor: codeEditorBgColor
-                          }}
-                        >
-                          {i}
-                        </p>
-                      ))
-                    }
-                  </div>
-
+          {
+            this.state.typeSelected === 'browan' && (
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
-                    value={this.props.templateBody}
-                    onValueChange={this.props.handleTemplateUpdate}
+                    value={JSON.stringify(browanPayload, null, 2)}
+                    onValueChange={() => {}}
                     highlight={code => highlight(code, languages.js)}
                     padding={10}
                     style={{
@@ -254,41 +192,154 @@ class ChannelPayloadTemplate extends Component {
                     }}
                   />
                 </div>
-              </div>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card
-              title="Output"
-              bodyStyle={{ padding: 0 }}
-              style={{ marginBottom: 0 }}
-              extra={
-                this.state.typeSelected && (<Button
-                  type="primary"
-                  shape="circle"
-                  icon="caret-right"
-                  size="small"
-                  style={{ marginRight: 0 }}
-                  onClick={this.generateOutput}
-                />)
-              }
-            >
-              <div style={{ height: 503, overflowY: 'scroll' }}>
-                <Editor
-                  value={this.state.output ? JSON.stringify(this.state.output, null, 2) : ""}
-                  highlight={code => highlight(code, languages.js)}
-                  padding={10}
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                  }}
-                />
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      </Card>
-    )
+              </Card>
+            )
+          }
+
+          {
+            this.state.typeSelected === 'cayenne' && (
+              <Card
+                title="JSON Message"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 16 }}
+              >
+                <div style={{ height: 303, overflowY: 'scroll' }}>
+                  <Editor
+                    value={JSON.stringify(cayennePayload, null, 2)}
+                    onValueChange={() => {}}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </Card>
+            )
+          }
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Card
+                title="Template Body"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 0 }}
+                extra={
+                  <span>
+                    {
+                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Clear Changes</Button>
+                    }
+                    {
+                      templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
+                    }
+                    {
+                      !templateDiff && this.props.channel && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
+                        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>See Example Template</Button>
+                      )
+                    }
+                  </span>
+                }
+              >
+                <div style={{ height: 503, overflowY: 'scroll' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
+                    <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                      {
+                        range(201).map(i => (
+                          <p
+                            key={i}
+                            style={{
+                              textAlign: 'right',
+                              fontFamily: 'monospace',
+                              color: codeEditorLineColor,
+                              fontSize: 14,
+                              marginBottom: 0,
+                              paddingLeft: 10,
+                              paddingRight: 10,
+                              backgroundColor: codeEditorBgColor
+                            }}
+                          >
+                            {i}
+                          </p>
+                        ))
+                      }
+                    </div>
+
+                    <Editor
+                      value={this.props.templateBody}
+                      onValueChange={this.props.handleTemplateUpdate}
+                      highlight={code => highlight(code, languages.js)}
+                      padding={10}
+                      style={{
+                        fontFamily: 'monospace',
+                        fontSize: 14,
+                      }}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card
+                title="Output"
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 0 }}
+                extra={
+                  this.state.typeSelected && (<Button
+                    type="primary"
+                    shape="circle"
+                    icon="caret-right"
+                    size="small"
+                    style={{ marginRight: 0 }}
+                    onClick={this.generateOutput}
+                  />)
+                }
+              >
+                <div style={{ height: 503, overflowY: 'scroll' }}>
+                  <Editor
+                    value={this.state.output ? JSON.stringify(this.state.output, null, 2) : ""}
+                    onValueChange={() => {}}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )
+    } else {
+      return (
+        <Card
+          title={
+            <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontWeight: 600 }}>Advanced - JSON Message Template (Optional)</Text>
+              <Popover
+                content={
+                  <Text>
+                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                  </Text>
+                }
+                placement="top"
+                overlayStyle={{ width: 250 }}
+              >
+                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+              </Popover>
+            </span>
+          }
+          bodyStyle={{
+            padding: 0
+          }}
+          extra={
+            <Button type="primary" onClick={() => this.setState({ show: true })}>Show Details</Button>
+          }
+        />
+      )
+    }
   }
 }
 

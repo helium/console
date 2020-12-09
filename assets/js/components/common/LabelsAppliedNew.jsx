@@ -63,7 +63,9 @@ class LabelsAppliedNew extends Component {
   removeLabelApplied = (id, key, e) => {
     e.preventDefault()
     remove(this.state[key], l => l.id === id)
-    this.setState({ [key]: this.state[key] })
+    this.setState({ [key]: this.state[key] }, () => {
+      this.props.handleLabelsUpdate({ labelsApplied: this.state.labelsApplied, newLabels: this.state.newLabels })
+    })
   }
 
   openConfirmationModal = (labelBeingMoved) => {
@@ -130,7 +132,7 @@ class LabelsAppliedNew extends Component {
           </div>
         </div>
         {
-          ConfirmationModal && 
+          ConfirmationModal &&
           <ConfirmationModal
             open={showConfirmationModal}
             onClose={this.closeConfirmationModal}
@@ -138,7 +140,7 @@ class LabelsAppliedNew extends Component {
             confirmAddLabel={this.confirmAddLabel}
           />
         }
-        
+
       </div>
     )
   }

@@ -299,6 +299,7 @@ class ChannelShow extends Component {
             handleTemplateUpdate={this.handleTemplateUpdate}
             updateChannelTemplate={this.updateChannelTemplate}
             channel={channel}
+            functions={channel.labels.map(l => find(allLabels, {id: l.id}).function).filter(f => f)}
           />
         )}
 
