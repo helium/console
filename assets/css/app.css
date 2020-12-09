@@ -478,3 +478,17 @@ p.page-description {
   margin: 0 auto;
   position: relative;
 }
+
+/* only needed for antd 3.x */
+.ant-tabs-nav-scroll {
+  display: flex;
+  justify-content: center;
+}
+
+.ant-slider-track {
+  background-color: #4091F7 !important;
+}
+
+.ant-slider-handle {
+  border-color: #4091F7 !important;
+}
