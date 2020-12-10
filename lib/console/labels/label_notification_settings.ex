@@ -17,7 +17,7 @@ defmodule Console.Labels.LabelNotificationSettings do
   def changeset(label_notification_setting, attrs) do
     label_notification_setting
     |> cast(attrs, [:key, :value, :recipients, :label_id])
-    |> validate_required([:label_id])
+    |> validate_required([:key, :value, :recipients, :label_id])
     |> unique_constraint(:key, name: :label_notification_settings_key_label_id_index, message: "Setting already exists for this label")
   end
 

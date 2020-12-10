@@ -3,11 +3,11 @@ defmodule Console.Repo.Migrations.AddLabelNotificationEventsTable do
 
   def change do
     create table(:label_notification_events, primary_key: false) do
-      add :id, :binary_id, primary_key: true
+      add :id, :binary_id, primary_key: true, null: false
       add :reported_at, :naive_datetime, null: false
-      add :key, :string
+      add :key, :string, null: false
       add :label_id, references(:labels, on_delete: :delete_all), null: false
-      add :details, :map, default: %{}
+      add :details, :map, default: %{}, null: false
       add :sent, :boolean, null: false, default: false
 
       timestamps()
