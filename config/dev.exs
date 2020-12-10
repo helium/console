@@ -55,8 +55,7 @@ config :console, Console.Repo,
   password: "postgres",
   database: "console_dev",
   hostname: "localhost",
-  pool_size: 10,
-  extensions: [{Extensions.JSON, library: Poison}]
+  pool_size: 10
 
 config :cloak, Cloak.AES.CTR,
   tag: "AES",

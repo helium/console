@@ -1,8 +1,8 @@
-defmodule Console.Repo.Migrations.AddNotificationsQueueTable do
+defmodule Console.Repo.Migrations.AddLabelNotificationEventsTable do
   use Ecto.Migration
 
   def change do
-    create table(:label_notification_queue, primary_key: false) do
+    create table(:label_notification_events, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :reported_at, :naive_datetime, null: false
       add :key, :string
@@ -13,6 +13,6 @@ defmodule Console.Repo.Migrations.AddNotificationsQueueTable do
       timestamps()
     end
 
-    create index(:label_notification_queue, [:label_id])
+    create index(:label_notification_events, [:label_id])
   end
 end

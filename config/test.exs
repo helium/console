@@ -16,8 +16,7 @@ config :console, Console.Repo,
   password: "postgres",
   database: "console_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  extensions: [{Extensions.JSON, library: Poison}]
+  pool: Ecto.Adapters.SQL.Sandbox
 
 config :console, Console.Mailer,
   adapter: Bamboo.TestAdapter

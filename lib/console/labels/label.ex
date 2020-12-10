@@ -7,6 +7,8 @@ defmodule Console.Labels.Label do
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
   alias Console.Labels.ChannelsLabels
+  alias Console.Labels.LabelNotificationEvents
+  alias Console.Labels.LabelNotificationSettings
   alias Console.Functions.Function
   alias Console.Helpers
 
@@ -21,8 +23,8 @@ defmodule Console.Labels.Label do
     belongs_to :function, Function
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: ChannelsLabels, on_delete: :delete_all
-    has_many :label_notification_settings, Setting, on_delete: :delete_all
-    has_many :label_notification_queue, Notification, on_delete: :delete_all
+    has_many :label_notification_settings, LabelNotificationSettings, on_delete: :delete_all
+    has_many :label_notification_events, LabelNotificationEvents, on_delete: :delete_all
     timestamps()
   end
 
