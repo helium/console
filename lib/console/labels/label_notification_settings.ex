@@ -1,28 +1,51 @@
-defmodule Console.Labels.LabelNotificationSettings do
-  use Ecto.Schema
-  import Ecto.Changeset
+defmodule Console.LabelNotificationSettings do
   import Ecto.Query, warn: false
+  alias Console.Repo
+  alias Ecto.Multi
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
-  schema "label_notification_settings" do
-    field :key, :string
-    field :value, :string
-    field :recipients, :string
-    belongs_to :label, Console.Labels.Label
+  alias Console.Labels.Label
+  alias Console.Labels.LabelNotificationSetting
+  
+  def get_label_notification_setting!(id), do: Repo.get!(LabelNotificationSetting, id)
+  def get_label_notification_setting(id), do: Repo.get(LabelNotificationSetting, id)
 
-    timestamps()
+  def get_label_notification_settings_for_label(label_id) do 
+    Repo.get_by(LabelNotificationSetting, label_id: label_id)
+  end
+  
+  def get_label_notification_setting_by_key(key, label_id) do
+    Repo.get_by(LabelNotificationSetting, [key: key, label_id: label_id])
   end
 
-  def changeset(label_notification_setting, attrs) do
-    label_notification_setting
-    |> cast(attrs, [:key, :value, :recipients, :label_id])
-    |> validate_required([:key, :value, :recipients, :label_id])
-    |> unique_constraint(:key, name: :label_notification_settings_key_label_id_index, message: "Setting already exists for this label")
+  def fetch_assoc(%LabelNotificationSetting{} = label_notification_setting, assoc \\ [:label]) do
+    Repo.preload(label_notification_setting, assoc)
   end
 
-  def join_changeset(label_notification_setting, key, value, recipients, label) do
+  def create_label_notification_setting(attrs \\ %{}) do
+    %LabelNotificationSetting{}
+    |> LabelNotificationSetting.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_label_notification_setting!(attrs \\ %{}) do
+    %LabelNotificationSetting{}
+    |> LabelNotificationSetting.changeset(attrs)
+    |> Repo.insert!()
+  end
+
+  def update_label_notification_setting(%LabelNotificationSetting{} = label_notification_setting, attrs) do
     label_notification_setting
-    |> changeset(%{key: key, value: value, recipients: recipients, label_id: label.id})
+    |> LabelNotificationSetting.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_label_notification_setting(%LabelNotificationSetting{} = label_notification_setting) do
+    Repo.delete(label_notification_setting)
+  end
+
+  def delete_label_notification_settings(label_notification_setting_ids) do
+    with {count, nil} <- from(ns in LabelNotificationSetting, where: ns.id in ^label_notification_setting_ids) |> Repo.delete_all() do
+      {:ok, count}
+    end
   end
 end

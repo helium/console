@@ -8,6 +8,8 @@ defmodule Console.Repo.Migrations.AddNotificationSettingsTable do
       add :value, :string, null: false
       add :label_id, references(:labels, on_delete: :delete_all), null: false
       add :recipients, :string, null: false
+
+      timestamps()
     end
 
     create index(:label_notification_settings, [:label_id])
