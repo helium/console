@@ -24,7 +24,8 @@ config :console, Console.Repo,
   password: System.get_env("DATABASE_PASSWORD") || "postgres",
   database: System.get_env("DATABASE_DB") || "console_dev",
   hostname: db_host,
-  pool_size: 10
+  pool_size: 10,
+  extensions: [{Extensions.JSON, library: Poison}]
 
 config :console, oui: String.to_integer(System.get_env("OUI"))
 
