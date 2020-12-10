@@ -1,34 +1,61 @@
 export const defaultPayload = {
-    "id": "5e651b66-1bb1-46dd-b0e5-d72356c0f5e3",
-    "name": "name 1",
-    "dev_eui": "58A0CB0000202323",
-    "app_eui": "app_eui",
-    "metadata": {},
-    "fcnt": 2,
-    "reported_at": 123,
-    "payload": "base64 encoded payload",
-    "payload_size": 22,
-    "port": 1,
-    "devaddr": "devaddr",
+    "app_eui": "3655731B237B9BA8",
+    "dc": {
+        "balance": 967819,
+        "nonce": 4
+    },
+    "dev_eui": "ED9196B2424BF383",
+    "devaddr": "07040048",
+    "downlink_url": "https://staging-console.helium.com/api/v1/down/46fe16d8-bb37-4fc7-8f66-d722aa86a995/L-RZrP2oxYQ150phzndQ-O5LKlXjRb17/91c9b41c-acb6-4887-93a1-dea80d13e92f",
+    "fcnt": 412,
     "hotspots": [
         {
-            "id": "hotspot_id",
-            "name": "hotspot name",
-            "reported_at": 123,
-            "status": "success | error",
-            "rssi": -30,
-            "snr": 0.2,
+            "channel": 9,
+            "frequency": 904.0999755859375,
+            "id": "11D86CyMMt685XcsddPtaChWr3qz2UxDyhGG5EUeZbwqemxjBMb",
+            "lat": 38.90166995231145,
+            "long": -121.0663012467163,
+            "name": "fancy-wood-pee",
+            "reported_at": 1606262019,
+            "rssi": -97,
+            "snr": 12.800000190734863,
             "spreading": "SF9BW125",
-            "frequency": 923.3,
-            "channel": 12,
-            "lat": 37.00001962582851,
-            "long": -120.9000053210367
+            "status": "success"
+        },
+        {
+            "channel": 9,
+            "frequency": 904.0999755859375,
+            "id": "11D86CyMMt685XcsddPtaChWr3qz2UxDyhGG5EUeZbwqemxjBMb",
+            "lat": 32.90166995231145,
+            "long": -118.0663012467163,
+            "name": "cool-rusty-willow",
+            "reported_at": 1606262019,
+            "rssi": -93,
+            "snr": 12.300000190734863,
+            "spreading": "SF9BW125",
+            "status": "success"
         }
     ],
-    "dc" : {
-        "balance": 3000,
-        "nonce": 2
-    }
+    "id": "91c9b41c-acb6-4887-93a1-dea80d13e92f",
+    "metadata": {
+        "labels": [
+            {
+                "id": "b6374794-4c46-43a0-99ff-a967aa75c526",
+                "name": "Integration_1",
+                "organization_id": "ae2f4a57-f3db-4ca2-bca3-aadb79c326b8"
+            },
+            {
+                "id": "071a45f3-19f0-4308-941c-51a68a02419d",
+                "name": "Integration_2",
+                "organization_id": "ae2f4a57-f3db-4ca2-bca3-aadb79c326b8"
+            }
+        ],
+        "organization_id": "ae2f4a57-f3db-4ca2-bca3-aadb79c326b8"
+    },
+    "name": "Device_1",
+    "payload": "base64 encoded payload",
+    "port": 1,
+    "reported_at": 1606262019
 }
 
 export const browanPayload = {

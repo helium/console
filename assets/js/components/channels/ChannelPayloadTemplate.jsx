@@ -131,7 +131,7 @@ class ChannelPayloadTemplate extends Component {
               <Popover
                 content={
                   <Text>
-                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                    Users can customize the JSON Message structure sent to Integrations. This is an advanced feature and should only be used by users familiar with logic-less templates.
                   </Text>
                 }
                 placement="top"
@@ -228,14 +228,14 @@ class ChannelPayloadTemplate extends Component {
                 extra={
                   <span>
                     {
-                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Clear Changes</Button>
+                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Undo</Button>
                     }
                     {
                       templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
                     }
                     {
                       !templateDiff && this.props.channel && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
-                        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>See Example Template</Button>
+                        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
                       )
                     }
                   </span>
@@ -321,7 +321,7 @@ class ChannelPayloadTemplate extends Component {
               <Popover
                 content={
                   <Text>
-                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                    Users can customize the JSON Message structure sent to Integrations. This is an advanced feature and should only be used by users familiar with logic-less templates.
                   </Text>
                 }
                 placement="top"
