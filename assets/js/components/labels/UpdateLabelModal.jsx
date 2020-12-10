@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography, Input, Divider, Select, Tabs, Slider } from 'antd';
 import LabelTag, { labelColors } from '../common/LabelTag'
+import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
 const { Text } = Typography
@@ -90,7 +91,7 @@ class UpdateLabelModal extends Component {
                 <Select value={this.state.color} name="color" onChange={this.handleColorSelect} className="colorpicker">
                   {
                     labelColors.map((c,i) => (
-                      <Option key={i} value={c}><LabelTag text={this.state.labelName || label.name} color={c} /></Option>
+                      <Option key={i} value={c}><SquareTag color={c} /></Option>
                     ))
                   }
                 </Select>

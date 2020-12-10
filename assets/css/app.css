@@ -489,6 +489,16 @@ p.page-description {
   background-color: #4091F7 !important;
 }
 
+.ant-slider-rail {
+  background-color: #FFFFFF !important;
+}
+
 .ant-slider-handle {
   border-color: #4091F7 !important;
+}
+
+.ant-select-selection__rendered {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
 }
