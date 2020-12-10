@@ -193,6 +193,6 @@ export const cayennePayload = {
       "reported_at": 1606869315
     }
 
-export const defaultTemplate = '{\n  "id": "{{id}}",\n  "name": "{{name}}",\n  "dev_eui": "{{dev_eui}}"\n}'
+export const defaultTemplate = '{\n  "id": "{{id}}",\n  "name": "{{name}}",\n  "app_eui": "{{app_eui}}",\n  "dev_eui": "{{dev_eui}}",\n  "devaddr": "{{devaddr}}",\n  "downlink_url": "{{downlink_url}}",\n  "fcnt": "{{fcnt}}",\n  "port": "{{port}}",\n  "payload": "{{payload}}",\n  "reported_at": "{{reported_at}}"\n}'
 export const browanTemplate = '{\n  "device": "{{id}}",\n  {{#decoded}}{{#payload}}\n  "battery": {{battery_percent}},\n  "latitude": {{latitude}},\n  "longitude": {{longitude}},\n  "temperature": {{temperature}}\n  {{/payload}}{{/decoded}}\n}'
 export const cayenneTemplate = '{\n  {{#decoded}}{{#payload}}\n    {{^value.altitude}}\n      {{#value.x}}\n        "{{name}}_x": "{{value.x}}",\n        "{{name}}_y": "{{value.y}}",\n        "{{name}}_z": "{{value.z}}"{{^last}},{{/last}}\n      {{/value.x}}\n      {{^value.x}}\n        "{{name}}":"{{value}}"{{^last}},{{/last}}\n      {{/value.x}}\n    {{/value.altitude}}\n    {{^value.x}}\n      {{#value.altitude}}\n        "altitude": "{{value.altitude}}",\n        "latitude": "{{value.latitude}}",\n        "longitude": "{{value.longitude}}"{{^last}},{{/last}}\n      {{/value.altitude}}\n    {{/value.x}}\n  {{/payload}}{{/decoded}}\n}'
