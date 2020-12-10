@@ -21,8 +21,8 @@ defmodule Console.Labels.Label do
     belongs_to :function, Function
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     many_to_many :channels, Channel, join_through: ChannelsLabels, on_delete: :delete_all
-    # has_many :label_notification_settings, Setting, join_through: LabelNotifications, on_delete: :delete_all
-    # has_many :label_notification_queue, Notification, join_through: LabelNotificationQueue, on_delete: :delete_all
+    has_many :label_notification_settings, Setting, on_delete: :delete_all
+    has_many :label_notification_queue, Notification, on_delete: :delete_all
     timestamps()
   end
 
