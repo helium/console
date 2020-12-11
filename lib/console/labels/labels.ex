@@ -57,7 +57,6 @@ defmodule Console.Labels do
         %Label{}
         |> Label.changeset(attrs)
         |> Repo.insert()
-      # add default settings?
     end
   end
 

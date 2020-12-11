@@ -4,6 +4,7 @@ import LabelTag, { labelColors } from '../common/LabelTag'
 import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
+import NotificationSettings from './NotificationSettings';
 const { Text } = Typography
 const { Option } = Select
 const { TabPane } = Tabs
@@ -26,16 +27,21 @@ class UpdateLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, tab } = this.state;
+    const { labelName, color, multiBuyValue, notifications, tab } = this.state;
 
-    if (tab === 'general') {
-      this.props.handleUpdateLabel(labelName, color)
-      analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
-      this.props.onClose()
-    } else if (tab === 'packets') {
-      this.props.handleUpdateLabelMultiBuy(multiBuyValue)
-      analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
-      this.props.onClose()
+    switch (tab) {
+      case 'general':
+        this.props.handleUpdateLabel(labelName, color)
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
+        this.props.onClose()
+      case 'packets':
+        this.props.handleUpdateLabelMultiBuy(multiBuyValue)
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
+        this.props.onClose()
+      case 'notifications':
+        this.props.handleUpdateLabelNotificationSettings(notifications);
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS",  {id: this.props.label.id, label_notification_settings: notifications })
+        this.props.onClose()
     }
   }
 
@@ -44,7 +50,7 @@ class UpdateLabelModal extends Component {
       setTimeout(() => this.setState({
         labelName: null,
         color: this.props.label.color || labelColors[0],
-        multiBuyValue: this.props.label.multi_buy,
+        multiBuyValue: this.props.label.multi_buy
       }), 200)
     }
 
@@ -138,6 +144,9 @@ class UpdateLabelModal extends Component {
                 </p>
               </div>
             </div>
+          </TabPane>
+          <TabPane tab="Notifications" key="notifications">
+            <NotificationSettings />
           </TabPane>
         </Tabs>
       </Modal>

@@ -6,14 +6,14 @@ defmodule Console.Labels.LabelResolver do
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:devices, :channels, :function])
+      |> preload([:devices, :channels, :function, :label_notification_settings])
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, labels}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    label = Ecto.assoc(current_organization, :labels) |> preload([:channels, :devices, :function]) |> Repo.get!(id)
+    label = Ecto.assoc(current_organization, :labels) |> preload([:channels, :devices, :function, :label_notification_settings]) |> Repo.get!(id)
 
     {:ok, label}
   end
@@ -30,7 +30,7 @@ defmodule Console.Labels.LabelResolver do
 
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:channels, :function])
+      |> preload([:channels, :function, :label_notification_settings])
       |> Repo.all()
       |> Enum.map(
         fn label ->

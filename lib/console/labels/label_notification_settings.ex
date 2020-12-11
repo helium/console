@@ -21,22 +21,16 @@ defmodule Console.LabelNotificationSettings do
     Repo.preload(label_notification_setting, assoc)
   end
 
-  def create_label_notification_setting(attrs \\ %{}) do
+  def upsert_label_notification_setting(attrs \\ %{}) do
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
   end
 
-  def create_label_notification_setting!(attrs \\ %{}) do
+  def upsert_label_notification_setting!(attrs \\ %{}) do
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)
-    |> Repo.insert!()
-  end
-
-  def update_label_notification_setting(%LabelNotificationSetting{} = label_notification_setting, attrs) do
-    label_notification_setting
-    |> LabelNotificationSetting.changeset(attrs)
-    |> Repo.update()
+    |> Repo.insert!(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
   end
 
   def delete_label_notification_setting(%LabelNotificationSetting{} = label_notification_setting) do

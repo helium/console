@@ -14,7 +14,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { updateLabel, addDevicesToLabels, toggleLabelDebug } from '../../actions/label'
+import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
@@ -104,6 +104,11 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleUpdateLabelNotificationSettings = notifications => {
+    const labelId = this.props.match.params.id;
+    this.props.updateLabelNotificationSettings(labelId, notifications);
+  }
+
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
@@ -176,6 +181,7 @@ class LabelShow extends Component {
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
             handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
+            handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
             open={this.state.showUpdateLabelModal}
             onClose={this.closeUpdateLabelModal}
             label={label}
