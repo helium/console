@@ -36,7 +36,7 @@ class ChannelPayloadTemplate extends Component {
   }
 
   componentDidMount = () => {
-    const { functions, from } = this.props
+    const { functions, from, channel } = this.props
     const fromChannelNew = from === 'channelNew'
 
     const firstFunc = functions[0]
@@ -46,10 +46,6 @@ class ChannelPayloadTemplate extends Component {
       this.setState({ typeSelected: 'cayenne' })
     } else {
       this.setState({ typeSelected: 'default' })
-      if (fromChannelNew) {
-        this.props.handleTemplateUpdate(templatesMap['default'])
-        setTimeout(this.generateOutput, 200)
-      }
     }
   }
 
@@ -119,9 +115,46 @@ class ChannelPayloadTemplate extends Component {
     this.props.handleTemplateUpdate(channel ? channel.payload_template : "")
   }
 
-  render() {
-    const templateDiff = this.props.channel && (this.props.channel.payload_template != this.props.templateBody)
+  renderTemplateButtons = () => {
+    const { channel, templateBody, from } = this.props
+    const { typeSelected } = this.state
+    const fromChannelNew = from === 'channelNew'
 
+    if (!fromChannelNew && channel && channel.payload_template === null && templateBody !== '' ) return (
+      <span>
+        <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Undo</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
+      </span>
+    )
+    if (!fromChannelNew && channel && channel.payload_template === null && templateBody === '') return (
+      <span>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+      </span>
+    )
+    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody !== channel.payload_template) return (
+      <span>
+        <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Undo</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
+      </span>
+    )
+    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== templatesMap[typeSelected]) return (
+      <span>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+      </span>
+    )
+    if (fromChannelNew && templateBody === '') return (
+      <span>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+      </span>
+    )
+    if (fromChannelNew && templateBody !== templatesMap[typeSelected]) return (
+      <span>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+      </span>
+    )
+  }
+
+  render() {
     if (this.state.show) {
       return (
         <Card
@@ -131,7 +164,7 @@ class ChannelPayloadTemplate extends Component {
               <Popover
                 content={
                   <Text>
-                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                    Users can customize the JSON Message structure sent to Integrations. This is an advanced feature and should only be used by users familiar with logic-less templates.
                   </Text>
                 }
                 placement="top"
@@ -222,24 +255,25 @@ class ChannelPayloadTemplate extends Component {
           <Row gutter={16}>
             <Col span={12}>
               <Card
-                title="Template Body"
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 0 }}
-                extra={
-                  <span>
-                    {
-                      templateDiff && this.props.channel.payload_template && <Button size="small" style={{ marginRight: 8, height: 25 }} onClick={this.resetTemplate}>Clear Changes</Button>
-                    }
-                    {
-                      templateDiff && <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
-                    }
-                    {
-                      !templateDiff && this.props.channel && this.props.channel.payload_template != templatesMap[this.state.typeSelected] && (
-                        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>See Example Template</Button>
-                      )
-                    }
+                title={
+                  <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontWeight: 600 }}>Template Body</Text>
+                    <Popover
+                      content={
+                        <Text>
+                          If no template changes are made then the default JSON message is sent.
+                        </Text>
+                      }
+                      placement="top"
+                      overlayStyle={{ width: 250 }}
+                    >
+                      <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+                    </Popover>
                   </span>
                 }
+                bodyStyle={{ padding: 0 }}
+                style={{ marginBottom: 0 }}
+                extra={this.renderTemplateButtons()}
               >
                 <div style={{ height: 503, overflowY: 'scroll' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
@@ -321,7 +355,7 @@ class ChannelPayloadTemplate extends Component {
               <Popover
                 content={
                   <Text>
-                    Users can customize the JSON message sent to Integrations. This is a beta feature and only users familiar with templating should try this feature. For more info, visit <a href="https://engineering.helium.com" target="_blank">https://engineering.helium.com</a>
+                    Users can customize the JSON Message structure sent to Integrations. This is an advanced feature and should only be used by users familiar with logic-less templates.
                   </Text>
                 }
                 placement="top"

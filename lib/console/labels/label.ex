@@ -18,6 +18,7 @@ defmodule Console.Labels.Label do
     field :name, :string
     field :color, :string
     field :creator, :string
+    field :multi_buy, :integer
 
     belongs_to :organization, Organization
     belongs_to :function, Function
@@ -33,7 +34,7 @@ defmodule Console.Labels.Label do
 
     changeset =
       label
-      |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id])
+      |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id, :multi_buy])
       |> validate_required([:name, :organization_id])
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "This label name has already been used in this organization")
   end

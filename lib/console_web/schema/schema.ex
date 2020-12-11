@@ -49,6 +49,7 @@ defmodule ConsoleWeb.Schema do
     field :channels, list_of(:channel)
     field :function, :function
     field :device_count, :integer
+    field :multi_buy, :integer
   end
 
   paginated object :channel do
