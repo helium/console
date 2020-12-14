@@ -64,6 +64,7 @@ defmodule Console.Mixfile do
       {:joken, "~> 2.2.0"},
       {:mox, "~> 0.5.2", only: :test},
       {:appsignal, "~> 1.0"},
+      {:inet_cidr, "~> 1.0.0"}
     ]
   end
 
