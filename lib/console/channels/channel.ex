@@ -36,6 +36,7 @@ defmodule Console.Channels.Channel do
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> validate_inclusion(:type, ~w(http mqtt aws azure google))
+    |> validate_length(:name, max: 50)
     |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
@@ -54,6 +55,7 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template])
     |> validate_required([:name, :type, :credentials])
+    |> validate_length(:name, max: 50)
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
@@ -172,7 +174,7 @@ defmodule Console.Channels.Channel do
 
           true ->
             up_topic_ok = check_topic(creds["uplink"]["topic"])
-            down_topic_ok = cond do 
+            down_topic_ok = cond do
               creds["downlink"]["topic"] -> check_topic(creds["downlink"]["topic"])
               true -> true
             end

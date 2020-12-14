@@ -28,6 +28,7 @@ defmodule Console.Functions.Function do
     |> cast(attrs, [:name, :body, :type, :format, :organization_id, :active])
     |> put_native_decoder_body()
     |> validate_required([:name, :body, :type, :format, :organization_id])
+    |> validate_length(:name, max: 50)
     |> validate_inclusion(:type, ~w(decoder))
     |> validate_inclusion(:format, ~w(custom cayenne browan_object_locator))
     |> unique_constraint(:name, name: :functions_name_organization_id_index, message: "This function name has already been used in this organization")
