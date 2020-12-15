@@ -47,7 +47,7 @@ export const sendDownlinkMessage = (payload, port, confirmed, devices, channels)
           devices.map(device => {
             return rest.post(
               `/api/v1/down/${channel.id}/${channel.downlink_token}/${device}`,
-              { payload_raw: payload, port, confirmed }
+              { payload_raw: payload, port, confirmed, from: 'console_downlink_queue' }
             );
           })
         ).then(()=> {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
@@ -55,7 +55,7 @@ export const sendDownlinkMessage = (payload, port, confirmed, devices, channels)
       } else {
         rest.post(
           `/api/v1/down/${channel.id}/${channel.downlink_token}/`,
-          { payload_raw: payload, port, confirmed }
+          { payload_raw: payload, port, confirmed, from: 'console_downlink_queue' }
         ).then(() => {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
         ).catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)});
       }

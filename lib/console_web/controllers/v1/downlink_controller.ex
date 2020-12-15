@@ -33,11 +33,11 @@ defmodule ConsoleWeb.V1.DownlinkController do
             device_id != nil and !Enum.member?(devices, device_id) ->
               {:error, :unprocessable_entity, "Device not found on integration"}
             device_id != nil and Enum.member?(devices, device_id) ->
-              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "devices" => [device_id], "payload" => conn.body_params })
+              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => [device_id], "payload" => conn.body_params })
               conn
               |> send_resp(:ok, "Downlink scheduled")
             device_id == nil ->
-              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "devices" => devices, "payload" => conn.body_params })
+              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => devices, "payload" => conn.body_params })
               conn
               |> send_resp(:ok, "Downlink scheduled")
           end
