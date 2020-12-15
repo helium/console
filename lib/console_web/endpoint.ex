@@ -4,7 +4,7 @@ defmodule ConsoleWeb.Endpoint do
   use Appsignal.Phoenix
 
   socket "/socket", ConsoleWeb.UserSocket,
-    websocket: [timeout: 45_000]
+    websocket: [timeout: 45_000, check_origin: ["//localhost", "https://*.helium.com"]]
 
   socket "/socket/router", ConsoleWeb.RouterSocket,
     websocket: [timeout: 45_000]
