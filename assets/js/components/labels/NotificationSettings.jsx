@@ -52,20 +52,21 @@ class NotificationSettings extends Component {
   updateSetting (setting) {
     this.setState({
       [setting.key]: {
+        label_id: this.props.label_id,
         key: setting.key,
         value: setting && setting.value || this.state[setting.key] && this.state[setting.key].value || "1", //needs to take in either setting coming in or existing
         recipients: setting && setting.recipients || this.state[setting.key] && this.state[setting.key].recipients || 'admin' //needs to take in either setting coming in or existing
       }
     }, () => {
       this.props.onChange([
-        this.state.device_join_otaa_first_time,
-        this.state.device_stops_transmitting,
-        this.state.device_deleted,
-        this.state.integration_stops_working,
-        this.state.device_first_connects_to_integration,
-        this.state.downlink_unsuccessful,
-        this.state.integration_with_devices_deleted,
-        this.state.integration_with_devices_updated,
+        ...this.state.device_join_otaa_first_time ? [this.state.device_join_otaa_first_time] : [],
+        ...this.state.device_stops_transmitting ? [this.state.device_stops_transmitting] : [],
+        ...this.state.device_deleted ? [this.state.device_deleted] : [],
+        ...this.state.integration_stops_working ? [this.state.integration_stops_working] : [],
+        ...this.state.device_first_connects_to_integration ? [this.state.device_first_connects_to_integration] : [],
+        ...this.state.downlink_unsuccessful ? [this.state.downlink_unsuccessful] : [],
+        ...this.state.integration_with_devices_deleted ? [this.state.integration_with_devices_deleted] : [],
+        ...this.state.integration_with_devices_updated ? [this.state.integration_with_devices_updated] : [],
       ])
     })
   }

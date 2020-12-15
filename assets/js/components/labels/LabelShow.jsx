@@ -105,8 +105,7 @@ class LabelShow extends Component {
   }
 
   handleUpdateLabelNotificationSettings = notifications => {
-    const labelId = this.props.match.params.id;
-    this.props.updateLabelNotificationSettings(labelId, notifications);
+    this.props.updateLabelNotificationSettings(notifications);
   }
 
   handleToggleDebug = () => {

@@ -45,8 +45,8 @@ class UpdateLabelModal extends Component {
         this.props.onClose()
       case 'notifications':
         this.props.handleUpdateLabelNotificationSettings(notificationSettings);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings })
-        this.props.onClose()
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
+        this.props.onClose();
     }
   }
 
@@ -153,6 +153,7 @@ class UpdateLabelModal extends Component {
           </TabPane>
           <TabPane tab="Notifications" key="notifications">
             <NotificationSettings 
+              label_id={this.props.label.id}
               notificationSettings={notificationSettings}
               onChange={this.handleNotificationSettingsChange}
             />

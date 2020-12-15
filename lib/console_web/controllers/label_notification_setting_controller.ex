@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.LabelNotificationsSettingController do
+defmodule ConsoleWeb.LabelNotificationSettingsController do
   use ConsoleWeb, :controller
 
   alias Console.Repo
@@ -9,9 +9,9 @@ defmodule ConsoleWeb.LabelNotificationsSettingController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def update(conn, %{"label_id" => label_id, "label_notification_settings" => settings}) do
+  def update(conn, %{"label_notification_settings" => settings}) do
     with {:ok, :ok} <- Repo.transaction(fn ->
-      Enum.each(settings, fn setting ->
+      Enum.each(settings, fn setting -> 
         LabelNotificationSettings.upsert_label_notification_setting(setting)
       end)
     end)

@@ -169,10 +169,9 @@ export const swapLabel = (label_id, destination_label_id) => {
   }
 }
 
-export const updateLabelNotificationSettings = (label_id, settings) => {
+export const updateLabelNotificationSettings = (settings) => {
   return (dispatch) => {
     rest.post(`/api/labels/update_notification_settings`, {
-      label_id,
       label_notification_settings: settings
     })
   }
