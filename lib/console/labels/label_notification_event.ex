@@ -20,9 +20,4 @@ defmodule Console.Labels.LabelNotificationEvent do
     |> cast(attrs, [:key, :details, :sent, :label_id])
     |> validate_required([:key, :details, :sent, :label_id])
   end
-
-  def join_changeset(label_notification_event, key, details, sent, label) do
-    label_notification_event
-    |> changeset(%{key: key, details: details, sent: sent, label_id: label.id})
-  end
 end
