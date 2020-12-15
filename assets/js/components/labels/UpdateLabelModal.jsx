@@ -52,6 +52,7 @@ class UpdateLabelModal extends Component {
 
   componentDidUpdate = (prevProps) => {
     if (prevProps.open && !this.props.open) {
+      console.log("IM HERE")
       setTimeout(() => this.setState({
         labelName: null,
         color: this.props.label.color || labelColors[0],

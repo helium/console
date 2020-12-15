@@ -60,13 +60,44 @@ class NotificationSettings extends Component {
     [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_UPDATED]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_UPDATED)[0],
   }
 
+  determineValue (setting) {
+    if (setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING) {
+      return (setting.value || (this.state[setting.key] && this.state[setting.key].value) || "60");
+    } else {
+      return (setting.value || (this.state[setting.key] && this.state[setting.key].value) || "1");
+    }
+  }
+
+  determineTimeValueToShow (value) {
+    if (parseInt(value) < 60) {
+      return `${value} mins`;
+    } else {
+      return `${(parseInt(value))/60} ${parseInt(value) === 60 ? 'hr' : 'hrs'}`;
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    if (this.props.notificationSettings !== prevProps.notificationSettings) {
+      this.setState({
+        [NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME)[0],
+        [NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING)[0],
+        [NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED)[0],
+        [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING)[0],
+        [NOTIFICATION_SETTINGS_KEYS.DEVICE_FIRST_CONNECTS_TO_INTEGRATION]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_FIRST_CONNECTS_TO_INTEGRATION)[0],
+        [NOTIFICATION_SETTINGS_KEYS.DOWNLINK_UNSUCCESSFUL]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.DOWNLINK_UNSUCCESSFUL)[0],
+        [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_DELETED]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_DELETED)[0],
+        [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_UPDATED]: this.props.notificationSettings.filter(s => s.key === NOTIFICATION_SETTINGS_KEYS.INTEGRATION_WITH_DEVICES_UPDATED)[0]
+      });
+    }
+  }
+
   updateSetting (setting) {
     this.setState({
       [setting.key]: {
         label_id: this.props.label_id,
         key: setting.key,
-        value: setting.value || this.state[setting.key] && this.state[setting.key].value || "1", //needs to take in either setting coming in or existing
-        recipients: setting.recipients || this.state[setting.key] && this.state[setting.key].recipients || "admin" //needs to take in either setting coming in or existing
+        value: this.determineValue(setting),
+        recipients: setting.recipients || (this.state[setting.key] && this.state[setting.key].recipients) || "admin"
       }
     }, () => {
       this.props.onChange([
@@ -120,22 +151,22 @@ class NotificationSettings extends Component {
             </Dropdown> 
             {setting.description}
             {setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING &&
-            <Dropdown overlay={timeMenu(setting.key)}>
-              <a 
-                className="ant-dropdown-link" 
-                onClick={e => e.preventDefault()} 
-                style={{ textTransform: 'capitalize', textDecoration: 'underline'}}
-              >
-                {
-                  (this.state[setting.key] || {}).value || '1 hr'
-                }
-              </a>
-            </Dropdown>
+              <Dropdown overlay={timeMenu(setting.key)}>
+                <a 
+                  className="ant-dropdown-link" 
+                  onClick={e => e.preventDefault()} 
+                  style={{ textTransform: 'capitalize', textDecoration: 'underline'}}
+                >
+                  {
+                    this.determineTimeValueToShow((this.state[setting.key] || {}).value || 60)
+                  }
+                </a>
+              </Dropdown>
             }
           </Col>
           <Col span={4} style={{ paddingLeft: 15 }}>
             <Switch 
-              onChange={checked => { this.updateSetting({ key: setting.key, value: checked ? "1" : "0" }) }} 
+              onChange={checked => { this.updateSetting({ key: setting.key, value: checked ? (setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING ? "60" : "1") : "0" }) }} 
               checked={(this.state[setting.key] || {}).value > 0 ? true : false} 
             />
           </Col>
