@@ -251,7 +251,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, updateLabelNotificationSettings }, dispatch)
 }
 
 export default LabelShow

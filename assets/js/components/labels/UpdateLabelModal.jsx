@@ -15,6 +15,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 0,
+    notificationSettings: this.props.label.label_notification_settings || []
   }
 
   handleInputUpdate = (e) => {
@@ -25,9 +26,13 @@ class UpdateLabelModal extends Component {
     this.setState({ color })
   }
 
+  onNotificationSettingsChange = (notificationSettings) => {
+    this.setState({ notificationSettings });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, notifications, tab } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, tab } = this.state;
 
     switch (tab) {
       case 'general':
@@ -39,8 +44,8 @@ class UpdateLabelModal extends Component {
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
         this.props.onClose()
       case 'notifications':
-        this.props.handleUpdateLabelNotificationSettings(notifications);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS",  {id: this.props.label.id, label_notification_settings: notifications })
+        this.props.handleUpdateLabelNotificationSettings(notificationSettings);
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings })
         this.props.onClose()
     }
   }
@@ -50,7 +55,8 @@ class UpdateLabelModal extends Component {
       setTimeout(() => this.setState({
         labelName: null,
         color: this.props.label.color || labelColors[0],
-        multiBuyValue: this.props.label.multi_buy
+        multiBuyValue: this.props.label.multi_buy,
+        notificationSettings: this.props.label.label_notification_settings
       }), 200)
     }
 
@@ -61,7 +67,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue } = this.state
+    const { multiBuyValue, notificationSettings } = this.state
 
     return (
       <Modal
@@ -81,7 +87,7 @@ class UpdateLabelModal extends Component {
         bodyStyle={{ padding: 0 }}
       >
         <Tabs defaultActiveKey="general" size="large" onTabClick={tab => this.setState({ tab })}>
-          <TabPane tab="General Settings" key="general">
+          <TabPane tab="General" key="general">
             <div style={{ padding: '30px 50px'}}>
               <Text strong style={{ fontSize: 16 }}>Label Name</Text>
               <Input
@@ -146,7 +152,10 @@ class UpdateLabelModal extends Component {
             </div>
           </TabPane>
           <TabPane tab="Notifications" key="notifications">
-            <NotificationSettings />
+            <NotificationSettings 
+              notificationSettings={notificationSettings}
+              onChange={this.onNotificationSettingsChange}
+            />
           </TabPane>
         </Tabs>
       </Modal>
