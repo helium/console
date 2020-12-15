@@ -27,12 +27,6 @@ defmodule Console.LabelNotificationSettings do
     |> Repo.insert(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
   end
 
-  def upsert_label_notification_setting!(attrs \\ %{}) do
-    %LabelNotificationSetting{}
-    |> LabelNotificationSetting.changeset(attrs)
-    |> Repo.insert!(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
-  end
-
   def delete_label_notification_setting(%LabelNotificationSetting{} = label_notification_setting) do
     Repo.delete(label_notification_setting)
   end
