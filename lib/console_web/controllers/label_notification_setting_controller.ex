@@ -16,10 +16,6 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
       end)
     end)
     do
-
-      # broadcast?
-      # subscription broadcast?
-
       conn
       |> put_resp_header("message", "The label notification settings were successfully updated")
       |> render("show.json", label_notification_settings: settings)
