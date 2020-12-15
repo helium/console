@@ -36,7 +36,7 @@ defmodule Console.Channels.Channel do
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> validate_inclusion(:type, ~w(http mqtt aws azure google))
-    |> validate_length(:name, max: 50)
+    |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
