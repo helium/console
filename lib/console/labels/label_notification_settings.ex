@@ -22,15 +22,12 @@ defmodule Console.LabelNotificationSettings do
   end
 
   def upsert_label_notification_setting(attrs \\ %{}) do
-    IO.puts "\n\n\n\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    IO.inspect attrs
-    IO.puts ">>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n\n\n"
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)
     |> Repo.insert(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
   end
 
-  def upsert_label_notification_setting!(existing, attrs \\ %{}) do
+  def upsert_label_notification_setting!(attrs \\ %{}) do
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)
     |> Repo.insert!(conflict_target: [:key, :label_id], on_conflict: {:replace, [:value, :recipients]})
