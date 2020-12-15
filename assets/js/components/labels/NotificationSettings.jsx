@@ -82,7 +82,7 @@ class NotificationSettings extends Component {
     return (
       defaultSettings.map(setting => (
         <Row style={{ padding: '20px' }} key={setting.key}>
-          <Col span={21}>
+          <Col span={20} style={{ fontSize: '16px' }}>
             <Text>Notify </Text>
             <Dropdown overlay={menu(setting.key)}>
               <a 
@@ -97,11 +97,10 @@ class NotificationSettings extends Component {
             </Dropdown> 
             {setting.description}
           </Col>
-          <Col span={3}>
+          <Col span={4} style={{ paddingLeft: 15 }}>
             <Switch 
               onChange={checked => { this.updateSetting({ key: setting.key, value: checked ? "1" : "0" }) }} 
-              checked={(this.state[setting.key] || {}).value > 0 ? 
-                  true : false} 
+              checked={(this.state[setting.key] || {}).value > 0 ? true : false} 
             />
           </Col>
         </Row>
@@ -110,4 +109,4 @@ class NotificationSettings extends Component {
   }
 }
 
-export default NotificationSettings
+export default NotificationSettings;

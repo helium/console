@@ -26,7 +26,7 @@ class UpdateLabelModal extends Component {
     this.setState({ color })
   }
 
-  onNotificationSettingsChange = (notificationSettings) => {
+  handleNotificationSettingsChange = (notificationSettings) => {
     this.setState({ notificationSettings });
   }
 
@@ -56,7 +56,7 @@ class UpdateLabelModal extends Component {
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
-        notificationSettings: this.props.label.label_notification_settings
+        notificationSettings: this.props.label.label_notification_settings // not resetting them upon closing/opening :/
       }), 200)
     }
 
@@ -154,7 +154,7 @@ class UpdateLabelModal extends Component {
           <TabPane tab="Notifications" key="notifications">
             <NotificationSettings 
               notificationSettings={notificationSettings}
-              onChange={this.onNotificationSettingsChange}
+              onChange={this.handleNotificationSettingsChange}
             />
           </TabPane>
         </Tabs>
