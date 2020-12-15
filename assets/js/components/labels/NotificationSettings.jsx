@@ -16,7 +16,7 @@ const NOTIFICATION_SETTINGS_KEYS = {
 const defaultSettings = [
   {
     key: NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME,
-    description: ' when a device activates via OTAA for the first time'
+    description: ' when a device joins via OTAA for the first time'
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING,
@@ -28,11 +28,11 @@ const defaultSettings = [
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING,
-    description: ' when an integration with devices stops working'
+    description: ' when an integration stops working'
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.DEVICE_FIRST_CONNECTS_TO_INTEGRATION,
-    description: ' when a device first connects to an integration for the first time'
+    description: ' when a device connects to an integration for the first time'
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.DOWNLINK_UNSUCCESSFUL,
@@ -136,7 +136,7 @@ class NotificationSettings extends Component {
     return (
       defaultSettings.map(setting => (
         <Row style={{ padding: '20px' }} key={setting.key}>
-          <Col span={20} style={{ fontSize: '16px' }}>
+          <Col span={21} style={{ fontSize: '16px'  }}>
             <Text>Notify </Text>
             <Dropdown overlay={recipientMenu(setting.key)}>
               <a 
@@ -149,7 +149,7 @@ class NotificationSettings extends Component {
                 }
               </a>
             </Dropdown> 
-            {setting.description}
+            <Text>{setting.description}</Text>
             {setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING &&
               <Dropdown overlay={timeMenu(setting.key)}>
                 <a 
@@ -164,7 +164,7 @@ class NotificationSettings extends Component {
               </Dropdown>
             }
           </Col>
-          <Col span={4} style={{ paddingLeft: 15 }}>
+          <Col span={3} style={{ paddingLeft: 15 }}>
             <Switch 
               onChange={checked => { this.updateSetting({ key: setting.key, value: checked ? (setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING ? "60" : "1") : "0" }) }} 
               checked={(this.state[setting.key] || {}).value > 0 ? true : false} 

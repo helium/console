@@ -57,7 +57,7 @@ class UpdateLabelModal extends Component {
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
-        notificationSettings: this.props.label.label_notification_settings // not resetting them upon closing/opening :/
+        notificationSettings: this.props.label.label_notification_settings
       }), 200)
     }
 
@@ -68,7 +68,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue, notificationSettings } = this.state
+    const { multiBuyValue, notificationSettings, tab } = this.state
 
     return (
       <Modal
@@ -86,6 +86,7 @@ class UpdateLabelModal extends Component {
           </Button>
         ]}
         bodyStyle={{ padding: 0 }}
+        width={tab === 'notifications' ? 600 : 520}
       >
         <Tabs defaultActiveKey="general" size="large" onTabClick={tab => this.setState({ tab })}>
           <TabPane tab="General" key="general">
