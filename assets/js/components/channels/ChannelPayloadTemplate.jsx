@@ -100,8 +100,7 @@ class ChannelPayloadTemplate extends Component {
     } else {
       const output = Mustache.render(this.props.templateBody, payloadsMap[typeSelected])
       try {
-        const parsedOutput = JSON.parse(output)
-        this.setState({ output: parsedOutput })
+        this.setState({ output })
       } catch(err) {
         displayError("Issue with generating output, please check your template body")
         this.setState({ output: null })
@@ -331,7 +330,7 @@ class ChannelPayloadTemplate extends Component {
               >
                 <div style={{ height: 503, overflowY: 'scroll' }}>
                   <Editor
-                    value={this.state.output ? JSON.stringify(this.state.output, null, 2) : ""}
+                    value={this.state.output || ""}
                     onValueChange={() => {}}
                     highlight={code => highlight(code, languages.js)}
                     padding={10}
