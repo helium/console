@@ -20,9 +20,4 @@ defmodule Console.Labels.LabelNotificationSetting do
     |> validate_required([:key, :value, :recipients, :label_id])
     |> unique_constraint(:key, name: :label_notification_settings_key_label_id_index, message: "Setting already exists for this label and key")
   end
-
-  def join_changeset(label_notification_setting, key, value, recipients, label) do
-    label_notification_setting
-    |> changeset(%{key: key, value: value, recipients: recipients, label_id: label.id})
-  end
 end
