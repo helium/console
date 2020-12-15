@@ -38,6 +38,7 @@ defmodule Console.Organizations.Organization do
     |> cast(attrs, [:name])
     |> validate_required(:name, message: "Organization Name is required")
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
+    |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
     |> check_name
   end
 

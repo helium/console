@@ -42,6 +42,7 @@ defmodule Console.Devices.Device do
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
   end
 
@@ -54,6 +55,7 @@ defmodule Console.Devices.Device do
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> validate_length(:name, max: 50)
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
   end
 

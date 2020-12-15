@@ -34,6 +34,7 @@ defmodule Console.ApiKeys.ApiKey do
     |> validate_required(:role, message: "Please select a role for your new api key")
     |> validate_inclusion(:role, ~w(admin))
     |> validate_required(:name, message: "Please choose a name for your new api key")
+    |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> validate_required([:key, :organization_id, :user_id])
     |> unique_constraint(:name, name: :api_keys_name_organization_id_index, message: "This name has already been used in this organization")
     |> check_name
