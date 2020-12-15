@@ -135,7 +135,7 @@ class NotificationSettings extends Component {
 
     return (
       defaultSettings.map(setting => (
-        <Row style={{ padding: '20px' }} key={setting.key}>
+        <Row style={{ padding: '10px 20px 10px 20px' }} key={setting.key}>
           <Col span={21} style={{ fontSize: '16px'  }}>
             <Text>Notify </Text>
             <Dropdown overlay={recipientMenu(setting.key)}>
