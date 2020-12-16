@@ -16,7 +16,7 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
-import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
+import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION, LABEL_NOTIFICATION_SETTING_UPDATED_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
@@ -55,6 +55,19 @@ class LabelShow extends Component {
       document: LABEL_UPDATE_SUBSCRIPTION,
       variables: { id: this.props.match.params.id },
       updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+        fetchMore({
+          variables: { id: this.props.match.params.id },
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+
+    subscribeToMore({
+      document: LABEL_NOTIFICATION_SETTING_UPDATED_SUBSCRIPTION,
+      variables: { id: this.props.match.params.id },
+      updateQuery: (prev, { subscriptionData }) => {
+        console.log(">>>>>>>>>>>>>>>HERE")
         if (!subscriptionData.data) return prev
         fetchMore({
           variables: { id: this.props.match.params.id },

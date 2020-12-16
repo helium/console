@@ -36,4 +36,10 @@ defmodule Console.LabelNotificationSettings do
       {:ok, count}
     end
   end
+
+  def delete_label_notification_setting_by_key_and_label(label_notification_setting_key, label_id) do
+    with {count, nil} <- from(ns in LabelNotificationSetting, where: ns.key == ^label_notification_setting_key and ns.label_id == ^label_id) |> Repo.delete_all() do
+      {:ok, count}
+    end
+  end
 end

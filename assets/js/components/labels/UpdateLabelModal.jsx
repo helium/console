@@ -38,15 +38,18 @@ class UpdateLabelModal extends Component {
       case 'general':
         this.props.handleUpdateLabel(labelName, color)
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
-        this.props.onClose()
+        this.props.onClose();
+        break;
       case 'packets':
         this.props.handleUpdateLabelMultiBuy(multiBuyValue)
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
-        this.props.onClose()
+        this.props.onClose();
+        break;
       case 'notifications':
         this.props.handleUpdateLabelNotificationSettings(notificationSettings);
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
         this.props.onClose();
+        break;
     }
   }
 

@@ -25,7 +25,8 @@ export const LABEL_FRAGMENT = gql`
     label_notification_settings {
       key,
       value,
-      recipients
+      recipients,
+      label_id
     }
   }
 `
@@ -77,6 +78,21 @@ export const LABEL_UPDATE_SUBSCRIPTION = gql`
     labelUpdated(id: $id) {
       name,
       id
+    }
+  }
+`
+
+export const LABEL_NOTIFICATION_SETTING_UPDATED_SUBSCRIPTION = gql`
+  subscription onLabelNotificationSettingUpdated($id: String) {
+    labelNotificationSettingUpdated(id: $id) {
+      name,
+      id,
+      label_notification_settings {
+        key,
+        value,
+        recipients,
+        label_id
+      }
     }
   }
 `
