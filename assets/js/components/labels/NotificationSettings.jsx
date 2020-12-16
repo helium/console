@@ -114,7 +114,6 @@ class NotificationSettings extends Component {
   }
 
   render() {
-    console.log(this.props.notificationSettings)
     const recipientMenu = (key) => (
       <Menu onClick={e => { this.updateSetting({ recipients: e.key, key}) }}>
         <Menu.Item key="admin">Admin</Menu.Item>

@@ -72,10 +72,6 @@ class UpdateLabelModal extends Component {
     const { open, onClose, label } = this.props
     const { multiBuyValue, notificationSettings, tab } = this.state
 
-    console.log({notificationSettings, new: notificationSettings.reduce(
-      (obj, item) => (obj[item.key] = { value: item.value, recipients: item.recipients }, obj), {}) //Object.assign(obj, { [item.key]: { value: item.value, recipients: item.recipients }})
-    })
-
     return (
       <Modal
         title="Label Settings"
