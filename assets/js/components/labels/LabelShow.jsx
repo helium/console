@@ -67,7 +67,6 @@ class LabelShow extends Component {
       document: LABEL_NOTIFICATION_SETTING_UPDATED_SUBSCRIPTION,
       variables: { id: this.props.match.params.id },
       updateQuery: (prev, { subscriptionData }) => {
-        console.log(">>>>>>>>>>>>>>>HERE")
         if (!subscriptionData.data) return prev
         fetchMore({
           variables: { id: this.props.match.params.id },

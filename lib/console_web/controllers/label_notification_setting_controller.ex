@@ -23,7 +23,6 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
     do
       label = Labels.get_label(List.first(settings)["label_id"])
       label = Repo.preload(label, [:label_notification_settings])
-      IO.inspect label
       broadcast(label, label.id)
 
       conn
@@ -33,7 +32,6 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
   end
 
   defp broadcast(%Label{} = label, id) do
-    IO.puts "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_notification_setting_updated: "#{label.organization_id}/#{id}/label_notification_setting_updated")
   end
 end
