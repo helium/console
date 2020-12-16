@@ -15,7 +15,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 0,
-    notificationSettings: this.props.label.label_notification_settings || []
+    notificationSettings: this.props.label.label_notification_settings
   }
 
   handleInputUpdate = (e) => {
@@ -71,6 +71,10 @@ class UpdateLabelModal extends Component {
   render() {
     const { open, onClose, label } = this.props
     const { multiBuyValue, notificationSettings, tab } = this.state
+
+    console.log({notificationSettings, new: notificationSettings.reduce(
+      (obj, item) => (obj[item.key] = { value: item.value, recipients: item.recipients }, obj), {}) //Object.assign(obj, { [item.key]: { value: item.value, recipients: item.recipients }})
+    })
 
     return (
       <Modal
@@ -158,7 +162,9 @@ class UpdateLabelModal extends Component {
           <TabPane tab="Notifications" key="notifications">
             <NotificationSettings 
               label_id={this.props.label.id}
-              notificationSettings={notificationSettings}
+              notificationSettings={notificationSettings.reduce(
+                (obj, item) => (obj[item.key] = { key: item.key, value: item.value, recipients: item.recipients, label_id: this.props.label.id }, obj), {}
+              )}
               onChange={this.handleNotificationSettingsChange}
             />
           </TabPane>
