@@ -4,6 +4,7 @@ import LabelTag, { labelColors } from '../common/LabelTag'
 import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
+import NotificationSettings from './NotificationSettings';
 const { Text } = Typography
 const { Option } = Select
 const { TabPane } = Tabs
@@ -14,6 +15,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 0,
+    notificationSettings: this.props.label.label_notification_settings
   }
 
   handleInputUpdate = (e) => {
@@ -24,27 +26,40 @@ class UpdateLabelModal extends Component {
     this.setState({ color })
   }
 
+  handleNotificationSettingsChange = (notificationSettings) => {
+    this.setState({ notificationSettings });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, tab } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, tab } = this.state;
 
-    if (tab === 'general') {
-      this.props.handleUpdateLabel(labelName, color)
-      analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
-      this.props.onClose()
-    } else if (tab === 'packets') {
-      this.props.handleUpdateLabelMultiBuy(multiBuyValue)
-      analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
-      this.props.onClose()
+    switch (tab) {
+      case 'general':
+        this.props.handleUpdateLabel(labelName, color)
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, name: labelName, color})
+        this.props.onClose();
+        break;
+      case 'packets':
+        this.props.handleUpdateLabelMultiBuy(multiBuyValue)
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL",  {id: this.props.label.id, multi_buy: multiBuyValue })
+        this.props.onClose();
+        break;
+      case 'notifications':
+        this.props.handleUpdateLabelNotificationSettings(notificationSettings);
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
+        this.props.onClose();
+        break;
     }
   }
 
   componentDidUpdate = (prevProps) => {
-    if (prevProps.open && !this.props.open) {
+    if (!prevProps.open && this.props.open) {
       setTimeout(() => this.setState({
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
+        notificationSettings: this.props.label.label_notification_settings
       }), 200)
     }
 
@@ -55,7 +70,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue } = this.state
+    const { multiBuyValue, notificationSettings, tab } = this.state
 
     return (
       <Modal
@@ -73,9 +88,10 @@ class UpdateLabelModal extends Component {
           </Button>
         ]}
         bodyStyle={{ padding: 0 }}
+        width={tab === 'notifications' ? 600 : 520}
       >
         <Tabs defaultActiveKey="general" size="large" onTabClick={tab => this.setState({ tab })}>
-          <TabPane tab="General Settings" key="general">
+          <TabPane tab="General" key="general">
             <div style={{ padding: '30px 50px'}}>
               <Text strong style={{ fontSize: 16 }}>Label Name</Text>
               <Input
@@ -138,6 +154,15 @@ class UpdateLabelModal extends Component {
                 </p>
               </div>
             </div>
+          </TabPane>
+          <TabPane tab="Notifications" key="notifications">
+            <NotificationSettings 
+              label_id={this.props.label.id}
+              notificationSettings={notificationSettings.reduce(
+                (obj, item) => (obj[item.key] = { key: item.key, value: item.value, recipients: item.recipients, label_id: this.props.label.id }, obj), {}
+              )}
+              onChange={this.handleNotificationSettingsChange}
+            />
           </TabPane>
         </Tabs>
       </Modal>

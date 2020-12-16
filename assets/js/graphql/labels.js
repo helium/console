@@ -22,6 +22,12 @@ export const LABEL_FRAGMENT = gql`
       id,
       name
     }
+    label_notification_settings {
+      key,
+      value,
+      recipients,
+      label_id
+    }
   }
 `
 

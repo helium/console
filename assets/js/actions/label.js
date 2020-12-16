@@ -169,6 +169,14 @@ export const swapLabel = (label_id, destination_label_id) => {
   }
 }
 
+export const updateLabelNotificationSettings = (settings) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/update_notification_settings`, {
+      label_notification_settings: settings
+    })
+  }
+}
+
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   if (params.color) params.color = sanitizeHtml(params.color)
