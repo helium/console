@@ -82,21 +82,6 @@ export const LABEL_UPDATE_SUBSCRIPTION = gql`
   }
 `
 
-export const LABEL_NOTIFICATION_SETTING_UPDATED_SUBSCRIPTION = gql`
-  subscription onLabelNotificationSettingUpdated($id: String) {
-    labelNotificationSettingUpdated(id: $id) {
-      name,
-      id,
-      label_notification_settings {
-        key,
-        value,
-        recipients,
-        label_id
-      }
-    }
-  }
-`
-
 // For LabelAddDeviceModal
 export const ALL_LABELS_DEVICES = gql`
   query LabelsDevicesQuery {

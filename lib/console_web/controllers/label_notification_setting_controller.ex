@@ -32,6 +32,6 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
   end
 
   defp broadcast(%Label{} = label, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_notification_setting_updated: "#{label.organization_id}/#{id}/label_notification_setting_updated")
+    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
   end
 end
