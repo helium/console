@@ -8,6 +8,7 @@ export const EVENT_FRAGMENT = gql`
     payload,
     device_name,
     category,
+    type,
     frame_up,
     frame_down,
     reported_at,

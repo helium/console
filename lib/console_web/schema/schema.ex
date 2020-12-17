@@ -152,6 +152,7 @@ defmodule ConsoleWeb.Schema do
     field :port, :integer
     field :devaddr, :string
     field :category, :string
+    field :type, :string
     field :frame_up, :integer
     field :frame_down, :integer
     field :hotspots, :string

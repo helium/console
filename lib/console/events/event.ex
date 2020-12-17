@@ -8,6 +8,7 @@ defmodule Console.Events.Event do
   @foreign_key_type :binary_id
   schema "events" do
     field :category, :string
+    field :type, :string
     field :description, :string
     field :reported_at, :string
     field :reported_at_epoch, :integer
@@ -34,6 +35,7 @@ defmodule Console.Events.Event do
       :description,
       :payload_size,
       :category,
+      :type,
       :frame_up,
       :frame_down,
       :reported_at,

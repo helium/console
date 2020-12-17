@@ -46,16 +46,10 @@ const categoryTag = (category) => {
       return <Text>Uplink</Text>
     case "down":
       return <Text>Downlink</Text>
-    case "ack":
-      return <Text>Acknowledge</Text>
-    case "activation":
-      return <Text>Activation</Text>
-    case "packet_dropped":
-      return <Text>Packet Dropped</Text>
-    case "channel_crash":
-      return <Text>Channel Crashed</Text>
-    case "channel_start_error":
-      return <Text>Channel Start Error</Text>
+    case "join_request":
+      return <Text>JoinRequest</Text>
+    case "join_accept":
+      return <Text>JoinAccept</Text>
   }
 }
 
@@ -153,10 +147,10 @@ class EventsDashboard extends Component {
     return (
       <Row gutter={10}>
         <Col span={22}>
-          <Card  bodyStyle={{padding: 0}}>
+          <Card  bodyStyle={{ padding: 0, marginBottom: -1}}>
             <Table columns={hotspotColumns} dataSource={JSON.parse(record.hotspots)} pagination={false} rowKey={record => record.id}/>
           </Card>
-          <Card  bodyStyle={{padding: 0}}>
+          <Card  bodyStyle={{ padding: 0, marginBottom: -1}}>
             <Table columns={channelColumns} dataSource={JSON.parse(record.channels)} pagination={false} rowKey={record => record.id}/>
           </Card>
         </Col>
@@ -180,49 +174,17 @@ class EventsDashboard extends Component {
             {row.frame_down}
           </Tag>
         )
-      case "ack":
+      case "join_request":
         return (
           <Tag style={styles.tag} color="#A0D911">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
             {row.frame_up}
           </Tag>
         )
-      case "activation":
+      case "join_accept":
         return (
-          <Tag style={styles.tag} color="#4091F7">
+          <Tag style={styles.tag} color="#A0D911">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
-          </Tag>
-        )
-      case "packet_dropped":
-        return (
-          <span>
-            <Tag style={styles.tag} color="#D9D9D9">
-              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-              {row.frame_up}
-            </Tag>
-            <Popover
-              content={row.description}
-              placement="top"
-              overlayStyle={{ width: 220 }}
-            >
-              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-              </Tag>
-            </Popover>
-          </span>
-        )
-      case "channel_crash":
-        return (
-          <Tag style={styles.tag} color="#D9D9D9">
-            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.frame_up}
-          </Tag>
-        )
-      case "channel_start_error":
-        return (
-          <Tag style={styles.tag} color="#D9D9D9">
-            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
             {row.frame_up}
           </Tag>
         )
@@ -236,6 +198,10 @@ class EventsDashboard extends Component {
       {
         dataIndex: 'category',
         render: data => <Text>{categoryTag(data)}</Text>
+      },
+      {
+        title: 'Type',
+        dataIndex: 'type',
       },
       {
         title: 'Time',
