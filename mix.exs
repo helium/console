@@ -65,7 +65,8 @@ defmodule Console.Mixfile do
       {:mox, "~> 0.5.2", only: :test},
       {:appsignal, "~> 1.0"},
       {:inet_cidr, "~> 1.0.0"},
-      {:quantum, "~> 3.0"}
+      {:quantum, "~> 3.0"},
+      {:timex, "~> 3.5"}
     ]
   end
 

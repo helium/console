@@ -9,6 +9,8 @@ defmodule ConsoleWeb.DeviceController do
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Labels
+  alias Console.LabelNotificationSettings
+  alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -66,9 +68,14 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, id)
 
+    # grab info for notifications before device(s) deletion
+    deleted_device = %{ device_id: id, labels: Enum.map(Labels.get_device_labels(id), fn l -> l.label_id end), device_name: Devices.get_device!(id).name }
+
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device)
       broadcast_router_update_devices(device)
+
+      notify_device_deleted_event(deleted_device)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -80,8 +87,14 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(List.first(devices))
 
+    # grab info for notifications before device(s) deletion
+    deleted_devices = Enum.map(devices, fn d -> %{ device_id: d, labels: Enum.map(Labels.get_device_labels(d), fn l -> l.label_id end), device_name: Devices.get_device!(d).name } end)
+
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       broadcast(device)
+
+      # now that devices have been deleted, send notification if applicable
+      Enum.each(deleted_devices, fn device -> notify_device_deleted_event(device) end)
 
       conn
       |> put_resp_header("message", "Devices deleted successfully")
@@ -90,12 +103,45 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def delete(conn, _params) do
-    device = conn.assigns.current_organization.id
+    organization_id = conn.assigns.current_organization.id
+
+    # grab info for notifications before device(s) deletion
+    deleted_devices = Enum.map(
+      Enum.map(Devices.get_devices(organization_id), fn d -> d.id end), 
+      fn d -> %{ device_id: d, labels: Enum.map(Labels.get_device_labels(d), fn l -> l.label_id end), device_name: Devices.get_device!(d).name } end
+    )
+
+    device = organization_id
     |> Devices.delete_all_devices_for_org()
     broadcast(device)
+
+    # now that devices have been deleted, send notification if applicable
+    Enum.each(deleted_devices, fn device -> notify_device_deleted_event(device) end)
+
     conn
     |> put_resp_header("message", "Deleted all devices successfully")
     |>send_resp(:ok, "")
+  end
+
+  defp notify_device_deleted_event(device) do
+    now = Timex.now
+    Enum.each(device.labels, fn label_id -> 
+      settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, "device_deleted")
+      if settings != nil and Integer.parse(settings.value) do
+        attrs = %{
+          label_id: label_id,
+          sent: false,
+          key: "device_deleted",
+          reported_at: now,
+          details: %{
+            device_name: device.device_name, 
+            deleted_by: "TODO", 
+            time: now
+          }
+        }
+        LabelNotificationEvents.create_label_notification_event(attrs) 
+      end
+    end)
   end
 
   def set_active(conn, %{ "device_ids" => device_ids, "active" => active }) do

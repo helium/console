@@ -65,11 +65,11 @@ config :console,
 config :console, Console.Scheduler,
   jobs: [
     send_notification_emails: [
-      schedule: "*/5 * * * *",
+      schedule: "* * * * *", # "*/5 * * * *" # every 5 mins
       task: {Console.Jobs, :send_notification_emails, []}
     ],
     delete_sent_notifications: [
-      schedule: "0 * * * *",
+      schedule: "0 * * * *", # every hr
       task: {Console.Jobs, :delete_sent_notifications, []}
     ]
   ]

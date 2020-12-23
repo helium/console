@@ -124,6 +124,12 @@ defmodule Console.Organizations do
     Repo.all(query)
   end
 
+  def get_memberships_by_organization_and_role(organization_id, roles) do
+    query = from m in Membership,
+      where: m.organization_id == ^organization_id and m.role in ^roles
+    Repo.all(query)
+  end
+
   def get_current_organization(user, organization_id) do
     if user.super do
       organization = get_organization!(organization_id)
