@@ -8,6 +8,8 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Channels.Channel
   alias Console.Organizations
   alias Console.Functions
+  alias Console.LabelNotificationSettings
+  alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -95,9 +97,26 @@ defmodule ConsoleWeb.ChannelController do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
+    # check if there are devices associated w/ this channel
+    devices_labels = Channels.get_channel_devices_per_label(id)
+    # get channel info before updating
+    updated_channel = case length(devices_labels) do
+      0 -> nil
+      _ -> %{ channel_id: id, labels: Enum.map(devices_labels, fn l -> l.label_id end), channel_name: channel.name }
+    end
+
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       broadcast(channel, channel.id)
       broadcast_router_update_devices(channel)
+
+      if (updated_channel != nil) do
+        details = %{
+          channel_name: updated_channel.channel_name, 
+          updated_by: "TODO", 
+          time: Timex.now
+        }
+        notify_channel_event(updated_channel, "integration_with_devices_updated", details)
+      end
 
       conn
       |> put_resp_header("message", "#{channel.name} updated successfully")
@@ -109,9 +128,26 @@ defmodule ConsoleWeb.ChannelController do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id) |> Channels.fetch_assoc([labels: :devices])
 
+    # check if there are devices associated w/ this channel
+    devices_labels = Channels.get_channel_devices_per_label(id)
+    # get channel info before deleting
+    deleted_channel = case length(devices_labels) do
+      0 -> nil
+      _ -> %{ channel_id: id, labels: Enum.map(devices_labels, fn l -> l.label_id end), channel_name: Channels.get_channel!(id).name }
+    end
+
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       broadcast(channel)
       broadcast_router_update_devices(channel.labels)
+
+      if (deleted_channel != nil) do
+        details = %{
+          channel_name: deleted_channel.channel_name, 
+          deleted_by: "TODO", 
+          time: Timex.now
+        }
+        notify_channel_event(deleted_channel, "integration_with_devices_deleted", details)
+      end
 
       msg =
         case length(channel.labels) do
@@ -125,6 +161,22 @@ defmodule ConsoleWeb.ChannelController do
       |> put_resp_header("message", msg)
       |> render("show.json", channel: channel)
     end
+  end
+
+  defp notify_channel_event(channel, event_key, details) do
+    Enum.each(channel.labels, fn label_id -> 
+      settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, event_key)
+      if settings != nil and Integer.parse(settings.value) do
+        attrs = %{
+          label_id: label_id,
+          sent: false,
+          key: event_key,
+          reported_at: Timex.now,
+          details: details
+        }
+        LabelNotificationEvents.create_label_notification_event(attrs) 
+      end
+    end)
   end
 
   def broadcast(%Channel{} = channel) do

@@ -147,11 +147,27 @@ defmodule Console.Email do
     |> render(:device_deleted_notification_email)
   end
 
-  def integration_with_devices_deleted_notification_email() do
-
+  def integration_with_devices_deleted_notification_email(recipients, label_name, details, organization_name, label_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("Helium Console: One or more integration(s) with device(s) have been deleted.")
+    |> assign(:label_name, label_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:label_id, label_id)
+    |> render(:integration_with_devices_deleted_notification_email)
   end
 
-  def integration_with_devices_updated_notification_email() do
-
+  def integration_with_devices_updated_notification_email(recipients, label_name, details, organization_name, label_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("Helium Console: One or more integration(s) with device(s) have been updated.")
+    |> assign(:label_name, label_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:label_id, label_id)
+    |> render(:integration_with_devices_updated_notification_email)
   end
 end

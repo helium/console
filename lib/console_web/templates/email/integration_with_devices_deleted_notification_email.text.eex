@@ -1,0 +1,14 @@
+<%= @label_name %> Notification
+
+<%= if @num_channels == 1 do %>
+  The Integration <%= List.first(@details)["integration_name"] %> that belongs to the Organization <%= @organization_name %> was deleted by <%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %>.
+<% end %>
+<%= if @num_channels > 1 && @num_channels <= 5 do %>
+  The following Integrations that belong to the Organization <b><%= @organization_name %></b> were deleted:
+  <%= Enum.map(@details, fn(d) -> %>
+    <%= d["integration_name"] %>, by <%= d["deleted_by"] %> on <%= d["time"] %>
+  <% end) %>
+<% end %>
+<%= if @num_channels > 5 do %>
+  More than 5 Integrations that belong to the Organization <b><%= @organization_name %></b> were deleted.
+<% end %>

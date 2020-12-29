@@ -41,8 +41,8 @@ defmodule Console.Jobs do
       # send email specific to the type of event
       case identifiers.key do
         "device_deleted" -> Email.device_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email() |> Mailer.deliver_later()
-        "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email() |> Mailer.deliver_later()
+        "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+        "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
       end
     end
   end

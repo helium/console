@@ -1,0 +1,14 @@
+<%= @label_name %> Notification
+
+<%= if @num_channels == 1 do %>
+  The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> was updated by <%= List.first(@details)["updated_by"] %></b> at <b><%= List.first(@details)["time"] %>.
+<% end %>
+<%= if @num_channels > 1 && @num_channels <= 5 do %>
+  The following Integrations that belong to the Organization <b><%= @organization_name %></b> were updated:
+  <%= Enum.map(@details, fn(d) -> %>
+    <%= d["channel_name"] %>, by <%= d["updated_by"] %> on <%= d["time"] %>
+  <% end) %>
+<% end %>
+<%= if @num_channels > 5 do %>
+  More than 5 Integrations that belong to the Organization <b><%= @organization_name %></b> were updated.
+<% end %>
