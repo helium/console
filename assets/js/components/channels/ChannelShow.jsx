@@ -293,7 +293,7 @@ class ChannelShow extends Component {
           handleClickRemove={this.handleOpenChannelShowRemoveLabelModal}
         />
 
-        {(channel.type == 'http' || channel.type == 'mqtt') && (
+        {((channel.type == 'http' && channel.endpoint !== 'https://lora.mydevices.com/v1/networks/helium/uplink') || channel.type == 'mqtt') && (
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody || ""}
             handleTemplateUpdate={this.handleTemplateUpdate}

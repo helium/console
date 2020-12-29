@@ -37,13 +37,26 @@ const queryOptions = {
 const adafruitBody = `{
   "feeds": {
     {{#decoded}}{{#payload}}
-        {{#value.x}}
-          "{{name}}_x": "{{value.x}}",
-          "{{name}}_y": "{{value.y}}",
-          "{{name}}_z": "{{value.z}}"{{^last}},{{/last}}
-        {{/value.x}}
+        {{^value.altitude}}
+            {{#value.x}}
+                "{{name}}_x": "{{value.x}}",
+                "{{name}}_y": "{{value.y}}",
+                "{{name}}_z": "{{value.z}}"{{^last}},{{/last}}
+            {{/value.x}}
+            {{^value.x}}
+                "{{name}}":"{{value}}"{{^last}},{{/last}}
+            {{/value.x}}
+        {{/value.altitude}}
+    {{/payload}}{{/decoded}}
+  },
+  "location": {
+    {{#decoded}}{{#payload}}
         {{^value.x}}
-          "{{name}}":"{{value}}"{{^last}},{{/last}}
+            {{#value.altitude}}
+                "ele": "{{value.altitude}}",
+                "lat": "{{value.latitude}}",
+                "lon": "{{value.longitude}}"
+            {{/value.altitude}}
         {{/value.x}}
     {{/payload}}{{/decoded}}
   }
