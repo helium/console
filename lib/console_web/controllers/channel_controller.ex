@@ -110,12 +110,13 @@ defmodule ConsoleWeb.ChannelController do
       broadcast_router_update_devices(channel)
 
       if (updated_channel != nil) do
+        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
           channel_name: updated_channel.channel_name, 
-          updated_by: "TODO", 
-          time: Timex.now
+          updated_by: conn.assigns.current_user.email, 
+          time: time
         }
-        notify_channel_event(updated_channel, "integration_with_devices_updated", details)
+        LabelNotificationEvents.notify_label_event(updated_channel, "integration_with_devices_updated", details)
       end
 
       conn
@@ -141,12 +142,13 @@ defmodule ConsoleWeb.ChannelController do
       broadcast_router_update_devices(channel.labels)
 
       if (deleted_channel != nil) do
+        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
           channel_name: deleted_channel.channel_name, 
-          deleted_by: "TODO", 
-          time: Timex.now
+          deleted_by: conn.assigns.current_user.email, 
+          time: time
         }
-        notify_channel_event(deleted_channel, "integration_with_devices_deleted", details)
+        LabelNotificationEvents.notify_label_event(deleted_channel, "integration_with_devices_deleted", details)
       end
 
       msg =
@@ -161,22 +163,6 @@ defmodule ConsoleWeb.ChannelController do
       |> put_resp_header("message", msg)
       |> render("show.json", channel: channel)
     end
-  end
-
-  defp notify_channel_event(channel, event_key, details) do
-    Enum.each(channel.labels, fn label_id -> 
-      settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, event_key)
-      if settings != nil and Integer.parse(settings.value) do
-        attrs = %{
-          label_id: label_id,
-          sent: false,
-          key: event_key,
-          reported_at: Timex.now,
-          details: details
-        }
-        LabelNotificationEvents.create_label_notification_event(attrs) 
-      end
-    end)
   end
 
   def broadcast(%Channel{} = channel) do

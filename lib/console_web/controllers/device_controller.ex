@@ -75,7 +75,13 @@ defmodule ConsoleWeb.DeviceController do
       broadcast(device)
       broadcast_router_update_devices(device)
 
-      notify_device_deleted_event(deleted_device)
+      { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+      details = %{
+        device_name: deleted_device.device_name, 
+        deleted_by: conn.assigns.current_user.email, 
+        time: time
+      }
+      LabelNotificationEvents.notify_label_event(deleted_device, "device_deleted", details)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -94,7 +100,15 @@ defmodule ConsoleWeb.DeviceController do
       broadcast(device)
 
       # now that devices have been deleted, send notification if applicable
-      Enum.each(deleted_devices, fn device -> notify_device_deleted_event(device) end)
+      { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+      Enum.each(deleted_devices, fn d -> 
+        details = %{
+          device_name: d.device_name, 
+          deleted_by: conn.assigns.current_user.email, 
+          time: time
+        }
+        LabelNotificationEvents.notify_label_event(d, "device_deleted", details) 
+      end)
 
       conn
       |> put_resp_header("message", "Devices deleted successfully")
@@ -116,32 +130,19 @@ defmodule ConsoleWeb.DeviceController do
     broadcast(device)
 
     # now that devices have been deleted, send notification if applicable
-    Enum.each(deleted_devices, fn device -> notify_device_deleted_event(device) end)
+    { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+    Enum.each(deleted_devices, fn d -> 
+      details = %{
+        device_name: d.device_name, 
+        deleted_by: conn.assigns.current_user.email, 
+        time: time
+      }
+      LabelNotificationEvents.notify_label_event(d, "device_deleted", details) 
+    end)
 
     conn
     |> put_resp_header("message", "Deleted all devices successfully")
     |>send_resp(:ok, "")
-  end
-
-  defp notify_device_deleted_event(device) do
-    now = Timex.now
-    Enum.each(device.labels, fn label_id -> 
-      settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, "device_deleted")
-      if settings != nil and Integer.parse(settings.value) do
-        attrs = %{
-          label_id: label_id,
-          sent: false,
-          key: "device_deleted",
-          reported_at: now,
-          details: %{
-            device_name: device.device_name, 
-            deleted_by: "TODO", 
-            time: now
-          }
-        }
-        LabelNotificationEvents.create_label_notification_event(attrs) 
-      end
-    end)
   end
 
   def set_active(conn, %{ "device_ids" => device_ids, "active" => active }) do
