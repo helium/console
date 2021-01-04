@@ -99,6 +99,9 @@ defmodule ConsoleWeb.ChannelController do
 
     # check if there are devices associated w/ this channel
     devices_labels = Channels.get_channel_devices_per_label(id)
+    IO.puts "\n\n\n\n\n\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>"
+    IO.inspect devices_labels
+    IO.puts ">>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n\n\n\n\n"
     # get channel info before updating
     updated_channel = case length(devices_labels) do
       0 -> nil
