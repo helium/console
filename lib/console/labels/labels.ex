@@ -7,6 +7,7 @@ defmodule Console.Labels do
   alias Console.Labels.DevicesLabels
   alias Console.Labels.ChannelsLabels
   alias Console.Labels.LabelNotificationSetting
+  alias Console.Labels.LabelNotificationEvent
   alias Console.Devices.Device
   alias Console.Devices
   alias Console.Channels
@@ -139,6 +140,11 @@ defmodule Console.Labels do
     do
       {:ok, length(devices_labels), devices_labels}
     end
+  end
+
+  def get_device_labels(device_id) do 
+    from(dl in DevicesLabels, where: dl.device_id == ^device_id)
+     |> Repo.all()
   end
 
   def add_devices_to_label(devices, to_label, organization) do

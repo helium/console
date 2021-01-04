@@ -9,6 +9,8 @@ defmodule Console.Channels do
   alias Console.Channels.Channel
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.Labels.ChannelsLabels
+  alias Console.Labels.DevicesLabels
 
   def list_channels do
     Repo.all(Channel)
@@ -29,6 +31,16 @@ defmodule Console.Channels do
 
   def get_channel(organization, id) do
      Repo.get_by(Channel, [id: id, organization_id: organization.id])
+  end
+
+  def get_channel_devices_per_label(channel_id) do
+    query = from c in Channel,
+      join: cl in ChannelsLabels, on: cl.channel_id == c.id,
+      join: dl in DevicesLabels, on: dl.label_id == cl.label_id,
+      where: c.id == ^channel_id,
+      select: %{device_id: dl.device_id, label_id: cl.label_id}
+      
+    Repo.all(query)
   end
 
   def fetch_assoc(%Channel{} = channel, assoc \\ [:organization]) do

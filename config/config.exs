@@ -62,6 +62,18 @@ config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
 config :console,
   self_hosted: System.get_env("SELF_HOSTED")
 
+config :console, Console.Scheduler,
+  jobs: [
+    send_notification_emails: [
+      schedule: "*/5 * * * *", # every 5 mins
+      task: {Console.Jobs, :send_notification_emails, []}
+    ],
+    delete_sent_notifications: [
+      schedule: "0 * * * *", # every hr
+      task: {Console.Jobs, :delete_sent_notifications, []}
+    ]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

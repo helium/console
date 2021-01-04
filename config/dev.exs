@@ -79,3 +79,5 @@ config :console,
 
 config :console,
   allowed_ip_range: ["127.0.0.1"]
+
+config :logger, level: :debug

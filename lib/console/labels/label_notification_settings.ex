@@ -9,6 +9,10 @@ defmodule Console.LabelNotificationSettings do
   def get_label_notification_setting!(id), do: Repo.get!(LabelNotificationSetting, id)
   def get_label_notification_setting(id), do: Repo.get(LabelNotificationSetting, id)
 
+  def get_label_notification_setting_by_label_and_key(label_id, key) do
+    Repo.get_by(LabelNotificationSetting, [label_id: label_id, key: key])
+  end
+
   def upsert_label_notification_setting(attrs \\ %{}) do
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)

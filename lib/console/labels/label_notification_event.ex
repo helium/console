@@ -6,7 +6,7 @@ defmodule Console.Labels.LabelNotificationEvent do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "label_notification_events" do
-    field :reported_at, :string
+    field :reported_at, :naive_datetime
     field :key, :string
     field :details, :map
     field :sent, :boolean
@@ -17,7 +17,7 @@ defmodule Console.Labels.LabelNotificationEvent do
 
   def changeset(label_notification_event, attrs) do
     label_notification_event
-    |> cast(attrs, [:key, :details, :sent, :label_id])
-    |> validate_required([:key, :details, :sent, :label_id])
+    |> cast(attrs, [:key, :details, :sent, :label_id, :reported_at])
+    |> validate_required([:key, :details, :sent, :label_id, :reported_at])
   end
 end
