@@ -121,7 +121,7 @@ defmodule ConsoleWeb.DeviceController do
 
     # grab info for notifications before device(s) deletion
     deleted_devices = Enum.map(
-      Devices.get_devices_with_labels(organization_id) |> Repo.preload([:labels]), 
+      Devices.get_devices(organization_id) |> Repo.preload([:labels]), 
       fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
     )
 
