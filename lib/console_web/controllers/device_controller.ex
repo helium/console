@@ -66,10 +66,10 @@ defmodule ConsoleWeb.DeviceController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(current_organization, id) |> Repo.preload([devices: [:labels]])
+    device = Devices.get_device!(current_organization, id) |> Repo.preload([:labels])
 
     # grab info for notifications before device(s) deletion
-    deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.label_id end), device_name: device.name }
+    deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device)
@@ -91,10 +91,14 @@ defmodule ConsoleWeb.DeviceController do
 
   def delete(conn, %{"devices" => devices}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(List.first(devices)) |> Repo.preload([:labels])
+    device = Devices.get_device!(List.first(devices))
+    list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
     # grab info for notifications before device(s) deletion
-    deleted_devices = Enum.map(devices, fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.label_id end), device_name: d.name } end)
+    deleted_devices = Enum.map(
+      list_devices, 
+      fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
+    )
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       broadcast(device)
