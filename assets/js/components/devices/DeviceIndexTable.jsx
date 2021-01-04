@@ -266,7 +266,7 @@ class DeviceIndexTable extends Component {
               { noDevicesButton() }
               <div className="explainer">
                 <p>Devices can be added to the Helium network.</p>
-                <p>More details about adding devices can be found <a href="https://developer.helium.com/longfi/data-credits" target="_blank"> here.</a></p>
+                <p>More details about adding devices can be found <a href="https://developer.helium.com/console/adding-devices" target="_blank"> here.</a></p>
               </div>
             </div>
             <style jsx>{`
