@@ -69,7 +69,7 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(current_organization, id) |> Repo.preload([devices: [:labels]])
 
     # grab info for notifications before device(s) deletion
-    deleted_device = %{ device_id: id, labels: Enum.map(Labels.get_device_labels(id), fn l -> l.label_id end), device_name: Devices.get_device!(id).name }
+    deleted_device = %{ device_id: id, labels: Enum.map(d.labels, fn l -> l.label_id end), device_name: device..name }
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       broadcast(device)
