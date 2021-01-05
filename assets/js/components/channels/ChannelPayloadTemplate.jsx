@@ -58,22 +58,10 @@ class ChannelPayloadTemplate extends Component {
       const firstFunc = functions[0]
       if (firstFunc && firstFunc.format === 'browan_object_locator') {
         this.setState({ typeSelected: 'browan', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['browan'])
-          setTimeout(this.generateOutput, 200)
-        }
       } else if (firstFunc && firstFunc.format === 'cayenne') {
         this.setState({ typeSelected: 'cayenne', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['cayenne'])
-          setTimeout(this.generateOutput, 200)
-        }
       } else {
         this.setState({ typeSelected: 'default', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['default'])
-          setTimeout(this.generateOutput, 200)
-        }
       }
     }
   }
