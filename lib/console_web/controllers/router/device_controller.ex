@@ -13,6 +13,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.DcPurchases.DcPurchase
   alias Console.Email
   alias Console.Mailer
+  alias Console.LabelNotificationEvents
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -127,7 +128,10 @@ defmodule ConsoleWeb.Router.DeviceController do
         dc -> Map.put(event, "dc_used", dc)
       end
 
-    case Devices.get_device(device_id) do
+    # store info before updating device
+    event_device = Devices.get_device(device_id) |> Repo.preload([:labels])
+
+    case event_device do
       nil ->
         conn
         |> send_resp(404, "")
@@ -167,6 +171,17 @@ defmodule ConsoleWeb.Router.DeviceController do
         with {:ok, %{ event: event, device: device, organization: organization }} <- result do
           publish_created_event(event, payload, device, channels_with_debug)
           check_org_dc_balance(organization, prev_dc_balance)
+
+          if event_device.last_connected == nil do
+            trigger_device = %{ device_id: event_device.id, labels: Enum.map(event_device.labels, fn l -> l.id end), device_name: event_device.name }
+            { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+            details = %{
+              device_name: trigger_device.device_name,
+              time: time,
+              hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
+            }
+            LabelNotificationEvents.notify_label_event(trigger_device, "device_join_otaa_first_time", details)
+          end
 
           conn
           |> send_resp(200, "")
