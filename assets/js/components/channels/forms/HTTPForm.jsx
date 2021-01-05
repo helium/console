@@ -146,26 +146,24 @@ class HTTPForm extends Component {
         {
           this.state.headers.map((obj, i) => (
             <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
-              <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
-                <Col sm={12}>
-                  <Input
-                    placeholder="Key"
-                    name={`${i}-header`}
-                    value={obj.header}
-                    onChange={this.handleHttpHeaderUpdate}
-                    style={{ width: '100%'}}
-                  />
-                  </Col>
-                <Col sm={12}>
-                  <Input
-                    placeholder="Value"
-                    name={`${i}-value`}
-                    value={obj.value}
-                    onChange={this.handleHttpHeaderUpdate}
-                    style={{ width: '100%'}}
-                  />
-                </Col>
-              </div>
+              <Col sm={12}>
+                <Input
+                  placeholder="Key"
+                  name={`${i}-header`}
+                  value={obj.header}
+                  onChange={this.handleHttpHeaderUpdate}
+                  style={{ width: '100%'}}
+                />
+              </Col>
+              <Col sm={12}>
+                <Input
+                  placeholder="Value"
+                  name={`${i}-value`}
+                  value={obj.value}
+                  onChange={this.handleHttpHeaderUpdate}
+                  style={{ width: '100%'}}
+                />
+              </Col>
             </Row>
           ))
         }

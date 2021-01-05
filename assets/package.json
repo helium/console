@@ -10,7 +10,7 @@
     "@absinthe/socket-apollo-link": "^0.1.11",
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.3.0",
-    "@auth0/auth0-spa-js": "^1.6.5",
+    "@auth0/auth0-spa-js": "^1.13.5",
     "amplitude-js": "^5.7.0",
     "antd": "^4.10.0",
     "apollo-boost": "^0.4.7",
