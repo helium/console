@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
-import { Checkbox, Input, Card, Icon, AutoComplete } from 'antd';
+import { Checkbox, Input, Card, AutoComplete } from 'antd';
+import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { graphql } from 'react-apollo';
 import { SEARCH_DEVICES } from '../../graphql/search'
 
@@ -49,7 +50,7 @@ class LabelAddDeviceSelect extends Component {
       <Card title={<Checkbox onChange={e => checkAllDevices(searchDevices)} checked={allDevices.length === Object.keys(checkedDevices).length}>Select All Devices</Checkbox>} size="small" style={{ height: 200 }}>
         <Input
           placeholder="Search here"
-          suffix={<Icon type="search" />}
+          suffix={<SearchOutlined />}
           onChange={e => debouncedSearch(e.target.value)}
           style={{ width: 200, marginBottom: 10 }}
         />
@@ -59,7 +60,7 @@ class LabelAddDeviceSelect extends Component {
               <div style={{ marginTop: 5 }} key={d.id}>
                 <Checkbox onChange={() => checkSingleDevice(d.id)} checked={checkedDevices[d.id]}>{d.name}</Checkbox>
                 {
-                  labelNormalizedDevices[d.id] && <Icon type="check-circle" theme="filled" style={{ color: "#4091F7" }} />
+                  labelNormalizedDevices[d.id] && <CheckCircleFilled style={{ color: "#4091F7" }} />
                 }
               </div>
             ))
@@ -69,7 +70,7 @@ class LabelAddDeviceSelect extends Component {
               <div style={{ marginTop: 5 }} key={d.id}>
                 <Checkbox onChange={() => checkSingleDevice(d.id)} checked={checkedDevices[d.id]}>{d.name}</Checkbox>
                 {
-                  labelNormalizedDevices[d.id] && <Icon type="check-circle" theme="filled" style={{ color: "#4091F7" }} />
+                  labelNormalizedDevices[d.id] && <CheckCircleFilled style={{ color: "#4091F7" }} />
                 }
               </div>
             ))

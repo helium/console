@@ -12,6 +12,7 @@ import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 const { Text } = Typography
 const { Option } = Select
 
@@ -227,7 +228,7 @@ class DeviceIndexTable extends Component {
               </Popover>
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}
@@ -294,7 +295,7 @@ class DeviceIndexTable extends Component {
                   color: #565656;
                   font-size: 15px;
                 }
-    
+
                 .explainer p a {
                   color: #096DD9;
                 }

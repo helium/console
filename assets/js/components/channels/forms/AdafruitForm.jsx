@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Input, Tooltip, Icon, Popover } from 'antd';
+import { Typography, Input, Tooltip, Popover } from 'antd';
+import { QuestionCircleFilled } from '@ant-design/icons';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 
@@ -20,7 +21,7 @@ class AdafruitForm extends Component {
       })
     }
   }
-  
+
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
       const { username, adafruitKey, groupName, uplinkTopic } = this.state;
@@ -35,7 +36,7 @@ class AdafruitForm extends Component {
       }
     })
   }
-  
+
   render() {
     const { type } = this.props;
 
@@ -67,18 +68,20 @@ class AdafruitForm extends Component {
         </Row>
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
           <Col sm={12}>
-          <Text>Group Name</Text>
-          <Popover
-              content={
-                <Text>
-                  {`By default, {{device_id}} will be used and is guaranteed to be unique. If you'd like to choose a human-readable group name, you may enter {{device_name}} or make sure that what you enter will be unique; otherwise Adafruit IO might encounter errors.`}
-                </Text>
-              }
-              placement="top"
-              overlayStyle={{ width: 250 }}
-            >
-              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
-            </Popover>
+          <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Text>Group Name</Text>
+            <Popover
+                content={
+                  <Text>
+                    {`By default, {{device_id}} will be used and is guaranteed to be unique. If you'd like to choose a human-readable group name, you may enter {{device_name}} or make sure that what you enter will be unique; otherwise Adafruit IO might encounter errors.`}
+                  </Text>
+                }
+                placement="top"
+                overlayStyle={{ width: 250 }}
+              >
+                <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+              </Popover>
+          </div>
           <Input
               placeholder="Group Name"
               name="groupName"
@@ -94,13 +97,13 @@ class AdafruitForm extends Component {
             <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Text>Uplink Topic</Text>
               <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
-                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
+                <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
               </Tooltip>
             </Col>
             <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Text>Downlink Topic</Text>
               <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
-                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
+                <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
               </Tooltip>
             </Col>
             <Col sm={12}>

@@ -9,6 +9,7 @@ import LabelIndexTable from './LabelIndexTable'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 class LabelIndex extends Component {
   state = {
@@ -82,7 +83,7 @@ class LabelIndex extends Component {
             <Button
               size="large"
               type="primary"
-              icon="plus"
+              icon={<PlusOutlined />}
               onClick={this.openCreateLabelModal}
             >
               Create New Label

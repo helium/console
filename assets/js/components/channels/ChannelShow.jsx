@@ -23,7 +23,8 @@ import { updateChannel } from '../../actions/channel'
 import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col, Icon } from 'antd';
+import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { isObject } from 'lodash';
 import MqttDetails from './MqttDetails';
 import { ChannelShowSkeleton } from './ChannelShowSkeleton';
@@ -255,10 +256,11 @@ class ChannelShow extends Component {
                     value={showDownlinkToken ? channel.downlink_token : "************************"}
                     style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
                     suffix={
-                      <Icon
-                        type={showDownlinkToken ? "eye" : "eye-invisible"}
-                        onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })}
-                      />
+                      showDownlinkToken ? (
+                        <EyeOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                      ) : (
+                        <EyeInvisibleOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                      )
                     }
                   />
                   <CopyToClipboard text={channel.downlink_token}>

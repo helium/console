@@ -6,6 +6,7 @@ import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
+import { CodeOutlined } from '@ant-design/icons';
 
 class FunctionIndex extends Component {
   state = {
@@ -46,7 +47,7 @@ class FunctionIndex extends Component {
           <UserCan>
             <Button
               size="large"
-              icon="code"
+              icon={<CodeOutlined />}
               type="primary"
               onClick={() => this.props.history.push('/functions/new')}
             >

@@ -8,6 +8,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
@@ -106,7 +107,7 @@ class MembersTable extends Component {
                     this.props.openDeleteUserModal(record, "membership")
                   }}
                   type="danger"
-                  icon="delete"
+                  icon={<DeleteOutlined />}
                   shape="circle"
                 />
               </div>

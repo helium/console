@@ -1,5 +1,6 @@
 import React from 'react'
 import { Radio, Typography, Button } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
 import PaymentCard from './PaymentCard'
 
@@ -22,7 +23,7 @@ const ExistingPaymentCards = ({ paymentMethods, onRadioChange, paymentMethodSele
                     <div style={{ flex: 'grow' }}/>
                     <Button
                       type="danger"
-                      icon="delete"
+                      icon={<DeleteOutlined />}
                       shape="circle"
                       onClick={() => removePaymentMethod(p.id)}
                     />

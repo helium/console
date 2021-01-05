@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@absinthe/socket-apollo-link": "^0.1.11",
+    "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.3.0",
     "@auth0/auth0-spa-js": "^1.6.5",
     "amplitude-js": "^5.7.0",
@@ -43,7 +44,6 @@
     "react-outside-click-handler": "^1.3.0",
     "react-qr-code": "^1.0.5",
     "react-redux": "^7.2.2",
-    "react-reveal": "^1.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-simple-code-editor": "^0.11.0",

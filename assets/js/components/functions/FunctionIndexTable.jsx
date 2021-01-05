@@ -11,6 +11,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
 import FunctionsImg from '../../../img/functions.svg'
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
 
 const { Text } = Typography
@@ -137,7 +138,7 @@ class FunctionIndexTable extends Component {
               />
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
                 style={{ marginLeft: 10 }}
                 onClick={e => {

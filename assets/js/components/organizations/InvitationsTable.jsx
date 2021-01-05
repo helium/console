@@ -7,6 +7,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const queryOptions = {
@@ -86,7 +87,7 @@ class InvitationsTable extends Component {
                   this.props.openDeleteUserModal(record, "invitation")
                 }}
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
               />
             </div>

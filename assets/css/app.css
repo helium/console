@@ -81,9 +81,6 @@ h1 {
 .ant-layout-sider {
   background: #f6f8fa;
   border-right: 1px solid #e1e4e8;
-  width: 250px !important;
-  max-width: 250px !important;
-  flex: 0 0 250px !important;
 }
 
 :focus {
@@ -363,6 +360,7 @@ tr.ant-table-expanded-row:hover {
 }
 
 .menu-link {
+  background: #f6f8fa;
   color: #1b1f23;
   display: block;
   padding: 22px 20px;

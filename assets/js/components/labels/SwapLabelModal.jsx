@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography, Divider, Select, Icon } from 'antd';
+import { Modal, Button, Typography, Divider, Select } from 'antd';
+import { DoubleRightOutlined } from '@ant-design/icons';
 const { Option } = Select
 import find from 'lodash/find'
 import { swapLabel } from '../../actions/label'
@@ -117,7 +118,7 @@ class SwapLabelModal extends Component {
                 <Text style={{ display: 'block', marginTop: 10 }}>This will impact {labelToSwap[0].devices.length} devices.</Text>
                 <div style={{ padding: 15, backgroundColor: '#F5F5F5', borderRadius: 5, marginTop: 10, display: 'inline-flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                   <LabelTag text={labelToSwap[0].name} color={labelToSwap[0].color} hasIntegrations={labelToSwap[0].channels.length > 0} hasFunction={labelToSwap[0].function}/>
-                  <Icon type="double-right" style={{ marginRight: 8 }} />
+                  <DoubleRightOutlined style={{ marginRight: 8 }} />
                   <LabelTag text={destinationLabel.name} color={destinationLabel.color} hasIntegrations={destinationLabel.channels.length > 0} hasFunction={destinationLabel.function}/>
                 </div>
               </div>

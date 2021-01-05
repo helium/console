@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Typography, Input, Tooltip, Icon } from 'antd';
+import { Typography, Input, Tooltip } from 'antd';
+import { QuestionCircleFilled } from '@ant-design/icons';
 const { Text } = Typography
 import { Row, Col } from 'antd';
-
 
 class MQTTForm extends Component {
   state = {
@@ -83,13 +83,13 @@ class MQTTForm extends Component {
           <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text>Uplink Topic</Text>
             <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
-              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
+              <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
             </Tooltip>
           </Col>
           <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text>Downlink Topic</Text>
             <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
-              <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
+              <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
             </Tooltip>
           </Col>
           <Col sm={12}>

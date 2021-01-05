@@ -13,6 +13,7 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { ALL_API_KEYS, API_KEY_SUBSCRIPTION } from '../../graphql/apiKeys';
 import { getMfaStatus } from '../../actions/auth';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 import { loginWithRedirect } from '../auth/Auth0Provider';
 import * as rest from '../../util/rest';
 const { Text } = Typography
@@ -118,7 +119,7 @@ class Profile extends Component {
             <UserCan noManager>
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
                 onClick={() => this.props.deleteKey(record.id)}
               />

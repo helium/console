@@ -20,6 +20,7 @@ import UserCan from '../common/UserCan';
 import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
 const { Text } = Typography
 
@@ -242,7 +243,7 @@ class DeviceIndex extends Component {
       <UserCan>
         <Button
           size="large"
-          icon="plus"
+          icon={<PlusOutlined />}
           onClick={this.openImportDevicesModal}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
           style={{marginRight: hasDevices ? 0 : 10}}
@@ -252,7 +253,7 @@ class DeviceIndex extends Component {
         <Button
           size="large"
           type="primary"
-          icon="plus"
+          icon={<PlusOutlined />}
           onClick={this.openCreateDeviceModal}
         >
           Add New Device

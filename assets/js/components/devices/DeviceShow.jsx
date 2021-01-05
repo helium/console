@@ -27,7 +27,8 @@ import { displayError } from '../../util/messages'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { graphql } from 'react-apollo';
-import { Typography, Button, Input, Icon, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
+import { Typography, Button, Input, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
+import { EditOutlined, EyeOutlined, EyeInvisibleOutlined, BugOutlined, DeleteOutlined } from '@ant-design/icons';
 import { DeviceShowSkeleton } from './DeviceShowSkeleton';
 const { Text } = Typography
 const { TabPane } = Tabs
@@ -253,7 +254,7 @@ class DeviceShow extends Component {
               />
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}
@@ -298,7 +299,7 @@ class DeviceShow extends Component {
                         <Text  style={{ marginRight: 5 }}>{device.name} </Text>
                         <UserCan>
                           <Button size="small" onClick={this.toggleNameInput}>
-                            <Icon type="edit"></Icon>
+                            <EditOutlined />
                           </Button>
                         </UserCan>
                       </React.Fragment>
@@ -341,7 +342,7 @@ class DeviceShow extends Component {
                         }
                         <UserCan>
                         <Button size="small" onClick={this.toggleDevEUIInput}>
-                          <Icon type="edit"></Icon>
+                          <EditOutlined />
                         </Button>
                         </UserCan>
                       </React.Fragment>
@@ -379,7 +380,7 @@ class DeviceShow extends Component {
                         }
                         <UserCan>
                         <Button size="small" onClick={this.toggleAppEUIInput}>
-                          <Icon type="edit"></Icon>
+                          <EditOutlined />
                         </Button>
                         </UserCan>
                       </React.Fragment>
@@ -390,11 +391,19 @@ class DeviceShow extends Component {
                   <tr style={{height: '30px'}}>
                     <td style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                       <Text strong>App Key</Text>
-                      <Icon
-                        type={showAppKey ? "eye" : "eye-invisible"}
-                        onClick={() => this.setState({ showAppKey: !showAppKey })}
-                        style={{ marginLeft: 5 }}
-                      />
+                      {
+                        showAppKey ? (
+                          <EyeOutlined
+                            onClick={() => this.setState({ showAppKey: !showAppKey })}
+                            style={{ marginLeft: 5 }}
+                          />
+                        ) : (
+                          <EyeInvisibleOutlined
+                            onClick={() => this.setState({ showAppKey: !showAppKey })}
+                            style={{ marginLeft: 5 }}
+                          />
+                        )
+                      }
                     </td>
                     <td>
                       {showAppKeyInput && (
@@ -424,7 +433,7 @@ class DeviceShow extends Component {
                             device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
                           }
                           <Button size="small" onClick={this.toggleAppKeyInput}>
-                            <Icon type="edit"></Icon>
+                            <EditOutlined />
                           </Button>
                         </React.Fragment>
                       )}
@@ -515,7 +524,7 @@ class DeviceShow extends Component {
         <Sidebar
           show={showDebugSidebar}
           toggle={this.handleToggleDebug}
-          sidebarIcon={<Icon type="bug" />}
+          sidebarIcon={<BugOutlined />}
           iconBackground={debugSidebarBackgroundColor}
           iconPosition='top'
           message='Access Debug mode to view device packet transfer'

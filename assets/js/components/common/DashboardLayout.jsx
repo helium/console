@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
 import ContentLayout from './ContentLayout'
-import { Layout, Tag, Icon, Popover, Button } from 'antd';
+import { Layout, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -11,7 +11,7 @@ class DashboardLayout extends Component {
     const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user } = this.props;
 
     return (
-      <Layout style={{width: '100%', minWidth: 800 }}>
+      <Layout style={{height: '100%', width: '100%', minWidth: 800 }}>
         <Header>
           <TopBar user={user} />
         </Header>
@@ -22,12 +22,12 @@ class DashboardLayout extends Component {
               <Sider style={{ overflow: 'hidden' }}>
                 <NavDrawer />
                 {
-                  process.env.CONSOLE_VERSION && 
+                  process.env.CONSOLE_VERSION &&
                     <Popover
                       content="Click to see release details"
                       placement="right"
                     >
-                      <Button className="version-link" icon="tool" href={process.env.RELEASE_BLOG_LINK || "https://engineering.helium.com"} target="_blank">{process.env.CONSOLE_VERSION}</Button>
+                      <Button className="version-link" icon={<ToolOutlined />} href={process.env.RELEASE_BLOG_LINK || "https://engineering.helium.com"} target="_blank">{process.env.CONSOLE_VERSION}</Button>
                     </Popover>
                 }
               </Sider>
