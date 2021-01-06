@@ -101,6 +101,7 @@ class ChannelsTable extends Component {
               type="danger"
               icon={<DeleteOutlined />}
               shape="circle"
+              size="small"
               onClick={e => {
                 e.stopPropagation()
                 this.props.openDeleteChannelModal(record)

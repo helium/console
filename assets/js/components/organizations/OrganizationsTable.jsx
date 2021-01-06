@@ -123,6 +123,7 @@ class OrganizationsTable extends Component {
               <Button
                 type="primary"
                 style={{ marginRight: 5 }}
+                size="small"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": record.id })
                   switchOrganization(record)
@@ -136,6 +137,7 @@ class OrganizationsTable extends Component {
                   type="danger"
                   icon={<DeleteOutlined />}
                   shape="circle"
+                  size="small"
                   onClick={() => {
                     this.props.openDeleteOrganizationModal(record.id)
                   }}

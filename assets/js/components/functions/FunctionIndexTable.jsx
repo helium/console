@@ -140,6 +140,7 @@ class FunctionIndexTable extends Component {
                 type="danger"
                 icon={<DeleteOutlined />}
                 shape="circle"
+                size="small"
                 style={{ marginLeft: 10 }}
                 onClick={e => {
                   e.stopPropagation()
