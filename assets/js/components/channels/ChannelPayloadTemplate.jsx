@@ -49,10 +49,10 @@ class ChannelPayloadTemplate extends Component {
     }
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = (prevProps, prevState) => {
     const fromChannelNew = this.props.from === 'channelNew'
 
-    if (prevProps.functions[0] != this.props.functions[0]) {
+    if ((prevProps.functions[0] != this.props.functions[0]) || (!prevState.show && this.state.show)) {
       const { functions } = this.props
 
       const firstFunc = functions[0]
