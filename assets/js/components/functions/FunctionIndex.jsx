@@ -48,6 +48,7 @@ class FunctionIndex extends Component {
             <Button
               size="large"
               icon={<CodeOutlined />}
+              style={{ borderRadius: 4 }}
               type="primary"
               onClick={() => this.props.history.push('/functions/new')}
             >

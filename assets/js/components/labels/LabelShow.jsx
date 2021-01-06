@@ -156,6 +156,7 @@ class LabelShow extends Component {
               <Button
                 size="large"
                 icon={<SettingOutlined />}
+                style={{ borderRadius: 4 }}
                 onClick={this.openUpdateLabelModal}
               >
                 Label Settings
@@ -165,7 +166,7 @@ class LabelShow extends Component {
                 type="primary"
                 onClick={this.openLabelAddDeviceModal}
                 icon={<TagOutlined />}
-                style={{ marginLeft: 20 }}
+                style={{ marginLeft: 20, borderRadius: 4 }}
               >
                 Add this Label to a Device
               </Button>

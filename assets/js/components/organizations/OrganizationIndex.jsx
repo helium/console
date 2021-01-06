@@ -46,6 +46,7 @@ class OrganizationIndex extends Component {
             <Button
               icon={<PlusOutlined />}
               size="large"
+              style={{ borderRadius: 4 }}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_NEW_ORG")
                 this.openOrganizationModal()

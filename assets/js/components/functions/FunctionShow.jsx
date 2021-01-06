@@ -160,6 +160,7 @@ class FunctionShow extends Component {
           <UserCan>
             <Button
               size="large"
+              style={{ borderRadius: 4 }}
               type="default"
               icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
               onClick={() => {
@@ -171,6 +172,7 @@ class FunctionShow extends Component {
             </Button>
             <Button
               size="large"
+              style={{ borderRadius: 4 }}
               type="danger"
               icon={<DeleteOutlined />}
               onClick={e => {

@@ -141,6 +141,7 @@ class DataCreditsIndex extends Component {
               type="primary"
               icon={<WalletOutlined />}
               onClick={() => this.openModal("showPurchaseCreditModal")}
+              style={{ borderRadius: 4 }}
             >
               Purchase Data Credits
             </Button>
@@ -318,6 +319,7 @@ class DataCreditsIndex extends Component {
                     (!organization.received_free_dc || organization.dc_balance > 10000) && (
                       <Button
                         size="large"
+                        style={{ borderRadius: 4 }}
                         icon={<RightCircleOutlined />}
                         onClick={() => this.openModal("showOrganizationTransferDCModal")}
                       >
@@ -329,7 +331,7 @@ class DataCreditsIndex extends Component {
                     size="large"
                     icon={<SyncOutlined />}
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{ marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
+                    style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
                   >
                     Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
                   </Button>
@@ -338,7 +340,7 @@ class DataCreditsIndex extends Component {
                     type="primary"
                     icon={<WalletOutlined />}
                     onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ marginLeft: 20 }}
+                    style={{ marginLeft: 20, borderRadius: 4 }}
                   >
                     Purchase Data Credits
                   </Button>

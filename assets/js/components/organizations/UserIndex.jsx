@@ -75,6 +75,7 @@ class UserIndex extends Component {
               type="primary"
               icon={<PlusOutlined />}
               size="large"
+              style={{ borderRadius: 4 }}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
                 this.openNewUserModal()

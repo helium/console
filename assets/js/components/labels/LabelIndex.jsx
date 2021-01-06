@@ -84,6 +84,7 @@ class LabelIndex extends Component {
               size="large"
               type="primary"
               icon={<PlusOutlined />}
+              style={{ borderRadius: 4 }}
               onClick={this.openCreateLabelModal}
             >
               Create New Label

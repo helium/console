@@ -246,7 +246,7 @@ class DeviceIndex extends Component {
           icon={<PlusOutlined />}
           onClick={this.openImportDevicesModal}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
-          style={{marginRight: hasDevices ? 0 : 10}}
+          style={{marginRight: hasDevices ? 0 : 10, borderRadius: 4 }}
         >
           Import Devices
         </Button>
@@ -255,6 +255,7 @@ class DeviceIndex extends Component {
           type="primary"
           icon={<PlusOutlined />}
           onClick={this.openCreateDeviceModal}
+          style={{ borderRadius: 4 }}
         >
           Add New Device
         </Button>
