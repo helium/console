@@ -6,6 +6,7 @@ import DeleteOrganizationModal from '../organizations/DeleteOrganizationModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons'
 
 class OrganizationIndex extends Component {
   state = {
@@ -43,8 +44,9 @@ class OrganizationIndex extends Component {
         extra={
           <UserCan noManager>
             <Button
-              icon="plus"
+              icon={<PlusOutlined />}
               size="large"
+              style={{ borderRadius: 4 }}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_NEW_ORG")
                 this.openOrganizationModal()

@@ -3,7 +3,9 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import moment from 'moment'
 import { debugTextColor } from '../../util/colors'
 import { displayInfo } from '../../util/messages'
-import { Typography, Icon, Menu, Dropdown } from 'antd';
+import { Typography, Menu, Dropdown } from 'antd';
+import { EyeFilled, EyeInvisibleFilled, EllipsisOutlined } from '@ant-design/icons';
+import { Icon } from '@ant-design/compatible';
 const { Text } = Typography
 
 class DebugEntry extends Component {
@@ -49,22 +51,26 @@ class DebugEntry extends Component {
       <div key={data.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>
-            <Icon
-              type={show1 ? "eye" : "eye-invisible"}
-              theme="filled"
-              style={{ color: show1 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
-              onClick={() => this.toggleView("show1")}
-            />
+            {
+              show1 ? (
+                <EyeFilled
+                  style={{ color: '#FFFFFF', marginRight: 10 }}
+                  onClick={() => this.toggleView("show1")}
+                />
+              ) : (
+                <EyeInvisibleFilled
+                  style={{ color: '#8C8C8C', marginRight: 10 }}
+                  onClick={() => this.toggleView("show1")}
+                />
+              )
+            }
             <Text style={{ color: show1 ? '#FFFFFF' : '#8C8C8C' }}>Packet Information</Text>
           </span>
 
           <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ color: '#8C8C8C' }}>{moment.unix(data.reported_at).fromNow()}</Text>
             <Dropdown overlay={menu}>
-              <Icon
-                type="ellipsis"
-                style={{ color: '#8C8C8C', marginLeft: 10, fontSize: 16 }}
-              />
+              <EllipsisOutlined style={{ color: '#8C8C8C', marginLeft: 10, fontSize: 16 }} />
             </Dropdown>
           </span>
         </div>
@@ -91,12 +97,19 @@ class DebugEntry extends Component {
           )
         }
         <div style={{ marginBottom: 5 }}>
-          <Icon
-            type={show2 ? "eye" : "eye-invisible"}
-            theme="filled"
-            style={{ color: show2 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
-            onClick={() => this.toggleView("show2")}
-          />
+        {
+          show2 ? (
+            <EyeFilled
+              style={{ color: '#FFFFFF', marginRight: 10 }}
+              onClick={() => this.toggleView("show2")}
+            />
+          ) : (
+            <EyeInvisibleFilled
+              style={{ color: '#8C8C8C', marginRight: 10 }}
+              onClick={() => this.toggleView("show2")}
+            />
+          )
+        }
           <Text style={{ color: show2 ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
         </div>
         {
@@ -114,12 +127,19 @@ class DebugEntry extends Component {
           )
         }
         <div style={{ marginBottom: 5 }}>
-          <Icon
-            type={show3 ? "eye" : "eye-invisible"}
-            theme="filled"
-            style={{ color: show3 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
-            onClick={() => this.toggleView("show3")}
-          />
+          {
+            show3 ? (
+              <EyeFilled
+                style={{ color: '#FFFFFF', marginRight: 10 }}
+                onClick={() => this.toggleView("show3")}
+              />
+            ) : (
+              <EyeInvisibleFilled
+                style={{ color: '#8C8C8C', marginRight: 10 }}
+                onClick={() => this.toggleView("show3")}
+              />
+            )
+          }
           <Text style={{ color: show3 ? '#FFFFFF' : '#8C8C8C' }}>Hotspots</Text>
         </div>
         {
@@ -132,12 +152,19 @@ class DebugEntry extends Component {
           ))
         }
         <div style={{ marginBottom: 5 }}>
-          <Icon
-            type={show4 ? "eye" : "eye-invisible"}
-            theme="filled"
-            style={{ color: show4 ? '#FFFFFF' : '#8C8C8C', marginRight: 10 }}
-            onClick={() => this.toggleView("show4")}
-          />
+          {
+            show4 ? (
+              <EyeFilled
+                style={{ color: '#FFFFFF', marginRight: 10 }}
+                onClick={() => this.toggleView("show4")}
+              />
+            ) : (
+              <EyeInvisibleFilled
+                style={{ color: '#8C8C8C', marginRight: 10 }}
+                onClick={() => this.toggleView("show4")}
+              />
+            )
+          }
           <Text style={{ color: show4 ? '#FFFFFF' : '#8C8C8C' }}>Integrations</Text>
         </div>
         {

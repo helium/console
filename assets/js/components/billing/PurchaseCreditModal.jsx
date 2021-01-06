@@ -16,7 +16,8 @@ import BurnManualEntry from './BurnManualEntry'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Icon, Popover } from 'antd';
+import { Modal, Button, Typography, Radio, Checkbox, Input, Popover } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 const { Text } = Typography
 const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
 const ROUTER_STAGING_ADDRESS = "1124CJ9yJaHq4D6ugyPCDnSBzQik61C1BqD9VMh1vsUmjwt16HNB"
@@ -457,7 +458,7 @@ class PurchaseCreditModal extends Component {
                   placement="bottom"
                   overlayStyle={{ width: 220 }}
                 >
-                  <Icon style={{ fontSize: 24, marginLeft: 10 }} type="info-circle" />
+                  <InfoCircleOutlined style={{ fontSize: 24, marginLeft: 10 }} />
                 </Popover>
               )
             }

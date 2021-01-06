@@ -11,6 +11,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import { graphql } from 'react-apollo';
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
 import { Query } from 'react-apollo';
 import { SkeletonLayout } from '../common/SkeletonLayout';
@@ -122,6 +123,7 @@ class OrganizationsTable extends Component {
               <Button
                 type="primary"
                 style={{ marginRight: 5 }}
+                size="small"
                 onClick={() => {
                   analyticsLogger.logEvent("ACTION_SWITCH_ORG", {"id": record.id })
                   switchOrganization(record)
@@ -133,8 +135,9 @@ class OrganizationsTable extends Component {
               <UserCan noManager>
                 <Button
                   type="danger"
-                  icon="delete"
+                  icon={<DeleteOutlined />}
                   shape="circle"
+                  size="small"
                   onClick={() => {
                     this.props.openDeleteOrganizationModal(record.id)
                   }}

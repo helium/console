@@ -29,6 +29,11 @@ body {
   height: 36px;
 }
 
+.ant-input-affix-wrapper {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 p {
   font-size: 15px;
 }
@@ -81,9 +86,6 @@ h1 {
 .ant-layout-sider {
   background: #f6f8fa;
   border-right: 1px solid #e1e4e8;
-  width: 250px !important;
-  max-width: 250px !important;
-  flex: 0 0 250px !important;
 }
 
 :focus {
@@ -215,7 +217,7 @@ h1 {
 
 .ant-page-header-heading {
   overflow: initial;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 
 .ant-empty-image {
@@ -363,6 +365,7 @@ tr.ant-table-expanded-row:hover {
 }
 
 .menu-link {
+  background: #f6f8fa;
   color: #1b1f23;
   display: block;
   padding: 22px 20px;
@@ -383,12 +386,6 @@ tr.ant-table-expanded-row:hover {
 
 .ant-select-dropdown-menu-item {
   font-weight: 300;
-}
-
-input {
-  font-weight: 300;
-  height: 36px;
-  font-size: 16px;
 }
 
 .pod#left a {
@@ -477,12 +474,6 @@ p.page-description {
   padding-top: 100px;
   margin: 0 auto;
   position: relative;
-}
-
-/* only needed for antd 3.x */
-.ant-tabs-nav-scroll {
-  display: flex;
-  justify-content: center;
 }
 
 .ant-slider-track {

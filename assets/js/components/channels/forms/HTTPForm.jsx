@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Button, Input, Radio, Tooltip, Icon } from 'antd';
+import { Typography, Button, Input, Radio, Tooltip } from 'antd';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 
@@ -128,7 +129,7 @@ class HTTPForm extends Component {
               style={{ width: '100%'}}
               suffix={
                 <Tooltip title="The URL should start with either 'http://' or 'https://' and contain no spaces">
-                  <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+                  <InfoCircleOutlined style={{ color: 'rgba(0,0,0,.45)' }} />
                 </Tooltip>
               }
             />
@@ -145,31 +146,29 @@ class HTTPForm extends Component {
         {
           this.state.headers.map((obj, i) => (
             <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
-              <div key={`http-${i}`} style={{ display: 'flex', flexDirection: 'row'}}>
-                <Col sm={12}>
-                  <Input
-                    placeholder="Key"
-                    name={`${i}-header`}
-                    value={obj.header}
-                    onChange={this.handleHttpHeaderUpdate}
-                    style={{ width: '100%'}}
-                  />
-                  </Col>
-                <Col sm={12}>
-                  <Input
-                    placeholder="Value"
-                    name={`${i}-value`}
-                    value={obj.value}
-                    onChange={this.handleHttpHeaderUpdate}
-                    style={{ width: '100%'}}
-                  />
-                </Col>
-              </div>
+              <Col sm={12}>
+                <Input
+                  placeholder="Key"
+                  name={`${i}-header`}
+                  value={obj.header}
+                  onChange={this.handleHttpHeaderUpdate}
+                  style={{ width: '100%'}}
+                />
+              </Col>
+              <Col sm={12}>
+                <Input
+                  placeholder="Value"
+                  name={`${i}-value`}
+                  value={obj.value}
+                  onChange={this.handleHttpHeaderUpdate}
+                  style={{ width: '100%'}}
+                />
+              </Col>
             </Row>
           ))
         }
         <Row>
-            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon="plus" type="default" onClick={this.addHeaderRow} >Add Header</Button>
+          <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addHeaderRow} >Add Header</Button>
         </Row>
       </div>
     </div>

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactDOM from "react-dom"
 import SearchResultsSection from './SearchResultsSection'
 import sample from 'lodash/sample'
-import Fade from 'react-reveal/Fade';
 
 import { Typography } from 'antd';
 const { Text } = Typography

@@ -12,7 +12,8 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Icon, Typography, Tooltip } from 'antd';
+import { Menu, Dropdown, Typography, Tooltip } from 'antd';
+import { HomeOutlined, DownOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.svg'
@@ -105,7 +106,7 @@ class TopBar extends Component {
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Link to="/welcome">
-            <Icon type="home" style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
+            <HomeOutlined style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
           </Link>
           {
             currentOrganizationName && <SearchBar />
@@ -143,7 +144,7 @@ class TopBar extends Component {
             <div style={{ position: 'relative', top: -45 }}>
               <Dropdown visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{ color: "#38A2FF", fontWeight: 500}}>
-                  {currentOrganizationName} {<Icon type="down" />}
+                  {currentOrganizationName} {<DownOutlined />}
                 </a>
               </Dropdown>
             </div>

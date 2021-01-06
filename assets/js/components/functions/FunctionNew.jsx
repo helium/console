@@ -9,6 +9,7 @@ import FunctionMoveLabelModal from './FunctionMoveLabelModal'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 const { Text } = Typography
 const { Option } = Select
 
@@ -116,7 +117,7 @@ class FunctionNew extends Component {
 
             <UserCan>
               <Button
-                icon="save"
+                icon={<SaveOutlined />}
                 type="primary"
                 onClick={this.handleSubmit}
                 disabled={!type || !format || name.length === 0}

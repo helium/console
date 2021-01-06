@@ -1,5 +1,6 @@
 import React from 'react'
-import { Popover, Icon, Typography } from 'antd';
+import { Popover, Typography } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import Countdown from "react-countdown"
 const { Text } = Typography
 
@@ -17,7 +18,7 @@ const BurnHNTPillbox = ({ nextTimeStamp, hntToBurn, onComplete }) => (
             renderer={({ minutes, seconds }) => {
               if (minutes < 10) minutes = "0" + minutes
               if (seconds < 10) seconds = "0" + seconds
-              return <span style={{ color: '#40A9FF', fontSize: 14, cursor: 'pointer' }}><Icon type="clock-circle" style={{ marginRight: 5, paddingTop: 4 }}/>{minutes}:{seconds}</span>
+              return <span style={{ color: '#40A9FF', fontSize: 14, cursor: 'pointer' }}><ClockCircleOutlined style={{ marginRight: 5, paddingTop: 4 }} />{minutes}:{seconds}</span>
             }}
             onComplete={onComplete}
           />

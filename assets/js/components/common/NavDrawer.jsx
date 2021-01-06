@@ -4,7 +4,8 @@ import Logo from '../../../img/logo-horizontalwhite.svg'
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Tag, Menu, Icon, Typography } from 'antd'
+import { Tag, Menu, Typography } from 'antd'
+import { EyeFilled, EyeInvisibleFilled, TagFilled } from '@ant-design/icons';
 import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
@@ -57,7 +58,6 @@ class NavDrawer extends Component {
       <div>
         <Menu
           mode="inline"
-          theme="dark"
           onClick={this.handleClick}
           style={{maxHeight: '82vh', overflowY: 'scroll'}}
         >
@@ -71,7 +71,7 @@ class NavDrawer extends Component {
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false }) || localStorage.setItem(SHOW_LABELS_KEY, 'false')}
                 >
-                  <Icon type="eye-invisible" theme="filled" />
+                  <EyeInvisibleFilled />
                 </p>
               )
             }
@@ -81,7 +81,7 @@ class NavDrawer extends Component {
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true }) || localStorage.setItem(SHOW_LABELS_KEY, 'true')}
                 >
-                  <Icon type="eye" theme="filled" />
+                  <EyeFilled />
                 </p>
               )
             }
@@ -115,7 +115,7 @@ class NavDrawer extends Component {
 
 const LabelRow = ({ text, color, deviceCount }) => (
   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', whiteSpace: 'nowrap'}} >
-    <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><Icon style={{marginRight: 8}} type="tag" theme="filled" />{text}</div>
+    <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><TagFilled style={{marginRight: 8}} />{text}</div>
         {
             deviceCount > 0 &&
       <div style={{

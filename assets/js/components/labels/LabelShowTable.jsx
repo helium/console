@@ -12,6 +12,7 @@ import { updateDevice } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select
@@ -147,7 +148,7 @@ class LabelShowTable extends Component {
               </Popover>
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}

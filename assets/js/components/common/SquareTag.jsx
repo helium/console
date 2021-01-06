@@ -4,7 +4,7 @@ const SquareTag = ({ color }) => {
   let labelColor = color ? color : "geekblue"
 
   return (
-    <div style={{ height: 30, width: 30, borderRadius: 5, marginRight: 10, top: 5, backgroundColor: labelColorsHex[labelColor] }}/>
+    <div style={{ height: 25, width: 25, borderRadius: 5, marginRight: 10, marginTop: 2, marginBottom: 2, backgroundColor: labelColorsHex[labelColor] }}/>
   )
 }
 
