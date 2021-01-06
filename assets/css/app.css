@@ -29,6 +29,11 @@ body {
   height: 36px;
 }
 
+.ant-input-affix-wrapper {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 p {
   font-size: 15px;
 }
@@ -383,12 +388,6 @@ tr.ant-table-expanded-row:hover {
   font-weight: 300;
 }
 
-input {
-  font-weight: 300;
-  height: 36px;
-  font-size: 16px;
-}
-
 .pod#left a {
   color: #096dd9;
 }
@@ -475,12 +474,6 @@ p.page-description {
   padding-top: 100px;
   margin: 0 auto;
   position: relative;
-}
-
-/* only needed for antd 3.x */
-.ant-tabs-nav-scroll {
-  display: flex;
-  justify-content: center;
 }
 
 .ant-slider-track {

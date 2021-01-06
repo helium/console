@@ -52,7 +52,7 @@ class LabelAddDeviceSelect extends Component {
           placeholder="Search here"
           suffix={<SearchOutlined />}
           onChange={e => debouncedSearch(e.target.value)}
-          style={{ width: 200, marginBottom: 10 }}
+          style={{ width: '100%' }}
         />
         <div style={{ overflow: 'scroll', height: 102 }}>
           {
