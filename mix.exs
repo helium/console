@@ -55,7 +55,7 @@ defmodule Console.Mixfile do
       {:gettext, "~> 0.18.2"},
       {:comeonin, "~> 5.3.1"},
       {:bcrypt_elixir, "~> 2.3.0"},
-      {:guardian, "~> 1.2.1"},
+      {:guardian, "~> 2.1"},
       {:bamboo, "~> 1.6.0"},
       {:httpoison, "~> 1.7.0"},
       {:html_sanitize_ex, "~> 1.4.1"},

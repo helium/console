@@ -1,6 +1,6 @@
 defmodule ConsoleWeb.AuthApiPipeline do
-  use Guardian.Plug.Pipeline, otp_app: :console
-
+  use Plug.Builder
+  
   plug ConsoleWeb.Plug.CheckDomain
   plug ConsoleWeb.Plug.RateLimit, ["internal_api_actions", 120]
   plug ConsoleWeb.Plug.VerifyRemoteIpRange
