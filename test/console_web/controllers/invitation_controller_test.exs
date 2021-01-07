@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.InvitationControllerTest do
   use ConsoleWeb.ConnCase
-  use Phoenix.ConnTest
+  import Plug.Conn
+  import Phoenix.ConnTest
 
   import Console.FactoryHelper
   import Console.Factory

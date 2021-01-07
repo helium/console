@@ -45,7 +45,7 @@ export const LABEL_DEBUG_EVENTS_SUBSCRIPTION = gql`
 `
 
 export const DEVICE_EVENTS = gql`
-  query DeviceEventsQuery ($device_id: String) {
+  query DeviceEventsQuery ($device_id: ID!) {
     deviceEvents(device_id: $device_id) {
       ...EventFragment
     }
