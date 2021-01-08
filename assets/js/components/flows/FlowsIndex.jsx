@@ -1,20 +1,44 @@
 import React, { Component } from 'react'
-import ReactFlow from 'react-flow-renderer';
 import DashboardLayout from '../common/DashboardLayout'
-import { Typography, Card } from 'antd';
-const { Text } = Typography
+import FlowsWorkspace from './FlowsWorkspace'
 
 class FlowsIndex extends Component {
+  state = {
+    selectedNode: null
+  }
+
+  selectNode = selectedNode => this.setState({ selectedNode })
+
   render() {
     const elements = [
-      { id: '1', data: { label: 'Node 1' }, position: { x: 250, y: 5 } },
-      { id: '2', data: { label: <div>Node 2</div> }, position: { x: 100, y: 100 } },
-      { id: 'e1-2', source: '1', target: '2', animated: true },
+      {
+        id: '1',
+        data: { label: 'Input Node' },
+        position: { x: 250, y: 25 },
+      },
+      {
+        id: '2',
+        data: { label: 'Another Node' },
+        position: { x: 100, y: 125 },
+      },
     ];
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
-        <ReactFlow elements={elements} />
+        <FlowsWorkspace initialElements={elements} selectNode={this.selectNode} />
+        {
+          this.state.selectedNode && (
+            <div style={{
+              backgroundColor: 'red',
+              position: 'absolute',
+              height: 'calc(100% - 135px)',
+              width: 300,
+              top: 95,
+              right: 40,
+              zIndex: 100
+            }} />
+          )
+        }
       </DashboardLayout>
     )
   }
