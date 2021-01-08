@@ -35,8 +35,8 @@ defmodule Console.Mixfile do
     [
       {:phoenix, "~> 1.5.7"},
       {:phoenix_ecto, "~> 4.2.1"},
-      {:ecto, "~> 3.5.5"},
-      {:ecto_sql, "~> 3.5.3"},
+      {:ecto, "~> 3.4.6"},
+      {:ecto_sql, "~> 3.4.5"},
       {:plug_cowboy, "~> 2.4.1"},
       {:cowboy, "~> 2.7.0"},
       {:plug, "~> 1.11.0"},
