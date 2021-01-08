@@ -71,6 +71,10 @@ config :console, Console.Scheduler,
     delete_sent_notifications: [
       schedule: "0 * * * *", # every hr
       task: {Console.Jobs, :delete_sent_notifications, []}
+    ],
+    trigger_device_stops_transmitting: [
+      schedule: "*/15 * * * *", # every 15 mins
+      task: {Console.Jobs, :trigger_device_stops_transmitting, []}
     ]
   ]
 

@@ -13,6 +13,11 @@ defmodule Console.LabelNotificationSettings do
     Repo.get_by(LabelNotificationSetting, [label_id: label_id, key: key])
   end
 
+  def get_label_notification_settings_by_key(key) do
+    from(s in LabelNotificationSetting, where: s.key == ^key)
+     |> Repo.all()
+  end
+
   def upsert_label_notification_setting(attrs \\ %{}) do
     %LabelNotificationSetting{}
     |> LabelNotificationSetting.changeset(attrs)

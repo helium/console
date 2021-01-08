@@ -2,9 +2,16 @@ defmodule Console.Jobs do
   # This module defines the jobs to be ran by Quantum scheduler 
   # as defined in config/config.exs
 
-  def send_notification_emails do
-    alias Console.LabelNotificationEvents
+  alias Console.LabelNotificationEvents
+  alias Console.Email
+  alias Console.Mailer
+  alias Console.LabelNotificationSettings
+  alias Console.Labels
+  alias Console.Organizations
+  alias Console.Devices
+  alias Console.Events
 
+  def send_notification_emails do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
     now = Timex.now
     buffer = -5
@@ -18,12 +25,6 @@ defmodule Console.Jobs do
   end
 
   def send_specific_event_email(identifiers, events) do
-    alias Console.Email
-    alias Console.Mailer
-    alias Console.LabelNotificationSettings
-    alias Console.Labels
-    alias Console.Organizations
-
     label_notification_settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(identifiers.label_id, identifiers.key)
     # continue w/ email if the setting for the specific label and key exist and are turned on ("1")
     if label_notification_settings != nil and Integer.parse(label_notification_settings.value) do
@@ -48,9 +49,37 @@ defmodule Console.Jobs do
   end
 
   def delete_sent_notifications do 
-    alias Console.LabelNotificationEvents
     # since events are kept as "sent" so we can check against flapping, delete them in 1-hr batches
     buffer = -1
     LabelNotificationEvents.delete_sent_label_notification_events_since(Timex.shift(Timex.now, hours: buffer))
+  end
+
+  def trigger_device_stops_transmitting do
+    settings_device_stops_working = LabelNotificationSettings.get_label_notification_settings_by_key("device_stops_transmitting")
+    Enum.each(settings_device_stops_working, fn setting -> 
+      # value in the setting determines period of time to check if device stopped connecting
+      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: String.to_integer(setting.value)))
+    end)
+  end
+
+  def check_device_stop_transmitting(label_id, starting_from) do
+    devices = Devices.get_devices_for_label(label_id)
+    Enum.each(devices, fn device ->
+      buffer = -1
+      num_of_prev_notifications = LabelNotificationEvents.get_prev_label_notification_events_for_device_since("device_stops_transmitting", device.id, Timex.shift(Timex.now, hours: buffer))
+      if device.last_connected < starting_from and num_of_prev_notifications == 0 do
+        # if 
+        # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
+        trigger_device = %{ device_id: device.id, labels: [label_id], device_name: device.name }
+        event = Events.get_device_last_event(device.id)
+        details = %{
+          device_name: device.name, 
+          device_id: device.id,
+          time: device.last_connected,
+          hotspots: Enum.map(event.hotspots, fn h -> %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } end)
+        }
+        LabelNotificationEvents.notify_label_event(trigger_device, "device_stops_transmitting", details) 
+      end
+    end)
   end
 end
