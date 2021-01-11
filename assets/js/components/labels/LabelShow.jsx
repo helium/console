@@ -173,10 +173,6 @@ class LabelShow extends Component {
             </UserCan>
           }
         >
-          <LabelTag text={label.name} color={label.color} hasFunction={label.function} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30, fontSize: 16, padding: '6px 12px' }}>
-
-          </LabelTag>
-
           <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history} devicesSelected={this.devicesSelected}/>
 
           <UpdateLabelModal

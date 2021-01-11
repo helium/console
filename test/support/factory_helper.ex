@@ -1,5 +1,6 @@
 defmodule Console.FactoryHelper do
-  use Phoenix.ConnTest
+  import Plug.Conn
+  import Phoenix.ConnTest
   import Console.Factory
   import ConsoleWeb.Guardian
 

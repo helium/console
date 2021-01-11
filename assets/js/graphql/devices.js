@@ -90,7 +90,6 @@ export const DEVICE_SHOW_STATS = gql`
       packets_last_30d
     }
   }
-  ${DEVICE_FRAGMENT}
 `
 
 export const ALL_IMPORTS = gql`
@@ -141,7 +140,7 @@ export const PAGINATED_DEVICES = gql`
 
 // For LabelShowTable
 export const PAGINATED_DEVICES_BY_LABEL = gql`
-  query PaginatedDevicesByLabelQuery ($page: Int, $pageSize: Int, $labelId: String, $column: String, $order: String) {
+  query PaginatedDevicesByLabelQuery ($page: Int, $pageSize: Int, $labelId: ID!, $column: String, $order: String) {
     devices_by_label(page: $page, pageSize: $pageSize, labelId: $labelId, column: $column, order: $order) {
       entries {
         name,
