@@ -21,7 +21,7 @@ defmodule Console.LabelNotificationEvents do
      |> Repo.all()
   end
 
-  def get_prev_label_notification_events_for_device_since(key, device_id, datetime_since) do
+  def get_prev_device_label_notification_events(key, device_id, datetime_since) do
     from(e in LabelNotificationEvent, select: fragment("count(*)"), where: e.reported_at >= ^datetime_since and e.key == ^key and fragment("details ->> 'device_id' = ?", ^device_id))
      |> Repo.one()
   end
