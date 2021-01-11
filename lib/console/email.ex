@@ -182,4 +182,16 @@ defmodule Console.Email do
     |> assign(:label_id, label_id)
     |> render(:device_join_otaa_first_time_notification_email)
   end
+
+  def device_stops_transmitting_notification_email(recipients, label_name, details, organization_name, label_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("Helium Console: One or more device(s) have stopped transmitting.")
+    |> assign(:label_name, label_name)
+    |> assign(:num_devices, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:label_id, label_id)
+    |> render(:device_stops_transmitting_notification_email)
+  end
 end

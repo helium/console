@@ -45,6 +45,7 @@ defmodule Console.Jobs do
         "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+        "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
       end
     end
   end
@@ -73,10 +74,11 @@ defmodule Console.Jobs do
         # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
         trigger_device = %{ device_id: device.id, labels: [label_id], device_name: device.name }
         event = Events.get_device_last_event(device.id)
+        { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
           device_name: device.name, 
           device_id: device.id,
-          time: device.last_connected,
+          time: last_connected_time,
           hotspots: Enum.map(event.hotspots, fn h -> 
             %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } 
           end)
