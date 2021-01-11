@@ -49,8 +49,8 @@ defmodule Console.Jobs do
   end
 
   def delete_sent_notifications do 
-    # since events are kept as "sent" so we can check against flapping, delete them in 1-hr batches
-    buffer = -1
+    # since events are kept as "sent" so we can check against flapping, delete them in 24-hr batches
+    buffer = -24
     LabelNotificationEvents.delete_sent_label_notification_events_since(Timex.shift(Timex.now, hours: buffer))
   end
 
@@ -65,7 +65,7 @@ defmodule Console.Jobs do
   def check_device_stop_transmitting(label_id, starting_from) do
     devices = Devices.get_devices_for_label(label_id)
     Enum.each(devices, fn device ->
-      buffer = -1 # one hour ago
+      buffer = -24 # 1 day ago
       time_buffer = Timex.shift(Timex.now, hours: buffer)
       num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("device_stops_transmitting", device.id, time_buffer)
       if device.last_connected < starting_from and num_of_prev_notifications == 0 do

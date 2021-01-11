@@ -68,7 +68,7 @@ config :console, Console.Scheduler,
       task: {Console.Jobs, :send_notification_emails, []}
     ],
     delete_sent_notifications: [
-      schedule: "0 * * * *", # every hr
+      schedule: "0 0 * * *", # every day @ midnight
       task: {Console.Jobs, :delete_sent_notifications, []}
     ],
     trigger_device_stops_transmitting: [
