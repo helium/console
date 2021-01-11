@@ -68,7 +68,6 @@ defmodule Console.Jobs do
       buffer = -1
       num_of_prev_notifications = LabelNotificationEvents.get_prev_label_notification_events_for_device_since("device_stops_transmitting", device.id, Timex.shift(Timex.now, hours: buffer))
       if device.last_connected < starting_from and num_of_prev_notifications == 0 do
-        # if 
         # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
         trigger_device = %{ device_id: device.id, labels: [label_id], device_name: device.name }
         event = Events.get_device_last_event(device.id)
