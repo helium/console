@@ -20,7 +20,7 @@
     </script>
     <div class="mainContainer">
       <main role="main">
-        <%= render @view_module, @view_template, assigns %>
+        <%= @inner_content %>
       </main>
 
     </div> <!-- /container -->
