@@ -34,8 +34,8 @@ defmodule Console.LabelNotificationEvents do
     from(e in LabelNotificationEvent, where: e.reported_at >= ^datetime_since and e.sent == true) |> Repo.delete_all()
   end
 
-  def notify_label_event(channel, event_key, details) do
-    Enum.each(channel.labels, fn label_id -> 
+  def notify_label_event(trigger, event_key, details) do
+    Enum.each(trigger.labels, fn label_id -> 
       settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, event_key)
       if settings != nil and Integer.parse(settings.value) do
         attrs = %{

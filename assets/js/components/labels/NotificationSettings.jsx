@@ -16,10 +16,10 @@ const NOTIFICATION_SETTINGS_KEYS = {
  // TODO Uncomment as notification remaining triggers are added in future sprint(s)
 
 const defaultSettings = [
-  // {
-  //   key: NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME,
-  //   description: ' when a device joins via OTAA for the first time'
-  // },
+  {
+    key: NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME,
+    description: ' when a device joins via OTAA for the first time'
+  },
   {
     key: NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING,
     description: ' when a device stops transmitting for '
@@ -52,7 +52,7 @@ const defaultSettings = [
 
 class NotificationSettings extends Component {
   state = {
-    // [NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME],
+    [NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME],
     [NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING],
     [NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED],
     // [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING],
@@ -81,7 +81,7 @@ class NotificationSettings extends Component {
   componentDidUpdate (prevProps) {
     if (this.props.notificationSettings !== prevProps.notificationSettings) {
       this.setState({
-        // [NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME],
+        [NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME],
         [NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING],
         [NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED],
         // [NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING]: this.props.notificationSettings[NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING],
@@ -103,7 +103,7 @@ class NotificationSettings extends Component {
       }
     }, () => {
       this.props.onChange([
-        // ...this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME] ? [this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]] : [],
+        ...this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME] ? [this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_JOIN_OTAA_FIRST_TIME]] : [],
         ...this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING] ? [this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING]] : [],
         ...this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED] ? [this.state[NOTIFICATION_SETTINGS_KEYS.DEVICE_DELETED]] : [],
         // ...this.state[NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING] ? [this.state[NOTIFICATION_SETTINGS_KEYS.INTEGRATION_STOPS_WORKING]] : [],
