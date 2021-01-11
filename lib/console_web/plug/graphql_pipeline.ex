@@ -1,7 +1,5 @@
 defmodule ConsoleWeb.Plug.GraphqlPipeline do
-  use Guardian.Plug.Pipeline, otp_app: :console,
-    module: ConsoleWeb.Guardian,
-    error_handler: ConsoleWeb.AuthErrorHandler
+  use Plug.Builder
 
   plug ConsoleWeb.Plug.CheckDomain
   plug ConsoleWeb.Plug.RateLimit, ["gql_actions", 300]

@@ -14,6 +14,7 @@ import { deleteFunction, updateFunction } from '../../actions/function'
 import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
+import { PauseOutlined, DeleteOutlined, SaveOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { FunctionShowSkeleton } from './FunctionShowSkeleton';
 const { Text } = Typography
 const { Option } = Select
@@ -159,8 +160,9 @@ class FunctionShow extends Component {
           <UserCan>
             <Button
               size="large"
+              style={{ borderRadius: 4 }}
               type="default"
-              icon={fxn.active ? "pause" : "caret-right"}
+              icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
               onClick={() => {
                 this.props.updateFunction(fxn.id, { active: !fxn.active })
                 analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
@@ -170,8 +172,9 @@ class FunctionShow extends Component {
             </Button>
             <Button
               size="large"
+              style={{ borderRadius: 4 }}
               type="danger"
-              icon="delete"
+              icon={<DeleteOutlined />}
               onClick={e => {
                 e.stopPropagation()
                 this.openDeleteFunctionModal(fxn)
@@ -221,7 +224,7 @@ class FunctionShow extends Component {
               </Option>
             </Select>
             <Button
-              icon="delete"
+              icon={<DeleteOutlined />}
               onClick={this.clearInputs}
               style={{ marginLeft: 8 }}
             >
@@ -231,7 +234,7 @@ class FunctionShow extends Component {
 
           <UserCan>
             <Button
-              icon="save"
+              icon={<SaveOutlined />}
               type="primary"
               onClick={this.handleSubmit}
               disabled={!type && !format && name.length === 0 && body.length === 0}

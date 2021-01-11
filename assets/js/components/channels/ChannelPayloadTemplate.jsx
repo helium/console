@@ -3,7 +3,8 @@ import Mustache from 'mustache'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import { displayError } from '../../util/messages'
 import { defaultPayload, browanPayload, cayennePayload, defaultTemplate, browanTemplate, cayenneTemplate } from '../../util/integrationTemplates'
-import { Typography, Card, Icon, Popover, Select, Row, Col, Button, Input } from 'antd';
+import { Typography, Card, Popover, Select, Row, Col, Button, Input } from 'antd';
+import { QuestionCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 const { TextArea } = Input;
 const { Option } = Select;
 const { Text } = Typography
@@ -49,31 +50,19 @@ class ChannelPayloadTemplate extends Component {
     }
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = (prevProps, prevState) => {
     const fromChannelNew = this.props.from === 'channelNew'
 
-    if (prevProps.functions[0] != this.props.functions[0]) {
+    if ((prevProps.functions[0] != this.props.functions[0]) || (!prevState.show && this.state.show)) {
       const { functions } = this.props
 
       const firstFunc = functions[0]
       if (firstFunc && firstFunc.format === 'browan_object_locator') {
         this.setState({ typeSelected: 'browan', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['browan'])
-          setTimeout(this.generateOutput, 200)
-        }
       } else if (firstFunc && firstFunc.format === 'cayenne') {
         this.setState({ typeSelected: 'cayenne', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['cayenne'])
-          setTimeout(this.generateOutput, 200)
-        }
       } else {
         this.setState({ typeSelected: 'default', output: null })
-        if (fromChannelNew) {
-          this.props.handleTemplateUpdate(templatesMap['default'])
-          setTimeout(this.generateOutput, 200)
-        }
       }
     }
   }
@@ -169,7 +158,7 @@ class ChannelPayloadTemplate extends Component {
                 placement="top"
                 overlayStyle={{ width: 250 }}
               >
-                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+                <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
               </Popover>
             </span>
           }
@@ -266,7 +255,7 @@ class ChannelPayloadTemplate extends Component {
                       placement="top"
                       overlayStyle={{ width: 250 }}
                     >
-                      <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+                      <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
                     </Popover>
                   </span>
                 }
@@ -318,14 +307,9 @@ class ChannelPayloadTemplate extends Component {
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 0 }}
                 extra={
-                  this.state.typeSelected && (<Button
-                    type="primary"
-                    shape="circle"
-                    icon="caret-right"
-                    size="small"
-                    style={{ marginRight: 0 }}
-                    onClick={this.generateOutput}
-                  />)
+                  this.state.typeSelected && (
+                    <PlayCircleFilled style={{ color: '#38A2FF', fontSize: 22, marginRight: 0 }} onClick={this.generateOutput} />
+                  )
                 }
               >
                 <div style={{ height: 503, overflowY: 'scroll' }}>
@@ -360,7 +344,7 @@ class ChannelPayloadTemplate extends Component {
                 placement="top"
                 overlayStyle={{ width: 250 }}
               >
-                <Icon type="question-circle" theme="filled" style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+                <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
               </Popover>
             </span>
           }

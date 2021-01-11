@@ -7,7 +7,7 @@ import SearchResults from './SearchResults'
 import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
 import { GENERAL_SEARCH } from '../../graphql/search'
-import { Icon } from 'antd'
+import { SearchOutlined } from '@ant-design/icons';
 import { graphql } from 'react-apollo';
 
 const queryOptions = {
@@ -182,7 +182,7 @@ class SearchBar extends Component {
     return (
       <div style={{display: 'inline-block'}}>
         <div onClick={this.focusSearchBar} id="searchBar" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Icon type="search" style={{ color: 'white', fontSize: 18 }} />
+          <SearchOutlined style={{ color: 'white', fontSize: 18 }} />
           <input
             ref={this.searchBarInput}
             value={query}

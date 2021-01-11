@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { blueForDeviceStatsLarge } from '../../util/colors'
 import { DEVICE_SHOW_STATS } from '../../graphql/devices'
-import { Typography, Card, Col, Spin } from 'antd';
+import { Typography, Card, Col, Spin, Row } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { graphql } from 'react-apollo';
 
@@ -45,6 +45,7 @@ class DeviceShowStats extends Component {
 
     if (loading) return (
       <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+        <Row>
         <Col span={12}>
           <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
           <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
@@ -59,6 +60,7 @@ class DeviceShowStats extends Component {
           <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
           <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
         </Col>
+        </Row>
       </Card>
     )
     if (error) return (
@@ -70,6 +72,7 @@ class DeviceShowStats extends Component {
     if (!showDC) {
       return (
         <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Row>
           <Col span={12}>
             <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.total_packets}</Text><br/>
@@ -84,11 +87,13 @@ class DeviceShowStats extends Component {
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_stats.packets_last_1d}</Text><br/>
           </Col>
+          </Row>
         </Card>
       )
     } else {
       return (
         <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Row>
           <Col span={12}>
             <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.dc_usage}</Text><br/>
@@ -103,6 +108,7 @@ class DeviceShowStats extends Component {
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>-</Text><br/>
           </Col>
+          </Row>
         </Card>
       )
     }

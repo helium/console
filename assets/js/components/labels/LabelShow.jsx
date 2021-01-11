@@ -20,7 +20,8 @@ import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
 import { graphql } from 'react-apollo';
-import { Button, Icon, Typography } from 'antd';
+import { Button, Typography } from 'antd';
+import { BugOutlined, SettingOutlined, TagOutlined } from '@ant-design/icons';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
 const { Text } = Typography
@@ -154,7 +155,8 @@ class LabelShow extends Component {
             <UserCan>
               <Button
                 size="large"
-                icon="setting"
+                icon={<SettingOutlined />}
+                style={{ borderRadius: 4 }}
                 onClick={this.openUpdateLabelModal}
               >
                 Label Settings
@@ -163,18 +165,14 @@ class LabelShow extends Component {
                 size="large"
                 type="primary"
                 onClick={this.openLabelAddDeviceModal}
-                icon="tag"
-                style={{ marginLeft: 20 }}
+                icon={<TagOutlined />}
+                style={{ marginLeft: 20, borderRadius: 4 }}
               >
                 Add this Label to a Device
               </Button>
             </UserCan>
           }
         >
-          <LabelTag text={label.name} color={label.color} hasFunction={label.function} hasIntegrations={label.channels.length > 0} style={{ position: 'relative', top: -30, fontSize: 16, padding: '6px 12px' }}>
-
-          </LabelTag>
-
           <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history} devicesSelected={this.devicesSelected}/>
 
           <UpdateLabelModal
@@ -204,7 +202,7 @@ class LabelShow extends Component {
           <Sidebar
             show={this.state.showDebugSidebar}
             toggle={this.handleToggleDebug}
-            sidebarIcon={<Icon type="bug" />}
+            sidebarIcon={<BugOutlined />}
             iconBackground={debugSidebarBackgroundColor}
             iconPosition='top'
             message='Access Debug mode to view device packet transfer'

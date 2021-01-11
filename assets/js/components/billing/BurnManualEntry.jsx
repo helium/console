@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Typography, Input, Row, Col, Icon } from 'antd';
+import { Typography, Input, Row, Col } from 'antd';
+import { CopyOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 const { Text } = Typography
 
@@ -30,7 +31,7 @@ const BurnManualEntry = ({ hntToBurn, memo, address}) => (
           <Input
             value={address}
             style={styles.input}
-            suffix={<CopyToClipboard text={address}><Icon style={{ color: "#4091F7" }} type="copy" /></CopyToClipboard>}
+            suffix={<CopyToClipboard text={address}><CopyOutlined style={{ color: "#4091F7" }} /></CopyToClipboard>}
           />
         </Col>
       </Row>
@@ -40,7 +41,7 @@ const BurnManualEntry = ({ hntToBurn, memo, address}) => (
           <Input
             value={memo}
             style={styles.input}
-            suffix={<CopyToClipboard text={memo}><Icon style={{ color: "#4091F7" }} type="copy" /></CopyToClipboard>}
+            suffix={<CopyToClipboard text={memo}><CopyOutlined style={{ color: "#4091F7" }} /></CopyToClipboard>}
           />
         </Col>
         <Col span={12}>
@@ -48,7 +49,7 @@ const BurnManualEntry = ({ hntToBurn, memo, address}) => (
           <Input
             value={hntToBurn}
             style={styles.input}
-            suffix={<CopyToClipboard text={hntToBurn}><Icon style={{ color: "#4091F7" }} type="copy" /></CopyToClipboard>}
+            suffix={<CopyToClipboard text={hntToBurn}><CopyOutlined style={{ color: "#4091F7" }} /></CopyToClipboard>}
           />
         </Col>
       </Row>

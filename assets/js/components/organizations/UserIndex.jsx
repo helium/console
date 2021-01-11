@@ -12,6 +12,7 @@ import DeleteUserModal from './DeleteUserModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button, Card } from 'antd';
+import { PlusOutlined } from '@ant-design/icons'
 const { Text } = Typography
 
 const styles = {
@@ -72,8 +73,9 @@ class UserIndex extends Component {
           <UserCan noManager>
             <Button
               type="primary"
-              icon="plus"
+              icon={<PlusOutlined />}
               size="large"
+              style={{ borderRadius: 4 }}
               onClick={() => {
                 analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
                 this.openNewUserModal()

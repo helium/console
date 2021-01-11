@@ -25,7 +25,7 @@ class DecoderForm extends Component {
         this.setState({ functionSelected: null })
       }
       this.props.onChange({ format: e.target.value });
-    }); 
+    });
   }
 
   handleFunctionSelection = value => {
@@ -40,16 +40,15 @@ class DecoderForm extends Component {
     return (
       <div>
         <Card title="Step 4 - Choose your decoder (Required)">
-          <Row gutter={16} style={{marginBottom: 16 }}>
-            <Text strong>Decoder Format</Text>
-            <br />
+          <Text style={{ display: 'block'}} strong>Decoder Format</Text>
+          <Row style={{marginBottom: 16 }}>  
             <Radio.Group onChange={this.handleDecoderChange} value={format}>
               <Radio value="cayenne" style={{ fontSize: '16px' }}>Cayenne LPP (Default)</Radio>
               <Radio value="custom" style={{ fontSize: '16px' }}>Custom</Radio>
             </Radio.Group>
           </Row>
           { format === 'custom' && (
-            <Row gutter={16} style={{marginBottom: 16 }}>
+            <Row style={{marginBottom: 16 }}>
               <FunctionsSearch allFunctions={allFunctions} handleFunctionSelection={this.handleFunctionSelection} />
             </Row>
           )}

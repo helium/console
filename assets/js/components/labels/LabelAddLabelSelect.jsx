@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
-import { Checkbox, Input, Card, Icon, AutoComplete } from 'antd';
+import { Checkbox, Input, Card, AutoComplete } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { graphql } from 'react-apollo';
 import { SEARCH_LABELS } from '../../graphql/search'
 
@@ -49,9 +50,9 @@ class LabelAddLabelSelect extends Component {
       <Card title={<Checkbox onChange={e => checkAllLabels(searchLabels)} checked={allLabels.length === Object.keys(checkedLabels).length}>Select All Labels</Checkbox>} size="small" style={{ marginLeft: 10, height: 200 }}>
         <Input
           placeholder="Search here"
-          suffix={<Icon type="search" />}
+          suffix={<SearchOutlined />}
           onChange={e => debouncedSearch(e.target.value)}
-          style={{ width: 200, marginBottom: 10 }}
+          style={{ width: '100%' }}
         />
         <div style={{ overflow: 'scroll', height: 102, width: 200 }}>
           {

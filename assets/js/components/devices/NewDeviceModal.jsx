@@ -79,10 +79,10 @@ class NewDeviceModal extends Component {
         onOk={this.handleSubmit}
         width={700}
         footer={[
-          <Button size="large" key="back" onClick={onClose}>
+          <Button key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button size="large" key="submit" type="primary" onClick={this.handleSubmit}>
+          <Button key="submit" type="primary" onClick={this.handleSubmit}>
             Submit
           </Button>,
         ]}

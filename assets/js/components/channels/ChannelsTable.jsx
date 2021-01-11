@@ -6,6 +6,7 @@ import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
 import { graphql } from 'react-apollo';
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'
 import classNames from 'classnames';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
@@ -98,8 +99,9 @@ class ChannelsTable extends Component {
           <UserCan>
             <Button
               type="danger"
-              icon="delete"
+              icon={<DeleteOutlined />}
               shape="circle"
+              size="small"
               onClick={e => {
                 e.stopPropagation()
                 this.props.openDeleteChannelModal(record)

@@ -11,6 +11,7 @@ import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import LabelsImg from '../../../img/labels.svg'
 import classNames from 'classnames';
 import { IndexSkeleton } from '../common/IndexSkeleton';
@@ -126,7 +127,7 @@ class LabelIndexTable extends Component {
             <UserCan>
               <Button
                 type="danger"
-                icon="delete"
+                icon={<DeleteOutlined />}
                 size="small"
                 shape="circle"
                 onClick={e => {

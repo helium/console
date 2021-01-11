@@ -5,7 +5,8 @@ import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
-import { Card, Typography, Table, Pagination, Icon } from 'antd';
+import { Card, Typography, Table, Pagination } from 'antd';
+import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
 const { Text } = Typography
 
@@ -96,13 +97,13 @@ class DataCreditPurchasesTable extends Component {
         dataIndex: 'payment_id',
         render:  (data, record) => {
           if (record.card_type == "transfer" && record.from_organization){
-            return <Text><Icon style={styles.greenIcon} type="caret-left" />{record.from_organization}</Text>
+            return <Text><CaretLeftOutlined style={styles.greenIcon} />{record.from_organization}</Text>
           } else if (record.card_type == "transfer" && record.to_organization){
-            return <Text><Icon style={styles.redIcon} type="caret-right" />{record.to_organization}</Text>
+            return <Text><CaretRightOutlined style={styles.redIcon} />{record.to_organization}</Text>
           } else if (record.card_type == "burn") {
-            return <Text><Icon style={styles.greenIcon} type="caret-left" />{data}</Text>
+            return <Text><CaretLeftOutlined style={styles.greenIcon} />{data}</Text>
           } else {
-            return <Text><Icon style={styles.greenIcon} type="caret-left" />Helium, Inc</Text>
+            return <Text><CaretLeftOutlined style={styles.greenIcon} />Helium, Inc</Text>
           }
         }
       },

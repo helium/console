@@ -15,7 +15,8 @@ import PaymentCard from './PaymentCard'
 import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
 import { getPaymentMethods } from '../../actions/dataCredits'
 import { Link } from 'react-router-dom'
-import { Icon, Typography, Card, Row, Col, Popover, Button } from 'antd';
+import { Typography, Card, Row, Col, Popover, Button } from 'antd';
+import { WalletOutlined, SyncOutlined, RightCircleOutlined } from '@ant-design/icons'
 import DCIMg from '../../../img/datacredits.svg'
 import BytesIMg from '../../../img/datacredits-bytes-logo.svg'
 import classNames from 'classnames';
@@ -138,8 +139,9 @@ class DataCreditsIndex extends Component {
             <Button
               size="large"
               type="primary"
-              icon="wallet"
+              icon={<WalletOutlined />}
               onClick={() => this.openModal("showPurchaseCreditModal")}
+              style={{ borderRadius: 4 }}
             >
               Purchase Data Credits
             </Button>
@@ -317,7 +319,8 @@ class DataCreditsIndex extends Component {
                     (!organization.received_free_dc || organization.dc_balance > 10000) && (
                       <Button
                         size="large"
-                        icon="right-circle"
+                        style={{ borderRadius: 4 }}
+                        icon={<RightCircleOutlined />}
                         onClick={() => this.openModal("showOrganizationTransferDCModal")}
                       >
                         Transfer DC to Org
@@ -326,18 +329,18 @@ class DataCreditsIndex extends Component {
                   }
                   <Button
                     size="large"
-                    icon="sync"
+                    icon={<SyncOutlined />}
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{ marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
+                    style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
                   >
                     Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
                   </Button>
                   <Button
                     size="large"
                     type="primary"
-                    icon="wallet"
+                    icon={<WalletOutlined />}
                     onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ marginLeft: 20 }}
+                    style={{ marginLeft: 20, borderRadius: 4 }}
                   >
                     Purchase Data Credits
                   </Button>

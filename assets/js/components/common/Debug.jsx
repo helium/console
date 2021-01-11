@@ -3,7 +3,8 @@ import { Subscription } from 'react-apollo';
 import DebugEntry from './DebugEntry'
 import omit from 'lodash/omit'
 import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
-import { Typography, Icon, Popover, Button } from 'antd';
+import { Typography, Popover, Button } from 'antd';
+import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Loader from '../../../img/debug-loader.png'
 
@@ -77,12 +78,12 @@ class Debug extends Component {
             <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Packets</span>
           </Text>
           <Popover content="Debug mode only shows a limited amount of packets at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
-            <Icon type="info-circle" style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
+            <InfoCircleOutlined style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
           </Popover>
           <div style={{ flexGrow: 1 }}/>
           <Button
             type="primary"
-            icon="reload"
+            icon={<ReloadOutlined />}
             shape="circle"
             onClick={() => {
               this.setState({ data: [] })

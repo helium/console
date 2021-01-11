@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Tag, Icon } from 'antd';
+import { Tag } from 'antd';
+import { ApiOutlined } from '@ant-design/icons';
 
 const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNew, hasFunction, onClick }) => {
   let labelColor = color ? color : "geekblue"
@@ -7,7 +8,7 @@ const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNe
 
   return (
     <Tag style={style} color={labelColor} closable={closable} onClose={onClose} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default'}}>
-      {hasIntegrations ? <Icon type="api" style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
+      {hasIntegrations ? <ApiOutlined style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
     </Tag>
   )
 }

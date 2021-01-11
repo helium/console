@@ -8,6 +8,7 @@ defmodule Console.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
+      {Phoenix.PubSub, name: MyApp.PubSub},
       # Start the Ecto repository
       supervisor(Console.Repo, []),
       # Start the endpoint when the application starts

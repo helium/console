@@ -90,7 +90,7 @@ class UpdateLabelModal extends Component {
         bodyStyle={{ padding: 0 }}
         width={tab === 'notifications' ? 600 : 520}
       >
-        <Tabs defaultActiveKey="general" size="large" onTabClick={tab => this.setState({ tab })}>
+        <Tabs defaultActiveKey="general" size="large" centered onTabClick={tab => this.setState({ tab })}>
           <TabPane tab="General" key="general">
             <div style={{ padding: '30px 50px'}}>
               <Text strong style={{ fontSize: 16 }}>Label Name</Text>
@@ -156,7 +156,7 @@ class UpdateLabelModal extends Component {
             </div>
           </TabPane>
           <TabPane tab="Notifications" key="notifications">
-            <NotificationSettings 
+            <NotificationSettings
               label_id={this.props.label.id}
               notificationSettings={notificationSettings.reduce(
                 (obj, item) => (obj[item.key] = { key: item.key, value: item.value, recipients: item.recipients, label_id: this.props.label.id }, obj), {}

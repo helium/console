@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import { primaryBlue, codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
-import { Typography, Card, Icon, Input, InputNumber, Row, Col, Popover } from 'antd';
+import { Typography, Card, Input, InputNumber, Row, Col, Popover } from 'antd';
+import { PlayCircleFilled } from '@ant-design/icons';
 const { Text } = Typography
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';
@@ -99,7 +100,7 @@ class FunctionValidator extends Component {
             title="Script Validator"
             style={{ height: 560 }}
             extra={
-              <Icon type="play-circle" theme="filled" style={{ color: primaryBlue, fontSize: 22 }} onClick={this.runValidator}/>
+              <PlayCircleFilled style={{ color: primaryBlue, fontSize: 22 }} onClick={this.runValidator}/>
             }
           >
             <Row gutter={10}>
