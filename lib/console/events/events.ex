@@ -13,6 +13,14 @@ defmodule Console.Events do
     Repo.all(query)
   end
 
+  def get_device_last_event(device_id) do
+    Event
+      |> where([e], e.device_id == ^device_id)
+      |> limit(1)
+      |> order_by(desc: :reported_at_naive)
+      |> Repo.one()
+  end
+
   def create_event(attrs \\ %{}) do
     reported_at_naive =
       attrs["reported_at"]

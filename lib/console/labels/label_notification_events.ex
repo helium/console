@@ -23,6 +23,10 @@ defmodule Console.LabelNotificationEvents do
 
   def get_prev_integration_label_notification_events(key, integration_id, datetime_since) do
     from(e in LabelNotificationEvent, select: fragment("count(*)"), where: e.reported_at >= ^datetime_since and e.key == ^key and fragment("details ->> 'channel_id' = ?", ^integration_id))
+  end
+
+  def get_prev_device_label_notification_events(key, device_id, datetime_since) do
+    from(e in LabelNotificationEvent, select: fragment("count(*)"), where: e.reported_at >= ^datetime_since and e.key == ^key and fragment("details ->> 'device_id' = ?", ^device_id))
      |> Repo.one()
   end
 
@@ -32,6 +36,10 @@ defmodule Console.LabelNotificationEvents do
 
   def delete_sent_label_notification_events_since(datetime_since) do
     from(e in LabelNotificationEvent, where: e.reported_at >= ^datetime_since and e.sent == true) |> Repo.delete_all()
+  end
+
+  def delete_label_events_for_device(device_id) do
+    from(e in LabelNotificationEvent, where: e.key == "device_stops_transmitting" and fragment("details ->> 'device_id' = ?", ^device_id)) |> Repo.delete_all()
   end
 
   def notify_label_event(trigger, event_key, details) do
