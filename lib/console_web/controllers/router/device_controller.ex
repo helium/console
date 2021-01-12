@@ -184,7 +184,6 @@ defmodule ConsoleWeb.Router.DeviceController do
             LabelNotificationEvents.notify_label_event(trigger_device, "device_join_otaa_first_time", details)
           end
 
-
           Enum.each(event.channels, fn channel -> 
             event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
             trigger_channel = %{ channel_id: channel.id, channel_name: event_channel.name, labels: Enum.map(event_channel.labels, fn l -> l.id end) }
