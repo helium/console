@@ -26,6 +26,7 @@ defmodule Console.Organizations.Organization do
     has_many :api_keys, Console.ApiKeys.ApiKey, on_delete: :delete_all
     has_many :functions, Console.Functions.Function, on_delete: :delete_all
     has_many :memos, Console.Memos.Memo, on_delete: :delete_all
+    has_many :events, Console.Events.Event, on_delete: :delete_all
 
     timestamps()
   end

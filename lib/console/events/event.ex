@@ -3,6 +3,7 @@ defmodule Console.Events.Event do
   import Ecto.Changeset
 
   alias Console.Devices.Device
+  alias Console.Organizations.Organization
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,6 +23,7 @@ defmodule Console.Events.Event do
     field :channels, {:array, :map}
 
     belongs_to :device, Device
+    belongs_to :organization, Organization
     timestamps()
   end
 
@@ -43,6 +45,7 @@ defmodule Console.Events.Event do
       :port,
       :devaddr,
       :dc_used,
+      :organization_id,
     ])
   end
 end
