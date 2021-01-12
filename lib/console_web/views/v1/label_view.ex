@@ -14,6 +14,7 @@ defmodule ConsoleWeb.V1.LabelView do
     %{
       id: label.id,
       name: label.name,
+      multi_buy: label.multi_buy,
     }
   end
 end

@@ -111,6 +111,22 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
+  def update_multi_buy(conn, %{ "id" => id, "value" => value }) do
+    current_organization = conn.assigns.current_organization
+    case Labels.get_label(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        with {:ok, %Label{} = label} <- Labels.update_label(label, %{ "multi_buy" => value }) do
+          broadcast_router_update_devices(label)
+
+          conn
+          |> put_status(:ok)
+          |> render("show.json", label: label)
+        end
+    end
+  end
+
   defp broadcast_router_update_devices(%Label{} = label) do
     assoc_device_ids = label |> Labels.fetch_assoc([:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
     if length(assoc_device_ids) > 0 do
