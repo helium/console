@@ -6,6 +6,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   alias Console.Labels
   alias Console.Devices
+  alias Console.Channels
   alias Console.Organizations
   alias Console.Devices.Device
   alias Console.Events
@@ -182,6 +183,25 @@ defmodule ConsoleWeb.Router.DeviceController do
             }
             LabelNotificationEvents.notify_label_event(trigger_device, "device_join_otaa_first_time", details)
           end
+
+
+          Enum.each(event.channels, fn channel -> 
+            event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
+            trigger_channel = %{ channel_id: channel.id, channel_name: event_channel.name, labels: Enum.map(event_channel.labels, fn l -> l.id end) }
+            { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+            details = %{
+              channel_name: trigger_channel.channel_name,
+              channel_id: trigger_channel.channel_id,
+              time: time
+            }
+      
+            # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
+            time_buffer = Timex.shift(Timex.now, hours: -1)
+            num_of_prev_notifications = LabelNotificationEvents.get_prev_integration_label_notification_events("integration_stops_working", trigger_channel.channel_id, time_buffer)
+            if channel.status != "success" and num_of_prev_notifications == 0 do
+              LabelNotificationEvents.notify_label_event(trigger_channel, "integration_stops_working", details)
+            end
+          end)
 
           conn
           |> send_resp(200, "")
