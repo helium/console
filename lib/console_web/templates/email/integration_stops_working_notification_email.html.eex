@@ -188,14 +188,14 @@
                                  <%= if @num_channels == 1 do %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
+                                      The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> has stopped working at <b><%= List.first(@details)["time"] %></b>.
                                     </td>
                                   </tr>
                                  <% end %>
                                  <%= if @num_channels > 1 && @num_channels <= 5 do %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      The following Integrations that belong to the Organization <b><%= @organization_name %></b> were deleted:
+                                      The Organization <b><%= @organization_name %></b> Integrations have stopped working:
                                     </td>
                                   </tr>
                                   <tr>
@@ -205,7 +205,7 @@
                                  <%= Enum.map(@details, fn(d) -> %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      <li><b><%= d["channel_name"] %></b>, by <b><%= d["deleted_by"] %></b> on <b><%= d["time"] %></b></li>
+                                      <li><b><%= d["channel_name"] %></b>, at <%= d["time"] %>
                                     </td>
                                   </tr>
                                  <% end) %>
@@ -214,7 +214,7 @@
                                  <%= if @num_channels > 5 do %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      More than 5 Integrations that belong to the Organization <b><%= @organization_name %></b> were deleted.
+                                      More than 5 Integrations that belong to the Organization <b><%= @organization_name %></b> have stopped working at <b><%= List.first(@details)["time"] %></b>.
                                     </td>
                                   </tr>
                                  <% end %>
