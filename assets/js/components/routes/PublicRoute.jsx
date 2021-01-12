@@ -7,12 +7,12 @@ class PublicRoute extends Component {
   }
 
   render() {
-    const { path } = this.props;
+    const { path, loaded } = this.props;
     const Component = this.props.component;
 
     return(
       <Route path={path} render={props => (
-        <Component {...props} />
+        <Component {...props} loaded={loaded} />
       )} />
     )
   }

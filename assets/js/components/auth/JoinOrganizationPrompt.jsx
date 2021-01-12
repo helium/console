@@ -19,9 +19,9 @@ class JoinOrganizationPrompt extends Component {
     acceptedTerms: false,
   }
 
-  componentDidMount() {
+  componentDidUpdate(prevProps) {
     const { invitationToken, getInvitation } = this.props
-    if (invitationToken) {
+    if (!prevProps.loaded && this.props.loaded && invitationToken) {
       getInvitation(invitationToken)
       .then(invite => this.setState({ email: invite.email, invite }))
     }
@@ -43,24 +43,31 @@ class JoinOrganizationPrompt extends Component {
           <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
             <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
             <div style={{textAlign: 'center', marginBottom: 30}}>
-              <Title>
-                You've been invited to join {invite && invite.organizationName}
-              </Title>
+              {
+                invite ? (
+                  <Title>
+                    You've been invited to join {invite && invite.organizationName}
+                  </Title>
+                ) : (
+                  <Title>
+                    Searching for invite...
+                  </Title>
+                )
+              }
             </div>
-            <Form onSubmit={this.acceptInvitation}>
-              <Row gutter={16} style={{marginTop:10}}>
-                <Col sm={12}>
-                  <Button onClick={() => this.props.history.push('/devices')} style={{width: '100%'}}>
-                    Reject Invitation
-                  </Button>
-                </Col>
-                <Col sm={12}>
-                  <Button type="primary" htmlType="submit" style={{width: '100%'}}>
-                    Accept Invitation
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
+
+            <Row gutter={16} style={{marginTop:10}}>
+              <Col sm={12}>
+                <Button onClick={() => this.props.history.push('/devices')} style={{width: '100%'}}>
+                  Reject Invitation
+                </Button>
+              </Col>
+              <Col sm={12}>
+                <Button type="primary" onClick={this.acceptInvitation} style={{width: '100%'}}>
+                  Accept Invitation
+                </Button>
+              </Col>
+            </Row>
           </Card>
         </div>
       </AuthLayout>

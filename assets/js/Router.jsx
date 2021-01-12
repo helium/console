@@ -89,7 +89,7 @@ const Router = (props) => {
             isAuthenticated &&
             <Switch>
               <Redirect exact from="/" to={redirectPath} />
-              <PublicRoute path="/join_organization" component={JoinOrganizationPrompt}/>
+              <PublicRoute path="/join_organization" loaded={loadedOrganization} component={JoinOrganizationPrompt} />
               <Route>
                 { /* If user has no organizations then render the no org page */
                   (loadedOrganization && !currentOrganizationId && <NoOrganization/>) ||
