@@ -82,6 +82,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
 
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id })
+      channel_0 = insert(:channel, %{ organization_id: organization.id })
       timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00])
 
       resp_conn = build_conn()
@@ -114,7 +115,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
           ],
           "channels" => [
             %{
-              "id" => "uuid2",
+              "id" => channel_0.id,
               "name" => "channel name",
               "reported_at" => timestamp,
               "status" => "success",
