@@ -56,6 +56,13 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
+  def get_devices_for_label(label_id) do
+    query = from d in Device,
+      join: dl in DevicesLabels, on: dl.device_id == d.id,
+      where: dl.label_id == ^label_id
+    Repo.all(query)
+  end
+
   def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
     Repo.preload(device, assoc)
   end
