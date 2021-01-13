@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography, Input, Divider, Select, Tabs, Slider } from 'antd';
+import { Modal, Button, Typography, Input, Divider, Select, Tabs, Slider, Switch } from 'antd';
 import LabelTag, { labelColors } from '../common/LabelTag'
 import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -15,6 +15,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 0,
+    adrValue: this.props.label.adr_allowed,
     notificationSettings: this.props.label.label_notification_settings
   }
 
@@ -32,7 +33,7 @@ class UpdateLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, notificationSettings, tab } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, tab, adrValue } = this.state;
 
     switch (tab) {
       case 'general':
@@ -50,6 +51,11 @@ class UpdateLabelModal extends Component {
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
         this.props.onClose();
         break;
+      case 'adr':
+        this.props.handleUpdateAdrSetting(adrValue);
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_ADR_SETTING", { label_adr_setting: adrValue });
+        this.props.onClose();
+        break;
     }
   }
 
@@ -59,6 +65,7 @@ class UpdateLabelModal extends Component {
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
+        adrValue: this.props.label.adr_allowed,
         notificationSettings: this.props.label.label_notification_settings
       }), 200)
     }
@@ -70,7 +77,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue, notificationSettings, tab } = this.state
+    const { multiBuyValue, notificationSettings, tab, adrValue } = this.state
 
     return (
       <Modal
@@ -163,6 +170,22 @@ class UpdateLabelModal extends Component {
               )}
               onChange={this.handleNotificationSettingsChange}
             />
+          </TabPane>
+          <TabPane tab="ADR" key="adr">
+            <div style={{ padding: '30px 50px'}}>
+              <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Switch
+                  onChange={adrValue => this.setState({ adrValue })}
+                  checked={adrValue}
+                  style={{ marginRight: 8 }}
+                />
+                <Text strong style={{ fontSize: 16 }}>Allow ADR (recommended for stationary devices)</Text>
+              </div>
+
+              <Text style={{ fontSize: 14 }}>{
+                "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
+              }</Text>
+            </div>
           </TabPane>
         </Tabs>
       </Modal>
