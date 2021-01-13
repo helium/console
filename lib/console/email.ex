@@ -218,4 +218,16 @@ defmodule Console.Email do
     |> assign(:label_id, label_id)
     |> render(:downlink_unsuccessful_notification_email)
   end
+
+  def integration_receives_first_event_notification_email(recipients, label_name, details, organization_name, label_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("Helium Console: The first packet came through one or more integration(s).")
+    |> assign(:label_name, label_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:label_id, label_id)
+    |> render(:integration_receives_first_event_notification_email)
+  end
 end

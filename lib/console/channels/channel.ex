@@ -21,6 +21,7 @@ defmodule Console.Channels.Channel do
     field :type_name, :string
     field :downlink_token, :string
     field :payload_template, :string
+    field :time_first_uplink, :naive_datetime
 
     belongs_to :organization, Organization
     many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
@@ -53,7 +54,7 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     channel
-    |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template])
+    |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template, :time_first_uplink])
     |> validate_required([:name, :type, :credentials])
     |> validate_length(:name, max: 50)
     |> check_credentials_update(channel.type)
