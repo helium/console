@@ -204,8 +204,11 @@ defmodule ConsoleWeb.Router.DeviceController do
                 end
               end)
             "down" ->
-              if List.first(event.hotspots).status != "success" do
-                trigger_device = %{ device_id: event_device.id, labels: Enum.map(event_device.labels, fn l -> l.id end), device_name: event_device.name }
+              trigger_device = %{ device_id: event_device.id, labels: Enum.map(event_device.labels, fn l -> l.id end), device_name: event_device.name }
+              # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
+              time_buffer = Timex.shift(Timex.now, hours: -1)
+              num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("downlink_unsuccessful", trigger_device.device_id, time_buffer)
+              if List.first(event.hotspots).status != "success" and num_of_prev_notifications == 0 do
                 details = %{ device_id: trigger_device.device_id, device_name: trigger_device.device_name }
                 LabelNotificationEvents.notify_label_event(trigger_device, "downlink_unsuccessful", details)
               end
