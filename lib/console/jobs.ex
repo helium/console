@@ -47,6 +47,7 @@ defmodule Console.Jobs do
         "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_stops_working" -> Email.integration_stops_working_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+        "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
       end
     end
   end
