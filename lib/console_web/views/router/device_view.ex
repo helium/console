@@ -5,6 +5,10 @@ defmodule ConsoleWeb.Router.DeviceView do
   alias ConsoleWeb.Router.LabelView
 
   def render("index.json", %{devices: devices}) do
+    render_many(devices, DeviceView, "device_short.json")
+  end
+
+  def render("devices.json", %{devices: devices}) do
     render_many(devices, DeviceView, "device.json")
   end
 
@@ -33,5 +37,18 @@ defmodule ConsoleWeb.Router.DeviceView do
       |> ChannelView.append_channels(device.channels)
       |> LabelView.append_labels(device.labels)
     end
+  end
+
+  def render("device_short.json", %{device: device}) do
+    device_attrs = %{
+      id: device.id,
+      name: device.name,
+      dev_eui: device.dev_eui,
+      app_eui: device.app_eui,
+      app_key: device.app_key,
+      oui: device.oui,
+      organization_id: device.organization_id,
+      active: device.active,
+    }
   end
 end
