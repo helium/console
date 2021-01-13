@@ -79,6 +79,13 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Enum.uniq()
           |> Enum.map(fn c -> Map.put(c, :function, nil) end)
 
+        adr_enabled = device.labels |> Enum.map(fn l -> l.adr_enabled end) |> Enum.find(fn s -> s == true end)
+        device =
+          case adr_enabled do
+            true -> Map.put(device, :adr_enabled, true)
+            _ -> device
+          end
+
         multi_buy_value = device.labels |> Enum.map(fn l -> l.multi_buy end) |> Enum.max
         case multi_buy_value do
           0 ->

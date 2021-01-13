@@ -105,6 +105,12 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleUpdateAdrSetting = adrValue => {
+    const labelId = this.props.match.params.id
+    const attrs = { adr_enabled: adrValue }
+    this.props.updateLabel(labelId, attrs)
+  }
+
   handleUpdateLabelNotificationSettings = notifications => {
     this.props.updateLabelNotificationSettings(notifications);
   }
@@ -178,6 +184,7 @@ class LabelShow extends Component {
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
             handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
+            handleUpdateAdrSetting={this.handleUpdateAdrSetting}
             handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
             open={this.state.showUpdateLabelModal}
             onClose={this.closeUpdateLabelModal}
