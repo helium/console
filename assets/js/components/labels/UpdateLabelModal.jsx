@@ -15,7 +15,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 0,
-    adrValue: this.props.label.adr_enabled,
+    adrValue: this.props.label.adr_allowed,
     notificationSettings: this.props.label.label_notification_settings
   }
 
@@ -65,7 +65,7 @@ class UpdateLabelModal extends Component {
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
-        adrValue: this.props.label.adr_enabled,
+        adrValue: this.props.label.adr_allowed,
         notificationSettings: this.props.label.label_notification_settings
       }), 200)
     }

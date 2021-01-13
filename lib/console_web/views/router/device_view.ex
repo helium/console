@@ -29,8 +29,8 @@ defmodule ConsoleWeb.Router.DeviceView do
     }
 
     device_attrs =
-      if Map.has_key?(device, :adr_enabled) do
-        Map.put(device_attrs, :adr_enabled, true)
+      if Map.has_key?(device, :adr_allowed) do
+        Map.put(device_attrs, :adr_allowed, true)
       else
         device_attrs
       end

@@ -107,7 +107,7 @@ class LabelShow extends Component {
 
   handleUpdateAdrSetting = adrValue => {
     const labelId = this.props.match.params.id
-    const attrs = { adr_enabled: adrValue }
+    const attrs = { adr_allowed: adrValue }
     this.props.updateLabel(labelId, attrs)
   }
 

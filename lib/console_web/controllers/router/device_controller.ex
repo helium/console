@@ -79,10 +79,10 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Enum.uniq()
           |> Enum.map(fn c -> Map.put(c, :function, nil) end)
 
-        adr_enabled = device.labels |> Enum.map(fn l -> l.adr_enabled end) |> Enum.find(fn s -> s == true end)
+        adr_allowed = device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.find(fn s -> s == true end)
         device =
-          case adr_enabled do
-            true -> Map.put(device, :adr_enabled, true)
+          case adr_allowed do
+            true -> Map.put(device, :adr_allowed, true)
             _ -> device
           end
 
