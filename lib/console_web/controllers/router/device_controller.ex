@@ -195,6 +195,14 @@ defmodule ConsoleWeb.Router.DeviceController do
               Enum.each(event.channels, fn channel ->
                 event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
                 trigger_channel = %{ channel_id: channel.id, channel_name: event_channel.name, labels: Enum.map(event_channel.labels, fn l -> l.id end) }
+                
+                if event_channel.time_first_uplink == nil do
+                  Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
+                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                  details = %{ time: time, channel_name: trigger_channel.channel_name, channel_id: trigger_channel.channel_id }
+                  LabelNotificationEvents.notify_label_event(trigger_channel, "integration_receives_first_event", details)
+                end
+
                 { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
                 details = %{
                   channel_name: trigger_channel.channel_name,

@@ -79,6 +79,7 @@ defmodule ConsoleWeb.Schema do
     field :downlink_token, :string
     field :credentials, type: :credentials
     field :payload_template, :string
+    field :time_first_uplink, :naive_datetime
   end
 
   paginated object :membership do

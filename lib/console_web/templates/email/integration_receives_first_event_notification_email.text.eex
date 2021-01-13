@@ -1,0 +1,13 @@
+<%= @label_name %> Notification
+<%= if @num_channels == 1 do %>
+  The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> received the first packet at <%= List.first(@details)["time"] %>.
+<% end %>
+<%= if @num_channels > 1 && @num_channels <= 5 do %>
+  The following Integrations that belong to the Organization <%= @organization_name %> received the first packets:
+  <%= Enum.map(@details, fn(d) -> %>
+    <%= d["channel_name"] %>, at <%= d["time"] %>
+  <% end) %>
+<% end %>
+<%= if @num_channels > 5 do %>
+  More than 5 Integrations that belong to the Organization <%= @organization_name %> received the first packets at <%= List.first(@details)["time"] %>.
+<% end %>
