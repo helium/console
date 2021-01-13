@@ -22,6 +22,12 @@ defmodule ConsoleWeb.Router.DeviceController do
     {"Content-Type", "application/x-www-form-urlencoded"}
   ]
 
+  def index(conn, _) do
+    devices = Devices.list_devices()
+
+    render(conn, "index.json", devices: devices)
+  end
+
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
     devices = Enum.map(devices, fn d ->
@@ -32,7 +38,7 @@ defmodule ConsoleWeb.Router.DeviceController do
       end
     end)
 
-    render(conn, "index.json", devices: devices)
+    render(conn, "devices.json", devices: devices)
   end
 
   def show(conn, %{"id" => id}) do
@@ -185,8 +191,8 @@ defmodule ConsoleWeb.Router.DeviceController do
           end
 
           case event.category do
-            "up" -> 
-              Enum.each(event.channels, fn channel -> 
+            "up" ->
+              Enum.each(event.channels, fn channel ->
                 event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
                 trigger_channel = %{ channel_id: channel.id, channel_name: event_channel.name, labels: Enum.map(event_channel.labels, fn l -> l.id end) }
                 { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
@@ -195,7 +201,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                   channel_id: trigger_channel.channel_id,
                   time: time
                 }
-          
+
                 # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
                 time_buffer = Timex.shift(Timex.now, hours: -1)
                 num_of_prev_notifications = LabelNotificationEvents.get_prev_integration_label_notification_events("integration_stops_working", trigger_channel.channel_id, time_buffer)
