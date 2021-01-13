@@ -1,0 +1,14 @@
+<%= @label_name %> Notification
+
+<%= if @num_devices == 1 do %>
+    The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> has experienced a downlink issue.
+  <% end %>
+  <%= if @num_devices > 1 && @num_devices <= 5 do %>
+    The following devices that belong to the Organization <%= @organization_name %> have experienced downlink issues:
+  <%= Enum.map(@details, fn(d) -> %>
+    <%= d["device_name"] %>
+  <% end) %>
+<% end %>
+<%= if @num_devices > 5 do %>
+  More than 5 devices that belong to the Organization <%= @organization_name %> have experienced downlink issues.
+<% end %>
