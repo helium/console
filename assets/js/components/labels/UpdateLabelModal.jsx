@@ -183,7 +183,7 @@ class UpdateLabelModal extends Component {
               </div>
 
               <Text style={{ fontSize: 14 }}>{
-                "Adaptive Data Rate (ADR) needs to requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
+                "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
               }</Text>
             </div>
           </TabPane>
