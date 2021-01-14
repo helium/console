@@ -70,22 +70,24 @@ defmodule Console.Jobs do
   def check_device_stop_transmitting(label_id, starting_from) do
     devices = Devices.get_devices_for_label(label_id)
     Enum.each(devices, fn device ->
-      buffer = -24 # 1 day ago
-      time_buffer = Timex.shift(Timex.now, hours: buffer)
-      num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("device_stops_transmitting", device.id, time_buffer)
-      if device.last_connected < starting_from and num_of_prev_notifications == 0 do
-        # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
-        event = Events.get_device_last_event(device.id)
-        { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
-        details = %{
-          device_name: device.name, 
-          device_id: device.id,
-          time: last_connected_time,
-          hotspots: Enum.map(event.hotspots, fn h -> 
-            %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } 
-          end)
-        }
-        LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details) 
+      if device.last_connected < starting_from do
+        buffer = -24 # 1 day ago
+        time_buffer = Timex.shift(Timex.now, hours: buffer)
+        num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("device_stops_transmitting", device.id, time_buffer)
+        if num_of_prev_notifications == 0 do
+          # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
+          event = Events.get_device_last_event(device.id)
+          { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
+          details = %{
+            device_name: device.name, 
+            device_id: device.id,
+            time: last_connected_time,
+            hotspots: Enum.map(event.hotspots, fn h -> 
+              %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } 
+            end)
+          }
+          LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details) 
+        end
       end
     end)
   end
