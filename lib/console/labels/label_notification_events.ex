@@ -21,14 +21,12 @@ defmodule Console.LabelNotificationEvents do
      |> Repo.all()
   end
 
-  # TODO make private
-  def get_prev_integration_label_notification_events(key, integration_id, datetime_since) do
+  defp get_prev_integration_label_notification_events(key, integration_id, datetime_since) do
     from(e in LabelNotificationEvent, select: fragment("count(*)"), where: e.reported_at >= ^datetime_since and e.key == ^key and fragment("details ->> 'channel_id' = ?", ^integration_id))
       |> Repo.one()
   end
 
-  # TODO make private
-  def get_prev_device_label_notification_events(key, device_id, datetime_since) do
+  defp get_prev_device_label_notification_events(key, device_id, datetime_since) do
     from(e in LabelNotificationEvent, select: fragment("count(*)"), where: e.reported_at >= ^datetime_since and e.key == ^key and fragment("details ->> 'device_id' = ?", ^device_id))
      |> Repo.one()
   end
