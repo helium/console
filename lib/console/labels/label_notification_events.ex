@@ -39,8 +39,12 @@ defmodule Console.LabelNotificationEvents do
     from(e in LabelNotificationEvent, where: e.reported_at >= ^datetime_since and e.sent == true) |> Repo.delete_all()
   end
 
-  def delete_label_events_for_device(device_id) do
-    from(e in LabelNotificationEvent, where: e.key == "device_stops_transmitting" and fragment("details ->> 'device_id' = ?", ^device_id)) |> Repo.delete_all()
+  def delete_unsent_label_events_for_device(device_id) do
+    from(e in LabelNotificationEvent, where: e.sent == false and fragment("details ->> 'device_id' = ?", ^device_id)) |> Repo.delete_all()
+  end
+
+  def delete_unsent_label_events_for_integration(integration_id) do
+    from(e in LabelNotificationEvent, where: e.sent == false and fragment("details ->> 'channel_id' = ?", ^integration_id)) |> Repo.delete_all()
   end
 
   def notify_label_event(labels, event_key, details, limit \\ nil) do

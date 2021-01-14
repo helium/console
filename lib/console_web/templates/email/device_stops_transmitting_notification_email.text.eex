@@ -1,3 +1,5 @@
+<%= @label_name %> Notification
+
 <%= if @num_devices == 1 do %>
     The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> stopped transmitting on <%= List.first(@details)["time"] %>.
     Details for Hotspot(s) that sent the last received device packet:
@@ -7,7 +9,6 @@
     <% end) %>
   <% end) %>
 <% end %>
-
 <%= if @num_devices > 1 && @num_devices <= 5 do %>
   The devices:
   <%= Enum.map(@details, fn(d) -> %>
@@ -21,7 +22,6 @@
     <% end) %>
   <% end) %>
 <% end %>
-
 <%= if @num_devices > 5 do %>
   More than 5 devices that belong to the Organization <%= @organization_name %> stopped transmitting on <%= List.first(@details)["time"] %>.
 <% end %>

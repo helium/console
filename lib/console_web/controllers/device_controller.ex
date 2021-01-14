@@ -82,7 +82,7 @@ defmodule ConsoleWeb.DeviceController do
         time: time
       }
       LabelNotificationEvents.notify_label_event(deleted_device.labels, "device_deleted", details)
-      LabelNotificationEvents.delete_label_events_for_device(deleted_device.device_id)
+      LabelNotificationEvents.delete_unsent_label_events_for_device(deleted_device.device_id)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -113,7 +113,7 @@ defmodule ConsoleWeb.DeviceController do
           time: time
         }
         LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
-        LabelNotificationEvents.delete_label_events_for_device(d.device_id)
+        LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
       end)
 
       conn
@@ -144,7 +144,7 @@ defmodule ConsoleWeb.DeviceController do
         time: time
       }
       LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
-      LabelNotificationEvents.delete_label_events_for_device(d.device_id)
+      LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
     end)
 
     conn

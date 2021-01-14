@@ -4,7 +4,7 @@
   The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> has stopped working at <%= List.first(@details)["time"] %>.
 <% end %>
 <%= if @num_channels > 1 && @num_channels <= 5 do %>
-  The Organization <%= @organization_name %> Integrations have stopped working:
+  The following Organization <%= @organization_name %> Integrations have stopped working:
   <%= Enum.map(@details, fn(d) -> %>
     <%= d["channel_name"] %>, at <%= d["time"] %>
   <% end) %>

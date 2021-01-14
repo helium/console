@@ -38,7 +38,9 @@ defmodule Console.Channels do
       join: cl in ChannelsLabels, on: cl.channel_id == c.id,
       join: dl in DevicesLabels, on: dl.label_id == cl.label_id,
       where: c.id == ^channel_id,
-      select: %{device_id: dl.device_id, label_id: cl.label_id}
+      distinct: cl.label_id,
+      select: %{label_id: cl.label_id},
+      group_by: cl.label_id
       
     Repo.all(query)
   end

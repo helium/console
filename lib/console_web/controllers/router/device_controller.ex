@@ -219,7 +219,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                 details = %{ device_id: event_device.id, device_name: event_device.name }
                 device_labels = Enum.map(event_device.labels, fn l -> l.id end)
                 limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details)
+                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
               end
             _ -> nil
           end
