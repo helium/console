@@ -186,7 +186,8 @@ defmodule ConsoleWeb.Router.DeviceController do
               time: time,
               hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
             }
-            LabelNotificationEvents.notify_label_event(Enum.map(event_device.labels, fn l -> l.id end), "device_join_otaa_first_time", details)
+            device_labels = Enum.map(event_device.labels, fn l -> l.id end
+            LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
           end
 
           case event.category do
@@ -225,7 +226,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                 num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("downlink_unsuccessful", event_device.id, time_buffer)
                 if num_of_prev_notifications == 0 do
                   details = %{ device_id: event_device.id, device_name: event_device.name }
-                  LabelNotificationEvents.notify_label_event(Enum.map(event_device.labels, fn l -> l.id end), "downlink_unsuccessful", details)
+                  device_labels = Enum.map(event_device.labels, fn l -> l.id end
+                  LabelNotificationEvents.notify_label_event(device_labels), "downlink_unsuccessful", details)
                 end
               end
             _ -> nil
