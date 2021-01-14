@@ -123,11 +123,8 @@ class UpdateLabelModal extends Component {
           </TabPane>
           <TabPane tab="Packets" key="packets">
             <div style={{ paddingTop: 20, paddingBottom: 20 }}>
-              <div style={{ textAlign: 'center', marginBottom: 12, paddingLeft: 50, paddingRight: 50 }}>
-                <Text strong style={{ fontSize: 16 }}>You can purchase duplicate packets if multiple Hotspots hear the device.</Text>
-              </div>
-              <div style={{ textAlign: 'center', paddingLeft: 50, paddingRight: 50 }}>
-                <Text style={{ fontSize: 16 }}>How many additional redundant packets do you want to purchase if available?</Text>
+              <div style={{ marginBottom: 12, paddingLeft: 50, paddingRight: 50 }}>
+                <Text strong style={{ fontSize: 16 }}>You can purchase duplicate packets if multiple Hotspots hear the device. How many additional redundant packets do you want to purchase if available?</Text>
               </div>
               <div style={{ backgroundColor: '#F0F2F5', padding: '0px 40px', marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ width: '100%', marginBottom: 12, marginTop: 20 }}>
@@ -155,10 +152,13 @@ class UpdateLabelModal extends Component {
                   }
                 </p>
               </div>
-              <div style={{ textAlign: 'center', marginTop: 20, paddingLeft: 50, paddingRight: 50 }}>
+              <div style={{ marginTop: 20, paddingLeft: 50, paddingRight: 50 }}>
                 <p style={{ color: '#F5222D', fontSize: 16, marginBottom: 0 }}>
                   <span style={{ fontWeight: 600 }}>Warning!</span> Increasing this value could dramatically affect your Data Credit spend.
                 </p>
+              </div>
+              <div style={{ marginTop: 20, paddingLeft: 50, paddingRight: 50 }}>
+                <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with ADR allowed to apply this setting for devices.</Text>
               </div>
             </div>
           </TabPane>
@@ -182,9 +182,13 @@ class UpdateLabelModal extends Component {
                 <Text strong style={{ fontSize: 16 }}>Allow ADR (recommended for stationary devices)</Text>
               </div>
 
-              <Text style={{ fontSize: 14 }}>{
-                "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
-              }</Text>
+              <div style={{ marginBottom: 20 }}>
+                <Text style={{ fontSize: 14 }}>{
+                  "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
+                }</Text>
+              </div>
+
+              <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with ADR allowed to apply this setting for devices.</Text>
             </div>
           </TabPane>
         </Tabs>
