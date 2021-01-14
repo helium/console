@@ -180,51 +180,53 @@ defmodule ConsoleWeb.Router.DeviceController do
           check_org_dc_balance(organization, prev_dc_balance)
 
           if event_device.last_connected == nil do
-            trigger_device = %{ device_id: event_device.id, labels: Enum.map(event_device.labels, fn l -> l.id end), device_name: event_device.name }
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
             details = %{
-              device_name: trigger_device.device_name,
+              device_name: event_device.name,
               time: time,
               hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
             }
-            LabelNotificationEvents.notify_label_event(trigger_device, "device_join_otaa_first_time", details)
+            LabelNotificationEvents.notify_label_event(Enum.map(event_device.labels, fn l -> l.id end), "device_join_otaa_first_time", details)
           end
 
           case event.category do
             "up" ->
               Enum.each(event.channels, fn channel ->
                 event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
-                trigger_channel = %{ channel_id: channel.id, channel_name: event_channel.name, labels: Enum.map(event_channel.labels, fn l -> l.id end) }
-                
+                labels = Enum.map(event_channel.labels, fn l -> l.id end)
+
                 if event_channel.time_first_uplink == nil do
                   Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
                   { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                  details = %{ time: time, channel_name: trigger_channel.channel_name, channel_id: trigger_channel.channel_id }
-                  LabelNotificationEvents.notify_label_event(trigger_channel, "integration_receives_first_event", details)
+                  details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
+                  LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
                 end
 
-                { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-                details = %{
-                  channel_name: trigger_channel.channel_name,
-                  channel_id: trigger_channel.channel_id,
-                  time: time
-                }
+                if channel.status != "success" do
+                  { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+                  details = %{
+                    channel_name: event_channel.name,
+                    channel_id: event_channel.id,
+                    time: time
+                  }
 
-                # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
-                time_buffer = Timex.shift(Timex.now, hours: -1)
-                num_of_prev_notifications = LabelNotificationEvents.get_prev_integration_label_notification_events("integration_stops_working", trigger_channel.channel_id, time_buffer)
-                if channel.status != "success" and num_of_prev_notifications == 0 do
-                  LabelNotificationEvents.notify_label_event(trigger_channel, "integration_stops_working", details)
+                  # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
+                  time_buffer = Timex.shift(Timex.now, hours: -1)
+                  num_of_prev_notifications = LabelNotificationEvents.get_prev_integration_label_notification_events("integration_stops_working", event_channel.id, time_buffer)
+                  if num_of_prev_notifications == 0 do
+                    LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details)
+                  end
                 end
               end)
             "down" ->
-              trigger_device = %{ device_id: event_device.id, labels: Enum.map(event_device.labels, fn l -> l.id end), device_name: event_device.name }
-              # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
-              time_buffer = Timex.shift(Timex.now, hours: -1)
-              num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("downlink_unsuccessful", trigger_device.device_id, time_buffer)
-              if List.first(event.hotspots).status != "success" and num_of_prev_notifications == 0 do
-                details = %{ device_id: trigger_device.device_id, device_name: trigger_device.device_name }
-                LabelNotificationEvents.notify_label_event(trigger_device, "downlink_unsuccessful", details)
+              if List.first(event.hotspots).status != "success" do
+                # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
+                time_buffer = Timex.shift(Timex.now, hours: -1)
+                num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("downlink_unsuccessful", event_device.id, time_buffer)
+                if num_of_prev_notifications == 0 do
+                  details = %{ device_id: event_device.id, device_name: event_device.name }
+                  LabelNotificationEvents.notify_label_event(Enum.map(event_device.labels, fn l -> l.id end), "downlink_unsuccessful", details)
+                end
               end
             _ -> nil
           end

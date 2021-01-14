@@ -116,7 +116,7 @@ defmodule ConsoleWeb.ChannelController do
           updated_by: conn.assigns.current_user.email, 
           time: time
         }
-        LabelNotificationEvents.notify_label_event(updated_channel, "integration_with_devices_updated", details)
+        LabelNotificationEvents.notify_label_event(updated_channel.labels, "integration_with_devices_updated", details)
       end
 
       conn

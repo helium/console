@@ -81,7 +81,7 @@ defmodule ConsoleWeb.DeviceController do
         deleted_by: conn.assigns.current_user.email, 
         time: time
       }
-      LabelNotificationEvents.notify_label_event(deleted_device, "device_deleted", details)
+      LabelNotificationEvents.notify_label_event(deleted_device.labels, "device_deleted", details)
       LabelNotificationEvents.delete_label_events_for_device(deleted_device.device_id)
 
       conn

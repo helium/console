@@ -75,7 +75,6 @@ defmodule Console.Jobs do
       num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("device_stops_transmitting", device.id, time_buffer)
       if device.last_connected < starting_from and num_of_prev_notifications == 0 do
         # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
-        trigger_device = %{ device_id: device.id, labels: [label_id], device_name: device.name }
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
@@ -86,7 +85,7 @@ defmodule Console.Jobs do
             %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } 
           end)
         }
-        LabelNotificationEvents.notify_label_event(trigger_device, "device_stops_transmitting", details) 
+        LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details) 
       end
     end)
   end
