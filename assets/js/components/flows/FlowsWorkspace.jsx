@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import ReactFlow, { isNode, removeElements, addEdge } from 'react-flow-renderer';
+import LabelNode from './LabelNode'
+import FunctionNode from './FunctionNode'
+import ChannelNode from './ChannelNode'
+import DebugNode from './DebugNode'
 import dagre from 'dagre';
 
 const dagreGraph = new dagre.graphlib.Graph()
@@ -31,6 +35,13 @@ const getLayoutedElements = (elements, direction = 'TB') => {
   });
 };
 
+const nodeTypes = {
+  labelNode: LabelNode,
+  functionNode: FunctionNode,
+  channelNode: ChannelNode,
+  debugNode: DebugNode
+};
+
 export default ({ initialElements, selectNode }) => {
   const layoutedElements = getLayoutedElements(initialElements, 'LR')
   const [elements, setElements] = useState(layoutedElements);
@@ -40,6 +51,7 @@ export default ({ initialElements, selectNode }) => {
     <ReactFlow
       elements={elements}
       onElementClick={onElementClick}
+      nodeTypes={nodeTypes}
     />
   );
 };

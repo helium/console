@@ -49,13 +49,19 @@ class FlowsIndex extends Component {
       return 0
     })
 
+    const debugElement = {
+      id: `debug`,
+      type: 'debugNode',
+      position: { x: 0, y: 0 },
+    }
+
     const labelElements =
       sortedAllLabels
         .map(label => ({
           id: `label-${label.id}`,
-          type: 'input',
+          type: 'labelNode',
           data: {
-            label: `Label: ${label.name}`,
+            label: label.name,
           },
           position: { x: 0, y: 0 },
         }))
@@ -64,20 +70,23 @@ class FlowsIndex extends Component {
       allFunctions
         .map(func => ({
           id: `function-${func.id}`,
-          type: 'output',
+          type: 'functionNode',
           data: {
-            label: `Function: ${func.name}`,
+            label: func.name,
+            format: func.format
           },
           position: { x: 0, y: 0 },
         }))
-        
+
     const channelElements =
       allChannels
         .map(channel => ({
           id: `channel-${channel.id}`,
-          type: 'output',
+          type: 'channelNode',
           data: {
-            label: `Channel: ${channel.name}`,
+            label: channel.name,
+            type_name: channel.type_name,
+            type: channel.type
           },
           position: { x: 0, y: 0 },
         }))
@@ -112,6 +121,7 @@ class FlowsIndex extends Component {
       .concat(channelElements)
       .concat(labelFunctionEdgeElements)
       .concat(labelChannelEdgeElements)
+      .concat(debugElement)
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >

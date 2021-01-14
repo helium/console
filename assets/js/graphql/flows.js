@@ -18,11 +18,14 @@ export const ALL_RESOURCES = gql`
     }
     allFunctions {
       id,
-      name
+      name,
+      format
     }
     allChannels {
       id,
       name,
+      type_name,
+      type
     }
   }
 `
