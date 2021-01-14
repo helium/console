@@ -112,7 +112,7 @@ defmodule ConsoleWeb.DeviceController do
           deleted_by: conn.assigns.current_user.email, 
           time: time
         }
-        LabelNotificationEvents.notify_label_event(d, "device_deleted", details) 
+        LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
         LabelNotificationEvents.delete_label_events_for_device(d.device_id)
       end)
 
@@ -143,7 +143,7 @@ defmodule ConsoleWeb.DeviceController do
         deleted_by: conn.assigns.current_user.email, 
         time: time
       }
-      LabelNotificationEvents.notify_label_event(d, "device_deleted", details) 
+      LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
       LabelNotificationEvents.delete_label_events_for_device(d.device_id)
     end)
 

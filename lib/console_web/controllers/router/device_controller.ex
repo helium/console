@@ -186,7 +186,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               time: time,
               hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
             }
-            device_labels = Enum.map(event_device.labels, fn l -> l.id end
+            device_labels = Enum.map(event_device.labels, fn l -> l.id end)
             LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
           end
 
@@ -210,25 +210,16 @@ defmodule ConsoleWeb.Router.DeviceController do
                     channel_id: event_channel.id,
                     time: time
                   }
-
-                  # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
-                  time_buffer = Timex.shift(Timex.now, hours: -1)
-                  num_of_prev_notifications = LabelNotificationEvents.get_prev_integration_label_notification_events("integration_stops_working", event_channel.id, time_buffer)
-                  if num_of_prev_notifications == 0 do
-                    LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details)
-                  end
+                  limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+                  LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
                 end
               end)
             "down" ->
               if List.first(event.hotspots).status != "success" do
-                # since this could potentially happen often, don't trigger if we've notified (or are about to) in a 1hr period
-                time_buffer = Timex.shift(Timex.now, hours: -1)
-                num_of_prev_notifications = LabelNotificationEvents.get_prev_device_label_notification_events("downlink_unsuccessful", event_device.id, time_buffer)
-                if num_of_prev_notifications == 0 do
-                  details = %{ device_id: event_device.id, device_name: event_device.name }
-                  device_labels = Enum.map(event_device.labels, fn l -> l.id end
-                  LabelNotificationEvents.notify_label_event(device_labels), "downlink_unsuccessful", details)
-                end
+                details = %{ device_id: event_device.id, device_name: event_device.name }
+                device_labels = Enum.map(event_device.labels, fn l -> l.id end)
+                limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details)
               end
             _ -> nil
           end
