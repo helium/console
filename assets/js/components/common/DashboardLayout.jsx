@@ -8,7 +8,7 @@ const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
   render() {
-    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth } = this.props;
 
     return (
       <Layout style={{height: '100%', width: '100%', minWidth: 800 }}>
@@ -35,9 +35,17 @@ class DashboardLayout extends Component {
           }
           <Layout>
             <Content>
-              <ContentLayout title={title} extra={extra} breadCrumbs={breadCrumbs} noHeaderPadding={noHeaderPadding}>
-              {this.props.children}
-              </ContentLayout>
+              {
+                fullHeightWidth ? (
+                  <div style={{ height: '100%', width: '100%'}}>
+                  {this.props.children}
+                  </div>
+                ) : (
+                  <ContentLayout title={title} extra={extra} breadCrumbs={breadCrumbs} noHeaderPadding={noHeaderPadding}>
+                  {this.props.children}
+                  </ContentLayout>
+                )
+              }
             </Content>
           </Layout>
         </Layout>

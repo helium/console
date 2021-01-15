@@ -28,6 +28,7 @@ import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
 import FunctionShow from './components/functions/FunctionShow';
+import FlowsIndex from './components/flows/FlowsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
 import { fetchOrganization } from './actions/organization';
@@ -113,6 +114,7 @@ const Router = (props) => {
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props} />} />
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
+                        <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                       </Switch>
                     </ApolloProvider>
                   )

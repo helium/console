@@ -107,6 +107,7 @@ class NavDrawer extends Component {
           <div><NavLink to={"/organizations"} activeClassName="is-active" className="menu-link">Organizations</NavLink></div>
           <div><NavLink to={"/users"} activeClassName="is-active" className="menu-link">Users</NavLink></div>
           <div><NavLink to={"/datacredits"} activeClassName="is-active" className="menu-link">Data Credits</NavLink></div>
+          <div><NavLink to={"/flows"} activeClassName="is-active" className="menu-link">Flows (Beta)</NavLink></div>
         </Menu>
       </div>
     )
