@@ -16,7 +16,7 @@ import { Menu, Dropdown, Typography, Tooltip } from 'antd';
 import { HomeOutlined, DownOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
-import ProfileActive from '../../../img/topbar-pf-active.svg'
+import ProfileActive from '../../../img/topbar-pf-active.png'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
 import OrganizationMenu from '../organizations/OrganizationMenu';
