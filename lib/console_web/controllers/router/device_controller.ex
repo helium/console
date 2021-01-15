@@ -204,7 +204,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                 end
 
                 if channel.status != "success" do
-                  { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
                   details = %{
                     channel_name: event_channel.name,
                     channel_id: event_channel.id,
