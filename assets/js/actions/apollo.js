@@ -42,7 +42,7 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
     })
 
     const authErrorLink = onError(({ networkError, operation: { operationName }}) => {
-      if (networkError.statusCode == 404) {
+      if (networkError && networkError.statusCode == 404) {
         switch(operationName) {
           case "DeviceShowQuery":
             store.dispatch(replace("/devices"))

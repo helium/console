@@ -79,14 +79,15 @@ class DeviceIndexTable extends Component {
 
   handleSort = (pagi, filter, sorter) => {
     const { order, column } = this.props
-    if (column == sorter.columnKey && order == 'asc') {
+    
+    if (column == sorter.field && order == 'asc') {
       this.props.handleSortChange(column, 'desc')
     }
-    if (column == sorter.columnKey && order == 'desc') {
+    if (column == sorter.field && order == 'desc') {
       this.props.handleSortChange(column, 'asc')
     }
-    if (column != sorter.columnKey) {
-      this.props.handleSortChange(sorter.columnKey, 'asc')
+    if (column != sorter.field) {
+      this.props.handleSortChange(sorter.field, 'asc')
     }
   }
 
