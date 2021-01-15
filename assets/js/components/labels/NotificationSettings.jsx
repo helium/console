@@ -32,7 +32,7 @@ const defaultSettings = [
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.INTEGRATION_RECEIVES_FIRST_EVENT,
-    description: ' when a packet first comes through an integration'
+    description: ' when an integration receives the first packet'
   },
   {
     key: NOTIFICATION_SETTINGS_KEYS.DOWNLINK_UNSUCCESSFUL,

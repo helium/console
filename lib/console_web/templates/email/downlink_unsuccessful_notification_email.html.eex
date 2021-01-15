@@ -195,7 +195,7 @@
                                  <%= if @num_devices > 1 && @num_devices <= 5 do %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      The following devices that belong to the Organization <b><%= @organization_name %></b> have experienced a downlink issue:
+                                      The following devices that belong to the Organization <b><%= @organization_name %></b> have experienced downlink issues:
                                     </td>
                                   </tr>
                                   <tr>
@@ -214,7 +214,7 @@
                                  <%= if @num_devices > 5 do %>
                                   <tr>
                                     <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      More than 5 devices that belong to the Organization <b><%= @organization_name %></b> have experienced a downlink issue.
+                                      More than 5 devices that belong to the Organization <b><%= @organization_name %></b> have experienced downlink issues.
                                     </td>
                                   </tr>
                                  <% end %>

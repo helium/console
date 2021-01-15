@@ -1,14 +1,14 @@
 <%= @label_name %> Notification
 
 <%= if @num_devices == 1 do %>
-    The device <b><%= List.first(@details)["device_name"] %></b> that belongs to the Organization <b><%= @organization_name%></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
+    The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> was deleted by <%= List.first(@details)["deleted_by"] %> at <%= List.first(@details)["time"] %>.
   <% end %>
   <%= if @num_devices > 1 && @num_devices <= 5 do %>
-    The following devices that belong to the Organization <b><%= @organization_name %></b> were deleted:
+    The following devices that belong to the Organization <%= @organization_name %> were deleted:
   <%= Enum.map(@details, fn(d) -> %>
     <%= d["device_name"] %>, by <%= d["deleted_by"] %> on <%= d["time"] %>
   <% end) %>
 <% end %>
 <%= if @num_devices > 5 do %>
-  More than 5 devices that belong to the Organization <b><%= @organization_name %></b> were deleted.
+  More than 5 devices that belong to the Organization <%= @organization_name %> were deleted.
 <% end %>

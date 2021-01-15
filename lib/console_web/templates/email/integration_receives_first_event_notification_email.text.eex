@@ -1,4 +1,5 @@
 <%= @label_name %> Notification
+
 <%= if @num_channels == 1 do %>
   The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> received the first packet at <%= List.first(@details)["time"] %>.
 <% end %>

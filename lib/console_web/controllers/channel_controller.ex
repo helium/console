@@ -109,14 +109,14 @@ defmodule ConsoleWeb.ChannelController do
       broadcast(channel, channel.id)
       broadcast_router_update_devices(channel)
 
-      if (updated_channel != nil) do
+      if updated_channel != nil do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
           channel_name: updated_channel.channel_name, 
           updated_by: conn.assigns.current_user.email, 
           time: time
         }
-        LabelNotificationEvents.notify_label_event(updated_channel, "integration_with_devices_updated", details)
+        LabelNotificationEvents.notify_label_event(updated_channel.labels, "integration_with_devices_updated", details)
       end
 
       conn
@@ -148,8 +148,10 @@ defmodule ConsoleWeb.ChannelController do
           deleted_by: conn.assigns.current_user.email, 
           time: time
         }
-        LabelNotificationEvents.notify_label_event(deleted_channel, "integration_with_devices_deleted", details)
+        LabelNotificationEvents.notify_label_event(deleted_channel.labels, "integration_with_devices_deleted", details)
       end
+
+      LabelNotificationEvents.delete_unsent_label_events_for_integration(deleted_channel.channel_id)
 
       msg =
         case length(channel.labels) do
