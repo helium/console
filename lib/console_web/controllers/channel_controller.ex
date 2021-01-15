@@ -148,8 +148,8 @@ defmodule ConsoleWeb.ChannelController do
           deleted_by: conn.assigns.current_user.email, 
           time: time
         }
-        LabelNotificationEvents.notify_label_event(deleted_channel.labels, "integration_with_devices_deleted", details)
         LabelNotificationEvents.delete_unsent_label_events_for_integration(deleted_channel.channel_id)
+        LabelNotificationEvents.notify_label_event(deleted_channel.labels, "integration_with_devices_deleted", details)
       end
 
       msg =
