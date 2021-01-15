@@ -5,13 +5,16 @@ import LabelNode from './LabelNode'
 import FunctionNode from './FunctionNode'
 import ChannelNode from './ChannelNode'
 import DebugNode from './DebugNode'
-import dagre from 'dagre';
+import dagre from 'dagre'
+
+const LEFT_RIGHT_LAYOUT = 'LR'
+const TOP_BOTTOM_LAYOUT = 'TB'
 
 const dagreGraph = new dagre.graphlib.Graph()
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
-const getLayoutedElements = (elements, direction = 'TB') => {
-  const isHorizontal = direction === 'LR';
+const addDagreLayoutToElements = (elements, direction = TOP_BOTTOM_LAYOUT) => {
+  const isHorizontal = direction === LEFT_RIGHT_LAYOUT;
   dagreGraph.setGraph({ rankdir: direction });
   elements.forEach((el) => {
     if (isNode(el)) {
@@ -63,7 +66,7 @@ const nodeTypes = {
 };
 
 export default ({ initialElements, selectNode }) => {
-  const layoutedElements = getLayoutedElements(initialElements, 'LR')
+  const layoutedElements = addDagreLayoutToElements(initialElements, LEFT_RIGHT_LAYOUT)
   const [elements, setElements] = useState(layoutedElements);
   const onElementClick = (e, el) => selectNode(el)
 
