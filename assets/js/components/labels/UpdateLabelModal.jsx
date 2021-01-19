@@ -171,7 +171,7 @@ class UpdateLabelModal extends Component {
               onChange={this.handleNotificationSettingsChange}
             />
           </TabPane>
-          <TabPane tab="ADR" key="adr">
+          <TabPane tab="ADR (Beta)" key="adr">
             <div style={{ padding: '30px 50px'}}>
               <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Switch
