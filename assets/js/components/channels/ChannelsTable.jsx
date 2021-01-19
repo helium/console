@@ -67,7 +67,7 @@ class ChannelsTable extends Component {
         title: 'Name',
         dataIndex: 'name',
         render: (text, record) => (
-          <Link to="#">{text}</Link>
+          <Link to={`/integrations/${record.id}`}>{text}</Link>
         )
       },
       {
