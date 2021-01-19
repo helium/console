@@ -28,6 +28,10 @@ config :console, Console.Repo,
 
 config :console, oui: String.to_integer(System.get_env("OUI"))
 
+config :console, ConsoleWeb.Guardian,
+  issuer: "console",
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+
 config :cloak, Cloak.AES.CTR,
   tag: "AES",
   default: true,

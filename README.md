@@ -29,6 +29,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
     SECRET_KEY_BASE= [Random 64 char secret key]\
     CLOAK_SECRET_KEY= [Run in iex: 32 |> :crypto.strong_rand_bytes()]\
+    GUARDIAN_SECRET_KEY = [Random 64 char secret key]\
     ROUTER_SECRETS= [Random 64 char secret key]\
     OUI=1\
     SELF_HOSTED=true\
