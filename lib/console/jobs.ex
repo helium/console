@@ -34,7 +34,8 @@ defmodule Console.Jobs do
       roles = case label_notification_settings.recipients do
         "admin" -> ["admin"]
         "manager" -> ["manager"]
-        "both" -> ["admin", "manager"]
+        "read" -> ["read"]
+        "all" -> ["admin", "manager", "read"]
       end
       recipients = Organizations.get_memberships_by_organization_and_role(label.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
       details = Enum.map(events, fn (e) -> e.details end)

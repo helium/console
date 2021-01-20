@@ -118,7 +118,8 @@ class NotificationSettings extends Component {
       <Menu onClick={e => { this.updateSetting({ recipients: e.key, key}) }}>
         <Menu.Item key="admin">Admin</Menu.Item>
         <Menu.Item key="manager">Manager</Menu.Item>
-        <Menu.Item key="both">Both</Menu.Item>
+        <Menu.Item key="read">Read-Only</Menu.Item>
+        <Menu.Item key="all">All</Menu.Item>
       </Menu>
     );
 
@@ -145,7 +146,9 @@ class NotificationSettings extends Component {
                 style={{ textTransform: 'capitalize', textDecoration: 'underline'}}
               >
                 {
-                  (this.state[setting.key] || {}).recipients || 'Admin'
+                  (this.state[setting.key] || {}).recipients === "read" && 'Read-Only' || 
+                    (this.state[setting.key] || {}).recipients || 
+                    'Admin'
                 }
               </a>
             </Dropdown> 
