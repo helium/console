@@ -30,7 +30,7 @@ defmodule Console.Labels.LabelResolver do
 
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
-      |> preload([:channels, :function, :label_notification_settings, :devices])
+      |> preload([:channels, :function, :label_notification_settings])
       |> Repo.all()
       |> Enum.map(
         fn label ->
