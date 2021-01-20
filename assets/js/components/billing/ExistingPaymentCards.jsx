@@ -16,7 +16,7 @@ const ExistingPaymentCards = ({ paymentMethods, onRadioChange, paymentMethodSele
           paymentMethods.map(p => (
             <div key={p.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Radio value={p.id} />
-              <PaymentCard key={p.id} card={p.card} style={{ margin: 12, marginLeft: 8 }}/>
+              <PaymentCard key={p.id} card={p.card} style={{ margin: 4, marginLeft: 8 }}/>
               {
                 showDelete && (
                   <React.Fragment>

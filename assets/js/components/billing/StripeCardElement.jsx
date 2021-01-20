@@ -1,8 +1,8 @@
 import React from 'react'
 
-const StripeCardElement = () => (
+const StripeCardElement = ({ id }) => (
   <div style={{ marginTop: 24 }}>
-    <div id="card-element" />
+    <div id={id} />
     <div id="card-errors" role="alert" />
   </div>
 )

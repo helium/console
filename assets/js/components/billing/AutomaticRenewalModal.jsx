@@ -159,6 +159,7 @@ class AutomaticRenewalModal extends Component {
               value={this.state.paymentMethod}
               onChange={this.handleSelectPaymentMethod}
               style={{ width: '100%', marginTop: 8 }}
+              size="large"
             >
               {
                 paymentMethods.map(p => (
@@ -177,6 +178,7 @@ class AutomaticRenewalModal extends Component {
                   value={this.state.chargeOption}
                   onChange={this.handleSelectCharge}
                   style={{ width: '100%', marginTop: 8 }}
+                  size="large"
                 >
                   {
                     organization.automatic_charge_amount && <Option value="none">Never</Option>

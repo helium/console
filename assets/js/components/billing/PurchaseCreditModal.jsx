@@ -98,6 +98,10 @@ class PurchaseCreditModal extends Component {
         this.getOraclePrice()
       }
     }
+
+    if(prevProps.open && !this.props.open) {
+      this.card.unmount()
+    }
   }
 
   getOraclePrice = debounce(() => {
@@ -161,7 +165,7 @@ class PurchaseCreditModal extends Component {
           loading: false,
           paymentIntentSecret: payment_intent_secret,
           paymentMethodSelected
-        }, () => this.card.mount("#card-element"))
+        }, () => this.card.mount("#card-element-purchase-flow"))
       })
       .catch(err => {
         this.setState({ loading: false })
@@ -174,7 +178,7 @@ class PurchaseCreditModal extends Component {
           loading: false,
           paymentIntentSecret: payment_intent_secret,
           paymentMethodSelected
-        }, () => this.card.mount("#card-element"))
+        }, () => this.card.mount("#card-element-purchase-flow"))
       })
       .catch(err => {
         this.setState({ loading: false })
@@ -350,7 +354,7 @@ class PurchaseCreditModal extends Component {
             {paymentMethods.length > 0 && "...or "}Add New Card
           </Text>
           {
-            open && <StripeCardElement />
+            open && <StripeCardElement id="card-element-purchase-flow" />
           }
         </div>
       </React.Fragment>

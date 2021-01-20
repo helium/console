@@ -124,7 +124,7 @@ class UpdateLabelModal extends Component {
           <TabPane tab="Packets" key="packets">
             <div style={{ paddingTop: 20, paddingBottom: 20 }}>
               <div style={{ marginBottom: 12, paddingLeft: 50, paddingRight: 50 }}>
-                <Text strong style={{ fontSize: 16 }}>You can purchase duplicate packets if multiple Hotspots hear the device. How many additional redundant packets do you want to purchase if available?</Text>
+                <Text strong style={{ fontSize: 16 }}>You can purchase duplicate packets if multiple Hotspots hear the device. How many packets do you want to purchase if available?</Text>
               </div>
               <div style={{ backgroundColor: '#F0F2F5', padding: '0px 40px', marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ width: '100%', marginBottom: 12, marginTop: 20 }}>

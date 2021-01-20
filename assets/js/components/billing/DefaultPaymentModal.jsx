@@ -35,12 +35,13 @@ class DefaultPaymentModal extends Component {
   componentDidUpdate(prevProps) {
     if(!prevProps.open && this.props.open) {
       setTimeout(() => {
-        this.card.mount("#card-element")
+        this.card.mount("#card-element-default-modal")
         this.setState({ paymentMethodSelected: this.props.organization.default_payment_id })
       }, 100)
     }
 
     if(prevProps.open && !this.props.open) {
+      this.card.unmount()
       setTimeout(() => {
         this.setState({ paymentMethodSelected: this.props.organization.default_payment_id })
       }, 100)
@@ -144,7 +145,7 @@ class DefaultPaymentModal extends Component {
             {paymentMethods.length > 0 && "...or "}Add New Card
           </Text>
           {
-            open && <StripeCardElement />
+            open && <StripeCardElement id="card-element-default-modal"/>
           }
         </div>
       </Modal>

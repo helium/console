@@ -16,11 +16,9 @@ const cards = {
 }
 
 const PaymentCard = ({ id, card, style }) => (
-  <div key={id} style={{ ...style, width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'space-between' }}>
-    <div>
-      <img src={cards[card.brand]} style={{ marginRight: 10, height: 24, width: 32 }}/>
-      <Text style={{ fontFamily: 'monospace', color: '#777777' }}>••••/{card.last4}</Text>
-    </div>
+  <div key={id} style={{ ...style, width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', height: 40 }}>
+    <img src={cards[card.brand]} style={{ marginRight: 10, height: 24, width: 32 }}/>
+    <p style={{ fontFamily: 'monospace', color: '#777777', display: 'inline', top: 6, position: 'relative' }}>••••/{card.last4}</p>
   </div>
 )
 
