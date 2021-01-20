@@ -46,10 +46,7 @@ export const CHANNEL_SHOW = gql`
       name,
       id,
       color,
-      devices {
-        name,
-        id
-      }
+      device_count
       channels {
         name,
         id

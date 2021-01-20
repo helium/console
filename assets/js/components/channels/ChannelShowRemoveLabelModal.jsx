@@ -37,7 +37,7 @@ class ChannelShowRemoveLabelModal extends Component {
               <Text strong>Are you sure you want to remove {label && label.name}?</Text>
             </div>
             <div style={{ marginTop: 10 }}>
-              <Text>{label && label.name} contains {label && label.devices.length} device(s) which will no longer send data via this integration.</Text>
+              <Text>{label && label.name} contains {label && label.device_count} device(s) which will no longer send data via this integration.</Text>
             </div>
             <Divider />
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
