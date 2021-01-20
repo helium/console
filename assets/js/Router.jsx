@@ -119,11 +119,9 @@ const Router = (props) => {
                     </ApolloProvider>
                   )
                 }
-
               </Route>
             </Switch>
           )
-
         }
       </ConnectedRouter>
     </PersistGate>

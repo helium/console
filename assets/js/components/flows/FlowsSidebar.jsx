@@ -7,13 +7,29 @@ import ChannelNode from './ChannelNode'
 import DebugNode from './DebugNode'
 const { Text } = Typography
 
-export default ({ unconnectedNodes }) => {
+export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, elementsMap }) => {
   const [showUnconnectedNodes, toggleUnconnectedNodes] = useState(false)
 
-  const onDragStart = (event, nodeType) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
+  const onDragStart = (event, node) => {
+    event.dataTransfer.setData('node/id', node.id)
+    event.dataTransfer.setData('node/type', node.type)
+    event.dataTransfer.setData('node/name', node.data.label)
+
+    if (node.type == 'channelNode') {
+      event.dataTransfer.setData('node/channel_type_name', node.data.type_name)
+      event.dataTransfer.setData('node/channel_type', node.data.type)
+    }
+
+    if (node.type == 'functionNode') {
+      event.dataTransfer.setData('node/function_format', node.data.format)
+    }
+
     event.dataTransfer.effectAllowed = 'move';
   }
+
+  const unconnectedLabelsNotDraggedIn = unconnectedLabels.filter(node => !elementsMap[node.id])
+  const unconnectedFunctionsNotDraggedIn = unconnectedFunctions.filter(node => !elementsMap[node.id])
+  const unconnectedChannelsNotDraggedIn = unconnectedChannels.filter(node => !elementsMap[node.id])
 
   return (
     <div style={{
@@ -39,40 +55,34 @@ export default ({ unconnectedNodes }) => {
         showUnconnectedNodes && (
           <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 10 }}>
             <div>
-              <Text strong>Labels</Text>
+              <Text strong>Labels ({unconnectedLabelsNotDraggedIn.length})</Text>
             </div>
             {
-              unconnectedNodes.map(node => {
-                return node.type == 'labelNode' && (
-                  <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, 'labelNode')}>
-                    <LabelNode data={node.data} unconnected={true} />
-                  </div>
-                )
-              })
+              unconnectedLabelsNotDraggedIn.map(node => (
+                <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
+                  <LabelNode data={node.data} unconnected={true} />
+                </div>
+              ))
             }
             <div>
-              <Text strong>Functions</Text>
+              <Text strong>Functions ({unconnectedFunctionsNotDraggedIn.length})</Text>
             </div>
             {
-              unconnectedNodes.map(node => {
-                return node.type == 'functionNode' && (
-                  <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, 'functionNode')}>
-                    <FunctionNode data={node.data} unconnected={true} />
-                  </div>
-                )
-              })
+              unconnectedFunctionsNotDraggedIn.map(node => (
+                <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
+                  <FunctionNode data={node.data} unconnected={true} />
+                </div>
+              ))
             }
             <div>
-              <Text strong>Channels</Text>
+              <Text strong>Channels ({unconnectedChannelsNotDraggedIn.length})</Text>
             </div>
             {
-              unconnectedNodes.map(node => {
-                return node.type == 'channelNode' && (
-                  <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, 'channelNode')}>
-                    <ChannelNode data={node.data} unconnected={true} />
-                  </div>
-                )
-              })
+              unconnectedChannelsNotDraggedIn.map(node => (
+                <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
+                  <ChannelNode data={node.data} unconnected={true} />
+                </div>
+              ))
             }
           </div>
         )

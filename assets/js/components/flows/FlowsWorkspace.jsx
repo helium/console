@@ -50,13 +50,14 @@ const nodeTypes = {
   debugNode: DebugNode
 };
 
-export default ({ initialElements, selectNode, unconnectedNodes }) => {
+export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
   const layoutedElements = addDagreLayoutToElements(initialElements, LEFT_RIGHT_LAYOUT)
-  const [elements, setElements] = useState(layoutedElements);
+  const [elementsMap, setElements] = useState(layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {}));
+
   // const onElementClick = (e, el) => selectNode(el)
 
   const onDragOver = event => {
@@ -67,31 +68,49 @@ export default ({ initialElements, selectNode, unconnectedNodes }) => {
   const onDrop = event => {
     event.preventDefault()
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
-    const type = event.dataTransfer.getData('application/reactflow')
+    const id = event.dataTransfer.getData('node/id')
+    const type = event.dataTransfer.getData('node/type')
+    const name = event.dataTransfer.getData('node/name')
+
     const position = reactFlowInstance.project({
       x: event.clientX - reactFlowBounds.left,
       y: event.clientY - reactFlowBounds.top,
     })
-    const newNode = {
-      id: type,
-      type,
-      position,
-      data: { label: `${type} node` },
+
+    let data = { label: name }
+    if (type == 'channelNode') {
+      data = Object.assign({}, data, {
+        type_name: event.dataTransfer.getData('node/channel_type_name'),
+        type: event.dataTransfer.getData('node/channel_type')
+      })
     }
-    setElements(els => els.concat(newNode))
+
+    if (type == 'functionNode') {
+      data = Object.assign({}, data, {
+        format: event.dataTransfer.getData('node/function_format'),
+      })
+    }
+
+    const newNode = { id, type, position, data }
+    setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
   }
 
   return (
     <ReactFlowProvider>
       <div ref={reactFlowWrapper} style={{ position: 'relative', height: '100%', width: '100%' }}>
         <ReactFlow
-          elements={elements}
+          elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
           onLoad={onLoad}
           onDragOver={onDragOver}
           onDrop={onDrop}
         />
-        <FlowsSidebar unconnectedNodes={unconnectedNodes}/>
+        <FlowsSidebar
+          unconnectedLabels={unconnectedLabels}
+          unconnectedFunctions={unconnectedFunctions}
+          unconnectedChannels={unconnectedChannels} 
+          elementsMap={elementsMap}
+        />
       </div>
     </ReactFlowProvider>
   );

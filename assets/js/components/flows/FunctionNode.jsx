@@ -30,7 +30,7 @@ export default ({ data, unconnected }) => {
         )
       }
       <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <img style={{ width: 40, marginRight: 8 }} src={Logo} />
+        <img style={{ width: 40, marginRight: 8 }} src={Logo} draggable={false}/>
         <div>
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
           <Text style={{ fontSize: 10, color: '#ffffff' }}>{functionFormats[data.format]}</Text>

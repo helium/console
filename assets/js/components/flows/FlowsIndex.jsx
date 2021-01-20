@@ -141,47 +141,57 @@ class FlowsIndex extends Component {
         return Object.assign({} , acc, { [edge.source]: true, [edge.target]: true })
       }, {})
 
-    const unconnectedNodes =
-      allLabels.concat(allFunctions).concat(allChannels)
+    const unconnectedLabels =
+      allLabels
       .filter(node => {
-        return !connectedNodeSet[`label-${node.id}`] && !connectedNodeSet[`function-${node.id}`] && !connectedNodeSet[`channel-${node.id}`]
+        return !connectedNodeSet[`label-${node.id}`]
       })
-      .map(node => {
-        if (node.__typename == 'Label') {
-          return {
-            id: `label-${node.id}`,
-            type: 'labelNode',
-            data: {
-              label: node.name,
-            },
-          }
+      .map(node => ({
+        id: `label-${node.id}`,
+        type: 'labelNode',
+        data: {
+          label: node.name,
         }
-        if (node.__typename == 'Channel') {
-          return {
-            id: `channel-${node.id}`,
-            type: 'channelNode',
-            data: {
-              label: node.name,
-              type_name: node.type_name,
-              type: node.type
-            },
-          }
-        }
-        if (node.__typename == 'Function') {
-          return {
-            id: `function-${node.id}`,
-            type: 'functionNode',
-            data: {
-              label: node.name,
-              format: node.format
-            },
-          }
-        }
+      }))
+
+    const unconnectedFunctions =
+      allFunctions
+      .filter(node => {
+        return !connectedNodeSet[`function-${node.id}`]
       })
+      .map(node => ({
+        id: `function-${node.id}`,
+        type: 'functionNode',
+        data: {
+          label: node.name,
+          format: node.format
+        }
+      }))
+
+    const unconnectedChannels =
+      allChannels
+      .filter(node => {
+        return !connectedNodeSet[`channel-${node.id}`]
+      })
+      .map(node => ({
+        id: `channel-${node.id}`,
+        type: 'channelNode',
+        data: {
+          label: node.name,
+          type_name: node.type_name,
+          type: node.type
+        }
+      }))
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
-        <FlowsWorkspace initialElements={elements} selectNode={this.selectNode} unconnectedNodes={unconnectedNodes} />
+        <FlowsWorkspace
+          initialElements={elements}
+          selectNode={this.selectNode}
+          unconnectedLabels={unconnectedLabels}
+          unconnectedFunctions={unconnectedFunctions}
+          unconnectedChannels={unconnectedChannels}
+        />
         {
           false && this.state.selectedNode && (
             <div style={{
