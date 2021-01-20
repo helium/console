@@ -49,47 +49,60 @@ class FlowsIndex extends Component {
       return 0
     })
 
-    const debugElement = {
-      id: `debug`,
-      type: 'debugNode',
-      position: { x: 0, y: 0 },
-    }
-
     const labelElements =
       sortedAllLabels
-        .map(label => ({
-          id: `label-${label.id}`,
-          type: 'labelNode',
-          data: {
-            label: label.name,
-          },
-          position: { x: 0, y: 0 },
-        }))
+        .reduce((acc, label) => {
+          if (label.function || label.channels.length > 0) return acc.concat(
+            {
+              id: `label-${label.id}`,
+              type: 'labelNode',
+              data: {
+                label: label.name,
+              },
+              position: { x: 0, y: 0 },
+            }
+          )
+          return acc
+        }, [])
 
     const functionElements =
-      allFunctions
-        .map(func => ({
-          id: `function-${func.id}`,
-          type: 'functionNode',
-          data: {
-            label: func.name,
-            format: func.format
-          },
-          position: { x: 0, y: 0 },
-        }))
+      sortedAllLabels
+        .reduce((acc, label) => {
+          if (label.function) return acc.concat(
+            {
+              id: `function-${label.function.id}`,
+              type: 'functionNode',
+              data: {
+                label: label.function.name,
+                format: label.function.format
+              },
+              position: { x: 0, y: 0 },
+            }
+          )
+          return acc
+        }, [])
 
-    const channelElements =
-      allChannels
-        .map(channel => ({
-          id: `channel-${channel.id}`,
-          type: 'channelNode',
-          data: {
-            label: channel.name,
-            type_name: channel.type_name,
-            type: channel.type
-          },
-          position: { x: 0, y: 0 },
-        }))
+    const channelElements = Object.values(
+      sortedAllLabels
+        .reduce((acc, label) => {
+          if (label.channels) return acc.concat(label.channels)
+          return acc
+        }, [])
+        .reduce((acc, channel) => {
+          return Object.assign({}, acc, {
+            [channel.id]: {
+              id: `channel-${channel.id}`,
+              type: 'channelNode',
+              data: {
+                label: channel.name,
+                type_name: channel.type_name,
+                type: channel.type
+              },
+              position: { x: 0, y: 0 },
+            }
+          })
+        }, {})
+    )
 
     const labelFunctionEdgeElements =
       sortedAllLabels
@@ -121,11 +134,54 @@ class FlowsIndex extends Component {
       .concat(channelElements)
       .concat(labelFunctionEdgeElements)
       .concat(labelChannelEdgeElements)
-      .concat(debugElement)
+
+    const connectedNodeSet =
+      labelFunctionEdgeElements.concat(labelChannelEdgeElements)
+      .reduce((acc, edge) => {
+        return Object.assign({} , acc, { [edge.source]: true, [edge.target]: true })
+      }, {})
+
+    const unconnectedNodes =
+      allLabels.concat(allFunctions).concat(allChannels)
+      .filter(node => {
+        return !connectedNodeSet[`label-${node.id}`] && !connectedNodeSet[`function-${node.id}`] && !connectedNodeSet[`channel-${node.id}`]
+      })
+      .map(node => {
+        if (node.__typename == 'Label') {
+          return {
+            id: `label-${node.id}`,
+            type: 'labelNode',
+            data: {
+              label: node.name,
+            },
+          }
+        }
+        if (node.__typename == 'Channel') {
+          return {
+            id: `channel-${node.id}`,
+            type: 'channelNode',
+            data: {
+              label: node.name,
+              type_name: node.type_name,
+              type: node.type
+            },
+          }
+        }
+        if (node.__typename == 'Function') {
+          return {
+            id: `function-${node.id}`,
+            type: 'functionNode',
+            data: {
+              label: node.name,
+              format: node.format
+            },
+          }
+        }
+      })
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
-        <FlowsWorkspace initialElements={elements} selectNode={this.selectNode} />
+        <FlowsWorkspace initialElements={elements} selectNode={this.selectNode} unconnectedNodes={unconnectedNodes} />
         {
           false && this.state.selectedNode && (
             <div style={{

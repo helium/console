@@ -4,7 +4,7 @@ import { Typography } from 'antd';
 const { Text } = Typography
 import { TagFilled } from '@ant-design/icons';
 
-export default ({ data }) => {
+export default ({ data, unconnected }) => {
   return (
     <div style={{
       background: '#FFD666',
@@ -17,11 +17,15 @@ export default ({ data }) => {
         <TagFilled style={{ fontSize: 20, marginRight: 8 }}/>
         <Text strong style={{ fontSize: 16 }}>{data.label}</Text>
       </div>
-      <Handle
-        type="source"
-        position="right"
-        style={{ borderRadius: 10, background: '#ffffff', border: '3.5px solid #FFD666', height: '12px', width: '12px' }}
-      />
+      {
+        !unconnected && (
+          <Handle
+            type="source"
+            position="right"
+            style={{ borderRadius: 10, background: '#ffffff', border: '3.5px solid #FFD666', height: '12px', width: '12px' }}
+          />
+        )
+      }
     </div>
   );
 };
