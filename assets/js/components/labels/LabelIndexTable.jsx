@@ -100,7 +100,20 @@ class LabelIndexTable extends Component {
         render: (text, record) => (
           <div>
             {
-              record.channels.map((c, i) => <Text key={c.id}>{c.name}{i != record.channels.length - 1 && ", "}</Text>)
+              record.channels.map(c => (
+                <a
+                  key={c.id}
+                  style={{ marginRight: 8 }}
+                  href={`/integrations/${c.id}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation(); 
+                    this.props.history.push(`/integrations/${c.id}`)
+                  }}
+                >
+                  {c.name}
+                </a>
+              ))
             }
           </div>
         )
@@ -256,6 +269,7 @@ class LabelIndexTable extends Component {
               rowKey={record => record.id}
               pagination={false}
               rowSelection={rowSelection}
+              rowClassName="clickable-row"
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination

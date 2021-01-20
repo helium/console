@@ -129,7 +129,10 @@ class DeviceIndexTable extends Component {
                       color={l.color}
                       hasIntegrations={l.channels.length > 0}
                       hasFunction={l.function}
-                      onClick={() => history.push(`/labels/${l.id}`)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        history.push(`/labels/${l.id}`)}
+                      }
                     />
                   }
                 >
@@ -142,10 +145,12 @@ class DeviceIndexTable extends Component {
                     hasFunction={l.function}
                     onClose={e => {
                       e.preventDefault()
-                      e.stopPropagation()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
-                    onClick={() => history.push(`/labels/${l.id}`)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      history.push(`/labels/${l.id}`)}
+                    }
                   />
                 </UserCan>
               ))
@@ -163,9 +168,10 @@ class DeviceIndexTable extends Component {
                 <a
                   key={c.id}
                   style={{ marginRight: 8 }}
-                  href="#"
+                  href={`/integrations/${c.id}`}
                   onClick={e => {
-                    e.preventDefault()
+                    e.preventDefault();
+                    e.stopPropagation(); 
                     this.props.history.push(`/integrations/${c.id}`)
                   }}
                 >
@@ -390,6 +396,12 @@ class DeviceIndexTable extends Component {
                 pagination={false}
                 rowSelection={rowSelection}
                 onChange={this.handleSort}
+                onRow={(record, rowIndex) => ({
+                  onClick: e => {
+                    this.props.history.push(`/devices/${record.id}`)
+                  }
+                })}
+                rowClassName="clickable-row"
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination
