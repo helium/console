@@ -77,7 +77,7 @@ class FunctionIndexTable extends Component {
       {
         title: 'Name',
         dataIndex: 'name',
-        render: (text, record) => <Link to="#">{text}</Link>
+        render: (text, record) => <Link to={`/functions/${record.id}`}>{text}</Link>
       },
       {
         title: 'Type',
@@ -245,6 +245,7 @@ class FunctionIndexTable extends Component {
                 dataSource={functions.entries}
                 rowKey={record => record.id}
                 pagination={false}
+                rowClassName="clickable-row"
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination

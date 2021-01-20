@@ -50,6 +50,10 @@ p {
   font-size: 16px;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
 .ant-btn-sm {
   height: 26px;
 }
@@ -477,15 +481,15 @@ p.page-description {
 }
 
 .ant-slider-track {
-  background-color: #4091F7 !important;
+  background-color: #4091f7 !important;
 }
 
 .ant-slider-rail {
-  background-color: #FFFFFF !important;
+  background-color: #ffffff !important;
 }
 
 .ant-slider-handle {
-  border-color: #4091F7 !important;
+  border-color: #4091f7 !important;
 }
 
 .ant-select-selection__rendered {

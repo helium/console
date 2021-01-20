@@ -77,15 +77,25 @@ class ChannelsTable extends Component {
       {
         title: 'Labels',
         dataIndex: 'labels',
-        render: (text, record) => (
-          <div>
+        render: (labels, record) => {
+          return <React.Fragment>
             {
-              record.labels.map(l => (
-                <LabelTag key={l.id} text={l.name} color={l.color} hasIntegrations={true} hasFunction={l.function} />
+              labels.map(l => (
+                  <LabelTag
+                    key={l.name}
+                    text={l.name}
+                    color={l.color}
+                    hasIntegrations
+                    hasFunction={l.function}
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.props.history.push(`/labels/${l.id}`)}
+                    }
+                  />
               ))
             }
-          </div>
-        )
+          </React.Fragment>
+        }
       },
       {
         title: 'Devices',
@@ -164,6 +174,7 @@ class ChannelsTable extends Component {
               dataSource={channels.entries}
               rowKey={record => record.id}
               pagination={false}
+              rowClassName="clickable-row"
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination
