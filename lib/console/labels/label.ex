@@ -38,6 +38,7 @@ defmodule Console.Labels.Label do
       |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id, :multi_buy, :adr_allowed])
       |> validate_required([:name, :organization_id])
       |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
+      |> validate_number(:multi_buy, greater_than: 0, less_than: 11)
       |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "This label name has already been used in this organization")
   end
 end
