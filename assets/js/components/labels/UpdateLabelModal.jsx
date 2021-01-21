@@ -14,7 +14,7 @@ class UpdateLabelModal extends Component {
     tab: 'general',
     labelName: null,
     color: this.props.label.color || labelColors[0],
-    multiBuyValue: this.props.label.multi_buy || 0,
+    multiBuyValue: this.props.label.multi_buy || 1,
     adrValue: this.props.label.adr_allowed,
     notificationSettings: this.props.label.label_notification_settings
   }
@@ -130,7 +130,7 @@ class UpdateLabelModal extends Component {
                 <div style={{ width: '100%', marginBottom: 12, marginTop: 20 }}>
                   <Slider
                     value={this.state.multiBuyValue}
-                    min={0}
+                    min={1}
                     max={10}
                     tooltipVisible={false}
                     onChange={multiBuyValue => this.setState({ multiBuyValue })}
@@ -139,16 +139,13 @@ class UpdateLabelModal extends Component {
 
                 <p style={{ color: '#096DD9', fontSize: 18, fontWeight: 600 }}>
                   {
-                    !multiBuyValue && "No Additional Packets"
+                    (!multiBuyValue || multiBuyValue == 1) && "1 Packet"
                   }
                   {
-                    multiBuyValue == 1 && "1 Additional Packet"
+                    multiBuyValue > 1 && multiBuyValue < 10 && `${multiBuyValue} Packets`
                   }
                   {
-                    multiBuyValue > 1 && multiBuyValue < 10 && `${multiBuyValue} Additional Packets`
-                  }
-                  {
-                    multiBuyValue == 10 && `All Additional Packets`
+                    multiBuyValue == 10 && `All Packets`
                   }
                 </p>
               </div>
