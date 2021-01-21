@@ -114,7 +114,6 @@ const Router = (props) => {
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props} />} />
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
-                        <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                       </Switch>
                     </ApolloProvider>
                   )
