@@ -5,6 +5,7 @@ import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
 import NotificationSettings from './NotificationSettings';
+import WebhookSettings from './WebhookSettings';
 const { Text } = Typography
 const { Option } = Select
 const { TabPane } = Tabs
@@ -16,7 +17,9 @@ class UpdateLabelModal extends Component {
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 1,
     adrValue: this.props.label.adr_allowed,
-    notificationSettings: this.props.label.label_notification_settings
+    notificationSettings: this.props.label.label_notification_settings,
+    notificationWebhooks: this.props.label.label_notification_webhooks,
+    subtab: 'email'
   }
 
   handleInputUpdate = (e) => {
@@ -27,13 +30,19 @@ class UpdateLabelModal extends Component {
     this.setState({ color })
   }
 
-  handleNotificationSettingsChange = (notificationSettings) => {
-    this.setState({ notificationSettings });
+  handleNotificationSettingsChange = (settings, type) => {
+    if (type === 'email') {
+      this.setState({ notificationSettings: settings });
+    } else if (type === 'webhook') {
+      this.setState({ notificationWebhooks: settings });
+    }
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, notificationSettings, tab, adrValue } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, subtab } = this.state;
+    console.log("in handleSubmit")
+    console.log({notificationWebhooks})
 
     switch (tab) {
       case 'general':
@@ -47,8 +56,13 @@ class UpdateLabelModal extends Component {
         this.props.onClose();
         break;
       case 'notifications':
-        this.props.handleUpdateLabelNotificationSettings(notificationSettings);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
+        if (subtab === 'email') {
+          this.props.handleUpdateLabelNotificationSettings(notificationSettings);
+          analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
+        } else {
+          this.props.handleUpdateLabelNotificationWebhooks(notificationWebhooks);
+          analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_WEBHOOKS", { label_notification_webhooks: notificationWebhooks });
+        }
         this.props.onClose();
         break;
       case 'adr':
@@ -66,7 +80,8 @@ class UpdateLabelModal extends Component {
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
         adrValue: this.props.label.adr_allowed,
-        notificationSettings: this.props.label.label_notification_settings
+        notificationSettings: this.props.label.label_notification_settings,
+        notificationWebhooks: this.props.label.label_notification_webhooks
       }), 200)
     }
 
@@ -77,7 +92,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue, notificationSettings, tab, adrValue } = this.state
+    const { multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue } = this.state
 
     return (
       <Modal
@@ -95,7 +110,7 @@ class UpdateLabelModal extends Component {
           </Button>
         ]}
         bodyStyle={{ padding: 0 }}
-        width={tab === 'notifications' ? 600 : 520}
+        width={tab === 'notifications' ? 665 : 520}
       >
         <Tabs defaultActiveKey="general" size="large" centered onTabClick={tab => this.setState({ tab })}>
           <TabPane tab="General" key="general">
@@ -160,13 +175,26 @@ class UpdateLabelModal extends Component {
             </div>
           </TabPane>
           <TabPane tab="Notifications" key="notifications">
-            <NotificationSettings
-              label_id={this.props.label.id}
-              notificationSettings={notificationSettings.reduce(
-                (obj, item) => (obj[item.key] = { key: item.key, value: item.value, recipients: item.recipients, label_id: this.props.label.id }, obj), {}
-              )}
-              onChange={this.handleNotificationSettingsChange}
-            />
+            <Tabs defaultActiveKey="general" size="large" tabPosition="left"  onTabClick={subtab => this.setState({ subtab })}>
+              <TabPane tab="Email" key="email">
+                <NotificationSettings
+                  label_id={this.props.label.id}
+                  notificationSettings={notificationSettings.reduce(
+                    (obj, item) => (obj[item.key] = { key: item.key, value: item.value, recipients: item.recipients, label_id: this.props.label.id }, obj), {}
+                  )}
+                  onChange={this.handleNotificationSettingsChange}
+                />
+              </TabPane>
+              <TabPane tab="Web Hooks" key="webhook" style={{ maxHeight: '375px', overflowY: 'scroll' }}>
+                <WebhookSettings 
+                  label_id={this.props.label.id}
+                  notificationSettings={notificationWebhooks.reduce(
+                    (obj, item) => (obj[item.key] = { key: item.key, value: item.value, url: item.url, notes: item.notes, label_id: this.props.label.id }, obj), {}
+                  )}
+                  onChange={this.handleNotificationSettingsChange}
+                />
+              </TabPane>
+            </Tabs>
           </TabPane>
           <TabPane tab="ADR (Beta)" key="adr">
             <div style={{ padding: '30px 50px'}}>

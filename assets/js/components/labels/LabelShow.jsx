@@ -14,7 +14,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings } from '../../actions/label'
+import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
@@ -115,6 +115,10 @@ class LabelShow extends Component {
     this.props.updateLabelNotificationSettings(notifications);
   }
 
+  handleUpdateLabelNotificationWebhooks = webhooks => {
+    this.props.updateLabelNotificationWebhooks(webhooks);
+  }
+
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
 
@@ -186,6 +190,7 @@ class LabelShow extends Component {
             handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
             handleUpdateAdrSetting={this.handleUpdateAdrSetting}
             handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
+            handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
             open={this.state.showUpdateLabelModal}
             onClose={this.closeUpdateLabelModal}
             label={label}
@@ -255,7 +260,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, updateLabelNotificationSettings }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
 }
 
 export default LabelShow

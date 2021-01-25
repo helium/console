@@ -177,6 +177,14 @@ export const updateLabelNotificationSettings = (settings) => {
   }
 }
 
+export const updateLabelNotificationWebhooks = (webhooks) => {
+  return (dispatch) => {
+    rest.post(`/api/labels/update_notification_webhooks`, {
+      label_notification_webhooks: webhooks
+    })
+  }
+}
+
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   if (params.color) params.color = sanitizeHtml(params.color)

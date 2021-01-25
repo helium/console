@@ -8,6 +8,7 @@ defmodule Console.Labels do
   alias Console.Labels.ChannelsLabels
   alias Console.Labels.LabelNotificationSetting
   alias Console.Labels.LabelNotificationEvent
+  alias Console.Labels.LabelNotificationWebhook
   alias Console.Devices.Device
   alias Console.Devices
   alias Console.Channels
@@ -104,6 +105,11 @@ defmodule Console.Labels do
       end)
       |> Ecto.Multi.run(:label_notification_events, fn _repo, _ ->
         with {count, nil} <- from(ne in LabelNotificationEvent, where: ne.label_id in ^label_ids) |> Repo.delete_all() do
+          {:ok, count}
+        end
+      end)
+      |> Ecto.Multi.run(:label_notification_webhooks, fn _repo, _ ->
+        with {count, nil} <- from(ne in LabelNotificationWebhook, where: ne.label_id in ^label_ids) |> Repo.delete_all() do
           {:ok, count}
         end
       end)

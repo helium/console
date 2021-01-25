@@ -29,6 +29,13 @@ export const LABEL_FRAGMENT = gql`
       recipients,
       label_id
     }
+    label_notification_webhooks {
+      key,
+      url,
+      notes,
+      label_id,
+      value
+    }
   }
 `
 
