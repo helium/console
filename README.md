@@ -25,8 +25,8 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   * Follow instructions at the bottom of `/assets/webpack.config.js`
   * Update host at the top of `/config/releases.exs`
   * Sign up with Auth0 (https://auth0.com/)
-  * Create .env file in root folder as well as in `/assets`
-  * Populate both .env files with the following
+  * Create .env file in root folder
+  * Populate .env file with the following
 
     SECRET_KEY_BASE=[Random 64 char secret key]\
     CLOAK_SECRET_KEY=[Run in iex: 32 |> :crypto.strong_rand_bytes() |> Base.encode64()]\
