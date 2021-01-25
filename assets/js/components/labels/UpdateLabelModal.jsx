@@ -48,12 +48,12 @@ class UpdateLabelModal extends Component {
         break;
       case 'notifications':
         this.props.handleUpdateLabelNotificationSettings(notificationSettings);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { label_notification_settings: notificationSettings });
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_NOTIFICATION_SETTINGS", { id: this.props.label.id, label_notification_settings: notificationSettings });
         this.props.onClose();
         break;
       case 'adr':
         this.props.handleUpdateAdrSetting(adrValue);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_ADR_SETTING", { label_adr_setting: adrValue });
+        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_ADR_SETTING", { id: this.props.label.id, label_adr_setting: adrValue });
         this.props.onClose();
         break;
     }
