@@ -37,8 +37,8 @@ class WebhookSettings extends Component {
         label_id: this.props.label_id,
         key: setting.key,
         value: determineValue(setting, this.state[setting.key] && this.state[setting.key].value),
-        url: null,
-        notes: null
+        url: typeof setting.url === 'undefined' && this.state[setting.key] ? this.state[setting.key].url : setting.url,
+        notes: typeof setting.notes === 'undefined' && this.state[setting.key] ? this.state[setting.key].notes : setting.notes
       }
     }, () => {
       this.props.onChange([
