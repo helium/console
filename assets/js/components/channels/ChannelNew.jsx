@@ -12,6 +12,7 @@ import HTTPForm from './forms/HTTPForm.jsx'
 import CargoForm from './forms/CargoForm.jsx'
 import MyDevicesForm from './forms/MyDevicesForm.jsx'
 import AdafruitForm from './forms/AdafruitForm.jsx';
+import UbidotsForm from './forms/UbidotsForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
@@ -122,6 +123,7 @@ class ChannelNew extends Component {
     switch(type) {
       case 'cargo':
       case 'mydevices':
+      case 'ubidots':
         return 'http';
       case 'adafruit':
         return 'mqtt';
@@ -174,6 +176,8 @@ class ChannelNew extends Component {
         return <MyDevicesForm onValidInput={this.handleStep2Input}/>
       case "adafruit":
         return <AdafruitForm onValidInput={this.handleStep2Input} />
+      case "ubidots":
+        return <UbidotsForm onValidInput={this.handleStep2Input}/>
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
