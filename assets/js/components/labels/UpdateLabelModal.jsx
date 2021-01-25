@@ -41,8 +41,6 @@ class UpdateLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, subtab } = this.state;
-    console.log("in handleSubmit")
-    console.log({notificationWebhooks})
 
     switch (tab) {
       case 'general':
