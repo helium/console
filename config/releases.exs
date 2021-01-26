@@ -28,6 +28,10 @@ config :console, Console.Repo,
 
 config :console, oui: String.to_integer(System.get_env("OUI"))
 
+config :console, ConsoleWeb.Guardian,
+  issuer: "console",
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+
 config :cloak, Cloak.AES.CTR,
   tag: "AES",
   default: true,
@@ -43,6 +47,12 @@ config :console,
 
 config :console,
   auth0_baseurl: System.get_env("AUTH0_BASE_URL")
+
+config :console,
+  auth0_domain: System.get_env("AUTH_0_DOMAIN")
+
+config :console,
+  auth0_client_id: System.get_env("AUTH_0_CLIENT_ID")
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,

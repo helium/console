@@ -16,6 +16,10 @@ config :console, Console.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
+config :console, ConsoleWeb.Guardian,
+  issuer: "console",
+  secret_key: System.get_env("GUARDIAN_SECRET_KEY")
+
 config :console, oui: String.to_integer(System.get_env("OUI"))
 
 config :console, Console.Mailer,

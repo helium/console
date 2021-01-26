@@ -18,6 +18,10 @@
       window.flashInfo = "<%= get_flash(@conn, :info) %>"
       window.flashError = "<%= get_flash(@conn, :error) %>"
     </script>
+    <script>
+      window.auth0_domain = "<%= Application.get_env(:console, :auth0_domain) %>"
+      window.auth0_client_id = "<%= Application.get_env(:console, :auth0_client_id) %>"
+    </script>
     <div class="mainContainer">
       <main role="main">
         <%= @inner_content %>
