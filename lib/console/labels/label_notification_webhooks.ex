@@ -12,7 +12,7 @@ defmodule Console.LabelNotificationWebhooks do
   def upsert_label_notification_webhook(attrs \\ %{}) do
     %LabelNotificationWebhook{}
     |> LabelNotificationWebhook.changeset(attrs)
-    |> Repo.insert(conflict_target: [:key, :label_id], on_conflict: {:replace, [:url, :notes]})
+    |> Repo.insert!(conflict_target: [:key, :label_id], on_conflict: {:replace, [:url, :notes]})
   end
 
   def delete_label_notification_webhook_by_key_and_label(label_notification_webhook_key, label_id) do
