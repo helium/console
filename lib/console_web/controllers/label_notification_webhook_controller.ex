@@ -12,22 +12,25 @@ defmodule ConsoleWeb.LabelNotificationWebhooksController do
   action_fallback(ConsoleWeb.FallbackController)
 
   def update(conn, %{"label_notification_webhooks" => webhooks}) do
-    with {:ok, :ok} <- Repo.transaction(fn ->
-      Enum.each(webhooks, fn webhook -> 
-        case webhook["value"] do
-          "0" -> LabelNotificationWebhooks.delete_label_notification_webhook_by_key_and_label(webhook["key"], webhook["label_id"])
-          _ -> LabelNotificationWebhooks.upsert_label_notification_webhook(webhook)
-        end
-      end)
+    result = webhooks
+    |> Enum.reduce(Ecto.Multi.new, fn (webhook, multi) -> 
+      case webhook["value"] do
+        "0" -> LabelNotificationWebhooks.delete(multi, webhook["key"], webhook["label_id"])
+        _ -> LabelNotificationWebhooks.upsert(multi, webhook) 
+      end
     end)
-    do
-      label = Labels.get_label(List.first(webhooks)["label_id"])
-      label = Repo.preload(label, [:label_notification_webhooks])
-      broadcast(label, label.id)
+    |> Repo.transaction
 
-      conn
-      |> put_resp_header("message", "The label notification webhooks were successfully updated")
-      |> render("label_notification_webhooks.json", label_notification_webhooks: webhooks)
+    case result do
+      {:ok, _} -> 
+        label = Labels.get_label(List.first(webhooks)["label_id"])
+        label = Repo.preload(label, [:label_notification_webhooks])
+        broadcast(label, label.id)
+  
+        conn
+        |> put_resp_header("message", "The label notification webhooks were successfully updated")
+        |> render("label_notification_webhooks.json", label_notification_webhooks: webhooks)
+      {:error, _, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
     end
   end
 

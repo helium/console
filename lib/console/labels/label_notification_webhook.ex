@@ -18,7 +18,8 @@ defmodule Console.Labels.LabelNotificationWebhook do
   def changeset(label_notification_webhook, attrs) do
     label_notification_webhook
     |> cast(attrs, [:key, :url, :notes, :label_id, :value])
-    |> validate_required([:key, :url, :label_id, :value])
+    |> validate_required(:url, message: "Webhook URL is required")
+    |> validate_required([:key, :label_id, :value])
     |> unique_constraint(:key, name: :label_notification_webhooks_key_label_id_index, message: "Webhook already exists for this label and key")
   end
 end 
