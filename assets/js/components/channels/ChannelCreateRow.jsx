@@ -35,9 +35,9 @@ class ChannelCreateRow extends Component {
           NEW_CHANNEL_TYPES.map(channel => (
             <div className="wrapper" style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
               <Link to={channel.link}>
-              <IntegrationTypeTile 
-                tileStyle={styles.tile} 
-                iconStyle={styles.icon} 
+              <IntegrationTypeTile
+                tileStyle={styles.tile}
+                iconStyle={styles.icon}
                 img={channel.img}
                 name={channel.name}
                 />
