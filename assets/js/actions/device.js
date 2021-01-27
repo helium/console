@@ -70,11 +70,12 @@ export const toggleDeviceDebug = (device_id) => {
   }
 }
 
-export const setDevicesActive = (device_ids, active) => {
+export const setDevicesActive = (device_ids, active, label_id = "none") => {
   return (dispatch) => {
     rest.post(`/api/devices/set_active`, {
       device_ids,
       active,
+      label_id,
     })
     .then(response => {})
   }

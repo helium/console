@@ -399,7 +399,7 @@ defmodule ConsoleWeb.LabelController do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_added_for_nav: "#{label.organization_id}/label_added_for_nav")
   end
 
-  defp broadcast(%Label{} = label, id) do
+  def broadcast(%Label{} = label, id) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
   end
 
