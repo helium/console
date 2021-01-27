@@ -27,19 +27,32 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   * Sign up with Auth0 (https://auth0.com/)
   * Create .env file in root folder
   * Populate .env file with the following
-
-    SECRET_KEY_BASE=[Random 64 char secret key]\
-    CLOAK_SECRET_KEY=[Run in iex: 32 |> :crypto.strong_rand_bytes() |> Base.encode64()]\
-    GUARDIAN_SECRET_KEY=[Random 64 char secret key]\
-    ROUTER_SECRETS=[Random 64 char secret key]\
-    OUI=1\
-    SELF_HOSTED=true\
-    AUTH_0_CLIENT_ID=[Client ID under Auth0 app settings]\
-    AUTH_0_DOMAIN=[Domain under Auth0 app settings]\
-    AUTH0_BASE_URL=[https:// + Auth0 Domain]\
-    MAILGUN_API_KEY=[Your Mailgun api key (optional)]\
-    SITE_DOMAIN_MAILGUN=[Your host domain (optional)]
-
+```
+SECRET_KEY_BASE=[Random 64 char secret key]
+CLOAK_SECRET_KEY=[Run in iex: 32 |> :crypto.strong_rand_bytes() |> Base.encode64()]
+GUARDIAN_SECRET_KEY=[Random 64 char secret key]
+ROUTER_SECRETS=[Random 64 char secret key]
+OUI=3
+SELF_HOSTED=true
+AUTH_0_CLIENT_ID=[Client ID under Auth0 app settings]
+AUTH_0_DOMAIN=[Domain under Auth0 app settings]
+AUTH0_BASE_URL=[https:// + Auth0 Domain]
+MAILGUN_API_KEY=[Your Mailgun api key (optional)]
+SITE_DOMAIN_MAILGUN=[Your host domain (optional)]
+DATABASE_DB=console
+DATABASE_HOST=postgres
+```
+  * Populate .env-router file with the following
+```
+ROUTER_SEED_NODES=/ip4/34.222.64.221/tcp/2154,/ip4/34.208.255.251/tcp/2154
+ROUTER_CONSOLE_ENDPOINT=http://helium_console:4000
+ROUTER_CONSOLE_WS_ENDPOINT=ws://helium_console:4000/socket/router/websocket
+ROUTER_CONSOLE_SECRET=[Random 64 char secret key from above]
+ROUTER_OUI=3
+ROUTER_DEFAULT_DEVADDR=AAQASA==
+ROUTER_SC_OPEN_DC_AMOUNT=100000
+ROUTER_SC_EXPIRATION_INTERVAL=45
+```
   * Build with `docker-compose build`
   * Run with `docker-compose up`
 
