@@ -67,6 +67,8 @@ class LabelShowTable extends Component {
       this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), true, this.props.labelId)
     } else if (value === 'setInactive') {
       this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false, this.props.labelId)
+    } else if (value === 'delete') {
+      this.props.openDeleteDeviceModal(this.state.selectedRows)
     }
   }
 
@@ -208,6 +210,7 @@ class LabelShowTable extends Component {
                 )
               }
               <Option disabled={selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+              <Option value="delete" disabled={selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
           </UserCan>
         }

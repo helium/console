@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import UpdateLabelModal from './UpdateLabelModal'
 import LabelAddDeviceModal from './LabelAddDeviceModal'
+import DeleteDeviceModal from '../devices/DeleteDeviceModal';
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
 import DashboardLayout from '../common/DashboardLayout'
@@ -41,8 +42,8 @@ class LabelShow extends Component {
   state = {
     showUpdateLabelModal: false,
     showLabelAddDeviceModal: false,
+    showDeleteDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
-    devicesToRemove: [],
     showDebugSidebar: false,
     showDownlinkSidebar: false,
     selectedDevices: []
@@ -81,15 +82,23 @@ class LabelShow extends Component {
     this.setState({ showLabelAddDeviceModal: false })
   }
 
-  openRemoveDevicesFromLabelModal = (devicesToRemove) => {
-    this.setState({ showRemoveDevicesFromLabelModal: true, devicesToRemove })
+  openRemoveDevicesFromLabelModal = selectedDevices => {
+    this.setState({ showRemoveDevicesFromLabelModal: true, selectedDevices })
   }
 
   closeRemoveDevicesFromLabelModal = () => {
     this.setState({ showRemoveDevicesFromLabelModal: false })
   }
 
-  devicesSelected = (selectedDevices) => {
+  openDeleteDeviceModal = selectedDevices => {
+    this.setState({ showDeleteDeviceModal: true, selectedDevices })
+  }
+
+  closeDeleteDeviceModal = () => {
+    this.setState({ showDeleteDeviceModal: false })
+  }
+
+  setDevicesSelected = (selectedDevices) => {
     this.setState({selectedDevices});
   }
 
@@ -135,6 +144,7 @@ class LabelShow extends Component {
 
   render() {
     const { loading, error, label } = this.props.data
+    const { showDeleteDeviceModal, selectedDevices } = this.state
 
     if (loading) return <DashboardLayout><SkeletonLayout/></DashboardLayout>
     if (error) return (
@@ -179,7 +189,13 @@ class LabelShow extends Component {
             </UserCan>
           }
         >
-          <LabelShowTable labelId={this.props.match.params.id} openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal} history={this.props.history} devicesSelected={this.devicesSelected}/>
+          <LabelShowTable
+            labelId={this.props.match.params.id}
+            openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal}
+            history={this.props.history}
+            devicesSelected={this.setDevicesSelected}
+            openDeleteDeviceModal={this.openDeleteDeviceModal}
+          />
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
@@ -203,7 +219,16 @@ class LabelShow extends Component {
             label={label}
             open={this.state.showRemoveDevicesFromLabelModal}
             onClose={this.closeRemoveDevicesFromLabelModal}
-            devicesToRemove={this.state.devicesToRemove}
+            devicesToRemove={selectedDevices}
+          />
+
+          <DeleteDeviceModal
+            label={label}
+            open={showDeleteDeviceModal}
+            onClose={this.closeDeleteDeviceModal}
+            allDevicesSelected={false}
+            devicesToDelete={selectedDevices}
+            totalDevices={selectedDevices.length}
           />
 
           <Sidebar

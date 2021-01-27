@@ -22,7 +22,7 @@ class DeleteDeviceModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteDevices, deleteDevice, devicesToDelete, onClose, from } = this.props
+    const { deleteDevices, deleteDevice, devicesToDelete, onClose, from, label } = this.props
     const { applyToAll } = this.state
 
     analyticsLogger.logEvent(
@@ -34,7 +34,7 @@ class DeleteDeviceModal extends Component {
     if (from == 'deviceShow') {
       deleteDevice(devicesToDelete[0].id, true)
     } else {
-      deleteDevices(!applyToAll && devicesToDelete)
+      deleteDevices(!applyToAll && devicesToDelete, label ? label.id : "none")
     }
 
     this.setState({applyToAll: false})

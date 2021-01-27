@@ -90,7 +90,7 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def delete(conn, %{"devices" => devices}) do
+  def delete(conn, %{"devices" => devices, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(List.first(devices))
     list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
@@ -103,6 +103,11 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       broadcast(device)
+
+      if label_id != "none" do
+        label = Labels.get_label(current_organization, label_id)
+        ConsoleWeb.LabelController.broadcast(label, label.id)
+      end
 
       # now that devices have been deleted, send notification if applicable
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
