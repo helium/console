@@ -48,7 +48,7 @@ class DeleteOrganizationModal extends Component {
 
     const currentOrg = find(this.props.data.allOrganizations, { id: selectedOrgId })
 
-    analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": selectedOrgId })
+    analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": selectedOrgId, "name": currentOrg.name })
     if (!currentOrg.dc_balance || currentOrg.dc_balance < 1) {
       this.props.deleteOrganization(selectedOrgId)
     } else {
