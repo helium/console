@@ -8,7 +8,7 @@ import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
-import { updateDevice } from '../../actions/device'
+import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
@@ -60,8 +60,16 @@ class LabelShowTable extends Component {
     })
   }
 
-  handleSelectOption = () => {
-    this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
+  handleSelectOption = value => {
+    if (value === 'remove') {
+      this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
+    } else if (value === 'setActive') {
+      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), true, this.props.labelId)
+    } else if (value === 'setInactive') {
+      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false, this.props.labelId)
+    } else if (value === 'delete') {
+      this.props.openDeleteDeviceModal(this.state.selectedRows)
+    }
   }
 
   handleChangePage = (page) => {
@@ -178,6 +186,8 @@ class LabelShowTable extends Component {
       }
     }
 
+    const { selectedRows } = this.state
+
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
@@ -189,7 +199,18 @@ class LabelShowTable extends Component {
               style={{ width: 300 }}
               onSelect={this.handleSelectOption}
             >
-              <Option disabled={this.state.selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+              {
+                selectedRows.length > 0 && !selectedRows.find(r => r.active == true) && (
+                  <Option value="setActive">Resume packet transfer for selected devices</Option>
+                )
+              }
+              {
+                selectedRows.length > 0 && !selectedRows.find(r => r.active == false) && (
+                  <Option value="setInactive">Pause packet transfer for selected devices</Option>
+                )
+              }
+              <Option disabled={selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+              <Option value="delete" disabled={selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
           </UserCan>
         }
@@ -220,7 +241,7 @@ class LabelShowTable extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice }, dispatch)
+  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch)
 }
 
 export default LabelShowTable

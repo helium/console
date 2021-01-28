@@ -77,8 +77,8 @@ defmodule ConsoleWeb.DeviceController do
 
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
       details = %{
-        device_name: deleted_device.device_name, 
-        deleted_by: conn.assigns.current_user.email, 
+        device_name: deleted_device.device_name,
+        deleted_by: conn.assigns.current_user.email,
         time: time
       }
       LabelNotificationEvents.notify_label_event(deleted_device.labels, "device_deleted", details)
@@ -90,29 +90,34 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def delete(conn, %{"devices" => devices}) do
+  def delete(conn, %{"devices" => devices, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(List.first(devices))
     list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
     # grab info for notifications before device(s) deletion
     deleted_devices = Enum.map(
-      list_devices, 
+      list_devices,
       fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
     )
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       broadcast(device)
 
+      if label_id != "none" do
+        label = Labels.get_label(current_organization, label_id)
+        ConsoleWeb.LabelController.broadcast(label, label.id)
+      end
+
       # now that devices have been deleted, send notification if applicable
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-      Enum.each(deleted_devices, fn d -> 
+      Enum.each(deleted_devices, fn d ->
         details = %{
-          device_name: d.device_name, 
-          deleted_by: conn.assigns.current_user.email, 
+          device_name: d.device_name,
+          deleted_by: conn.assigns.current_user.email,
           time: time
         }
-        LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
+        LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details)
         LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
       end)
 
@@ -127,7 +132,7 @@ defmodule ConsoleWeb.DeviceController do
 
     # grab info for notifications before device(s) deletion
     deleted_devices = Enum.map(
-      Devices.get_devices(organization_id) |> Repo.preload([:labels]), 
+      Devices.get_devices(organization_id) |> Repo.preload([:labels]),
       fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
     )
 
@@ -137,13 +142,13 @@ defmodule ConsoleWeb.DeviceController do
 
     # now that devices have been deleted, send notification if applicable
     { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-    Enum.each(deleted_devices, fn d -> 
+    Enum.each(deleted_devices, fn d ->
       details = %{
-        device_name: d.device_name, 
-        deleted_by: conn.assigns.current_user.email, 
+        device_name: d.device_name,
+        deleted_by: conn.assigns.current_user.email,
         time: time
       }
-      LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details) 
+      LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details)
       LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
     end)
 
@@ -152,12 +157,18 @@ defmodule ConsoleWeb.DeviceController do
     |>send_resp(:ok, "")
   end
 
-  def set_active(conn, %{ "device_ids" => device_ids, "active" => active }) do
+  def set_active(conn, %{ "device_ids" => device_ids, "active" => active, "label_id" => label_id }) do
     current_organization = conn.assigns.current_organization
 
     with {count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
       device = Devices.get_device!(current_organization, device_ids |> List.first())
       broadcast(device)
+
+      if label_id != "none" do
+        label = Labels.get_label(current_organization, label_id)
+        ConsoleWeb.LabelController.broadcast(label, label.id)
+      end
+
       if active do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
       else
