@@ -82,10 +82,10 @@ defmodule Console.Channels.Channel do
   defp put_downlink_token(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http"}} ->
-        token = generate_token(32)
+        token = Helpers.generate_token(32)
         put_change(changeset, :downlink_token, token)
       %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: "http"}} ->
-        token = generate_token(32)
+        token = Helpers.generate_token(32)
         put_change(changeset, :downlink_token, token)
       _ -> changeset
     end
@@ -132,7 +132,7 @@ defmodule Console.Channels.Channel do
                 if Enum.member?(16..31, byte2) do
                   add_error(changeset, :message, "Must not provide private or link local addresses")
                 else
-                  put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+                  put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
                 end
               {:ok, ipv6_addr = {_,_,_,_,_,_,_,_}} ->
                 cond do
@@ -143,10 +143,10 @@ defmodule Console.Channels.Channel do
                   InetCidr.contains?(InetCidr.parse("fc00::/7"), ipv6_addr) ->
                     add_error(changeset, :message, "Must not provide private or link local addresses")
                   true ->
-                    put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+                    put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
                 end
               _ ->
-                put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => generate_token(16)}))
+                put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
             end
         end
     end
@@ -212,12 +212,6 @@ defmodule Console.Channels.Channel do
             end
         end
     end
-  end
-
-  defp generate_token(length) do
-    :crypto.strong_rand_bytes(length)
-    |> Base.url_encode64
-    |> binary_part(0, length)
   end
 
   defp check_topic(topic_string) do

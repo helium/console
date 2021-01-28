@@ -9,6 +9,10 @@ defmodule Console.LabelNotificationWebhooks do
   def get_label_notification_webhook!(id), do: Repo.get!(LabelNotificationWebhook, id)
   def get_label_notification_webhook(id), do: Repo.get(LabelNotificationWebhook, id)
 
+  def get_label_notification_webhook_by_label_and_key(label_id, key) do
+    Repo.get_by(LabelNotificationWebhook, [label_id: label_id, key: key])
+  end
+
   def delete(multi, label_notification_webhook_key, label_id) do
     queryable = from(ns in LabelNotificationWebhook, where: ns.key == ^label_notification_webhook_key and ns.label_id == ^label_id)
     Ecto.Multi.delete_all(multi, :delete_all, queryable)

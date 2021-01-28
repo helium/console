@@ -183,7 +183,7 @@ class UpdateLabelModal extends Component {
                   onChange={this.handleNotificationSettingsChange}
                 />
               </TabPane>
-              <TabPane tab="Web Hooks" key="webhook" style={{ maxHeight: '375px', overflowY: 'scroll' }}>
+              <TabPane tab="Webhooks" key="webhook" style={{ maxHeight: '375px', overflowY: 'scroll' }}>
                 <WebhookSettings 
                   label_id={this.props.label.id}
                   notificationSettings={notificationWebhooks.reduce(

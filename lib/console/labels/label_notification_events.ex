@@ -6,6 +6,7 @@ defmodule Console.LabelNotificationEvents do
   alias Console.Labels.Label
   alias Console.Labels.LabelNotificationEvent
   alias Console.LabelNotificationSettings
+  alias Console.LabelNotificationWebhooks
   
   def get_label_notification_event!(id), do: Repo.get!(LabelNotificationEvent, id)
   def get_label_notification_event(id), do: Repo.get(LabelNotificationEvent, id)
@@ -60,7 +61,8 @@ defmodule Console.LabelNotificationEvents do
     if not restrict_to_prevent_flapping do
       Enum.each(labels, fn label_id -> 
         settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(label_id, event_key)
-        if settings != nil and Integer.parse(settings.value) do
+        webhooks = LabelNotificationWebhooks.get_label_notification_webhook_by_label_and_key(label_id, event_key)
+        if (settings != nil && Integer.parse(settings.value)) || (webhooks != nil && Integer.parse(webhooks.value)) do
           attrs = %{
             label_id: label_id,
             sent: false,

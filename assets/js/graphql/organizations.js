@@ -6,6 +6,7 @@ export const ORGANIZATION_FRAGMENT = gql`
     name,
     inserted_at,
     dc_balance,
+    webhook_key
   }
 `
 
@@ -20,7 +21,8 @@ export const ORGANIZATION_SHOW_DC = gql`
       automatic_charge_amount,
       automatic_payment_method,
       dc_balance_nonce,
-      received_free_dc
+      received_free_dc,
+      webhook_key
     }
   }
 `
@@ -51,7 +53,8 @@ export const ALL_ORGANIZATIONS = gql`
       dc_balance,
       inactive_count,
       active_count,
-      received_free_dc
+      received_free_dc,
+      webhook_key
     }
   }
 `

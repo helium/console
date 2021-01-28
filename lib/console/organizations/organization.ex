@@ -2,6 +2,7 @@ defmodule Console.Organizations.Organization do
   use Ecto.Schema
   import Ecto.Changeset
   alias Console.Helpers
+  alias Console.Organizations.Organization
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -16,6 +17,7 @@ defmodule Console.Organizations.Organization do
     field :pending_automatic_purchase, :boolean
     field :active, :boolean
     field :received_free_dc, :boolean
+    field :webhook_key, :string
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -36,7 +38,7 @@ defmodule Console.Organizations.Organization do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     organization
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :webhook_key])
     |> validate_required(:name, message: "Organization Name is required")
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
     |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
@@ -61,6 +63,7 @@ defmodule Console.Organizations.Organization do
       :pending_automatic_purchase,
       :active,
       :received_free_dc,
+      :webhook_key
     ])
   end
 
@@ -69,6 +72,7 @@ defmodule Console.Organizations.Organization do
     organization
     |> changeset(attrs)
     |> put_assoc(:users, [user])
+    |> put_webhook_key()
   end
 
   defp check_name(changeset) do
@@ -79,6 +83,18 @@ defmodule Console.Organizations.Organization do
           false -> add_error(changeset, :message, "Please refrain from using special characters in the org name")
           true -> changeset
         end
+      _ -> changeset
+    end
+  end
+
+  defp put_webhook_key(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true} ->
+        key = Helpers.generate_token(32)
+        put_change(changeset, :webhook_key, key)
+      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Organization{}} ->
+        key = Helpers.generate_token(32)
+        put_change(changeset, :webhook_key, key)
       _ -> changeset
     end
   end

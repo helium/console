@@ -15,6 +15,7 @@ import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
 import { Query } from 'react-apollo';
 import { SkeletonLayout } from '../common/SkeletonLayout';
+import WebhookKeyField from './WebhookKeyField';
 
 const queryOptions = {
   options: props => ({
@@ -32,6 +33,7 @@ class OrganizationsTable extends Component {
   state = {
     page: 1,
     pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    webhookKeyToShow: 'none'
   }
 
   componentDidMount() {
@@ -113,6 +115,13 @@ class OrganizationsTable extends Component {
             </span>
           )
         }
+      },
+      {
+        title: 'Webhook Key',
+        key: 'webhook',
+        render: (text, record) => (
+         <WebhookKeyField data={record.webhook_key} />
+        )
       },
       {
         title: '',
