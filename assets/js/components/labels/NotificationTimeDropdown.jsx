@@ -3,7 +3,6 @@ import { Dropdown, Menu } from 'antd';
 import { determineTimeValueToShow } from './constants';
 
 class NotificationTimeDropdown extends Component {
-  // TODO change to functional component
   render() {
     const timeMenu = (key) => (
       <Menu onClick={e => { this.props.update({ value: e.key, key}) }}>
