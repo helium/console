@@ -43,6 +43,7 @@ defmodule Console.Organizations.Organization do
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
     |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
     |> check_name
+    |> put_webhook_key()
   end
 
   @doc false
@@ -62,8 +63,7 @@ defmodule Console.Organizations.Organization do
       :dc_balance_nonce,
       :pending_automatic_purchase,
       :active,
-      :received_free_dc,
-      :webhook_key
+      :received_free_dc
     ])
   end
 
@@ -72,7 +72,6 @@ defmodule Console.Organizations.Organization do
     organization
     |> changeset(attrs)
     |> put_assoc(:users, [user])
-    |> put_webhook_key()
   end
 
   defp check_name(changeset) do
@@ -90,9 +89,6 @@ defmodule Console.Organizations.Organization do
   defp put_webhook_key(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
-        key = Helpers.generate_token(32)
-        put_change(changeset, :webhook_key, key)
-      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Organization{}} ->
         key = Helpers.generate_token(32)
         put_change(changeset, :webhook_key, key)
       _ -> changeset

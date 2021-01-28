@@ -10,7 +10,7 @@ defmodule ConsoleWeb.OrganizationControllerTest do
     setup [:authenticate_user]
 
     test "create organization properly", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org", "webhook_key": "some_valid_key" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org" }}
       organization = json_response(resp_conn, 201)
 
       current_user = resp_conn.assigns.current_user
@@ -18,7 +18,7 @@ defmodule ConsoleWeb.OrganizationControllerTest do
     end
 
     test "delete organization properly", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org", "webhook_key": "some_valid_key" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org" }}
       organization = json_response(resp_conn, 201)
       current_user = resp_conn.assigns.current_user
 
