@@ -64,9 +64,13 @@ defmodule Console.Jobs do
     if label_notification_webhooks != nil and Integer.parse(label_notification_webhooks.value) do
       label = Labels.get_label(identifiers.label_id)
       organization = Organizations.get_organization(label.organization_id)
-      payload = Poison.encode!(events)
+
+      # sanitize events by removing __meta__ field which causes JSON serializing differences on request end
+      sanitized_events = Enum.map(events, fn e -> Map.delete(Map.from_struct(e), :__meta__) end)
+      
+      payload = Poison.encode!(sanitized_events)
       headers = [
-        {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: false)},
+        {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
         {"Content-Type", "application/json"}
       ]
       HTTPoison.post(label_notification_webhooks.url, payload, headers)
