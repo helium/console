@@ -69,9 +69,7 @@ defmodule Console.Jobs do
         {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload)},
         {"Content-Type", "application/json"}
       ]
-      with {:ok, response} <- HTTPoison.post(label_notification_webhooks.url, payload, headers) do
-        IO.inspect response
-      end
+      HTTPoison.post(label_notification_webhooks.url, payload, headers)
     end
   end
 
