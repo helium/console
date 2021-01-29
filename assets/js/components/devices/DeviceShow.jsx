@@ -549,12 +549,13 @@ class DeviceShow extends Component {
                 disabled={channels.length === 0}
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
-                <Downlink onSend={(payload, confirm, port) => {
+                <Downlink onSend={(payload, confirm, port, position) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
                   this.props.sendDownlinkMessage(
                     payload,
                     port,
                     confirm,
+                    position,
                     [device.id],
                     channels
                   )
