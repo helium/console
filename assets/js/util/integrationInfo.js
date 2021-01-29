@@ -6,6 +6,7 @@ import Http from '../../img/http-channel.svg'
 import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
 import Adafruit from '../../img/adafruitio.png';
+import Ubidots from '../../img/ubidots.svg';
 
 export const NEW_CHANNEL_TYPES = [
   {
@@ -50,7 +51,7 @@ export const PREMADE_CHANNEL_TYPES = [
   {
     name: "Ubidots",
     link: "/integrations/new/ubidots",
-    img: `${Adafruit}` ,
+    img: `${Ubidots}` ,
     info: "Use the Ubidots platform to send data to the cloud from any Internet-enabled device.",
     docLink: "https://developer.helium.com/console/integrations/ubidots"
   },

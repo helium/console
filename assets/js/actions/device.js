@@ -47,11 +47,12 @@ export const deleteDevice = (id, redirect = true) => {
   }
 }
 
-export const deleteDevices = (devices) => {
+export const deleteDevices = (devices, label_id = "none") => {
   return (dispatch) => {
     if (devices) {
       rest.post(`/api/devices/delete`, {
-        devices: devices.map(d => d.id)
+        devices: devices.map(d => d.id),
+        label_id
       })
       .then(response => {})
     } else {
@@ -70,11 +71,12 @@ export const toggleDeviceDebug = (device_id) => {
   }
 }
 
-export const setDevicesActive = (device_ids, active) => {
+export const setDevicesActive = (device_ids, active, label_id = "none") => {
   return (dispatch) => {
     rest.post(`/api/devices/set_active`, {
       device_ids,
       active,
+      label_id,
     })
     .then(response => {})
   }
