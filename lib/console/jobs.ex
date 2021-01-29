@@ -66,7 +66,7 @@ defmodule Console.Jobs do
       organization = Organizations.get_organization(label.organization_id)
       payload = Poison.encode!(events)
       headers = [
-        {"X-Helium-Signature", :crypto.hmac(:sha256, organization.webhook_key, payload)},
+        {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload)},
         {"Content-Type", "application/json"}
       ]
       with {:ok, response} <- HTTPoison.post(label_notification_webhooks.url, payload, headers) do
