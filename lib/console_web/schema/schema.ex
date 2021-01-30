@@ -46,6 +46,14 @@ defmodule ConsoleWeb.Schema do
     field :label_id, :id
   end
 
+  object :label_notification_webhook do
+    field :key, :string
+    field :url, :string
+    field :notes, :string
+    field :label_id, :id
+    field :value, :string
+  end
+
   paginated object :label do
     field :id, :id
     field :name, :string
@@ -59,6 +67,7 @@ defmodule ConsoleWeb.Schema do
     field :multi_buy, :integer
     field :adr_allowed, :boolean
     field :label_notification_settings, list_of(:label_notification_setting)
+    field :label_notification_webhooks, list_of(:label_notification_webhook)
   end
 
   paginated object :channel do
@@ -112,6 +121,7 @@ defmodule ConsoleWeb.Schema do
     field :active_count, :integer
     field :active, :boolean
     field :received_free_dc, :boolean
+    field :webhook_key, :string
   end
 
   object :api_key do

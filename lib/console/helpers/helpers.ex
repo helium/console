@@ -13,6 +13,12 @@ defmodule Console.Helpers do
     end
   end
 
+  def generate_token(length) do
+    :crypto.strong_rand_bytes(length)
+    |> Base.url_encode64
+    |> binary_part(0, length)
+  end
+
   def geocodeLatLng(lat, lng) do
     case HTTPoison.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{Application.get_env(:console, :google_maps_secret)}") do
       {:ok, response} ->

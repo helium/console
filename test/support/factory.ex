@@ -20,7 +20,8 @@ defmodule Console.Factory do
 
   def organization_factory do
     %Organization{
-      name: sequence(:name, &"Organization #{&1}")
+      name: sequence(:name, &"Organization #{&1}"),
+      webhook_key: "some_valid_key"
     }
   end
 

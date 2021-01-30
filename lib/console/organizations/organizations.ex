@@ -14,7 +14,7 @@ defmodule Console.Organizations do
 
   def list_organizations do
     query = from o in Organization,
-      select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at}
+      select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at, webhook_key: o.webhook_key}
     Repo.all(query)
   end
 
@@ -22,7 +22,7 @@ defmodule Console.Organizations do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
-      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at}
+      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, webhook_key: o.webhook_key}
     Repo.all(query)
   end
 
@@ -30,7 +30,7 @@ defmodule Console.Organizations do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
-      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, active: o.active, received_free_dc: o.received_free_dc}
+      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, active: o.active, received_free_dc: o.received_free_dc, webhook_key: o.webhook_key}
     organizations = Repo.all(query)
 
     organizations =

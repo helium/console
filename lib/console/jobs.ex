@@ -6,6 +6,7 @@ defmodule Console.Jobs do
   alias Console.Email
   alias Console.Mailer
   alias Console.LabelNotificationSettings
+  alias Console.LabelNotificationWebhooks
   alias Console.Labels
   alias Console.Organizations
   alias Console.Devices
@@ -18,7 +19,10 @@ defmodule Console.Jobs do
     notifiable_events = LabelNotificationEvents.get_unsent_label_notification_events_since(Timex.shift(now, minutes: buffer))
 
     # send emails for this batch, grouped by event type and label
-    Enum.each(Enum.group_by(notifiable_events, &Map.take(&1, [:label_id, :key])), fn {identifiers, events} -> send_specific_event_email(identifiers, events) end)
+    Enum.each(Enum.group_by(notifiable_events, &Map.take(&1, [:label_id, :key])), fn {identifiers, events} -> 
+      send_specific_event_email(identifiers, events) 
+      send_webhook(identifiers, events)
+    end)
 
     # mark these events as sent
     Enum.each(notifiable_events, fn e -> LabelNotificationEvents.mark_label_notification_events_sent(e) end)
@@ -34,7 +38,8 @@ defmodule Console.Jobs do
       roles = case label_notification_settings.recipients do
         "admin" -> ["admin"]
         "manager" -> ["manager"]
-        "both" -> ["admin", "manager"]
+        "read" -> ["read"]
+        "all" -> ["admin", "manager", "read"]
       end
       recipients = Organizations.get_memberships_by_organization_and_role(label.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
       details = Enum.map(events, fn (e) -> e.details end)
@@ -50,6 +55,25 @@ defmodule Console.Jobs do
         "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_receives_first_event" -> Email.integration_receives_first_event_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
       end
+    end
+  end
+
+  def send_webhook(identifiers, events) do
+    label_notification_webhooks = LabelNotificationWebhooks.get_label_notification_webhook_by_label_and_key(identifiers.label_id, identifiers.key)
+
+    if label_notification_webhooks != nil and Integer.parse(label_notification_webhooks.value) do
+      label = Labels.get_label(identifiers.label_id)
+      organization = Organizations.get_organization(label.organization_id)
+
+      # sanitize events by removing __meta__ field which causes JSON serializing differences on request end
+      sanitized_events = Enum.map(events, fn e -> Map.delete(Map.from_struct(e), :__meta__) end)
+      
+      payload = Poison.encode!(sanitized_events)
+      headers = [
+        {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
+        {"Content-Type", "application/json"}
+      ]
+      HTTPoison.post(label_notification_webhooks.url, payload, headers)
     end
   end
 
