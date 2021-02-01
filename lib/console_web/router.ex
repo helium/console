@@ -111,6 +111,7 @@ defmodule ConsoleWeb.Router do
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
     post "/labels/:id/multi_buy", LabelController, :update_multi_buy
+    post "/label_notification_setting/", LabelNotificationSettingsController, :update
   end
 
   if Mix.env == :dev do
