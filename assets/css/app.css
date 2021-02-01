@@ -497,3 +497,7 @@ p.page-description {
   flex-direction: row;
   align-items: flex-end;
 }
+
+.react-flow__edge-path {
+  stroke-width: 2px;
+}

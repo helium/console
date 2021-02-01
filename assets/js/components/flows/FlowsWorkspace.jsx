@@ -1,7 +1,10 @@
 import React, { useState, useRef } from 'react';
-import ReactFlow, { ReactFlowProvider, isNode, removeElements, addEdge } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements, addEdge, getOutgoers } from 'react-flow-renderer';
 import findIndex from 'lodash/findIndex'
+import find from 'lodash/find'
+import omit from 'lodash/omit'
 import FlowsSidebar from './FlowsSidebar'
+import FlowsSettingsBar from './FlowsSettingsBar'
 import LabelNode from './LabelNode'
 import FunctionNode from './FunctionNode'
 import ChannelNode from './ChannelNode'
@@ -50,13 +53,18 @@ const nodeTypes = {
   debugNode: DebugNode
 };
 
-export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels }) => {
+export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels, submitChanges }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
   const layoutedElements = addDagreLayoutToElements(initialElements, LEFT_RIGHT_LAYOUT)
-  const [elementsMap, setElements] = useState(layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {}));
+  const originalElementsState = layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {})
+  const [elementsMap, setElements] = useState(originalElementsState);
+
+  const [edgesToRemove, updateEdgeMapRemove] = useState({})
+  const [edgesToAdd, updateEdgeMapAdd] = useState({})
+  const [nodeDroppedIn, updateNodeDroppedIn] = useState(false)
 
   // const onElementClick = (e, el) => selectNode(el)
 
@@ -93,6 +101,59 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
 
     const newNode = { id, type, position, data }
     setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
+    updateNodeDroppedIn(true)
+  }
+
+  const onElementsRemove = (elementsToRemove) => {
+    if (isEdge(elementsToRemove[0])) {
+      const id = elementsToRemove[0].id
+
+      if (originalElementsState[id] && elementsMap[id]) {
+        setElements(elsMap => omit(elsMap, [id]))
+        updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [id]: elementsToRemove[0] }))
+      }
+      if (!originalElementsState[id] && elementsMap[id]) {
+        setElements(elsMap => omit(elsMap, [id]))
+        updateEdgeMapAdd(edgeMap => omit(edgeMap, [id]))
+      }
+    }
+  }
+
+  const onElementsAdd = ({ source, target }) => {
+    const id = "edge-" + source + "-" + target
+    const newEdge = { id, source, target }
+
+    if (target[0] === 'f' && !elementsMap[id]) {
+      const existingFunctionNode =
+        getOutgoers(elementsMap[source], Object.values(elementsMap))
+        .find(node => node.type === 'functionNode')
+
+      if (existingFunctionNode) {
+        const existingFunctionEdgeId = "edge-" + source + "-" + existingFunctionNode.id
+
+        setElements(elsMap => omit(elsMap, [existingFunctionEdgeId]))
+        updateEdgeMapAdd(edgeMap => omit(edgeMap, [existingFunctionEdgeId]))
+        if (originalElementsState[existingFunctionEdgeId]) {
+          updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [existingFunctionEdgeId]: originalElementsState[existingFunctionEdgeId] }))
+        }
+      }
+    }
+
+    if (!originalElementsState[id] && !elementsMap[id]) {
+      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+      updateEdgeMapAdd(edgeMap => Object.assign({}, edgeMap, { [newEdge.id]: newEdge }))
+    }
+    if (originalElementsState[id] && !elementsMap[id]) {
+      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+      updateEdgeMapRemove(edgeMap => omit(edgeMap, [newEdge.id]))
+    }
+  }
+
+  const resetElementsMap = () => {
+    setElements(elsMap => originalElementsState)
+    updateEdgeMapRemove(edgeMap => ({}))
+    updateEdgeMapAdd(edgeMap => ({}))
+    updateNodeDroppedIn(false)
   }
 
   return (
@@ -104,12 +165,21 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
           onLoad={onLoad}
           onDragOver={onDragOver}
           onDrop={onDrop}
+          onElementsRemove={onElementsRemove}
+          onConnect={onElementsAdd}
         />
         <FlowsSidebar
           unconnectedLabels={unconnectedLabels}
           unconnectedFunctions={unconnectedFunctions}
-          unconnectedChannels={unconnectedChannels} 
+          unconnectedChannels={unconnectedChannels}
           elementsMap={elementsMap}
+        />
+        <FlowsSettingsBar
+          edgesToRemove={edgesToRemove}
+          edgesToAdd={edgesToAdd}
+          nodeDroppedIn={nodeDroppedIn}
+          resetElementsMap={resetElementsMap}
+          submitChanges={() => submitChanges(edgesToRemove, edgesToAdd)}
         />
       </div>
     </ReactFlowProvider>

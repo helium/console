@@ -21,6 +21,45 @@ class FlowsIndex extends Component {
 
   selectNode = selectedNode => this.setState({ selectedNode })
 
+  submitChanges = (edgesToRemove, edgesToAdd) => {
+    const removeEdges =
+      Object.values(edgesToRemove).map(edge => {
+        if (edge.target[0] === 'c') {
+          return {
+            source: edge.source.slice(6),
+            target: edge.target.slice(8),
+            type: "channel",
+          }
+        }
+        if (edge.target[0] === 'f') {
+          return {
+            source: edge.source.slice(6),
+            target: edge.target.slice(9),
+            type: "function",
+          }
+        }
+      })
+
+    const addEdges = Object.values(edgesToAdd).map(edge => {
+      if (edge.target[0] === 'c') {
+        return {
+          source: edge.source.slice(6),
+          target: edge.target.slice(8),
+          type: "channel",
+        }
+      }
+      if (edge.target[0] === 'f') {
+        return {
+          source: edge.source.slice(6),
+          target: edge.target.slice(9),
+          type: "function",
+        }
+      }
+    })
+
+    console.log(removeEdges, addEdges)
+  }
+
   render() {
     const { loading, error, allLabels, allFunctions, allChannels } = this.props.data
     if (loading) return (
@@ -191,6 +230,7 @@ class FlowsIndex extends Component {
           unconnectedLabels={unconnectedLabels}
           unconnectedFunctions={unconnectedFunctions}
           unconnectedChannels={unconnectedChannels}
+          submitChanges={this.submitChanges}
         />
         {
           false && this.state.selectedNode && (
