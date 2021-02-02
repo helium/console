@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
+import { updateEdges } from '../../actions/flows'
 import DashboardLayout from '../common/DashboardLayout'
 import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
@@ -57,7 +58,7 @@ class FlowsIndex extends Component {
       }
     })
 
-    console.log(removeEdges, addEdges)
+    updateEdges(removeEdges, addEdges)
   }
 
   render() {
