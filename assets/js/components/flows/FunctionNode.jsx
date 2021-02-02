@@ -11,7 +11,7 @@ const functionFormats = {
   custom: "Custom"
 }
 
-export default ({ data }) => {
+export default ({ data, unconnected }) => {
   return (
     <div style={{
       background: '#1D4676',
@@ -20,13 +20,17 @@ export default ({ data }) => {
       minWidth: 150,
       minHeight: 50,
     }}>
-      <Handle
-        type="target"
-        position="left"
-        style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #1D4676', height: '12px', width: '12px' }}
-      />
+      {
+        !unconnected && (
+          <Handle
+            type="target"
+            position="left"
+            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #1D4676', height: '12px', width: '12px' }}
+          />
+        )
+      }
       <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <img style={{ width: 40, marginRight: 8 }} src={Logo} />
+        <img style={{ width: 40, marginRight: 8 }} src={Logo} draggable={false}/>
         <div>
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
           <Text style={{ fontSize: 10, color: '#ffffff' }}>{functionFormats[data.format]}</Text>

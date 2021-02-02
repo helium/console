@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
+import { updateEdges } from '../../actions/flows'
 import DashboardLayout from '../common/DashboardLayout'
 import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
@@ -20,6 +21,54 @@ class FlowsIndex extends Component {
   }
 
   selectNode = selectedNode => this.setState({ selectedNode })
+
+  submitChanges = (edgesToRemove, edgesToAdd) => {
+    const removeEdges =
+      Object.values(edgesToRemove).map(edge => {
+        if (edge.target[0] === 'c') {
+          return {
+            source: edge.source.slice(6),
+            target: edge.target.slice(8),
+            type: "channel",
+          }
+        }
+        if (edge.target[0] === 'f') {
+          return {
+            source: edge.source.slice(6),
+            target: edge.target.slice(9),
+            type: "function",
+          }
+        }
+      })
+
+    const addEdges = Object.values(edgesToAdd).map(edge => {
+      if (edge.target[0] === 'c') {
+        return {
+          source: edge.source.slice(6),
+          target: edge.target.slice(8),
+          type: "channel",
+        }
+      }
+      if (edge.target[0] === 'f') {
+        return {
+          source: edge.source.slice(6),
+          target: edge.target.slice(9),
+          type: "function",
+        }
+      }
+    })
+
+    updateEdges(removeEdges, addEdges)
+    .then(status => {
+      if (status == 200) {
+        const { fetchMore } = this.props.data
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+    .catch(err => {})
+  }
 
   render() {
     const { loading, error, allLabels, allFunctions, allChannels } = this.props.data
@@ -49,47 +98,60 @@ class FlowsIndex extends Component {
       return 0
     })
 
-    const debugElement = {
-      id: `debug`,
-      type: 'debugNode',
-      position: { x: 0, y: 0 },
-    }
-
     const labelElements =
       sortedAllLabels
-        .map(label => ({
-          id: `label-${label.id}`,
-          type: 'labelNode',
-          data: {
-            label: label.name,
-          },
-          position: { x: 0, y: 0 },
-        }))
+        .reduce((acc, label) => {
+          if (label.function || label.channels.length > 0) return acc.concat(
+            {
+              id: `label-${label.id}`,
+              type: 'labelNode',
+              data: {
+                label: label.name,
+              },
+              position: { x: 0, y: 0 },
+            }
+          )
+          return acc
+        }, [])
 
     const functionElements =
-      allFunctions
-        .map(func => ({
-          id: `function-${func.id}`,
-          type: 'functionNode',
-          data: {
-            label: func.name,
-            format: func.format
-          },
-          position: { x: 0, y: 0 },
-        }))
+      sortedAllLabels
+        .reduce((acc, label) => {
+          if (label.function) return acc.concat(
+            {
+              id: `function-${label.function.id}`,
+              type: 'functionNode',
+              data: {
+                label: label.function.name,
+                format: label.function.format
+              },
+              position: { x: 0, y: 0 },
+            }
+          )
+          return acc
+        }, [])
 
-    const channelElements =
-      allChannels
-        .map(channel => ({
-          id: `channel-${channel.id}`,
-          type: 'channelNode',
-          data: {
-            label: channel.name,
-            type_name: channel.type_name,
-            type: channel.type
-          },
-          position: { x: 0, y: 0 },
-        }))
+    const channelElements = Object.values(
+      sortedAllLabels
+        .reduce((acc, label) => {
+          if (label.channels) return acc.concat(label.channels)
+          return acc
+        }, [])
+        .reduce((acc, channel) => {
+          return Object.assign({}, acc, {
+            [channel.id]: {
+              id: `channel-${channel.id}`,
+              type: 'channelNode',
+              data: {
+                label: channel.name,
+                type_name: channel.type_name,
+                type: channel.type
+              },
+              position: { x: 0, y: 0 },
+            }
+          })
+        }, {})
+    )
 
     const labelFunctionEdgeElements =
       sortedAllLabels
@@ -121,11 +183,65 @@ class FlowsIndex extends Component {
       .concat(channelElements)
       .concat(labelFunctionEdgeElements)
       .concat(labelChannelEdgeElements)
-      .concat(debugElement)
+
+    const connectedNodeSet =
+      labelFunctionEdgeElements.concat(labelChannelEdgeElements)
+      .reduce((acc, edge) => {
+        return Object.assign({} , acc, { [edge.source]: true, [edge.target]: true })
+      }, {})
+
+    const unconnectedLabels =
+      allLabels
+      .filter(node => {
+        return !connectedNodeSet[`label-${node.id}`]
+      })
+      .map(node => ({
+        id: `label-${node.id}`,
+        type: 'labelNode',
+        data: {
+          label: node.name,
+        }
+      }))
+
+    const unconnectedFunctions =
+      allFunctions
+      .filter(node => {
+        return !connectedNodeSet[`function-${node.id}`]
+      })
+      .map(node => ({
+        id: `function-${node.id}`,
+        type: 'functionNode',
+        data: {
+          label: node.name,
+          format: node.format
+        }
+      }))
+
+    const unconnectedChannels =
+      allChannels
+      .filter(node => {
+        return !connectedNodeSet[`channel-${node.id}`]
+      })
+      .map(node => ({
+        id: `channel-${node.id}`,
+        type: 'channelNode',
+        data: {
+          label: node.name,
+          type_name: node.type_name,
+          type: node.type
+        }
+      }))
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
-        <FlowsWorkspace initialElements={elements} selectNode={this.selectNode} />
+        <FlowsWorkspace
+          initialElements={elements}
+          selectNode={this.selectNode}
+          unconnectedLabels={unconnectedLabels}
+          unconnectedFunctions={unconnectedFunctions}
+          unconnectedChannels={unconnectedChannels}
+          submitChanges={this.submitChanges}
+        />
         {
           false && this.state.selectedNode && (
             <div style={{

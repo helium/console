@@ -8,7 +8,9 @@ export const ALL_RESOURCES = gql`
       color,
       channels {
         id,
-        name
+        name,
+        type_name,
+        type
       },
       function {
         id,

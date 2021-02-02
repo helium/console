@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import ReactFlow, { isNode, removeElements, addEdge } from 'react-flow-renderer';
+import React, { useState, useRef, useEffect } from 'react';
+import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements, addEdge, getOutgoers } from 'react-flow-renderer';
 import findIndex from 'lodash/findIndex'
+import find from 'lodash/find'
+import omit from 'lodash/omit'
+import FlowsSidebar from './FlowsSidebar'
+import FlowsSettingsBar from './FlowsSettingsBar'
 import LabelNode from './LabelNode'
 import FunctionNode from './FunctionNode'
 import ChannelNode from './ChannelNode'
@@ -25,34 +29,18 @@ const addDagreLayoutToElements = (elements, direction = TOP_BOTTOM_LAYOUT) => {
   });
   dagre.layout(dagreGraph);
 
-  const edgeSet = elements.reduce((acc, el) => {
-    if (!isNode(el)) return Object.assign({}, acc, { [el.source]: true, [el.target]: true })
-    return acc
-  }, {})
-
-  const unconnectedNodes = elements.filter(el => isNode(el) && !edgeSet[el.id])
-
   return elements.map((el) => {
     if (isNode(el)) {
-      if (!edgeSet[el.id]) {
-        const index = findIndex(unconnectedNodes, {id: el.id})
-        console.log(el)
-        el.position = {
-          x: 1000 + Math.random() / 1000,
-          y: 40 + index * 100,
-        };
-      } else {
-        const nodeWithPosition = dagreGraph.node(el.id);
-        el.targetPosition = isHorizontal ? 'left' : 'top';
-        el.sourcePosition = isHorizontal ? 'right' : 'bottom';
-        // unfortunately we need this little hack to pass a slightly different position in order to notify react flow about the change
-        let x = nodeWithPosition.x + Math.random() / 1000
-        if (el.type == 'channelNode') x += 250
-        el.position = {
-          x: x - 50,
-          y: nodeWithPosition.y,
-        };
-      }
+      const nodeWithPosition = dagreGraph.node(el.id);
+      el.targetPosition = isHorizontal ? 'left' : 'top';
+      el.sourcePosition = isHorizontal ? 'right' : 'bottom';
+      // unfortunately we need this little hack to pass a slightly different position in order to notify react flow about the change
+      let x = nodeWithPosition.x + Math.random() / 1000
+      if (el.type == 'channelNode') x += 250
+      el.position = {
+        x: x - 50,
+        y: nodeWithPosition.y + 20,
+      };
     }
     return el;
   });
@@ -65,16 +53,138 @@ const nodeTypes = {
   debugNode: DebugNode
 };
 
-export default ({ initialElements, selectNode }) => {
+export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels, submitChanges }) => {
+  const reactFlowWrapper = useRef(null)
+  const [reactFlowInstance, setReactFlowInstance] = useState(null)
+  const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
+
   const layoutedElements = addDagreLayoutToElements(initialElements, LEFT_RIGHT_LAYOUT)
-  const [elements, setElements] = useState(layoutedElements);
-  const onElementClick = (e, el) => selectNode(el)
+  const originalElementsState = layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {})
+  const [elementsMap, setElements] = useState(originalElementsState);
+
+  const [edgesToRemove, updateEdgeMapRemove] = useState({})
+  const [edgesToAdd, updateEdgeMapAdd] = useState({})
+  const [nodeDroppedIn, updateNodeDroppedIn] = useState(false)
+
+  useEffect(() => {
+    setElements(elsMap => originalElementsState)
+  }, [initialElements])
+  // const onElementClick = (e, el) => selectNode(el)
+
+  const onDragOver = event => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }
+
+  const onDrop = event => {
+    event.preventDefault()
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
+    const id = event.dataTransfer.getData('node/id')
+    const type = event.dataTransfer.getData('node/type')
+    const name = event.dataTransfer.getData('node/name')
+
+    const position = reactFlowInstance.project({
+      x: event.clientX - reactFlowBounds.left - 75,
+      y: event.clientY - reactFlowBounds.top,
+    })
+
+    let data = { label: name }
+    if (type == 'channelNode') {
+      data = Object.assign({}, data, {
+        type_name: event.dataTransfer.getData('node/channel_type_name'),
+        type: event.dataTransfer.getData('node/channel_type')
+      })
+    }
+
+    if (type == 'functionNode') {
+      data = Object.assign({}, data, {
+        format: event.dataTransfer.getData('node/function_format'),
+      })
+    }
+
+    const newNode = { id, type, position, data }
+    setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
+    updateNodeDroppedIn(true)
+  }
+
+  const onElementsRemove = (elementsToRemove) => {
+    if (isEdge(elementsToRemove[0])) {
+      const id = elementsToRemove[0].id
+
+      if (originalElementsState[id] && elementsMap[id]) {
+        setElements(elsMap => omit(elsMap, [id]))
+        updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [id]: elementsToRemove[0] }))
+      }
+      if (!originalElementsState[id] && elementsMap[id]) {
+        setElements(elsMap => omit(elsMap, [id]))
+        updateEdgeMapAdd(edgeMap => omit(edgeMap, [id]))
+      }
+    }
+  }
+
+  const onElementsAdd = ({ source, target }) => {
+    const id = "edge-" + source + "-" + target
+    const newEdge = { id, source, target }
+
+    if (target[0] === 'f' && !elementsMap[id]) {
+      const existingFunctionNode =
+        getOutgoers(elementsMap[source], Object.values(elementsMap))
+        .find(node => node.type === 'functionNode')
+
+      if (existingFunctionNode) {
+        const existingFunctionEdgeId = "edge-" + source + "-" + existingFunctionNode.id
+
+        setElements(elsMap => omit(elsMap, [existingFunctionEdgeId]))
+        updateEdgeMapAdd(edgeMap => omit(edgeMap, [existingFunctionEdgeId]))
+        if (originalElementsState[existingFunctionEdgeId]) {
+          updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [existingFunctionEdgeId]: originalElementsState[existingFunctionEdgeId] }))
+        }
+      }
+    }
+
+    if (!originalElementsState[id] && !elementsMap[id]) {
+      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+      updateEdgeMapAdd(edgeMap => Object.assign({}, edgeMap, { [newEdge.id]: newEdge }))
+    }
+    if (originalElementsState[id] && !elementsMap[id]) {
+      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+      updateEdgeMapRemove(edgeMap => omit(edgeMap, [newEdge.id]))
+    }
+  }
+
+  const resetElementsMap = () => {
+    setElements(elsMap => originalElementsState)
+    updateEdgeMapRemove(edgeMap => ({}))
+    updateEdgeMapAdd(edgeMap => ({}))
+    updateNodeDroppedIn(false)
+  }
 
   return (
-    <ReactFlow
-      elements={elements}
-      onElementClick={onElementClick}
-      nodeTypes={nodeTypes}
-    />
+    <ReactFlowProvider>
+      <div ref={reactFlowWrapper} style={{ position: 'relative', height: '100%', width: '100%' }}>
+        <ReactFlow
+          elements={Object.values(elementsMap)}
+          nodeTypes={nodeTypes}
+          onLoad={onLoad}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onElementsRemove={onElementsRemove}
+          onConnect={onElementsAdd}
+        />
+        <FlowsSidebar
+          unconnectedLabels={unconnectedLabels}
+          unconnectedFunctions={unconnectedFunctions}
+          unconnectedChannels={unconnectedChannels}
+          elementsMap={elementsMap}
+        />
+        <FlowsSettingsBar
+          edgesToRemove={edgesToRemove}
+          edgesToAdd={edgesToAdd}
+          nodeDroppedIn={nodeDroppedIn}
+          resetElementsMap={resetElementsMap}
+          submitChanges={() => submitChanges(edgesToRemove, edgesToAdd)}
+        />
+      </div>
+    </ReactFlowProvider>
   );
 };
