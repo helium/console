@@ -82,12 +82,20 @@ class NotificationSettings extends Component {
             </Dropdown> 
             <Text> when <b>{setting.description}</b></Text>
             {setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING &&
-              <NotificationTimeDropdown setting={setting} update={s => { this.updateSetting(s)} } value={this.state[setting.key] && this.state[setting.key].value} />
+              <NotificationTimeDropdown 
+                setting={setting} 
+                update={s => { this.updateSetting(s)} } value={this.state[setting.key] && this.state[setting.key].value} 
+              />
             }
           </Col>
           <Col span={3} style={{ paddingLeft: 15 }}>
             <Switch 
-              onChange={checked => { this.updateSetting({ key: setting.key, value: checked ? (setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING ? "60" : "1") : "0" }) }} 
+              onChange={checked => { 
+                this.updateSetting({ 
+                  key: setting.key, 
+                  value: checked ? (setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING ? "60" : "1") : "0" 
+                }) 
+              }} 
               checked={(this.state[setting.key] || {}).value > 0 ? true : false} 
             />
           </Col>

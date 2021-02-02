@@ -63,7 +63,10 @@ class WebhookSettings extends Component {
               <Text>Notify when </Text>
               <Text><b>{setting.description}</b></Text>
               {setting.key === NOTIFICATION_SETTINGS_KEYS.DEVICE_STOPS_TRANSMITTING &&
-                <NotificationTimeDropdown setting={setting} update={s => { this.updateSetting(s)} } value={this.state[setting.key] && this.state[setting.key].value} />
+                <NotificationTimeDropdown 
+                  setting={setting} 
+                  update={s => { this.updateSetting(s)} } value={this.state[setting.key] && this.state[setting.key].value} 
+                />
               }
             </Col>
             <Col span={3} style={{ paddingLeft: 15 }}>
