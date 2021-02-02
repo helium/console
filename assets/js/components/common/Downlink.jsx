@@ -15,7 +15,7 @@ const Downlink = ({onSend}) => {
   return (
     <div style={{position: 'relative'}}>
       <Card style={{marginRight: 20, marginLeft: 20, marginTop: -25}}>
-        <Title style={{fontSize: 22}}>Create Downlink Payload</Title>
+        <Title style={{fontSize: 22}}>Add Downlink Payload</Title>
 
         <Row gutter={[16, 16]}>
           <Col span={12}>

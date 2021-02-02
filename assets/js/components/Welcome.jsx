@@ -68,7 +68,7 @@ class Welcome extends Component {
                 <h2>Get Started with Console</h2>
               <Link to="/devices"><p>Add and Manage Devices <span>for the Helium Network</span><CaretRightOutlined className="caret" /></p></Link>
               <Link to="/integrations"><p>Set up an Integration <span>to send and receive device data</span><CaretRightOutlined className="caret" /></p></Link>
-              <Link to="/labels"><p>Create and Manage Labels <span>to organize your devices</span><CaretRightOutlined className="caret" /></p></Link>
+              <Link to="/labels"><p>Add and Manage Labels <span>to organize your devices</span><CaretRightOutlined className="caret" /></p></Link>
               <Link to="/functions"><p>Apply Functions <span>to your devices</span><CaretRightOutlined className="caret" /></p></Link>
               <Link to="/users"><p>Invite other Users <span> to your Console Organization</span><CaretRightOutlined className="caret" /></p></Link>
             </div>

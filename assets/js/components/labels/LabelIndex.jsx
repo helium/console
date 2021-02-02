@@ -87,7 +87,7 @@ class LabelIndex extends Component {
               style={{ borderRadius: 4 }}
               onClick={this.openCreateLabelModal}
             >
-              Create New Label
+              Add New Label
             </Button>
           </UserCan>
         }

@@ -72,7 +72,7 @@ class NewDeviceModal extends Component {
 
     return (
       <Modal
-        title="Create a New Device"
+        title="Add a New Device"
         visible={open}
         centered
         onCancel={onClose}

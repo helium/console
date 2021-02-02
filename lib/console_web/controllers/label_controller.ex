@@ -42,7 +42,7 @@ defmodule ConsoleWeb.LabelController do
 
       conn
       |> put_status(:created)
-      |> put_resp_header("message",  "Label #{label.name} created successfully")
+      |> put_resp_header("message",  "Label #{label.name} added successfully")
       |> render("show.json", label: label)
     end
   end

@@ -80,7 +80,7 @@ class OrganizationsTable extends Component {
         dataIndex: 'name',
       },
       {
-        title: 'Created',
+        title: 'Added',
         dataIndex: 'inserted_at',
         render: data => moment(data).format('LL')
       },

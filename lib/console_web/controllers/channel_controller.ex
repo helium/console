@@ -120,7 +120,7 @@ defmodule ConsoleWeb.ChannelController do
       end
 
       conn
-      |> put_resp_header("message", "#{channel.name} updated successfully")
+      |> put_resp_header("message", "Integration #{channel.name} updated successfully")
       |> render("show.json", channel: channel)
     end
   end

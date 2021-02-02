@@ -173,7 +173,7 @@ class LabelIndexTable extends Component {
             <div className="message">
       <img src={LabelsImg} />
       <h1>No Labels</h1>
-      <p>You haven’t created any labels yet.</p>
+      <p>You haven’t added any labels yet.</p>
 
       <div className="explainer">
         <h2>What are Labels?</h2>

@@ -32,7 +32,7 @@ class NewOrganizationModal extends Component {
 
     return (
       <Modal
-        title="Create a new organization"
+        title="Add a new organization"
         visible={open}
         onCancel={onClose}
         centered

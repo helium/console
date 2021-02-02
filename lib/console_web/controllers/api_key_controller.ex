@@ -28,7 +28,7 @@ defmodule ConsoleWeb.ApiKeyController do
 
         conn
         |> put_status(:created)
-        |> put_resp_header("message",  "#{api_key.name} created successfully")
+        |> put_resp_header("message",  "API Key #{api_key.name} added successfully")
         |> render("show.json", api_key: api_key, key: key)
       end
     end
