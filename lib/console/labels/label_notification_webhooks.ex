@@ -18,7 +18,19 @@ defmodule Console.LabelNotificationWebhooks do
     Ecto.Multi.delete_all(multi, :delete_all, queryable)
   end
 
+  def delete(label_notification_webhook_key, label_id) do
+    with {count, nil} <- from(nw in LabelNotificationWebhook, where: nw.key == ^label_notification_webhook_key and nw.label_id == ^label_id) |> Repo.delete_all() do
+      {:ok, count}
+    end
+  end
+
   def upsert(multi, attrs \\ %{}) do
     Ecto.Multi.insert(multi, attrs["key"], LabelNotificationWebhook.changeset(%LabelNotificationWebhook{}, attrs), on_conflict: {:replace, [:url, :notes]}, conflict_target: [:key, :label_id])
+  end
+  
+  def upsert_webhook(attrs \\ %{}) do
+    %LabelNotificationWebhook{}
+    |> LabelNotificationWebhook.changeset(attrs)
+    |> Repo.insert!(on_conflict: {:replace, [:url, :notes]}, conflict_target: [:key, :label_id])
   end
 end 
