@@ -199,7 +199,7 @@
                                  <!-- content -->
                                  <tr>
                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                     You have created a new API Key  <%= @key_name %> on Helium Console. Please activate it by visiting the link below.
+                                     You have added a new API Key  <%= @key_name %> on Helium Console. Please activate it by visiting the link below.
                                    </td>
                                  </tr>
                                  <!-- end of content -->

@@ -53,7 +53,7 @@ class CreateLabelModal extends Component {
 
     return (
       <Modal
-        title="Create New label"
+        title="Add New label"
         visible={open}
         onCancel={onClose}
         centered
@@ -63,10 +63,10 @@ class CreateLabelModal extends Component {
             Cancel
           </Button>,
           <Button key="submit" onClick={this.handleSubmit}>
-            Create Label
+            Add Label
           </Button>,
           <Button key="submit2" onClick={e => this.handleSubmit(e, true)} type="primary">
-            Create Label & Manage
+            Add Label & Manage
           </Button>
         ]}
       >

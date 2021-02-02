@@ -168,7 +168,7 @@ class FunctionIndexTable extends Component {
           <div className="message">
     <img src={FunctionsImg} />
     <h1>No Functions</h1>
-    <p>You haven’t created any functions yet.</p>
+    <p>You haven’t added any functions yet.</p>
 
     <div className="explainer">
       <h2>What are Functions?</h2>

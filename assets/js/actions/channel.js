@@ -13,7 +13,7 @@ export const createChannel = (params) => {
         func: params.func ? params.func : undefined
       })
       .then(response => {
-        displayInfo(`${response.data.name} has been created`)
+        displayInfo(`Integration ${response.data.name} added successfully`)
         dispatch(replace(`/integrations/${response.data.id}`))
       })
   }

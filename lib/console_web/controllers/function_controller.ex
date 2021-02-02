@@ -31,7 +31,7 @@ defmodule ConsoleWeb.FunctionController do
 
       conn
         |> put_status(:created)
-        |> put_resp_header("message",  "#{function.name} created successfully")
+        |> put_resp_header("message",  "Function #{function.name} added successfully")
         |> render("show.json", function: function)
     end
   end
@@ -46,7 +46,7 @@ defmodule ConsoleWeb.FunctionController do
       broadcast_router_update_devices(function)
 
       conn
-      |> put_resp_header("message", "#{function.name} updated successfully")
+      |> put_resp_header("message", "Function #{function.name} updated successfully")
       |> render("show.json", function: function)
     end
   end

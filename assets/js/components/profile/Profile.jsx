@@ -96,7 +96,7 @@ class Profile extends Component {
         dataIndex: 'role',
       },
       {
-        title: 'Date Created',
+        title: 'Date Added',
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')
       },
@@ -108,7 +108,7 @@ class Profile extends Component {
         )
       },
       {
-        title: 'Created By',
+        title: 'Added By',
         dataIndex: 'user',
       },
       {

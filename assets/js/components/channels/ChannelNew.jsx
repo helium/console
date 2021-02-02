@@ -195,14 +195,14 @@ class ChannelNew extends Component {
 
     return(
       <DashboardLayout
-        title="Create New Integration"
+        title="Add New Integration"
         user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
             {type ?
-              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Create New Integration&nbsp;&nbsp;/</Text></Link>) :
-              (<Text>&nbsp;&nbsp;Create New Integration</Text>)
+              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Add New Integration&nbsp;&nbsp;/</Text></Link>) :
+              (<Text>&nbsp;&nbsp;Add New Integration</Text>)
             }
             <Text>&nbsp;&nbsp;{type ? this.getIntegrationType()[0].name : null}</Text>
           </div>
@@ -247,7 +247,7 @@ class ChannelNew extends Component {
                 onClick={this.handleStep3Submit}
                 disabled={!this.state.validInput}
               >
-                Create Integration
+                Add Integration
               </Button>
             </div>
           </DecoderForm>
@@ -263,7 +263,7 @@ class ChannelNew extends Component {
                 onClick={this.handleStep3Submit}
                 disabled={!this.state.validInput}
               >
-                Create Integration
+                Add Integration
               </Button>
             </div>
           </Card>

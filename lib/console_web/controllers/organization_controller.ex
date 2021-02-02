@@ -50,7 +50,7 @@ defmodule ConsoleWeb.OrganizationController do
 
           conn
           |> put_status(:created)
-          |> put_resp_header("message",  "#{organization.name} created successfully")
+          |> put_resp_header("message",  "Organization #{organization.name} added successfully")
           |> render("show.json", organization: membership_info)
       end
     end
@@ -86,7 +86,7 @@ defmodule ConsoleWeb.OrganizationController do
 
       render_org = %{id: organization.id, name: organization.name, role: membership.role}
       conn
-      |> put_resp_header("message", "#{organization.name} updated successfully")
+      |> put_resp_header("message", "Organization #{organization.name} updated successfully")
       |> render("show.json", organization: render_org)
     end
   end

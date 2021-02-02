@@ -52,7 +52,7 @@ class FunctionIndex extends Component {
               type="primary"
               onClick={() => this.props.history.push('/functions/new')}
             >
-              Create New Function
+              Add New Function
             </Button>
           </UserCan>
         }

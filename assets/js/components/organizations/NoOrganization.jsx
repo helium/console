@@ -35,7 +35,7 @@ class NoOrganization extends Component {
             <Title>
               Helium Console
             </Title>
-            <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Create Your First Organization</Text>
+            <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Add Your First Organization</Text>
           </div>
           <Text style={{display: 'block'}}>
               Define an Organization as the top level of your structure, (usually your company name). This Organization name is used when inviting other users to your Console.
@@ -58,7 +58,7 @@ class NoOrganization extends Component {
               </Col>
               <Col sm={12}>
               <Button type="primary" onClick={this.handleSubmit} style={{width: '100%'}}>
-                Create Organization
+                Add Organization
               </Button>
               </Col>
             </Row>
