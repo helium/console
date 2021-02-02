@@ -122,7 +122,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       not_my_org = insert(:organization)
       not_my_device = insert(:device, %{ organization_id: not_my_org.id })
 
-      resp_conn = post conn, device_path(conn, :delete), %{ "devices" => [not_my_device.id]}
+      resp_conn = post conn, device_path(conn, :delete), %{ "devices" => [not_my_device.id], "label_id" => "none" }
       assert response(resp_conn, 204)
       assert Devices.get_device(not_my_device.id) != nil
 
@@ -140,7 +140,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert Devices.get_device(device_2["id"]) != nil
 
       resp_conn = post conn, device_path(conn, :delete), %{ "devices" => [device_1["id"], device_2["id"]] }
-      assert response(resp_conn, 204)
+      assert response(resp_conn, 200)
 
       assert Devices.get_device(device_1["id"]) == nil
       assert Devices.get_device(device_2["id"]) == nil
