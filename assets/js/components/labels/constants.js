@@ -53,9 +53,10 @@ export function determineValue (setting, stateValue) {
 }
 
 export function determineTimeValueToShow (value) {
-  if (parseInt(value) < 60) {
-    return `${value} mins`;
+  let timeValue = value === "0" ? 60 : parseInt(value);
+  if (timeValue < 60) {
+    return `${timeValue} mins`;
   } else {
-    return `${(parseInt(value))/60} ${parseInt(value) === 60 ? 'hr' : 'hrs'}`;
+    return `${timeValue/60} ${timeValue === 60 ? 'hr' : 'hrs'}`;
   }
 }
