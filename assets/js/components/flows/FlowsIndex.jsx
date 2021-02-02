@@ -59,6 +59,15 @@ class FlowsIndex extends Component {
     })
 
     updateEdges(removeEdges, addEdges)
+    .then(status => {
+      if (status == 200) {
+        const { fetchMore } = this.props.data
+        fetchMore({
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
+        })
+      }
+    })
+    .catch(err => {})
   }
 
   render() {

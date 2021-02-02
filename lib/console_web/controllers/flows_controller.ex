@@ -16,8 +16,10 @@ defmodule ConsoleWeb.FlowsController do
   def update_edges(conn, %{"removeEdges" => remove_edges, "addEdges" => add_edges}) do
     current_organization = conn.assigns.current_organization
 
-    functions_to_remove = Enum.filter(remove_edges, fn r -> Map.get(r, "type") == "function" end)
-    channels_to_remove = Enum.filter(remove_edges, fn r -> Map.get(r, "type") == "channel" end)
+    functions_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "function" end)
+    channels_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "channel" end)
+    functions_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "function" end)
+    channels_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "channel" end)
 
     result =
     Ecto.Multi.new()
@@ -49,6 +51,38 @@ defmodule ConsoleWeb.FlowsController do
         {:ok, "success"}
       else
         {:error, "failed to remove integrations from labels"}
+      end
+    end)
+    |> Ecto.Multi.run(:added_functions, fn _repo, _ ->
+      count =
+        Enum.map(functions_to_add, fn edge ->
+          function = Functions.get_function!(current_organization, Map.get(edge, "target"))
+
+          {:ok, _} = Labels.add_function_to_labels(function, [Map.get(edge, "source")], current_organization)
+          1
+        end)
+        |> Enum.sum()
+
+      if count == Enum.count(functions_to_add) do
+        {:ok, "success"}
+      else
+        {:error, "failed to add functions to labels"}
+      end
+    end)
+    |> Ecto.Multi.run(:added_channels, fn _repo, _ ->
+      count =
+        Enum.map(channels_to_add, fn edge ->
+          channel = Channels.get_channel!(current_organization, Map.get(edge, "target"))
+
+          {:ok, 1, _} = Labels.add_labels_to_channel([Map.get(edge, "source")], channel, current_organization)
+          1
+        end)
+        |> Enum.sum()
+
+      if count == Enum.count(channels_to_add) do
+        {:ok, "success"}
+      else
+        {:error, "failed to add integrations to labels"}
       end
     end)
     |> Repo.transaction()

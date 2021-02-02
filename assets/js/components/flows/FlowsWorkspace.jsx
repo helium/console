@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements, addEdge, getOutgoers } from 'react-flow-renderer';
 import findIndex from 'lodash/findIndex'
 import find from 'lodash/find'
@@ -66,6 +66,9 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
   const [edgesToAdd, updateEdgeMapAdd] = useState({})
   const [nodeDroppedIn, updateNodeDroppedIn] = useState(false)
 
+  useEffect(() => {
+    setElements(elsMap => originalElementsState)
+  }, [initialElements])
   // const onElementClick = (e, el) => selectNode(el)
 
   const onDragOver = event => {
@@ -81,7 +84,7 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
     const name = event.dataTransfer.getData('node/name')
 
     const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
+      x: event.clientX - reactFlowBounds.left - 75,
       y: event.clientY - reactFlowBounds.top,
     })
 
