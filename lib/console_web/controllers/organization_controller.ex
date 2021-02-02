@@ -86,7 +86,7 @@ defmodule ConsoleWeb.OrganizationController do
 
       render_org = %{id: organization.id, name: organization.name, role: membership.role}
       conn
-      |> put_resp_header("message", "#{organization.name} updated successfully")
+      |> put_resp_header("message", "Organization #{organization.name} updated successfully")
       |> render("show.json", organization: render_org)
     end
   end
