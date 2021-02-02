@@ -43,9 +43,9 @@ defmodule ConsoleWeb.V1LabelNotificationSettingsControllerTest do
 
     label_2 = insert(:label)
     resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{ "key" => "invalid_key", "label_id" => label_2.id, "value" => "30", "recipients" => "all" })
-    assert response(resp_conn, 403) # invalid key not allowed
+    assert response(resp_conn, 400) # invalid key not allowed
 
     resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{ "key" => "device_deleted", "label_id" => label_2.id, "value" => "0", "recipients" => "invalid_recipient" })
-    assert response(resp_conn, 403) # invalid recipients not allowed
+    assert response(resp_conn, 400) # invalid recipients not allowed
   end
 end

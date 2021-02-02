@@ -20,11 +20,11 @@ defmodule ConsoleWeb.V1.LabelNotificationSettingsController do
         case recipients_ok and key_ok do
           false -> cond do 
             key_ok and not recipients_ok -> 
-              {:error, :forbidden, "Recipients must be: \"admin\", \"manager\", \"read\", or \"all\""}
+              {:error, :bad_request, "Recipients must be: \"admin\", \"manager\", \"read\", or \"all\""}
             recipients_ok and not key_ok ->
-              {:error, :forbidden, "Key must be: \"device_deleted\", \"device_join_otaa_first_time\", \"device_stops_transmitting\", \"integration_stops_working\", \"integration_receives_first_event\", \"downlink_unsuccessful\", \"integration_with_devices_deleted\", or \"integration_with_devices_updated\""}
+              {:error, :bad_request, "Key must be: \"device_deleted\", \"device_join_otaa_first_time\", \"device_stops_transmitting\", \"integration_stops_working\", \"integration_receives_first_event\", \"downlink_unsuccessful\", \"integration_with_devices_deleted\", or \"integration_with_devices_updated\""}
             not recipients_ok and not key_ok ->
-              {:error, :forbidden, "Recipients must be: \"admin\", \"manager\", \"read\", or \"all\" & key must be: \"device_deleted\", \"device_join_otaa_first_time\", \"device_stops_transmitting\", \"integration_stops_working\", \"integration_receives_first_event\", \"downlink_unsuccessful\", \"integration_with_devices_deleted\", or \"integration_with_devices_updated\""}
+              {:error, :bad_request, "Recipients must be: \"admin\", \"manager\", \"read\", or \"all\" & key must be: \"device_deleted\", \"device_join_otaa_first_time\", \"device_stops_transmitting\", \"integration_stops_working\", \"integration_receives_first_event\", \"downlink_unsuccessful\", \"integration_with_devices_deleted\", or \"integration_with_devices_updated\""}
           end
           true -> 
             case value do
