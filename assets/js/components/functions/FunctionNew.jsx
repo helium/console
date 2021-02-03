@@ -64,7 +64,7 @@ class FunctionNew extends Component {
   render() {
     const { name, type, format, body } = this.state
     return (
-      <DashboardLayout title="Add New Function" user={this.props.user}>
+      <DashboardLayout title="Add Function" user={this.props.user}>
         <Card title="Step 1 - Enter Function Details">
           <Text>Enter Function Name</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>

@@ -102,7 +102,7 @@ class DevicesAddLabelModal extends Component {
         </div>
 
         <div>
-          <Text>Add New Label</Text>
+          <Text>Add Label</Text>
           <Input
             placeholder="Enter Label Name"
             name="labelName"
