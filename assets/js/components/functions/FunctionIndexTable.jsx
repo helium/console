@@ -173,7 +173,7 @@ class FunctionIndexTable extends Component {
     <div className="explainer">
       <h2>What are Functions?</h2>
       <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
-      <p>More details can be found <a href="https://developer.helium.com/console/functions" target="_blank">here</a>.</p>
+      <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank">here</a>.</p>
     </div>
 
           </div>
@@ -230,7 +230,7 @@ class FunctionIndexTable extends Component {
           functions.entries.length > 0 && (
             <div>
               <p className="page-description">
-                Functions are operators that can be applied to Labels and act on the data of any devices in those Labels. <a href="https://developer.helium.com/console/functions" target="_blank"> Tell me more about functions.</a>
+                Functions are operators that can be applied to Labels and act on the data of any devices in those Labels. <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank"> Tell me more about functions.</a>
               </p>
             <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
