@@ -74,6 +74,14 @@ p {
   height: 100%;
 }
 
+.dull {
+  opacity: 50%;
+}
+
+.dull:hover {
+  opacity: 1;
+}
+
 main {
   height: 100%;
 }
