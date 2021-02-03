@@ -4,10 +4,11 @@ import debounce from 'lodash/debounce'
 import omit from 'lodash/omit'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS_DEVICES } from '../../graphql/labels'
-import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete, Typography } from 'antd';
+import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete, Typography, Tabs } from 'antd';
 import LabelAddDeviceSelect from './LabelAddDeviceSelect'
 import LabelAddLabelSelect from './LabelAddLabelSelect'
 const { Text } = Typography
+const { TabPane } = Tabs
 
 const queryOptions = {
   options: props => ({
@@ -118,25 +119,37 @@ class LabelAddDeviceModal extends Component {
             Add Label to Devices
           </Button>
         ]}
+        width={620}
       >
         {
           !loading && !error && (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-              <LabelAddDeviceSelect
-                checkAllDevices={this.checkAllDevices}
-                allDevices={allDevices}
-                checkedDevices={checkedDevices}
-                checkSingleDevice={this.checkSingleDevice}
-                labelNormalizedDevices={labelNormalizedDevices}
-              />
-
-              <LabelAddLabelSelect
-                checkAllLabels={this.checkAllLabels}
-                allLabels={allLabels}
-                checkedLabels={checkedLabels}
-                checkSingleLabel={this.checkSingleLabel}
-                currentLabel={label}
-              />
+              <Tabs
+                defaultActiveKey="devices"
+                size="small"
+                onTabClick={tab => this.setState({ tab })}
+                tabPosition="left"
+                style={{ width: '100%', height: 300 }}
+              >
+                <TabPane tab="Devices" key="devices">
+                  <LabelAddDeviceSelect
+                    checkAllDevices={this.checkAllDevices}
+                    allDevices={allDevices}
+                    checkedDevices={checkedDevices}
+                    checkSingleDevice={this.checkSingleDevice}
+                    labelNormalizedDevices={labelNormalizedDevices}
+                  />
+                </TabPane>
+                <TabPane tab="Labels" key="labels">
+                  <LabelAddLabelSelect
+                    checkAllLabels={this.checkAllLabels}
+                    allLabels={allLabels}
+                    checkedLabels={checkedLabels}
+                    checkSingleLabel={this.checkSingleLabel}
+                    currentLabel={label}
+                  />
+                </TabPane>
+              </Tabs>
             </div>
           )
         }

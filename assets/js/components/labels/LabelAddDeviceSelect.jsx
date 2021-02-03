@@ -47,14 +47,19 @@ class LabelAddDeviceSelect extends Component {
     const debouncedSearch = debounce(this.runSearch, 300)
 
     return (
-      <Card title={<Checkbox onChange={e => checkAllDevices(searchDevices)} checked={allDevices.length === Object.keys(checkedDevices).length}>Select All Devices</Checkbox>} size="small" style={{ height: 200 }}>
+      <Card
+        title={<Checkbox onChange={e => checkAllDevices(searchDevices)}
+        checked={allDevices.length === Object.keys(checkedDevices).length}>Select All Devices</Checkbox>}
+        size="small"
+        style={{ height: 300, width: '100%' }}
+      >
         <Input
           placeholder="Search here"
           suffix={<SearchOutlined />}
           onChange={e => debouncedSearch(e.target.value)}
           style={{ width: '100%' }}
         />
-        <div style={{ overflow: 'scroll', height: 102 }}>
+        <div style={{ overflowY: 'scroll', height: 202, width: '100%' }}>
           {
             searchDevices.length === 0 && allDevices.map(d => (
               <div style={{ marginTop: 5 }} key={d.id}>

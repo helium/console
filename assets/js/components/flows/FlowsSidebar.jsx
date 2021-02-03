@@ -75,7 +75,7 @@ export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, 
               ))
             }
             <div>
-              <Text strong>Channels ({unconnectedChannelsNotDraggedIn.length})</Text>
+              <Text strong>Integrations ({unconnectedChannelsNotDraggedIn.length})</Text>
             </div>
             {
               unconnectedChannelsNotDraggedIn.map(node => (
