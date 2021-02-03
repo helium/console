@@ -195,14 +195,14 @@ class ChannelNew extends Component {
 
     return(
       <DashboardLayout
-        title="Add New Integration"
+        title="Add Integration"
         user={this.props.user}
         breadCrumbs={
           <div style={{ marginLeft: 4, paddingBottom: 0 }}>
             <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
             {type ?
-              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Add New Integration&nbsp;&nbsp;/</Text></Link>) :
-              (<Text>&nbsp;&nbsp;Add New Integration</Text>)
+              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Add Integration&nbsp;&nbsp;/</Text></Link>) :
+              (<Text>&nbsp;&nbsp;Add Integration</Text>)
             }
             <Text>&nbsp;&nbsp;{type ? this.getIntegrationType()[0].name : null}</Text>
           </div>

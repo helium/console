@@ -257,7 +257,7 @@ class DeviceIndex extends Component {
           onClick={this.openCreateDeviceModal}
           style={{ borderRadius: 4 }}
         >
-          Add New Device
+          Add Device
         </Button>
       </UserCan>
     );

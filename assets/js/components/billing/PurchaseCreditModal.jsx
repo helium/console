@@ -351,7 +351,7 @@ class PurchaseCreditModal extends Component {
 
         <div>
           <Text strong>
-            {paymentMethods.length > 0 && "...or "}Add New Card
+            {paymentMethods.length > 0 && "...or "}Add Card
           </Text>
           {
             open && <StripeCardElement id="card-element-purchase-flow" />
