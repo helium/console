@@ -36,7 +36,7 @@ class ChannelIndex extends Component {
       <DashboardLayout title="Integrations" user={this.props.user}>
       <p style={{fontSize: 16, marginBottom: 20, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>
         Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.
-        <a href="https://developer.helium.com/console/integrations" target="_blank"> Tell me more about Console Integrations.</a>
+        <a href="https://docs.helium.com/use-the-network/console/integrations/" target="_blank"> Tell me more about Console Integrations.</a>
       </p>
       <div className="flexwrapper">
         <UserCan>

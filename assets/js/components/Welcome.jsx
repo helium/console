@@ -76,7 +76,7 @@ class Welcome extends Component {
             <div className="pod" id="right">
               <CalendarFilled className="bigicon" id="purple" />
               <h2>Developer Resources</h2>
-              <a href="https://developer.helium.com/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
+              <a href="https://docs.helium.com/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
               <a href="https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo" target="_blank"><p><span>Watch our</span> How-to Videos<CaretRightOutlined className="caret" /></p></a>
               <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Discord Channel<CaretRightOutlined className="caret" /></p></a>
               <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<CaretRightOutlined className="caret" /></p></a>

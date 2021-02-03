@@ -150,7 +150,7 @@ class DataCreditsIndex extends Component {
           <div className="explainer">
             <h2>What are Data Credits?</h2>
             <p>Data Credits are used by devices to send data via the Helium Network. The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC). During the Beta, the cost to send packets is 0 DC.</p>
-            <p>More details can be found <a href="https://developer.helium.com/longfi/data-credits" target="_blank"> here.</a></p>
+            <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/data-credits" target="_blank"> here.</a></p>
           </div>
         </div>
         <style jsx>{`
@@ -213,7 +213,7 @@ class DataCreditsIndex extends Component {
     return (
       <div>
         <p className="page-description" style={{ maxWidth: "450px" }}>
-          Data Credits (also known as DCs) are used to pay all transaction fees on the Helium Network. <a href="https://developer.helium.com/longfi/data-credits" target="_blank"> Tell me more about Data Credits.</a>
+          Data Credits (also known as DCs) are used to pay all transaction fees on the Helium Network. <a href="https://docs.helium.com/use-the-network/console/data-credits" target="_blank"> Tell me more about Data Credits.</a>
         </p>
         <Row gutter={16}>
           <Col span={8}>

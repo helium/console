@@ -134,7 +134,7 @@ class ChannelsTable extends Component {
             <div className="message">
               <h1>You have no Integrations added</h1>
               <p>Choose an Integration above to get started.</p>
-              <p>More details about adding Integrations can be found <a href="https://developer.helium.com/console/integrations" target="_blank"> here.</a></p>
+              <p>More details about adding Integrations can be found <a href="https://docs.helium.com/use-the-network/console/integrations/" target="_blank"> here.</a></p>
             </div>
             <style jsx>{`
 
