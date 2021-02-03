@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
+import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
 import { updateEdges } from '../../actions/flows'
@@ -17,10 +18,15 @@ const queryOptions = {
 @graphql(ALL_RESOURCES, queryOptions)
 class FlowsIndex extends Component {
   state = {
-    selectedNode: null
+    selectedNode: null,
+    hasChanges: false,
   }
 
   selectNode = selectedNode => this.setState({ selectedNode })
+
+  setChangesState = hasChanges => {
+    this.setState({ hasChanges })
+  }
 
   submitChanges = (edgesToRemove, edgesToAdd) => {
     const removeEdges =
@@ -234,6 +240,10 @@ class FlowsIndex extends Component {
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
+        <Prompt
+          when={this.state.hasChanges}
+          message='You have unsaved changes, are you sure you want to leave this page?'
+        />
         <FlowsWorkspace
           initialElements={elements}
           selectNode={this.selectNode}
@@ -241,6 +251,8 @@ class FlowsIndex extends Component {
           unconnectedFunctions={unconnectedFunctions}
           unconnectedChannels={unconnectedChannels}
           submitChanges={this.submitChanges}
+          setChangesState={this.setChangesState}
+          hasChanges={this.state.hasChanges}
         />
         {
           false && this.state.selectedNode && (

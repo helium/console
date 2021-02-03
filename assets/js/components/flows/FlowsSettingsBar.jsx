@@ -20,7 +20,7 @@ export default ({ edgesToRemove, edgesToAdd, nodeDroppedIn, resetElementsMap, su
             onClick={resetElementsMap}
             size="small"
           >
-            Clear Changes
+            Undo
           </Button>
           <Button
             onClick={submitChanges}
