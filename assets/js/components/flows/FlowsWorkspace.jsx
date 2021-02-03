@@ -53,7 +53,7 @@ const nodeTypes = {
   debugNode: DebugNode
 };
 
-export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels, submitChanges }) => {
+export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels, submitChanges, setChangesState, hasChanges }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
@@ -67,8 +67,18 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
   const [nodeDroppedIn, updateNodeDroppedIn] = useState(false)
 
   useEffect(() => {
-    setElements(elsMap => originalElementsState)
+    if (!hasChanges) {
+      setElements(elsMap => originalElementsState)
+    }
   }, [initialElements])
+
+  useEffect(() => {
+    const hasChangesNew = Object.keys(edgesToRemove).length > 0 || Object.keys(edgesToAdd).length > 0 || nodeDroppedIn
+    if (hasChanges !== hasChangesNew) {
+      setChangesState(hasChangesNew)
+    }
+  })
+
   // const onElementClick = (e, el) => selectNode(el)
 
   const onDragOver = event => {
