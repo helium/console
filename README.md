@@ -35,11 +35,12 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   ROUTER_SECRETS=[Unix Timestamp:Random 64 char secret key]
   OUI=3
   SELF_HOSTED=true
+  ENV_DOMAIN=[Your host domain]
   AUTH_0_CLIENT_ID=[Client ID under Auth0 app settings]
   AUTH_0_DOMAIN=[Domain under Auth0 app settings]
   AUTH0_BASE_URL=[https:// + Auth0 Domain]
   MAILGUN_API_KEY=[Your Mailgun api key (optional)]
-  SITE_DOMAIN_MAILGUN=[Your host domain (optional)]
+  SITE_DOMAIN_MAILGUN=[Your Mailgun host domain (optional)]
   DATABASE_DB=console
   DATABASE_HOST=postgres
   ```

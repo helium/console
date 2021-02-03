@@ -46,6 +46,9 @@ config :console,
   self_hosted: true
 
 config :console,
+  env_domain: System.get_env("ENV_DOMAIN")
+
+config :console,
   auth0_baseurl: System.get_env("AUTH0_BASE_URL")
 
 config :console,

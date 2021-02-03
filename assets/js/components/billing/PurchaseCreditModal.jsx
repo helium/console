@@ -192,7 +192,7 @@ class PurchaseCreditModal extends Component {
     .then(({ data }) => {
       const qr = {
         "type": "dc_burn",
-        "address": process.env.ENV_DOMAIN == "console" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS,
+        "address": process.env.ENV_DOMAIN == "console.helium.com" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS,
         "amount": this.state.hntToBurn,
         "memo": data.memo
       }
@@ -368,7 +368,7 @@ class PurchaseCreditModal extends Component {
           {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} onComplete={this.getOraclePrice} />}
         </div>
         {this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
-        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={process.env.ENV_DOMAIN == "console" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS} />}
+        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={process.env.ENV_DOMAIN == "console.helium.com" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS} />}
         <div style={{ marginTop: 20 }}>
           <Link to="#" onClick={this.toggleQREntry}>
             <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>Use {!this.state.manualQREntry ? "Helium Wallet CLI Tool" : "Helium App"}</Text>

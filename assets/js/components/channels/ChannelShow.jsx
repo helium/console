@@ -178,7 +178,7 @@ class ChannelShow extends Component {
       <Text>Data failed to load, please reload the page and try again</Text>
     )
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
-    const downlinkUrl = `https://${process.env.ENV_DOMAIN}.helium.com/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+    const downlinkUrl = `https://${window.env_domain || process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
     const { showDownlinkToken } = this.state
 
     return(
