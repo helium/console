@@ -10,11 +10,11 @@ defmodule ConsoleWeb.V1.LabelNotificationWebhooksController do
 
   plug CORSPlug, origin: "*"
 
-  def update(conn, webhook_params = %{ "key" => key, "url" => url, "value" => value, "label_id" => label_id, "notes" => notes }) do
+  def update(conn, webhook_params = %{ "key" => key, "url" => url, "value" => value, "id" => label_id, "notes" => notes }) do
     update(conn, key, url, value, label_id, notes)
   end
 
-  def update(conn, webhook_params = %{ "key" => key, "url" => url, "value" => value, "label_id" => label_id }) do
+  def update(conn, webhook_params = %{ "key" => key, "url" => url, "value" => value, "id" => label_id }) do
     update(conn, key, url, value, label_id, nil)
   end
 

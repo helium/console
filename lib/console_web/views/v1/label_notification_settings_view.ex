@@ -5,7 +5,7 @@ defmodule ConsoleWeb.V1.LabelNotificationSettingsView do
 
   def render("label_notification_settings.json", %{ label_notification_settings: label_notification_settings }) do
     %{
-      setting: label_notification_settings
+      email_setting: label_notification_settings
     }
   end
 end

@@ -15,7 +15,7 @@ defmodule ConsoleWeb.V1LabelNotificationWebhooksControllerTest do
       })
       assert api_key.active == false
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_webhook")
+      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/some_long_id/notification_webhook")
       assert response(resp_conn, 401) == "{\"message\":\"api_key_needs_email_verification\"}"
     end
   end
@@ -30,23 +30,23 @@ defmodule ConsoleWeb.V1LabelNotificationWebhooksControllerTest do
     })
 
     assert_error_sent 500, fn ->
-      build_conn() |> post("/api/v1/label_notification_webhook")
+      build_conn() |> post("/api/v1/labels/some_long_id/notification_webhook")
     end # no api key attached
 
     assert_error_sent 400, fn ->
-      build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_webhook", %{})
+      build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/some_long_id/notification_webhook", %{})
     end # no attrs in body
 
     label_1 = insert(:label)
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_webhook", %{ "key" => "device_stops_transmitting", "label_id" => label_1.id, "value" => "30", "url" => "http://hello.com", "notes" => "hi" })
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_1.id}/notification_webhook", %{ "key" => "device_stops_transmitting", "value" => "30", "url" => "http://hello.com", "notes" => "hi" })
     assert response(resp_conn, 202) # valid with notes field
 
     label_2 = insert(:label)
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_webhook", %{ "key" => "invalid_key", "label_id" => label_2.id, "value" => "30", "url" => "http://hi.com" })
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_2.id}/notification_webhook", %{ "key" => "invalid_key", "value" => "30", "url" => "http://hi.com" })
     assert response(resp_conn, 403) # invalid key not allowed
 
-    label_4 = insert(:label)
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_webhook", %{ "key" => "device_stops_transmitting", "label_id" => label_4.id, "value" => "30", "url" => "http://hello.com" })
+    label_3 = insert(:label)
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_3.id}/notification_webhook", %{ "key" => "device_stops_transmitting", "value" => "30", "url" => "http://hello.com" })
     assert response(resp_conn, 202) # valid without notes field
   end
 end

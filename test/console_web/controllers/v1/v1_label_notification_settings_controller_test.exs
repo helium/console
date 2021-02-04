@@ -15,7 +15,7 @@ defmodule ConsoleWeb.V1LabelNotificationSettingsControllerTest do
       })
       assert api_key.active == false
 
-      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting")
+      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/some_long_id/notification_email")
       assert response(resp_conn, 401) == "{\"message\":\"api_key_needs_email_verification\"}"
     end
   end
@@ -30,22 +30,22 @@ defmodule ConsoleWeb.V1LabelNotificationSettingsControllerTest do
     })
 
     assert_error_sent 500, fn ->
-      build_conn() |> post("/api/v1/label_notification_setting")
+      build_conn() |> post("/api/v1/labels/some_long_id/notification_email")
     end # no api key attached
 
     assert_error_sent 400, fn ->
-      build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{})
+      build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/some_long_id/notification_email", %{})
     end # no attrs in body
 
     label_1 = insert(:label)
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{ "key" => "device_stops_transmitting", "label_id" => label_1.id, "value" => "30", "recipients" => "all" })
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_1.id}/notification_email", %{ "key" => "device_stops_transmitting", "value" => "30", "recipients" => "all" })
     assert response(resp_conn, 202)
 
     label_2 = insert(:label)
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{ "key" => "invalid_key", "label_id" => label_2.id, "value" => "30", "recipients" => "all" })
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_2.id}/notification_email", %{ "key" => "invalid_key", "value" => "30", "recipients" => "all" })
     assert response(resp_conn, 400) # invalid key not allowed
 
-    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/label_notification_setting", %{ "key" => "device_deleted", "label_id" => label_2.id, "value" => "0", "recipients" => "invalid_recipient" })
+    resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels/#{label_2.id}/notification_email", %{ "key" => "device_deleted", "value" => "0", "recipients" => "invalid_recipient" })
     assert response(resp_conn, 400) # invalid recipients not allowed
   end
 end

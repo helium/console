@@ -10,7 +10,7 @@ defmodule ConsoleWeb.V1.LabelNotificationSettingsController do
 
   plug CORSPlug, origin: "*"
 
-  def update(conn, settings_params = %{ "key" => key, "recipients" => recipients, "value" => value, "label_id" => label_id }) do
+  def update(conn, settings_params = %{ "key" => key, "recipients" => recipients, "value" => value, "id" => label_id }) do
     case Labels.get_label!(label_id) do
       nil ->
         {:error, :not_found, "Label not found"}
@@ -26,14 +26,15 @@ defmodule ConsoleWeb.V1.LabelNotificationSettingsController do
             not recipients_ok and not key_ok ->
               {:error, :bad_request, "Recipients must be: \"admin\", \"manager\", \"read\", or \"all\" & key must be: \"device_deleted\", \"device_join_otaa_first_time\", \"device_stops_transmitting\", \"integration_stops_working\", \"integration_receives_first_event\", \"downlink_unsuccessful\", \"integration_with_devices_deleted\", or \"integration_with_devices_updated\""}
           end
-          true -> 
+          true ->
+            params = %{ label_id: label_id, key: key, recipients: recipients, value: value }
             case value do
               "0" -> LabelNotificationSettings.delete_label_notification_setting_by_key_and_label(key, label_id)
-              _ -> LabelNotificationSettings.upsert_label_notification_setting(settings_params)
+              _ -> LabelNotificationSettings.upsert_label_notification_setting(params)
             end
             conn
             |> put_status(:accepted)
-            |> render("label_notification_settings.json", label_notification_settings: settings_params)
+            |> render("label_notification_settings.json", label_notification_settings: params)
         end
     end
   end
