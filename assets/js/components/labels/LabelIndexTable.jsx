@@ -94,7 +94,7 @@ class LabelIndexTable extends Component {
             <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
             {
               record.devices.find(d => moment().utc().local().subtract(1, 'days').isBefore(moment.utc(d.last_connected).local())) &&
-              <Tooltip title='One or more attached devices last connected within the last 24h' placement='right'><StatusIcon style={{ marginLeft: "2px" }} {...this.props} /></Tooltip>
+                <StatusIcon tooltipTitle='One or more attached devices last connected within the last 24h' style={{ marginLeft: "2px" }} {...this.props} />
             }
           </React.Fragment>
         )

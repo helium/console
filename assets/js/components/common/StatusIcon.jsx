@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 const StatusSvg = () => (
   <svg height="11" width="10">
@@ -7,4 +8,8 @@ const StatusSvg = () => (
   </svg> 
 );
 
-export const StatusIcon = props => <Icon component={StatusSvg} {...props} />;
+export const StatusIcon = props => (
+  <Tooltip title={props.tooltipTitle} placement='right'>
+    <Icon component={StatusSvg} {...props} />
+  </Tooltip>
+);
