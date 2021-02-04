@@ -82,13 +82,13 @@ class MQTTForm extends Component {
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
           <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text>Uplink Topic</Text>
-            <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
+            <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_name, device_eui, app_eui, and organization_id.'>
               <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
             </Tooltip>
           </Col>
           <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text>Downlink Topic</Text>
-            <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_eui, app_eui, and organization_id.'>
+            <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_name, device_eui, app_eui, and organization_id.'>
               <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
             </Tooltip>
           </Col>
