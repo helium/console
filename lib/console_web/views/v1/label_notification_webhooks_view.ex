@@ -5,7 +5,7 @@ defmodule ConsoleWeb.V1.LabelNotificationWebhooksView do
 
   def render("label_notification_webhooks.json", %{ label_notification_webhooks: label_notification_webhooks }) do
     %{
-      webhook: label_notification_webhooks
+      webhook_setting: label_notification_webhooks
     }
   end
 end
