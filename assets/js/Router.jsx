@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Spin } from 'antd';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/client';
 
 // Routes
 import { connect } from 'react-redux';
@@ -13,22 +13,22 @@ import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx';
-import Profile from './components/profile/Profile.jsx';
-import DeviceIndex from './components/devices/DeviceIndex';
-import DeviceShow from './components/devices/DeviceShow';
-import ChannelIndex from './components/channels/ChannelIndex';
-import ChannelShow from './components/channels/ChannelShow';
-import ChannelNew from './components/channels/ChannelNew';
-import UserIndex from './components/organizations/UserIndex';
-import OrganizationIndex from './components/organizations/OrganizationIndex';
-import LabelIndex from './components/labels/LabelIndex';
-import LabelShow from './components/labels/LabelShow';
-import DataCreditsIndex from './components/billing/DataCreditsIndex';
+// import Profile from './components/profile/Profile.jsx';
+// import DeviceIndex from './components/devices/DeviceIndex';
+// import DeviceShow from './components/devices/DeviceShow';
+// import ChannelIndex from './components/channels/ChannelIndex';
+// import ChannelShow from './components/channels/ChannelShow';
+// import ChannelNew from './components/channels/ChannelNew';
+// import UserIndex from './components/organizations/UserIndex';
+// import OrganizationIndex from './components/organizations/OrganizationIndex';
+// import LabelIndex from './components/labels/LabelIndex';
+// import LabelShow from './components/labels/LabelShow';
+// import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
-import FunctionIndex from './components/functions/FunctionIndex';
-import FunctionNew from './components/functions/FunctionNew';
-import FunctionShow from './components/functions/FunctionShow';
-import FlowsIndex from './components/flows/FlowsIndex';
+// import FunctionIndex from './components/functions/FunctionIndex';
+// import FunctionNew from './components/functions/FunctionNew';
+// import FunctionShow from './components/functions/FunctionShow';
+// import FlowsIndex from './components/flows/FlowsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
 import { fetchOrganization } from './actions/organization';
@@ -99,22 +99,8 @@ const Router = (props) => {
                     apolloClient &&
                     <ApolloProvider client={apolloClient}>
                       <Switch>
-                        <Route path="/profile" render={props => <Profile user={user} {...props}/>}/>
                         <Route exact path="/devices" render={props => <DeviceIndex user={user} {...props}/>} />
-                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
-                        <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
-                        <Route path="/labels/:id" component={props => <LabelShow user={user} {...props}/>} />
-                        <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
-                        <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
-                        <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
-                        <Route exact path="/users" render={props => <UserIndex user={user} {...props}/>}/>
-                        <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
-                        <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
-                        <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
-                        <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
-                        <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props} />} />
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
-                        <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                       </Switch>
                     </ApolloProvider>
                   )

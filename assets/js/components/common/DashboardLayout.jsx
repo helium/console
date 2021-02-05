@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import TopBar from './TopBar'
+// import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
 import ContentLayout from './ContentLayout'
 import { Layout, Tag, Popover, Button } from 'antd';
@@ -21,7 +21,6 @@ class DashboardLayout extends Component {
     return (
       <Layout style={{height: '100%', width: '100%'}}>
         <Header>
-          <TopBar user={user} showNav={this.state.showNav} toggleNav={this.toggleNav} />
         </Header>
 
         <Layout style={{ height: 'calc(100vh - 64px)' }}>
