@@ -8,19 +8,10 @@ import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
 import { GENERAL_SEARCH } from '../../graphql/search'
 import { SearchOutlined } from '@ant-design/icons';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import _JSXStyle from "styled-jsx/style"
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
 @withRouter
-@graphql(GENERAL_SEARCH, queryOptions)
 class SearchBar extends Component {
   state = {
     query: "",
@@ -67,25 +58,22 @@ class SearchBar extends Component {
     })
 
     // fire off graphql query to get searchResults
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.searchQuery
 
     fetchMore({
-      variables: { query: newQuery },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        // update searchResults state
-        const { searchResults } = fetchMoreResult
-        const { pageResults } = this.state
-        const flatResults = searchResults.concat(pageResults)
-        const selectedResult = flatResults[0]
+      variables: { query: newQuery }
+    })
+    .then(({ data }) => {
+      const { searchResults } = data
+      const { pageResults } = this.state
+      const flatResults = searchResults.concat(pageResults)
+      const selectedResult = flatResults[0]
 
-        this.setState({
-          searchResults,
-          flatResults,
-          selectedResult
-        })
-
-        return fetchMoreResult
-      }
+      this.setState({
+        searchResults,
+        flatResults,
+        selectedResult
+      })
     })
   }
 
@@ -177,8 +165,7 @@ class SearchBar extends Component {
   }
 
   render() {
-    const { query, open, selectedResult, pageResults } = this.state
-    const { searchResults } = this.props.data
+    const { query, open, selectedResult, pageResults, searchResults } = this.state
 
     return (
       <div style={{display: 'inline-block'}}>
@@ -213,4 +200,4 @@ class SearchBar extends Component {
   }
 }
 
-export default SearchBar
+export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'cache-and-network', variables: { query: "" }, name: 'searchQuery' }))

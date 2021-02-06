@@ -9,7 +9,7 @@ import numeral from 'numeral'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
-// import SearchBar from '../search/SearchBar'
+import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
@@ -22,15 +22,6 @@ import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
 import OrganizationMenu from '../organizations/OrganizationMenu';
 import NewOrganizationModal from '../organizations/NewOrganizationModal';
-
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.currentOrganizationId
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
 
 class TopBar extends Component {
   state = {
@@ -123,7 +114,7 @@ class TopBar extends Component {
             </Link>
           </MediaQuery>
           {
-
+            currentOrganizationName && <SearchBar />
           }
           {
             organization && (
