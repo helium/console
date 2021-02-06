@@ -1,8 +1,9 @@
 import React from 'react'
 import { useQuery } from '@apollo/client';
 
-const withGql = (Component, query, queryOptions) => {
+const withGql = (Component, query, queryOptionsFunc) => {
   return (props) => {
+    const queryOptions = queryOptionsFunc(props)
     const queryProps = useQuery(query, queryOptions)
 
     return (

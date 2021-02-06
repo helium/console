@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
@@ -9,7 +9,7 @@ import numeral from 'numeral'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
-import SearchBar from '../search/SearchBar'
+// import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
@@ -32,9 +32,6 @@ const queryOptions = {
   })
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-@graphql(ORGANIZATION_SHOW_DC, {...queryOptions, name: 'orgShowQuery'})
-@graphql(ALL_ORGANIZATIONS, {...queryOptions, name: 'orgsQuery'})
 class TopBar extends Component {
   state = {
     userMenuVisible: false,
@@ -43,15 +40,15 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.orgsQuery;
-
-    subscribeToMore({
-      document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        this.handleSubscriptionAdded();
-      }
-    })
+    // const { subscribeToMore } = this.props.orgsQuery;
+    //
+    // subscribeToMore({
+    //   document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
+    //   updateQuery: (prev, { subscriptionData }) => {
+    //     if (!subscriptionData.data) return prev;
+    //     this.handleSubscriptionAdded();
+    //   }
+    // })
   }
 
   handleSubscriptionAdded = () => {
@@ -91,11 +88,13 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, user } = this.props;
+    const { logOut, currentOrganizationName, user, orgsQuery, orgsShowQuery } = this.props;
     const { showOrganizationModal } = this.state
-    const { organization } = this.props.orgShowQuery;
-    const { allOrganizations } = this.props.orgsQuery;
-    const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id);
+
+    if (orgsQuery.loading || orgsShowQuery.loading) return <div />
+    const { allOrganizations } = orgsQuery.data
+    const { organization } = orgsShowQuery.data
+    const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id)
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -124,7 +123,7 @@ class TopBar extends Component {
             </Link>
           </MediaQuery>
           {
-            currentOrganizationName && <SearchBar />
+
           }
           {
             organization && (
@@ -208,4 +207,10 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logOut, push, switchOrganization }, dispatch);
 }
 
-export default TopBar
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(
+    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgsShowQuery' })),
+    ALL_ORGANIZATIONS,
+    props => ({ fetchPolicy: 'cache-and-network', name: 'orgsQuery' })
+  )
+)

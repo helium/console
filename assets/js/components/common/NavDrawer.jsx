@@ -132,4 +132,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ push }, dispatch)
 }
 
-export default withGql(NavDrawer, MENU_LABELS, { fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' })
+export default withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' }))
