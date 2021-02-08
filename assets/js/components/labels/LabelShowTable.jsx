@@ -11,7 +11,8 @@ import { redForTablesDeleteText } from '../../util/colors'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
-import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
+import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
+import { StatusIcon } from '../common/StatusIcon'
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
@@ -114,7 +115,15 @@ class LabelShowTable extends Component {
         title: 'Device Name',
         dataIndex: 'name',
         sorter: true,
-        render: (text, record) => <Link to="#">{text}</Link>
+        render: (text, record) => (
+          <Link to={"#"}>
+            {text}
+            {
+              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) && 
+                <StatusIcon tooltipTitle='Last connected within the last 24h' style={{ marginLeft: "4px" }} {...this.props} />
+            }
+          </Link>
+        )
       },
       {
         title: 'Labels',

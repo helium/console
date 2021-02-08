@@ -11,8 +11,9 @@ import { redForTablesDeleteText } from '../../util/colors'
 import DevicesImg from '../../../img/devices.svg'
 
 import classNames from 'classnames';
-import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox } from 'antd';
+import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { StatusIcon } from '../common/StatusIcon'
 const { Text } = Typography
 const { Option } = Select
 
@@ -105,7 +106,15 @@ class DeviceIndexTable extends Component {
         title: 'Device Name',
         dataIndex: 'name',
         sorter: true,
-        render: (text, record) => <Link to={`/devices/${record.id}`}>{text}</Link>
+        render: (text, record) => (
+          <Link className={record.labels.length === 0 && 'dull'} to={`/devices/${record.id}`}>
+            {text} 
+            {
+              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) && 
+                <StatusIcon style={{ marginLeft: "4px" }} tooltipTitle='Last connected within the last 24h' {...this.props} />
+            }
+          </Link>
+        )
       },
       {
         title: 'Device EUI',
@@ -119,7 +128,7 @@ class DeviceIndexTable extends Component {
         render: (labels, record) => {
           return <React.Fragment>
             {
-              labels.map(l => (
+              labels.length > 0 ? labels.map(l => (
                 <UserCan
                   key={l.id}
                   alternate={
@@ -153,7 +162,7 @@ class DeviceIndexTable extends Component {
                     }
                   />
                 </UserCan>
-              ))
+              )) : <Text type="danger">None</Text>
             }
           </React.Fragment>
         }

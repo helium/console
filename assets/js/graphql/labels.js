@@ -11,7 +11,8 @@ export const LABEL_FRAGMENT = gql`
     adr_allowed,
     devices {
       name,
-      id
+      id,
+      last_connected
     }
     channels {
       name,
