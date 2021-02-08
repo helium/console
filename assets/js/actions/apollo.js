@@ -1,12 +1,9 @@
 // GraphQL
-import { ApolloClient, ApolloLink, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
-
-import { hasSubscription } from "@jumpn/utils-graphql";
-// import SocketLink from '../util/socketLink'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
 
@@ -59,18 +56,10 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
       }
     })
 
-    const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
-    // const socketLink = new SocketLink(getAuthToken, currentOrganizationId);
-    // const connectedSocket = await socketLink.connect();
-    // connectedSocket.disconnect()
-
-    // const link = new ApolloLink.split(
-    //   operation => hasSubscription(operation.query),
-    //   authHttpLink
-    // )
+    const link = authErrorLink.concat(authLink.concat(httpLink))
 
     const apolloClient = new ApolloClient({
-      link: authHttpLink,
+      link,
       cache: new InMemoryCache(),
     })
     return dispatch(createdApolloClient(apolloClient));

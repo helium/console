@@ -2,30 +2,6 @@
 # yarn lockfile v1
 
 
-"@absinthe/socket-apollo-link@^0.1.11":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@absinthe/socket-apollo-link/-/socket-apollo-link-0.1.11.tgz#8dde213db3cf6e73419693c409ba00c96214a0e6"
-  integrity sha1-jd4hPbPPbnNBlpPECboAyWIUoOY=
-  dependencies:
-    "@absinthe/socket" "0.1.10"
-    apollo-link "1.0.0"
-    babel-runtime "6.26.0"
-    flow-static-land "0.2.8"
-    graphql "0.11.7"
-    zen-observable "0.6.0"
-
-"@absinthe/socket@0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@absinthe/socket/-/socket-0.1.10.tgz#657f7b32cd6161bdc20b28c1377dc3596ea25432"
-  integrity sha1-ZX97Ms1hYb3CCyjBN33DWW6iVDI=
-  dependencies:
-    "@jumpn/utils-array" "0.3.4"
-    "@jumpn/utils-composite" "0.5.0"
-    "@jumpn/utils-graphql" "0.5.3"
-    babel-runtime "6.26.0"
-    phoenix "1.3.0"
-    zen-observable "0.6.0"
-
 "@amplitude/ua-parser-js@0.7.20":
   version "0.7.20"
   resolved "https://registry.yarnpkg.com/@amplitude/ua-parser-js/-/ua-parser-js-0.7.20.tgz#15652f8cc4fee72d962a5f2101cfde6f3c8e87b8"
@@ -133,10 +109,14 @@
   integrity sha512-np/lG3uARFybkoHokJUmf1QfEvRVCPbmQeUQpKow5cQ3xWrV9i3rUHodKDJPQfTVX61qKi+UdYk8kik84n7XOw==
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.8.4":
 =======
 "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.8.4":
 >>>>>>> Remove routes for testing
+=======
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.8.4":
+>>>>>>> Add pckage for socket
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.13.tgz#0a21452352b02542db0ffb928ac2d3ca7cb6d66d"
   integrity sha512-8+3UMPBrjFa/6TtKi/7sehPKqfAm4g6K+YQjyyFOLUTxzOngcRZTlAVY8sc2CORJYqdHQY8gRPHmn+qo15rCBw==
@@ -187,34 +167,6 @@
     update-notifier "^2.2.0"
     yargs "^8.0.2"
 
-"@jumpn/utils-array@0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@jumpn/utils-array/-/utils-array-0.3.4.tgz#fb4310120108f659dab54075ef93abc56137de5e"
-  integrity sha1-+0MQEgEI9lnatUB175OrxWE33l4=
-  dependencies:
-    babel-polyfill "6.26.0"
-    babel-runtime "6.26.0"
-    flow-static-land "0.2.7"
-
-"@jumpn/utils-composite@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@jumpn/utils-composite/-/utils-composite-0.5.0.tgz#83580d470d0042f756889d2d057c2675fa1ebac6"
-  integrity sha512-n+H6hh95w4RKLdg0cPaguauqFg9FTd2uxKZ5Jf5ZVIBULEMyT0wExGKkIePnL7d6d2YCiO6i3z4f/SAc5uc8cg==
-  dependencies:
-    "@jumpn/utils-array" "0.3.4"
-    babel-polyfill "6.26.0"
-    babel-runtime "6.26.0"
-    fast-deep-equal "1.0.0"
-    flow-static-land "0.2.8"
-
-"@jumpn/utils-graphql@0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@jumpn/utils-graphql/-/utils-graphql-0.5.3.tgz#a7b41b0bec34d8dc1873981be0a718190673f430"
-  integrity sha1-p7QbC+w02NwYc5gb4KcYGQZz9DA=
-  dependencies:
-    babel-runtime "6.26.0"
-    graphql "0.11.7"
-
 "@mapbox/geojson-rewind@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@mapbox/geojson-rewind/-/geojson-rewind-0.5.0.tgz#91f0ad56008c120caa19414b644d741249f4f560"
@@ -245,6 +197,7 @@
 
 "@mapbox/tiny-sdf@^1.1.1":
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@mapbox/tiny-sdf/-/tiny-sdf-1.2.3.tgz#74807b3eab60ca8f9cd2de8238c27928f8f31677"
   integrity sha512-UH233on+8Okmj/JJFcxyc+HMSzKQcSFiiT339lFf2BMGs0+iEbobX7+GESeKVkPVtTFoh54LuNa1mC8N2ucM2w==
@@ -253,6 +206,11 @@
   resolved "https://registry.yarnpkg.com/@mapbox/tiny-sdf/-/tiny-sdf-1.2.2.tgz#536417dd04cd6af4d46eb0e65f932941a7540be1"
   integrity sha512-GeJdumh5Do1JvnE2QbbLixZmJg6CzOfpzcAuS+qZadWK1Gj+yY/mj7IOVlgXCBg/yDqDmitGwSius+rrTpm8RA==
 >>>>>>> Remove routes for testing
+=======
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@mapbox/tiny-sdf/-/tiny-sdf-1.2.3.tgz#74807b3eab60ca8f9cd2de8238c27928f8f31677"
+  integrity sha512-UH233on+8Okmj/JJFcxyc+HMSzKQcSFiiT339lFf2BMGs0+iEbobX7+GESeKVkPVtTFoh54LuNa1mC8N2ucM2w==
+>>>>>>> Add pckage for socket
 
 "@mapbox/unitbezier@^0.0.0":
   version "0.0.0"
@@ -689,19 +647,6 @@ anymatch@~3.1.1:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
-
-apollo-link@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/apollo-link/-/apollo-link-1.0.0.tgz#3d334285789c217f95712ebce434d56ce7f3e991"
-  integrity sha512-tlbNNokM4v6I6PAQ19dV8hhykqkuqgT00DgH6b5I0dTTiJL7i4bNLVm+X6Si/cqu66akvjuRQsqUgjH3Du0Cgw==
-  dependencies:
-    apollo-utilities "^0.2.0-beta.0"
-    zen-observable "^0.6.0"
-
-apollo-utilities@^0.2.0-beta.0:
-  version "0.2.0-rc.3"
-  resolved "https://registry.yarnpkg.com/apollo-utilities/-/apollo-utilities-0.2.0-rc.3.tgz#7bd93be0f587f20c5b46e21880272e305759fdc2"
-  integrity sha512-UM5ok/DUKSgh/3T302hoPqCAhqfXdvBaQKOQJb0QUuX3qu2qVKzvwFsv/C3zWYySeCJTP9EoV2LtooIJOhSL4g==
 
 aproba@^1.0.3, aproba@^1.1.1, aproba@^1.1.2:
   version "1.2.0"
@@ -1369,15 +1314,6 @@ babel-plugin-transform-strict-mode@^6.24.1:
     babel-runtime "^6.22.0"
     babel-types "^6.24.1"
 
-babel-polyfill@6.26.0:
-  version "6.26.0"
-  resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
-  integrity sha1-N5k3q8Z9eJWXCtxiHyhM2WbPIVM=
-  dependencies:
-    babel-runtime "^6.26.0"
-    core-js "^2.5.0"
-    regenerator-runtime "^0.10.5"
-
 babel-preset-env@^1.6.1:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/babel-preset-env/-/babel-preset-env-1.7.0.tgz#dea79fa4ebeb883cd35dab07e260c1c9c04df77a"
@@ -1446,7 +1382,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@6.26.0, babel-runtime@6.x, babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
+babel-runtime@6.x, babel-runtime@^6.18.0, babel-runtime@^6.2.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
@@ -2486,7 +2422,7 @@ debug@^3.1.0:
   dependencies:
     ms "^2.1.1"
 
-debuglog@*, debuglog@^1.0.1:
+debuglog@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debuglog/-/debuglog-1.0.1.tgz#aa24ffb9ac3df9a2351837cfb2d279360cd78492"
   integrity sha1-qiT/uaw9+aI1GDfPstJ5NgzXhJI=
@@ -2743,6 +2679,7 @@ editor@~1.0.0:
 
 electron-to-chromium@^1.3.47:
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "1.3.663"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.663.tgz#dd54adfd8d7f0e01b80d236c6e232efbaa0c686c"
   integrity sha512-xkVkzHj6k3oRRGlmdgUCCLSLhtFYHDCTH7SeK+LJdJjnsLcrdbpr8EYmfMQhez3V/KPO5UScSpzQ0feYX6Qoyw==
@@ -2751,6 +2688,11 @@ electron-to-chromium@^1.3.47:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.655.tgz#e5ccf5c445ca131fea9d0698d08cc9c8ca01fa81"
   integrity sha512-b+V6KreLR1SvNBY1WOZWsm5Dc/ZC/B5/E1m5TpUrWnEwrd1pJgKgsrLYtQYTDgdTj1/QoZE7qMPIeJ6hZwpsVA==
 >>>>>>> Remove routes for testing
+=======
+  version "1.3.657"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.657.tgz#a9c307f2612681245738bb8d36d997cbb568d481"
+  integrity sha512-/9ROOyvEflEbaZFUeGofD+Tqs/WynbSTbNgNF+/TJJxH1ePD/e6VjZlDJpW3FFFd3nj5l3Hd8ki2vRwy+gyRFw==
+>>>>>>> Add pckage for socket
 
 elliptic@^6.5.3:
   version "6.5.4"
@@ -3020,11 +2962,6 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fast-deep-equal@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.0.0.tgz#96256a3bc975595eb36d82e9929d060d893439ff"
-  integrity sha1-liVqO8l1WV6zbYLpkp0GDYk0Of8=
-
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
@@ -3144,16 +3081,6 @@ findup-sync@^3.0.0:
     is-glob "^4.0.0"
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
-
-flow-static-land@0.2.7:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/flow-static-land/-/flow-static-land-0.2.7.tgz#937f9dcb2780889a609155e5d1a55a993bc2ffb3"
-  integrity sha1-k3+dyyeAiJpgkVXl0aVamTvC/7M=
-
-flow-static-land@0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/flow-static-land/-/flow-static-land-0.2.8.tgz#49617e531396928bae6eb5d8ba32e7071637e5b9"
-  integrity sha512-pOZFExu2rbscCgcEo7nL7FNhBubMi18dn1Un4lm8LOmQkYhgsHLsrBGMWmuJXRWcYMrOC7I/bPsiqqVjdD3K1g==
 
 flush-write-stream@^1.0.0:
   version "1.1.1"
@@ -3490,6 +3417,7 @@ graphql-tag@^2.11.0:
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.11.0.tgz#1deb53a01c46a7eb401d6cb59dec86fa1cccbffd"
   integrity sha512-VmsD5pJqWJnQZMUeRwrDhfgoyqcfwEkvtpANqcoUG8/tOLkwNgU9mzub/Mc78OJMhHjx7gfAMTxzdG43VGg3bA==
 
+<<<<<<< HEAD
 graphql@0.11.7:
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.7.tgz#e5abaa9cb7b7cccb84e9f0836bf4370d268750c6"
@@ -3500,6 +3428,8 @@ graphql@0.11.7:
 <<<<<<< HEAD
 graphql@^15.4.0:
 =======
+=======
+>>>>>>> Add pckage for socket
 graphql@^15.5.0:
 >>>>>>> Remove routes for testing
   version "15.5.0"
@@ -3780,7 +3710,7 @@ import-local@^2.0.0:
     pkg-dir "^3.0.0"
     resolve-cwd "^2.0.0"
 
-imurmurhash@*, imurmurhash@^0.1.4:
+imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
@@ -4152,11 +4082,6 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-iterall@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.1.3.tgz#1cbbff96204056dde6656e2ed2e2226d0e6d72c9"
-  integrity sha512-Cu/kb+4HiNSejAPhSaN1VukdNTTi/r4/e+yykqjlG/IW+1gZH5b4+Bq3whDX4tvbYugta3r8KTMUiqT3fIGxuQ==
-
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -4488,11 +4413,6 @@ lockfile@^1.0.4:
   dependencies:
     signal-exit "^3.0.2"
 
-lodash._baseindexof@*:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/lodash._baseindexof/-/lodash._baseindexof-3.1.0.tgz#fe52b53a1c6761e42618d654e4a25789ed61822c"
-  integrity sha1-/lK1OhxnYeQmGNZU5KJXie1hgiw=
-
 lodash._baseuniq@~4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash._baseuniq/-/lodash._baseuniq-4.6.0.tgz#0ebb44e456814af7905c6212fa2c9b2d51b841e8"
@@ -4501,32 +4421,10 @@ lodash._baseuniq@~4.6.0:
     lodash._createset "~4.0.0"
     lodash._root "~3.0.0"
 
-lodash._bindcallback@*:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/lodash._bindcallback/-/lodash._bindcallback-3.0.1.tgz#e531c27644cf8b57a99e17ed95b35c748789392e"
-  integrity sha1-5THCdkTPi1epnhftlbNcdIeJOS4=
-
-lodash._cacheindexof@*:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/lodash._cacheindexof/-/lodash._cacheindexof-3.0.2.tgz#3dc69ac82498d2ee5e3ce56091bafd2adc7bde92"
-  integrity sha1-PcaayCSY0u5ePOVgkbr9Ktx73pI=
-
-lodash._createcache@*:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/lodash._createcache/-/lodash._createcache-3.1.2.tgz#56d6a064017625e79ebca6b8018e17440bdcf093"
-  integrity sha1-VtagZAF2JeeevKa4AY4XRAvc8JM=
-  dependencies:
-    lodash._getnative "^3.0.0"
-
 lodash._createset@~4.0.0:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/lodash._createset/-/lodash._createset-4.0.3.tgz#0f4659fbb09d75194fa9e2b88a6644d363c9fe26"
   integrity sha1-D0ZZ+7CddRlPqeK4imZE02PJ/iY=
-
-lodash._getnative@*, lodash._getnative@^3.0.0:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/lodash._getnative/-/lodash._getnative-3.9.1.tgz#570bc7dede46d61cdcde687d65d3eecbaa3aaff5"
-  integrity sha1-VwvH3t5G1hzc3mh9ZdPuy6o6r/U=
 
 lodash._root@~3.0.0:
   version "3.0.1"
@@ -4542,11 +4440,6 @@ lodash.clonedeep@^4.5.0, lodash.clonedeep@~4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
   integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
-
-lodash.restparam@*:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
-  integrity sha1-k2pOMJ7zMKdkXtQUWYbIWuWyCAU=
 
 lodash.union@~4.6.0:
   version "4.6.0"
@@ -5636,11 +5529,6 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-phoenix@1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.3.0.tgz#1df2c27f986ee295e37c9983ec28ebac1d7f4a3e"
-  integrity sha512-g1I6kJKTQx7wGsJCc2b1RfXeHUfITTV5kdqJPFoqmrGDfFEKQIrQkkBtv8QeJ0s1iN9+vvryrQLv+4SfmH/wqg==
-
 "phoenix@file:../deps/phoenix":
   version "1.5.7"
 
@@ -6126,6 +6014,7 @@ rc-form@^2.4.10:
 
 rc-image@~5.2.0:
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-5.2.2.tgz#08ab21ffce90563cc1459aed14d940d638189f15"
   integrity sha512-Zv8Qyftw5P2nbqaueUOX1Fq1c5XlY/hTEWzUxINQh+qt/K1e5vF5sriTy1KH9B6GY4LVwIk4oHweDJemCWYDcw==
@@ -6134,6 +6023,11 @@ rc-image@~5.2.0:
   resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-5.2.1.tgz#a4114eb42f558d7b2e1ef2acae25f56ed219bb6d"
   integrity sha512-vcFT6XCn7vtlm1qLWjJugHlW4lmmIudy7Skn2Uqf4FD0keaq924QfFaYbH4ZbrmmK15jbExKTAsFQ5zMkkqjJg==
 >>>>>>> Remove routes for testing
+=======
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-5.2.2.tgz#08ab21ffce90563cc1459aed14d940d638189f15"
+  integrity sha512-Zv8Qyftw5P2nbqaueUOX1Fq1c5XlY/hTEWzUxINQh+qt/K1e5vF5sriTy1KH9B6GY4LVwIk4oHweDJemCWYDcw==
+>>>>>>> Add pckage for socket
   dependencies:
     "@babel/runtime" "^7.11.2"
     classnames "^2.2.6"
@@ -6213,9 +6107,15 @@ rc-pagination@~3.1.2:
     classnames "^2.2.1"
 
 rc-picker@~2.5.1:
+<<<<<<< HEAD
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.5.5.tgz#ae5b0077746ed7843081eca8d797e788212a82be"
   integrity sha512-HZDBDDDqCkw7RiFQI9yxuQb1G9/z2KS66+0moJ3jSNVWTGZwTGa8bmdEabds7WtEZEHPDH5EGlWAJU72iimxUg==
+=======
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/rc-picker/-/rc-picker-2.5.4.tgz#341cc78796605d2667b6b47a0c943ed5f00400bc"
+  integrity sha512-H2G5armWMWUWbCt1jEdJQkkUvrh3IzC2Sd9Wb/T6AtMI3mjyd/TQEe68pWozS+NGA/ElDO9PiFiZjiHDep6NAQ==
+>>>>>>> Add pckage for socket
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.1"
@@ -6254,6 +6154,7 @@ rc-resize-observer@^1.0.0:
 
 rc-select@^12.0.0, rc-select@~12.1.0:
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "12.1.3"
   resolved "https://registry.yarnpkg.com/rc-select/-/rc-select-12.1.3.tgz#3d1715ba24313951f184b446ac352cfc2d548a20"
   integrity sha512-pMJ27VQRh5QbyGLSE+by4tORYucNFbZxON+Ywj81qjXAGMjvhMcOOvlv1RZRNdnZxaMwH//3iDPOf80b0AJxZg==
@@ -6262,6 +6163,11 @@ rc-select@^12.0.0, rc-select@~12.1.0:
   resolved "https://registry.yarnpkg.com/rc-select/-/rc-select-12.1.2.tgz#7f5f06838b8a8c86516acb66ead26adbc55fbc16"
   integrity sha512-WEcqj4ljz5kgp/yPN4RDQEZRvjGkwdk1PugpFrtd6tY+YqwKZs7vSZt6xphVIvWlmtwmZMe7e9G1U8XykUN0+g==
 >>>>>>> Remove routes for testing
+=======
+  version "12.1.3"
+  resolved "https://registry.yarnpkg.com/rc-select/-/rc-select-12.1.3.tgz#3d1715ba24313951f184b446ac352cfc2d548a20"
+  integrity sha512-pMJ27VQRh5QbyGLSE+by4tORYucNFbZxON+Ywj81qjXAGMjvhMcOOvlv1RZRNdnZxaMwH//3iDPOf80b0AJxZg==
+>>>>>>> Add pckage for socket
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
@@ -6465,6 +6371,7 @@ react-draggable@^4.4.3:
 
 react-flow-renderer@^8.3.2:
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "8.8.0"
   resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-8.8.0.tgz#30133c307273580575c1e6f8918e787eff8f03cb"
   integrity sha512-j2V95KJ4D0JSbTOENCYCYle4bKfXdmYEmHTkANIGTr+4+dKxjUS+liFCHXPHJnJ4FQb0F0+jR6cv6ELhgM3eWg==
@@ -6473,6 +6380,11 @@ react-flow-renderer@^8.3.2:
   resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-8.7.0.tgz#9d3cf39ec2dc1b277a4c0098eb1f015f39ee7a7c"
   integrity sha512-FtGo7LxUxC2gMHz86RRv/pMCGPj9FQp8pqEZpBGUEJzrlaS1mFiFSZnpqI4qjLnAt4uxtyfzbS8DOSWTy/6Utw==
 >>>>>>> Remove routes for testing
+=======
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-8.8.0.tgz#30133c307273580575c1e6f8918e787eff8f03cb"
+  integrity sha512-j2V95KJ4D0JSbTOENCYCYle4bKfXdmYEmHTkANIGTr+4+dKxjUS+liFCHXPHJnJ4FQb0F0+jR6cv6ELhgM3eWg==
+>>>>>>> Add pckage for socket
   dependencies:
     "@babel/runtime" "^7.12.13"
     classcat "^4.1.0"
@@ -6732,11 +6644,6 @@ regenerate@^1.2.1:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
-
-regenerator-runtime@^0.10.5:
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
-  integrity sha1-M2w+/BIgrc7dosn6tntaeVWjNlg=
 
 regenerator-runtime@^0.11.0:
   version "0.11.1"
@@ -7468,6 +7375,7 @@ style-loader@^0.23.1:
 
 styled-jsx@^3.3.2:
 <<<<<<< HEAD
+<<<<<<< HEAD
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/styled-jsx/-/styled-jsx-3.4.2.tgz#40b90ab433e8e26f57919b5333d8427340521096"
   integrity sha512-SCEwcnnRHlv0iJ56T/ke1pKnkMiIHPvIPm18kyne9Hirug8RV5p9+tjuQB8GDr6UXN+GH5gzPOqnYhNnNV0jaw==
@@ -7476,6 +7384,11 @@ styled-jsx@^3.3.2:
   resolved "https://registry.yarnpkg.com/styled-jsx/-/styled-jsx-3.4.1.tgz#5b12c5e841cec3d7310f5ab6b94c3c8df665caf5"
   integrity sha512-Jl1pcQVTnHdsfePHxZ0GgxxgU3+KgiDKj9QTp2vZ0eifg2cgNV5RFdgfxcXvJyspsynUhF32opNZ4jmM1EIROA==
 >>>>>>> Remove routes for testing
+=======
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/styled-jsx/-/styled-jsx-3.4.2.tgz#40b90ab433e8e26f57919b5333d8427340521096"
+  integrity sha512-SCEwcnnRHlv0iJ56T/ke1pKnkMiIHPvIPm18kyne9Hirug8RV5p9+tjuQB8GDr6UXN+GH5gzPOqnYhNnNV0jaw==
+>>>>>>> Add pckage for socket
   dependencies:
     "@babel/helper-module-imports" "7.12.5"
     "@babel/types" "7.8.3"
@@ -8213,16 +8126,6 @@ yargs@^8.0.2:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^7.0.0"
-
-zen-observable@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.6.0.tgz#8a6157ed15348d185d948cfc4a59d90a2c0f70ee"
-  integrity sha512-G5v4eFZ1+qJC9U3iyldcc7OLsYfFf6/+/vywU3acbq0qq1PdFXsyfqtOUaQSTwhdbejO7AQWil3GzHxYlMchIg==
-
-zen-observable@^0.6.0:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.6.1.tgz#01dbed3bc8d02cbe9ee1112c83e04c807f647244"
-  integrity sha512-DKjFTL7siVLIUMZOFZ0alqMEdTsXPUxoCZzrvB2tdWEVN/6606Qh1nCfSTCAOZMrtcPzzFI3BXmwBKLAew52NA==
 
 zen-observable@^0.8.14:
   version "0.8.15"

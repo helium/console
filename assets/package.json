@@ -7,7 +7,6 @@
     "watch": "webpack --mode development --watch-stdin"
   },
   "dependencies": {
-    "@absinthe/socket-apollo-link": "^0.1.11",
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.3.0",
     "@apollo/client": "^3.3.8",
