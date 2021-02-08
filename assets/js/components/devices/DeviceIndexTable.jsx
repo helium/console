@@ -128,7 +128,7 @@ class DeviceIndexTable extends Component {
         render: (labels, record) => {
           return <React.Fragment>
             {
-              labels.map(l => (
+              labels.length > 0 ? labels.map(l => (
                 <UserCan
                   key={l.id}
                   alternate={
@@ -162,7 +162,7 @@ class DeviceIndexTable extends Component {
                     }
                   />
                 </UserCan>
-              ))
+              )) : <Text type="danger">None</Text>
             }
           </React.Fragment>
         }
