@@ -143,7 +143,7 @@ class LabelAddDeviceModal extends Component {
                 <TabPane tab="Labels" key="labels">
                   <LabelAddLabelSelect
                     checkAllLabels={this.checkAllLabels}
-                    allLabels={allLabels}
+                    allLabelsWithDevices={allLabels.filter(l => l.device_count && l.device_count > 0)}
                     checkedLabels={checkedLabels}
                     checkSingleLabel={this.checkSingleLabel}
                     currentLabel={label}

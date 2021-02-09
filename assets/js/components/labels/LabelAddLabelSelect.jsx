@@ -21,13 +21,18 @@ class LabelAddLabelSelect extends Component {
 
   runSearch = (value) => {
     const { loading, fetchMore } = this.props.data
+    const allLabelsWithDevicesMap = this.props.allLabelsWithDevices.reduce(
+      (acc, l) => Object.assign({}, acc, { [l.id]: true }),
+      {}
+    )
+    
     if (!loading) {
       fetchMore({
         variables: { query: value },
         updateQuery: (prev, { fetchMoreResult }) => {
           const { searchLabels } = fetchMoreResult
 
-          this.setState({ searchLabels })
+          this.setState({ searchLabels: searchLabels.filter(l => allLabelsWithDevicesMap[l.id]) })
         }
       })
     }
@@ -36,7 +41,7 @@ class LabelAddLabelSelect extends Component {
   render () {
     const {
       checkAllLabels,
-      allLabels,
+      allLabelsWithDevices,
       checkedLabels,
       checkSingleLabel,
       currentLabel,
@@ -49,7 +54,7 @@ class LabelAddLabelSelect extends Component {
     return (
       <Card
         title={<Checkbox onChange={e => checkAllLabels(searchLabels)}
-        checked={allLabels.length === Object.keys(checkedLabels).length}>Select All Labels</Checkbox>}
+        checked={allLabelsWithDevices.length === Object.keys(checkedLabels).length}>Select All Labels</Checkbox>}
         size="small"
         style={{ height: 300, width: '100%' }}
       >
@@ -61,7 +66,7 @@ class LabelAddLabelSelect extends Component {
         />
         <div style={{ overflowY: 'scroll', height: 202, width: '100%' }}>
           {
-            searchLabels.length === 0 && allLabels.map(l => {
+            searchLabels.length === 0 && allLabelsWithDevices.map(l => {
               if (l.id === currentLabel.id) return
               return (
                 <div style={{ marginTop: 5 }} key={l.id}>
