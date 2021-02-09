@@ -8,6 +8,7 @@ import { ALL_LABELS } from '../../graphql/labels'
 import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
+import LabelAppliedNew from '../common/LabelAppliedNew';
 const { Text } = Typography
 const { Option } = Select
 
@@ -62,13 +63,10 @@ class NewDeviceModal extends Component {
     }
   }
 
-  handleSelectOption = (labelId) => {
-    this.setState({ labelId })
-  }
-
   render() {
     const { open, onClose } = this.props
     const { allLabels, error } = this.props.data
+    console.log(this.state.labelId)
 
     return (
       <Modal
@@ -139,19 +137,11 @@ class NewDeviceModal extends Component {
 
 
         <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
-        <Select
-          placeholder={error ? "No Labels found..." : "Choose Label"}
-          style={{ width: 300, marginRight: 10, marginTop: 10 }}
-          onSelect={this.handleSelectOption}
-        >
-          {
-            allLabels && allLabels.map(l => (
-              <Option value={l.id} key={l.id}>
-                <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
-              </Option>
-            ))
-          }
-        </Select>
+        <LabelAppliedNew 
+          allLabels={allLabels} 
+          value={this.state.labelId} 
+          select={value => this.setState({ labelId: value })} 
+        />
       </Modal>
     )
   }
