@@ -4,33 +4,25 @@ import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
+import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
 
 export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
   return async (dispatch) => {
+    const tokenClaims = await getAuthToken();
+    const token = tokenClaims.__raw
+
     const httpLink = new HttpLink({
       uri: "/graphql"
     })
 
-    const authLink = setContext(async (_, { headers }) => {
-      const tokenClaims = await getAuthToken();
-      const token = tokenClaims.__raw
-      let assignableHeaders = {
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : "",
-        }
-      }
-      const organizationId = JSON.parse(localStorage.getItem('organization')).id;
-      if (organizationId) {
-        Object.assign(assignableHeaders, {organization: organizationId })
-      }
+    const authLink = setContext((_, { headers }) => {
       return {
         headers: {
           ...headers,
           authorization: token ? `Bearer ${token}` : "",
-          organization: organizationId
+          organization: currentOrganizationId
         }
       }
     })
@@ -62,13 +54,18 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
       link,
       cache: new InMemoryCache(),
     })
-    return dispatch(createdApolloClient(apolloClient));
+
+    let socket = createSocket(token, currentOrganizationId)
+    socket.connect()
+
+    return dispatch(createdApolloClient(apolloClient, socket));
   }
 }
 
-export const createdApolloClient = (apolloClient) => {
+export const createdApolloClient = (apolloClient, socket) => {
   return {
     type: CREATED_APOLLO_CLIENT,
-    apolloClient
+    apolloClient,
+    socket
   };
 }

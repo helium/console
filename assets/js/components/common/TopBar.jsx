@@ -31,20 +31,13 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    // const { subscribeToMore } = this.props.orgsQuery;
-    //
-    // subscribeToMore({
-    //   document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
-    //   updateQuery: (prev, { subscriptionData }) => {
-    //     if (!subscriptionData.data) return prev;
-    //     this.handleSubscriptionAdded();
-    //   }
-    // })
-  }
+    const { socket } = this.props
 
-  handleSubscriptionAdded = () => {
-    const { refetch } = this.props.orgsQuery;
-    refetch();
+    const channel = socket.channel("organization:all", { who: "this"})
+    channel.join()
+    channel.on("organization:all:update:organization", (message) => {
+      this.props.orgsQuery.refetch()
+    })
   }
 
   handleClick = e => {
@@ -79,12 +72,12 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, user, orgsQuery, orgsShowQuery } = this.props;
+    const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery } = this.props;
     const { showOrganizationModal } = this.state
 
-    if (orgsQuery.loading || orgsShowQuery.loading) return <div />
+    if (orgsQuery.loading || orgShowQuery.loading) return <div />
     const { allOrganizations } = orgsQuery.data
-    const { organization } = orgsShowQuery.data
+    const { organization } = orgShowQuery.data
     const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id)
 
     return (
@@ -191,6 +184,7 @@ function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationName: state.organization.currentOrganizationName,
     currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
   }
 }
 
@@ -200,7 +194,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(
-    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgsShowQuery' })),
+    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgShowQuery' })),
     ALL_ORGANIZATIONS,
     props => ({ fetchPolicy: 'cache-and-network', name: 'orgsQuery' })
   )
