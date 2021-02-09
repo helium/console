@@ -97,6 +97,7 @@ export const ALL_LABELS_DEVICES = gql`
     allLabels {
       id,
       name,
+      device_count
     }
     allDevices {
       id,

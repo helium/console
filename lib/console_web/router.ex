@@ -52,6 +52,7 @@ defmodule ConsoleWeb.Router do
     post "/labels/update_notification_webhooks", LabelNotificationWebhooksController, :update
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
+    post "/channels/ubidots", ChannelController, :get_ubidots_url
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
