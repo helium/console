@@ -181,10 +181,10 @@ defmodule ConsoleWeb.ChannelController do
     case response do
       {:ok, %{ status_code: 201, body: body }} ->
         conn
-        |> put_resp_header("message", "Received ubidots plugin webhook URL successfully")
+        |> put_resp_header("message", "Received Ubidots plugin webhook URL successfully")
         |> send_resp(:ok, body)
       _ ->
-        errors = %{ "errors" => %{ "error" => "Failed to create ubidots plugin with provided token" }}
+        errors = %{ "errors" => %{ "error" => "Failed to create Ubidots plugin with provided token" }}
 
         conn
         |> send_resp(502, Jason.encode!(errors))
