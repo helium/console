@@ -75,9 +75,8 @@ class TopBar extends Component {
     const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery } = this.props;
     const { showOrganizationModal } = this.state
 
-    if (orgsQuery.loading || orgShowQuery.loading) return <div />
-    const { allOrganizations } = orgsQuery.data
-    const { organization } = orgShowQuery.data
+    const allOrganizations = orgsQuery.data ? orgsQuery.data.allOrganizations : null
+    const organization = orgShowQuery.data ? orgShowQuery.data.organization : null
     const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id)
 
     return (

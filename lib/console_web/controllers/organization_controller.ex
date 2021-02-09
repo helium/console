@@ -46,7 +46,7 @@ defmodule ConsoleWeb.OrganizationController do
 
           render(conn, "show.json", organization: membership_info)
         _ ->
-          ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:update:organization", %{ "devices" => "gay" })
+          ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:update:organization", %{ "devices" => "no" })
 
           conn
           |> put_status(:created)
