@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 @connect(mapStateToProps, null)
 class OrganizationMenu extends Component {
   render() {
-    const { current, orgs, handleClick, role, ...rest } = this.props;
+    const { current, orgs, handleClick, role, dispatch, ...rest } = this.props;
     return (
       <Menu {...rest} onClick={handleClick}>
         <Menu.ItemGroup title="Current Organization">
