@@ -1,15 +1,30 @@
 import React, { Component } from 'react'
+import { graphql } from 'react-apollo';
 import { Typography, Button, Card, Select } from 'antd';
+import { ALL_CHANNELS } from '../../graphql/channels'
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+@graphql(ALL_CHANNELS, queryOptions)
 class LabelShowChannelsAttached extends Component {
   state = {
     selectedChannel: null
   }
+
+  selectChannel = id => {
+    this.setState({ selectedChannel: id })
+  }
+
   render() {
     const { channels } = this.props
     const { selectedChannel } = this.state
+    const { allChannels } = this.props.data
 
     return (
       <div>
@@ -20,10 +35,14 @@ class LabelShowChannelsAttached extends Component {
 
               <Select
                 value={selectedChannel}
-                onChange={() => {}}
+                onChange={this.selectChannel}
                 style={{ width: 220 }}
               >
-                <Option value="$5">500,000 DC or less remaining</Option>
+                {
+                  allChannels && allChannels.map(c => (
+                    <Option value={c.id} key={c.id}>{c.name}</Option>
+                  ))
+                }
               </Select>
               <Button style={{ marginLeft: 8, marginRight: 20 }}>
                 Add

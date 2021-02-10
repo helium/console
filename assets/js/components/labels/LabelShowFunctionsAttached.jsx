@@ -1,15 +1,30 @@
 import React, { Component } from 'react'
+import { graphql } from 'react-apollo';
 import { Typography, Button, Card, Select } from 'antd';
+import { ALL_FUNCTIONS } from '../../graphql/functions'
 const { Text } = Typography
 const { Option } = Select
 
+const queryOptions = {
+  options: props => ({
+    fetchPolicy: 'cache-and-network',
+  })
+}
+
+@graphql(ALL_FUNCTIONS, queryOptions)
 class LabelShowFunctionsAttached extends Component {
   state = {
     selectedFunction: null
   }
+
+  selectFunction = id => {
+    this.setState({ selectedFunction: id })
+  }
+
   render() {
     const { func } = this.props
     const { selectedFunction } = this.state
+    const { allFunctions } = this.props.data
 
     return (
       <div>
@@ -20,10 +35,14 @@ class LabelShowFunctionsAttached extends Component {
 
               <Select
                 value={selectedFunction}
-                onChange={() => {}}
+                onChange={this.selectFunction}
                 style={{ width: 220 }}
               >
-                <Option value="$5">500,000 DC or less remaining</Option>
+                {
+                  allFunctions && allFunctions.map(f => (
+                    <Option value={f.id} key={f.id}>{f.name}</Option>
+                  ))
+                }
               </Select>
               <Button style={{ marginLeft: 8, marginRight: 20 }}>
                 Add
