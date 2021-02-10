@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
 import { ALL_CHANNELS } from '../../graphql/channels'
+import { push } from 'connected-react-router';
 const { Text } = Typography
 const { Option } = Select
 
@@ -11,6 +15,7 @@ const queryOptions = {
   })
 }
 
+@connect(null, mapDispatchToProps)
 @graphql(ALL_CHANNELS, queryOptions)
 class LabelShowChannelsAttached extends Component {
   state = {
@@ -49,9 +54,23 @@ class LabelShowChannelsAttached extends Component {
               </Button>
             </div>
             <div style={{ height: 75 }}>
-              <Text style={{ display: 'block' }}>Attached Integrations</Text>
+              <Text style={{ display: 'block', marginBottom: 4 }}>Attached Integrations</Text>
               {
-                channels && channels.map(c => <Text key={c.id}>{c.name}</Text>)
+                channels && channels.map(c => (
+                  <span key={c.id}>
+                    <a
+                      href={`/integrations/${c.id}`}
+                      onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.props.push(`/integrations/${c.id}`)
+                      }}
+                    >
+                      {c.name}
+                    </a>
+                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8 }}/>
+                  </span>
+                ))
               }
             </div>
           </div>
@@ -59,6 +78,10 @@ class LabelShowChannelsAttached extends Component {
       </div>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ push }, dispatch)
 }
 
 export default LabelShowChannelsAttached

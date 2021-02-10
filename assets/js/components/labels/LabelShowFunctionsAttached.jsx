@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { push } from 'connected-react-router';
+import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
 import { ALL_FUNCTIONS } from '../../graphql/functions'
 const { Text } = Typography
@@ -11,6 +15,7 @@ const queryOptions = {
   })
 }
 
+@connect(null, mapDispatchToProps)
 @graphql(ALL_FUNCTIONS, queryOptions)
 class LabelShowFunctionsAttached extends Component {
   state = {
@@ -49,14 +54,34 @@ class LabelShowFunctionsAttached extends Component {
               </Button>
             </div>
             <div style={{ height: 75 }}>
-              <Text style={{ display: 'block' }}>Attached Function</Text>
-              <Text>{func && func.name}</Text>
+              <Text style={{ display: 'block', marginBottom: 4 }}>Attached Function</Text>
+              {
+                func && (
+                  <span>
+                    <a
+                      href={`/functions/${func.id}`}
+                      onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.props.push(`/functions/${func.id}`)
+                      }}
+                    >
+                      {func.name}
+                    </a>
+                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8 }}/>
+                  </span>
+                )
+              }
             </div>
           </div>
         </Card>
       </div>
     )
   }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ push }, dispatch)
 }
 
 export default LabelShowFunctionsAttached
