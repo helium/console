@@ -50,7 +50,7 @@ defmodule ConsoleWeb.ChannelController do
     user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
-    result = 
+    result =
       Ecto.Multi.new()
       |> Ecto.Multi.run(:channel, fn _repo, _ ->
         with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
@@ -112,8 +112,8 @@ defmodule ConsoleWeb.ChannelController do
       if updated_channel != nil do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
-          channel_name: updated_channel.channel_name, 
-          updated_by: conn.assigns.current_user.email, 
+          channel_name: updated_channel.channel_name,
+          updated_by: conn.assigns.current_user.email,
           time: time
         }
         LabelNotificationEvents.notify_label_event(updated_channel.labels, "integration_with_devices_updated", details)
@@ -144,8 +144,8 @@ defmodule ConsoleWeb.ChannelController do
       if (deleted_channel != nil) do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
-          channel_name: deleted_channel.channel_name, 
-          deleted_by: conn.assigns.current_user.email, 
+          channel_name: deleted_channel.channel_name,
+          deleted_by: conn.assigns.current_user.email,
           time: time
         }
         LabelNotificationEvents.delete_unsent_label_events_for_integration(deleted_channel.channel_id)
@@ -163,6 +163,31 @@ defmodule ConsoleWeb.ChannelController do
       conn
       |> put_resp_header("message", msg)
       |> render("show.json", channel: channel)
+    end
+  end
+
+  def get_ubidots_url(conn, %{"token" => token, "name" => name}) do
+    headers = [{"Content-Type", "application/json"}, {"x-auth-token", token}]
+    body = Jason.encode!(%{
+      "name": name,
+      "description": "Plugin created using Ubidots APIv2",
+      "settings": %{
+        "device_type_name": "Helium",
+        "helium_labels_as": "tags",
+        "token": token
+      }
+    })
+    response = HTTPoison.post "https://industrial.api.ubidots.com/api/v2.0/plugin_types/~helium/plugins/", body, headers
+    case response do
+      {:ok, %{ status_code: 201, body: body }} ->
+        conn
+        |> put_resp_header("message", "Received Ubidots plugin webhook URL successfully")
+        |> send_resp(:ok, body)
+      _ ->
+        errors = %{ "errors" => %{ "error" => "Failed to create Ubidots plugin with provided token" }}
+
+        conn
+        |> send_resp(502, Jason.encode!(errors))
     end
   end
 
