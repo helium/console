@@ -18,14 +18,23 @@ defmodule ConsoleWeb.DeviceController do
 
   @ttn_url "https://ttn-service.herokuapp.com"
 
-  def create(conn, %{"device" => device_params, "label_id" => label_id}) do
+  def create(conn, %{"device" => device_params, "label" => label}) do
     current_organization = conn.assigns.current_organization
+    user = conn.assigns.current_user
     device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
-      if label_id != nil do
-        label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
-        Labels.add_devices_to_label([device.id], label.id, current_organization)
+      case label["labelApplied"] do
+        nil -> nil
+        label_id -> 
+          label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
+          Labels.add_devices_to_label([device.id], label.id, current_organization)
+      end
+
+      case label["newLabel"] do
+        nil -> nil
+        label_name ->
+          Labels.create_labels_add_device(device, [label_name], current_organization, user)
       end
 
       broadcast(device)

@@ -8,8 +8,10 @@ import { ALL_LABELS } from '../../graphql/labels'
 import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
+import LabelAppliedNew from '../common/LabelAppliedNew';
 const { Text } = Typography
 const { Option } = Select
+import find from 'lodash/find'
 
 const queryOptions = {
   options: props => ({
@@ -27,7 +29,7 @@ class NewDeviceModal extends Component {
     devEUI: randomString(16),
     appEUI: randomString(16),
     appKey: randomString(32),
-    labelId: null,
+    labelName: null,
   }
 
   componentDidUpdate(prevProps) {
@@ -37,7 +39,7 @@ class NewDeviceModal extends Component {
         devEUI: randomString(16),
         appEUI: randomString(16),
         appKey: randomString(32),
-        labelId: null,
+        labelName: null,
       })
       if (this.nameInputRef.current) {
         this.nameInputRef.current.focus()
@@ -51,19 +53,17 @@ class NewDeviceModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { name, devEUI, appEUI, appKey, labelId } = this.state;
+    const { name, devEUI, appEUI, appKey, labelName } = this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32)  {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name, "devEUI": devEUI, "appEUI": appEUI, "appKey": appKey})
-      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, labelId)
+      let foundLabel = find(this.props.data.allLabels, { name: labelName });
+      let label = foundLabel ? { labelApplied: foundLabel.id } : { newLabel: labelName };
+      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, label)
 
       this.props.onClose()
     } else {
       displayError(`Please ensure your device credentials are of the correct length.`)
     }
-  }
-
-  handleSelectOption = (labelId) => {
-    this.setState({ labelId })
   }
 
   render() {
@@ -139,19 +139,11 @@ class NewDeviceModal extends Component {
 
 
         <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
-        <Select
-          placeholder={error ? "No Labels found..." : "Choose Label"}
-          style={{ width: 300, marginRight: 10, marginTop: 10 }}
-          onSelect={this.handleSelectOption}
-        >
-          {
-            allLabels && allLabels.map(l => (
-              <Option value={l.id} key={l.id}>
-                <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
-              </Option>
-            ))
-          }
-        </Select>
+        <LabelAppliedNew 
+          allLabels={allLabels} 
+          value={this.state.labelName} 
+          select={value => this.setState({ labelName: value })} 
+        />
       </Modal>
     )
   }

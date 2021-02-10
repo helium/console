@@ -107,7 +107,7 @@ class DeviceIndexTable extends Component {
         dataIndex: 'name',
         sorter: true,
         render: (text, record) => (
-          <Link className={record.labels.length === 0 && 'dull'} to={`/devices/${record.id}`}>
+          <Link className={record.labels.length === 0 ? 'dull' : undefined} to={`/devices/${record.id}`}>
             {text} 
             {
               moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) && 
