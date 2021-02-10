@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
+import find from 'lodash/find'
+import analyticsLogger from '../../util/analyticsLogger'
 import { bindActionCreators } from 'redux'
 import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
 import { ALL_CHANNELS } from '../../graphql/channels'
 import { push } from 'connected-react-router';
+import { addChannelToLabel } from '../../actions/label'
 const { Text } = Typography
 const { Option } = Select
 
@@ -26,6 +29,11 @@ class LabelShowChannelsAttached extends Component {
     this.setState({ selectedChannel: id })
   }
 
+  handleAddChannelToLabel = () => {
+    this.props.addChannelToLabel(this.props.label.id, this.state.selectedChannel)
+    analyticsLogger.logEvent("ACTION_ADD_CHANNEL_TO_LABEL", { "channel_id": this.state.selectedChannel, "label_id": this.props.label.id })
+  }
+
   render() {
     const { channels } = this.props
     const { selectedChannel } = this.state
@@ -35,7 +43,7 @@ class LabelShowChannelsAttached extends Component {
       <div>
         <Card title="Added Integrations">
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75 }}>
+            <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75, minWidth: 310 }}>
               <Text style={{ display: 'block' }}>Add an Integration</Text>
 
               <Select
@@ -44,12 +52,13 @@ class LabelShowChannelsAttached extends Component {
                 style={{ width: 220 }}
               >
                 {
-                  allChannels && allChannels.map(c => (
-                    <Option value={c.id} key={c.id}>{c.name}</Option>
-                  ))
+                  allChannels && allChannels.reduce((acc, c) => {
+                    if (find(channels, { id: c.id })) return acc
+                    return acc.concat(<Option value={c.id} key={c.id}>{c.name}</Option>)
+                  }, [])
                 }
               </Select>
-              <Button style={{ marginLeft: 8, marginRight: 20 }}>
+              <Button style={{ marginLeft: 8, marginRight: 20 }} onClick={this.handleAddChannelToLabel}>
                 Add
               </Button>
             </div>
@@ -68,7 +77,7 @@ class LabelShowChannelsAttached extends Component {
                     >
                       {c.name}
                     </a>
-                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8 }}/>
+                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8, marginBottom: 8 }}/>
                   </span>
                 ))
               }
@@ -81,7 +90,7 @@ class LabelShowChannelsAttached extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ push }, dispatch)
+  return bindActionCreators({ push, addChannelToLabel }, dispatch)
 }
 
 export default LabelShowChannelsAttached

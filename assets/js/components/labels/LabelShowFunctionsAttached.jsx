@@ -53,7 +53,7 @@ class LabelShowFunctionsAttached extends Component {
       <div>
         <Card title="Added Function (Only 1 Allowed)">
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75 }}>
+            <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75, minWidth: 310 }}>
               <Text style={{ display: 'block' }}>Add a Function</Text>
 
               <Select
