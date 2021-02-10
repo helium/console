@@ -290,7 +290,24 @@ defmodule ConsoleWeb.LabelController do
       broadcast_router_update_devices(assoc_devices)
 
       conn
-      |> put_resp_header("message", "Label(s) successfully removed from channel")
+      |> put_resp_header("message", "Label(s) successfully removed from integration")
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def delete_labels_from_channel(conn, %{"label_id" => label_id, "channel_id" => channel_id}) do
+    current_organization = conn.assigns.current_organization
+
+    with {_, nil} <- Labels.delete_labels_from_channel([label_id], channel_id, current_organization) do
+      channel = Channels.get_channel!(channel_id)
+      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+
+      label = Labels.get_label!(current_organization, label_id)
+      broadcast(label, label.id)
+      broadcast_router_update_devices(label)
+
+      conn
+      |> put_resp_header("message", "Integration successfully removed from label")
       |> send_resp(:no_content, "")
     end
   end

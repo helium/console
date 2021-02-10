@@ -6,6 +6,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { bindActionCreators } from 'redux'
 import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
+import LabelShowRemoveChannelModal from './LabelShowRemoveChannelModal'
 import { ALL_CHANNELS } from '../../graphql/channels'
 import { push } from 'connected-react-router';
 import { addChannelToLabel } from '../../actions/label'
@@ -22,11 +23,21 @@ const queryOptions = {
 @graphql(ALL_CHANNELS, queryOptions)
 class LabelShowChannelsAttached extends Component {
   state = {
-    selectedChannel: null
+    selectedChannel: null,
+    showRemoveChannelModal: false,
+    channelToDelete: null
   }
 
   selectChannel = id => {
     this.setState({ selectedChannel: id })
+  }
+
+  openRemoveChannelModal = (channelToDelete) => {
+    this.setState({ showRemoveChannelModal: true, channelToDelete })
+  }
+
+  closeRemoveChannelModal = () => {
+    this.setState({ showRemoveChannelModal: false })
   }
 
   handleAddChannelToLabel = () => {
@@ -35,8 +46,8 @@ class LabelShowChannelsAttached extends Component {
   }
 
   render() {
-    const { channels } = this.props
-    const { selectedChannel } = this.state
+    const { channels, label } = this.props
+    const { selectedChannel, showRemoveChannelModal, channelToDelete } = this.state
     const { allChannels } = this.props.data
 
     return (
@@ -77,13 +88,27 @@ class LabelShowChannelsAttached extends Component {
                     >
                       {c.name}
                     </a>
-                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8, marginBottom: 8 }}/>
+                    <Button
+                      size="small"
+                      type="danger"
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                      style={{ marginLeft: 8, marginBottom: 8 }}
+                      onClick={() => this.openRemoveChannelModal(c)}
+                    />
                   </span>
                 ))
               }
             </div>
           </div>
         </Card>
+
+        <LabelShowRemoveChannelModal
+          open={showRemoveChannelModal}
+          onClose={this.closeRemoveChannelModal}
+          channelToDelete={channelToDelete}
+          label={label}
+        />
       </div>
     )
   }

@@ -151,6 +151,16 @@ export const removeLabelsFromChannel = (labels, channel_id) => {
   }
 }
 
+export const removeChannelFromLabel = (label_id, channel_id) => {
+  return (dispatch) => {
+    rest.post(`/api/channels_labels/delete`, {
+      label_id,
+      channel_id,
+    })
+    .then(response => {})
+  }
+}
+
 export const removeLabelFromFunction = (label_id, function_id) => {
   return (dispatch) => {
     rest.post(`/api/labels/remove_function`, {
