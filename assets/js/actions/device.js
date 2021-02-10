@@ -15,13 +15,13 @@ export const GENERIC_IMPORT_STARTED = "GENERIC_IMPORT_STARTED";
 export const GENERIC_IMPORT_FAILED = "GENERIC_IMPORT_FAILED";
 export const RESET_GENERIC_IMPORT = "RESET_GENERIC_IMPORT";
 
-export const createDevice = (params, labelId) => {
+export const createDevice = (params, label) => {
   return (dispatch) => {
     const deviceParams = sanitizeParams(params)
 
     rest.post('/api/devices', {
         device: deviceParams,
-        label_id: labelId,
+        label: label,
       })
       .then(response => {})
   }

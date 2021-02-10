@@ -250,6 +250,28 @@ defmodule Console.Labels do
     end
   end
 
+  def add_labels_to_device(labels, device, organization) do
+    labels_query = from(l in Label, where: l.id in ^labels and l.organization_id == ^organization.id, select: l)
+    all_labels = Repo.all(labels_query)
+
+    devices_labels = Enum.reduce(all_labels, [], fn label, acc ->
+      if Repo.get_by(DevicesLabels, device_id: device.id, label_id: label.id) == nil do
+        acc ++ [%{ device_id: device.id, label_id: label.id }]
+      else
+        acc
+      end
+    end)
+
+    with {:ok, :ok} <- Repo.transaction(fn ->
+        Enum.each(devices_labels, fn attrs ->
+          Repo.insert!(DevicesLabels.changeset(%DevicesLabels{}, attrs))
+        end)
+      end)
+    do
+      {:ok, length(devices_labels), List.first(all_labels)}
+    end
+  end
+
   def delete_labels_from_channel(labels, channel_id, organization) do
     case Channels.get_channel(organization, channel_id) do
       nil -> {:error}
@@ -286,6 +308,17 @@ defmodule Console.Labels do
         acc ++ [new_label.id]
       end)
       add_labels_to_channel(labels, channel, organization)
+    end)
+  end
+
+  def create_labels_add_device(device, label_names, organization, user) do
+    Repo.transaction(fn ->
+      labels = Enum.reduce(label_names, [], fn label_name, acc ->
+        # create a label, store the id, and add
+        new_label = create_label!(organization, %{"name" => label_name, "creator" => user.email, "organization_id" => organization.id})
+        acc ++ [new_label.id]
+      end)
+      add_labels_to_device(labels, device, organization)
     end)
   end
 end

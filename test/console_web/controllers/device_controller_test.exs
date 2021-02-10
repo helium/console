@@ -12,7 +12,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
     test "creates devices properly", %{conn: conn} do
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaaa", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device = json_response(resp_conn, 201)
       device = Devices.get_device!(device["id"])
@@ -21,7 +21,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "a", "app_eui" => "b", "app_key" => "c" },
-        "label_id" => nil
+        "label" => nil
       }
       assert json_response(resp_conn, 422) # attrs must be correct length
 
@@ -33,26 +33,18 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       assert json_response(resp_conn, 201)
     end
 
     test "create devices with label linked properly", %{conn: conn} do
       # device is still created even if label does not parse by design
-      assert_error_sent 400, fn ->
-        resp_conn = post conn, device_path(conn, :create), %{
-          "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-          "label_id" => %{}
-        }
-      end # label attr invalid type
-
-      assert_error_sent 400, fn ->
-        resp_conn = post conn, device_path(conn, :create), %{
-          "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa2", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-          "label_id" => ""
-        }
-      end # label attr invalid type
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
+        "label" => %{}
+      }
+      assert json_response(resp_conn, 201)
 
       organization_id = conn |> get_req_header("organization") |> List.first()
       label_1 = insert(:label, %{ organization_id: organization_id })
@@ -60,7 +52,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa3", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => label_1.id
+        "label" => %{ "labelApplied" => label_1.id }
       }
       device = json_response(resp_conn, 201)
       device = Devices.get_device!(device["id"])
@@ -68,6 +60,16 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       assert Enum.find(device.labels, fn l -> l.id == label_1.id end)
       assert Enum.find(device.labels, fn l -> l.id == label_2.id end) == nil
+
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "b", "dev_eui" => "aaaaaaaaaaaaaaa4", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
+        "label" => %{ "newLabel" => "newLabelName" }
+      }
+      device = json_response(resp_conn, 201)
+      device = Devices.get_device!(device["id"])
+      device = device |> Devices.fetch_assoc([:labels])
+
+      assert Enum.find(device.labels, fn l -> l.name == "newLabelName" end)
     end
 
     test "updates devices properly", %{conn: conn} do
@@ -79,7 +81,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa3", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device = json_response(resp_conn, 201)
       device = Devices.get_device!(device["id"])
@@ -106,7 +108,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa3", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device = json_response(resp_conn, 201)
 
@@ -128,12 +130,12 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device_1 = json_response(resp_conn, 201)
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "m", "dev_eui" => "aaaaaaaaaaaaaaa2", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device_2 = json_response(resp_conn, 201)
       assert Devices.get_device(device_1["id"]) != nil
@@ -156,7 +158,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
       resp_conn = post conn, device_path(conn, :create), %{
         "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label_id" => nil
+        "label" => nil
       }
       device = json_response(resp_conn, 201)
       resp_conn = post conn, device_path(conn, :debug), %{ "device" => device["id"]}

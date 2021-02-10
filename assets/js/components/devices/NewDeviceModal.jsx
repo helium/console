@@ -11,6 +11,7 @@ import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 import LabelAppliedNew from '../common/LabelAppliedNew';
 const { Text } = Typography
 const { Option } = Select
+import find from 'lodash/find'
 
 const queryOptions = {
   options: props => ({
@@ -28,7 +29,7 @@ class NewDeviceModal extends Component {
     devEUI: randomString(16),
     appEUI: randomString(16),
     appKey: randomString(32),
-    labelId: null,
+    labelName: null,
   }
 
   componentDidUpdate(prevProps) {
@@ -38,7 +39,7 @@ class NewDeviceModal extends Component {
         devEUI: randomString(16),
         appEUI: randomString(16),
         appKey: randomString(32),
-        labelId: null,
+        labelName: null,
       })
       if (this.nameInputRef.current) {
         this.nameInputRef.current.focus()
@@ -52,10 +53,12 @@ class NewDeviceModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { name, devEUI, appEUI, appKey, labelId } = this.state;
+    const { name, devEUI, appEUI, appKey, labelName } = this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32)  {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name, "devEUI": devEUI, "appEUI": appEUI, "appKey": appKey})
-      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, labelId)
+      let foundLabel = find(this.props.data.allLabels, { name: labelName });
+      let label = foundLabel ? { labelApplied: foundLabel.id } : { newLabel: labelName };
+      this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, label)
 
       this.props.onClose()
     } else {
@@ -66,7 +69,6 @@ class NewDeviceModal extends Component {
   render() {
     const { open, onClose } = this.props
     const { allLabels, error } = this.props.data
-    console.log(this.state.labelId)
 
     return (
       <Modal
@@ -139,8 +141,8 @@ class NewDeviceModal extends Component {
         <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
         <LabelAppliedNew 
           allLabels={allLabels} 
-          value={this.state.labelId} 
-          select={value => this.setState({ labelId: value })} 
+          value={this.state.labelName} 
+          select={value => this.setState({ labelName: value })} 
         />
       </Modal>
     )
