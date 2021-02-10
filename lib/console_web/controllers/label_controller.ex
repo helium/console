@@ -287,10 +287,11 @@ defmodule ConsoleWeb.LabelController do
         function = Functions.get_function!(current_organization, function_id)
         ConsoleWeb.FunctionController.broadcast(function)
         ConsoleWeb.FunctionController.broadcast(function, function.id)
+        broadcast(label, label.id)
         broadcast_router_update_devices(label)
 
         conn
-        |> put_resp_header("message", "Label successfully removed from function")
+        |> put_resp_header("message", "Function successfully removed from label")
         |> send_resp(:no_content, "")
       end
     else

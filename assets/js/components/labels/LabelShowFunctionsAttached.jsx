@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux'
 import { push } from 'connected-react-router';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
+import LabelShowRemoveFunctionModal from './LabelShowRemoveFunctionModal'
 import { ALL_FUNCTIONS } from '../../graphql/functions'
+import { updateLabel } from '../../actions/label'
+import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 const { Option } = Select
 
@@ -19,16 +22,31 @@ const queryOptions = {
 @graphql(ALL_FUNCTIONS, queryOptions)
 class LabelShowFunctionsAttached extends Component {
   state = {
-    selectedFunction: null
+    selectedFunction: null,
+    showRemoveFunctionModal: false,
+    functionToDelete: null
   }
 
   selectFunction = id => {
     this.setState({ selectedFunction: id })
   }
 
+  openRemoveFunctionModal = (functionToDelete) => {
+    this.setState({ showRemoveFunctionModal: true, functionToDelete })
+  }
+
+  closeRemoveFunctionModal = () => {
+    this.setState({ showRemoveFunctionModal: false })
+  }
+
+  addFunctionToLabel = () => {
+    this.props.updateLabel(this.props.label.id, { function_id: this.state.selectedFunction })
+    analyticsLogger.logEvent("ACTION_ADD_FUNCTION_TO_LABEL", { "function_id": this.state.selectedFunction, "label_id": this.props.label.id })
+  }
+
   render() {
-    const { func } = this.props
-    const { selectedFunction } = this.state
+    const { func, label } = this.props
+    const { selectedFunction, showRemoveFunctionModal, functionToDelete } = this.state
     const { allFunctions } = this.props.data
 
     return (
@@ -44,12 +62,17 @@ class LabelShowFunctionsAttached extends Component {
                 style={{ width: 220 }}
               >
                 {
-                  allFunctions && allFunctions.map(f => (
-                    <Option value={f.id} key={f.id}>{f.name}</Option>
-                  ))
+                  allFunctions && allFunctions.reduce((acc, f) => {
+                    if (func && f.id == func.id) return acc
+                    return acc.concat(<Option value={f.id} key={f.id}>{f.name}</Option>)
+                  }, [])
                 }
               </Select>
-              <Button style={{ marginLeft: 8, marginRight: 20 }}>
+              <Button
+                style={{ marginLeft: 8, marginRight: 20 }}
+                disabled={!selectedFunction}
+                onClick={this.addFunctionToLabel}
+              >
                 Add
               </Button>
             </div>
@@ -68,20 +91,34 @@ class LabelShowFunctionsAttached extends Component {
                     >
                       {func.name}
                     </a>
-                    <Button size="small" type="danger" shape="circle" icon={<DeleteOutlined />} style={{ marginLeft: 8 }}/>
+                    <Button
+                      size="small"
+                      type="danger"
+                      shape="circle"
+                      icon={<DeleteOutlined />}
+                      style={{ marginLeft: 8 }}
+                      onClick={() => this.openRemoveFunctionModal(func)}
+                    />
                   </span>
                 )
               }
             </div>
           </div>
         </Card>
+
+        <LabelShowRemoveFunctionModal
+          open={showRemoveFunctionModal}
+          onClose={this.closeRemoveFunctionModal}
+          functionToDelete={functionToDelete}
+          label={label}
+        />
       </div>
     )
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ push }, dispatch)
+  return bindActionCreators({ push, updateLabel }, dispatch)
 }
 
 export default LabelShowFunctionsAttached

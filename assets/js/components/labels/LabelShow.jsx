@@ -203,9 +203,9 @@ class LabelShow extends Component {
             openDeleteDeviceModal={this.openDeleteDeviceModal}
           />
 
-          <LabelShowChannelsAttached channels={label.channels}/>
+          <LabelShowChannelsAttached channels={label.channels} label={label}/>
 
-          <LabelShowFunctionsAttached func={label.function}/>
+          <LabelShowFunctionsAttached label={label} func={label.function}/>
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}
