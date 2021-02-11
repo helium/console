@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
 import find from 'lodash/find'
+import sortBy from 'lodash/sortBy'
 import analyticsLogger from '../../util/analyticsLogger'
 import { bindActionCreators } from 'redux'
 import { DeleteOutlined } from '@ant-design/icons';
@@ -55,7 +56,7 @@ class LabelShowChannelsAttached extends Component {
         <Card title="Added Integrations">
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75, minWidth: 310 }}>
-              <Text style={{ display: 'block' }}>Add an Integration</Text>
+              <Text style={{ display: 'block' }}>Select an Integration</Text>
 
               <Select
                 value={selectedChannel}
@@ -63,13 +64,13 @@ class LabelShowChannelsAttached extends Component {
                 style={{ width: 220 }}
               >
                 {
-                  allChannels && allChannels.reduce((acc, c) => {
+                  allChannels && sortBy(allChannels, ["name"]).reduce((acc, c) => {
                     if (find(channels, { id: c.id })) return acc
                     return acc.concat(<Option value={c.id} key={c.id}>{c.name}</Option>)
                   }, [])
                 }
               </Select>
-              <Button style={{ marginLeft: 8, marginRight: 20 }} onClick={this.handleAddChannelToLabel}>
+              <Button style={{ marginLeft: 8, marginRight: 20 }} onClick={this.handleAddChannelToLabel} disabled={!selectedChannel}>
                 Add
               </Button>
             </div>

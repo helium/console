@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import sortBy from 'lodash/sortBy'
 import { push } from 'connected-react-router';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Typography, Button, Card, Select } from 'antd';
@@ -54,7 +55,7 @@ class LabelShowFunctionsAttached extends Component {
         <Card title="Added Function (Only 1 Allowed)">
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ borderRight: "1px solid #e1e4e8", marginRight: 20, height: 75, minWidth: 310 }}>
-              <Text style={{ display: 'block' }}>Add a Function</Text>
+              <Text style={{ display: 'block' }}>Select a Function</Text>
 
               <Select
                 value={selectedFunction}
@@ -62,7 +63,7 @@ class LabelShowFunctionsAttached extends Component {
                 style={{ width: 220 }}
               >
                 {
-                  allFunctions && allFunctions.reduce((acc, f) => {
+                  allFunctions && sortBy(allFunctions, ["name"]).reduce((acc, f) => {
                     if (func && f.id == func.id) return acc
                     return acc.concat(<Option value={f.id} key={f.id}>{f.name}</Option>)
                   }, [])
@@ -73,7 +74,7 @@ class LabelShowFunctionsAttached extends Component {
                 disabled={!selectedFunction}
                 onClick={this.addFunctionToLabel}
               >
-                Add
+                {func ? "Update" : "Add"}
               </Button>
             </div>
             <div style={{ height: 75 }}>
