@@ -55,7 +55,7 @@ class DashboardLayout extends Component {
                       { title: 'Community Discord', url: 'http://chat.helium.com' },
                       { title: 'Engineering Blog', url: 'http://engineering.helium.com' }
                     ].map(link =>
-                      <a href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
+                      <a key={link.title} href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
                     )}
                   <div style={{ marginLeft: 'auto' }}>© 2021 Helium Systems Inc.</div>
                 </div>
