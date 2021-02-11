@@ -130,10 +130,31 @@ export const addLabelsToChannel = (labels, channel_id) => {
   }
 }
 
+export const addChannelToLabel = (label_id, channel_id) => {
+  return (dispatch) => {
+    rest.post(`/api/channels_labels`, {
+      label_id,
+      channel_id,
+    })
+    .then(response => {})
+  }
+}
+
+
 export const removeLabelsFromChannel = (labels, channel_id) => {
   return (dispatch) => {
     rest.post(`/api/channels_labels/delete`, {
       labels,
+      channel_id,
+    })
+    .then(response => {})
+  }
+}
+
+export const removeChannelFromLabel = (label_id, channel_id) => {
+  return (dispatch) => {
+    rest.post(`/api/channels_labels/delete`, {
+      label_id,
       channel_id,
     })
     .then(response => {})

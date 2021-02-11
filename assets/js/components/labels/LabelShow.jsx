@@ -7,6 +7,8 @@ import LabelAddDeviceModal from './LabelAddDeviceModal'
 import DeleteDeviceModal from '../devices/DeleteDeviceModal';
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
+import LabelShowFunctionsAttached from './LabelShowFunctionsAttached'
+import LabelShowChannelsAttached from './LabelShowChannelsAttached'
 import DashboardLayout from '../common/DashboardLayout'
 import Sidebar from '../common/Sidebar'
 import Debug from '../common/Debug'
@@ -200,6 +202,10 @@ class LabelShow extends Component {
             devicesSelected={this.setDevicesSelected}
             openDeleteDeviceModal={this.openDeleteDeviceModal}
           />
+
+          <LabelShowChannelsAttached channels={label.channels} label={label}/>
+
+          <LabelShowFunctionsAttached label={label} func={label.function}/>
 
           <UpdateLabelModal
             handleUpdateLabel={this.handleUpdateLabel}

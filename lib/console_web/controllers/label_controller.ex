@@ -171,7 +171,7 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, count, first_label} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
       msg =
         case count do
-          0 -> "All selected labels are already in channel"
+          0 -> "All selected labels are already in integration"
           _ ->
             ConsoleWeb.ChannelController.broadcast(channel, channel.id)
             broadcast(first_label)
@@ -180,11 +180,27 @@ defmodule ConsoleWeb.LabelController do
             assoc_devices = Enum.map(labels_updated, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
             broadcast_router_update_devices(assoc_devices)
 
-            "#{count} Labels added to channel successfully"
+            "#{count} Labels added to integration successfully"
         end
 
       conn
       |> put_resp_header("message", msg)
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def add_labels_to_channel(conn, %{"label_id" => label_id, "channel_id" => channel_id}) do
+    # used for labelShowChannelsAttached
+    current_organization = conn.assigns.current_organization
+    channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
+
+    with {:ok, 1, label} <- Labels.add_labels_to_channel([label_id], channel, current_organization) do
+      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+      broadcast(label, label.id)
+      broadcast_router_update_devices(label)
+
+      conn
+      |> put_resp_header("message", "Integration added to label successfully")
       |> send_resp(:no_content, "")
     end
   end
@@ -274,7 +290,24 @@ defmodule ConsoleWeb.LabelController do
       broadcast_router_update_devices(assoc_devices)
 
       conn
-      |> put_resp_header("message", "Label(s) successfully removed from channel")
+      |> put_resp_header("message", "Label(s) successfully removed from integration")
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def delete_labels_from_channel(conn, %{"label_id" => label_id, "channel_id" => channel_id}) do
+    current_organization = conn.assigns.current_organization
+
+    with {_, nil} <- Labels.delete_labels_from_channel([label_id], channel_id, current_organization) do
+      channel = Channels.get_channel!(channel_id)
+      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+
+      label = Labels.get_label!(current_organization, label_id)
+      broadcast(label, label.id)
+      broadcast_router_update_devices(label)
+
+      conn
+      |> put_resp_header("message", "Integration successfully removed from label")
       |> send_resp(:no_content, "")
     end
   end
@@ -287,10 +320,11 @@ defmodule ConsoleWeb.LabelController do
         function = Functions.get_function!(current_organization, function_id)
         ConsoleWeb.FunctionController.broadcast(function)
         ConsoleWeb.FunctionController.broadcast(function, function.id)
+        broadcast(label, label.id)
         broadcast_router_update_devices(label)
 
         conn
-        |> put_resp_header("message", "Label successfully removed from function")
+        |> put_resp_header("message", "Function successfully removed from label")
         |> send_resp(:no_content, "")
       end
     else

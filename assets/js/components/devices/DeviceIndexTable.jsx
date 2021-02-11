@@ -80,7 +80,7 @@ class DeviceIndexTable extends Component {
 
   handleSort = (pagi, filter, sorter) => {
     const { order, column } = this.props
-    
+
     if (column == sorter.field && order == 'asc') {
       this.props.handleSortChange(column, 'desc')
     }
@@ -108,9 +108,9 @@ class DeviceIndexTable extends Component {
         sorter: true,
         render: (text, record) => (
           <Link className={record.labels.length === 0 ? 'dull' : undefined} to={`/devices/${record.id}`}>
-            {text} 
+            {text}
             {
-              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) && 
+              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
                 <StatusIcon style={{ marginLeft: "4px" }} tooltipTitle='Last connected within the last 24h' {...this.props} />
             }
           </Link>
@@ -180,7 +180,7 @@ class DeviceIndexTable extends Component {
                   href={`/integrations/${c.id}`}
                   onClick={e => {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     this.props.history.push(`/integrations/${c.id}`)
                   }}
                 >
