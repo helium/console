@@ -11,12 +11,12 @@ class DashboardLayout extends Component {
     const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth } = this.props;
 
     return (
-      <Layout style={{height: '100%', width: '100%', minWidth: 800 }}>
+      <Layout>
         <Header>
           <TopBar user={user} />
         </Header>
 
-        <Layout style={{ height: 'calc(100vh - 64px)' }}>
+        <Layout>
           {
             !noSideNav && (
               <Sider style={{ overflow: 'hidden' }}>
@@ -33,8 +33,8 @@ class DashboardLayout extends Component {
               </Sider>
             )
           }
-          <Layout>
-            <Content>
+          <Layout style={{ position: 'relative', minHeight: '100vh' }}>
+            <Content style={{ paddingBottom: '2.5rem'}}>
               {
                 fullHeightWidth ? (
                   <div style={{ height: '100%', width: '100%'}}>
@@ -46,6 +46,20 @@ class DashboardLayout extends Component {
                   </ContentLayout>
                 )
               }
+              <Footer style={{ height: '2.5rem', textAlign: 'center', padding: '10px 10px', bottom: '0', position: 'absolute', width: '100%' }}>
+                <div style={{ flexDirection: 'row', display: 'flex' }}>
+                <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
+                  {[
+                      { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},
+                      { title: 'How-to Videos', url: 'https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo' },
+                      { title: 'Community Discord', url: 'http://chat.helium.com' },
+                      { title: 'Engineering Blog', url: 'http://engineering.helium.com' }
+                    ].map(link =>
+                      <a key={link.title} href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
+                    )}
+                  <div style={{ marginLeft: 'auto' }}>© 2021 Helium Systems Inc.</div>
+                </div>
+              </Footer>
             </Content>
           </Layout>
         </Layout>
