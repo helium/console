@@ -48,7 +48,7 @@ class DashboardLayout extends Component {
               }
               <Footer style={{ height: '2.5rem', textAlign: 'center', padding: '10px 10px', bottom: '0', position: 'absolute', width: '100%' }}>
                 <div style={{ flexDirection: 'row', display: 'flex' }}>
-                <a href='http://console.helium.com' target="_blank" style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
+                <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
                   {[
                       { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},
                       { title: 'How-to Videos', url: 'https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo' },
