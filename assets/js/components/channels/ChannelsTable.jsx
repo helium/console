@@ -9,6 +9,7 @@ import { Table, Button, Empty, Pagination, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import classNames from 'classnames';
 import { SkeletonLayout } from '../common/SkeletonLayout';
+import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 

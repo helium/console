@@ -9,6 +9,7 @@ import UserCan from '../common/UserCan'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import DevicesImg from '../../../img/devices.svg'
+import _JSXStyle from "styled-jsx/style"
 
 import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';

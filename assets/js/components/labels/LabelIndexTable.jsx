@@ -16,6 +16,7 @@ import LabelsImg from '../../../img/labels.svg'
 import classNames from 'classnames';
 import { IndexSkeleton } from '../common/IndexSkeleton';
 import { StatusIcon } from '../common/StatusIcon'
+import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 const { Option } = Select

@@ -7,6 +7,7 @@ import ChannelPremadeRow from './ChannelPremadeRow'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import classNames from 'classnames';
+import _JSXStyle from "styled-jsx/style"
 
 import { Typography } from 'antd';
 import { Card } from 'antd';
