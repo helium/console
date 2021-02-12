@@ -7,19 +7,27 @@ import { ToolOutlined } from '@ant-design/icons';
 const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
+  state = {
+    showNav: true
+  }
+
+  toggleNav = () => {
+    this.setState({ showNav: !this.state.showNav})
+  }
+
   render() {
     const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth } = this.props;
 
     return (
-      <Layout style={{height: '100%', width: '100%', minWidth: 800 }}>
-        <Header>
-          <TopBar user={user} />
+      <Layout style={{height: '100%', width: '100%'}}>
+        <Header style={{ overflowX: 'hidden' }}>
+          <TopBar user={user} showNav={this.state.showNav} toggleNav={this.toggleNav} />
         </Header>
 
         <Layout style={{ height: 'calc(100vh - 64px)' }}>
           {
             !noSideNav && (
-              <Sider style={{ overflow: 'hidden' }}>
+              <Sider style={{ overflow: 'hidden', display: this.state.showNav ? 'block' : 'none' }}>
                 <NavDrawer />
                 {
                   process.env.CONSOLE_VERSION &&
@@ -46,7 +54,7 @@ class DashboardLayout extends Component {
                   </ContentLayout>
                 )
               }
-              <Footer style={{ height: '2.5rem', flexShrink: '0', padding: '10px 10px', marginBottom: '-150px' }}>
+              <Footer style={{ flexShrink: '0', padding: '10px 10px', marginBottom: '-150px', overflow: 'hidden' }}>
                 <div style={{ flexDirection: 'row', display: 'flex' }}>
                 <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
                   {[

@@ -266,7 +266,7 @@ class EventsDashboard extends Component {
     )
 
     return(
-      <React.Fragment>
+      <div style={{ minWidth: 800 }}>
         <div style={{padding: 20}}>
           <div className="chart-legend-bulb red"></div>
           <Text>
@@ -309,7 +309,7 @@ class EventsDashboard extends Component {
           expandedRowKeys={expandedRowKeys}
           onExpand={this.onExpandRow}
         />
-      </React.Fragment>
+      </div>
     )
   }
 }

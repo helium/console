@@ -494,8 +494,8 @@ class DeviceShow extends Component {
         </Row>
 
         <Card title="Device Integrations"
-
-        bodyStyle={{padding: 0}}>
+          bodyStyle={{padding: 0, overflowX: "scroll" }}
+        >
           <EventsDashboard device_id={device.id} />
         </Card>
 

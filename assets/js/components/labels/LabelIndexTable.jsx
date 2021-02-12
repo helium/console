@@ -112,7 +112,7 @@ class LabelIndexTable extends Component {
                   href={`/integrations/${c.id}`}
                   onClick={e => {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     this.props.history.push(`/integrations/${c.id}`)
                   }}
                 >
@@ -275,6 +275,7 @@ class LabelIndexTable extends Component {
               pagination={false}
               rowSelection={rowSelection}
               rowClassName="clickable-row"
+              style={{ minWidth: 800 }}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination

@@ -4,6 +4,7 @@ import { graphql } from 'react-apollo';
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
+import MediaQuery from 'react-responsive'
 import numeral from 'numeral'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
@@ -12,8 +13,8 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Typography, Tooltip } from 'antd';
-import { HomeOutlined, DownOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Typography, Tooltip, Button } from 'antd';
+import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.png'
@@ -99,56 +100,74 @@ class TopBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <Link to="/welcome">
-            <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
-          </Link>
+          <img src={Logo} style={{height:33, position: 'relative', top: '-1px', display: 'inline-block'}}/>
+          {
+            this.props.showNav ? (
+              <MenuFoldOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginLeft: 8, position: 'relative', top: 3}}
+                onClick={this.props.toggleNav}
+              />
+            ) : (
+              <MenuUnfoldOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginLeft: 8, position: 'relative', top: 3}}
+                onClick={this.props.toggleNav}
+              />
+            )
+          }
+
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Link to="/welcome">
-            <HomeOutlined style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
-          </Link>
+          <MediaQuery minWidth={720}>
+            <Link to="/welcome">
+              <HomeOutlined style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
+            </Link>
+          </MediaQuery>
           {
             currentOrganizationName && <SearchBar />
           }
           {
             organization && (
-              <Tooltip
-                title={
-                  <span
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
-                    onClick={() => this.props.push("/datacredits")}
-                  >
-                    <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
-                    <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
-                  </span>
-                }
-                onVisibleChange={this.refreshDC}
-              >
-                <div style={{ height: 30, backgroundColor: organization.dc_balance > 1000 ? '#000000' : '#FF4D4F', borderRadius: 30, paddingLeft: 10, paddingRight: 10, marginLeft: 6 }}>
-                  <img style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
-                    <Text
-                      style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -12, cursor: 'default' }}
+              <MediaQuery minWidth={720}>
+                <Tooltip
+                  title={
+                    <span
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                      onClick={() => this.props.push("/datacredits")}
                     >
-                      {numeral(organization.dc_balance).format('0,0')}
-                    </Text>
-                </div>
-              </Tooltip>
+                      <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
+                      <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
+                    </span>
+                  }
+                  onVisibleChange={this.refreshDC}
+                >
+                  <div style={{ height: 30, backgroundColor: organization.dc_balance > 1000 ? '#000000' : '#FF4D4F', borderRadius: 30, paddingLeft: 10, paddingRight: 10, marginLeft: 6 }}>
+                    <img style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
+                      <Text
+                        style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -12, cursor: 'default' }}
+                      >
+                        {numeral(organization.dc_balance).format('0,0')}
+                      </Text>
+                  </div>
+                </Tooltip>
+              </MediaQuery>
             )
           }
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
-            <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
-            <div style={{ position: 'relative', top: -45 }}>
-              <Dropdown visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
-                <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{ color: "#38A2FF", fontWeight: 500}}>
-                  {currentOrganizationName} {<DownOutlined />}
-                </a>
-              </Dropdown>
+          <MediaQuery minWidth={720}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
+              <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
+              <div style={{ position: 'relative', top: -45 }}>
+                <Dropdown visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{ color: "#38A2FF", fontWeight: 500}}>
+                    {currentOrganizationName} {<DownOutlined />}
+                  </a>
+                </Dropdown>
+              </div>
             </div>
-          </div>
+          </MediaQuery>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
             <img src={this.state.userMenuVisible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>

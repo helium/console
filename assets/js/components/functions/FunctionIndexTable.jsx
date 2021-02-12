@@ -246,6 +246,7 @@ class FunctionIndexTable extends Component {
                 rowKey={record => record.id}
                 pagination={false}
                 rowClassName="clickable-row"
+                style={{ minWidth: 800 }}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination
