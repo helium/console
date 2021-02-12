@@ -141,7 +141,7 @@ h1 {
   left: calc(50% - 228px);
   width: 380px;
   max-height: calc(100vh - 72px);
-  overflow-x: scroll;
+  overflow-y: scroll;
 }
 
 @media only screen and (max-width: 720px) {
