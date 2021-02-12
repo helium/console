@@ -142,8 +142,10 @@ h1 {
   position: absolute;
   top: 58px;
   z-index: 100;
-  left: calc(50% - 257px);
+  left: calc(50% - 325px);
   width: 380px;
+  max-height: calc(100vh - 72px);
+  overflow-x: scroll;
 }
 
 #searchResults .jumpto .jumpto--inner {
