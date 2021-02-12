@@ -12,8 +12,8 @@ import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Typography, Tooltip } from 'antd';
-import { HomeOutlined, DownOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Typography, Tooltip, Button } from 'antd';
+import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.png'
@@ -99,9 +99,21 @@ class TopBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <Link to="/welcome">
-            <img src={Logo} style={{height:33, position: 'relative', top: '-2px', display: 'inline-block'}}/>
-          </Link>
+          <img src={Logo} style={{height:33, position: 'relative', top: '-1px', display: 'inline-block'}}/>
+          {
+            this.props.showNav ? (
+              <MenuFoldOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginLeft: 8, position: 'relative', top: 3}}
+                onClick={this.props.toggleNav}
+              />
+            ) : (
+              <MenuUnfoldOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginLeft: 8, position: 'relative', top: 3}}
+                onClick={this.props.toggleNav}
+              />
+            )
+          }
+
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
