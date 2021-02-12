@@ -119,7 +119,7 @@ class LabelShowTable extends Component {
           <Link to={"#"}>
             {text}
             {
-              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) && 
+              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
                 <StatusIcon tooltipTitle='Last connected within the last 24h' style={{ marginLeft: "4px" }} {...this.props} />
             }
           </Link>
@@ -234,6 +234,7 @@ class LabelShowTable extends Component {
           pagination={false}
           rowSelection={rowSelection}
           onChange={this.handleSortChange}
+          style={{ minWidth: 800 }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

@@ -172,7 +172,7 @@ class OrganizationsTable extends Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth: 700 }}/>
+        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth: 800 }}/>
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={organizations.pageNumber}

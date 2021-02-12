@@ -192,6 +192,7 @@ class Profile extends Component {
                     rowKey={record => record.id}
                     pagination={false}
                     bordered
+                    style={{ minWidth: 800 }}
                   />
                 </div>
               )

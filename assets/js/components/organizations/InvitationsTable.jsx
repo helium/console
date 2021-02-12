@@ -110,6 +110,7 @@ class InvitationsTable extends Component {
           dataSource={invitations.entries}
           rowKey={record => record.id}
           pagination={false}
+          style={{ minWidth: 800 }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
           <Pagination

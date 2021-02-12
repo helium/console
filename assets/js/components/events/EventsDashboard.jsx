@@ -308,6 +308,7 @@ class EventsDashboard extends Component {
           expandedRowRender={this.renderExpanded}
           expandedRowKeys={expandedRowKeys}
           onExpand={this.onExpandRow}
+          style={{ minWidth: 800 }}
         />
       </React.Fragment>
     )
