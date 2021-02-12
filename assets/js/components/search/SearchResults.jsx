@@ -54,10 +54,12 @@ class SearchResults extends Component {
       )
     } else {
       return ReactDOM.createPortal(
-        <div style={{ backgroundColor: 'white', padding: '10px 20px', borderRadius: 6,boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px', textAlign: 'center'  }} id="searchResults">
-          <Text>
-            No Results Found {reactionFace()}
-          </Text>
+        <div style={{ backgroundColor: 'white', borderRadius: 6, boxShadow: 'rgb(16, 24, 38) 0px 9px 44px -14px', textAlign: 'center'  }} id="searchResults">
+          <div style={{ backgroundColor: 'white', padding: '10px 20px' }} className="result">
+            <Text>
+              No Results Found {reactionFace()}
+            </Text>
+          </div>
         </div>,
         this.el
       )
