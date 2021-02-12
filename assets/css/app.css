@@ -130,10 +130,6 @@ h1 {
   transition: all 0.2s ease 0s;
 }
 
-#searchBar input:focus {
-  width: 300px;
-}
-
 #searchBar input::placeholder {
   color: #cfd0d1;
 }
@@ -142,10 +138,16 @@ h1 {
   position: absolute;
   top: 58px;
   z-index: 100;
-  left: calc(50% - 325px);
+  left: calc(50% - 228px);
   width: 380px;
   max-height: calc(100vh - 72px);
   overflow-x: scroll;
+}
+
+@media only screen and (max-width: 720px) {
+  #searchResults {
+    left: calc(50vw - 190px) !important;
+  }
 }
 
 #searchResults .jumpto .jumpto--inner {
