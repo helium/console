@@ -11,12 +11,12 @@ class DashboardLayout extends Component {
     const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth } = this.props;
 
     return (
-      <Layout>
+      <Layout style={{height: '100%', width: '100%', minWidth: 800 }}>
         <Header>
           <TopBar user={user} />
         </Header>
 
-        <Layout>
+        <Layout style={{ height: 'calc(100vh - 64px)' }}>
           {
             !noSideNav && (
               <Sider style={{ overflow: 'hidden' }}>
@@ -33,11 +33,11 @@ class DashboardLayout extends Component {
               </Sider>
             )
           }
-          <Layout style={{ position: 'relative', minHeight: '100vh' }}>
-            <Content style={{ paddingBottom: '2.5rem'}}>
+          <Layout>
+            <Content>
               {
                 fullHeightWidth ? (
-                  <div style={{ height: '100%', width: '100%'}}>
+                  <div style={{ height: '100%', width: '100%' }}>
                   {this.props.children}
                   </div>
                 ) : (
@@ -46,7 +46,7 @@ class DashboardLayout extends Component {
                   </ContentLayout>
                 )
               }
-              <Footer style={{ height: '2.5rem', textAlign: 'center', padding: '10px 10px', bottom: '0', position: 'absolute', width: '100%' }}>
+              <Footer style={{ height: '2.5rem', flexShrink: '0', padding: '10px 10px', marginBottom: '-150px' }}>
                 <div style={{ flexDirection: 'row', display: 'flex' }}>
                 <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
                   {[

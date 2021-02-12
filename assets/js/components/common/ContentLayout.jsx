@@ -8,7 +8,7 @@ class ContentLayout extends Component {
     const { title, extra, breadCrumbs, noHeaderPadding } = this.props
 
     return (
-      <div style={{padding: 30}}>
+      <div style={{padding: 30, height: 'auto', minHeight: '100%'}}>
         {breadCrumbs}
         <PageHeader
           backIcon={false}

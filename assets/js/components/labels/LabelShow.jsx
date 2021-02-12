@@ -163,130 +163,128 @@ class LabelShow extends Component {
     }, {})
 
     return (
-      <div>
-        <DashboardLayout
-          user={this.props.user}
-          breadCrumbs={
-            <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-              <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
-              <Text>&nbsp;&nbsp;{label.name}</Text>
-            </div>
-          }
-          title={`${label.name}`}
-          extra={
-            <UserCan>
-              <Button
-                size="large"
-                icon={<SettingOutlined />}
-                style={{ borderRadius: 4 }}
-                onClick={this.openUpdateLabelModal}
-              >
-                Label Settings
-              </Button>
-              <Button
-                size="large"
-                type="primary"
-                onClick={this.openLabelAddDeviceModal}
-                icon={<TagOutlined />}
-                style={{ marginLeft: 20, borderRadius: 4 }}
-              >
-                Add this Label to a Device
-              </Button>
-            </UserCan>
-          }
-        >
-          <LabelShowTable
-            labelId={this.props.match.params.id}
-            openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal}
-            history={this.props.history}
-            devicesSelected={this.setDevicesSelected}
-            openDeleteDeviceModal={this.openDeleteDeviceModal}
-          />
-
-          <LabelShowChannelsAttached channels={label.channels} label={label}/>
-
-          <LabelShowFunctionsAttached label={label} func={label.function}/>
-
-          <UpdateLabelModal
-            handleUpdateLabel={this.handleUpdateLabel}
-            handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-            handleUpdateAdrSetting={this.handleUpdateAdrSetting}
-            handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
-            handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
-            open={this.state.showUpdateLabelModal}
-            onClose={this.closeUpdateLabelModal}
-            label={label}
-          />
-
-          <LabelAddDeviceModal
-            label={label}
-            labelNormalizedDevices={normalizedDevices}
-            addDevicesToLabels={this.props.addDevicesToLabels}
-            open={this.state.showLabelAddDeviceModal}
-            onClose={this.closeLabelAddDeviceModal}
-          />
-
-          <RemoveDevicesFromLabelModal
-            label={label}
-            open={this.state.showRemoveDevicesFromLabelModal}
-            onClose={this.closeRemoveDevicesFromLabelModal}
-            devicesToRemove={selectedDevices}
-          />
-
-          <DeleteDeviceModal
-            label={label}
-            open={showDeleteDeviceModal}
-            onClose={this.closeDeleteDeviceModal}
-            allDevicesSelected={false}
-            devicesToDelete={selectedDevices}
-            totalDevices={selectedDevices.length}
-          />
-
-          <Sidebar
-            show={this.state.showDebugSidebar}
-            toggle={this.handleToggleDebug}
-            sidebarIcon={<BugOutlined />}
-            iconBackground={debugSidebarBackgroundColor}
-            iconPosition='top'
-            message='Access Debug mode to view device packet transfer'
-          >
-            <Debug
-              subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
-              variables={{ label_id: this.props.match.params.id }}
-              refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
-              subscriptionKey="labelDebugEventAdded"
-            />
-          </Sidebar>
-
+      <DashboardLayout
+        user={this.props.user}
+        breadCrumbs={
+          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
+            <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
+            <Text>&nbsp;&nbsp;{label.name}</Text>
+          </div>
+        }
+        title={`${label.name}`}
+        extra={
           <UserCan>
-            {
-              label &&
-              <Sidebar
-                show={this.state.showDownlinkSidebar}
-                toggle={this.handleToggleDownlink}
-                sidebarIcon={<img src={DownlinkImage}/>}
-                iconBackground='#40A9FF'
-                disabled={label.channels.filter(c => c.type === 'http').length === 0}
-                disabledMessage='Please attach an HTTP integration to use Downlink'
-                iconPosition='middle'
-                message='Send a manual downlink using an HTTP integration'
-              >
-                <Downlink onSend={(payload, confirm, port, position) => {
-                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
-                  this.props.sendDownlinkMessage(
-                    payload,
-                    port,
-                    confirm,
-                    position,
-                    this.state.selectedDevices.map(device => device.id),
-                    label.channels
-                  )
-                }}/>
-              </Sidebar>
-            }
+            <Button
+              size="large"
+              icon={<SettingOutlined />}
+              style={{ borderRadius: 4 }}
+              onClick={this.openUpdateLabelModal}
+            >
+              Label Settings
+            </Button>
+            <Button
+              size="large"
+              type="primary"
+              onClick={this.openLabelAddDeviceModal}
+              icon={<TagOutlined />}
+              style={{ marginLeft: 20, borderRadius: 4 }}
+            >
+              Add this Label to a Device
+            </Button>
           </UserCan>
-        </DashboardLayout>
-      </div>
+        }
+      >
+        <LabelShowTable
+          labelId={this.props.match.params.id}
+          openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal}
+          history={this.props.history}
+          devicesSelected={this.setDevicesSelected}
+          openDeleteDeviceModal={this.openDeleteDeviceModal}
+        />
+
+        <LabelShowChannelsAttached channels={label.channels} label={label}/>
+
+        <LabelShowFunctionsAttached label={label} func={label.function}/>
+
+        <UpdateLabelModal
+          handleUpdateLabel={this.handleUpdateLabel}
+          handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
+          handleUpdateAdrSetting={this.handleUpdateAdrSetting}
+          handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
+          handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
+          open={this.state.showUpdateLabelModal}
+          onClose={this.closeUpdateLabelModal}
+          label={label}
+        />
+
+        <LabelAddDeviceModal
+          label={label}
+          labelNormalizedDevices={normalizedDevices}
+          addDevicesToLabels={this.props.addDevicesToLabels}
+          open={this.state.showLabelAddDeviceModal}
+          onClose={this.closeLabelAddDeviceModal}
+        />
+
+        <RemoveDevicesFromLabelModal
+          label={label}
+          open={this.state.showRemoveDevicesFromLabelModal}
+          onClose={this.closeRemoveDevicesFromLabelModal}
+          devicesToRemove={selectedDevices}
+        />
+
+        <DeleteDeviceModal
+          label={label}
+          open={showDeleteDeviceModal}
+          onClose={this.closeDeleteDeviceModal}
+          allDevicesSelected={false}
+          devicesToDelete={selectedDevices}
+          totalDevices={selectedDevices.length}
+        />
+
+        <Sidebar
+          show={this.state.showDebugSidebar}
+          toggle={this.handleToggleDebug}
+          sidebarIcon={<BugOutlined />}
+          iconBackground={debugSidebarBackgroundColor}
+          iconPosition='top'
+          message='Access Debug mode to view device packet transfer'
+        >
+          <Debug
+            subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
+            variables={{ label_id: this.props.match.params.id }}
+            refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
+            subscriptionKey="labelDebugEventAdded"
+          />
+        </Sidebar>
+
+        <UserCan>
+          {
+            label &&
+            <Sidebar
+              show={this.state.showDownlinkSidebar}
+              toggle={this.handleToggleDownlink}
+              sidebarIcon={<img src={DownlinkImage}/>}
+              iconBackground='#40A9FF'
+              disabled={label.channels.filter(c => c.type === 'http').length === 0}
+              disabledMessage='Please attach an HTTP integration to use Downlink'
+              iconPosition='middle'
+              message='Send a manual downlink using an HTTP integration'
+            >
+              <Downlink onSend={(payload, confirm, port, position) => {
+                analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
+                this.props.sendDownlinkMessage(
+                  payload,
+                  port,
+                  confirm,
+                  position,
+                  this.state.selectedDevices.map(device => device.id),
+                  label.channels
+                )
+              }}/>
+            </Sidebar>
+          }
+        </UserCan>
+      </DashboardLayout>
     )
   }
 }
