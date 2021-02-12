@@ -48,13 +48,13 @@ export const PREMADE_CHANNEL_TYPES = [
     info: "myDevices Cayenne lets you quickly visualize real-time data sent over the Helium Network.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/mydevices-cayenne"
   },
-  // {
-  //   name: "Ubidots",
-  //   link: "/integrations/new/ubidots",
-  //   img: `${Ubidots}` ,
-  //   info: "Use the Ubidots platform to send data to the cloud from any Internet-enabled device.",
-  //   docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots"
-  // },
+  {
+    name: "Ubidots",
+    link: "/integrations/new/ubidots",
+    img: `${Ubidots}` ,
+    info: "Use the Ubidots platform to send data to the cloud from any Internet-enabled device.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots"
+  },
   {
     name: "Adafruit IO",
     link: "/integrations/new/adafruit",
