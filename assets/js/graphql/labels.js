@@ -136,3 +136,28 @@ export const MENU_LABELS = gql`
     }
   }
 `
+
+// For DeviceShowLabelsTable
+export const PAGINATED_LABELS_BY_DEVICE = gql`
+  query PaginatedLabelsByDeviceQuery ($page: Int, $pageSize: Int, $deviceId: ID!, $column: String, $order: String) {
+    labels_by_device(page: $page, pageSize: $pageSize, deviceId: $deviceId, column: $column, order: $order) {
+      entries {
+        name,
+        id,
+        color,
+        channels {
+          id,
+          name
+        },
+        function {
+          id,
+          name
+        }
+      },
+      totalEntries,
+      totalPages,
+      pageSize,
+      pageNumber
+    }
+  }
+`

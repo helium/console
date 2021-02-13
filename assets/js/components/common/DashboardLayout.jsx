@@ -20,7 +20,7 @@ class DashboardLayout extends Component {
 
     return (
       <Layout style={{height: '100%', width: '100%'}}>
-        <Header style={{ overflowX: 'hidden' }}>
+        <Header>
           <TopBar user={user} showNav={this.state.showNav} toggleNav={this.toggleNav} />
         </Header>
 

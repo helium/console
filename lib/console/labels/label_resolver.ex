@@ -1,6 +1,7 @@
 defmodule Console.Labels.LabelResolver do
   alias Console.Repo
   alias Console.Labels.Label
+  alias Console.Labels.DevicesLabels
   import Ecto.Query
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
@@ -10,6 +11,19 @@ defmodule Console.Labels.LabelResolver do
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, labels}
+  end
+
+  def paginate_by_device(%{page: page, page_size: page_size, device_id: device_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
+    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+
+    query = from l in Label,
+      join: dl in DevicesLabels,
+      on: dl.label_id == l.id,
+      where: l.organization_id == ^current_organization.id and dl.device_id == ^device_id,
+      preload: [:channels, :function],
+      order_by: ^order_by
+
+    {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do

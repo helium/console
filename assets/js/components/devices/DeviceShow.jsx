@@ -12,7 +12,6 @@ import DashboardLayout from '../common/DashboardLayout'
 import Debug from '../common/Debug'
 import Downlink from '../common/Downlink'
 import Sidebar from '../common/Sidebar'
-import DeviceShowLabelsAttached from './DeviceShowLabelsAttached'
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal'
 import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
@@ -33,6 +32,7 @@ import { DeviceShowSkeleton } from './DeviceShowSkeleton';
 const { Text } = Typography
 const { TabPane } = Tabs
 const { Option } = Select
+import DeviceShowLabelsTable from './DeviceShowLabelsTable';
 
 const queryOptions = {
   options: props => ({
@@ -450,36 +450,6 @@ class DeviceShow extends Component {
                 </tr>
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
-                  <td><Text strong>Attached Labels</Text></td>
-                  <td>
-                    <DeviceShowLabelsAttached
-                      labels={device.labels}
-                      openDeviceRemoveLabelModal={this.openDeviceRemoveLabelModal}
-                      openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-                      history={this.props.history}
-                    />
-                  </td>
-                </tr>
-                <tr style={{height: '30px'}}>
-                  <td><Text strong>Associated Integrations</Text></td>
-                  <td>
-                    {flatten(device.labels.map(l => l.channels)).map(c => (
-                      <a
-                        key={c.id}
-                        style={{ marginRight: 8 }}
-                        href="#"
-                        onClick={e => {
-                          e.preventDefault()
-                          this.props.history.push(`/integrations/${c.id}`)
-                        }}
-                      >
-                        {c.name}
-                      </a>
-                    ))}
-                  </td>
-                </tr>
-                <tr style={{height: '20px'}} />
-                <tr style={{height: '30px'}}>
                   <td><Text strong>DC Used</Text></td>
                   <td><Text>{device.dc_usage} DC</Text></td>
                 </tr>
@@ -493,7 +463,14 @@ class DeviceShow extends Component {
           </Col>
         </Row>
 
-        <Card title="Device Integrations"
+        <DeviceShowLabelsTable
+          deviceId={this.props.match.params.id}
+          history={this.props.history}
+          openRemoveLabelFromDeviceModal={this.openDeviceRemoveLabelModal}
+          openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+        />
+
+        <Card title="Real Time Packets"
           bodyStyle={{padding: 0, overflowX: "scroll" }}
         >
           <EventsDashboard device_id={device.id} />
