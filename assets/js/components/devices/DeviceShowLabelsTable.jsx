@@ -1,22 +1,17 @@
 import React, { Component } from 'react'
 import { graphql } from 'react-apollo';
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { redForTablesDeleteText } from '../../util/colors'
-import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_LABELS_BY_DEVICE } from '../../graphql/labels'
 import { DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
-import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
-import { StatusIcon } from '../common/StatusIcon'
+import { Card, Button, Typography, Table, Pagination } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
-const { Option } = Select
 
 
 const DEFAULT_COLUMN = "name"
@@ -35,7 +30,6 @@ const queryOptions = {
   })
 }
 
-@connect(null, mapDispatchToProps)
 @graphql(PAGINATED_LABELS_BY_DEVICE, queryOptions)
 class DeviceShowLabelsTable extends Component {
   state = {
@@ -68,23 +62,6 @@ class DeviceShowLabelsTable extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
-  handleSortChange = (pagi, filter, sorter) => {
-    const { page, pageSize, order, column } = this.state
-
-    if (column == sorter.columnKey && order == 'asc') {
-      this.setState({ order: 'desc' })
-      this.refetchPaginatedEntries(page, pageSize, column, 'desc')
-    }
-    if (column == sorter.columnKey && order == 'desc') {
-      this.setState({ order: 'asc' })
-      this.refetchPaginatedEntries(page, pageSize, column, 'asc')
-    }
-    if (column != sorter.columnKey) {
-      this.setState({ column: sorter.columnKey, order: 'asc' })
-      this.refetchPaginatedEntries(page, pageSize, sorter.columnKey, 'asc')
-    }
-  }
-
   refetchPaginatedEntries = (page, pageSize, column, order) => {
     const { fetchMore } = this.props.data
     fetchMore({
@@ -93,28 +70,20 @@ class DeviceShowLabelsTable extends Component {
     })
   }
 
-  toggleDeviceActive = (active, id) => {
-    this.props.updateDevice(id, { active })
-  }
-
-  handleSortChange = (column, order) => {
-    const { page, pageSize } = this.state
-
-    this.setState({ column, order })
-    this.refetchPaginatedEntries(page, pageSize, column, order)
-  }
-
-  handleSort = (page, filter, sorter) => {
-    const { order, column } = this.state;
+  handleSortChange = (pagi, filter, sorter) => {
+    const { page, pageSize, order, column } = this.state
 
     if (column == sorter.field && order == 'asc') {
-      this.handleSortChange(column, 'desc')
+      this.setState({ order: 'desc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'desc')
     }
     if (column == sorter.field && order == 'desc') {
-      this.handleSortChange(column, 'asc')
+      this.setState({ order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'asc')
     }
     if (column != sorter.field) {
-      this.handleSortChange(sorter.field, 'asc')
+      this.setState({ column: sorter.field, order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, sorter.field, 'asc')
     }
   }
 
@@ -173,7 +142,7 @@ class DeviceShowLabelsTable extends Component {
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}
-                onChange={this.handleSort}
+                onChange={this.handleSortChange}
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openRemoveLabelFromDeviceModal([record])
@@ -218,7 +187,8 @@ class DeviceShowLabelsTable extends Component {
           dataSource={labels_by_device.entries}
           rowKey={record => record.id}
           pagination={false}
-          onChange={this.handleSort}
+          onChange={this.handleSortChange}
+          style={{ minWidth: 800 }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
@@ -232,10 +202,6 @@ class DeviceShowLabelsTable extends Component {
       </Card>
     )
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch)
 }
 
 export default DeviceShowLabelsTable
