@@ -152,7 +152,8 @@ export const PAGINATED_LABELS_BY_DEVICE = gql`
         function {
           id,
           name
-        }
+        },
+        inserted_at
       },
       totalEntries,
       totalPages,

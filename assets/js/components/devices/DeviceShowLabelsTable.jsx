@@ -97,11 +97,33 @@ class DeviceShowLabelsTable extends Component {
     this.props.updateDevice(id, { active })
   }
 
+  handleSortChange = (column, order) => {
+    const { page, pageSize } = this.state
+
+    this.setState({ column, order })
+    this.refetchPaginatedEntries(page, pageSize, column, order)
+  }
+
+  handleSort = (page, filter, sorter) => {
+    const { order, column } = this.state;
+
+    if (column == sorter.field && order == 'asc') {
+      this.handleSortChange(column, 'desc')
+    }
+    if (column == sorter.field && order == 'desc') {
+      this.handleSortChange(column, 'asc')
+    }
+    if (column != sorter.field) {
+      this.handleSortChange(sorter.field, 'asc')
+    }
+  }
+
   render() {
     const columns = [
       {
         title: 'Labels',
         dataIndex: 'name',
+        sorter: true,
         render: (text, record) => (
           <React.Fragment>
             <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
@@ -136,6 +158,7 @@ class DeviceShowLabelsTable extends Component {
       {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
+        sorter: true,
         render: data => moment.utc(data).local().format('lll')
       },
       {
@@ -150,6 +173,7 @@ class DeviceShowLabelsTable extends Component {
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}
+                onChange={this.handleSort}
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openRemoveLabelFromDeviceModal([record])
@@ -194,8 +218,7 @@ class DeviceShowLabelsTable extends Component {
           dataSource={labels_by_device.entries}
           rowKey={record => record.id}
           pagination={false}
-          // rowSelection={rowSelection}
-          onChange={this.handleSortChange}
+          onChange={this.handleSort}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
