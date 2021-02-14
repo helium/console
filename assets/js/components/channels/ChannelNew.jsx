@@ -28,6 +28,7 @@ import DecoderForm from './DecoderForm';
 import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
 const { Text } = Typography
 const { Option } = Select
+import _JSXStyle from "styled-jsx/style"
 
 const queryOptions = {
   options: props => ({

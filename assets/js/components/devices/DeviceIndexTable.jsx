@@ -15,6 +15,7 @@ import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Sw
 import { DeleteOutlined } from '@ant-design/icons';
 const { Text } = Typography
 const { Option } = Select
+import _JSXStyle from "styled-jsx/style"
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -79,7 +80,7 @@ class DeviceIndexTable extends Component {
 
   handleSort = (pagi, filter, sorter) => {
     const { order, column } = this.props
-    
+
     if (column == sorter.field && order == 'asc') {
       this.props.handleSortChange(column, 'desc')
     }
@@ -171,7 +172,7 @@ class DeviceIndexTable extends Component {
                   href={`/integrations/${c.id}`}
                   onClick={e => {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     this.props.history.push(`/integrations/${c.id}`)
                   }}
                 >

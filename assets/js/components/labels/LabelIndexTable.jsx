@@ -15,6 +15,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import LabelsImg from '../../../img/labels.svg'
 import classNames from 'classnames';
 import { IndexSkeleton } from '../common/IndexSkeleton';
+import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 const { Option } = Select
@@ -107,7 +108,7 @@ class LabelIndexTable extends Component {
                   href={`/integrations/${c.id}`}
                   onClick={e => {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     this.props.history.push(`/integrations/${c.id}`)
                   }}
                 >

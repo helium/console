@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { IntegrationTypeTile } from './IntegrationTypeTile';
 import { NEW_CHANNEL_TYPES } from '../../util/integrationInfo';
-
+import _JSXStyle from "styled-jsx/style"
 
 const styles = {
   createRow: {

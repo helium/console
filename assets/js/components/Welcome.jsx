@@ -10,6 +10,7 @@ import WelcomeImg from '../../img/welcome-image.png'
 import BulbImg from '../../img/bulb.svg'
 import PlusCircle from '../../img/pluscircle.svg'
 import classNames from 'classnames';
+import _JSXStyle from "styled-jsx/style"
 
 class Welcome extends Component {
   state = {

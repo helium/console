@@ -23,6 +23,7 @@ import classNames from 'classnames';
 const { Text, Title } = Typography
 import { primaryBlue, tertiaryPurple } from '../../util/colors'
 import UserCan from '../common/UserCan'
+import _JSXStyle from "styled-jsx/style"
 
 const styles = {
   tipText: {

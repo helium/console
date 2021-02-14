@@ -13,6 +13,7 @@ import FunctionsImg from '../../../img/functions.svg'
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
+import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 

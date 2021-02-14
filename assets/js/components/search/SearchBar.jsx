@@ -9,6 +9,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { GENERAL_SEARCH } from '../../graphql/search'
 import { SearchOutlined } from '@ant-design/icons';
 import { graphql } from 'react-apollo';
+import _JSXStyle from "styled-jsx/style"
 
 const queryOptions = {
   options: props => ({
