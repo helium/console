@@ -200,25 +200,27 @@ defmodule ConsoleWeb.Router.DeviceController do
           case event.category do
             "up" ->
               Enum.each(event.channels, fn channel ->
-                event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
-                labels = Enum.map(event_channel.labels, fn l -> l.id end)
+                if channel.id != "no_channel" do
+                  event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
+                  labels = Enum.map(event_channel.labels, fn l -> l.id end)
 
-                if event_channel.time_first_uplink == nil do
-                  Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
-                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                  details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
-                end
+                  if event_channel.time_first_uplink == nil do
+                    Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
+                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                    details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
+                    LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
+                  end
 
-                if channel.status != "success" do
-                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                  details = %{
-                    channel_name: event_channel.name,
-                    channel_id: event_channel.id,
-                    time: time
-                  }
-                  limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+                  if channel.status != "success" do
+                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                    details = %{
+                      channel_name: event_channel.name,
+                      channel_id: event_channel.id,
+                      time: time
+                    }
+                    limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+                    LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+                  end
                 end
               end)
             "down" ->
