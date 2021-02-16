@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Mustache from 'mustache'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import { displayError } from '../../util/messages'
-import { defaultPayload, browanPayload, cayennePayload, defaultTemplate, browanTemplate, cayenneTemplate } from '../../util/integrationTemplates'
+import { defaultPayload, browanPayload, cayennePayload, defaultTemplate, browanTemplate, cayenneTemplate, adafruitTemplate } from '../../util/integrationTemplates'
 import { Typography, Card, Popover, Select, Row, Col, Button, Input } from 'antd';
 import { QuestionCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 const { TextArea } = Input;
@@ -27,6 +27,7 @@ const templatesMap = {
   browan: browanTemplate,
   cayenne: cayenneTemplate,
   custom: defaultTemplate,
+  adafruit: adafruitTemplate
 }
 
 class ChannelPayloadTemplate extends Component {
@@ -77,7 +78,9 @@ class ChannelPayloadTemplate extends Component {
   }
 
   selectPayloadType = value => {
-    this.props.handleTemplateUpdate(templatesMap[value])
+    const { channel } = this.props;
+    const isAdafruit = channel.credentials.endpoint.includes('io.adafruit.com');
+    this.props.handleTemplateUpdate(isAdafruit ? templatesMap["adafruit"] : templatesMap[value])
     this.setState({ typeSelected: value, output: null }, this.generateOutput)
   }
 
@@ -107,6 +110,7 @@ class ChannelPayloadTemplate extends Component {
     const { channel, templateBody, from } = this.props
     const { typeSelected } = this.state
     const fromChannelNew = from === 'channelNew'
+    const isAdafruit = channel.credentials.endpoint.includes('io.adafruit.com');
 
     if (!fromChannelNew && channel && channel.payload_template === null && templateBody !== '' ) return (
       <span>
@@ -116,7 +120,7 @@ class ChannelPayloadTemplate extends Component {
     )
     if (!fromChannelNew && channel && channel.payload_template === null && templateBody === '') return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
       </span>
     )
     if (!fromChannelNew && channel && channel.payload_template !== null && templateBody !== channel.payload_template) return (
@@ -125,19 +129,20 @@ class ChannelPayloadTemplate extends Component {
         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
       </span>
     )
-    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== templatesMap[typeSelected]) return (
+    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) {
+      return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
       </span>
-    )
+    )}
     if (fromChannelNew && templateBody === '') return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
       </span>
     )
-    if (fromChannelNew && templateBody !== templatesMap[typeSelected]) return (
+    if (fromChannelNew && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(this.state.typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
       </span>
     )
   }

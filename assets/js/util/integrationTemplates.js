@@ -196,3 +196,31 @@ export const cayennePayload = {
 export const defaultTemplate = '{\n  "id": "{{id}}",\n  "name": "{{name}}",\n  "app_eui": "{{app_eui}}",\n  "dev_eui": "{{dev_eui}}",\n  "devaddr": "{{devaddr}}",\n  "downlink_url": "{{downlink_url}}",\n  "fcnt": "{{fcnt}}",\n  "port": "{{port}}",\n  "payload": "{{payload}}",\n  "reported_at": "{{reported_at}}"\n}'
 export const browanTemplate = '{\n  "device": "{{id}}",\n  {{#decoded}}{{#payload}}\n  "battery": {{battery_percent}},\n  "latitude": {{latitude}},\n  "longitude": {{longitude}},\n  "temperature": {{temperature}}\n  {{/payload}}{{/decoded}}\n}'
 export const cayenneTemplate = '{\n  {{#decoded}}{{#payload}}\n    {{^value.altitude}}\n      {{#value.x}}\n        "{{name}}_x_{{channel}}": "{{value.x}}",\n        "{{name}}_y_{{channel}}": "{{value.y}}",\n        "{{name}}_z_{{channel}}": "{{value.z}}"{{^last}},{{/last}}\n      {{/value.x}}\n      {{^value.x}}\n        "{{name}}__{{channel}}":"{{value}}"{{^last}},{{/last}}\n      {{/value.x}}\n    {{/value.altitude}}\n    {{^value.x}}\n      {{#value.altitude}}\n        "altitude": "{{value.altitude}}",\n        "latitude": "{{value.latitude}}",\n        "longitude": "{{value.longitude}}"{{^last}},{{/last}}\n      {{/value.altitude}}\n    {{/value.x}}\n  {{/payload}}{{/decoded}}\n}'
+
+export const adafruitTemplate = `{
+  "feeds": {
+    {{#decoded}}{{#payload}}
+        {{^value.altitude}}
+            {{#value.x}}
+                "{{name}}_x_{{channel}}": "{{value.x}}",
+                "{{name}}_y_{{channel}}": "{{value.y}}",
+                "{{name}}_z_{{channel}}": "{{value.z}}"{{^last}},{{/last}}
+            {{/value.x}}
+            {{^value.x}}
+                "{{name}}_{{channel}}":"{{value}}"{{^last}},{{/last}}
+            {{/value.x}}
+        {{/value.altitude}}
+    {{/payload}}{{/decoded}}
+  },
+  "location": {
+    {{#decoded}}{{#payload}}
+        {{^value.x}}
+            {{#value.altitude}}
+                "ele": "{{value.altitude}}",
+                "lat": "{{value.latitude}}",
+                "lon": "{{value.longitude}}"
+            {{/value.altitude}}
+        {{/value.x}}
+    {{/payload}}{{/decoded}}
+  }
+}`;

@@ -29,40 +29,13 @@ import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integration
 const { Text } = Typography
 const { Option } = Select
 import _JSXStyle from "styled-jsx/style"
+import { adafruitTemplate } from '../../util/integrationTemplates'
 
 const queryOptions = {
   options: props => ({
     fetchPolicy: 'cache-and-network',
   })
 }
-
-const adafruitBody = `{
-  "feeds": {
-    {{#decoded}}{{#payload}}
-        {{^value.altitude}}
-            {{#value.x}}
-                "{{name}}_x_{{channel}}": "{{value.x}}",
-                "{{name}}_y_{{channel}}": "{{value.y}}",
-                "{{name}}_z_{{channel}}": "{{value.z}}"{{^last}},{{/last}}
-            {{/value.x}}
-            {{^value.x}}
-                "{{name}}_{{channel}}":"{{value}}"{{^last}},{{/last}}
-            {{/value.x}}
-        {{/value.altitude}}
-    {{/payload}}{{/decoded}}
-  },
-  "location": {
-    {{#decoded}}{{#payload}}
-        {{^value.x}}
-            {{#value.altitude}}
-                "ele": "{{value.altitude}}",
-                "lat": "{{value.latitude}}",
-                "lon": "{{value.longitude}}"
-            {{/value.altitude}}
-        {{/value.x}}
-    {{/payload}}{{/decoded}}
-  }
-}`;
 
 @connect(null, mapDispatchToProps)
 @graphql(ALL_LABELS, queryOptions)
@@ -73,7 +46,7 @@ class ChannelNew extends Component {
     credentials: {},
     channelName: "",
     labels: {},
-    templateBody: this.props.match.params.id === 'adafruit' ? adafruitBody : "",
+    templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
     func: {
       format: 'cayenne'
     }
@@ -117,7 +90,7 @@ class ChannelNew extends Component {
         format: 'cayenne'
       }
     }
-    this.setState({ func, templateBody: payload.format === 'cayenne' ? adafruitBody : "" });
+    this.setState({ func, templateBody: payload.format === 'cayenne' ? adafruitTemplate : "" });
   }
 
   getRootType = (type) => {
