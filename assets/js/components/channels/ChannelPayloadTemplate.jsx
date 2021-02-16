@@ -77,9 +77,7 @@ class ChannelPayloadTemplate extends Component {
     this.props.handleTemplateUpdate(this.props.channel.payload_template)
   }
 
-  selectPayloadType = value => {
-    const { channel } = this.props;
-    const isAdafruit = channel.credentials.endpoint.includes('io.adafruit.com');
+  selectPayloadType = (value, isAdafruit) => {
     this.props.handleTemplateUpdate(isAdafruit ? templatesMap["adafruit"] : templatesMap[value])
     this.setState({ typeSelected: value, output: null }, this.generateOutput)
   }
@@ -110,7 +108,7 @@ class ChannelPayloadTemplate extends Component {
     const { channel, templateBody, from } = this.props
     const { typeSelected } = this.state
     const fromChannelNew = from === 'channelNew'
-    const isAdafruit = channel.credentials.endpoint.includes('io.adafruit.com');
+    const isAdafruit = channel.credentials && channel.credentials.endpoint && channel.credentials.endpoint.includes('io.adafruit.com');
 
     if (!fromChannelNew && channel && channel.payload_template === null && templateBody !== '' ) return (
       <span>
@@ -120,7 +118,7 @@ class ChannelPayloadTemplate extends Component {
     )
     if (!fromChannelNew && channel && channel.payload_template === null && templateBody === '') return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>
     )
     if (!fromChannelNew && channel && channel.payload_template !== null && templateBody !== channel.payload_template) return (
@@ -132,17 +130,17 @@ class ChannelPayloadTemplate extends Component {
     if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) {
       return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>
     )}
     if (fromChannelNew && templateBody === '') return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>
     )
     if (fromChannelNew && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) return (
       <span>
-        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected)}>Apply Default Template</Button>
+        <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>
     )
   }
