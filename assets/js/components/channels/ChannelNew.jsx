@@ -279,17 +279,13 @@ class ChannelNew extends Component {
         )}
          <style jsx>{`
           .flexwrapper {
-            display: flex;
+            display: block;
             flex-wrap: wrap;
 
           }
 
           .integrationcard {
             flex-grow: 1;
-          }
-
-          .integrationcard:first-of-type {
-            margin-right: 20px;
           }
 
 
