@@ -380,19 +380,20 @@ class DeviceIndexTable extends Component {
                       style={{ width: 270, marginRight: 10 }}
                       onSelect={this.handleSelectOption}
                     >
+                      <Option value="addLabel" disabled={selectedRows.length == 0}>Add Label to Selected Devices</Option>
+                      <Option value="removeAllLabels" disabled={selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
                       {
-                        selectedRows.length > 0 && !selectedRows.find(r => r.active == true) && (
-                          <Option value="setActive">Resume packet transfer for selected devices</Option>
+                        selectedRows.find(r => r.active == false) && (
+                          <Option value="setActive" disabled={selectedRows.length == 0}>Resume Packet Transfer for Selected Devices</Option>
                         )
                       }
+
                       {
-                        selectedRows.length > 0 && !selectedRows.find(r => r.active == false) && (
-                          <Option value="setInactive">Pause packet transfer for selected devices</Option>
+                        (selectedRows.length == 0 || !selectedRows.find(r => r.active == false)) && (    
+                          <Option value="setInactive" disabled={selectedRows.length == 0}>Pause Packet Transfer for Selected Devices</Option>
                         )
                       }
-                      <Option value="addLabel" disabled={this.state.selectedRows.length == 0}>Add Label to Selected Devices</Option>
-                      <Option value="removeAllLabels" disabled={this.state.selectedRows.length == 0}>Remove All Labels From Selected Devices</Option>
-                      <Option value="delete" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+                      <Option value="delete" disabled={selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
                     </Select>
                   </UserCan>
                 </div>

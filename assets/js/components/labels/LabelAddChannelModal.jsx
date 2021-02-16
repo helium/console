@@ -5,8 +5,9 @@ import { graphql } from 'react-apollo';
 import { addLabelsToChannel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_CHANNELS } from '../../graphql/channels'
-import { Modal, Button, Select } from 'antd';
+import { Modal, Button, Select, Typography } from 'antd';
 const { Option } = Select
+const { Text } = Typography
 
 const queryOptions = {
   options: props => ({
@@ -42,7 +43,7 @@ class LabelAddChannelModal extends Component {
 
     return (
       <Modal
-        title={`Add Integration to ${labels ? labels.length : 0} Labels`}
+        title={`Add Integration to ${labels ? labels.length : 0} Label${labels && labels.length == 1 ? "" : "s"}`}
         visible={open}
         centered
         onCancel={onClose}
@@ -61,15 +62,18 @@ class LabelAddChannelModal extends Component {
           </Button>,
         ]}
       >
-        <Select
-          onChange={this.handleSelectOption}
-          style={{ width: 220 }}
-          placeholder="Choose Integration..."
-        >
-          {allChannels && allChannels.map(c => (
-            <Option value={c.id} key={c.id}>{c.name}</Option>
-          ))}
-        </Select>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <Text>Select an integration to attach to your selected Label{labels && labels.length == 1 ? "" : "s"}:</Text>
+
+          <Select
+            onChange={this.handleSelectOption}
+            style={{ width: 200, marginTop: 12 }}
+          >
+            {allChannels && allChannels.map(c => (
+              <Option value={c.id} key={c.id}>{c.name}</Option>
+            ))}
+          </Select>
+        </div>
       </Modal>
     )
   }
