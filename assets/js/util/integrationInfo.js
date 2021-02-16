@@ -66,7 +66,7 @@ export const PREMADE_CHANNEL_TYPES = [
     name: "Datacake",
     link: "/integrations/new/datacake",
     img: `${Ubidots}` ,
-    info: "Forward the Data from your LoRaWAN Devices to your Datacake Integration",
-    docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots"
+    info: "This Integration simplifies sending data to the Datacake IoT platform.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake"
   },
 ]
