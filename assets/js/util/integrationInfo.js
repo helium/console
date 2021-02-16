@@ -62,4 +62,11 @@ export const PREMADE_CHANNEL_TYPES = [
     info: "This Integration automates the complexity of securely connecting your devices to Adafruit IO.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/adafruitio"
   },
+  {
+    name: "Datacake",
+    link: "/integrations/new/datacake",
+    img: `${Ubidots}` ,
+    info: "Forward the Data from your LoRaWAN Devices to your Datacake Integration",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots"
+  },
 ]
