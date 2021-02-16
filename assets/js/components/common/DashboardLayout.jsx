@@ -21,7 +21,7 @@ class DashboardLayout extends Component {
     return (
       <Layout style={{height: '100%', width: '100%'}}>
         <Header>
-          <TopBar user={user} />
+          <TopBar user={user} toggleNav={this.toggleNav} showNav={this.state.showNav}/>
         </Header>
 
         <Layout style={{ height: 'calc(100vh - 64px)' }}>

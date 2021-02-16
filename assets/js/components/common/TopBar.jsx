@@ -72,7 +72,7 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery } = this.props;
+    const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery, toggleNav } = this.props;
     const { showOrganizationModal } = this.state
 
     const allOrganizations = orgsQuery.data ? orgsQuery.data.allOrganizations : null
