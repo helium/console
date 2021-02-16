@@ -43,7 +43,7 @@ class LabelAddChannelModal extends Component {
 
     return (
       <Modal
-        title={`Add Integration to ${labels ? labels.length : 0} Label${labels && labels.length == 1 ? "" : "s"}`}
+        title={`Add Integration to ${labels ? labels.length : 0} Label${labels && labels.length === 1 ? "" : "s"}`}
         visible={open}
         centered
         onCancel={onClose}
@@ -63,7 +63,7 @@ class LabelAddChannelModal extends Component {
         ]}
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <Text>Select an integration to attach to your selected Label{labels && labels.length == 1 ? "" : "s"}:</Text>
+          <Text>Select an integration to attach to your selected Label{labels && labels.length === 1 ? "" : "s"}:</Text>
 
           <Select
             onChange={this.handleSelectOption}

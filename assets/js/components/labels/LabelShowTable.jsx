@@ -209,18 +209,18 @@ class LabelShowTable extends Component {
               onSelect={this.handleSelectOption}
             >
               {
-                selectedRows.find(r => r.active == false) && (
-                  <Option value="setActive" disabled={selectedRows.length == 0}>Resume Packet Transfer for Selected Devices</Option>
+                selectedRows.find(r => r.active === false) && (
+                  <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
                 )
               }
 
               {
-                (selectedRows.length == 0 || !selectedRows.find(r => r.active == false)) && (
-                  <Option value="setInactive" disabled={selectedRows.length == 0}>Pause Packet Transfer for Selected Devices</Option>
+                (selectedRows.length === 0 || !selectedRows.find(r => r.active === false)) && (
+                  <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
                 )
               }
-              <Option disabled={selectedRows.length == 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
-              <Option value="delete" disabled={selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              <Option disabled={selectedRows.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+              <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
             </Select>
           </UserCan>
         }
