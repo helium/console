@@ -39,7 +39,7 @@ class ChannelIndex extends Component {
         Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.
         <a href="https://docs.helium.com/use-the-network/console/integrations/" target="_blank"> Tell me more about Console Integrations.</a>
       </p>
-      <div className="flexwrapper">
+      <div style={{ display: 'block' }}>
         <UserCan>
           <Card title="Add a Prebuilt Integration" className="integrationcard">
             <ChannelPremadeRow />

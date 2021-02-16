@@ -218,7 +218,7 @@ class ChannelNew extends Component {
           </div>
         )}
         {!type && (
-          <div className="flexwrapper">
+          <div style={{ display: 'block' }}>
             <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
               <ChannelPremadeRow />
             </Card>
@@ -286,10 +286,6 @@ class ChannelNew extends Component {
 
           .integrationcard {
             flex-grow: 1;
-          }
-
-          .integrationcard:first-of-type {
-            margin-right: 20px;
           }
 
 

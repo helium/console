@@ -285,12 +285,8 @@ h1 {
   animation: rotate 1.5s linear infinite;
 }
 
-.integrationcard:nth-of-type(2) {
+.integrationcard {
   flex-grow: 1;
-}
-
-.integrationcard:first-of-type {
-  margin-right: 20px;
 }
 
 .ant-modal-mask {
