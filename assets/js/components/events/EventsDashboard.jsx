@@ -48,8 +48,10 @@ const categoryTag = (category) => {
       return <Text>Downlink</Text>
     case "ack":
       return <Text>Acknowledge</Text>
-    case "activation":
-      return <Text>Activation</Text>
+    case "join_req":
+      return <Text>Join Request</Text>
+    case "join_accept":
+      return <Text>Join Accept</Text>
     case "packet_dropped":
       return <Text>Packet Dropped</Text>
     case "channel_crash":
@@ -187,7 +189,14 @@ class EventsDashboard extends Component {
             {row.frame_up}
           </Tag>
         )
-      case "activation":
+      case "join_req":
+        return (
+          <Tag style={styles.tag} color="#4091F7">
+            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
+            {row.frame_up}
+          </Tag>
+        )
+      case "join_accept":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
