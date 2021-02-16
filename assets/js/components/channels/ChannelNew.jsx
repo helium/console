@@ -41,12 +41,12 @@ const adafruitBody = `{
     {{#decoded}}{{#payload}}
         {{^value.altitude}}
             {{#value.x}}
-                "{{name}}_x": "{{value.x}}",
-                "{{name}}_y": "{{value.y}}",
-                "{{name}}_z": "{{value.z}}"{{^last}},{{/last}}
+                "{{name}}_x_{{channel}}": "{{value.x}}",
+                "{{name}}_y_{{channel}}": "{{value.y}}",
+                "{{name}}_z_{{channel}}": "{{value.z}}"{{^last}},{{/last}}
             {{/value.x}}
             {{^value.x}}
-                "{{name}}":"{{value}}"{{^last}},{{/last}}
+                "{{name}}_{{channel}}":"{{value}}"{{^last}},{{/last}}
             {{/value.x}}
         {{/value.altitude}}
     {{/payload}}{{/decoded}}
