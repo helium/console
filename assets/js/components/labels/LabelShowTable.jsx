@@ -83,17 +83,17 @@ class LabelShowTable extends Component {
   handleSortChange = (pagi, filter, sorter) => {
     const { page, pageSize, order, column } = this.state
 
-    if (column == sorter.columnKey && order == 'asc') {
+    if (column == sorter.field && order == 'asc') {
       this.setState({ order: 'desc' })
       this.refetchPaginatedEntries(page, pageSize, column, 'desc')
     }
-    if (column == sorter.columnKey && order == 'desc') {
+    if (column == sorter.field && order == 'desc') {
       this.setState({ order: 'asc' })
       this.refetchPaginatedEntries(page, pageSize, column, 'asc')
     }
-    if (column != sorter.columnKey) {
-      this.setState({ column: sorter.columnKey, order: 'asc' })
-      this.refetchPaginatedEntries(page, pageSize, sorter.columnKey, 'asc')
+    if (column != sorter.field) {
+      this.setState({ column: sorter.field, order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, sorter.field, 'asc')
     }
   }
 
