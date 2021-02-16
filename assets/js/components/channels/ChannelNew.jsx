@@ -218,7 +218,7 @@ class ChannelNew extends Component {
           </div>
         )}
         {!type && (
-          <div className="flexwrapper">
+          <div style={{ display: 'block' }}>
             <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
               <ChannelPremadeRow />
             </Card>
@@ -279,7 +279,7 @@ class ChannelNew extends Component {
         )}
          <style jsx>{`
           .flexwrapper {
-            display: block;
+            display: flex;
             flex-wrap: wrap;
 
           }
