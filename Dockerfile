@@ -9,14 +9,11 @@ WORKDIR /app
 # install Hex + Rebar
 RUN mix do local.hex --force, local.rebar --force
 
-# set build ENV
-ENV MIX_ENV=prod
-
 # install mix dependencies
 COPY mix.lock mix.lock
 COPY mix.exs  mix.exs
 COPY config config
-RUN mix deps.get --only $MIX_ENV
+RUN mix deps.get --only prod
 RUN mix deps.compile
 
 # build assets
