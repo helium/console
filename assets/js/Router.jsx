@@ -28,7 +28,7 @@ import { useAuth0  } from './components/auth/Auth0Provider';
 // import FunctionIndex from './components/functions/FunctionIndex';
 // import FunctionNew from './components/functions/FunctionNew';
 // import FunctionShow from './components/functions/FunctionShow';
-// import FlowsIndex from './components/flows/FlowsIndex';
+import FlowsIndex from './components/flows/FlowsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
 import { fetchOrganization } from './actions/organization';
@@ -103,6 +103,7 @@ const Router = (props) => {
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
+                        <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                       </Switch>
                     </ApolloProvider>
                   )
