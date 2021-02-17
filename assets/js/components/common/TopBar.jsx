@@ -11,7 +11,7 @@ import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
-import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Typography, Tooltip, Button } from 'antd';
 import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
@@ -34,9 +34,9 @@ class TopBar extends Component {
     const { socket, user } = this.props
     const user_id = user.sub.slice(6)
 
-    this.channel = socket.channel("graphql:all", {})
+    this.channel = socket.channel("graphql:topbar_orgs", {})
     this.channel.join()
-    this.channel.on(`graphql:all:${user_id}:organization_added`, (message) => {
+    this.channel.on(`graphql:topbar_orgs:${user_id}:organization_list_update`, (message) => {
       this.props.orgsQuery.refetch()
     })
   }
@@ -80,8 +80,8 @@ class TopBar extends Component {
     const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery, toggleNav } = this.props;
     const { showOrganizationModal } = this.state
 
-    const allOrganizations = orgsQuery.data ? orgsQuery.data.allOrganizations : null
-    const organization = orgShowQuery.data ? orgShowQuery.data.organization : null
+    const allOrganizations = orgsQuery.allOrganizations || null
+    const organization = orgShowQuery.organization || null
     const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id)
 
     return (

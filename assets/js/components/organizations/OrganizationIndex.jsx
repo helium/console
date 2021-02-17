@@ -64,6 +64,7 @@ class OrganizationIndex extends Component {
         <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 1, overflowX: 'scroll' }}>
           <OrganizationsTable
             openDeleteOrganizationModal={this.openDeleteOrganizationModal}
+            user={this.props.user}
           />
         </Card>
 

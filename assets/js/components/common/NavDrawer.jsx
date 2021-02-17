@@ -44,7 +44,7 @@ class NavDrawer extends Component {
 
   render() {
     const { history } = this.props
-    const { data } = this.props.allLabelsQuery
+    const { allLabels } = this.props.allLabelsQuery
     const { showLabels } = this.state
 
     return (
@@ -59,7 +59,7 @@ class NavDrawer extends Component {
           <div style={{ marginLeft: 0, position: 'relative' }}>
             <NavLink to={"/labels"} activeClassName="is-active" className="menu-link">Labels</NavLink>
             {
-              showLabels && data && data.allLabels && data.allLabels.length > 0 && (
+              showLabels && allLabels && allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false }) || localStorage.setItem(SHOW_LABELS_KEY, 'false')}
@@ -69,7 +69,7 @@ class NavDrawer extends Component {
               )
             }
             {
-              !showLabels && data && data.allLabels && data.allLabels.length > 0 && (
+              !showLabels && allLabels && allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true }) || localStorage.setItem(SHOW_LABELS_KEY, 'true')}
@@ -83,7 +83,7 @@ class NavDrawer extends Component {
             showLabels && (
               <div style={{background: '#d9e2ef', overflowX: 'scroll' }} className="labellist">
                 {
-                  data && data.allLabels && data.allLabels.map(l => (
+                  allLabels && allLabels.map(l => (
                  <div style={{ paddingTop: 8, paddingLeft: 18, width: '100%' }} key={l.id} className="labelrowwrapper">
                     <div style={{ padding: 2, width: '100%', paddingRight: 18 }}>
                       <Link to={`/labels/${l.id}`}>

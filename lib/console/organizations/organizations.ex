@@ -30,7 +30,9 @@ defmodule Console.Organizations do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
-      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, active: o.active, received_free_dc: o.received_free_dc, webhook_key: o.webhook_key}
+      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, active: o.active, received_free_dc: o.received_free_dc, webhook_key: o.webhook_key},
+      order_by: [asc: :name]
+
     organizations = Repo.all(query)
 
     organizations =

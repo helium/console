@@ -7,7 +7,7 @@ const withGql = (Component, query, queryOptionsFunc) => {
     const queryProps = useQuery(query, queryOptions)
 
     return (
-      <Component {...props} {...{ [queryOptions.name]: queryProps }} />
+      <Component {...props} {...{ [queryOptions.name]: Object.assign({}, queryProps, queryProps.data) }}  />
     )
   }
 }

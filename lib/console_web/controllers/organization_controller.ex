@@ -46,7 +46,8 @@ defmodule ConsoleWeb.OrganizationController do
 
           render(conn, "show.json", organization: membership_info)
         _ ->
-          ConsoleWeb.Endpoint.broadcast("graphql:all", "graphql:all:#{conn.assigns.current_user.id}:organization_added", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
 
           conn
           |> put_status(:created)
@@ -77,7 +78,8 @@ defmodule ConsoleWeb.OrganizationController do
       end)
       |> Repo.transaction()
 
-      broadcast(organization, conn.assigns.current_user)
+      ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
       if active do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
       else
@@ -154,7 +156,9 @@ defmodule ConsoleWeb.OrganizationController do
             |> Mailer.deliver_later()
           end)
 
-          broadcast(organization, conn.assigns.current_user)
+          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+
           render_org = %{id: organization.id, name: organization.name, role: membership.role}
           conn
           |> put_status(:accepted)
@@ -162,10 +166,5 @@ defmodule ConsoleWeb.OrganizationController do
           |> render("show.json", organization: render_org)
         end
     end
-  end
-
-  defp broadcast(%Organization{} = organization, current_user) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, top_bar_organizations: "#{current_user.id}/top_bar_organizations")
   end
 end
