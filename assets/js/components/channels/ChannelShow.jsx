@@ -178,7 +178,16 @@ class ChannelShow extends Component {
       <Text>Data failed to load, please reload the page and try again</Text>
     )
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
-    const downlinkUrl = `https://${window.env_domain || process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+
+    let downlinkUrl = `http://localhost:4000/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+
+    if (process.env.SELF_HOSTED && window.env_domain !== "localhost:4000") {
+      downlinkUrl = `https://${window.env_domain}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+    }
+    if (!process.env.SELF_HOSTED && process.env.ENV_DOMAIN !== "localhost") {
+      downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
+    }
+
     const { showDownlinkToken } = this.state
 
     return(
