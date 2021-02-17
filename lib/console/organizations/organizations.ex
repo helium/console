@@ -238,7 +238,7 @@ defmodule Console.Organizations do
   end
 
   def update_membership(%Membership{} = membership, attrs) do
-    if attrs["role"] != "admin" do
+    if "role" in attrs and attrs["role"] != "admin" do
       Repo.transaction(fn ->
         from(key in ApiKey, where: key.user_id == ^membership.user_id and key.organization_id == ^membership.organization_id)
         |> Repo.delete_all()
