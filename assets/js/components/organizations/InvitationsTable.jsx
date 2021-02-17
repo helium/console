@@ -119,6 +119,7 @@ class InvitationsTable extends Component {
             total={invitations.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{ marginBottom: 20 }}
+            showSizeChanger={false}
           />
         </div>
       </div>

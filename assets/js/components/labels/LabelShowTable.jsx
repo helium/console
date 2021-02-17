@@ -244,6 +244,7 @@ class LabelShowTable extends Component {
             total={devices_by_label.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
+            showSizeChanger={false}
           />
         </div>
       </Card>

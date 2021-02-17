@@ -285,6 +285,7 @@ class LabelIndexTable extends Component {
                 total={labels.totalEntries}
                 onChange={page => this.handleChangePage(page)}
                 style={{marginBottom: 20}}
+                showSizeChanger={false}
               />
             </div>
           </React.Fragment>

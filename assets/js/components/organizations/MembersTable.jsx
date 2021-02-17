@@ -140,6 +140,7 @@ class MembersTable extends Component {
             total={memberships.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{ marginBottom: 20 }}
+            showSizeChanger={false}
           />
         </div>
       </div>
