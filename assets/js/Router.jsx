@@ -13,7 +13,7 @@ import { Redirect } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import PublicRoute from './components/routes/PublicRoute.jsx';
 import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx';
-// import Profile from './components/profile/Profile.jsx';
+import Profile from './components/profile/Profile.jsx';
 // import DeviceIndex from './components/devices/DeviceIndex';
 // import DeviceShow from './components/devices/DeviceShow';
 // import ChannelIndex from './components/channels/ChannelIndex';
@@ -104,6 +104,7 @@ const Router = (props) => {
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
+                        <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>
                   )

@@ -16,4 +16,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:members_table", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:api_keys", _message, socket) do
+    {:ok, socket}
+  end
 end
