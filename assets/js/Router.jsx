@@ -19,7 +19,7 @@ import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx
 // import ChannelIndex from './components/channels/ChannelIndex';
 // import ChannelShow from './components/channels/ChannelShow';
 // import ChannelNew from './components/channels/ChannelNew';
-// import UserIndex from './components/organizations/UserIndex';
+import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 // import LabelIndex from './components/labels/LabelIndex';
 // import LabelShow from './components/labels/LabelShow';
@@ -102,6 +102,7 @@ const Router = (props) => {
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
+                        <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>
                   )

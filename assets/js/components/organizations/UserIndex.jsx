@@ -102,7 +102,7 @@ class UserIndex extends Component {
 
         <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0, overflowX: 'scroll' }}>
           <header style={{ ...styles.header, marginTop: 1 }} />
-          <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} />
+          <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} user={user} />
         </Card>
 
         <NewUserModal

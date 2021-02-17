@@ -2,43 +2,35 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import get from 'lodash/get'
 import moment from 'moment'
-import { PAGINATED_MEMBERSHIPS, MEMBERSHIP_SUBSCRIPTION } from '../../graphql/memberships'
+import { PAGINATED_MEMBERSHIPS } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_MEMBERSHIPS, queryOptions)
 class MembersTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10
+    pageSize: 10
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.data
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
 
-    subscribeToMore({
-      document: MEMBERSHIP_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
+    this.channel = socket.channel("graphql:members_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:members_table:${user_id}:member_list_update`, (message) => {
+      this.props.paginatedMembersQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
@@ -48,13 +40,8 @@ class MembersTable extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedMembersQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -117,7 +104,7 @@ class MembersTable extends Component {
       },
     ]
 
-    const { loading, error, memberships } = this.props.data
+    const { loading, error, memberships } = this.props.paginatedMembersQuery
 
     if (loading) return <SkeletonLayout />;
     if (error) return (
@@ -148,4 +135,12 @@ class MembersTable extends Component {
   }
 }
 
-export default MembersTable
+function mapStateToProps(state) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(MembersTable, PAGINATED_MEMBERSHIPS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedMembersQuery' }))
+)

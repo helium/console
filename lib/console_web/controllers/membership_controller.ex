@@ -19,7 +19,7 @@ defmodule ConsoleWeb.MembershipController do
       {:error, :forbidden, "Cannot update your own membership"}
     else
       with {:ok, _} <- Organizations.update_membership(membership, attrs) do
-        broadcast(membership)
+        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_user.id}:member_list_update", %{})
 
         conn
         |> put_resp_header("message", "User role updated successfully")
@@ -37,16 +37,12 @@ defmodule ConsoleWeb.MembershipController do
       {:error, :forbidden, "Cannot delete your own membership"}
     else
       with {:ok, _} <- Organizations.delete_membership(membership) do
-        broadcast(membership)
+        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_user.id}:member_list_update", %{})
 
         conn
         |> put_resp_header("message", "User removed from organization")
         |> send_resp(:no_content, "")
       end
     end
-  end
-
-  def broadcast(%Membership{} = membership) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, membership, membership_updated: "#{membership.organization_id}/membership_updated")
   end
 end
