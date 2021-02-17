@@ -318,7 +318,7 @@ defmodule ConsoleWeb.LabelController do
     if label.function_id == function_id do
       with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
         function = Functions.get_function!(current_organization, function_id)
-        ConsoleWeb.FunctionController.broadcast(function)
+        ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
         ConsoleWeb.FunctionController.broadcast(function, function.id)
         broadcast(label, label.id)
         broadcast_router_update_devices(label)

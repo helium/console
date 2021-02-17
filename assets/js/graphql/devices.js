@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const DEVICE_FRAGMENT = gql`
   fragment DeviceFragment on Device {
