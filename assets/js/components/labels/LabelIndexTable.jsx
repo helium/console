@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
@@ -21,36 +21,25 @@ import _JSXStyle from "styled-jsx/style"
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(PAGINATED_LABELS, queryOptions)
 class LabelIndexTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
     selectedRows: [],
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.data
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: LABEL_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-        this.setState({ selectedRows: [] })
-      }
+    this.channel = socket.channel("graphql:labels_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:labels_index_table:${currentOrganizationId}:label_list_update`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleSelectOption = (value) => {
@@ -58,11 +47,6 @@ class LabelIndexTable extends Component {
     else if (value === 'addIntegration') this.props.openLabelAddChannelModal(this.state.selectedRows)
     else if (value === 'swapLabelDevices') this.props.openSwapLabelModal(this.state.selectedRows)
     else this.props.openDeleteLabelModal(this.state.selectedRows)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
   }
 
   handleChangePage = (page) => {
@@ -73,7 +57,7 @@ class LabelIndexTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedLabelsQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -160,7 +144,7 @@ class LabelIndexTable extends Component {
       },
     ]
 
-    const { loading, error, labels } = this.props.data
+    const { loading, error, labels } = this.props.paginatedLabelsQuery
 
     if (loading) return <IndexSkeleton title="Labels" />;
     if (error) return (
@@ -297,8 +281,17 @@ class LabelIndexTable extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteLabel }, dispatch)
 }
 
-export default LabelIndexTable
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedLabelsQuery' }))
+)

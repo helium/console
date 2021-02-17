@@ -21,7 +21,7 @@ import ChannelShow from './components/channels/ChannelShow';
 import ChannelNew from './components/channels/ChannelNew';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
-// import LabelIndex from './components/labels/LabelIndex';
+import LabelIndex from './components/labels/LabelIndex';
 // import LabelShow from './components/labels/LabelShow';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
@@ -103,6 +103,7 @@ const Router = (props) => {
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
                         <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
+                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />

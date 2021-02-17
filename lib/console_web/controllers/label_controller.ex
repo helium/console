@@ -24,7 +24,7 @@ defmodule ConsoleWeb.LabelController do
       })
 
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
-      broadcast(label)
+      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
 
       case label_params["channel_id"] do
         nil -> nil
@@ -81,7 +81,7 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
-      broadcast(label)
+      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       broadcast_router_update_devices(label.devices)
 
       conn
@@ -98,7 +98,7 @@ defmodule ConsoleWeb.LabelController do
     assoc_devices = Enum.map(labels_to_delete, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
 
     with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
-      broadcast(label)
+      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       broadcast_router_update_devices(assoc_devices)
 
       conn
@@ -174,7 +174,7 @@ defmodule ConsoleWeb.LabelController do
           0 -> "All selected labels are already in integration"
           _ ->
             ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
-            broadcast(first_label)
+            ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
 
             labels_updated = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
             assoc_devices = Enum.map(labels_updated, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
@@ -253,9 +253,7 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, labels} <- Labels.delete_all_devices_from_labels(labels, current_organization) do
-      labels
-        |> List.first()
-        |> broadcast()
+      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
 
       assoc_labels = labels |> Labels.multi_fetch_assoc([:devices])
       assoc_devices = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
@@ -354,7 +352,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, _, _} <- Labels.add_devices_to_label(device_ids, destination_label.id, current_organization),
       {_, nil} <- Labels.delete_devices_from_label(device_ids, label_id, current_organization) do
-        broadcast(label)
+        ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
         broadcast(label, label.id)
         broadcast(destination_label, destination_label.id)
         broadcast_router_update_devices(label.devices)

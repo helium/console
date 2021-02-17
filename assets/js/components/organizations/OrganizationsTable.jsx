@@ -19,7 +19,7 @@ import WebhookKeyField from './WebhookKeyField';
 class OrganizationsTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
     webhookKeyToShow: 'none'
   }
 

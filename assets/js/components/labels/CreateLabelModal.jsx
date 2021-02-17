@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createLabel } from '../../actions/label'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { ALL_CHANNELS_FUNCTIONS } from '../../graphql/channels'
 import { grayForModalCaptions } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -10,14 +10,6 @@ import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_CHANNELS_FUNCTIONS, queryOptions)
 class CreateLabelModal extends Component {
   state = {
     labelName: "",
@@ -49,7 +41,7 @@ class CreateLabelModal extends Component {
 
   render() {
     const { open, onClose } = this.props
-    const { allChannels, allFunctions, error } = this.props.data
+    const { allChannels, allFunctions, error } = this.props.allResourcesQuery
 
     return (
       <Modal
@@ -97,7 +89,7 @@ class CreateLabelModal extends Component {
               ))
             }
           </Select>
-   
+
           <Select
             placeholder={error ? "No Functions Available" : "Choose Function"}
             style={{ width: '100%', marginRight: 10, marginTop: 10 }}
@@ -121,4 +113,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createLabel }, dispatch)
 }
 
-export default CreateLabelModal
+export default connect(null, mapDispatchToProps)(
+  withGql(CreateLabelModal, ALL_CHANNELS_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allResourcesQuery' }))
+)

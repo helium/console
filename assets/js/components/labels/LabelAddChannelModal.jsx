@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { addLabelsToChannel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_CHANNELS } from '../../graphql/channels'
@@ -9,14 +9,6 @@ import { Modal, Button, Select, Typography } from 'antd';
 const { Option } = Select
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_CHANNELS, queryOptions)
 class LabelAddChannelModal extends Component {
   state = {
     channelId: null
@@ -39,7 +31,7 @@ class LabelAddChannelModal extends Component {
 
   render() {
     const { open, onClose, labels } = this.props
-    const { allChannels } = this.props.data
+    const { allChannels } = this.props.allChannelsQuery
 
     return (
       <Modal
@@ -83,4 +75,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ addLabelsToChannel }, dispatch)
 }
 
-export default LabelAddChannelModal
+export default connect(null, mapDispatchToProps)(
+  withGql(LabelAddChannelModal, ALL_CHANNELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allChannelsQuery' }))
+)
