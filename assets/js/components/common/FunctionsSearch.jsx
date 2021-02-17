@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { SEARCH_FUNCTIONS } from '../../graphql/search';
 import { Typography, Button, Select } from 'antd';
 const { Option } = Select;
@@ -8,15 +8,6 @@ import debounce from 'lodash/debounce';
 import find from 'lodash/find';
 import UserCan from '../common/UserCan';
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-@graphql(SEARCH_FUNCTIONS, queryOptions)
 class FunctionsSearch extends Component {
   state = {
     searchFunctions: [],
@@ -24,7 +15,7 @@ class FunctionsSearch extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
+    const { loading, fetchMore } = this.props.searchFunctionsQuery
 
     this.setState({ selectedFunction: value}, () => {
       if (!loading) {
@@ -83,4 +74,4 @@ class FunctionsSearch extends Component {
   }
 }
 
-export default FunctionsSearch;
+export default withGql(FunctionsSearch, SEARCH_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { query:"" }, name: 'searchFunctionsQuery' }))

@@ -18,7 +18,7 @@ import Profile from './components/profile/Profile.jsx';
 // import DeviceShow from './components/devices/DeviceShow';
 // import ChannelIndex from './components/channels/ChannelIndex';
 // import ChannelShow from './components/channels/ChannelShow';
-// import ChannelNew from './components/channels/ChannelNew';
+import ChannelNew from './components/channels/ChannelNew';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 // import LabelIndex from './components/labels/LabelIndex';
@@ -100,6 +100,7 @@ const Router = (props) => {
                     <ApolloProvider client={apolloClient}>
                       <Switch>
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
+                        <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { graphql } from 'react-apollo';
 import DashboardLayout from '../common/DashboardLayout'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
@@ -31,14 +30,7 @@ const { Option } = Select
 import _JSXStyle from "styled-jsx/style"
 import { adafruitTemplate } from '../../util/integrationTemplates'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
 @connect(null, mapDispatchToProps)
-@graphql(ALL_LABELS, queryOptions)
 class ChannelNew extends Component {
   state = {
     type: this.props.match.params.id,
@@ -165,7 +157,6 @@ class ChannelNew extends Component {
 
   render() {
     const { showNextSteps, type, labels } = this.state
-    const { allLabels } = this.props.data
 
     return(
       <DashboardLayout
