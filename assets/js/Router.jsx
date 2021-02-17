@@ -23,7 +23,7 @@ import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 // import LabelIndex from './components/labels/LabelIndex';
 // import LabelShow from './components/labels/LabelShow';
-// import DataCreditsIndex from './components/billing/DataCreditsIndex';
+import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
 // import FunctionIndex from './components/functions/FunctionIndex';
 // import FunctionNew from './components/functions/FunctionNew';
@@ -103,6 +103,7 @@ const Router = (props) => {
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
+                        <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>

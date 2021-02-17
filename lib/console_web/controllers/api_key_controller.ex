@@ -23,7 +23,7 @@ defmodule ConsoleWeb.ApiKeyController do
       params = Map.update(params, "name", nil, fn name -> String.trim(name) end)
 
       with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
-        ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_user.id}:api_key_list_update", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_organization.id}:api_key_list_update", %{})
         Email.api_key_email(current_user, api_key) |> Mailer.deliver_later()
 
         conn
@@ -39,7 +39,7 @@ defmodule ConsoleWeb.ApiKeyController do
     api_key = ApiKeys.get_api_key!(current_organization, id)
 
     with {:ok, %ApiKey{} = api_key} <- ApiKeys.delete_api_key(api_key) do
-      ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_user.id}:api_key_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_organization.id}:api_key_list_update", %{})
 
       conn
       |> put_resp_header("message", "#{api_key.name} deleted successfully")

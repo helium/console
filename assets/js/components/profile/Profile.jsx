@@ -27,12 +27,11 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    const { socket, user } = this.props
-    const user_id = user.sub.slice(6)
+    const { socket, currentOrganizationId } = this.props
 
     this.channel = socket.channel("graphql:api_keys", {})
     this.channel.join()
-    this.channel.on(`graphql:api_keys:${user_id}:api_key_list_update`, (message) => {
+    this.channel.on(`graphql:api_keys:${currentOrganizationId}:api_key_list_update`, (message) => {
       this.props.apiKeysQuery.refetch()
     })
   }
@@ -204,6 +203,7 @@ function mapStateToProps(state) {
     role: state.organization.currentRole,
     mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus,
     socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId
   }
 }
 

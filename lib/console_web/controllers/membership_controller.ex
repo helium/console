@@ -19,7 +19,7 @@ defmodule ConsoleWeb.MembershipController do
       {:error, :forbidden, "Cannot update your own membership"}
     else
       with {:ok, _} <- Organizations.update_membership(membership, attrs) do
-        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_user.id}:member_list_update", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
 
         conn
         |> put_resp_header("message", "User role updated successfully")
@@ -37,7 +37,7 @@ defmodule ConsoleWeb.MembershipController do
       {:error, :forbidden, "Cannot delete your own membership"}
     else
       with {:ok, _} <- Organizations.delete_membership(membership) do
-        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_user.id}:member_list_update", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
 
         conn
         |> put_resp_header("message", "User removed from organization")

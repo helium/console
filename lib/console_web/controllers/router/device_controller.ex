@@ -339,8 +339,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                         Email.dc_top_up_notification_email(organization, dc_purchase, administrator.email)
                         |> Mailer.deliver_later()
                       end)
-                      ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
-                      ConsoleWeb.DataCreditController.broadcast(organization)
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
                       ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
                     end
                 end

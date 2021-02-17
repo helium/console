@@ -4,18 +4,12 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import find from 'lodash/find'
 import { transferDC } from '../../actions/dataCredits'
-import { graphql } from 'react-apollo'
+import withGql from '../../graphql/withGql'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
 import { Modal, Button, Typography, Input, Select, Row, Col } from 'antd';
 const { Text } = Typography
 const { Option } = Select
-
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
 
 const styles = {
   container: {
@@ -55,8 +49,6 @@ const styles = {
   }
 }
 
-@connect(null, mapDispatchToProps)
-@graphql(ALL_ORGANIZATIONS, queryOptions)
 class OrganizationTransferDCModal extends Component {
   state = {
     selectedOrgId: undefined,
@@ -104,7 +96,7 @@ class OrganizationTransferDCModal extends Component {
   }
 
   renderOrgEntry = () => {
-    const { organization, data: { allOrganizations } } = this.props
+    const { organization, allOrgsQuery: { allOrganizations } } = this.props
     return (
       <div>
         {
@@ -236,4 +228,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ transferDC }, dispatch)
 }
 
-export default OrganizationTransferDCModal
+export default connect(null, mapDispatchToProps)(
+  withGql(OrganizationTransferDCModal, ALL_ORGANIZATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allOrgsQuery' }))
+)

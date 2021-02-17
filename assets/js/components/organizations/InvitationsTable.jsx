@@ -14,16 +14,15 @@ import { SkeletonLayout } from '../common/SkeletonLayout';
 class InvitationsTable extends Component {
   state = {
     page: 1,
-    pageSize: 10
+    pageSize: 1
   }
 
   componentDidMount() {
-    const { socket, user } = this.props
-    const user_id = user.sub.slice(6)
+    const { socket, currentOrganizationId } = this.props
 
     this.channel = socket.channel("graphql:invitations_table", {})
     this.channel.join()
-    this.channel.on(`graphql:invitations_table:${user_id}:invitation_list_update`, (message) => {
+    this.channel.on(`graphql:invitations_table:${currentOrganizationId}:invitation_list_update`, (message) => {
       this.props.paginatedInvitesQuery.refetch()
     })
   }
@@ -117,10 +116,11 @@ class InvitationsTable extends Component {
 
 function mapStateToProps(state) {
   return {
+    currentOrganizationId: state.organization.currentOrganizationId,
     socket: state.apollo.socket,
   }
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(InvitationsTable, PAGINATED_INVITATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedInvitesQuery' }))
+  withGql(InvitationsTable, PAGINATED_INVITATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 1 }, name: 'paginatedInvitesQuery' }))
 )

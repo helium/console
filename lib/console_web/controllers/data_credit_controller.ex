@@ -110,7 +110,7 @@ defmodule ConsoleWeb.DataCreditController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
-      broadcast(organization)
+      ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
       # Send email about payment method changed
       Organizations.get_administrators(current_organization)
       |> Enum.each(fn administrator ->
@@ -153,7 +153,7 @@ defmodule ConsoleWeb.DataCreditController do
           |> Email.payment_method_updated_email(current_organization, administrator.email, "removed") |> Mailer.deliver_later()
         end)
 
-        broadcast(current_organization)
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
 
         conn
         |> put_resp_header("message", msg)
@@ -186,8 +186,8 @@ defmodule ConsoleWeb.DataCreditController do
             current_organization = Organizations.get_organization!(current_organization.id)
             Organizations.update_organization(current_organization, %{ "received_free_dc" => false })
 
-            broadcast(current_organization, dc_purchase)
-            broadcast(current_organization)
+            ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{current_organization.id}:update_dc_table", %{})
+            ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
             broadcast_router_refill_dc_balance(current_organization)
 
             # send transaction emails
@@ -226,7 +226,7 @@ defmodule ConsoleWeb.DataCreditController do
         end
 
       with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, attrs) do
-        broadcast(organization)
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
         conn
         |> put_resp_header("message", "Automatic payments updated successfully")
         |> send_resp(:no_content, "")
@@ -262,8 +262,8 @@ defmodule ConsoleWeb.DataCreditController do
             Email.dc_transfer_dest_notification(from_org_updated, to_org_updated, amount, current_user, administrator.email)
             |> Mailer.deliver_later()
           end)
-          broadcast(from_org_updated)
-          broadcast(to_org_updated)
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{from_org_updated.id}:update_dc", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{to_org_updated.id}:update_dc", %{})
           broadcast_router_refill_dc_balance(from_org_updated)
           broadcast_router_refill_dc_balance(to_org_updated)
 
@@ -279,8 +279,8 @@ defmodule ConsoleWeb.DataCreditController do
           |> DcPurchases.create_dc_purchase()
           {:ok, from_org_dc_purchase} = Map.merge(attrs, %{"to_organization" => to_org_updated.name, "organization_id" => from_org_updated.id })
           |> DcPurchases.create_dc_purchase()
-          broadcast(to_org_updated, to_org_dc_purchase)
-          broadcast(from_org_updated, from_org_dc_purchase)
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{from_org_updated.id}:update_dc_table", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{to_org_updated.id}:update_dc_table", %{})
 
           conn
           |> put_resp_header("message", "Transfer successful, please verify your new balance in both organizations")
@@ -323,14 +323,6 @@ defmodule ConsoleWeb.DataCreditController do
 
         conn |> send_resp(:ok, Poison.encode!(%{ price: current_price["data"]["price"], next_price_timestamp: next_price_timestamp }))
     end
-  end
-
-  def broadcast(%Organization{} = organization) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_updated: "#{organization.id}/organization_updated")
-  end
-
-  def broadcast(%Organization{} = organization, %DcPurchase{} = dc_purchase) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, dc_purchase, dc_purchase_added: "#{organization.id}/dc_purchase_added")
   end
 
   def broadcast_router_refill_dc_balance(%Organization{} = organization) do

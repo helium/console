@@ -19,12 +19,11 @@ class MembersTable extends Component {
   }
 
   componentDidMount() {
-    const { socket, user } = this.props
-    const user_id = user.sub.slice(6)
+    const { socket, currentOrganizationId } = this.props
 
     this.channel = socket.channel("graphql:members_table", {})
     this.channel.join()
-    this.channel.on(`graphql:members_table:${user_id}:member_list_update`, (message) => {
+    this.channel.on(`graphql:members_table:${currentOrganizationId}:member_list_update`, (message) => {
       this.props.paginatedMembersQuery.refetch()
     })
   }
@@ -138,6 +137,7 @@ class MembersTable extends Component {
 function mapStateToProps(state) {
   return {
     socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId,
   }
 }
 
