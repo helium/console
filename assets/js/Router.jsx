@@ -27,7 +27,7 @@ import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
-// import FunctionShow from './components/functions/FunctionShow';
+import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
@@ -102,6 +102,7 @@ const Router = (props) => {
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
+                        <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
                         <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />

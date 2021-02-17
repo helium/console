@@ -37,7 +37,7 @@ defmodule ConsoleWeb.LabelController do
         nil -> nil
         id ->
           function = Functions.get_function!(current_organization, id)
-          ConsoleWeb.FunctionController.broadcast(function, function.id)
+          ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
       end
 
       conn
@@ -60,7 +60,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       broadcast(label, label.id)
-      if function, do: ConsoleWeb.FunctionController.broadcast(function, function.id)
+      if function, do: ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
       broadcast_router_update_devices(label)
 
       msg =
@@ -319,7 +319,7 @@ defmodule ConsoleWeb.LabelController do
       with {:ok, _} <- Labels.update_label(label, %{ "function_id" => nil }) do
         function = Functions.get_function!(current_organization, function_id)
         ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
-        ConsoleWeb.FunctionController.broadcast(function, function.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
         broadcast(label, label.id)
         broadcast_router_update_devices(label)
 
