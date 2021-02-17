@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import classNames from 'classnames';
@@ -13,33 +14,24 @@ import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_CHANNELS, queryOptions)
 class ChannelsTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10
+    pageSize: 10
   }
 
   componentDidMount() {
-    const { subscribeToMore} = this.props.data
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: CHANNEL_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
+    this.channel = socket.channel("graphql:channels_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:channels_index_table:${currentOrganizationId}:channel_list_update`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
@@ -49,13 +41,8 @@ class ChannelsTable extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedChannelsQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -123,7 +110,7 @@ class ChannelsTable extends Component {
       },
     ]
 
-    const { channels, loading, error } = this.props.data
+    const { channels, loading, error } = this.props.paginatedChannelsQuery
 
     if (loading) return <SkeletonLayout />;
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>;
@@ -195,4 +182,13 @@ class ChannelsTable extends Component {
   }
 }
 
-export default ChannelsTable
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(ChannelsTable, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
+)

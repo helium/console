@@ -173,7 +173,7 @@ defmodule ConsoleWeb.LabelController do
         case count do
           0 -> "All selected labels are already in integration"
           _ ->
-            ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+            ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
             broadcast(first_label)
 
             labels_updated = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
@@ -195,7 +195,7 @@ defmodule ConsoleWeb.LabelController do
     channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
 
     with {:ok, 1, label} <- Labels.add_labels_to_channel([label_id], channel, current_organization) do
-      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
       broadcast(label, label.id)
       broadcast_router_update_devices(label)
 
@@ -283,7 +283,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {_, nil} <- Labels.delete_labels_from_channel(labels, channel_id, current_organization) do
       channel = Channels.get_channel!(channel_id)
-      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
 
       assoc_labels = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
       assoc_devices = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
@@ -300,7 +300,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {_, nil} <- Labels.delete_labels_from_channel([label_id], channel_id, current_organization) do
       channel = Channels.get_channel!(channel_id)
-      ConsoleWeb.ChannelController.broadcast(channel, channel.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
 
       label = Labels.get_label!(current_organization, label_id)
       broadcast(label, label.id)

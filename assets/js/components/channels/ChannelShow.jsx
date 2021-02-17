@@ -20,9 +20,9 @@ import GoogleForm from './forms/GoogleForm.jsx'
 import MQTTForm from './forms/MQTTForm.jsx'
 import HTTPForm from './forms/HTTPForm.jsx'
 import { updateChannel } from '../../actions/channel'
-import { CHANNEL_SHOW, CHANNEL_UPDATE_SUBSCRIPTION } from '../../graphql/channels'
+import { CHANNEL_SHOW } from '../../graphql/channels'
 import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { isObject } from 'lodash';
@@ -30,17 +30,6 @@ import MqttDetails from './MqttDetails';
 import { ChannelShowSkeleton } from './ChannelShowSkeleton';
 const { Text, Paragraph } = Typography
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(CHANNEL_SHOW, queryOptions)
-@connect(null, mapDispatchToProps)
 class ChannelShow extends Component {
   state = {
     newName: "",
@@ -54,29 +43,29 @@ class ChannelShow extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore, fetchMore } = this.props.data
     const channelId = this.props.match.params.id
     analyticsLogger.logEvent("ACTION_NAV_CHANNEL_SHOW", {"id": channelId})
 
-    subscribeToMore({
-      document: CHANNEL_UPDATE_SUBSCRIPTION,
-      variables: { channelId },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    const { socket } = this.props
+
+    this.channel = socket.channel("graphql:channel_show", {})
+    this.channel.join()
+    this.channel.on(`graphql:channel_show:${channelId}:channel_update`, (message) => {
+      this.props.channelShowQuery.refetch()
     })
 
-    if (this.props.data.channel) {
-      this.setState({ templateBody: this.props.data.channel.payload_template })
+    if (this.props.channelShowQuery.channel) {
+      this.setState({ templateBody: this.props.channelShowQuery.channel.payload_template })
     }
   }
 
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
   componentDidUpdate(prevProps) {
-    if (prevProps.data.channel != this.props.data.channel) {
-      this.setState({ templateBody: this.props.data.channel.payload_template })
+    if (prevProps.channelShowQuery.channel != this.props.channelShowQuery.channel) {
+      this.setState({ templateBody: this.props.channelShowQuery.channel.payload_template })
     }
   }
 
@@ -89,20 +78,20 @@ class ChannelShow extends Component {
   }
 
   handleNameChange = () => {
-    const { channel } = this.props.data
+    const { channel } = this.props.channelShowQuery
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_NAME", { "id": channel.id, "name": this.state.newName})
     this.props.updateChannel(channel.id, { name: this.state.newName })
     this.setState({ newName: ""})
   }
 
   handleChangeDownlinkToken = () => {
-    const { channel } = this.props.data
+    const { channel } = this.props.channelShowQuery
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DOWNLINK_TOKEN", { "id": channel.id })
     this.props.updateChannel(channel.id, { downlink_token: "new" })
   }
 
   handleUpdateDetailsChange = () => {
-    const { channel } = this.props.data
+    const { channel } = this.props.channelShowQuery
     const { credentials } = this.state
 
     if (Object.keys(credentials).length > 0) {
@@ -149,12 +138,12 @@ class ChannelShow extends Component {
   }
 
   updateChannelTemplate = () => {
-    const { channel } = this.props.data
+    const { channel } = this.props.channelShowQuery
     this.props.updateChannel(channel.id, { payload_template: this.state.templateBody })
   }
 
   renderForm = () => {
-    const { channel } = this.props.data
+    const { channel } = this.props.channelShowQuery
 
     switch (channel.type) {
       case "aws":
@@ -171,9 +160,9 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { loading, error, channel, allLabels } = this.props.data;
+    const { loading, error, channel, allLabels } = this.props.channelShowQuery
 
-    if (loading) return <ChannelShowSkeleton />;
+    if (loading) return <ChannelShowSkeleton user={this.props.user} />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
@@ -332,8 +321,19 @@ class ChannelShow extends Component {
   }
 }
 
+
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateChannel }, dispatch);
 }
 
-export default ChannelShow
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(ChannelShow, CHANNEL_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'channelShowQuery' }))
+)
