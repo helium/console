@@ -45,11 +45,6 @@ class OrganizationsTable extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
   refetchPaginatedEntries = (page, pageSize) => {
     const { fetchMore } = this.props.data
     fetchMore({

@@ -59,7 +59,7 @@ defmodule ConsoleWeb.LabelController do
       end
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
-      broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
       if function, do: ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
       broadcast_router_update_devices(label)
 
@@ -121,7 +121,7 @@ defmodule ConsoleWeb.LabelController do
             _ -> "#{count} Devices added to label successfully"
           end
 
-        broadcast(destination_label, destination_label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{destination_label.id}:label_update", %{})
 
         assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_devices })
@@ -196,7 +196,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, 1, label} <- Labels.add_labels_to_channel([label_id], channel, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
-      broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
       broadcast_router_update_devices(label)
 
       conn
@@ -210,7 +210,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {_, nil} <- Labels.delete_devices_from_label(devices, label_id, current_organization) do
       label = Labels.get_label!(label_id)
-      broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => devices })
 
       conn
@@ -301,7 +301,7 @@ defmodule ConsoleWeb.LabelController do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
 
       label = Labels.get_label!(current_organization, label_id)
-      broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
       broadcast_router_update_devices(label)
 
       conn
@@ -318,7 +318,7 @@ defmodule ConsoleWeb.LabelController do
         function = Functions.get_function!(current_organization, function_id)
         ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
-        broadcast(label, label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
         broadcast_router_update_devices(label)
 
         conn
@@ -353,8 +353,8 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, _, _} <- Labels.add_devices_to_label(device_ids, destination_label.id, current_organization),
       {_, nil} <- Labels.delete_devices_from_label(device_ids, label_id, current_organization) do
         ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-        broadcast(label, label.id)
-        broadcast(destination_label, destination_label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
         broadcast_router_update_devices(label.devices)
 
         conn
@@ -383,7 +383,7 @@ defmodule ConsoleWeb.LabelController do
           |> Repo.transaction()
 
         with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
-          broadcast(label)
+          ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{conn.assigns.current_organization.id}:label_list_update", %{})
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.DeviceController.broadcast(device)
           ConsoleWeb.DeviceController.broadcast(device, device.id)
@@ -412,7 +412,7 @@ defmodule ConsoleWeb.LabelController do
 
         device = Devices.get_device!(List.first(devices))
 
-        broadcast(destination_label, destination_label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
         ConsoleWeb.DeviceController.broadcast(device)
         ConsoleWeb.DeviceController.broadcast(device, device.id)
 
@@ -424,15 +424,6 @@ defmodule ConsoleWeb.LabelController do
         |> send_resp(:no_content, "")
       end
     end
-  end
-
-  defp broadcast(%Label{} = label) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_added: "#{label.organization_id}/label_added")
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_added_for_nav: "#{label.organization_id}/label_added_for_nav")
-  end
-
-  def broadcast(%Label{} = label, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
   end
 
   defp broadcast_router_update_devices(%Label{} = label) do

@@ -9,7 +9,7 @@ import { EyeFilled, EyeInvisibleFilled, TagFilled } from '@ant-design/icons';
 import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
-import { MENU_LABELS, LABEL_SUBSCRIPTION_FOR_NAV } from '../../graphql/labels'
+import { MENU_LABELS } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
 import withGql from '../../graphql/withGql'
@@ -25,17 +25,7 @@ class NavDrawer extends Component {
   }
 
   componentDidMount() {
-    // const { subscribeToMore, fetchMore } = this.props.data
-    //
-    // subscribeToMore({
-    //   document: LABEL_SUBSCRIPTION_FOR_NAV,
-    //   updateQuery: (prev, { subscriptionData }) => {
-    //     if (!subscriptionData.data) return prev
-    //     fetchMore({
-    //       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    //     })
-    //   }
-    // })
+    
   }
 
   handleClick = e => {

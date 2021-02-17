@@ -26,7 +26,7 @@ defmodule ConsoleWeb.DeviceController do
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       case label["labelApplied"] do
         nil -> nil
-        label_id -> 
+        label_id ->
           label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
           Labels.add_devices_to_label([device.id], label.id, current_organization)
       end
@@ -59,11 +59,7 @@ defmodule ConsoleWeb.DeviceController do
 
         device_labels = Labels.get_labels_of_device(device)
         Enum.each(device_labels, fn l ->
-          Absinthe.Subscription.publish(
-            ConsoleWeb.Endpoint,
-            %{ id: l.label_id },
-            label_updated: "#{device.organization_id}/#{l.label_id}/label_updated"
-          )
+          ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{l.label_id}:update_label_devices", %{})
         end)
       end
 
@@ -115,7 +111,7 @@ defmodule ConsoleWeb.DeviceController do
 
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
-        ConsoleWeb.LabelController.broadcast(label, label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       end
 
       # now that devices have been deleted, send notification if applicable
@@ -175,7 +171,7 @@ defmodule ConsoleWeb.DeviceController do
 
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
-        ConsoleWeb.LabelController.broadcast(label, label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       end
 
       if active do

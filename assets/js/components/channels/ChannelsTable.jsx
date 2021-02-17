@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
-import { PAGINATED_CHANNELS, CHANNEL_SUBSCRIPTION } from '../../graphql/channels'
+import { PAGINATED_CHANNELS } from '../../graphql/channels'
 import withGql from '../../graphql/withGql'
 import { Table, Button, Empty, Pagination, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'

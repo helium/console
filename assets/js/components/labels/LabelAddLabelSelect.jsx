@@ -2,30 +2,21 @@ import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
 import { Checkbox, Input, Card, AutoComplete } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { SEARCH_LABELS } from '../../graphql/search'
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-@graphql(SEARCH_LABELS, queryOptions)
 class LabelAddLabelSelect extends Component {
   state = {
     searchLabels: []
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
+    const { loading, fetchMore } = this.props.searchLabelsQuery
     const allLabelsWithDevicesMap = this.props.allLabelsWithDevices.reduce(
       (acc, l) => Object.assign({}, acc, { [l.id]: true }),
       {}
     )
-    
+
     if (!loading) {
       fetchMore({
         variables: { query: value },
@@ -91,4 +82,4 @@ class LabelAddLabelSelect extends Component {
   }
 }
 
-export default LabelAddLabelSelect
+export default withGql(LabelAddLabelSelect, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {query:''}, name: 'searchLabelsQuery' }))

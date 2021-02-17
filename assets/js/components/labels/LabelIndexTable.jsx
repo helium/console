@@ -9,7 +9,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
-import { PAGINATED_LABELS, LABEL_SUBSCRIPTION } from '../../graphql/labels'
+import { PAGINATED_LABELS } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import LabelsImg from '../../../img/labels.svg'

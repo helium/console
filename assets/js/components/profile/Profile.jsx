@@ -10,7 +10,7 @@ import UserCan from '../common/UserCan';
 import ProfileNewKeyModal from './ProfileNewKeyModal';
 import RoleName from '../common/RoleName';
 import analyticsLogger from '../../util/analyticsLogger';
-import { ALL_API_KEYS, API_KEY_SUBSCRIPTION } from '../../graphql/apiKeys';
+import { ALL_API_KEYS } from '../../graphql/apiKeys';
 import { getMfaStatus } from '../../actions/auth';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'

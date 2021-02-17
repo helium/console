@@ -13,7 +13,7 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
 
   def update(conn, %{"label_notification_settings" => settings}) do
     with {:ok, :ok} <- Repo.transaction(fn ->
-      Enum.each(settings, fn setting -> 
+      Enum.each(settings, fn setting ->
         case setting["value"] do
           "0" -> LabelNotificationSettings.delete_label_notification_setting_by_key_and_label(setting["key"], setting["label_id"])
           _ -> LabelNotificationSettings.upsert_label_notification_setting(setting)
@@ -23,15 +23,11 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
     do
       label = Labels.get_label(List.first(settings)["label_id"])
       label = Repo.preload(label, [:label_notification_settings])
-      broadcast(label, label.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
 
       conn
       |> put_resp_header("message", "The label notification settings were successfully updated")
       |> render("label_notification_settings.json", label_notification_settings: settings)
     end
-  end
-
-  defp broadcast(%Label{} = label, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, label, label_updated: "#{label.organization_id}/#{id}/label_updated")
   end
 end
