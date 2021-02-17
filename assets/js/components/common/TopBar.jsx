@@ -31,13 +31,18 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    const { socket } = this.props
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
 
-    const channel = socket.channel("organization:all", { who: "this"})
-    channel.join()
-    channel.on("organization:all:update:organization", (message) => {
+    this.channel = socket.channel("graphql:all", {})
+    this.channel.join()
+    this.channel.on(`graphql:all:${user_id}:organization_added`, (message) => {
       this.props.orgsQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleClick = e => {

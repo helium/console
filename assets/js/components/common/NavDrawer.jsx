@@ -44,10 +44,8 @@ class NavDrawer extends Component {
 
   render() {
     const { history } = this.props
-    const { loading, data } = this.props.allLabelsQuery
+    const { data } = this.props.allLabelsQuery
     const { showLabels } = this.state
-
-    if (loading) return <div />
 
     return (
       <div>

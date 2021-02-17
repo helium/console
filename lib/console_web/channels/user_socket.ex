@@ -6,7 +6,7 @@ defmodule ConsoleWeb.UserSocket do
   alias Console.Auth
   require Logger
 
-  channel("organization:*", ConsoleWeb.OrganizationChannel)
+  channel("graphql:*", ConsoleWeb.GraphqlChannel)
 
   @access_token_decoder Application.get_env(:console, :access_token_decoder)
 

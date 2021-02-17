@@ -8,10 +8,11 @@ import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
 
-export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
+export const setupApolloClient = (getAuthToken, organizationId) => {
   return async (dispatch) => {
-    const tokenClaims = await getAuthToken();
-    const token = tokenClaims.__raw
+    let currentOrganizationId = organizationId
+    let tokenClaims = await getAuthToken();
+    let token = tokenClaims.__raw
 
     const httpLink = new HttpLink({
       uri: "/graphql"
@@ -57,6 +58,20 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
 
     let socket = createSocket(token, currentOrganizationId)
     socket.connect()
+
+    store.subscribe(async () => {
+      const newTokenClaims = await getAuthToken();
+      const newToken = newTokenClaims.__raw;
+      const newOrganization = store.getState().organization;
+
+      if (newToken !== token || currentOrganizationId !== newOrganization.currentOrganizationId) {
+        currentOrganizationId = newOrganizationId
+        token = newToken;
+        socket.disconnect();
+        socket = createSocket(token, currentOrganizationId)
+        socket.connect()
+      }
+    })
 
     return dispatch(createdApolloClient(apolloClient, socket));
   }
