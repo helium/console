@@ -20,7 +20,7 @@ services:
     volumes:
       - "./data/postgres/:/var/lib/postgresql/data"
   router:
-    image: helium/router:latest
+    image: quay.io/team-helium/router:latest
     container_name: helium_router
     restart: always
     env_file: .env-router
