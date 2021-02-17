@@ -197,6 +197,7 @@ class DeviceShowLabelsTable extends Component {
             total={labels_by_device.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
+            showSizeChanger={false}
           />
         </div>
       </Card>

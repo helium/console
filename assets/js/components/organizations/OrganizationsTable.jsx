@@ -180,6 +180,7 @@ class OrganizationsTable extends Component {
             total={organizations.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
+            showSizeChanger={false}
           />
         </div>
       </div>

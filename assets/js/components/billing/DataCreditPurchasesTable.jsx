@@ -159,6 +159,7 @@ class DataCreditPurchasesTable extends Component {
             total={dcPurchases.totalEntries}
             onChange={page => this.handleChangePage(page)}
             style={{marginBottom: 20}}
+            showSizeChanger={false}
           />
         </div>
       </Card>

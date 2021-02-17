@@ -256,6 +256,7 @@ class FunctionIndexTable extends Component {
                   total={functions.totalEntries}
                   onChange={page => this.handleChangePage(page)}
                   style={{marginBottom: 20}}
+                  showSizeChanger={false}
                 />
               </div>
             </React.Fragment>
