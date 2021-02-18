@@ -23,7 +23,7 @@ class LabelShowRemoveChannelModal extends Component {
 
     return (
       <Modal
-        title={"Remove Function from Label"}
+        title={"Remove Integration from Label"}
         visible={open}
         onCancel={onClose}
         centered

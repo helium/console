@@ -48,7 +48,7 @@ module.exports = function(env) {
       new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY', 'SELF_HOSTED', 'INTERCOM_ID_SECRET', 'CONSOLE_VERSION', 'RELEASE_BLOG_LINK'])
       // new webpack.DefinePlugin({
       //   'process.env.SELF_HOSTED': true,
-      //   'process.env.ENV_DOMAIN': "localhost:4000",
+      //   'process.env.ENV_DOMAIN': "localhost",
       // }) // UNCOMMENT FOR OPEN SOURCE RUNNING AND COMMENT OUT ABOVE LINE
     ],
   };
