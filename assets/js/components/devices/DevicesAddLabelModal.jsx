@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
 import { grayForModalCaptions } from '../../util/colors'
@@ -11,14 +11,6 @@ import { Modal, Button, Typography, Input, Select, Checkbox } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_LABELS, queryOptions)
 class DevicesAddLabelModal extends Component {
   state = {
     labelId: undefined,
@@ -54,7 +46,7 @@ class DevicesAddLabelModal extends Component {
 
   render() {
     const { open, onClose, devicesToUpdate, allDevicesSelected, totalDevices } = this.props
-    const { error, allLabels } = this.props.data
+    const { error, allLabels } = this.props.allLabelsQuery
     const { labelName, labelId } = this.state
 
     return (
@@ -112,7 +104,7 @@ class DevicesAddLabelModal extends Component {
           <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>Label names must be unique</Text>
         </div>
         {
-          allDevicesSelected && 
+          allDevicesSelected &&
           <Checkbox
             style={{marginTop: 20}}
             checked={this.state.applyToAll}
@@ -130,4 +122,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ addDevicesToLabel, addDevicesToNewLabel }, dispatch)
 }
 
-export default DevicesAddLabelModal
+export default connect(null, mapDispatchToProps)(
+  withGql(DevicesAddLabelModal, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))
+)

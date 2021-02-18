@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { graphql } from 'react-apollo';
-import { ALL_LABELS } from '../../../graphql/labels';
 import TTNLoading from '../../../../img/ttn-waiting-cloud.svg';
 import ListApplications from './ttn/ListApplications';
 import { fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDeviceImport } from '../../../actions/device';
@@ -17,15 +15,6 @@ const { Text, Title } = Typography
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: 'white' }} spin />;
 const antLoaderGrey = <LoadingOutlined style={{ fontSize: 50, color: 'grey' }} spin />
 
-
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-//@connect(null, mapDispatchToProps)
-//@graphql(ALL_LABELS, queryOptions)
 const ImportDevicesModal = (props) => {
   const {
     open,

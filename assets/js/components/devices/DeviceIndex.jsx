@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
 import DashboardLayout from '../common/DashboardLayout';
 import NewDeviceModal from './NewDeviceModal';
@@ -7,14 +8,8 @@ import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
-import {
-  PAGINATED_DEVICES,
-  DEVICE_SUBSCRIPTION,
-  ALL_IMPORTS,
-  IMPORT_ADDED_SUBSCRIPTION,
-  IMPORT_UPDATED_SUBSCRIPTION
-} from '../../graphql/devices';
-import { graphql, compose } from 'react-apollo';
+import { PAGINATED_DEVICES, ALL_IMPORTS } from '../../graphql/devices';
+import withGql from '../../graphql/withGql'
 import get from 'lodash/get';
 import UserCan from '../common/UserCan';
 import { displayError, displayInfo } from '../../util/messages';
@@ -27,22 +22,8 @@ const { Text } = Typography
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 const PAGE_SIZE_KEY = 'devicePageSize';
-let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
+let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 1;
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: startPageSize,
-      column: DEFAULT_COLUMN,
-      order: DEFAULT_ORDER
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_DEVICES, {...queryOptions, name: 'devicesQuery'})
-@graphql(ALL_IMPORTS, {...queryOptions, name: 'importsQuery'})
 class DeviceIndex extends Component {
   state = {
     showCreateDeviceModal: false,
@@ -55,7 +36,7 @@ class DeviceIndex extends Component {
     labelsSelected: null,
     deviceToRemoveLabel: null,
     page: 1,
-    pageSize: get(this.props.devicesQuery, ['variables', 'pageSize']) || 10,
+    pageSize: startPageSize,
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
     allDevicesSelected: false,
@@ -64,66 +45,18 @@ class DeviceIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
-    let { subscribeToMore } = this.props.devicesQuery;
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: DEVICE_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
-    });
-
-    subscribeToMore = this.props.importsQuery.subscribeToMore;
-
-    subscribeToMore({
-      document: IMPORT_ADDED_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        return {
-          ...prev,
-          device_imports: {
-            entries: [subscriptionData.data.importAdded, ...prev.device_imports.entries],
-            __typename: prev.device_imports.__typename
-          }
-        };
-      }
-    });
-
-    subscribeToMore({
-      document: IMPORT_UPDATED_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const updatedImport = subscriptionData.data.importUpdated;
-        const replaceIndex = prev.device_imports.entries.findIndex(
-          val => val.id === updatedImport.id
-        )
-        if (updatedImport.user_id === this.props.user.sub.replace("auth0|", "")) {
-          if (updatedImport.status === "successful") {
-            displayInfo(`Imported ${updatedImport.successful_devices}
-            device${(updatedImport.successful_devices !== 1 && "s") || ""} from ${
-              updatedImport.type === "ttn" ? "The Things Network." : "CSV."
-            }. Refresh this page to see the changes.`);
-            this.setState({ importComplete: true })
-          } else if (updatedImport.status === "failed"){
-            displayError(`Failed to import devices from ${
-              updatedImport.type === "ttn" ? "The Things Network" : "CSV"
-            }.`);
-          }
-        }
-        return {
-          ...prev,
-          device_imports: {
-            entries: [
-              ...prev.device_imports.entries.slice(0, replaceIndex),
-              subscriptionData.data.importUpdated,
-              ...prev.device_imports.entries.slice(replaceIndex + 1)
-            ],
-            __typename: prev.device_imports.__typename
-          }
-        };
-      }
+    this.channel = socket.channel("graphql:devices_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:devices_index_table:${currentOrganizationId}:device_list_update`, (message) => {
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   openCreateDeviceModal = () => {
@@ -203,14 +136,8 @@ class DeviceIndex extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize, column, order } = this.state
-    this.refetchPaginatedEntries(page, pageSize, column, order)
-  }
-
   refetchPaginatedEntries = (page, pageSize, column, order) => {
     const { refetch } = this.props.devicesQuery;
-    startPageSize = pageSize;
     refetch({ page, pageSize, column, order })
   }
 
@@ -336,4 +263,15 @@ class DeviceIndex extends Component {
   }
 }
 
-export default DeviceIndex
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(withGql(
+  withGql(DeviceIndex, PAGINATED_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: startPageSize, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'devicesQuery' })),
+  ALL_IMPORTS,
+  props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: startPageSize }, name: 'importsQuery' })
+))
