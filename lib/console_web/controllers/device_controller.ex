@@ -51,7 +51,7 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(current_organization, id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-      broadcast(device, device.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
       broadcast_router_update_devices(device)
 
       if device_params["active"] != nil do
@@ -427,16 +427,8 @@ defmodule ConsoleWeb.DeviceController do
     |> send_resp(:no_content, "")
   end
 
-  def broadcast(%Device{} = device) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
-  end
-
   def broadcast_add(%DeviceImports{} = device_import) do
     Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device_import, import_added: "#{device_import.organization_id}/import_added")
-  end
-
-  def broadcast(%Device{} = device, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
   end
 
   def broadcast_update(%DeviceImports{} = device_import) do

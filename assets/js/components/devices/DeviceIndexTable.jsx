@@ -112,7 +112,7 @@ class DeviceIndexTable extends Component {
             {text}
             {
               moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
-                <StatusIcon style={{ marginLeft: "4px" }} tooltipTitle='Last connected within the last 24h' {...this.props} />
+                <StatusIcon tooltipTitle='Last connected within the last 24h' />
             }
           </Link>
         )

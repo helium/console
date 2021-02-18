@@ -16,13 +16,22 @@ class Debug extends Component {
   componentDidMount() {
     this.setState({ data: []})
 
-    const { socket } = this.props
+    const { socket, deviceId, labelId } = this.props
 
-    this.channel = socket.channel("graphql:label_show_debug", {})
-    this.channel.join()
-    this.channel.on(`graphql:label_show_debug:${this.props.labelId}:get_event`, (message) => {
-      this.updateData(message)
-    })
+    if (deviceId) {
+      this.channel = socket.channel("graphql:device_show_debug", {})
+      this.channel.join()
+      this.channel.on(`graphql:device_show_debug:${this.props.deviceId}:get_event`, (message) => {
+        this.updateData(message)
+      })
+    }
+    if (labelId) {
+      this.channel = socket.channel("graphql:label_show_debug", {})
+      this.channel.join()
+      this.channel.on(`graphql:label_show_debug:${this.props.labelId}:get_event`, (message) => {
+        this.updateData(message)
+      })
+    }
   }
 
   componentWillUnmount() {

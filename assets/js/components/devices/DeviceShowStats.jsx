@@ -3,21 +3,10 @@ import { blueForDeviceStatsLarge } from '../../util/colors'
 import { DEVICE_SHOW_STATS } from '../../graphql/devices'
 import { Typography, Card, Col, Spin, Row } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { graphql } from 'react-apollo';
-
+import withGql from '../../graphql/withGql'
 const { Text } = Typography
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: '#38A2FF' }} spin />;
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.device.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(DEVICE_SHOW_STATS, queryOptions)
 class DeviceShowStats extends Component {
   state = {
     showDC: false
@@ -40,7 +29,7 @@ class DeviceShowStats extends Component {
 
   render() {
     const { device, smallerText } = this.props
-    const { loading, error, device_stats } = this.props.data
+    const { loading, error, device_stats } = this.props.deviceStatsQuery
     const { showDC } = this.state
 
     if (loading) return (
@@ -115,4 +104,4 @@ class DeviceShowStats extends Component {
   }
 }
 
-export default DeviceShowStats
+export default withGql(DeviceShowStats, DEVICE_SHOW_STATS, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.device.id, }, name: 'deviceStatsQuery' }))
