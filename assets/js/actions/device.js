@@ -1,6 +1,7 @@
 import { push, replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 import sanitizeHtml from 'sanitize-html'
+import { displayInfo, displayError } from '../util/messages';
 
 export const FETCHING_APPLICATIONS = "FETCHING_APPLICATIONS";
 export const FETCHED_APPLICATIONS = "FETCHED_APPLICATIONS";
@@ -198,4 +199,14 @@ const sanitizeParams = (params) => {
   if (params.app_eui) params.app_eui = sanitizeHtml(params.app_eui)
   if (params.app_key) params.app_key = sanitizeHtml(params.app_key)
   return params
+}
+
+export const sendClearDownlinkQueue = (devices) => {
+  return (dispatch) => {
+    rest.post(
+      '/api/v1/clear_downlink_queue',
+      { devices, from: 'console_downlink_queue' }
+    ).then(()=> {displayInfo(`Successfully cleared downlink queue`)}
+    ).catch(() => {displayError(`Failed to clear downlink queue`)});
+  }
 }

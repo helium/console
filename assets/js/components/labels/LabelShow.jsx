@@ -19,6 +19,7 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
+import { sendClearDownlinkQueue } from '../../actions/device'
 import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -270,17 +271,24 @@ class LabelShow extends Component {
               iconPosition='middle'
               message='Send a manual downlink using an HTTP integration'
             >
-              <Downlink onSend={(payload, confirm, port, position) => {
-                analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
-                this.props.sendDownlinkMessage(
-                  payload,
-                  port,
-                  confirm,
-                  position,
-                  this.state.selectedDevices.map(device => device.id),
-                  label.channels
-                )
-              }}/>
+              <Downlink 
+                src="LabelShow" 
+                onSend={(payload, confirm, port, position) => {
+                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
+                  this.props.sendDownlinkMessage(
+                    payload,
+                    port,
+                    confirm,
+                    position,
+                    this.state.selectedDevices.map(device => device.id),
+                    label.channels
+                  )
+                }}
+                onClear={() => {
+                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": this.state.selectedDevices.map(device => device.id) });
+                  this.props.sendClearDownlinkQueue(this.state.selectedDevices.map(device => device.id));
+                }}
+              />
             </Sidebar>
           }
         </UserCan>
@@ -290,7 +298,7 @@ class LabelShow extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, sendClearDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
 }
 
 export default LabelShow

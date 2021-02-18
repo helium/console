@@ -6,7 +6,7 @@ import { ClearOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 const { Group, Button } = Radio;
 
-const Downlink = ({onSend}) => {
+const Downlink = ({src, onSend, onClear}) => {
   const [port, setPort] = useState(1);
   const [confirm, setConfirm] = useState(true);
   const [payloadType, setPayloadType] = useState('bytes');
@@ -75,10 +75,10 @@ const Downlink = ({onSend}) => {
           size="large"
           type="primary"
           icon={<ClearOutlined />}
-          onClick={() => {console.log("HELLO!")}}
+          onClick={() => {onClear()}}
           style={{ borderRadius: 4 }}
         >
-          Clear Queue for Device
+          {src === "DeviceShow" ? "Clear Queue for Device" : "Clear Queue for All Label's Devices"}
         </RegularButton>
       </div>
     </React.Fragment>
