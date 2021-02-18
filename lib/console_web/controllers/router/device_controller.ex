@@ -262,7 +262,9 @@ defmodule ConsoleWeb.Router.DeviceController do
 
     label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
     Enum.each(label_ids, fn id ->
-      Absinthe.Subscription.publish(ConsoleWeb.Endpoint, event, label_debug_event_added: "labels/#{id}/event/debug")
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show_debug", "graphql:label_show_debug:#{id}:get_event",
+        Map.from_struct(event) |> Map.delete(:__meta__) |> Map.delete(:__struct__) |> Map.delete(:device) |> Map.delete(:organization)
+      )
     end)
   end
 

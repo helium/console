@@ -11,7 +11,7 @@ import LabelShowFunctionsAttached from './LabelShowFunctionsAttached'
 import LabelShowChannelsAttached from './LabelShowChannelsAttached'
 import DashboardLayout from '../common/DashboardLayout'
 import Sidebar from '../common/Sidebar'
-// import Debug from '../common/Debug'
+import Debug from '../common/Debug'
 import Downlink from '../common/Downlink'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
@@ -244,7 +244,10 @@ class LabelShow extends Component {
           iconPosition='top'
           message='Access Debug mode to view device packet transfer'
         >
-
+          <Debug
+            labelId={this.props.match.params.id}
+            refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
+          />
         </Sidebar>
 
         <UserCan>
