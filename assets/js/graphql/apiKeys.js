@@ -12,11 +12,3 @@ export const ALL_API_KEYS = gql`
     }
   }
 `
-
-export const API_KEY_SUBSCRIPTION = gql`
-  subscription onApiKeyAdded {
-    apiKeyAdded {
-      id
-    }
-  }
-`

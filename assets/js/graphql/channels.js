@@ -61,23 +61,6 @@ export const CHANNEL_SHOW = gql`
   ${CHANNEL_FRAGMENT}
 `
 
-export const CHANNEL_SUBSCRIPTION = gql`
-  subscription onChannelAdded {
-    channelAdded {
-      ...ChannelFragment
-    }
-  }
-  ${CHANNEL_FRAGMENT}
-`
-
-export const CHANNEL_UPDATE_SUBSCRIPTION = gql`
-  subscription onChannelUpdated($channelId: String) {
-    channelUpdated(channelId: $channelId) {
-      name
-    }
-  }
-`
-
 export const PAGINATED_CHANNELS = gql`
   query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
     channels(page: $page, pageSize: $pageSize) {

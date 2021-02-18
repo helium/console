@@ -48,23 +48,6 @@ export const FUNCTION_SHOW = gql`
   ${FUNCTION_FRAGMENT}
 `
 
-export const FUNCTION_SUBSCRIPTION = gql`
-  subscription onFunctionAdded {
-    functionAdded {
-      ...FunctionFragment
-    }
-  }
-  ${FUNCTION_FRAGMENT}
-`
-
-export const FUNCTION_UPDATE_SUBSCRIPTION = gql`
-  subscription onFunctionUpdated($functionId: String) {
-    functionUpdated(functionId: $functionId) {
-      name
-    }
-  }
-`
-
 export const ALL_FUNCTIONS = gql`
   query AllFunctionsQuery {
     allFunctions {

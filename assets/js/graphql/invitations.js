@@ -23,11 +23,3 @@ export const PAGINATED_INVITATIONS = gql`
   }
   ${INVITATION_FRAGMENT}
 `
-export const INVITATION_SUBSCRIPTION = gql`
-  subscription onInvitationUpdated {
-    invitationUpdated {
-      ...InvitationFragment
-    }
-  }
-  ${INVITATION_FRAGMENT}
-`

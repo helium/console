@@ -22,11 +22,3 @@ export const PAGINATED_DC_PURCHASES = gql`
     }
   }
 `
-
-export const DC_PURCHASE_SUBSCRIPTION = gql`
-  subscription onDcPurchaseAdded {
-    dcPurchaseAdded {
-      id
-    }
-  }
-`

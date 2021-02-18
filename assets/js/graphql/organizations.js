@@ -58,31 +58,3 @@ export const ALL_ORGANIZATIONS = gql`
     }
   }
 `
-
-export const ORGANIZATION_SUBSCRIPTION = gql`
-  subscription onOrganizationAdded {
-    organizationAdded {
-      id,
-      name,
-      inserted_at,
-    }
-  }
-`
-
-export const TOP_BAR_ORGANIZATIONS_SUBSCRIPTION = gql`
-  subscription topBarOrganizations {
-    topBarOrganizations {
-      id,
-      name,
-      inserted_at
-    }
-  }
-`
-
-export const ORGANIZATION_UPDATE_SUBSCRIPTION = gql`
-  subscription onOrganizationUpdated($organizationId: String) {
-    organizationUpdated(organizationId: $organizationId) {
-      name
-    }
-  }
-`

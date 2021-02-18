@@ -23,12 +23,3 @@ export const PAGINATED_MEMBERSHIPS = gql`
   }
   ${MEMBERSHIP_FRAGMENT}
 `
-
-export const MEMBERSHIP_SUBSCRIPTION = gql`
-  subscription onMembershipUpdated {
-    membershipUpdated {
-      ...MembershipFragment
-    }
-  }
-  ${MEMBERSHIP_FRAGMENT}
-`

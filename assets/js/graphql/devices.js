@@ -17,47 +17,6 @@ export const DEVICE_FRAGMENT = gql`
   }
 `
 
-export const DEVICE_SUBSCRIPTION = gql`
-  subscription onDeviceAdded {
-    deviceAdded {
-      ...DeviceFragment
-    }
-  }
-  ${DEVICE_FRAGMENT}
-`
-
-export const DEVICE_UPDATE_SUBSCRIPTION = gql`
-  subscription onDeviceUpdated($deviceId: String) {
-    deviceUpdated(deviceId: $deviceId) {
-      name
-    }
-  }
-`
-
-export const IMPORT_ADDED_SUBSCRIPTION = gql`
-  subscription onImportAdded {
-    importAdded {
-      id,
-      user_id,
-      successful_devices,
-      status,
-      type
-    }
-  }
-`
-
-export const IMPORT_UPDATED_SUBSCRIPTION = gql`
-  subscription onImportUpdated {
-    importUpdated {
-      id,
-      user_id,
-      successful_devices,
-      status,
-      type
-    }
-  }
-`
-
 export const DEVICE_SHOW = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
