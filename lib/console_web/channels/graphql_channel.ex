@@ -76,4 +76,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:device_show_debug", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:nav_labels", _message, socket) do
+    {:ok, socket}
+  end
 end

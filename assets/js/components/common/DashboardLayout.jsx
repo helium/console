@@ -28,7 +28,7 @@ class DashboardLayout extends Component {
           {
             !noSideNav && (
               <Sider style={{ overflow: 'hidden', display: this.state.showNav ? 'block' : 'none' }}>
-                <NavDrawer />
+                <NavDrawer user={user}/>
                 {
                   process.env.CONSOLE_VERSION &&
                     <Popover

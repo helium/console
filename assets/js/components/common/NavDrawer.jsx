@@ -14,18 +14,26 @@ import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
 import withGql from '../../graphql/withGql'
 import classNames from 'classnames';
-
 const SHOW_LABELS_KEY = 'showLabels';
 
-@withRouter
-@connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
   state = {
     showLabels: localStorage.getItem(SHOW_LABELS_KEY) !== 'false'
   }
 
   componentDidMount() {
-    
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
+
+    this.channel = socket.channel("graphql:nav_labels", {})
+    this.channel.join()
+    this.channel.on(`graphql:nav_labels:${user_id}:update_list`, (message) => {
+      this.props.allLabelsQuery.refetch()
+    })
+    }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleClick = e => {
@@ -100,24 +108,34 @@ class NavDrawer extends Component {
 const LabelRow = ({ text, color, deviceCount }) => (
   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', whiteSpace: 'nowrap'}} >
     <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><TagFilled style={{marginRight: 8}} />{text}</div>
-        {
-            deviceCount > 0 &&
-      <div style={{
-        lineHeight: 1,
-        color: '#8391a5',
-        fontSize: 16,
-        fontWeight: 500,
-        textAlign: 'right',
+      {
+        deviceCount > 0 && (
+          <div style={{
+            lineHeight: 1,
+            color: '#8391a5',
+            fontSize: 16,
+            fontWeight: 500,
+            textAlign: 'right',
 
-      }}>
-       {deviceCount}
-      </div>
-    }
+          }}>
+           {deviceCount}
+          </div>
+        )
+      }
   </div>
 )
+
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ push }, dispatch)
 }
 
-export default withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' }))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' }))
+))
