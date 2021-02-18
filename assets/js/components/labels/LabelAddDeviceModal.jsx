@@ -129,7 +129,7 @@ class LabelAddDeviceModal extends Component {
                 size="small"
                 onTabClick={tab => this.setState({ tab })}
                 tabPosition="left"
-                style={{ width: '100%', height: 300 }}
+                style={{ width: '100%', height: 325 }}
               >
                 <TabPane tab="Devices" key="devices">
                   <LabelAddDeviceSelect
@@ -141,6 +141,7 @@ class LabelAddDeviceModal extends Component {
                   />
                 </TabPane>
                 <TabPane tab="Labels" key="labels">
+                  <Text strong>Choose additional labels to attach to selected devices:</Text>
                   <LabelAddLabelSelect
                     checkAllLabels={this.checkAllLabels}
                     allLabelsWithDevices={allLabels.filter(l => l.device_count && l.device_count > 0)}
