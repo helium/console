@@ -45,7 +45,7 @@ class DeviceIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX")
-    const { socket, currentOrganizationId } = this.props
+    const { socket, currentOrganizationId, user } = this.props
 
     this.channel = socket.channel("graphql:devices_index_table", {})
     this.channel.join()
@@ -53,10 +53,31 @@ class DeviceIndex extends Component {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
+
+    this.importChannel = socket.channel("graphql:device_import_update", {})
+    this.importChannel.join()
+    this.importChannel.on(`graphql:device_import_update:${currentOrganizationId}:import_list_updated`, (message) => {
+      const { page, pageSize } = this.state
+      this.props.importsQuery.refetch({ page, pageSize })
+      const user_id = user.sub.slice(6)
+
+      if (user_id === message.user_id && message.status === 'success') {
+        this.setState({ importComplete: true })
+
+        displayInfo(
+          `Imported ${message.successful_devices} device${(message.successful_devices !== 1 && "s") || ""} from ${
+          message.type === "ttn" ? "The Things Network" : "CSV"}. Refresh this page to see the changes.`
+        )
+      }
+      if (user_id === message.user_id && message.status === 'failed') {
+        displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
+      }
+    })
   }
 
   componentWillUnmount() {
     this.channel.leave()
+    this.importChannel.leave()
   }
 
   openCreateDeviceModal = () => {
