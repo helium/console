@@ -321,9 +321,6 @@ class ChannelShow extends Component {
   }
 }
 
-
-
-
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
