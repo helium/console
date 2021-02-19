@@ -3,9 +3,9 @@ import { Skeleton } from 'antd';
 import DashboardLayout from '../common/DashboardLayout';
 import { Card, Row, Col } from 'antd';
 
-export const DeviceShowSkeleton = () => {
+export const DeviceShowSkeleton = ({ user }) => {
     return (
-      <DashboardLayout>
+      <DashboardLayout user={user}>
         <Skeleton title={true} paragraph={{ rows: 0 }} active />
         <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex" >
           <Col span={15}>

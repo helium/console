@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import debounce from 'lodash/debounce'
 import omit from 'lodash/omit'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -10,13 +10,6 @@ import LabelAddLabelSelect from './LabelAddLabelSelect'
 const { Text } = Typography
 const { TabPane } = Tabs
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(ALL_LABELS_DEVICES, queryOptions)
 class LabelAddDeviceModal extends Component {
   state = {
     checkedDevices: {},
@@ -50,7 +43,7 @@ class LabelAddDeviceModal extends Component {
       this.setState({ checkedDevices: devices })
     } else {
       const devices = {}
-      this.props.data.allDevices.forEach(d => {
+      this.props.allResourcesQuery.allDevices.forEach(d => {
         devices[d.id] = true
       })
       this.setState({ checkedDevices: devices })
@@ -80,7 +73,7 @@ class LabelAddDeviceModal extends Component {
       this.setState({ checkedLabels: labels })
     } else {
       const labels = {}
-      this.props.data.allLabels.forEach(l => {
+      this.props.allResourcesQuery.allLabels.forEach(l => {
         if (this.props.label.id !== l.id) labels[l.id] = true
       })
       this.setState({ checkedLabels: labels })
@@ -101,7 +94,7 @@ class LabelAddDeviceModal extends Component {
 
   render() {
     const { open, onClose, label, labelNormalizedDevices } = this.props
-    const { allDevices, allLabels, loading, error } = this.props.data
+    const { allDevices, allLabels, loading, error } = this.props.allResourcesQuery
     const { checkedDevices, checkedLabels } = this.state
 
     return (
@@ -162,4 +155,4 @@ class LabelAddDeviceModal extends Component {
   }
 }
 
-export default LabelAddDeviceModal
+export default withGql(LabelAddDeviceModal, ALL_LABELS_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allResourcesQuery' }))

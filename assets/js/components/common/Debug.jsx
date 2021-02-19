@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Subscription } from 'react-apollo';
+import { connect } from 'react-redux'
 import DebugEntry from './DebugEntry'
 import omit from 'lodash/omit'
 import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
@@ -13,8 +13,29 @@ class Debug extends Component {
     data: []
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.setState({ data: []})
+
+    const { socket, deviceId, labelId } = this.props
+
+    if (deviceId) {
+      this.channel = socket.channel("graphql:device_show_debug", {})
+      this.channel.join()
+      this.channel.on(`graphql:device_show_debug:${this.props.deviceId}:get_event`, (message) => {
+        this.updateData(message)
+      })
+    }
+    if (labelId) {
+      this.channel = socket.channel("graphql:label_show_debug", {})
+      this.channel.join()
+      this.channel.on(`graphql:label_show_debug:${this.props.labelId}:get_event`, (message) => {
+        this.updateData(message)
+      })
+    }
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   clearSingleEntry = id => {
@@ -23,24 +44,18 @@ class Debug extends Component {
     })
   }
 
-  updateData = subscriptionData => {
+  updateData = event => {
     if (this.state.data.length === 10) return
-
-    let event = subscriptionData.data[this.props.subscriptionKey]
-
     if (!event.hasOwnProperty("payload")) return
-
-    event = omit(event, ["__typename"])
 
     const hotspots = JSON.parse(event.hotspots)
     const channels = JSON.parse(event.channels)
 
-    if (hotspots) event.hotspots = hotspots.map(h => omit(h, ["__typename"]))
+    event.hotspots = hotspots || []
     if (channels) {
-      event.channels = channels.map(c => {
-        const channel = omit(c, ["__typename"])
+      event.channels = channels.map(channel => {
         if (channel.debug) {
-          channel.debug = JSON.parse(c["debug"])
+          channel.debug = JSON.parse(channel["debug"])
           if (channel.debug.req && channel.debug.req.body) {
             try {
               channel.debug.req.body =  JSON.parse(channel.debug.req.body)
@@ -54,13 +69,15 @@ class Debug extends Component {
         }
         return channel
       })
+    } else {
+      event.channels = []
     }
 
     const { data } = this.state
     this.setState({ data: [event].concat(data) })
   }
 
-  renderData = () => {
+  render = () => {
     const { data } = this.state
 
     if (data.length === 0) return (
@@ -103,23 +120,12 @@ class Debug extends Component {
       </div>
     )
   }
+}
 
-  render() {
-    const { subscription, variables } = this.props
-
-    return (
-      <Subscription
-        subscription={subscription}
-        variables={variables}
-        onSubscriptionData={({ subscriptionData }) => this.updateData(subscriptionData)}
-        fetchPolicy="network-only"
-        shouldResubscribe
-      >
-        {this.renderData}
-      </Subscription>
-    )
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
   }
 }
 
-
-export default Debug
+export default connect(mapStateToProps, null)(Debug)

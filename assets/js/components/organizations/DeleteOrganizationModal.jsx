@@ -5,18 +5,12 @@ import { deleteOrganization } from '../../actions/organization'
 import sort from 'lodash/sortBy'
 import find from 'lodash/find'
 import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo'
+import withGql from '../../graphql/withGql'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
 import { Modal, Button, Typography, Select, Row, Col } from 'antd';
 const { Text } = Typography
 const { Option } = Select
-
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
 
 const styles = {
   center: {
@@ -26,17 +20,9 @@ const styles = {
   }
 }
 
-@connect(null, mapDispatchToProps)
-@graphql(ALL_ORGANIZATIONS, queryOptions)
 class DeleteOrganizationModal extends Component {
   state = {
     destinationOrgId: null
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.selectedOrgId && this.props.selectedOrgId && !find(this.props.data.allOrganizations, { id: this.props.selectedOrgId })) {
-      this.props.data.refetch()
-    }
   }
 
   handleSetOrg = destinationOrgId => {
@@ -46,7 +32,7 @@ class DeleteOrganizationModal extends Component {
   handleSubmit = () => {
     const { selectedOrgId } = this.props
 
-    const currentOrg = find(this.props.data.allOrganizations, { id: selectedOrgId })
+    const currentOrg = find(this.props.allOrganizationsQuery.allOrganizations, { id: selectedOrgId })
 
     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": selectedOrgId, "name": currentOrg.name })
     if (!currentOrg.dc_balance || currentOrg.dc_balance < 1) {
@@ -60,9 +46,9 @@ class DeleteOrganizationModal extends Component {
 
   render() {
     const { open, onClose, selectedOrgId } = this.props
-    const { allOrganizations } = this.props.data
+    const { allOrganizations } = this.props.allOrganizationsQuery
 
-    const currentOrg = find(allOrganizations, { id: selectedOrgId })
+    const currentOrg = allOrganizations ? find(allOrganizations, { id: selectedOrgId }) : null
 
     return(
       <Modal
@@ -163,4 +149,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteOrganization }, dispatch)
 }
 
-export default DeleteOrganizationModal
+export default connect(null, mapDispatchToProps)(
+  withGql(DeleteOrganizationModal, ALL_ORGANIZATIONS, props => ({ fetchPolicy: 'cache-and-network', name: 'allOrganizationsQuery' }))
+)

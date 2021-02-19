@@ -3,16 +3,9 @@ import { Typography, Radio, Card } from 'antd';
 const { Text } = Typography
 import { Row, } from 'antd';
 import { ALL_FUNCTIONS } from '../../graphql/functions';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import FunctionsSearch from '../common/FunctionsSearch';
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(ALL_FUNCTIONS, queryOptions)
 class DecoderForm extends Component {
   state = {
     format: 'cayenne',
@@ -35,13 +28,13 @@ class DecoderForm extends Component {
 
   render() {
     const { format } = this.state;
-    const { allFunctions } = this.props.data;
+    const { allFunctions } = this.props.allFunctionsQuery;
 
     return (
       <div>
         <Card title="Step 4 - Choose your decoder (Required)">
           <Text style={{ display: 'block'}} strong>Decoder Format</Text>
-          <Row style={{marginBottom: 16 }}>  
+          <Row style={{marginBottom: 16 }}>
             <Radio.Group onChange={this.handleDecoderChange} value={format}>
               <Radio value="cayenne" style={{ fontSize: '16px' }}>Cayenne LPP (Default)</Radio>
               <Radio value="custom" style={{ fontSize: '16px' }}>Custom</Radio>
@@ -59,4 +52,4 @@ class DecoderForm extends Component {
   }
 }
 
-export default DecoderForm;
+export default withGql(DecoderForm, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allFunctionsQuery' }))

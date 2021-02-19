@@ -3,9 +3,9 @@ import { Skeleton } from 'antd';
 import DashboardLayout from '../common/DashboardLayout';
 import { Card } from 'antd';
 
-export const ChannelShowSkeleton = () => {
+export const ChannelShowSkeleton = ({user}) => {
     return (
-      <DashboardLayout>
+      <DashboardLayout user={user}>
         <Skeleton title={true} paragraph={{ rows: 0 }} active />
         <Card>
           <Skeleton title={false} paragraph={{ rows: 9 }} active />

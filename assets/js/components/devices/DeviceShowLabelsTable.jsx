@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
@@ -7,52 +7,20 @@ import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { PAGINATED_LABELS_BY_DEVICE } from '../../graphql/labels'
-import { DEVICE_UPDATE_SUBSCRIPTION } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
-
-
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10,
-      deviceId: props.deviceId,
-      column: DEFAULT_COLUMN,
-      order: DEFAULT_ORDER
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_LABELS_BY_DEVICE, queryOptions)
 class DeviceShowLabelsTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
     selectedRows: [],
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER
-  }
-
-  componentDidMount() {
-    const { subscribeToMore} = this.props.data
-
-    subscribeToMore({
-      document: DEVICE_UPDATE_SUBSCRIPTION,
-      variables: { deviceId: this.props.deviceId },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
-    })
   }
 
   handleChangePage = (page) => {
@@ -63,28 +31,11 @@ class DeviceShowLabelsTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize, column, order) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedLabelsQuery
     fetchMore({
       variables: { page, pageSize, column, order },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
     })
-  }
-
-  handleSortChange = (pagi, filter, sorter) => {
-    const { page, pageSize, order, column } = this.state
-
-    if (column == sorter.field && order == 'asc') {
-      this.setState({ order: 'desc' })
-      this.refetchPaginatedEntries(page, pageSize, column, 'desc')
-    }
-    if (column == sorter.field && order == 'desc') {
-      this.setState({ order: 'asc' })
-      this.refetchPaginatedEntries(page, pageSize, column, 'asc')
-    }
-    if (column != sorter.field) {
-      this.setState({ column: sorter.field, order: 'asc' })
-      this.refetchPaginatedEntries(page, pageSize, sorter.field, 'asc')
-    }
   }
 
   render() {
@@ -92,7 +43,6 @@ class DeviceShowLabelsTable extends Component {
       {
         title: 'Labels',
         dataIndex: 'name',
-        sorter: true,
         render: (text, record) => (
           <React.Fragment>
             <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
@@ -127,7 +77,6 @@ class DeviceShowLabelsTable extends Component {
       {
         title: 'Date Activated',
         dataIndex: 'inserted_at',
-        sorter: true,
         render: data => moment.utc(data).local().format('lll')
       },
       {
@@ -142,7 +91,6 @@ class DeviceShowLabelsTable extends Component {
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 8 }}
-                onChange={this.handleSortChange}
                 onClick={e => {
                   e.stopPropagation()
                   this.props.openRemoveLabelFromDeviceModal([record])
@@ -154,7 +102,7 @@ class DeviceShowLabelsTable extends Component {
       }
     ]
 
-    const { loading, error, labels_by_device } = this.props.data
+    const { loading, error, labels_by_device } = this.props.paginatedLabelsQuery
     const numOfEntries = labels_by_device && labels_by_device.totalEntries;
 
     if (loading) return <SkeletonLayout />;
@@ -170,8 +118,8 @@ class DeviceShowLabelsTable extends Component {
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${numOfEntries} Label${numOfEntries > 1 || numOfEntries === 0 ? 's' : ''} Attached providing ${numOfUniqueIntegrations} Integration${numOfUniqueIntegrations > 1 || numOfUniqueIntegrations === 0 ? 's' : ''}`}
         extra={
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             onClick={this.props.openDevicesAddLabelModal}
             icon={<PlusOutlined />}
           >
@@ -187,7 +135,6 @@ class DeviceShowLabelsTable extends Component {
           dataSource={labels_by_device.entries}
           rowKey={record => record.id}
           pagination={false}
-          onChange={this.handleSortChange}
           style={{ minWidth: 800 }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
@@ -205,4 +152,12 @@ class DeviceShowLabelsTable extends Component {
   }
 }
 
-export default DeviceShowLabelsTable
+function mapStateToProps(state) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(DeviceShowLabelsTable, PAGINATED_LABELS_BY_DEVICE, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10, deviceId: props.deviceId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedLabelsQuery' }))
+)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import sortBy from 'lodash/sortBy'
@@ -13,14 +13,6 @@ import analyticsLogger from '../../util/analyticsLogger'
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_FUNCTIONS, queryOptions)
 class LabelShowFunctionsAttached extends Component {
   state = {
     selectedFunction: null,
@@ -48,7 +40,7 @@ class LabelShowFunctionsAttached extends Component {
   render() {
     const { func, label } = this.props
     const { selectedFunction, showRemoveFunctionModal, functionToDelete } = this.state
-    const { allFunctions } = this.props.data
+    const { allFunctions } = this.props.allFunctionsQuery
 
     return (
       <div>
@@ -122,4 +114,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ push, updateLabel }, dispatch)
 }
 
-export default LabelShowFunctionsAttached
+export default connect(null, mapDispatchToProps)(
+  withGql(LabelShowFunctionsAttached, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allFunctionsQuery' }))
+)

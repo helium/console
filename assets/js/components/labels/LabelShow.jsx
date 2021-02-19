@@ -19,27 +19,14 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
-import { LABEL_SHOW, LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
-import { LABEL_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
+import { LABEL_SHOW } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Button, Typography } from 'antd';
 import { BugOutlined, SettingOutlined, TagOutlined } from '@ant-design/icons';
 import { SkeletonLayout } from '../common/SkeletonLayout';
-
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(LABEL_SHOW, queryOptions)
 class LabelShow extends Component {
   state = {
     showUpdateLabelModal: false,
@@ -52,20 +39,28 @@ class LabelShow extends Component {
   }
 
   componentDidMount() {
+    const labelId = this.props.match.params.id
     analyticsLogger.logEvent("ACTION_NAV_LABEL_SHOW")
-    const { subscribeToMore, fetchMore } = this.props.data
 
-    subscribeToMore({
-      document: LABEL_UPDATE_SUBSCRIPTION,
-      variables: { id: this.props.match.params.id },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          variables: { id: this.props.match.params.id },
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    const { socket } = this.props
+
+    this.channel = socket.channel("graphql:label_show", {})
+    this.channel.join()
+    this.channel.on(`graphql:label_show:${labelId}:label_update`, (message) => {
+      this.props.labelShowQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.channel.on(`graphql:label_show:${this.props.match.params.id}:label_update`, (message) => {
+        this.props.labelShowQuery.refetch()
+      })
+    }
   }
 
   openUpdateLabelModal = () => {
@@ -149,10 +144,10 @@ class LabelShow extends Component {
   }
 
   render() {
-    const { loading, error, label } = this.props.data
+    const { loading, error, label } = this.props.labelShowQuery
     const { showDeleteDeviceModal, selectedDevices } = this.state
 
-    if (loading) return <DashboardLayout><SkeletonLayout/></DashboardLayout>
+    if (loading) return <DashboardLayout user={this.props.user}><SkeletonLayout/></DashboardLayout>
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
@@ -250,10 +245,8 @@ class LabelShow extends Component {
           message='Access Debug mode to view device packet transfer'
         >
           <Debug
-            subscription={LABEL_DEBUG_EVENTS_SUBSCRIPTION}
-            variables={{ label_id: this.props.match.params.id }}
+            labelId={this.props.match.params.id}
             refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
-            subscriptionKey="labelDebugEventAdded"
           />
         </Sidebar>
 
@@ -289,8 +282,16 @@ class LabelShow extends Component {
   }
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
 }
 
-export default LabelShow
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(LabelShow, LABEL_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'labelShowQuery' }))
+)

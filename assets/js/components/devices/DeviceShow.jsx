@@ -19,13 +19,12 @@ import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
 import { updateDevice, toggleDeviceDebug } from '../../actions/device'
 import { sendDownlinkMessage } from '../../actions/channel'
-import { DEVICE_UPDATE_SUBSCRIPTION, DEVICE_SHOW } from '../../graphql/devices'
-import { DEVICE_DEBUG_EVENTS_SUBSCRIPTION } from '../../graphql/events'
+import { DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Typography, Button, Input, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
 import { EditOutlined, EyeOutlined, EyeInvisibleOutlined, BugOutlined, DeleteOutlined } from '@ant-design/icons';
 import { DeviceShowSkeleton } from './DeviceShowSkeleton';
@@ -34,17 +33,6 @@ const { TabPane } = Tabs
 const { Option } = Select
 import DeviceShowLabelsTable from './DeviceShowLabelsTable';
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(DEVICE_SHOW, queryOptions)
 class DeviceShow extends Component {
   state = {
     newName: "",
@@ -66,21 +54,20 @@ class DeviceShow extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore, fetchMore } = this.props.data
     const deviceId = this.props.match.params.id
-
     analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", {"id": deviceId})
 
-    subscribeToMore({
-      document: DEVICE_UPDATE_SUBSCRIPTION,
-      variables: { deviceId },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    const { socket } = this.props
+
+    this.channel = socket.channel("graphql:device_show", {})
+    this.channel.join()
+    this.channel.on(`graphql:device_show:${deviceId}:device_update`, (message) => {
+      this.props.deviceShowQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleInputUpdate = (e) => {
@@ -219,14 +206,14 @@ class DeviceShow extends Component {
       deviceToDelete,
       showAppKey
     } = this.state
-    const { loading, error, device } = this.props.data;
+    const { loading, error, device } = this.props.deviceShowQuery;
 
     const channels = device && device.labels.reduce(
       (acc, label) => acc.concat(label.channels.filter(c => c.type === 'http')),
       []
     );
 
-    if (loading) return <DeviceShowSkeleton />;
+    if (loading) return <DeviceShowSkeleton user={this.props.user} />;
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
     const smallerText = device.total_packets > 10000
@@ -267,7 +254,7 @@ class DeviceShow extends Component {
           </UserCan>
         }
       >
-        <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} type="flex" style={{ overflow: 'scroll' }}>
+        <Row gutter={12} type="flex" style={{ overflow: 'scroll' }}>
           <Col span={15}>
           <Card title="Device Details" >
             <table>
@@ -507,9 +494,7 @@ class DeviceShow extends Component {
           message='Access Debug mode to view device packet transfer'
         >
           <Debug
-            subscription={DEVICE_DEBUG_EVENTS_SUBSCRIPTION}
-            variables={{ device_id: this.props.match.params.id }}
-            subscriptionKey="deviceDebugEventAdded"
+            deviceId={this.props.match.params.id}
             refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
           />
         </Sidebar>
@@ -545,8 +530,16 @@ class DeviceShow extends Component {
   }
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateDevice, toggleDeviceDebug, sendDownlinkMessage }, dispatch)
 }
 
-export default DeviceShow
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(DeviceShow, DEVICE_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'deviceShowQuery' }))
+)

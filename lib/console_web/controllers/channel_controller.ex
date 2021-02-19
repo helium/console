@@ -36,7 +36,6 @@ defmodule ConsoleWeb.ChannelController do
         new_labels ->
           Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
       end
-      broadcast(channel)
       broadcast_router_update_devices(channel)
 
       conn
@@ -83,7 +82,6 @@ defmodule ConsoleWeb.ChannelController do
       case result do
         {:error, _, changeset, _} -> {:error, changeset}
         {:ok, %{ channel: channel, label: label, label_attached: _label_attached, function: function}} ->
-          broadcast(channel)
           broadcast_router_update_devices(channel)
 
           conn
@@ -106,7 +104,7 @@ defmodule ConsoleWeb.ChannelController do
     end
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
-      broadcast(channel, channel.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
       broadcast_router_update_devices(channel)
 
       if updated_channel != nil do
@@ -138,7 +136,7 @@ defmodule ConsoleWeb.ChannelController do
     end
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
-      broadcast(channel)
+      ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
       broadcast_router_update_devices(channel.labels)
 
       if (deleted_channel != nil) do
@@ -189,14 +187,6 @@ defmodule ConsoleWeb.ChannelController do
         conn
         |> send_resp(502, Jason.encode!(errors))
     end
-  end
-
-  def broadcast(%Channel{} = channel) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_added: "#{channel.organization_id}/channel_added")
-  end
-
-  def broadcast(%Channel{} = channel, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, channel, channel_updated: "#{channel.organization_id}/#{id}/channel_updated")
   end
 
   defp broadcast_router_update_devices(%Channel{} = channel) do

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
+import { connect } from 'react-redux'
 import moment from 'moment'
 import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
-import { PAGINATED_DC_PURCHASES, DC_PURCHASE_SUBSCRIPTION } from '../../graphql/dcPurchases'
+import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination } from 'antd';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
@@ -23,34 +24,24 @@ const styles = {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10,
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_DC_PURCHASES, queryOptions)
 class DataCreditPurchasesTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
   }
 
   componentDidMount() {
-    const { subscribeToMore} = this.props.data
-    const { page, pageSize } = this.state
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: DC_PURCHASE_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.refetchPaginatedEntries(page, pageSize)
-      }
+    this.channel = socket.channel("graphql:dc_purchases_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:dc_purchases_table:${currentOrganizationId}:update_dc_table`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
@@ -61,7 +52,7 @@ class DataCreditPurchasesTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.dcPurchasesQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -81,17 +72,6 @@ class DataCreditPurchasesTable extends Component {
           }
         }
       },
-      // {
-      //   title: 'Cost',
-      //   dataIndex: 'cost',
-      //   render:  (data, record) => {
-      //     if (record.card_type == "burn") {
-      //       return data + " HNT"
-      //     } else {
-      //       return "$ " + (data / 100).toFixed(2)
-      //     }
-      //   }
-      // },
       {
         title: 'From/To',
         dataIndex: 'payment_id',
@@ -132,7 +112,7 @@ class DataCreditPurchasesTable extends Component {
       },
     ]
 
-    const { loading, error, dcPurchases } = this.props.data
+    const { loading, error, dcPurchases } = this.props.dcPurchasesQuery
     const title = "Payment History";
 
     if (loading) return <IndexSkeleton title={title} />;
@@ -167,4 +147,13 @@ class DataCreditPurchasesTable extends Component {
   }
 }
 
-export default DataCreditPurchasesTable
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(DataCreditPurchasesTable, PAGINATED_DC_PURCHASES, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'dcPurchasesQuery' }))
+)

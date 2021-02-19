@@ -21,14 +21,14 @@ class DashboardLayout extends Component {
     return (
       <Layout style={{height: '100%', width: '100%'}}>
         <Header>
-          <TopBar user={user} showNav={this.state.showNav} toggleNav={this.toggleNav} />
+          <TopBar user={user} toggleNav={this.toggleNav} showNav={this.state.showNav}/>
         </Header>
 
         <Layout style={{ height: 'calc(100vh - 64px)' }}>
           {
             !noSideNav && (
               <Sider style={{ overflow: 'hidden', display: this.state.showNav ? 'block' : 'none' }}>
-                <NavDrawer />
+                <NavDrawer user={user}/>
                 {
                   process.env.CONSOLE_VERSION &&
                     <Popover

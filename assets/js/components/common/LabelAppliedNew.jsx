@@ -1,27 +1,17 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { SEARCH_LABELS } from '../../graphql/search'
 import { AutoComplete } from 'antd';
 import find from 'lodash/find'
 import LabelTag from './LabelTag'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-    variables: {
-      query: ""
-    }
-  })
-}
-
-@graphql(SEARCH_LABELS, queryOptions)
 class LabelAppliedNew extends Component {
   state = {
     searchLabels: []
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
+    const { loading, fetchMore } = this.props.searchLabelsQuery
 
     this.props.select(value);
     if (!loading) {
@@ -51,13 +41,13 @@ class LabelAppliedNew extends Component {
         options={searchLabels.map(l => (
           {
             label: (
-              <LabelTag 
-                text={l.name} 
-                color={l.color} 
-                hasIntegrations={l.channels.length > 0} 
+              <LabelTag
+                text={l.name}
+                color={l.color}
+                hasIntegrations={l.channels.length > 0}
                 hasFunction={find(this.props.allLabels, { id: l.id }).function}
               />
-            ), 
+            ),
             value: l.name
           }
         ))}
@@ -72,4 +62,4 @@ class LabelAppliedNew extends Component {
   }
 }
 
-export default LabelAppliedNew
+export default withGql(LabelAppliedNew, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: { query:"" }, name: 'searchLabelsQuery' }))

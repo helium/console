@@ -6,6 +6,8 @@ defmodule ConsoleWeb.UserSocket do
   alias Console.Auth
   require Logger
 
+  channel("graphql:*", ConsoleWeb.GraphqlChannel)
+
   @access_token_decoder Application.get_env(:console, :access_token_decoder)
 
   # Socket params are passed from the client and can
