@@ -278,8 +278,8 @@ class LabelShow extends Component {
                   )
                 }}
                 onClear={() => {
-                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": this.state.selectedDevices.map(device => device.id) });
-                  this.props.sendClearDownlinkQueue(this.state.selectedDevices.map(device => device.id));
+                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": label.devices.map(device => device.id) });
+                  this.props.sendClearDownlinkQueue(label.devices.map(device => device.id));
                 }}
               />
             </Sidebar>
