@@ -206,7 +206,6 @@ export const sendClearDownlinkQueue = (devices) => {
     rest.post(
       '/api/v1/clear_downlink_queue',
       { devices, from: 'console_downlink_queue' }
-    ).then(()=> {displayInfo(`Successfully cleared downlink queue`)}
-    ).catch(() => {displayError(`Failed to clear downlink queue`)});
+    ).then(()=> {displayInfo(`Successfully cleared downlink queue`)});
   }
 }
