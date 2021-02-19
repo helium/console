@@ -42,8 +42,8 @@ defmodule ConsoleWeb.Router.OrganizationController do
             with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
               Organizations.update_organization(organization, %{ "received_free_dc" => false })
 
-              ConsoleWeb.DataCreditController.broadcast(organization, dc_purchase)
-              ConsoleWeb.DataCreditController.broadcast(organization)
+              ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+              ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
               ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
 
               conn |> send_resp(:no_content, "")

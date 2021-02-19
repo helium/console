@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
 import sortBy from 'lodash/sortBy'
@@ -14,14 +14,6 @@ import { addChannelToLabel } from '../../actions/label'
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_CHANNELS, queryOptions)
 class LabelShowChannelsAttached extends Component {
   state = {
     selectedChannel: null,
@@ -49,7 +41,7 @@ class LabelShowChannelsAttached extends Component {
   render() {
     const { channels, label } = this.props
     const { selectedChannel, showRemoveChannelModal, channelToDelete } = this.state
-    const { allChannels } = this.props.data
+    const { allChannels } = this.props.allChannelsQuery
 
     return (
       <div>
@@ -119,4 +111,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ push, addChannelToLabel }, dispatch)
 }
 
-export default LabelShowChannelsAttached
+export default connect(null, mapDispatchToProps)(
+  withGql(LabelShowChannelsAttached, ALL_CHANNELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allChannelsQuery' }))
+)

@@ -6,9 +6,9 @@ import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateFunction } from '../../actions/function'
-import { PAGINATED_FUNCTIONS, FUNCTION_SUBSCRIPTION } from '../../graphql/functions'
+import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import FunctionsImg from '../../../img/functions.svg'
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -17,40 +17,30 @@ import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
 const functionFormats = {
   cayenne: "Cayenne LPP",
   browan_object_locator: "Browan Object Locator",
   custom: "Custom"
 }
 
-@connect(null, mapDispatchToProps)
-@graphql(PAGINATED_FUNCTIONS, queryOptions)
 class FunctionIndexTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.data
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: FUNCTION_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
+    this.channel = socket.channel("graphql:function_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:function_index_table:${currentOrganizationId}:function_list_update`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
@@ -60,13 +50,8 @@ class FunctionIndexTable extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedFunctionsQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -154,7 +139,7 @@ class FunctionIndexTable extends Component {
       }
     ]
 
-    const { functions, loading, error } = this.props.data
+    const { functions, loading, error } = this.props.paginatedFunctionsQuery
 
     if (loading) return <IndexSkeleton title="Functions" />;
     if (error) return (
@@ -166,18 +151,18 @@ class FunctionIndexTable extends Component {
         {
           functions.entries.length === 0 && (
             <div className="blankstateWrapper">
-          <div className="message">
-    <img src={FunctionsImg} />
-    <h1>No Functions</h1>
-    <p>You haven’t added any functions yet.</p>
+              <div className="message">
+              <img src={FunctionsImg} />
+              <h1>No Functions</h1>
+              <p>You haven’t added any functions yet.</p>
 
-    <div className="explainer">
-      <h2>What are Functions?</h2>
-      <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
-      <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank">here</a>.</p>
-    </div>
+              <div className="explainer">
+                <h2>What are Functions?</h2>
+                <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
+                <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank">here</a>.</p>
+              </div>
 
-          </div>
+            </div>
           <style jsx>{`
              .message {
                 width: 100%;
@@ -234,9 +219,9 @@ class FunctionIndexTable extends Component {
                 Functions are operators that can be applied to Labels and act on the data of any devices in those Labels. <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank"> Tell me more about functions.</a>
               </p>
             <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${functions.totalEntries} Functions`}
-      >
+              bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+              title={`${functions.totalEntries} Functions`}
+            >
             <React.Fragment>
               <Table
                 onRow={(record, rowIndex) => ({
@@ -269,8 +254,18 @@ class FunctionIndexTable extends Component {
   }
 }
 
+
+function mapStateToProps(state, ownProps) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateFunction }, dispatch);
 }
 
-export default FunctionIndexTable
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(FunctionIndexTable, PAGINATED_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedFunctionsQuery' }))
+)

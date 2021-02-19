@@ -1,42 +1,34 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import get from 'lodash/get'
 import moment from 'moment'
-import { PAGINATED_INVITATIONS, INVITATION_SUBSCRIPTION } from '../../graphql/invitations'
+import { PAGINATED_INVITATIONS } from '../../graphql/invitations'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(PAGINATED_INVITATIONS, queryOptions)
 class InvitationsTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10
+    pageSize: 10
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.data
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: INVITATION_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
+    this.channel = socket.channel("graphql:invitations_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:invitations_table:${currentOrganizationId}:invitation_list_update`, (message) => {
+      this.props.paginatedInvitesQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
@@ -46,13 +38,8 @@ class InvitationsTable extends Component {
     this.refetchPaginatedEntries(page, pageSize)
   }
 
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedInvitesQuery
     fetchMore({
       variables: { page, pageSize },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -96,7 +83,7 @@ class InvitationsTable extends Component {
       },
     ]
 
-    const { loading, error, invitations } = this.props.data
+    const { loading, error, invitations } = this.props.paginatedInvitesQuery
 
     if (loading) return <SkeletonLayout />;
     if (error) return (
@@ -127,4 +114,13 @@ class InvitationsTable extends Component {
   }
 }
 
-export default InvitationsTable
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(InvitationsTable, PAGINATED_INVITATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedInvitesQuery' }))
+)

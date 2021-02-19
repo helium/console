@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -10,7 +10,7 @@ import UserCan from '../common/UserCan';
 import ProfileNewKeyModal from './ProfileNewKeyModal';
 import RoleName from '../common/RoleName';
 import analyticsLogger from '../../util/analyticsLogger';
-import { ALL_API_KEYS, API_KEY_SUBSCRIPTION } from '../../graphql/apiKeys';
+import { ALL_API_KEYS } from '../../graphql/apiKeys';
 import { getMfaStatus } from '../../actions/auth';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
@@ -19,14 +19,6 @@ import * as rest from '../../util/rest';
 const { Text } = Typography
 const { Option } = Select
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-@graphql(ALL_API_KEYS, queryOptions)
 class Profile extends Component {
   state = {
     name: "",
@@ -35,21 +27,17 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_PROFILE")
+    const { socket, currentOrganizationId } = this.props
 
-    const { subscribeToMore, fetchMore } = this.props.data;
-    const { getMfaStatus } = this.props;
-    getMfaStatus();
-
-    subscribeToMore({
-      document: API_KEY_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    this.channel = socket.channel("graphql:api_keys", {})
+    this.channel.join()
+    this.channel.on(`graphql:api_keys:${currentOrganizationId}:api_key_list_update`, (message) => {
+      this.props.apiKeysQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleInputUpdate = (e) => {
@@ -83,7 +71,8 @@ class Profile extends Component {
   render() {
     const { email } = this.props.user;
     const { role, mfaEnrollmentStatus } = this.props;
-    const { logOut, data } = this.props
+    const { logOut } = this.props
+    const { apiKeys } = this.props.apiKeysQuery
     const { newKey } = this.state
 
     const columns = [
@@ -184,11 +173,11 @@ class Profile extends Component {
             </Button>
 
             {
-              data.apiKeys && (
+              apiKeys && (
                 <div style={{ marginTop: 20, overflowX: 'scroll' }}>
                   <Table
                     columns={columns}
-                    dataSource={data.apiKeys}
+                    dataSource={apiKeys}
                     rowKey={record => record.id}
                     pagination={false}
                     bordered
@@ -212,7 +201,9 @@ class Profile extends Component {
 function mapStateToProps(state) {
   return {
     role: state.organization.currentRole,
-    mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus
+    mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus,
+    socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId
   }
 }
 
@@ -220,4 +211,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logOut, generateKey, deleteKey, getMfaStatus }, dispatch)
 }
 
-export default Profile
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(Profile, ALL_API_KEYS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'apiKeysQuery' }))
+)

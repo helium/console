@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import numeral from 'numeral'
@@ -12,7 +12,7 @@ import AutomaticRenewalModal from './AutomaticRenewalModal'
 import OrganizationTransferDCModal from './OrganizationTransferDCModal'
 import DataCreditPurchasesTable from './DataCreditPurchasesTable'
 import PaymentCard from './PaymentCard'
-import { ORGANIZATION_SHOW_DC, ORGANIZATION_UPDATE_SUBSCRIPTION } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC } from '../../graphql/organizations'
 import { getPaymentMethods } from '../../actions/dataCredits'
 import { Link } from 'react-router-dom'
 import { Typography, Card, Row, Col, Popover, Button } from 'antd';
@@ -48,17 +48,6 @@ const styles = {
   }
 }
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.currentOrganizationId
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-@graphql(ORGANIZATION_SHOW_DC, queryOptions)
 class DataCreditsIndex extends Component {
   state = {
     showDefaultPaymentModal: false,
@@ -72,26 +61,25 @@ class DataCreditsIndex extends Component {
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS")
 
-    const { subscribeToMore, variables, fetchMore } = this.props.data
+    const { socket, currentOrganizationId } = this.props
 
-    subscribeToMore({
-      document: ORGANIZATION_UPDATE_SUBSCRIPTION,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    this.channel = socket.channel("graphql:dc_index", {})
+    this.channel.join()
+    this.channel.on(`graphql:dc_index:${currentOrganizationId}:update_dc`, (message) => {
+      this.props.orgShowDCQuery.refetch()
     })
 
-    if (this.props.data.organization && this.props.data.organization.stripe_customer_id) {
+    if (this.props.orgShowDCQuery.organization && this.props.orgShowDCQuery.organization.stripe_customer_id) {
       this.fetchPaymentMethods()
     }
   }
 
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
   componentDidUpdate(prevProps) {
-    if(!prevProps.data.organization && this.props.data.organization && this.props.data.organization.stripe_customer_id) {
+    if(!prevProps.orgShowDCQuery.organization && this.props.orgShowDCQuery.organization && this.props.orgShowDCQuery.organization.stripe_customer_id) {
       this.fetchPaymentMethods()
     }
   }
@@ -122,7 +110,7 @@ class DataCreditsIndex extends Component {
   }
 
   renderBlankState = () => {
-    const { organization } = this.props.data
+    const { organization } = this.props.orgShowDCQuery
     return (
       <div className="blankstateWrapper" style={{ paddingTop: "80px" }}>
         <div className="message">
@@ -207,7 +195,7 @@ class DataCreditsIndex extends Component {
   }
 
   renderContent = () => {
-    const { organization } = this.props.data
+    const { organization } = this.props.orgShowDCQuery
     const { dc_balance, default_payment_id } = organization
     const defaultPayment = find(this.state.paymentMethods, p => p.id === organization.default_payment_id)
 
@@ -297,7 +285,7 @@ class DataCreditsIndex extends Component {
           )}
         </Row>
         <UserCan noManager>
-          <DataCreditPurchasesTable />
+          <DataCreditPurchasesTable user={this.props.user}/>
         </UserCan>
       </div>
     )
@@ -305,7 +293,7 @@ class DataCreditsIndex extends Component {
 
   render() {
     const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal, showOrganizationTransferDCModal } = this.state
-    const { organization, error } = this.props.data
+    const { organization, error } = this.props.orgShowDCQuery
 
     return (
       <DashboardLayout
@@ -399,7 +387,8 @@ class DataCreditsIndex extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
-    role: state.organization.currentRole
+    role: state.organization.currentRole,
+    socket: state.apollo.socket,
   }
 }
 
@@ -408,4 +397,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default DataCreditsIndex
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(DataCreditsIndex, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgShowDCQuery' }))
+)

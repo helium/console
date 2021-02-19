@@ -1,24 +1,17 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
 import PacketGraph from '../common/PacketGraph'
-import { DEVICE_EVENTS, EVENTS_SUBSCRIPTION } from '../../graphql/events'
-import { graphql } from 'react-apollo';
+import { DEVICE_EVENTS } from '../../graphql/events'
+import withGql from '../../graphql/withGql'
 import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox } from 'antd';
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
-
-const queryOptions = {
-  options: props => ({
-    variables: {
-      device_id: props.device_id,
-    },
-    fetchPolicy: 'network-only',
-  })
-}
 
 const styles = {
   tag: {
@@ -72,7 +65,6 @@ const statusBadge = (status) => {
   }
 }
 
-@graphql(DEVICE_EVENTS, queryOptions)
 class EventsDashboard extends Component {
   state = {
     rows: [],
@@ -81,21 +73,22 @@ class EventsDashboard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { deviceEvents, loading, subscribeToMore, variables } = this.props.data
+    const { deviceEvents, loading } = this.props.deviceEventsQuery
+    const { socket } = this.props
 
-    if (prevProps.data.loading && !loading) {
+    if (prevProps.deviceEventsQuery.loading && !loading) {
       this.setState({ rows: deviceEvents }, () => {
-        subscribeToMore({
-          document: EVENTS_SUBSCRIPTION,
-          variables,
-          updateQuery: (prev, { subscriptionData }) => {
-            if (!subscriptionData.data) return prev
-
-            this.addEvent(subscriptionData.data.eventAdded)
-          }
+        this.channel = socket.channel("graphql:events_dashboard", {})
+        this.channel.join()
+        this.channel.on(`graphql:events_dashboard:${this.props.device_id}:new_event`, (message) => {
+          this.addEvent(message)
         })
       })
     }
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   addEvent = event => {
@@ -267,7 +260,7 @@ class EventsDashboard extends Component {
       },
     ]
 
-    const { loading, error } = this.props.data
+    const { loading, error } = this.props.deviceEventsQuery
 
     if (loading) return <SkeletonLayout />;
     if (error) return (
@@ -323,4 +316,12 @@ class EventsDashboard extends Component {
   }
 }
 
-export default EventsDashboard
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(EventsDashboard, DEVICE_EVENTS, props => ({ fetchPolicy: 'cache-and-network', variables: { device_id: props.device_id, }, name: 'deviceEventsQuery' }))
+)

@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
@@ -16,32 +16,6 @@ export const EVENT_FRAGMENT = gql`
     hotspots,
     channels
   }
-`
-export const EVENTS_SUBSCRIPTION = gql`
-  subscription onEventAdded($device_id: String) {
-    eventAdded(device_id: $device_id) {
-      ...EventFragment
-    }
-  }
-  ${EVENT_FRAGMENT}
-`
-
-export const DEVICE_DEBUG_EVENTS_SUBSCRIPTION = gql`
-  subscription deviceDebugEventAdded($device_id: String) {
-    deviceDebugEventAdded(device_id: $device_id) {
-      ...EventFragment
-    }
-  }
-  ${EVENT_FRAGMENT}
-`
-
-export const LABEL_DEBUG_EVENTS_SUBSCRIPTION = gql`
-  subscription labelDebugEventAdded($label_id: String) {
-    labelDebugEventAdded(label_id: $label_id) {
-      ...EventFragment
-    }
-  }
-  ${EVENT_FRAGMENT}
 `
 
 export const DEVICE_EVENTS = gql`

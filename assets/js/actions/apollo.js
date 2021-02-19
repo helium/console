@@ -1,42 +1,29 @@
 // GraphQL
-import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { onError } from 'apollo-link-error'
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { onError } from "@apollo/client/link/error";
+import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
-
-import { ApolloLink } from "apollo-link";
-import { hasSubscription } from "@jumpn/utils-graphql";
-import SocketLink from '../util/socketLink'
+import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
 
-export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
+export const setupApolloClient = (getAuthToken, organizationId) => {
   return async (dispatch) => {
-    const httpLink = createHttpLink({
+    let currentOrganizationId = organizationId
+    let tokenClaims = await getAuthToken();
+    let token = tokenClaims.__raw
+
+    const httpLink = new HttpLink({
       uri: "/graphql"
     })
 
-    const authLink = setContext(async (_, { headers }) => {
-      const tokenClaims = await getAuthToken();
-      const token = tokenClaims.__raw
-      let assignableHeaders = {
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : "",
-        }
-      }
-      const organizationId = JSON.parse(localStorage.getItem('organization')).id;
-      if (organizationId) {
-        Object.assign(assignableHeaders, {organization: organizationId })
-      }
+    const authLink = setContext((_, { headers }) => {
       return {
         headers: {
           ...headers,
           authorization: token ? `Bearer ${token}` : "",
-          organization: organizationId
+          organization: currentOrganizationId
         }
       }
     })
@@ -62,28 +49,38 @@ export const setupApolloClient = (getAuthToken, currentOrganizationId) => {
       }
     })
 
-    const authHttpLink = authErrorLink.concat(authLink.concat(httpLink))
-    const socketLink = new SocketLink(getAuthToken, currentOrganizationId);
-    const connectedSocket = await socketLink.connect();
-    connectedSocket.disconnect()
-
-    const link = new ApolloLink.split(
-      operation => hasSubscription(operation.query),
-      socketLink,
-      authHttpLink
-    )
+    const link = authErrorLink.concat(authLink.concat(httpLink))
 
     const apolloClient = new ApolloClient({
       link,
       cache: new InMemoryCache(),
     })
-    return dispatch(createdApolloClient(apolloClient));
+
+    let socket = createSocket(token, currentOrganizationId)
+    socket.connect()
+
+    store.subscribe(async () => {
+      const newTokenClaims = await getAuthToken();
+      const newToken = newTokenClaims.__raw;
+      const newOrganization = store.getState().organization;
+
+      if (newToken !== token || currentOrganizationId !== newOrganization.currentOrganizationId) {
+        currentOrganizationId = newOrganizationId
+        token = newToken;
+        socket.disconnect();
+        socket = createSocket(token, currentOrganizationId)
+        socket.connect()
+      }
+    })
+
+    return dispatch(createdApolloClient(apolloClient, socket));
   }
 }
 
-export const createdApolloClient = (apolloClient) => {
+export const createdApolloClient = (apolloClient, socket) => {
   return {
     type: CREATED_APOLLO_CLIENT,
-    apolloClient
+    apolloClient,
+    socket
   };
 }

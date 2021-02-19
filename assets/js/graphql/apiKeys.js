@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const ALL_API_KEYS = gql`
   query ApiKeysQuery {
@@ -9,14 +9,6 @@ export const ALL_API_KEYS = gql`
       inserted_at
       user
       active
-    }
-  }
-`
-
-export const API_KEY_SUBSCRIPTION = gql`
-  subscription onApiKeyAdded {
-    apiKeyAdded {
-      id
     }
   }
 `

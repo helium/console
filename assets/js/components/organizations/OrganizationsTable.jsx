@@ -6,58 +6,42 @@ import numeral from 'numeral'
 import get from 'lodash/get'
 import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization, updateOrganization } from '../../actions/organization'
-import { PAGINATED_ORGANIZATIONS, ORGANIZATION_SUBSCRIPTION } from '../../graphql/organizations'
+import { PAGINATED_ORGANIZATIONS } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
-import { Query } from 'react-apollo';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import WebhookKeyField from './WebhookKeyField';
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10,
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-@graphql(PAGINATED_ORGANIZATIONS, queryOptions)
 class OrganizationsTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
     webhookKeyToShow: 'none'
   }
 
   componentDidMount() {
-    const { subscribeToMore, variables } = this.props.data
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
 
-    subscribeToMore({
-      document: ORGANIZATION_SUBSCRIPTION,
-      variables,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        this.handleSubscriptionAdded()
-      }
+    this.channel = socket.channel("graphql:orgs_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:orgs_index_table:${user_id}:organization_list_update`, (message) => {
+      this.props.paginatedOrganizationsQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleChangePage = (page) => {
     this.setState({ page })
 
     const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
-  }
-
-  handleSubscriptionAdded = () => {
-    const { page, pageSize } = this.state
     this.refetchPaginatedEntries(page, pageSize)
   }
 
@@ -163,7 +147,7 @@ class OrganizationsTable extends Component {
     ]
 
     const { currentOrganizationId, switchOrganization, deleteOrganization } = this.props
-    const { organizations, loading, error } = this.props.data
+    const { organizations, loading, error } = this.props.paginatedOrganizationsQuery
 
     if (loading) return <SkeletonLayout />;
     if (error) return (
@@ -173,16 +157,19 @@ class OrganizationsTable extends Component {
     return (
       <div>
         <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth: 800 }}/>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-          <Pagination
-            current={organizations.pageNumber}
-            pageSize={organizations.pageSize}
-            total={organizations.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-            style={{marginBottom: 20}}
-            showSizeChanger={false}
-          />
-        </div>
+        {
+          organizations.totalPages && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+              <Pagination
+                current={organizations.pageNumber}
+                pageSize={organizations.pageSize}
+                total={organizations.totalEntries}
+                onChange={page => this.handleChangePage(page)}
+                style={{marginBottom: 20}}
+              />
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -191,6 +178,7 @@ class OrganizationsTable extends Component {
 function mapStateToProps(state) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
   }
 }
 
@@ -198,4 +186,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ switchOrganization, deleteOrganization, updateOrganization }, dispatch);
 }
 
-export default OrganizationsTable
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(OrganizationsTable, PAGINATED_ORGANIZATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedOrganizationsQuery' }))
+)

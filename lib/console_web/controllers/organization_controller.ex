@@ -46,7 +46,8 @@ defmodule ConsoleWeb.OrganizationController do
 
           render(conn, "show.json", organization: membership_info)
         _ ->
-          broadcast(organization, conn.assigns.current_user)
+          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
 
           conn
           |> put_status(:created)
@@ -77,7 +78,8 @@ defmodule ConsoleWeb.OrganizationController do
       end)
       |> Repo.transaction()
 
-      broadcast(organization, conn.assigns.current_user)
+      ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
       if active do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:active:devices", %{ "devices" => device_ids })
       else
@@ -127,8 +129,8 @@ defmodule ConsoleWeb.OrganizationController do
             end
 
           {:ok, {:ok, from_org_updated, to_org_updated }} = Organizations.send_dc_to_org(balance_to_transfer, organization, destination_org)
-          ConsoleWeb.DataCreditController.broadcast(from_org_updated)
-          ConsoleWeb.DataCreditController.broadcast(to_org_updated)
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{from_org_updated.id}:update_dc", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{to_org_updated.id}:update_dc", %{})
           ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
           ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
 
@@ -143,7 +145,7 @@ defmodule ConsoleWeb.OrganizationController do
           }
 
           {:ok, destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
-          ConsoleWeb.DataCreditController.broadcast(destination_org, destination_org_dc_purchase)
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{destination_org.id}:update_dc_table", %{})
         end
 
         admins = Organizations.get_administrators(organization)
@@ -154,7 +156,9 @@ defmodule ConsoleWeb.OrganizationController do
             |> Mailer.deliver_later()
           end)
 
-          broadcast(organization, conn.assigns.current_user)
+          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+
           render_org = %{id: organization.id, name: organization.name, role: membership.role}
           conn
           |> put_status(:accepted)
@@ -162,10 +166,5 @@ defmodule ConsoleWeb.OrganizationController do
           |> render("show.json", organization: render_org)
         end
     end
-  end
-
-  defp broadcast(%Organization{} = organization, current_user) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, organization_added: "#{current_user.id}/organization_added")
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, organization, top_bar_organizations: "#{current_user.id}/top_bar_organizations")
   end
 end

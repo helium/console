@@ -4,7 +4,7 @@ import { DoubleRightOutlined } from '@ant-design/icons';
 const { Option } = Select
 import find from 'lodash/find'
 import { swapLabel } from '../../actions/label'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 const { Text } = Typography
 import analyticsLogger from '../../util/analyticsLogger'
 import LabelTag from '../common/LabelTag'
@@ -13,14 +13,6 @@ import AddIcon from '../../../img/channel-show-add-label-icon.png'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_LABELS, queryOptions)
 class SwapLabelModal extends Component {
   state = {
     showConfirmSwap: false,
@@ -28,7 +20,7 @@ class SwapLabelModal extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!prevProps.open && this.props.open) this.props.data.refetch()
+    if (!prevProps.open && this.props.open) this.props.allLabelsQuery.refetch()
   }
 
   handleSubmit = (e) => {
@@ -60,7 +52,7 @@ class SwapLabelModal extends Component {
 
   render() {
     const { open, onClose, labelToSwap } = this.props
-    const { allLabels } = this.props.data
+    const { allLabels } = this.props.allLabelsQuery
     const { showConfirmSwap, destinationLabel } = this.state
 
     return (
@@ -134,4 +126,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ swapLabel }, dispatch)
 }
 
-export default SwapLabelModal
+export default connect(null, mapDispatchToProps)(
+  withGql(SwapLabelModal, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))
+)

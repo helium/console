@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import LabelsAppliedExisting from '../common/LabelsAppliedExisting'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
 import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
-import { FUNCTION_SHOW, FUNCTION_UPDATE_SUBSCRIPTION } from '../../graphql/functions'
+import { FUNCTION_SHOW } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
 import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -18,15 +18,6 @@ import { PauseOutlined, DeleteOutlined, SaveOutlined, CaretRightOutlined } from 
 import { FunctionShowSkeleton } from './FunctionShowSkeleton';
 const { Text } = Typography
 const { Option } = Select
-
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.match.params.id
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
 
 const functionTypes = {
   decoder: "Decoder"
@@ -38,8 +29,6 @@ const functionFormats = {
   custom: "Custom Script"
 }
 
-@connect(null, mapDispatchToProps)
-@graphql(FUNCTION_SHOW, queryOptions)
 class FunctionShow extends Component {
   state = {
     name: "",
@@ -54,20 +43,20 @@ class FunctionShow extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore, fetchMore } = this.props.data
     const functionId = this.props.match.params.id
     analyticsLogger.logEvent("ACTION_NAV_FUNCTION_SHOW", {"id": functionId})
 
-    subscribeToMore({
-      document: FUNCTION_UPDATE_SUBSCRIPTION,
-      variables: { functionId },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    const { socket } = this.props
+
+    this.channel = socket.channel("graphql:function_show", {})
+    this.channel.join()
+    this.channel.on(`graphql:function_show:${functionId}:function_update`, (message) => {
+      this.props.functionShowQuery.refetch()
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleInputUpdate = e => this.setState({ name: e.target.value })
@@ -84,7 +73,7 @@ class FunctionShow extends Component {
   handleSubmit = () => {
     const {name, type, format, body} = this.state
     const functionId = this.props.match.params.id
-    const fxn = this.props.data.function
+    const fxn = this.props.functionShowQuery.function
 
     const newAttrs = {}
 
@@ -116,7 +105,7 @@ class FunctionShow extends Component {
   }
 
   openRemoveFunctionLabelModal = (labelToRemove) => {
-    const fxn = this.props.data.function
+    const fxn = this.props.functionShowQuery.function
     this.setState({ showRemoveFunctionLabelModal: true, functionSelected: fxn, labelToRemove })
   }
 
@@ -138,10 +127,10 @@ class FunctionShow extends Component {
 
   render() {
     const {name, type, format, body, codeUpdated, showDeleteFunctionModal, showRemoveFunctionLabelModal} = this.state
-    const { loading, error } = this.props.data
-    const fxn = this.props.data.function
+    const { loading, error } = this.props.functionShowQuery
+    const fxn = this.props.functionShowQuery.function
 
-    if (loading) return <FunctionShowSkeleton />
+    if (loading) return <FunctionShowSkeleton user={this.props.user}/>
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
@@ -287,8 +276,16 @@ class FunctionShow extends Component {
   }
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ deleteFunction, updateFunction, updateLabel, createLabel }, dispatch);
 }
 
-export default FunctionShow
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(FunctionShow, FUNCTION_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'functionShowQuery' }))
+)

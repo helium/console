@@ -108,7 +108,7 @@ class ChannelPayloadTemplate extends Component {
     const { channel, templateBody, from } = this.props
     const { typeSelected } = this.state
     const fromChannelNew = from === 'channelNew'
-    const isAdafruit = channel.credentials && channel.credentials.endpoint && channel.credentials.endpoint.includes('io.adafruit.com');
+    const isAdafruit = channel && channel.credentials && channel.credentials.endpoint && channel.credentials.endpoint.includes('io.adafruit.com');
 
     if (!fromChannelNew && channel && channel.payload_template === null && templateBody !== '' ) return (
       <span>
@@ -127,7 +127,7 @@ class ChannelPayloadTemplate extends Component {
         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={this.props.updateChannelTemplate}>Save</Button>
       </span>
     )
-    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) {
+    if (!fromChannelNew && channel && channel.payload_template !== null && templateBody === channel.payload_template && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[typeSelected])) {
       return (
       <span>
         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
@@ -138,7 +138,7 @@ class ChannelPayloadTemplate extends Component {
         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>
     )
-    if (fromChannelNew && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[value])) return (
+    if (fromChannelNew && templateBody !== (isAdafruit ? templatesMap["adafruit"] : templatesMap[typeSelected])) return (
       <span>
         <Button size="small" type="primary" style={{ marginRight: 0, height: 25 }} onClick={() => this.selectPayloadType(typeSelected, isAdafruit)}>Apply Default Template</Button>
       </span>

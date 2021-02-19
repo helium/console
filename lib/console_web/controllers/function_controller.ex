@@ -15,7 +15,7 @@ defmodule ConsoleWeb.FunctionController do
     function_params = Map.merge(function_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
-      broadcast(function)
+      ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
 
       case function_params["labels"]["labelsApplied"] do
         nil -> nil
@@ -41,8 +41,8 @@ defmodule ConsoleWeb.FunctionController do
     function = Functions.get_function!(current_organization, id)
 
     with {:ok, %Function{} = function} <- Functions.update_function(function, function_params) do
-      broadcast(function)
-      broadcast(function, function.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
       broadcast_router_update_devices(function)
 
       conn
@@ -56,21 +56,13 @@ defmodule ConsoleWeb.FunctionController do
     function = Functions.get_function!(current_organization, id) |> Functions.fetch_assoc([labels: :devices])
 
     with {:ok, _} <- Functions.delete_function(function) do
-      broadcast(function)
+      ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       broadcast_router_update_devices(function.labels)
 
       conn
       |> put_resp_header("message", "#{function.name} deleted successfully")
       |> send_resp(:no_content, "")
     end
-  end
-
-  def broadcast(%Function{} = function) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, function, function_added: "#{function.organization_id}/function_added")
-  end
-
-  def broadcast(%Function{} = function, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, function, function_updated: "#{function.organization_id}/#{id}/function_updated")
   end
 
   defp broadcast_router_update_devices(%Function{} = function) do

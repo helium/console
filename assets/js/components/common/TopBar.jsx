@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
@@ -11,7 +11,7 @@ import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
-import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS, TOP_BAR_ORGANIZATIONS_SUBSCRIPTION } from '../../graphql/organizations'
+import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Typography, Tooltip, Button } from 'antd';
 import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
@@ -23,18 +23,6 @@ import { switchOrganization } from '../../actions/organization';
 import OrganizationMenu from '../organizations/OrganizationMenu';
 import NewOrganizationModal from '../organizations/NewOrganizationModal';
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      id: props.currentOrganizationId
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-@graphql(ORGANIZATION_SHOW_DC, {...queryOptions, name: 'orgShowQuery'})
-@graphql(ALL_ORGANIZATIONS, {...queryOptions, name: 'orgsQuery'})
 class TopBar extends Component {
   state = {
     userMenuVisible: false,
@@ -43,20 +31,18 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
-    const { subscribeToMore } = this.props.orgsQuery;
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
 
-    subscribeToMore({
-      document: TOP_BAR_ORGANIZATIONS_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        this.handleSubscriptionAdded();
-      }
+    this.channel = socket.channel("graphql:topbar_orgs", {})
+    this.channel.join()
+    this.channel.on(`graphql:topbar_orgs:${user_id}:organization_list_update`, (message) => {
+      this.props.orgsQuery.refetch()
     })
   }
 
-  handleSubscriptionAdded = () => {
-    const { refetch } = this.props.orgsQuery;
-    refetch();
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleClick = e => {
@@ -91,11 +77,12 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, user } = this.props;
+    const { logOut, currentOrganizationName, user, orgsQuery, orgShowQuery, toggleNav } = this.props;
     const { showOrganizationModal } = this.state
-    const { organization } = this.props.orgShowQuery;
-    const { allOrganizations } = this.props.orgsQuery;
-    const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id);
+
+    const allOrganizations = orgsQuery.allOrganizations || null
+    const organization = orgShowQuery.organization || null
+    const otherOrgs = (allOrganizations || []).filter(org => organization && org.id !== organization.id)
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -201,6 +188,7 @@ function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationName: state.organization.currentOrganizationName,
     currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
   }
 }
 
@@ -208,4 +196,10 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ logOut, push, switchOrganization }, dispatch);
 }
 
-export default TopBar
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(
+    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgShowQuery' })),
+    ALL_ORGANIZATIONS,
+    props => ({ fetchPolicy: 'cache-and-network', name: 'orgsQuery' })
+  )
+)

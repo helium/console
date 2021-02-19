@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const DEVICE_FRAGMENT = gql`
   fragment DeviceFragment on Device {
@@ -14,47 +14,6 @@ export const DEVICE_FRAGMENT = gql`
     total_packets,
     dc_usage,
     active
-  }
-`
-
-export const DEVICE_SUBSCRIPTION = gql`
-  subscription onDeviceAdded {
-    deviceAdded {
-      ...DeviceFragment
-    }
-  }
-  ${DEVICE_FRAGMENT}
-`
-
-export const DEVICE_UPDATE_SUBSCRIPTION = gql`
-  subscription onDeviceUpdated($deviceId: String) {
-    deviceUpdated(deviceId: $deviceId) {
-      name
-    }
-  }
-`
-
-export const IMPORT_ADDED_SUBSCRIPTION = gql`
-  subscription onImportAdded {
-    importAdded {
-      id,
-      user_id,
-      successful_devices,
-      status,
-      type
-    }
-  }
-`
-
-export const IMPORT_UPDATED_SUBSCRIPTION = gql`
-  subscription onImportUpdated {
-    importUpdated {
-      id,
-      user_id,
-      successful_devices,
-      status,
-      type
-    }
   }
 `
 

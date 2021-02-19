@@ -9,41 +9,31 @@ import { EyeFilled, EyeInvisibleFilled, TagFilled } from '@ant-design/icons';
 import truncate from 'lodash/truncate'
 const { SubMenu } = Menu
 const { Text } = Typography
-import { graphql } from 'react-apollo';
-import { MENU_LABELS, LABEL_SUBSCRIPTION_FOR_NAV } from '../../graphql/labels'
+import { MENU_LABELS } from '../../graphql/labels'
 import { labelColorsHex } from './LabelTag'
 import { grayForHideLabelsDash } from '../../util/colors'
+import withGql from '../../graphql/withGql'
 import classNames from 'classnames';
-
-
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
 const SHOW_LABELS_KEY = 'showLabels';
 
-@withRouter
-@graphql(MENU_LABELS, queryOptions)
-@connect(null, mapDispatchToProps)
 class NavDrawer extends Component {
   state = {
     showLabels: localStorage.getItem(SHOW_LABELS_KEY) !== 'false'
   }
 
   componentDidMount() {
-    const { subscribeToMore, fetchMore } = this.props.data
+    const { socket, user } = this.props
+    const user_id = user.sub.slice(6)
 
-    subscribeToMore({
-      document: LABEL_SUBSCRIPTION_FOR_NAV,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
-        fetchMore({
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-        })
-      }
+    this.channel = socket.channel("graphql:nav_labels", {})
+    this.channel.join()
+    this.channel.on(`graphql:nav_labels:${user_id}:update_list`, (message) => {
+      this.props.allLabelsQuery.refetch()
     })
+    }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleClick = e => {
@@ -51,7 +41,8 @@ class NavDrawer extends Component {
   }
 
   render() {
-    const { history, data } = this.props
+    const { history } = this.props
+    const { allLabels } = this.props.allLabelsQuery
     const { showLabels } = this.state
 
     return (
@@ -66,7 +57,7 @@ class NavDrawer extends Component {
           <div style={{ marginLeft: 0, position: 'relative' }}>
             <NavLink to={"/labels"} activeClassName="is-active" className="menu-link">Labels</NavLink>
             {
-              showLabels && data.allLabels && data.allLabels.length > 0 && (
+              showLabels && allLabels && allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: false }) || localStorage.setItem(SHOW_LABELS_KEY, 'false')}
@@ -76,7 +67,7 @@ class NavDrawer extends Component {
               )
             }
             {
-              !showLabels && data.allLabels && data.allLabels.length > 0 && (
+              !showLabels && allLabels && allLabels.length > 0 && (
                 <p
                   style={{ position: 'absolute', right: 15, top: 14, color: 'rgb(144, 157, 169)', fontSize: 17, cursor: 'pointer' }}
                   onClick={() => this.setState({ showLabels: true }) || localStorage.setItem(SHOW_LABELS_KEY, 'true')}
@@ -90,7 +81,7 @@ class NavDrawer extends Component {
             showLabels && (
               <div style={{background: '#d9e2ef', overflowX: 'scroll' }} className="labellist">
                 {
-                  data.allLabels && data.allLabels.map(l => (
+                  allLabels && allLabels.map(l => (
                  <div style={{ paddingTop: 8, paddingLeft: 18, width: '100%' }} key={l.id} className="labelrowwrapper">
                     <div style={{ padding: 2, width: '100%', paddingRight: 18 }}>
                       <Link to={`/labels/${l.id}`}>
@@ -117,24 +108,34 @@ class NavDrawer extends Component {
 const LabelRow = ({ text, color, deviceCount }) => (
   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', whiteSpace: 'nowrap'}} >
     <div style={{ background: color ? labelColorsHex[color] : labelColorsHex['geekblue'], padding: '8px 10px', borderRadius: 4, color: 'white', fontWeight: 600}}><TagFilled style={{marginRight: 8}} />{text}</div>
-        {
-            deviceCount > 0 &&
-      <div style={{
-        lineHeight: 1,
-        color: '#8391a5',
-        fontSize: 16,
-        fontWeight: 500,
-        textAlign: 'right',
+      {
+        deviceCount > 0 && (
+          <div style={{
+            lineHeight: 1,
+            color: '#8391a5',
+            fontSize: 16,
+            fontWeight: 500,
+            textAlign: 'right',
 
-      }}>
-       {deviceCount}
-      </div>
-    }
+          }}>
+           {deviceCount}
+          </div>
+        )
+      }
   </div>
 )
+
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ push }, dispatch)
 }
 
-export default NavDrawer
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' }))
+))

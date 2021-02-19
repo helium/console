@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
@@ -9,13 +9,6 @@ import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
 const { Text } = Typography
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(ALL_RESOURCES, queryOptions)
 class FlowsIndex extends Component {
   state = {
     selectedNode: null,
@@ -67,7 +60,7 @@ class FlowsIndex extends Component {
     updateEdges(removeEdges, addEdges)
     .then(status => {
       if (status == 200) {
-        const { fetchMore } = this.props.data
+        const { fetchMore } = this.props.allResourcesQuery
         fetchMore({
           updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
         })
@@ -77,18 +70,19 @@ class FlowsIndex extends Component {
   }
 
   render() {
-    const { loading, error, allLabels, allFunctions, allChannels } = this.props.data
+    const { loading, error, allLabels, allFunctions, allChannels } = this.props.allResourcesQuery
     if (loading) return (
-      <DashboardLayout fullHeightWidth />
+      <DashboardLayout fullHeightWidth user={this.props.user} />
     )
     if (error) return (
-      <DashboardLayout fullHeightWidth>
+      <DashboardLayout fullHeightWidth user={this.props.user}>
         <div style={{ padding: 20 }}>
           <Text>Workspace data failed to load, please reload the page and try again</Text>
         </div>
       </DashboardLayout>
     )
-    const sortedAllLabels = allLabels.sort((a, b) => {
+
+    const sortedAllLabels = allLabels.slice().sort((a, b) => {
       if (a.channels.length > b.channels.length) {
         return -1
       }
@@ -272,4 +266,4 @@ class FlowsIndex extends Component {
   }
 }
 
-export default FlowsIndex
+export default withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allResourcesQuery' }))

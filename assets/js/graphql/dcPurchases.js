@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const PAGINATED_DC_PURCHASES = gql`
   query PaginatedDcPurchasesQuery ($page: Int, $pageSize: Int) {
@@ -19,14 +19,6 @@ export const PAGINATED_DC_PURCHASES = gql`
       totalPages,
       pageSize,
       pageNumber
-    }
-  }
-`
-
-export const DC_PURCHASE_SUBSCRIPTION = gql`
-  subscription onDcPurchaseAdded {
-    dcPurchaseAdded {
-      id
     }
   }
 `

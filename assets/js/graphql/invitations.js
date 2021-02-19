@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const INVITATION_FRAGMENT = gql`
   fragment InvitationFragment on Invitation {
@@ -19,14 +19,6 @@ export const PAGINATED_INVITATIONS = gql`
       totalPages,
       pageSize,
       pageNumber
-    }
-  }
-  ${INVITATION_FRAGMENT}
-`
-export const INVITATION_SUBSCRIPTION = gql`
-  subscription onInvitationUpdated {
-    invitationUpdated {
-      ...InvitationFragment
     }
   }
   ${INVITATION_FRAGMENT}

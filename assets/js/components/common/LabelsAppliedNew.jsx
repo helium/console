@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Button } from 'antd';
 const { Text } = Typography
@@ -9,13 +9,6 @@ import UserCan from './UserCan'
 import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(ALL_LABELS, queryOptions)
 class LabelsAppliedNew extends Component {
   state = {
     labelsApplied: [],
@@ -25,7 +18,7 @@ class LabelsAppliedNew extends Component {
   }
 
   addLabelToList = value => {
-    const { allLabels } = this.props.data;
+    const { allLabels } = this.props.allLabelsQuery;
     const { addOrPrompt } = this.props;
     const { labelsApplied, newLabels } = this.state;
 
@@ -78,7 +71,7 @@ class LabelsAppliedNew extends Component {
 
   render() {
     const { showConfirmationModal, labelBeingMoved } = this.state;
-    const { allLabels, loading, error } = this.props.data;
+    const { allLabels, loading, error } = this.props.allLabelsQuery
     const { ConfirmationModal } = this.props;
     if (loading) return <div />
     if (error) return (
@@ -146,4 +139,4 @@ class LabelsAppliedNew extends Component {
   }
 }
 
-export default LabelsAppliedNew
+export default withGql(LabelsAppliedNew, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))

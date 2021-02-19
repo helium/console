@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createDevice } from '../../actions/device'
 import { displayError } from '../../util/messages'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { ALL_LABELS } from '../../graphql/labels'
 import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -13,14 +13,6 @@ const { Text } = Typography
 const { Option } = Select
 import find from 'lodash/find'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(ALL_LABELS, queryOptions)
 class NewDeviceModal extends Component {
   nameInputRef = React.createRef()
 
@@ -56,7 +48,7 @@ class NewDeviceModal extends Component {
     const { name, devEUI, appEUI, appKey, labelName } = this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32)  {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {"name": name, "devEUI": devEUI, "appEUI": appEUI, "appKey": appKey})
-      let foundLabel = find(this.props.data.allLabels, { name: labelName });
+      let foundLabel = find(this.props.allLabelsQuery.allLabels, { name: labelName });
       let label = foundLabel ? { labelApplied: foundLabel.id } : { newLabel: labelName };
       this.props.createDevice({ name, dev_eui: devEUI.toUpperCase(), app_eui: appEUI.toUpperCase(), app_key: appKey.toUpperCase() }, label)
 
@@ -68,7 +60,7 @@ class NewDeviceModal extends Component {
 
   render() {
     const { open, onClose } = this.props
-    const { allLabels, error } = this.props.data
+    const { allLabels, error } = this.props.allLabelsQuery
 
     return (
       <Modal
@@ -139,10 +131,10 @@ class NewDeviceModal extends Component {
 
 
         <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
-        <LabelAppliedNew 
-          allLabels={allLabels} 
-          value={this.state.labelName} 
-          select={value => this.setState({ labelName: value })} 
+        <LabelAppliedNew
+          allLabels={allLabels}
+          value={this.state.labelName}
+          select={value => this.setState({ labelName: value })}
         />
       </Modal>
     )
@@ -160,4 +152,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createDevice }, dispatch)
 }
 
-export default NewDeviceModal
+export default connect(null, mapDispatchToProps)(
+  withGql(NewDeviceModal, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))
+)

@@ -33,27 +33,19 @@ class AutomaticRenewalModal extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if ((!prevProps.organization && this.props.organization) || (prevProps.organization.automatic_charge_amount !== this.props.organization.automatic_charge_amount)) {
-      return this.setState({
+    if (!prevProps.open && this.props.open) {
+      this.setState({ checked: false })
+    }
+    
+    if (!prevProps.open && this.props.open) {
+      analyticsLogger.logEvent("ACTION_OPEN_AUTO_RENEW_MODAL")
+      this.setState({
         chargeOption: '$5',
         paymentMethod: this.props.organization.automatic_payment_method || null,
         countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
         countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
         countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
       })
-    }
-
-    if (prevProps.open && !this.props.open) {
-      return setTimeout(() => this.setState({
-        chargeOption: '$5',
-        paymentMethod: this.props.organization.automatic_payment_method || null,
-        countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
-        countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
-        countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
-      }), 100)
-    }
-    if (!prevProps.open && this.props.open) {
-      analyticsLogger.logEvent("ACTION_OPEN_AUTO_RENEW_MODAL")
     }
   }
 

@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Spin } from 'antd';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/client';
 
 // Routes
 import { connect } from 'react-redux';
@@ -99,22 +99,22 @@ const Router = (props) => {
                     apolloClient &&
                     <ApolloProvider client={apolloClient}>
                       <Switch>
-                        <Route path="/profile" render={props => <Profile user={user} {...props}/>}/>
-                        <Route exact path="/devices" render={props => <DeviceIndex user={user} {...props}/>} />
-                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
+                        <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
+                        <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
                         <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
-                        <Route path="/labels/:id" component={props => <LabelShow user={user} {...props}/>} />
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
                         <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
-                        <Route exact path="/users" render={props => <UserIndex user={user} {...props}/>}/>
-                        <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
-                        <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
+                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
+                        <Route exact path="/labels/:id" component={props => <LabelShow user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
-                        <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props} />} />
-                        <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
+                        <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />
+                        <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
+                        <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
+                        <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
+                        <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>
                   )

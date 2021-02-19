@@ -23,7 +23,7 @@ defmodule ConsoleWeb.ApiKeyController do
       params = Map.update(params, "name", nil, fn name -> String.trim(name) end)
 
       with {:ok, %ApiKey{} = api_key} <- ApiKeys.create_api_key(current_organization, current_user, params) do
-        broadcast(api_key)
+        ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_organization.id}:api_key_list_update", %{})
         Email.api_key_email(current_user, api_key) |> Mailer.deliver_later()
 
         conn
@@ -39,7 +39,7 @@ defmodule ConsoleWeb.ApiKeyController do
     api_key = ApiKeys.get_api_key!(current_organization, id)
 
     with {:ok, %ApiKey{} = api_key} <- ApiKeys.delete_api_key(api_key) do
-      broadcast(api_key)
+      ConsoleWeb.Endpoint.broadcast("graphql:api_keys", "graphql:api_keys:#{conn.assigns.current_organization.id}:api_key_list_update", %{})
 
       conn
       |> put_resp_header("message", "#{api_key.name} deleted successfully")
@@ -68,9 +68,5 @@ defmodule ConsoleWeb.ApiKeyController do
         |> redirect(to: "/profile")
         |> halt()
     end
-  end
-
-  def broadcast(%ApiKey{} = api_key) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, api_key, api_key_added: "#{api_key.organization_id}/api_key_added")
   end
 end

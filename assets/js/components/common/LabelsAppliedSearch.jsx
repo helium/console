@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { SEARCH_LABELS } from '../../graphql/search'
 import { Typography, Button, Select } from 'antd';
 const { Option } = Select
@@ -9,15 +9,6 @@ import find from 'lodash/find'
 import UserCan from '../common/UserCan'
 import LabelTag from '../common/LabelTag'
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-@graphql(SEARCH_LABELS, queryOptions)
 class LabelsAppliedSearch extends Component {
   state = {
     searchLabels: [],
@@ -25,7 +16,7 @@ class LabelsAppliedSearch extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
+    const { loading, fetchMore } = this.props.searchLabelsQuery
 
     this.setState({ selectedLabel: value}, () => {
       if (!loading) {
@@ -83,4 +74,4 @@ class LabelsAppliedSearch extends Component {
   }
 }
 
-export default LabelsAppliedSearch
+export default withGql(LabelsAppliedSearch, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: { query:"" }, name: 'searchLabelsQuery' }))

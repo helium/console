@@ -22,7 +22,7 @@ defmodule ConsoleWeb.InvitationController do
       with {:ok, %Invitation{} = invitation} <-
         Organizations.create_invitation(current_user, organization, attrs) do
         Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
-        broadcast(invitation)
+        ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
 
         conn
         |> put_status(:created)
@@ -57,10 +57,10 @@ defmodule ConsoleWeb.InvitationController do
         organization = Organizations.get_organization!(invitation.organization_id)
         Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
         {:ok, invitation} = Organizations.mark_invitation_used(invitation)
-        ConsoleWeb.InvitationController.broadcast(invitation)
+        ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{organization.id}:invitation_list_update", %{})
 
         membership = Organizations.get_membership!(conn.assigns.current_user, organization)
-        ConsoleWeb.MembershipController.broadcast(membership)
+        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{organization.id}:member_list_update", %{})
 
         conn
         |> put_status(:ok)
@@ -87,7 +87,7 @@ defmodule ConsoleWeb.InvitationController do
 
     if invitation.pending do
       with {:ok, %Invitation{}} <- Organizations.delete_invitation(invitation) do
-        broadcast(invitation)
+        ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
 
         conn
         |> put_resp_header("message", "Invitation removed")
@@ -96,11 +96,5 @@ defmodule ConsoleWeb.InvitationController do
     else
       {:error, :forbidden, "Cannot remove an invitation that has already been used"}
     end
-  end
-
-  def broadcast(%Invitation{} = invitation) do
-    invitation = invitation |> Organizations.fetch_assoc_invitation()
-
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, invitation, invitation_updated: "#{invitation.organization_id}/invitation_updated")
   end
 end

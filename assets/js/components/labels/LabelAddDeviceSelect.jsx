@@ -2,25 +2,16 @@ import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
 import { Checkbox, Input, Card, AutoComplete } from 'antd';
 import { SearchOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { SEARCH_DEVICES } from '../../graphql/search'
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      query: ""
-    }
-  })
-}
-
-@graphql(SEARCH_DEVICES, queryOptions)
 class LabelAddDeviceSelect extends Component {
   state = {
     searchDevices: []
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.data
+    const { loading, fetchMore } = this.props.searchDevicesQuery
     if (!loading) {
       fetchMore({
         variables: { query: value },
@@ -86,4 +77,4 @@ class LabelAddDeviceSelect extends Component {
   }
 }
 
-export default LabelAddDeviceSelect
+export default withGql(LabelAddDeviceSelect, SEARCH_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: {query:''}, name: 'searchDevicesQuery' }))

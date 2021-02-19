@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Button } from 'antd';
 const { Text } = Typography
@@ -10,13 +10,6 @@ import LabelTag from './LabelTag'
 import LabelsAppliedSearch from './LabelsAppliedSearch'
 import FunctionMoveLabelModal from '../functions/FunctionMoveLabelModal'
 
-const queryOptions = {
-  options: props => ({
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@graphql(ALL_LABELS, queryOptions)
 class LabelsAppliedExisting extends Component {
   state = {
     showFunctionMoveLabelModal: false,
@@ -24,7 +17,7 @@ class LabelsAppliedExisting extends Component {
   }
 
   addLabelToList = value => {
-    const { allLabels } = this.props.data
+    const { allLabels } = this.props.allLabelsQuery
     const existingLabel = find(allLabels, { id: value }) || find(allLabels, { name: value })
 
 
@@ -53,7 +46,7 @@ class LabelsAppliedExisting extends Component {
 
   render() {
     const { showFunctionMoveLabelModal, labelBeingMoved } = this.state
-    const { allLabels, loading, error } = this.props.data
+    const { allLabels, loading, error } = this.props.allLabelsQuery
     if (loading) return <div />
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
@@ -101,4 +94,4 @@ class LabelsAppliedExisting extends Component {
   }
 }
 
-export default LabelsAppliedExisting
+export default withGql(LabelsAppliedExisting, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))

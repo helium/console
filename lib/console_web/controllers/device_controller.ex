@@ -26,18 +26,20 @@ defmodule ConsoleWeb.DeviceController do
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       case label["labelApplied"] do
         nil -> nil
-        label_id -> 
+        label_id ->
           label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
           Labels.add_devices_to_label([device.id], label.id, current_organization)
+          ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       end
 
       case label["newLabel"] do
         nil -> nil
         label_name ->
           Labels.create_labels_add_device(device, [label_name], current_organization, user)
+          ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       end
 
-      broadcast(device)
+      ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
 
       conn
       |> put_status(:created)
@@ -51,19 +53,15 @@ defmodule ConsoleWeb.DeviceController do
     device = Devices.get_device!(current_organization, id)
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
-      broadcast(device, device.id)
+      ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
       broadcast_router_update_devices(device)
 
       if device_params["active"] != nil do
-        broadcast(device)
+        ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
 
         device_labels = Labels.get_labels_of_device(device)
         Enum.each(device_labels, fn l ->
-          Absinthe.Subscription.publish(
-            ConsoleWeb.Endpoint,
-            %{ id: l.label_id },
-            label_updated: "#{device.organization_id}/#{l.label_id}/label_updated"
-          )
+          ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{l.label_id}:update_label_devices", %{})
         end)
       end
 
@@ -81,7 +79,8 @@ defmodule ConsoleWeb.DeviceController do
     deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
-      broadcast(device)
+      ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       broadcast_router_update_devices(device)
 
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
@@ -111,11 +110,11 @@ defmodule ConsoleWeb.DeviceController do
     )
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
-      broadcast(device)
-
+      ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
-        ConsoleWeb.LabelController.broadcast(label, label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       end
 
       # now that devices have been deleted, send notification if applicable
@@ -147,7 +146,8 @@ defmodule ConsoleWeb.DeviceController do
 
     device = organization_id
     |> Devices.delete_all_devices_for_org()
-    broadcast(device)
+    ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{organization_id}:device_list_update", %{})
+    ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
     # now that devices have been deleted, send notification if applicable
     { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
@@ -171,11 +171,11 @@ defmodule ConsoleWeb.DeviceController do
 
     with {count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
       device = Devices.get_device!(current_organization, device_ids |> List.first())
-      broadcast(device)
+      ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
 
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
-        ConsoleWeb.LabelController.broadcast(label, label.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       end
 
       if active do
@@ -260,7 +260,7 @@ defmodule ConsoleWeb.DeviceController do
     current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
     {:ok, device_import} = Devices.create_import(current_organization, current_user.id, "generic")
-    broadcast_add(device_import)
+    ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{})
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
         added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0}, fn device, acc ->
@@ -324,11 +324,20 @@ defmodule ConsoleWeb.DeviceController do
             successful_devices: added_devices.device_count
           }
         )
-        broadcast_update(successful_import)
+        ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
+          status: "success",
+          user_id: successful_import.user_id,
+          successful_devices: successful_import.successful_devices,
+          type: successful_import.type
+        })
       rescue
         _ ->
           {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
-          broadcast_update(failed_import)
+          ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
+            status: "failed",
+            user_id: failed_import.user_id,
+            type: failed_import.type
+          })
       end
     end)
     conn
@@ -339,7 +348,7 @@ defmodule ConsoleWeb.DeviceController do
   defp fetch_and_write_devices(applications, token, organization, add_labels, delete_devices, delete_apps, user_id) do
     # Create import record
     {:ok, device_import} = Devices.create_import(organization, user_id, "ttn")
-    broadcast_add(device_import)
+    ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{organization.id}:import_list_updated", %{})
     try do
       device_count = Enum.reduce(applications, 0, fn app, acc ->
         case HTTPoison.request!(
@@ -395,11 +404,20 @@ defmodule ConsoleWeb.DeviceController do
           successful_devices: device_count
         }
       )
-      broadcast_update(successful_import)
+      ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{organization.id}:import_list_updated", %{
+        status: "success",
+        user_id: successful_import.user_id,
+        successful_devices: successful_import.successful_devices,
+        type: successful_import.type
+      })
     rescue
       _ ->
         {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
-        broadcast_update(failed_import)
+        ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{organization.id}:import_list_updated", %{
+          status: "failed",
+          user_id: failed_import.user_id,
+          type: failed_import.type
+        })
     end
   end
 
@@ -429,22 +447,6 @@ defmodule ConsoleWeb.DeviceController do
 
     conn
     |> send_resp(:no_content, "")
-  end
-
-  def broadcast(%Device{} = device) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_added: "#{device.organization_id}/device_added")
-  end
-
-  def broadcast_add(%DeviceImports{} = device_import) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device_import, import_added: "#{device_import.organization_id}/import_added")
-  end
-
-  def broadcast(%Device{} = device, id) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device, device_updated: "#{device.organization_id}/#{id}/device_updated")
-  end
-
-  def broadcast_update(%DeviceImports{} = device_import) do
-    Absinthe.Subscription.publish(ConsoleWeb.Endpoint, device_import, import_updated: "#{device_import.organization_id}/import_updated")
   end
 
   defp broadcast_router_update_devices(%Device{} = device) do

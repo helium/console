@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client';
 
 export const CHANNEL_FRAGMENT = gql`
   fragment ChannelFragment on Channel {
@@ -59,23 +59,6 @@ export const CHANNEL_SHOW = gql`
     }
   }
   ${CHANNEL_FRAGMENT}
-`
-
-export const CHANNEL_SUBSCRIPTION = gql`
-  subscription onChannelAdded {
-    channelAdded {
-      ...ChannelFragment
-    }
-  }
-  ${CHANNEL_FRAGMENT}
-`
-
-export const CHANNEL_UPDATE_SUBSCRIPTION = gql`
-  subscription onChannelUpdated($channelId: String) {
-    channelUpdated(channelId: $channelId) {
-      name
-    }
-  }
 `
 
 export const PAGINATED_CHANNELS = gql`

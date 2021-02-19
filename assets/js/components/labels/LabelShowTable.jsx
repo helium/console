@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
@@ -10,55 +10,36 @@ import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
-import { LABEL_UPDATE_SUBSCRIPTION } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
 import { StatusIcon } from '../common/StatusIcon'
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select
-
-
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 
-const queryOptions = {
-  options: props => ({
-    variables: {
-      page: 1,
-      pageSize: 10,
-      labelId: props.labelId,
-      column: DEFAULT_COLUMN,
-      order: DEFAULT_ORDER
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-}
-
-@connect(null, mapDispatchToProps)
-@graphql(PAGINATED_DEVICES_BY_LABEL, queryOptions)
 class LabelShowTable extends Component {
   state = {
     page: 1,
-    pageSize: get(this.props.data, ['variables', 'pageSize']) || 10,
+    pageSize: 10,
     selectedRows: [],
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER
   }
 
   componentDidMount() {
-    const { subscribeToMore} = this.props.data
+    const { socket, labelId } = this.props
 
-    subscribeToMore({
-      document: LABEL_UPDATE_SUBSCRIPTION,
-      variables: { id: this.props.labelId },
-      updateQuery: (prev, { subscriptionData }) => {
-        const { page, pageSize, column, order } = this.state
-        if (!subscriptionData.data) return prev
-        this.refetchPaginatedEntries(page, pageSize, column, order)
-        this.setState({ selectedRows: [] })
-      }
+    this.channel = socket.channel("graphql:label_show_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:label_show_table:${labelId}:update_label_devices`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
   }
 
   handleSelectOption = value => {
@@ -98,7 +79,7 @@ class LabelShowTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize, column, order) => {
-    const { fetchMore } = this.props.data
+    const { fetchMore } = this.props.paginatedDevicesQuery
     fetchMore({
       variables: { page, pageSize, column, order },
       updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
@@ -180,7 +161,7 @@ class LabelShowTable extends Component {
       },
     ]
 
-    const { loading, error, devices_by_label } = this.props.data
+    const { loading, error, devices_by_label } = this.props.paginatedDevicesQuery
     const { devicesSelected } = this.props;
 
     if (loading) return <SkeletonLayout />;
@@ -252,8 +233,16 @@ class LabelShowTable extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateDevice, setDevicesActive }, dispatch)
 }
 
-export default LabelShowTable
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withGql(LabelShowTable, PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10, labelId: props.labelId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' }))
+)
