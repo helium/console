@@ -17,7 +17,7 @@ import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
-import { updateDevice, toggleDeviceDebug } from '../../actions/device'
+import { updateDevice, toggleDeviceDebug, sendClearDownlinkQueue } from '../../actions/device'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -511,17 +511,24 @@ class DeviceShow extends Component {
                 disabled={channels.length === 0}
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
-                <Downlink onSend={(payload, confirm, port, position) => {
-                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
-                  this.props.sendDownlinkMessage(
-                    payload,
-                    port,
-                    confirm,
-                    position,
-                    [device.id],
-                    channels
-                  )
-                }}/>
+                <Downlink 
+                  src="DeviceShow" 
+                  onSend={(payload, confirm, port, position) => {
+                    analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
+                    this.props.sendDownlinkMessage(
+                      payload,
+                      port,
+                      confirm,
+                      position,
+                      [device.id],
+                      channels
+                    )
+                  }}
+                  onClear={() => {
+                    analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": [device.id] });
+                    this.props.sendClearDownlinkQueue([device.id]);
+                  }}
+                />
               </Sidebar>
             }
           </UserCan>
@@ -537,7 +544,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendDownlinkMessage }, dispatch)
+  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendClearDownlinkQueue, sendDownlinkMessage }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

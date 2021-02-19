@@ -46,4 +46,14 @@ defmodule ConsoleWeb.V1.DownlinkController do
         end
     end
   end
+
+  def clear_downlink_queue(conn, %{ "devices" => device_ids }) do
+    if length(device_ids) == 0 do
+      {:error, :bad_request, "Please include at least one device ID"}
+    else
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:clear_downlink_queue:devices", %{ "devices" => device_ids })
+      conn
+      |> send_resp(:ok, "Downlink queue cleared")
+    end
+  end
 end
