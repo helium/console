@@ -201,11 +201,11 @@ const sanitizeParams = (params) => {
   return params
 }
 
-export const sendClearDownlinkQueue = (devices) => {
+export const sendClearDownlinkQueue = (payload) => {
   return (dispatch) => {
     rest.post(
-      '/api/v1/clear_downlink_queue',
-      { devices, from: 'console_downlink_queue' }
-    ).then(()=> {displayInfo(`Successfully cleared downlink queue`)});
+      '/api/clear_downlink_queue',
+      payload
+    );
   }
 }

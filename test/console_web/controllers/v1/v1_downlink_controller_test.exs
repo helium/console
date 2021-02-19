@@ -17,13 +17,14 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
       assert response(resp_conn, 422) # no devices linked to channel cannot downlink
 
       organization = insert(:organization)
-      label = insert(:label)
+      label_1 = insert(:label)
+      label_2 = insert(:label)
       device_1 = insert(:device, %{ organization_id: organization.id })
       device_2 = insert(:device, %{ organization_id: organization.id })
       device_3 = insert(:device, %{ organization_id: organization.id })
-      insert(:devices_labels, %{ label_id: label.id, device_id: device_1.id })
-      insert(:devices_labels, %{ label_id: label.id, device_id: device_2.id })
-      insert(:channels_labels, %{ label_id: label.id, channel_id: channel.id })
+      insert(:devices_labels, %{ label_id: label_1.id, device_id: device_1.id })
+      insert(:devices_labels, %{ label_id: label_1.id, device_id: device_2.id })
+      insert(:channels_labels, %{ label_id: label_1.id, channel_id: channel.id })
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}")
       assert response(resp_conn, 200) # multiple devices linked downlink works
@@ -33,15 +34,6 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_3.id}")
       assert response(resp_conn, 422) # device not linked downlink does not work
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => [device_1.id]})
-      assert response(resp_conn, 200) # clearing queue for one device works
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => [device_1.id, device_2.id]})
-      assert response(resp_conn, 200) # clearing queue for two devices works
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => []})
-      assert response(resp_conn, 400) # clearing queue for no devices does not work
     end
   end
 end
