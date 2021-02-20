@@ -200,7 +200,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           case event.category do
             "up" ->
               Enum.each(event.channels, fn channel ->
-                if channel.id != "no_channel" do
+                if channel.id != "no_channel" and channel.id != "no_integration_id" do
                   event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
                   labels = Enum.map(event_channel.labels, fn l -> l.id end)
 
