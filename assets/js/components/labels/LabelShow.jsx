@@ -264,8 +264,8 @@ class LabelShow extends Component {
               iconPosition='middle'
               message='Send a manual downlink using an HTTP integration'
             >
-              <Downlink 
-                src="LabelShow" 
+              <Downlink
+                src="LabelShow"
                 onSend={(payload, confirm, port, position) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
                   this.props.sendDownlinkMessage(
@@ -273,7 +273,7 @@ class LabelShow extends Component {
                     port,
                     confirm,
                     position,
-                    this.state.selectedDevices.map(device => device.id),
+                    [],
                     label.channels
                   )
                 }}
