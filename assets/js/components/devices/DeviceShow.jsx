@@ -526,7 +526,7 @@ class DeviceShow extends Component {
                   }}
                   onClear={() => {
                     analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": [device.id] });
-                    this.props.sendClearDownlinkQueue([device.id]);
+                    this.props.sendClearDownlinkQueue({ device_id: device.id });
                   }}
                 />
               </Sidebar>

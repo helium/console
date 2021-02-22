@@ -78,6 +78,8 @@ defmodule ConsoleWeb.Router do
     get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
 
     post "/flows/update", FlowsController, :update_edges
+    
+    post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
   end
 
   scope "/api/router", ConsoleWeb.Router do
@@ -103,7 +105,6 @@ defmodule ConsoleWeb.Router do
 
     post "/down/:channel_id/:downlink_token/:device_id", DownlinkController, :down
     post "/down/:channel_id/:downlink_token", DownlinkController, :down
-    post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

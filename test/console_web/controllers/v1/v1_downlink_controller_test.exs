@@ -33,15 +33,6 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_3.id}")
       assert response(resp_conn, 422) # device not linked downlink does not work
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => [device_1.id]})
-      assert response(resp_conn, 200) # clearing queue for one device works
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => [device_1.id, device_2.id]})
-      assert response(resp_conn, 200) # clearing queue for two devices works
-
-      resp_conn = build_conn() |> post("/api/v1/clear_downlink_queue", %{ "devices" => []})
-      assert response(resp_conn, 400) # clearing queue for no devices does not work
     end
   end
 end
