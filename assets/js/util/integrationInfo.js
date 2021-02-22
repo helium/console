@@ -7,6 +7,7 @@ import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
 import Adafruit from '../../img/adafruitio.png';
 import Ubidots from '../../img/ubidots.svg';
+import Datacake from '../../img/datacake.png';
 
 export const NEW_CHANNEL_TYPES = [
   {
@@ -65,7 +66,7 @@ export const PREMADE_CHANNEL_TYPES = [
   {
     name: "Datacake",
     link: "/integrations/new/datacake",
-    img: `${Ubidots}` ,
+    img: `${Datacake}` ,
     info: "This Integration simplifies sending data to the Datacake IoT platform.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake"
   },
