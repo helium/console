@@ -75,10 +75,11 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/set_automatic_payments", DataCreditController, :set_automatic_payments
     post "/data_credits/transfer_dc", DataCreditController, :transfer_dc
     get "/data_credits/generate_memo", DataCreditController, :generate_memo
+    get "/data_credits/router_address", DataCreditController, :get_router_address
     get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
 
     post "/flows/update", FlowsController, :update_edges
-    
+
     post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
   end
 

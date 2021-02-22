@@ -49,6 +49,10 @@ export const generateMemo = () => () => (
   rest.get('/api/data_credits/generate_memo')
 )
 
+export const getRouterAddress = () => () => (
+  rest.get('/api/data_credits/router_address')
+)
+
 const convertToString = (amount) => {
   if (typeof(amount) === "number") {
     return amount.toString()
