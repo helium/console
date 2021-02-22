@@ -28,6 +28,10 @@ class ChannelsTable extends Component {
     this.channel.on(`graphql:channels_index_table:${currentOrganizationId}:channel_list_update`, (message) => {
       this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+
+    if (!this.props.paginatedChannelsQuery.loading) {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    }
   }
 
   componentWillUnmount() {
@@ -190,5 +194,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(ChannelsTable, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
+  withGql(ChannelsTable, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
 )

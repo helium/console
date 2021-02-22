@@ -23,6 +23,21 @@ class DeviceShowLabelsTable extends Component {
     order: DEFAULT_ORDER
   }
 
+  componentDidMount() {
+    const { deviceId, socket } = this.props
+
+    this.channel = socket.channel("graphql:device_show_labels_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:device_show_labels_table:${deviceId}:device_update`, (message) => {
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
+    })
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
   handleChangePage = (page) => {
     this.setState({ page })
 
@@ -159,5 +174,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(DeviceShowLabelsTable, PAGINATED_LABELS_BY_DEVICE, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10, deviceId: props.deviceId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedLabelsQuery' }))
+  withGql(DeviceShowLabelsTable, PAGINATED_LABELS_BY_DEVICE, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, deviceId: props.deviceId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedLabelsQuery' }))
 )

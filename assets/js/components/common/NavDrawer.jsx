@@ -137,5 +137,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-and-network', name: 'allLabelsQuery' }))
+  withGql(NavDrawer, MENU_LABELS, props => ({ fetchPolicy: 'cache-first', name: 'allLabelsQuery' }))
 ))

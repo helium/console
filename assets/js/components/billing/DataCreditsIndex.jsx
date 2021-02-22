@@ -398,5 +398,5 @@ function mapDispatchToProps(dispatch) {
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(DataCreditsIndex, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgShowDCQuery' }))
+  withGql(DataCreditsIndex, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-first', variables: { id: props.currentOrganizationId }, name: 'orgShowDCQuery' }))
 )

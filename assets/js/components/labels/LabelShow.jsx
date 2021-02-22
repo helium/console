@@ -301,5 +301,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(LabelShow, LABEL_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'labelShowQuery' }))
+  withGql(LabelShow, LABEL_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.match.params.id }, name: 'labelShowQuery' }))
 )

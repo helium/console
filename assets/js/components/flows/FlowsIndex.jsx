@@ -266,4 +266,4 @@ class FlowsIndex extends Component {
   }
 }
 
-export default withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allResourcesQuery' }))
+export default withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'network-only', variables: {}, name: 'allResourcesQuery' }))

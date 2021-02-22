@@ -122,5 +122,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(InvitationsTable, PAGINATED_INVITATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedInvitesQuery' }))
+  withGql(InvitationsTable, PAGINATED_INVITATIONS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedInvitesQuery' }))
 )

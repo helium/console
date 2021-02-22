@@ -115,5 +115,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(null, mapDispatchToProps)(
-  withGql(LabelShowFunctionsAttached, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allFunctionsQuery' }))
+  withGql(LabelShowFunctionsAttached, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: {}, name: 'allFunctionsQuery' }))
 )

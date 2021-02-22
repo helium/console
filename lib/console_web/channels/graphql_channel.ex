@@ -69,6 +69,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:device_show_labels_table", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:events_dashboard", _message, socket) do
     {:ok, socket}
   end

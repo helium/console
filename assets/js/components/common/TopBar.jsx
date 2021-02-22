@@ -198,8 +198,8 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(
-    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.currentOrganizationId }, name: 'orgShowQuery' })),
+    withGql(TopBar, ORGANIZATION_SHOW_DC, props => ({ fetchPolicy: 'cache-first', variables: { id: props.currentOrganizationId }, name: 'orgShowQuery' })),
     ALL_ORGANIZATIONS,
-    props => ({ fetchPolicy: 'cache-and-network', name: 'orgsQuery' })
+    props => ({ fetchPolicy: 'cache-first', name: 'orgsQuery' })
   )
 )

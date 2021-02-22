@@ -212,5 +212,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(Profile, ALL_API_KEYS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'apiKeysQuery' }))
+  withGql(Profile, ALL_API_KEYS, props => ({ fetchPolicy: 'cache-first', variables: {}, name: 'apiKeysQuery' }))
 )

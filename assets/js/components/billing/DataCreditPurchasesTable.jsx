@@ -155,5 +155,5 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(DataCreditPurchasesTable, PAGINATED_DC_PURCHASES, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'dcPurchasesQuery' }))
+  withGql(DataCreditPurchasesTable, PAGINATED_DC_PURCHASES, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'dcPurchasesQuery' }))
 )

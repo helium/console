@@ -34,7 +34,8 @@ class LabelShowTable extends Component {
     this.channel = socket.channel("graphql:label_show_table", {})
     this.channel.join()
     this.channel.on(`graphql:label_show_table:${labelId}:update_label_devices`, (message) => {
-      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
     })
   }
 
@@ -244,5 +245,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(LabelShowTable, PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10, labelId: props.labelId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' }))
+  withGql(LabelShowTable, PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, labelId: props.labelId, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' }))
 )

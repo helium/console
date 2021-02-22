@@ -74,4 +74,4 @@ class FunctionsSearch extends Component {
   }
 }
 
-export default withGql(FunctionsSearch, SEARCH_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { query:"" }, name: 'searchFunctionsQuery' }))
+export default withGql(FunctionsSearch, SEARCH_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: { query:"" }, name: 'searchFunctionsQuery' }))

@@ -52,4 +52,4 @@ class DecoderForm extends Component {
   }
 }
 
-export default withGql(DecoderForm, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allFunctionsQuery' }))
+export default withGql(DecoderForm, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: {}, name: 'allFunctionsQuery' }))

@@ -7,6 +7,8 @@ import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
 import Adafruit from '../../img/adafruitio.png';
 import Ubidots from '../../img/ubidots.svg';
+import Datacake from '../../img/datacake.png';
+import Tago from '../../img/tago.png';
 
 export const NEW_CHANNEL_TYPES = [
   {
@@ -61,5 +63,19 @@ export const PREMADE_CHANNEL_TYPES = [
     img: `${Adafruit}` ,
     info: "This Integration automates the complexity of securely connecting your devices to Adafruit IO.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/adafruitio"
+  },
+  {
+    name: "Datacake",
+    link: "/integrations/new/datacake",
+    img: `${Datacake}` ,
+    info: "This Integration simplifies sending data to the Datacake IoT platform.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake"
+  },
+  {
+    name: "TagoIO",
+    link: "/integrations/new/tago",
+    img: `${Tago}` ,
+    info: "This Integration simplifies sending data to the TagoIO platform.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"
   },
 ]

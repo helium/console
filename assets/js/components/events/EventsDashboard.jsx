@@ -323,5 +323,5 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(EventsDashboard, DEVICE_EVENTS, props => ({ fetchPolicy: 'cache-and-network', variables: { device_id: props.device_id, }, name: 'deviceEventsQuery' }))
+  withGql(EventsDashboard, DEVICE_EVENTS, props => ({ fetchPolicy: 'network-only', variables: { device_id: props.device_id, }, name: 'deviceEventsQuery' }))
 )

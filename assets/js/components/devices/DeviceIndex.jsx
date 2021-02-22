@@ -22,7 +22,7 @@ const { Text } = Typography
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 const PAGE_SIZE_KEY = 'devicePageSize';
-let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 1;
+let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 class DeviceIndex extends Component {
   state = {
@@ -292,7 +292,7 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, null)(withGql(
-  withGql(DeviceIndex, PAGINATED_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: startPageSize, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'devicesQuery' })),
+  withGql(DeviceIndex, PAGINATED_DEVICES, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: startPageSize, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'devicesQuery' })),
   ALL_IMPORTS,
-  props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: startPageSize }, name: 'importsQuery' })
+  props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: startPageSize }, name: 'importsQuery' })
 ))

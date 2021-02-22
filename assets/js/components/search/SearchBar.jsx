@@ -200,4 +200,4 @@ class SearchBar extends Component {
   }
 }
 
-export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'cache-and-network', variables: { query: "" }, name: 'searchQuery' }))
+export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'cache-first', variables: { query: "" }, name: 'searchQuery' }))

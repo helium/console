@@ -41,7 +41,7 @@ class ChannelIndex extends Component {
       </p>
       <div style={{ display: 'block' }}>
         <UserCan>
-          <Card title="Add a Prebuilt Integration" className="integrationcard">
+          <Card title="Add a Prebuilt Integration" className="integrationcard" bodyStyle={{ overflowX: 'scroll' }}>
             <ChannelPremadeRow />
           </Card>
         </UserCan>

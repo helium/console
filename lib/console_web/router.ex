@@ -78,7 +78,7 @@ defmodule ConsoleWeb.Router do
     get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
 
     post "/flows/update", FlowsController, :update_edges
-    
+
     post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
   end
 

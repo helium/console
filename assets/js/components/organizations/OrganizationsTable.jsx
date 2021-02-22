@@ -187,5 +187,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(OrganizationsTable, PAGINATED_ORGANIZATIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedOrganizationsQuery' }))
+  withGql(OrganizationsTable, PAGINATED_ORGANIZATIONS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedOrganizationsQuery' }))
 )

@@ -511,8 +511,8 @@ class DeviceShow extends Component {
                 disabled={channels.length === 0}
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
-                <Downlink 
-                  src="DeviceShow" 
+                <Downlink
+                  src="DeviceShow"
                   onSend={(payload, confirm, port, position) => {
                     analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
                     this.props.sendDownlinkMessage(
@@ -548,5 +548,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(DeviceShow, DEVICE_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'deviceShowQuery' }))
+  withGql(DeviceShow, DEVICE_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.match.params.id }, name: 'deviceShowQuery' }))
 )

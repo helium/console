@@ -104,4 +104,4 @@ class DeviceShowStats extends Component {
   }
 }
 
-export default withGql(DeviceShowStats, DEVICE_SHOW_STATS, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.device.id, }, name: 'deviceStatsQuery' }))
+export default withGql(DeviceShowStats, DEVICE_SHOW_STATS, props => ({ fetchPolicy: 'cache-first', variables: { id: props.device.id, }, name: 'deviceStatsQuery' }))

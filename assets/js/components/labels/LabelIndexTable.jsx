@@ -293,5 +293,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedLabelsQuery' }))
+  withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedLabelsQuery' }))
 )

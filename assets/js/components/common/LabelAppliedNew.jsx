@@ -62,4 +62,4 @@ class LabelAppliedNew extends Component {
   }
 }
 
-export default withGql(LabelAppliedNew, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: { query:"" }, name: 'searchLabelsQuery' }))
+export default withGql(LabelAppliedNew, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { query:"" }, name: 'searchLabelsQuery' }))

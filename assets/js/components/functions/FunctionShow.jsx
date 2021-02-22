@@ -287,5 +287,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(FunctionShow, FUNCTION_SHOW, props => ({ fetchPolicy: 'cache-and-network', variables: { id: props.match.params.id }, name: 'functionShowQuery' }))
+  withGql(FunctionShow, FUNCTION_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.match.params.id }, name: 'functionShowQuery' }))
 )

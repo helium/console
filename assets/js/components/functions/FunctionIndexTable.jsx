@@ -37,6 +37,10 @@ class FunctionIndexTable extends Component {
     this.channel.on(`graphql:function_index_table:${currentOrganizationId}:function_list_update`, (message) => {
       this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     })
+
+    if (!this.props.paginatedFunctionsQuery.loading) {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    }
   }
 
   componentWillUnmount() {
@@ -267,5 +271,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(FunctionIndexTable, PAGINATED_FUNCTIONS, props => ({ fetchPolicy: 'cache-and-network', variables: { page: 1, pageSize: 10 }, name: 'paginatedFunctionsQuery' }))
+  withGql(FunctionIndexTable, PAGINATED_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedFunctionsQuery' }))
 )
