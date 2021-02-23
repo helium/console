@@ -57,11 +57,8 @@ class LabelIndexTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.paginatedLabelsQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedLabelsQuery
+    refetch({ page, pageSize })
   }
 
   handleDeleteLabelClick = (label) => {

@@ -40,11 +40,8 @@ class MembersTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.paginatedMembersQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedMembersQuery
+    refetch({ page, pageSize })
   }
 
   render() {

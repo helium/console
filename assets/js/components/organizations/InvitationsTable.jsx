@@ -39,11 +39,8 @@ class InvitationsTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.paginatedInvitesQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedInvitesQuery
+    refetch({ page, pageSize })
   }
 
   render() {

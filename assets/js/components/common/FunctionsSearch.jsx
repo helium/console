@@ -20,18 +20,18 @@ class FunctionsSearch extends Component {
     this.setState({ selectedFunction: value}, () => {
       if (!loading) {
         fetchMore({
-          variables: { query: value },
-          updateQuery: (prev, { fetchMoreResult }) => {
-            const { searchFunctions } = fetchMoreResult;
+          variables: { query: value }
+        })
+        .then(({data}) => {
+          const { searchFunctions } = data
 
-            const functions = [];
-            searchFunctions.forEach(f => {
-              const result = find(this.props.allFunctions, { id: f.id });
-              if (result) functions.push(result);
-            })
+          const functions = [];
+          searchFunctions.forEach(f => {
+            const result = find(this.props.allFunctions, { id: f.id });
+            if (result) functions.push(result);
+          })
 
-            this.setState({ searchFunctions: functions });
-          }
+          this.setState({ searchFunctions: functions });
         })
       }
     })
@@ -74,4 +74,4 @@ class FunctionsSearch extends Component {
   }
 }
 
-export default withGql(FunctionsSearch, SEARCH_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: { query:"" }, name: 'searchFunctionsQuery' }))
+export default withGql(FunctionsSearch, SEARCH_FUNCTIONS, props => ({ fetchPolicy: 'network-only', variables: { query:"" }, name: 'searchFunctionsQuery' }))

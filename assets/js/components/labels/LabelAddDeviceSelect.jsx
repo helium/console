@@ -14,12 +14,12 @@ class LabelAddDeviceSelect extends Component {
     const { loading, fetchMore } = this.props.searchDevicesQuery
     if (!loading) {
       fetchMore({
-        variables: { query: value },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          const { searchDevices } = fetchMoreResult
+        variables: { query: value }
+      })
+      .then(({data}) => {
+        const { searchDevices } = data
 
-          this.setState({ searchDevices })
-        }
+        this.setState({ searchDevices })
       })
     }
   }
@@ -77,4 +77,4 @@ class LabelAddDeviceSelect extends Component {
   }
 }
 
-export default withGql(LabelAddDeviceSelect, SEARCH_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: {query:''}, name: 'searchDevicesQuery' }))
+export default withGql(LabelAddDeviceSelect, SEARCH_DEVICES, props => ({ fetchPolicy: 'network-only', variables: {query:''}, name: 'searchDevicesQuery' }))

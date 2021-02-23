@@ -21,18 +21,18 @@ class LabelsAppliedSearch extends Component {
     this.setState({ selectedLabel: value}, () => {
       if (!loading) {
         fetchMore({
-          variables: { query: value },
-          updateQuery: (prev, { fetchMoreResult }) => {
-            const { searchLabels } = fetchMoreResult
+          variables: { query: value }
+        })
+        .then(({data}) => {
+          const { searchLabels } = data
 
-            const labels = []
-            searchLabels.forEach(l => {
-              const result = find(this.props.allLabels, { id: l.id })
-              if (result) labels.push(result)
-            })
+          const labels = []
+          searchLabels.forEach(l => {
+            const result = find(this.props.allLabels, { id: l.id })
+            if (result) labels.push(result)
+          })
 
-            this.setState({ searchLabels: labels })
-          }
+          this.setState({ searchLabels: labels })
         })
       }
     })
@@ -74,4 +74,4 @@ class LabelsAppliedSearch extends Component {
   }
 }
 
-export default withGql(LabelsAppliedSearch, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { query:"" }, name: 'searchLabelsQuery' }))
+export default withGql(LabelsAppliedSearch, SEARCH_LABELS, props => ({ fetchPolicy: 'network-only', variables: { query:"" }, name: 'searchLabelsQuery' }))
