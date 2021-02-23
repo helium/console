@@ -164,5 +164,14 @@ defmodule ConsoleWeb.DeviceControllerTest do
       resp_conn = post conn, device_path(conn, :debug), %{ "device" => device["id"]}
       assert response(resp_conn, 204)
     end
+
+    test "import devices properly", %{conn: conn} do
+      resp_conn = post conn, device_path(conn, :import_generic), %{ 
+        "devices" => [
+          %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaaa", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" }
+        ],
+        "add_labels" => [] }
+      assert response(resp_conn, 200)
+    end
   end
 end

@@ -65,7 +65,7 @@ defmodule Console.Devices.Device do
       |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage])
   end
 
-  defp check_attrs_format(changeset) do
+  def check_attrs_format(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: changes} ->
         dev_eui_valid = Map.get(changes, :dev_eui) == nil or String.match?(changes.dev_eui, ~r/[0-9a-fA-F]{16}/)
