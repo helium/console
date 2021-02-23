@@ -15,13 +15,11 @@ class FunctionsSearch extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.searchFunctionsQuery
+    const { loading, refetch } = this.props.searchFunctionsQuery
 
     this.setState({ selectedFunction: value}, () => {
       if (!loading) {
-        fetchMore({
-          variables: { query: value }
-        })
+        refetch({ query: value })
         .then(({data}) => {
           const { searchFunctions } = data
 

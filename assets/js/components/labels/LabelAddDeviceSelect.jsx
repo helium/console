@@ -11,11 +11,9 @@ class LabelAddDeviceSelect extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.searchDevicesQuery
+    const { loading, refetch } = this.props.searchDevicesQuery
     if (!loading) {
-      fetchMore({
-        variables: { query: value }
-      })
+      refetch({ query: value })
       .then(({data}) => {
         const { searchDevices } = data
 

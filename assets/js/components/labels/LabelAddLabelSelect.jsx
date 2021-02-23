@@ -11,16 +11,14 @@ class LabelAddLabelSelect extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.searchLabelsQuery
+    const { loading, refetch } = this.props.searchLabelsQuery
     const allLabelsWithDevicesMap = this.props.allLabelsWithDevices.reduce(
       (acc, l) => Object.assign({}, acc, { [l.id]: true }),
       {}
     )
 
     if (!loading) {
-      fetchMore({
-        variables: { query: value }
-      })
+      refetch({ query: value })
       .then(({data}) => {
         const { searchLabels } = data
 

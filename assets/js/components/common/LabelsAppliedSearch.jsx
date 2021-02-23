@@ -16,13 +16,11 @@ class LabelsAppliedSearch extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.searchLabelsQuery
+    const { loading, refetch } = this.props.searchLabelsQuery
 
     this.setState({ selectedLabel: value}, () => {
       if (!loading) {
-        fetchMore({
-          variables: { query: value }
-        })
+        refetch({ query: value })
         .then(({data}) => {
           const { searchLabels } = data
 

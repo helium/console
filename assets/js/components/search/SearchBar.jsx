@@ -58,11 +58,9 @@ class SearchBar extends Component {
     })
 
     // fire off graphql query to get searchResults
-    const { fetchMore } = this.props.searchQuery
+    const { refetch } = this.props.searchQuery
 
-    fetchMore({
-      variables: { query: newQuery }
-    })
+    refetch({ query: newQuery })
     .then(({ data }) => {
       const { searchResults } = data
       const { pageResults } = this.state
