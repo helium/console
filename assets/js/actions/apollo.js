@@ -53,7 +53,49 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
 
     const apolloClient = new ApolloClient({
       link,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          Query: {
+            fields: {
+              allOrganizations: {
+                merge: false
+              },
+              allLabels:{
+                merge: false
+              },
+              apiKeys: {
+                merge: false
+              },
+              allChannels: {
+                merge: false
+              },
+              allFunctions: {
+                merge: false
+              },
+              device_imports: {
+                merge: false
+              },
+              allDevices: {
+                merge: false
+              }
+            },
+          },
+          Label: {
+            fields: {
+              devices: {
+                merge: false
+              }
+            }
+          },
+          Device: {
+            fields: {
+              labels: {
+                merge: false
+              }
+            }
+          }
+        },
+      }),
     })
 
     let socket = createSocket(token, currentOrganizationId)
