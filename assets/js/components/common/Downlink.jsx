@@ -38,7 +38,7 @@ const Downlink = ({src, onSend, onClear}) => {
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <Input placeholder="Enter Payload" onChange={(e) => setPayload(e.target.value)} style={{ marginRight: 16 }}/>
 
-              <Tooltip title='Select encoded to send a Base64 encoded payload, or plain to have the payload Base64 encoded for you.' placement='topRight'>
+              <Tooltip title='Select bytes to send a Base64 encoded payload, or fields to have the payload Base64 encoded for you.' placement='left'>
                 <Group value={payloadType} onChange={(el) => setPayloadType(el.target.value)} buttonStyle="solid" style={{ display: 'flex', flexDirection: 'row' }}>
                   <Button value="bytes">Bytes</Button>
                   <Button value="fields">Fields</Button>
