@@ -6,7 +6,9 @@ defmodule ConsoleWeb.OrganizationChannel do
   end
 
   def handle_in("router:address", %{"address" => router_address}, socket) do
-    ConsoleWeb.Monitor.update_router_address(router_address)
+    router_address
+    |> to_string()
+    |> ConsoleWeb.Monitor.update_router_address()
 
     {:reply, :ok, socket}
   end
