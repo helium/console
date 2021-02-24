@@ -6,7 +6,7 @@ import Http from '../../img/http-channel.svg'
 import Cargo from '../../img/heliumcargo.svg'
 import MyDevices from '../../img/mydevices.svg'
 import Adafruit from '../../img/adafruitio.png';
-import Ubidots from '../../img/ubidots.svg';
+import Ubidots from '../../img/ubidots.png';
 import Datacake from '../../img/datacake.png';
 import Tago from '../../img/tago.png';
 
