@@ -11,20 +11,18 @@ class LabelAddLabelSelect extends Component {
   }
 
   runSearch = (value) => {
-    const { loading, fetchMore } = this.props.searchLabelsQuery
+    const { loading, refetch } = this.props.searchLabelsQuery
     const allLabelsWithDevicesMap = this.props.allLabelsWithDevices.reduce(
       (acc, l) => Object.assign({}, acc, { [l.id]: true }),
       {}
     )
 
     if (!loading) {
-      fetchMore({
-        variables: { query: value },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          const { searchLabels } = fetchMoreResult
+      refetch({ query: value })
+      .then(({data}) => {
+        const { searchLabels } = data
 
-          this.setState({ searchLabels: searchLabels.filter(l => allLabelsWithDevicesMap[l.id]) })
-        }
+        this.setState({ searchLabels: searchLabels.filter(l => allLabelsWithDevicesMap[l.id]) })
       })
     }
   }
@@ -82,4 +80,4 @@ class LabelAddLabelSelect extends Component {
   }
 }
 
-export default withGql(LabelAddLabelSelect, SEARCH_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {query:''}, name: 'searchLabelsQuery' }))
+export default withGql(LabelAddLabelSelect, SEARCH_LABELS, props => ({ fetchPolicy: 'network-only', variables: {query:''}, name: 'searchLabelsQuery' }))

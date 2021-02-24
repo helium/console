@@ -80,11 +80,8 @@ class LabelShowTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize, column, order) => {
-    const { fetchMore } = this.props.paginatedDevicesQuery
-    fetchMore({
-      variables: { page, pageSize, column, order },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedDevicesQuery
+    refetch({ page, pageSize, column, order })
   }
 
   toggleDeviceActive = (active, id) => {

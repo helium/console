@@ -46,11 +46,8 @@ class ChannelsTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.paginatedChannelsQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedChannelsQuery
+    refetch({ page, pageSize })
   }
 
   render() {

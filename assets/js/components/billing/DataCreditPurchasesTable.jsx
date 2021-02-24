@@ -52,11 +52,8 @@ class DataCreditPurchasesTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.dcPurchasesQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.dcPurchasesQuery
+    refetch({ page, pageSize })
   }
 
   render() {

@@ -55,11 +55,8 @@ class FunctionIndexTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.paginatedFunctionsQuery
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedFunctionsQuery
+    refetch({ page, pageSize })
   }
 
   render() {

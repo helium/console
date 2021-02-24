@@ -46,11 +46,8 @@ class OrganizationsTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize) => {
-    const { fetchMore } = this.props.data
-    fetchMore({
-      variables: { page, pageSize },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedOrganizationsQuery
+    refetch({ page, pageSize })
   }
 
   toggleOrgActive = (active, id) => {

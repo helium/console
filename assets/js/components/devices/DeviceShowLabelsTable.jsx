@@ -46,11 +46,8 @@ class DeviceShowLabelsTable extends Component {
   }
 
   refetchPaginatedEntries = (page, pageSize, column, order) => {
-    const { fetchMore } = this.props.paginatedLabelsQuery
-    fetchMore({
-      variables: { page, pageSize, column, order },
-      updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult
-    })
+    const { refetch } = this.props.paginatedLabelsQuery
+    refetch({ page, pageSize, column, order })
   }
 
   render() {

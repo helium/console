@@ -58,11 +58,9 @@ class SearchBar extends Component {
     })
 
     // fire off graphql query to get searchResults
-    const { fetchMore } = this.props.searchQuery
+    const { refetch } = this.props.searchQuery
 
-    fetchMore({
-      variables: { query: newQuery }
-    })
+    refetch({ query: newQuery })
     .then(({ data }) => {
       const { searchResults } = data
       const { pageResults } = this.state
@@ -200,4 +198,4 @@ class SearchBar extends Component {
   }
 }
 
-export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'cache-first', variables: { query: "" }, name: 'searchQuery' }))
+export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'network-only', variables: { query: "" }, name: 'searchQuery' }))
