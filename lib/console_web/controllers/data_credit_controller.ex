@@ -303,6 +303,11 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
+  def get_router_address(conn, _) do
+    address = ConsoleWeb.Monitor.get_router_address()
+    conn |> send_resp(:ok, Poison.encode!(%{ address: address }))
+  end
+
   def get_hnt_price(conn, _) do
     with {:ok, current_price_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/prices/current"),
       200 <- current_price_resp.status_code,

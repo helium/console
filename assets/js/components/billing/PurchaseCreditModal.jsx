@@ -15,12 +15,10 @@ import BurnHNTPillbox from './BurnHNTPillbox'
 import BurnManualEntry from './BurnManualEntry'
 import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
-import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo, getRouterAddress } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Radio, Checkbox, Input, Popover } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 const { Text } = Typography
-const ROUTER_ADDRESS = "112qB3YaH5bZkCnKA5uRH7tBtGNv2Y5B4smv1jsmvGUzgKT71QpE"
-const ROUTER_STAGING_ADDRESS = "1124CJ9yJaHq4D6ugyPCDnSBzQik61C1BqD9VMh1vsUmjwt16HNB"
 
 const styles = {
   container: {
@@ -73,6 +71,7 @@ class PurchaseCreditModal extends Component {
     hntToBurn: null,
     nextTimeStamp: null,
     manualQREntry: false,
+    routerAddress: ""
   }
 
   componentDidMount() {
@@ -87,6 +86,13 @@ class PurchaseCreditModal extends Component {
 
     this.card.on('focus', () => {
       this.setState({ paymentMethodSelected: undefined })
+    })
+
+    this.props.getRouterAddress()
+    .then(({data}) => {
+      if (typeof data.address === "string") {
+        this.setState({ routerAddress: data.address })
+      }
     })
   }
 
@@ -192,7 +198,7 @@ class PurchaseCreditModal extends Component {
     .then(({ data }) => {
       const qr = {
         "type": "dc_burn",
-        "address": process.env.ENV_DOMAIN == "console.helium.com" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS,
+        "address": this.state.routerAddress,
         "amount": this.state.hntToBurn,
         "memo": data.memo
       }
@@ -367,8 +373,20 @@ class PurchaseCreditModal extends Component {
         <div style={{ height: 30, width: '100%', paddingLeft: 50, paddingRight: 50, marginBottom: 60 }}>
           {this.state.hntToBurn && <BurnHNTPillbox hntToBurn={this.state.hntToBurn} nextTimeStamp={this.state.nextTimeStamp} onComplete={this.getOraclePrice} />}
         </div>
-        {this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
-        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={process.env.ENV_DOMAIN == "console.helium.com" ? ROUTER_ADDRESS : ROUTER_STAGING_ADDRESS} />}
+        {
+          this.state.routerAddress === "" && (
+            <div>
+              <Text style={{ textAlign: 'center', color: '#FF4D4F', display: 'block' }}>
+                Router address for burning HNT is not available
+              </Text>
+              <Text style={{ textAlign: 'center', color: '#FF4D4F', display: 'block' }}>
+                {process.env.SELF_HOSTED ? "Please make sure your Router is connected to Console through websockets" : "Please contact support to enable burn"}
+              </Text>
+            </div>
+          )
+        }
+        {this.state.routerAddress !== "" && this.state.qrContent && !this.state.manualQREntry && <QRCode value={this.state.qrContent} size={220}/>}
+        {this.state.manualQREntry && <BurnManualEntry hntToBurn={this.state.hntToBurn} memo={this.state.memo} address={this.state.routerAddress} />}
         <div style={{ marginTop: 20 }}>
           <Link to="#" onClick={this.toggleQREntry}>
             <Text style={{ textDecoration: 'underline', color: '#4091F7' }}>Use {!this.state.manualQREntry ? "Helium Wallet CLI Tool" : "Helium App"}</Text>
@@ -484,7 +502,7 @@ class PurchaseCreditModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments, generateMemo }, dispatch)
+  return bindActionCreators({ createCustomerIdAndCharge, createCharge, setDefaultPaymentMethod, createDCPurchase, setAutomaticPayments, generateMemo, getRouterAddress }, dispatch)
 }
 
 export default PurchaseCreditModal

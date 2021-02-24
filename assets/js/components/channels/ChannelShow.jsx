@@ -173,7 +173,7 @@ class ChannelShow extends Component {
     if (process.env.SELF_HOSTED && window.env_domain !== "localhost:4000") {
       downlinkUrl = `https://${window.env_domain}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
     }
-    if (!process.env.SELF_HOSTED && process.env.ENV_DOMAIN !== "localhost") {
+    if (!process.env.SELF_HOSTED) {
       downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`
     }
 
