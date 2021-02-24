@@ -1,6 +1,16 @@
 # Console
 
-## Development Environment
+Code that powers the official [Helium Console](https://console.helium.com/).
+
+## Development and Contribution
+
+Any and all contributions from the community are encouraged.
+
+- Guidelines for how to contribute to this repository [are here](https://github.com/helium/console/blob/master/CONTRIBUTING.md).
+- Discussion about the development and usage of the Helium Console takes place in the [official Helium Discord Server](https://discord.gg/helium), specifically in the `#console` channel. Join us!
+- For a list of issues and prioritization, please go to our [Project page](https://github.com/orgs/helium/projects/15).
+
+## Running Console Development Environment
 
   * Install homebrew (https://brew.sh/)
   * Install postgres (postgres.app on mac)
@@ -18,7 +28,7 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-## Running with Docker
+## Running Console+Router with Docker
 
   * Clone the repo and `cd console`
   * Follow instructions at the top of `/config/prod.exs`
@@ -60,3 +70,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   * Run with `docker-compose up`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## Questions
+
+If you run into any issues or you have any questions about how to get started contributing, feel free to reach out on the `#console` channel in [the official Helium Community Discord server](http://discord.gg/helium)!
