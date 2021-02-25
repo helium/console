@@ -31,11 +31,9 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Running Console+Router with Docker
 
   * Clone the repo and `cd console`
-  * Follow instructions at the top of `/config/prod.exs`
-  * Follow instructions at the bottom of `/assets/webpack.config.js`
   * Update host at the top of `/config/releases.exs`
   * Sign up with Auth0 (https://auth0.com/)
-  * Create .env file in root folder
+  * Create .env and .env-router files in root folder
   * Populate .env file with the following
 
   ```

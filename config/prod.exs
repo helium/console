@@ -1,6 +1,5 @@
 use Mix.Config
 
-# COMMENT OUT EVERYTHING BELOW FOR OPEN SOURCE
 config :console, ConsoleWeb.Endpoint,
   load_from_system_env: true,
   url: [scheme: "https", host: System.get_env("HOSTNAME"), port: 443],

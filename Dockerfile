@@ -16,11 +16,15 @@ ENV MIX_ENV=prod
 COPY mix.lock mix.lock
 COPY mix.exs  mix.exs
 COPY config config
+RUN rm config/prod.exs
+RUN mv config/prod-docker.exs config/prod.exs
 RUN mix deps.get --only $MIX_ENV
 RUN mix deps.compile
 
 # build assets
 COPY assets assets
+RUN rm assets/webpack.config.js
+RUN mv assets/webpack-docker.config.js assets/webpack.config.js
 RUN cd assets && yarn && yarn run deploy
 RUN mix phx.digest
 
