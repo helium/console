@@ -11,6 +11,8 @@ defmodule Console.Events.Event do
     field :category, :string
     field :sub_category, :string
     field :description, :string
+    field :frame_up, :integer
+    field :frame_down, :integer
     field :reported_at, :string
     field :reported_at_epoch, :integer
     field :reported_at_naive, :naive_datetime
@@ -27,6 +29,8 @@ defmodule Console.Events.Event do
     event
     |> cast(attrs, [
       :data,
+      :frame_up,
+      :frame_down,
       :description,
       :category,
       :sub_category,

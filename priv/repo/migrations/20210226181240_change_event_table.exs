@@ -7,8 +7,6 @@ defmodule Console.Repo.Migrations.ChangeEventTable do
       remove :channels
       remove :payload_size
       remove :dc_used
-      remove :frame_up
-      remove :frame_down
       remove :port
       remove :devaddr
       add :sub_category, :string
@@ -23,8 +21,6 @@ defmodule Console.Repo.Migrations.ChangeEventTable do
       add :channels, {:array, :map}
       add :payload_size, :integer
       add :dc_used, :integer
-      add :frame_up, :integer
-      add :frame_down, :integer
       add :port, :integer
       add :devaddr, :string
       remove :sub_category
