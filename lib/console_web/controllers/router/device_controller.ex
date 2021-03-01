@@ -106,41 +106,45 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
     # for passing to debug panel, not stored in db
-    channels_with_debug =
-      event["channels"]
-      |> Enum.map(fn c ->
-        case c["debug"] do
-          nil -> c
-          value -> Map.put(c, "debug", Jason.encode!(value))
-        end
-      end)
-      |> Enum.map(fn c ->
-        c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
-      end)
+    # channels_with_debug =
+    #   event["channels"]
+    #   |> Enum.map(fn c ->
+    #     case c["debug"] do
+    #       nil -> c
+    #       value -> Map.put(c, "debug", Jason.encode!(value))
+    #     end
+    #   end)
+    #   |> Enum.map(fn c ->
+    #     c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    #   end)
 
     # for storing event in db, no debug info attached
-    channels_without_debug =
-      event["channels"]
-      |> Enum.map(fn c ->
-        Map.drop(c, ["debug"])
-      end)
+    # channels_without_debug =
+    #   event["channels"]
+    #   |> Enum.map(fn c ->
+    #     Map.drop(c, ["debug"])
+    #   end)
 
-    payload = event["payload"]
+    # payload = event["payload"]
 
     event = event
-      |> Map.put("channels", channels_without_debug)
+      # |> Map.put("channels", channels_without_debug)
       |> Map.put("reported_at_epoch", event["reported_at"])
+      |> Map.put("router_uuid", event["id"])
+      |> Map.delete("id")
+
     event =
       cond do
-        is_integer(event["port"]) -> event
-        event["port"] != nil and Integer.parse(event["port"]) != :error -> event
-        true -> Map.put(event, "port", nil)
+        is_integer(event["data"]["port"]) -> event
+        event["data"]["port"] != nil and Integer.parse(event.data["port"]) != :error -> event
+        true -> Map.put(event.data, "port", nil)
       end
-    event =
-      case event["dc"]["used"] do
-        nil -> Map.put(event, "dc_used", 0)
-        dc -> Map.put(event, "dc_used", dc)
-      end
+    
+    # event =
+    #   case event["data"]["dc"]["used"] do
+    #     nil -> Map.put(event["data"]["dc"], "used", 0)
+    #     dc -> Map.put(event["data"]["dc"], "used", dc)
+    #   end
 
     # store info before updating device
     event_device = Devices.get_device(device_id) |> Repo.preload([:labels])
@@ -161,18 +165,18 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
-              "frame_up" => event.frame_up,
-              "frame_down" => event.frame_down,
+              "frame_up" => event.data["frame_up"],
+              "frame_down" => event.data["frame_down"],
               "total_packets" => device.total_packets + 1,
-              "dc_usage" => device.dc_usage + event.dc_used,
+              "dc_usage" => device.dc_usage + event.data["dc"]["used"],
             }, "router")
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: device, event: created_event } ->
             cond do
-              organization.dc_balance_nonce == event["dc"]["nonce"] ->
-                Organizations.update_organization(organization, %{ "dc_balance" => event["dc"]["balance"] })
-              organization.dc_balance_nonce - 1 == event["dc"]["nonce"] ->
-                {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.dc_used })
+              organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
+                Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
+              organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
+                {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
                 ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(updated_org)
 
                 {:ok, updated_org}
@@ -183,7 +187,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Repo.transaction()
 
         with {:ok, %{ event: event, device: device, organization: organization }} <- result do
-          publish_created_event(event, payload, device, channels_with_debug)
+          publish_created_event(event, device)
           check_org_dc_balance(organization, prev_dc_balance)
 
           if event_device.last_connected == nil do
@@ -191,45 +195,45 @@ defmodule ConsoleWeb.Router.DeviceController do
             details = %{
               device_name: event_device.name,
               time: time,
-              hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
+              # hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
             }
             device_labels = Enum.map(event_device.labels, fn l -> l.id end)
             LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
           end
 
           case event.category do
-            "up" ->
-              Enum.each(event.channels, fn channel ->
-                if channel.id != "no_channel" and channel.id != "no_integration_id" do
-                  event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
-                  labels = Enum.map(event_channel.labels, fn l -> l.id end)
+            # "up" ->
+              # Enum.each(event.channels, fn channel ->
+              #   if channel.id != "no_channel" and channel.id != "no_integration_id" do
+              #     event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
+              #     labels = Enum.map(event_channel.labels, fn l -> l.id end)
 
-                  if event_channel.time_first_uplink == nil do
-                    Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
-                    LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
-                  end
+              #     if event_channel.time_first_uplink == nil do
+              #       Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
+              #       { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+              #       details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
+              #       LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
+              #     end
 
-                  if channel.status != "success" do
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{
-                      channel_name: event_channel.name,
-                      channel_id: event_channel.id,
-                      time: time
-                    }
-                    limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
-                  end
-                end
-              end)
-            "down" ->
-              if List.first(event.hotspots).status != "success" do
-                details = %{ device_id: event_device.id, device_name: event_device.name }
-                device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-                limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
-              end
+              #     if channel.status != "success" do
+              #       { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+              #       details = %{
+              #         channel_name: event_channel.name,
+              #         channel_id: event_channel.id,
+              #         time: time
+              #       }
+              #       limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+              #       LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+              #     end
+              #   end
+              # end)
+            # "down" ->
+            #   if List.first(event.hotspots).status != "success" do
+            #     details = %{ device_id: event_device.id, device_name: event_device.name }
+            #     device_labels = Enum.map(event_device.labels, fn l -> l.id end)
+            #     limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+            #     LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
+            #   end
             _ -> nil
           end
 
@@ -239,23 +243,23 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  defp publish_created_event(event, payload, device, channels_with_debug) do
-    event =
-      case payload do
-        nil ->
-          Map.merge(event, %{
-            device_name: device.name,
-            hotspots: Jason.encode!(event.hotspots),
-            channels: Jason.encode!(event.channels)
-          })
-        _ ->
-          Map.merge(event, %{
-            device_name: device.name,
-            payload: payload,
-            hotspots: Jason.encode!(event.hotspots),
-            channels: Jason.encode!(channels_with_debug)
-          })
-      end
+  defp publish_created_event(event, device) do
+    # event =
+      # case payload do
+      #   nil ->
+      #     Map.merge(event, %{
+      #       device_name: device.name,
+      #       # hotspots: Jason.encode!(event.hotspots),
+      #       # channels: Jason.encode!(event.channels)
+      #     })
+      #   _ ->
+      #     Map.merge(event, %{
+      #       device_name: device.name,
+      #       # payload: payload,
+      #       # hotspots: Jason.encode!(event.hotspots),
+      #       # channels: Jason.encode!(channels_with_debug)
+      #     })
+      # end
 
     event_to_publish =
       event

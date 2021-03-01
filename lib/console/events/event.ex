@@ -9,18 +9,13 @@ defmodule Console.Events.Event do
   @foreign_key_type :binary_id
   schema "events" do
     field :category, :string
+    field :sub_category, :string
     field :description, :string
     field :reported_at, :string
     field :reported_at_epoch, :integer
     field :reported_at_naive, :naive_datetime
-    field :frame_up, :integer
-    field :frame_down, :integer
-    field :payload_size, :integer
-    field :port, :integer
-    field :dc_used, :integer
-    field :devaddr, :string
-    field :hotspots, {:array, :map}
-    field :channels, {:array, :map}
+    field :data, :map
+    field :router_uuid, :string
 
     belongs_to :device, Device
     belongs_to :organization, Organization
@@ -31,21 +26,16 @@ defmodule Console.Events.Event do
   def changeset(event, attrs) do
     event
     |> cast(attrs, [
-      :hotspots,
-      :channels,
+      :data,
       :description,
-      :payload_size,
       :category,
-      :frame_up,
-      :frame_down,
+      :sub_category,
       :reported_at,
       :reported_at_naive,
       :reported_at_epoch,
       :device_id,
-      :port,
-      :devaddr,
-      :dc_used,
       :organization_id,
+      :router_uuid
     ])
   end
 end
