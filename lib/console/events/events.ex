@@ -22,7 +22,6 @@ defmodule Console.Events do
   end
 
   def create_event(attrs \\ %{}) do
-    IO.inspect attrs
     reported_at_naive =
       attrs["reported_at"]
       |> DateTime.from_unix!()
