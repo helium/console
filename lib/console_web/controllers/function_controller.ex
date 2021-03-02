@@ -16,17 +16,6 @@ defmodule ConsoleWeb.FunctionController do
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
-
-      case function_params["labels"]["labelsApplied"] do
-        nil -> nil
-        labels -> Labels.add_function_to_labels(function, labels, current_organization)
-      end
-
-      case function_params["labels"]["newLabels"] do
-        nil -> nil
-        labels -> Labels.create_labels_add_function(function, labels, current_organization, current_user)
-      end
-
       broadcast_router_update_devices(function)
 
       conn

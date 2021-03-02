@@ -7,7 +7,6 @@ defmodule Console.Functions.FunctionResolver do
     functions = Function
       |> where([f], f.organization_id == ^current_organization.id)
       |> order_by(desc: :inserted_at)
-      |> preload([labels: [:channels]])
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, functions}
