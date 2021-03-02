@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ChannelsTable from './ChannelsTable'
+import ChannelIndexTable from './ChannelIndexTable'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import ChannelCreateRow from './ChannelCreateRow'

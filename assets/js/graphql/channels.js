@@ -32,30 +32,6 @@ export const CHANNEL_SHOW = gql`
       aws_access_key
       topic
       payload_template
-      labels {
-        name,
-        id,
-        color,
-      }
-      devices {
-        name,
-        id
-      }
-    }
-    allLabels {
-      name,
-      id,
-      color,
-      device_count
-      channels {
-        name,
-        id
-      }
-      function {
-        id
-        name
-        format
-      }
     }
   }
   ${CHANNEL_FRAGMENT}
@@ -66,16 +42,6 @@ export const PAGINATED_CHANNELS = gql`
     channels(page: $page, pageSize: $pageSize) {
       entries {
         ...ChannelFragment
-        labels {
-          name,
-          id,
-          color,
-          function {
-            id,
-            name
-          }
-        },
-        device_count
       },
       totalEntries,
       totalPages,

@@ -82,9 +82,6 @@ defmodule ConsoleWeb.Schema do
     field :aws_access_key, :string
     field :topic, :string
     field :active, :boolean
-    field :labels, list_of(:label)
-    field :devices, list_of(:device)
-    field :device_count, :integer
     field :downlink_token, :string
     field :credentials, type: :credentials
     field :payload_template, :string

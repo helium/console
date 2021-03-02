@@ -8,9 +8,7 @@ export const createChannel = (params) => {
     const channelParams = sanitizeParams(params.channel)
 
     rest.post('/api/channels', {
-        channel: channelParams,
-        labels: params.labels ? params.labels : undefined,
-        func: params.func ? params.func : undefined
+        channel: channelParams
       })
       .then(response => {
         displayInfo(`Integration ${response.data.name} added successfully`)

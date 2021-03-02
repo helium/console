@@ -15,80 +15,18 @@ defmodule ConsoleWeb.ChannelController do
 
   action_fallback ConsoleWeb.FallbackController
 
-  def create(conn, %{"channel" => channel_params, "labels" => labels}) do
+  def create(conn, %{"channel" => channel_params}) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      case labels["labelsApplied"] do
-        nil -> nil
-        applied_labels ->
-          label_ids = applied_labels
-            |> Enum.map(fn label ->
-              label["id"]
-            end)
-          Labels.add_labels_to_channel(label_ids, channel, current_organization)
-      end
-
-      case labels["newLabels"] do
-        nil -> nil
-        new_labels ->
-          Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
-      end
       broadcast_router_update_devices(channel)
 
       conn
       |> put_status(:created)
       |> render("show.json", channel: channel)
     end
-  end
-
-  def create(conn, %{"channel" => channel_params, "func" => function_params}) do
-    current_organization = conn.assigns.current_organization
-    user = conn.assigns.current_user
-    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.run(:channel, fn _repo, _ ->
-        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          {:ok, channel}
-        end
-      end)
-      |> Ecto.Multi.run(:label, fn _repo, _ ->
-        with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
-          {:ok, label}
-        end
-      end)
-      |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
-        with {:ok, length, label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
-          {:ok, "label attached success"}
-        end
-      end)
-      |> Ecto.Multi.run(:function, fn _repo, %{ label: label } ->
-        cond do
-          function_params["format"] === "custom" ->
-            Labels.add_function_to_labels(%{ id: function_params["id"] }, [label.id], current_organization)
-          function_params["format"] === "cayenne" ->
-            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
-            with {:ok, new_function} <- Functions.create_function(function_params, current_organization) do
-              Labels.add_function_to_labels(%{ id: new_function.id }, [label.id], current_organization)
-            end
-        end
-      end)
-      |> Repo.transaction()
-
-      case result do
-        {:error, _, changeset, _} -> {:error, changeset}
-        {:ok, %{ channel: channel, label: label, label_attached: _label_attached, function: function}} ->
-          broadcast_router_update_devices(channel)
-
-          conn
-          |> put_status(:created)
-          |> render("show.json", channel: channel)
-        _ -> result
-      end
   end
 
   def update(conn, %{"id" => id, "channel" => channel_params}) do
