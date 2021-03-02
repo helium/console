@@ -82,7 +82,7 @@ class SwapLabelModal extends Component {
           labelToSwap && labelToSwap[0] && !showConfirmSwap && (
             <div>
               <Text style={{ display: 'block' }}>This action will swap the following label with another of your choice:</Text>
-              <LabelTag text={labelToSwap[0].name} color={labelToSwap[0].color} style={{ marginTop: 10 }} hasIntegrations={labelToSwap[0].channels.length > 0} hasFunction={labelToSwap[0].function}/>
+              <LabelTag text={labelToSwap[0].name} color={labelToSwap[0].color} style={{ marginTop: 10 }} />
               <Divider />
               <Text style={{ display: 'block' }}>Swap with:</Text>
               <Select
@@ -92,7 +92,7 @@ class SwapLabelModal extends Component {
               >
                 {allLabels.filter(l => l.id !== labelToSwap[0].id).map(l => (
                   <Option value={l.id} key={l.id}>
-                    <LabelTag text={l.name} color={l.color} hasIntegrations={l.channels.length > 0} hasFunction={l.function}/>
+                    <LabelTag text={l.name} color={l.color} />
                   </Option>
                 ))}
               </Select>
@@ -109,9 +109,9 @@ class SwapLabelModal extends Component {
                 <Text style={{ display: 'block' }} strong>Are you sure you want to swap Labels?</Text>
                 <Text style={{ display: 'block', marginTop: 10 }}>This will impact {labelToSwap[0].devices.length} devices.</Text>
                 <div style={{ padding: 15, backgroundColor: '#F5F5F5', borderRadius: 5, marginTop: 10, display: 'inline-flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                  <LabelTag text={labelToSwap[0].name} color={labelToSwap[0].color} hasIntegrations={labelToSwap[0].channels.length > 0} hasFunction={labelToSwap[0].function}/>
+                  <LabelTag text={labelToSwap[0].name} color={labelToSwap[0].color} />
                   <DoubleRightOutlined style={{ marginRight: 8 }} />
-                  <LabelTag text={destinationLabel.name} color={destinationLabel.color} hasIntegrations={destinationLabel.channels.length > 0} hasFunction={destinationLabel.function}/>
+                  <LabelTag text={destinationLabel.name} color={destinationLabel.color} />
                 </div>
               </div>
             </div>

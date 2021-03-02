@@ -60,8 +60,6 @@ defmodule ConsoleWeb.Schema do
     field :creator, :string
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
-    field :channels, list_of(:channel)
-    field :function, :function
     field :device_count, :integer
     field :multi_buy, :integer
     field :adr_allowed, :boolean

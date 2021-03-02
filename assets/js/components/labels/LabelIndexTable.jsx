@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
+import LabelTag from '../common/LabelTag'
 import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS } from '../../graphql/labels'
@@ -44,7 +44,6 @@ class LabelIndexTable extends Component {
 
   handleSelectOption = (value) => {
     if (value === 'removeDevices') this.props.openRemoveAllDevicesFromLabelsModal(this.state.selectedRows)
-    else if (value === 'addIntegration') this.props.openLabelAddChannelModal(this.state.selectedRows)
     else if (value === 'swapLabelDevices') this.props.openSwapLabelModal(this.state.selectedRows)
     else this.props.openDeleteLabelModal(this.state.selectedRows)
   }
@@ -73,36 +72,12 @@ class LabelIndexTable extends Component {
         dataIndex: 'name',
         render: (text, record) => (
           <React.Fragment>
-            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
+            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
             {
               record.devices.find(d => moment().utc().local().subtract(1, 'days').isBefore(moment.utc(d.last_connected).local())) &&
                 <StatusIcon tooltipTitle='One or more attached devices last connected within the last 24h' style={{ marginLeft: "2px" }} {...this.props} />
             }
           </React.Fragment>
-        )
-      },
-      {
-        title: 'Associated Integrations',
-        dataIndex: 'channels',
-        render: (text, record) => (
-          <div>
-            {
-              record.channels.map(c => (
-                <a
-                  key={c.id}
-                  style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
-                >
-                  {c.name}
-                </a>
-              ))
-            }
-          </div>
         )
       },
       {
@@ -226,7 +201,7 @@ class LabelIndexTable extends Component {
         {labels.entries.length > 0 && (
           <div>
             <p className="page-description">
-              Labels are a powerful mechanism to organize devices, assign integrations, and provide scalability and flexibility to managing your projects. <a href="https://docs.helium.com/use-the-network/console/labels" target="_blank"> Tell me more about Labels.</a>
+              Labels are a powerful mechanism to organize devices. <a href="https://docs.helium.com/use-the-network/console/labels" target="_blank"> Tell me more about Labels.</a>
             </p>
           <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
@@ -239,7 +214,6 @@ class LabelIndexTable extends Component {
               onSelect={this.handleSelectOption}
             >
               <Option value="swapLabelDevices" disabled={this.state.selectedRows.length !== 1}>Swap Selected Label</Option>
-              <Option value="addIntegration" disabled={this.state.selectedRows.length == 0}>Add Integration to Selected Labels</Option>
               <Option value="removeDevices" disabled={this.state.selectedRows.length == 0}>Remove All Devices from Selected Labels</Option>
               <Option value="remove" disabled={this.state.selectedRows.length == 0} style={{ color: redForTablesDeleteText }}>Delete Selected Labels</Option>
             </Select>

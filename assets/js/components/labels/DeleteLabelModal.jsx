@@ -41,7 +41,7 @@ class DeleteLabelModal extends Component {
           labelsToDelete && labelsToDelete.length === 1 && (
             <React.Fragment>
               <div style={{ marginBottom: 20 }}>
-                <Text>The {labelsToDelete[0].channels.map(c => c.name).join(", ")} integration{`${labelsToDelete[0].channels.length == 1 ? " is" : "s are"}`} mapped to this label. Are you sure you want to proceed? All devices tagged with this label will remain.</Text>
+                <Text>Are you sure you want to proceed? All devices tagged with this label will remain.</Text>
               </div>
             </React.Fragment>
           )

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom'
 import get from 'lodash/get'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'

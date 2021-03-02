@@ -60,16 +60,3 @@ export const ALL_CHANNELS = gql`
     }
   }
 `
-
-export const ALL_CHANNELS_FUNCTIONS = gql`
-  query AllChannelsFunctionsQuery {
-    allChannels {
-      id,
-      name,
-    }
-    allFunctions {
-      id,
-      name,
-    }
-  }
-`

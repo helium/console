@@ -146,7 +146,7 @@ class DeviceIndexTable extends Component {
                     key={l.name}
                     text={l.name}
                     color={l.color}
-                    closable  
+                    closable
                     onClose={e => {
                       e.preventDefault()
                       this.props.openDevicesRemoveLabelModal([l], record)

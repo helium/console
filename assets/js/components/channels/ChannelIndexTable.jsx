@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import get from 'lodash/get'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS } from '../../graphql/channels'
 import withGql from '../../graphql/withGql'
