@@ -17,7 +17,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :last_connected, :naive_datetime
     field :labels, list_of(:label)
-    field :channels, list_of(:channel)
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean

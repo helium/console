@@ -13,27 +13,15 @@ defmodule Console.Devices.DeviceResolver do
 
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
-      |> preload([labels: [:channels, :devices, :function]])
+      |> preload([:labels])
       |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    entries =
-      Enum.map(devices.entries, fn d ->
-        channels =
-          Enum.map(d.labels, fn l ->
-            l.channels
-          end)
-          |> List.flatten()
-          |> Enum.uniq()
-
-        Map.put(d, :channels, channels)
-      end)
-
-    {:ok, Map.put(devices, :entries, entries)}
+    {:ok, devices}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels, :function]])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([:labels])
 
     device =
       case current_membership.role do
@@ -85,7 +73,7 @@ defmodule Console.Devices.DeviceResolver do
       join: dl in DevicesLabels,
       on: dl.device_id == d.id,
       where: d.organization_id == ^current_organization.id and dl.label_id == ^label_id,
-      preload: [labels: [:channels, :function]],
+      preload: [:labels],
       order_by: ^order_by
 
     {:ok, query |> Repo.paginate(page: page, page_size: page_size)}

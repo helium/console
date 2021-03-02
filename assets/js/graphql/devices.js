@@ -25,16 +25,6 @@ export const DEVICE_SHOW = gql`
         name,
         id,
         color,
-        channels {
-          name,
-          id,
-          type,
-          downlink_token
-        },
-        function {
-          id,
-          name
-        }
       }
     }
   }
@@ -70,22 +60,10 @@ export const PAGINATED_DEVICES = gql`
     devices(page: $page, pageSize: $pageSize, column: $column, order: $order) {
       entries {
         ...DeviceFragment
-        channels {
-          name,
-          id
-        }
         labels {
           name,
           id,
           color,
-          channels {
-            name,
-            id
-          }
-          function {
-            id,
-            name
-          }
         }
       },
       totalEntries,
@@ -110,14 +88,6 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
         labels {
           name,
           color,
-          channels {
-            id,
-            name
-          }
-          function {
-            id,
-            name
-          }
         }
       },
       totalEntries,
