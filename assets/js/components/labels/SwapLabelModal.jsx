@@ -9,7 +9,7 @@ const { Text } = Typography
 import analyticsLogger from '../../util/analyticsLogger'
 import LabelTag from '../common/LabelTag'
 import { ALL_LABELS } from '../../graphql/labels'
-import AddIcon from '../../../img/channel-show-add-label-icon.png'
+import QuestionIcon from '../../../img/question-icon.png'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
