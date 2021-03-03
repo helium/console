@@ -51,12 +51,3 @@ export const PAGINATED_CHANNELS = gql`
   }
   ${CHANNEL_FRAGMENT}
 `
-
-export const ALL_CHANNELS = gql`
-  query AllChannelsQuery {
-    allChannels {
-      id,
-      name,
-    }
-  }
-`

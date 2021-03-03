@@ -5,6 +5,7 @@ import { AutoComplete } from 'antd';
 import find from 'lodash/find'
 import LabelTag from './LabelTag'
 
+// new device modal
 class LabelAppliedNew extends Component {
   state = {
     searchLabels: []

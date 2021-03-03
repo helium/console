@@ -34,12 +34,3 @@ export const FUNCTION_SHOW = gql`
   }
   ${FUNCTION_FRAGMENT}
 `
-
-export const ALL_FUNCTIONS = gql`
-  query AllFunctionsQuery {
-    allFunctions {
-      id,
-      name
-    }
-  }
-`
