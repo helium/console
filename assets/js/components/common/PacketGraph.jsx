@@ -104,8 +104,10 @@ class PacketGraph extends Component {
       const currentTime = Date.now() / 1000
       const eventTime =  event.reported_at
       const timeDiff = currentTime - eventTime
-      const channels = JSON.parse(event.channels)
-      const hotspots = JSON.parse(event.hotspots)
+      // const channels = JSON.parse(event.channels)
+      // const hotspots = JSON.parse(event.hotspots)
+      const data = JSON.parse(event.data)
+      // console.log(data)
 
       if ( timeDiff < 300 ) {
         if (channels[0] && channels[0].status == 'success') {

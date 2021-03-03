@@ -132,20 +132,24 @@ defmodule ConsoleWeb.Router.DeviceController do
       |> Map.put("reported_at_epoch", event["reported_at"])
       |> Map.put("router_uuid", event["id"])
       |> Map.delete("id")
-    
-    event =
-      cond do
-        is_integer(event["data"]["frame_up"]) -> event |> Map.put("frame_up", event["data"]["frame_up"])
-        event["data"]["frame_up"] != nil and Integer.parse(event["data"]["frame_up"]) != :error -> event |> Map.put("frame_up", event["data"]["frame_up"])
-        true -> event |> Map.put("frame_up", nil)
-      end
-    
-    event =
-      cond do
-        is_integer(event["data"]["frame_down"]) -> event |> Map.put("frame_down", event["data"]["frame_down"])
-        event["data"]["frame_down"] != nil and Integer.parse(event["data"]["frame_down"]) != :error -> event |> Map.put("frame_down", event["data"]["frame_down"])
-        true -> event |> Map.put("frame_down", nil)
-      end
+
+    event = case event["category"] do
+      "uplink" -> 
+        cond do
+          is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
+          event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])
+          true -> event |> Map.put("frame_up", nil)
+        end
+      "downlink" -> 
+        cond do
+          is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_down", event["data"]["fcnt"])
+          event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_down", event["data"]["fcnt"])
+          true -> event |> Map.put("frame_down", nil)
+        end
+      _ -> event
+    end
+
+    IO.inspect event
     
     # event =
     #   case event["data"]["dc"]["used"] do

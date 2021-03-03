@@ -5,6 +5,7 @@ import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
 import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
+import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
@@ -35,9 +36,9 @@ const base64ToHex = str => {
 
 const categoryTag = (category) => {
   switch(category) {
-    case "up":
+    case "uplink":
       return <Text>Uplink</Text>
-    case "down":
+    case "downlink":
       return <Text>Downlink</Text>
     case "ack":
       return <Text>Acknowledge</Text>
@@ -106,11 +107,11 @@ class EventsDashboard extends Component {
     })
   }
 
-  toggleExpandAll = () => {
+  toggleExpandAll = (aggregatedRows) => {
     if (this.state.expandAll) {
       this.setState({ expandAll: false, expandedRowKeys: [] })
     } else {
-      this.setState({ expandAll: true, expandedRowKeys: this.state.rows.map(r => r.id) })
+      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) })
     }
   }
 
@@ -123,8 +124,8 @@ class EventsDashboard extends Component {
   }
 
   renderExpanded = record => {
-    let hotspotColumns
-    if (record.category == 'ack' || record.category == 'down') {
+    let hotspotColumns;
+    if (record.category === 'downlink') {
       hotspotColumns = [
         { title: 'Hotspot Name', dataIndex: 'name' },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
@@ -140,19 +141,28 @@ class EventsDashboard extends Component {
       ]
     }
 
+    const lorawanColumns = [
+      { title: 'Payload Size', dataIndex: 'payload_size' },
+      { title: 'Port', dataIndex: 'port' },
+      { title: 'Devaddr', dataIndex: 'devaddr' }
+    ];
+
     const channelColumns = [
       { title: 'Integration Name', dataIndex: 'name' },
-      { title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text> }
-    ]
+      { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> }
+    ];
 
     return (
       <Row gutter={10}>
         <Col span={22}>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={hotspotColumns} dataSource={JSON.parse(record.hotspots)} pagination={false} rowKey={record => record.id}/>
+            <Table columns={lorawanColumns} dataSource={[record]} pagination={false} rowKey={record => record.id}/>
           </Card>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={channelColumns} dataSource={JSON.parse(record.channels)} pagination={false} rowKey={record => record.id}/>
+            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
+          </Card>
+          <Card  bodyStyle={{padding: 0}}>
+            <Table columns={channelColumns} dataSource={record.integrations} pagination={false} rowKey={record => record.id}/>
           </Card>
         </Col>
       </Row>
@@ -161,39 +171,39 @@ class EventsDashboard extends Component {
 
   renderFrameIcons = row => {
     switch(row.category) {
-      case "up":
+      case "uplink":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CaretUpOutlined style={{ marginRight: 1 }}/>
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
-      case "down":
+      case "downlink":
         return (
           <Tag style={styles.tag} color="#FA541C">
             <CaretDownOutlined style={{ marginRight: 1 }}/>
-            {row.frame_down}
+            {row.fct}
           </Tag>
         )
       case "ack":
         return (
           <Tag style={styles.tag} color="#A0D911">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
       case "join_req":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
       case "join_accept":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
       case "packet_dropped":
@@ -201,7 +211,7 @@ class EventsDashboard extends Component {
           <span>
             <Tag style={styles.tag} color="#D9D9D9">
               <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-              {row.frame_up}
+              {row.fct}
             </Tag>
             <Popover
               content={row.description}
@@ -218,14 +228,14 @@ class EventsDashboard extends Component {
         return (
           <Tag style={styles.tag} color="#D9D9D9">
             <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
       case "channel_start_error":
         return (
           <Tag style={styles.tag} color="#D9D9D9">
             <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.frame_up}
+            {row.fct}
           </Tag>
         )
     }
@@ -234,8 +244,28 @@ class EventsDashboard extends Component {
   render() {
     const { rows, expandedRowKeys, expandAll } = this.state
 
+    const aggregatedRows = sortBy(Object.values(groupBy(rows, 'router_uuid')), ['reported_at']).map(routerEvents => {
+      return ({
+        id: routerEvents[0].router_uuid,
+        reported_at: routerEvents[0].reported_at,
+        category: routerEvents[0].category,
+        fct: routerEvents[0].frame_up || routerEvents[0].frame_down,
+        payload_size: JSON.parse(routerEvents[0].data).payload_size,
+        port: JSON.parse(routerEvents[0].data).port,
+        devaddr: JSON.parse(routerEvents[0].data).devaddr,
+        hotspots: routerEvents.map(event => JSON.parse(event.data).hotspot),
+        integrations: routerEvents.filter(event => ['uplink_integration_req', 'uplink_integration_res', 'misc_integration_error'].includes(event.sub_category)).map(ie => ({ id: ie.id, name: ie.name, message: ie.status }))
+      })
+    })
+
     const columns = [
       {
+        title: 'Frame Count',
+        dataIndex: 'data',
+        render: (data, row) => this.renderFrameIcons(row)
+      },
+      {
+        title: 'Type',
         dataIndex: 'category',
         render: data => <Text>{categoryTag(data)}</Text>
       },
@@ -244,20 +274,7 @@ class EventsDashboard extends Component {
         dataIndex: 'reported_at',
         align: 'left',
         render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
-      },
-      {
-        title: 'Frame Count',
-        dataIndex: 'frame_up',
-        render: (data, row) => this.renderFrameIcons(row)
-      },
-      {
-        title: 'Port',
-        dataIndex: 'port',
-      },
-      {
-        title: 'Dev Address',
-        dataIndex: 'devaddr',
-      },
+      }
     ]
 
     const { loading, error } = this.props.deviceEventsQuery
@@ -285,7 +302,7 @@ class EventsDashboard extends Component {
             </Text>
 
             <Checkbox
-              onChange={this.toggleExpandAll}
+              onChange={() => this.toggleExpandAll(aggregatedRows)}
               checked={expandAll}
               style={{ marginLeft: 20 }}
             >
@@ -303,7 +320,7 @@ class EventsDashboard extends Component {
           </a>
         </div>
         <Table
-          dataSource={rows}
+          dataSource={aggregatedRows}
           columns={columns}
           rowKey={record => record.id}
           pagination={false}

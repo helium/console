@@ -101,28 +101,16 @@ defmodule Console.Devices.DeviceResolver do
       |> limit(50)
       |> order_by(desc: :reported_at_naive)
       |> Repo.all()
-
-    events =
+    
+    events = 
       Enum.map(events, fn e ->
-        e_hotspots =
-          case e.hotspots do
-            nil -> []
-            _ ->
-              Enum.map(e.hotspots, fn h ->
-                Map.new(h, fn {k, v} -> {String.to_atom(k), v} end)
-              end)
+        data = 
+          case e.data do
+            nil -> %{}
+            _ -> Map.new(e.data, fn {k, v} -> {String.to_atom(k), v} 
+            end)
           end
-
-        e_channels =
-          case e.channels do
-            nil -> []
-            _ ->
-              Enum.map(e.channels, fn c ->
-                Map.new(c, fn {k, v} -> {String.to_atom(k), v} end)
-              end)
-          end
-
-        e |> Map.put(:hotspots, Jason.encode!(e_hotspots)) |> Map.put(:channels, Jason.encode!(e_channels))
+        e |> Map.put(:data, Jason.encode!(data))
       end)
 
     {:ok, events}

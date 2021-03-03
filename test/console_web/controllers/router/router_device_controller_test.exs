@@ -89,14 +89,13 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
         |> put_req_header("authorization", "Bearer " <> jwt)
         |> post("/api/router/devices/#{device_0.id}/event", %{
           "id" => "UUID-V4",
-          "category" => "up",
+          "category" => "uplink",
           "sub_category" => "ack",
           "description" => "test description",
           "reported_at" => timestamp,
           "device_id" => "device_uuid",
           "data" => %{
-            "frame_up" => 2,
-            "frame_down" => 2,
+            "fcnt" => 2,
             "payload_size" => 12,
             "payload" => "base64 payload",
             "port" => 1,
