@@ -13,13 +13,12 @@ defmodule Console.Devices do
     Repo.all(Device)
   end
 
-  def get_organization_device_count(organization) do
-    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
-    length(devices)
-  end
-
+  def get_device(id), do: Repo.get(Device, id)
   def get_device!(id), do: Repo.get!(Device, id)
 
+  def get_device(organization, id) do
+     Repo.get_by(Device, [id: id, organization_id: organization.id])
+  end
   def get_device!(organization, id) do
      Repo.get_by!(Device, [id: id, organization_id: organization.id])
   end
@@ -33,12 +32,6 @@ defmodule Console.Devices do
      from(d in Device, where: d.organization_id == ^organization_id)
      |> Repo.all()
   end
-
-  def get_device(organization, id) do
-     Repo.get_by(Device, [id: id, organization_id: organization.id])
-  end
-
-  def get_device(id), do: Repo.get(Device, id)
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
      from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
@@ -63,14 +56,14 @@ defmodule Console.Devices do
     Repo.all(query)
   end
 
-  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
+  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization]) do
     Repo.preload(device, assoc)
   end
 
   def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
     cond do
-      count > 9999 ->
+      count > 49999 ->
         {:error, :forbidden, "Device limit for organization reached"}
       true ->
         %Device{}
@@ -128,7 +121,6 @@ defmodule Console.Devices do
   end
 
   def create_import(%Organization{} = organization, user_id, type) do
-
     %DeviceImports{}
     |> DeviceImports.create_changeset(%{
       organization_id: organization.id,
@@ -149,5 +141,10 @@ defmodule Console.Devices do
   def update_devices_active(device_ids, active, organization) do
     from(d in Device, where: d.id in ^device_ids and d.organization_id == ^organization.id)
     |> Repo.update_all(set: [active: active])
+  end
+
+  defp get_organization_device_count(organization) do
+    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(devices)
   end
 end

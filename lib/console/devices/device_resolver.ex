@@ -58,14 +58,6 @@ defmodule Console.Devices.DeviceResolver do
     }
   end
 
-  def all(_, %{context: %{current_organization: current_organization}}) do
-    devices = Device
-      |> where([d], d.organization_id == ^current_organization.id)
-      |> Repo.all()
-
-    {:ok, devices}
-  end
-
   def paginate_by_label(%{page: page, page_size: page_size, label_id: label_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
     order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
 
