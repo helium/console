@@ -8,7 +8,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import withGql from '../../graphql/withGql'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
-import { Modal, Button, Typography, Select, Row, Col } from 'antd';
+import { Modal, Button, Typography, Select, Row, Col, Input } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
@@ -22,11 +22,25 @@ const styles = {
 
 class DeleteOrganizationModal extends Component {
   state = {
-    destinationOrgId: null
+    destinationOrgId: null,
+    confirmText: ""
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.open && this.props.open) {
+      this.setState({
+        destinationOrgId: null,
+        confirmText: ""
+      })
+    }
   }
 
   handleSetOrg = destinationOrgId => {
     this.setState({ destinationOrgId })
+  }
+
+  handleInputUpdate = (e) => {
+    this.setState({ confirmText: e.target.value})
   }
 
   handleSubmit = () => {
@@ -69,7 +83,7 @@ class DeleteOrganizationModal extends Component {
               onClick={this.handleSubmit}
               type="danger"
               ghost
-              disabled={currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId}
+              disabled={(currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId) || (currentOrg && this.state.confirmText !== currentOrg.name + " DELETE")}
             >
               Delete Organization
             </Button>,
@@ -137,6 +151,15 @@ class DeleteOrganizationModal extends Component {
               <Text style={{ fontWeight: 500, color: 'black' }}>
                 {`This organization has ${currentOrg.active_count + currentOrg.inactive_count} device(s). Are you sure you want to delete the organization?`}
               </Text>
+
+              <div style={{ marginTop: 15 }}>
+                <Text style={{ display: 'block' }}>{`To continue, please enter "${currentOrg.name} DELETE"`}</Text>
+                <Input
+                  name="confirmText"
+                  value={this.state.confirmText}
+                  onChange={this.handleInputUpdate}
+                />
+              </div>
             </div>
           )
         }
