@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
 import UserCan from '../common/UserCan'
 import LabelTag from '../common/LabelTag'
-import { deleteLabel } from '../../actions/label'
 import { redForTablesDeleteText } from '../../util/colors'
 import { PAGINATED_LABELS } from '../../graphql/labels'
 import { Card, Button, Typography, Table, Pagination, Select, Tooltip } from 'antd';
@@ -61,8 +59,7 @@ class LabelIndexTable extends Component {
   }
 
   handleDeleteLabelClick = (label) => {
-    if (label.channels.length === 0) this.props.deleteLabel(label.id)
-    else this.props.openDeleteLabelModal([label])
+    this.props.openDeleteLabelModal([label])
   }
 
   render() {
@@ -259,10 +256,6 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteLabel }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps, null)(
   withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedLabelsQuery' }))
 )
