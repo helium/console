@@ -16,7 +16,6 @@ defmodule ConsoleWeb.FunctionController do
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
-      broadcast_router_update_devices(function)
 
       conn
         |> put_status(:created)
@@ -32,7 +31,6 @@ defmodule ConsoleWeb.FunctionController do
     with {:ok, %Function{} = function} <- Functions.update_function(function, function_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
-      broadcast_router_update_devices(function)
 
       conn
       |> put_resp_header("message", "Function #{function.name} updated successfully")
@@ -42,11 +40,10 @@ defmodule ConsoleWeb.FunctionController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    function = Functions.get_function!(current_organization, id) |> Functions.fetch_assoc([labels: :devices])
+    function = Functions.get_function!(current_organization, id)
 
     with {:ok, _} <- Functions.delete_function(function) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
-      broadcast_router_update_devices(function.labels)
 
       conn
       |> put_resp_header("message", "#{function.name} deleted successfully")
