@@ -52,9 +52,4 @@ defmodule Console.Channels.ChannelResolver do
 
     {:ok, channel}
   end
-
-  def all(_, %{context: %{current_organization: current_organization}}) do
-    channels = Ecto.assoc(current_organization, :channels) |> Repo.all()
-    {:ok, channels}
-  end
 end
