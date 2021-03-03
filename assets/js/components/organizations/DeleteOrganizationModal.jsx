@@ -40,7 +40,7 @@ class DeleteOrganizationModal extends Component {
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ confirmText: e.target.value})
+    this.setState({ confirmText: e.target.value })
   }
 
   handleSubmit = () => {
@@ -63,6 +63,7 @@ class DeleteOrganizationModal extends Component {
     const { allOrganizations } = this.props.allOrganizationsQuery
 
     const currentOrg = allOrganizations ? find(allOrganizations, { id: selectedOrgId }) : null
+    const DELETE_ORG_TEXT = currentOrg ? currentOrg.name + " DELETE" : ""
 
     return(
       <Modal
@@ -83,7 +84,7 @@ class DeleteOrganizationModal extends Component {
               onClick={this.handleSubmit}
               type="danger"
               ghost
-              disabled={(currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId) || (currentOrg && this.state.confirmText !== currentOrg.name + " DELETE")}
+              disabled={(currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId) || (currentOrg && this.state.confirmText !== DELETE_ORG_TEXT)}
             >
               Delete Organization
             </Button>,
@@ -153,7 +154,7 @@ class DeleteOrganizationModal extends Component {
               </Text>
 
               <div style={{ marginTop: 15 }}>
-                <Text style={{ display: 'block' }}>{`To continue, please enter "${currentOrg.name} DELETE"`}</Text>
+                <Text style={{ display: 'block' }}>{`To continue, please enter "${DELETE_ORG_TEXT}"`}</Text>
                 <Input
                   name="confirmText"
                   value={this.state.confirmText}
