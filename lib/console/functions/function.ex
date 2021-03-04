@@ -3,7 +3,10 @@ defmodule Console.Functions.Function do
   import Ecto.Changeset
 
   alias Console.Organizations.Organization
-  alias Console.Labels.Label
+  alias Console.Channels.Channel
+  alias Console.Devices.Device
+  alias Console.Connections.DeviceFunction
+  alias Console.Connections.FunctionChannel
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -16,6 +19,9 @@ defmodule Console.Functions.Function do
     field :active, :boolean
 
     belongs_to :organization, Organization
+    many_to_many :devices, Device, join_through: DeviceFunction, on_delete: :delete_all
+    many_to_many :channels, Channel, join_through: FunctionChannel, on_delete: :delete_all
+
     timestamps()
   end
 
