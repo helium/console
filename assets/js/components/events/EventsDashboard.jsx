@@ -168,6 +168,7 @@ class EventsDashboard extends Component {
   renderFrameIcons = row => {
     switch(row.category) {
       case "uplink":
+        // per router, uplink_dropped will never be associated to another subcategory of uplink
         if (row.sub_categories.includes('uplink_dropped')) {
           return (
             <span>
@@ -195,6 +196,7 @@ class EventsDashboard extends Component {
           )
         }
       case "downlink":
+        // per router, downlink_dropped will never be associated to another subcategory of downlink
         if (row.sub_categories.includes('downlink_dropped')) {
           return (
             <span>
