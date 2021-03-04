@@ -160,18 +160,15 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :device_id, :id
     field :description, :string
-    field :payload_size, :integer
-    field :port, :integer
-    field :devaddr, :string
     field :category, :string
     field :frame_up, :integer
     field :frame_down, :integer
-    field :hotspots, :string
-    field :channels, :string
+    field :sub_category, :string
     field :reported_at, :string
     field :reported_at_naive, :naive_datetime
     field :device_name, :string
-    field :payload, :string
+    field :router_uuid, :string
+    field :data, :string
   end
 
   object :search_result do
