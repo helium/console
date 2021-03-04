@@ -40,18 +40,12 @@ const categoryTag = (category) => {
       return <Text>Uplink</Text>
     case "downlink":
       return <Text>Downlink</Text>
-    case "ack":
-      return <Text>Acknowledge</Text>
-    case "join_req":
+    case "join_request":
       return <Text>Join Request</Text>
     case "join_accept":
       return <Text>Join Accept</Text>
-    case "packet_dropped":
-      return <Text>Packet Dropped</Text>
-    case "channel_crash":
-      return <Text>Channel Crashed</Text>
-    case "channel_start_error":
-      return <Text>Channel Start Error</Text>
+    case "misc":
+      return <Text>Misc. Integration Error</Text>
   }
 }
 
@@ -130,6 +124,7 @@ class EventsDashboard extends Component {
         { title: 'Hotspot Name', dataIndex: 'name' },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>}
       ]
     } else {
       hotspotColumns = [
@@ -138,6 +133,7 @@ class EventsDashboard extends Component {
         { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>}
       ]
     }
 
@@ -172,91 +168,110 @@ class EventsDashboard extends Component {
   renderFrameIcons = row => {
     switch(row.category) {
       case "uplink":
-        return (
-          <Tag style={styles.tag} color="#4091F7">
-            <CaretUpOutlined style={{ marginRight: 1 }}/>
-            {row.fct}
-          </Tag>
-        )
+        if (row.sub_categories.includes('uplink_dropped')) {
+          return (
+            <span>
+              <Tag style={styles.tag} color="#D9D9D9">
+                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+                {row.fct}
+              </Tag>
+              <Popover
+                content={row.description}
+                placement="top"
+                overlayStyle={{ width: 220 }}
+              >
+                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+                </Tag>
+              </Popover>
+            </span>
+          );
+        } else {
+          return (
+            <Tag style={styles.tag} color="#4091F7">
+              <CaretUpOutlined style={{ marginRight: 1 }}/>
+              {row.fct}
+            </Tag>
+          )
+        }
       case "downlink":
-        return (
-          <Tag style={styles.tag} color="#FA541C">
-            <CaretDownOutlined style={{ marginRight: 1 }}/>
-            {row.fct}
-          </Tag>
-        )
-      case "ack":
-        return (
-          <Tag style={styles.tag} color="#A0D911">
-            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.fct}
-          </Tag>
-        )
-      case "join_req":
-        return (
-          <Tag style={styles.tag} color="#4091F7">
-            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.fct}
-          </Tag>
-        )
+        if (row.sub_categories.includes('downlink_dropped')) {
+          return (
+            <span>
+              <Tag style={styles.tag} color="#D9D9D9">
+                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+                {row.fct}
+              </Tag>
+              <Popover
+                content={row.description}
+                placement="top"
+                overlayStyle={{ width: 220 }}
+              >
+                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+                </Tag>
+              </Popover>
+            </span>
+          );
+        } else {
+          return (
+            <Tag style={styles.tag} color="#FA541C">
+              <CaretDownOutlined style={{ marginRight: 1 }}/>
+              {row.fct}
+            </Tag>
+          );
+        }
+      case "join_request":
       case "join_accept":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.fct}
           </Tag>
         )
-      case "packet_dropped":
-        return (
-          <span>
-            <Tag style={styles.tag} color="#D9D9D9">
-              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-              {row.fct}
-            </Tag>
-            <Popover
-              content={row.description}
-              placement="top"
-              overlayStyle={{ width: 220 }}
-            >
-              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-              </Tag>
-            </Popover>
-          </span>
-        )
-      case "channel_crash":
+      case "misc":
         return (
           <Tag style={styles.tag} color="#D9D9D9">
             <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.fct}
-          </Tag>
-        )
-      case "channel_start_error":
-        return (
-          <Tag style={styles.tag} color="#D9D9D9">
-            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.fct}
           </Tag>
         )
     }
   }
 
+  isDataString = data => {
+    return typeof data === 'string';
+  }
+
   render() {
     const { rows, expandedRowKeys, expandAll } = this.state
 
-    const aggregatedRows = sortBy(Object.values(groupBy(rows, 'router_uuid')), ['reported_at']).map(routerEvents => {
+    const aggregatedRows = rows ? Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
+      const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
+      let firstEvent = orderedRouterEvents[0];
+
+      // data field might initially come in as json when new event is added but normally won't
+      let firstEventData = firstEvent.data;
+      if (this.isDataString(firstEvent.data)) {
+        firstEventData = JSON.parse(firstEvent.data);
+      }
+      
       return ({
-        id: routerEvents[0].router_uuid,
-        reported_at: routerEvents[0].reported_at,
-        category: routerEvents[0].category,
-        fct: routerEvents[0].frame_up || routerEvents[0].frame_down,
-        payload_size: JSON.parse(routerEvents[0].data).payload_size,
-        port: JSON.parse(routerEvents[0].data).port,
-        devaddr: JSON.parse(routerEvents[0].data).devaddr,
-        hotspots: routerEvents.map(event => JSON.parse(event.data).hotspot),
-        integrations: routerEvents.filter(event => ['uplink_integration_req', 'uplink_integration_res', 'misc_integration_error'].includes(event.sub_category)).map(ie => ({ id: ie.id, name: ie.name, message: ie.status }))
+        id: firstEvent.router_uuid,
+        description: firstEvent.description,
+        reported_at: firstEvent.reported_at,
+        category: firstEvent.category,
+        sub_categories: orderedRouterEvents.map(e => e.sub_category),
+        fct: firstEvent.frame_up || firstEvent.frame_down,
+        payload_size: firstEventData.payload_size,
+        port: firstEventData.port,
+        devaddr: firstEventData.devaddr,
+        hotspots: orderedRouterEvents.filter(
+          event => this.isDataString(event.data) ? JSON.parse(event.data).hotspot : event.data.hotspot
+        ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
+        integrations: orderedRouterEvents.filter(
+          event => this.isDataString(event.data) ? JSON.parse(event.data).integration : event.data.integration
+        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description }))
       })
-    })
+    }) : [];
 
     const columns = [
       {
@@ -293,7 +308,7 @@ class EventsDashboard extends Component {
           </Text>
         </div>
         <div style={{padding: 20, boxSizing: 'border-box'}}>
-        <PacketGraph events={this.state.rows} />
+        <PacketGraph events={aggregatedRows} />
         </div>
         <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <span>

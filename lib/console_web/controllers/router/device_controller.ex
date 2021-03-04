@@ -148,8 +148,6 @@ defmodule ConsoleWeb.Router.DeviceController do
         end
       _ -> event
     end
-
-    IO.inspect event
     
     # event =
     #   case event["data"]["dc"]["used"] do
@@ -174,25 +172,34 @@ defmodule ConsoleWeb.Router.DeviceController do
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
+            dc_used = 
+              case event.sub_category == "uplink_confirmed" || event.sub_category == "uplink_unconfirmed" do
+                true -> event.data["dc"]["used"]
+                false -> 0
+              end
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
               "frame_up" => event.data["frame_up"],
               "frame_down" => event.data["frame_down"],
               "total_packets" => device.total_packets + 1,
-              "dc_usage" => device.dc_usage + event.data["dc"]["used"],
+              "dc_usage" => device.dc_usage + dc_used,
             }, "router")
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: device, event: created_event } ->
-            cond do
-              organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
-                Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
-              organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
-                {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
-                ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(updated_org)
+            if event["sub_category"] == "uplink_confirmed" || event["sub_category"] == "uplink_unconfirmed" do
+              cond do
+                organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
+                  Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
+                organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
+                  {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
+                  ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(updated_org)
 
-                {:ok, updated_org}
-              true ->
-                {:error, "DC balance nonce inconsistent between router and console"}
+                  {:ok, updated_org}
+                true ->
+                  {:error, "DC balance nonce inconsistent between router and console"}
+              end
+            else
+              {:ok, organization}
             end
           end)
           |> Repo.transaction()
