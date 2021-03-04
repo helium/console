@@ -24,7 +24,6 @@ defmodule Console.Channels.Channel do
     field :time_first_uplink, :naive_datetime
 
     belongs_to :organization, Organization
-    many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
 
     timestamps()
   end

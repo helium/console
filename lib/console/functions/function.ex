@@ -16,7 +16,6 @@ defmodule Console.Functions.Function do
     field :active, :boolean
 
     belongs_to :organization, Organization
-    has_many :labels, Label
     timestamps()
   end
 

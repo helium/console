@@ -79,18 +79,6 @@ export const ALL_LABELS = gql`
   }
 `
 
-// For NavDrawer
-export const MENU_LABELS = gql`
-  query MenuLabelsQuery {
-    allLabels {
-      id,
-      name,
-      color,
-      device_count
-    }
-  }
-`
-
 // For DeviceShowLabelsTable
 export const PAGINATED_LABELS_BY_DEVICE = gql`
   query PaginatedLabelsByDeviceQuery ($page: Int, $pageSize: Int, $deviceId: ID!, $column: String, $order: String) {
