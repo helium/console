@@ -29,13 +29,6 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
-    devices = Enum.map(devices, fn d ->
-      if length(d.labels) > 0 do
-        Map.put(d, :channels, Ecto.assoc(d.labels, :channels) |> Repo.all() |> Enum.uniq())
-      else
-        Map.put(d, :channels, [])
-      end
-    end)
 
     render(conn, "devices.json", devices: devices)
   end

@@ -13,11 +13,6 @@ defmodule Console.Labels do
   alias Console.Channels
   alias Console.Organizations.Organization
 
-  def get_organization_label_count(organization) do
-    labels = from(d in Label, where: d.organization_id == ^organization.id) |> Repo.all()
-    length(labels)
-  end
-
   def get_label!(id), do: Repo.get!(Label, id)
   def get_label(id), do: Repo.get(Label, id)
   def get_label!(organization, id) do
@@ -46,7 +41,9 @@ defmodule Console.Labels do
     Repo.preload(labels, assoc)
   end
 
-  def get_label_by_name(name, organization_id), do: Repo.get_by(Label, [name: name, organization_id: organization_id])
+  def get_label_by_name(name, organization_id) do
+    Repo.get_by(Label, [name: name, organization_id: organization_id])
+  end
 
   def create_label(%Organization{} = organization, attrs \\ %{}) do
     count = get_organization_label_count(organization)
@@ -88,11 +85,6 @@ defmodule Console.Labels do
     Ecto.Multi.new()
       |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
         with {count, nil} <- from(dl in DevicesLabels, where: dl.label_id in ^label_ids) |> Repo.delete_all() do
-          {:ok, count}
-        end
-      end)
-      |> Ecto.Multi.run(:channels_labels, fn _repo, _ ->
-        with {count, nil} <- from(cl in ChannelsLabels, where: cl.label_id in ^label_ids) |> Repo.delete_all() do
           {:ok, count}
         end
       end)
@@ -146,7 +138,7 @@ defmodule Console.Labels do
     end
   end
 
-  def get_device_labels(device_id) do 
+  def get_device_labels(device_id) do
     from(dl in DevicesLabels, where: dl.device_id == ^device_id)
      |> Repo.all()
   end
@@ -226,28 +218,6 @@ defmodule Console.Labels do
     end
   end
 
-  def add_labels_to_channel(labels, channel, organization) do
-    labels_query = from(l in Label, where: l.id in ^labels and l.organization_id == ^organization.id, select: l)
-    all_labels = Repo.all(labels_query)
-
-    channels_labels = Enum.reduce(all_labels, [], fn label, acc ->
-      if Repo.get_by(ChannelsLabels, channel_id: channel.id, label_id: label.id) == nil do
-        acc ++ [%{ channel_id: channel.id, label_id: label.id }]
-      else
-        acc
-      end
-    end)
-
-    with {:ok, :ok} <- Repo.transaction(fn ->
-        Enum.each(channels_labels, fn attrs ->
-          Repo.insert!(ChannelsLabels.changeset(%ChannelsLabels{}, attrs))
-        end)
-      end)
-    do
-      {:ok, length(channels_labels), List.first(all_labels)}
-    end
-  end
-
   def add_labels_to_device(labels, device, organization) do
     labels_query = from(l in Label, where: l.id in ^labels and l.organization_id == ^organization.id, select: l)
     all_labels = Repo.all(labels_query)
@@ -270,45 +240,6 @@ defmodule Console.Labels do
     end
   end
 
-  def delete_labels_from_channel(labels, channel_id, organization) do
-    case Channels.get_channel(organization, channel_id) do
-      nil -> {:error}
-      _ ->
-        query = from(cl in ChannelsLabels, where: cl.label_id in ^labels and cl.channel_id == ^channel_id)
-        Repo.delete_all(query)
-    end
-  end
-
-  def add_function_to_labels(function, label_ids, organization) do
-    Repo.transaction(fn ->
-      Enum.each(label_ids, fn id ->
-        label = get_label!(organization, id)
-        label
-        |> Label.changeset(%{ "function_id" => function.id })
-        |> Repo.update!()
-      end)
-    end)
-  end
-
-  def create_labels_add_function(function, label_names, organization, user) do
-    Repo.transaction(fn ->
-      Enum.each(label_names, fn name ->
-        create_label!(organization, %{ "name" => name, "creator" => user.email, "organization_id" => organization.id, "function_id" => function.id })
-      end)
-    end)
-  end
-
-  def create_labels_add_channel(channel, label_names, organization, user) do
-    Repo.transaction(fn ->
-      labels = Enum.reduce(label_names, [], fn label, acc ->
-        # create a label, store the id, and add
-        new_label = create_label!(organization, %{"name" => label["name"], "creator" => user.email, "organization_id" => organization.id})
-        acc ++ [new_label.id]
-      end)
-      add_labels_to_channel(labels, channel, organization)
-    end)
-  end
-
   def create_labels_add_device(device, label_names, organization, user) do
     Repo.transaction(fn ->
       labels = Enum.reduce(label_names, [], fn label_name, acc ->
@@ -318,5 +249,10 @@ defmodule Console.Labels do
       end)
       add_labels_to_device(labels, device, organization)
     end)
+  end
+
+  defp get_organization_label_count(organization) do
+    labels = from(d in Label, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(labels)
   end
 end

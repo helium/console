@@ -7,13 +7,10 @@ import LabelAddDeviceModal from './LabelAddDeviceModal'
 import DeleteDeviceModal from '../devices/DeleteDeviceModal';
 import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import LabelShowTable from './LabelShowTable'
-import LabelShowFunctionsAttached from './LabelShowFunctionsAttached'
-import LabelShowChannelsAttached from './LabelShowChannelsAttached'
 import DashboardLayout from '../common/DashboardLayout'
 import Sidebar from '../common/Sidebar'
 import Debug from '../common/Debug'
 import Downlink from '../common/Downlink'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
@@ -198,10 +195,6 @@ class LabelShow extends Component {
           openDeleteDeviceModal={this.openDeleteDeviceModal}
         />
 
-        <LabelShowChannelsAttached channels={label.channels} label={label}/>
-
-        <LabelShowFunctionsAttached label={label} func={label.function}/>
-
         <UpdateLabelModal
           handleUpdateLabel={this.handleUpdateLabel}
           handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
@@ -259,7 +252,6 @@ class LabelShow extends Component {
               toggle={this.handleToggleDownlink}
               sidebarIcon={<img src={DownlinkImage}/>}
               iconBackground='#40A9FF'
-              disabled={label.channels.filter(c => c.type === 'http').length === 0}
               disabledMessage='Please attach an HTTP integration to use Downlink'
               iconPosition='middle'
               message='Send a manual downlink using an HTTP integration'

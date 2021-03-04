@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import FunctionIndexTable from './FunctionIndexTable'
 import DeleteFunctionModal from './DeleteFunctionModal'
-import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button } from 'antd';
@@ -11,7 +10,6 @@ import { CodeOutlined } from '@ant-design/icons';
 class FunctionIndex extends Component {
   state = {
     showDeleteFunctionModal: false,
-    showRemoveFunctionLabelModal: false,
     functionSelected: null,
     labelToRemove: null,
   }
@@ -28,16 +26,8 @@ class FunctionIndex extends Component {
     this.setState({ showDeleteFunctionModal: false })
   }
 
-  openRemoveFunctionLabelModal = (functionSelected, labelToRemove) => {
-    this.setState({ showRemoveFunctionLabelModal: true, functionSelected, labelToRemove })
-  }
-
-  closeRemoveFunctionLabelModal = () => {
-    this.setState({ showRemoveFunctionLabelModal: false })
-  }
-
   render() {
-    const { showDeleteFunctionModal, showRemoveFunctionLabelModal } = this.state
+    const { showDeleteFunctionModal } = this.state
 
     return (
       <DashboardLayout
@@ -60,20 +50,12 @@ class FunctionIndex extends Component {
         <FunctionIndexTable
           history={this.props.history}
           openDeleteFunctionModal={this.openDeleteFunctionModal}
-          openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
         />
 
         <DeleteFunctionModal
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={this.state.functionSelected}
-        />
-
-        <RemoveFunctionLabelModal
-          open={showRemoveFunctionLabelModal}
-          onClose={this.closeRemoveFunctionLabelModal}
-          functionSelected={this.state.functionSelected}
-          labelToRemove={this.state.labelToRemove}
         />
       </DashboardLayout>
     )

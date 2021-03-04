@@ -14,16 +14,6 @@ export const LABEL_FRAGMENT = gql`
       id,
       last_connected
     }
-    channels {
-      name,
-      id,
-      type,
-      downlink_token
-    }
-    function {
-      id,
-      name
-    }
     label_notification_settings {
       key,
       value,
@@ -85,15 +75,6 @@ export const ALL_LABELS = gql`
       id,
       name,
       color,
-      channels {
-        id,
-        name
-      },
-      function {
-        id,
-        name,
-        format
-      }
     }
   }
 `
@@ -118,14 +99,6 @@ export const PAGINATED_LABELS_BY_DEVICE = gql`
         name,
         id,
         color,
-        channels {
-          id,
-          name
-        },
-        function {
-          id,
-          name
-        },
         inserted_at
       },
       totalEntries,

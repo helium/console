@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import get from 'lodash/get'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { PAGINATED_CHANNELS } from '../../graphql/channels'
 import withGql from '../../graphql/withGql'
@@ -14,7 +13,7 @@ import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 
-class ChannelsTable extends Component {
+class ChannelIndexTable extends Component {
   state = {
     page: 1,
     pageSize: 10
@@ -62,34 +61,6 @@ class ChannelsTable extends Component {
       {
         title: 'Type',
         dataIndex: 'type_name'
-      },
-      {
-        title: 'Labels',
-        dataIndex: 'labels',
-        render: (labels, record) => {
-          return <React.Fragment>
-            {
-              labels.map(l => (
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    color={l.color}
-                    hasIntegrations
-                    hasFunction={l.function}
-                    onClick={e => {
-                      e.stopPropagation();
-                      this.props.history.push(`/labels/${l.id}`)}
-                    }
-                  />
-              ))
-            }
-          </React.Fragment>
-        }
-      },
-      {
-        title: 'Devices',
-        dataIndex: 'device_count',
-        render: text => text ? text : 0
       },
       {
         title: '',
@@ -191,5 +162,5 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, null)(
-  withGql(ChannelsTable, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
+  withGql(ChannelIndexTable, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
 )

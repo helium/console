@@ -17,7 +17,7 @@ defmodule ConsoleWeb.DeviceController do
   def create(conn, %{"device" => device_params, "label" => label}) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
-    device_params = 
+    device_params =
       Map.merge(device_params, %{
         "organization_id" => current_organization.id
       })
@@ -54,7 +54,6 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
-      broadcast_router_update_devices(device)
 
       if device_params["active"] != nil do
         ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
@@ -75,22 +74,9 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, id) |> Repo.preload([:labels])
 
-    # grab info for notifications before device(s) deletion
-    deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
-
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
-      broadcast_router_update_devices(device)
-
-      { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-      details = %{
-        device_name: deleted_device.device_name,
-        deleted_by: conn.assigns.current_user.email,
-        time: time
-      }
-      LabelNotificationEvents.notify_label_event(deleted_device.labels, "device_deleted", details)
-      LabelNotificationEvents.delete_unsent_label_events_for_device(deleted_device.device_id)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -102,12 +88,6 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
-    # grab info for notifications before device(s) deletion
-    deleted_devices = Enum.map(
-      list_devices,
-      fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
-    )
-
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
@@ -115,18 +95,6 @@ defmodule ConsoleWeb.DeviceController do
         label = Labels.get_label(current_organization, label_id)
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       end
-
-      # now that devices have been deleted, send notification if applicable
-      { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-      Enum.each(deleted_devices, fn d ->
-        details = %{
-          device_name: d.device_name,
-          deleted_by: conn.assigns.current_user.email,
-          time: time
-        }
-        LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details)
-        LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
-      end)
 
       conn
       |> put_resp_header("message", "Devices deleted successfully")
@@ -137,27 +105,10 @@ defmodule ConsoleWeb.DeviceController do
   def delete(conn, _params) do
     organization_id = conn.assigns.current_organization.id
 
-    # grab info for notifications before device(s) deletion
-    deleted_devices = Enum.map(
-      Devices.get_devices(organization_id) |> Repo.preload([:labels]),
-      fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
-    )
-
-    Devices.delete_all_devices_for_org(organization_id)
+    device = organization_id
+    |> Devices.delete_all_devices_for_org()
     ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{organization_id}:device_list_update", %{})
     ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
-
-    # now that devices have been deleted, send notification if applicable
-    { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-    Enum.each(deleted_devices, fn d ->
-      details = %{
-        device_name: d.device_name,
-        deleted_by: conn.assigns.current_user.email,
-        time: time
-      }
-      LabelNotificationEvents.notify_label_event(d.labels, "device_deleted", details)
-      LabelNotificationEvents.delete_unsent_label_events_for_device(d.device_id)
-    end)
 
     conn
     |> put_resp_header("message", "Deleted all devices successfully")

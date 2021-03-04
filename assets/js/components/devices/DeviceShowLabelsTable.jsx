@@ -57,34 +57,9 @@ class DeviceShowLabelsTable extends Component {
         dataIndex: 'name',
         render: (text, record) => (
           <React.Fragment>
-            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
+            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
           </React.Fragment>
         )
-      },
-      {
-        title: 'Associated Integrations',
-        dataIndex: 'channels',
-        render: (text, record) => {
-          return (
-          <div>
-            {
-              record.channels.length > 0 ? record.channels.map(c => (
-                <a
-                  key={c.id}
-                  style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
-                >
-                  {c.name}
-                </a>
-              )) : <Text type="danger">None</Text>
-            }
-          </div>
-        )}
       },
       {
         title: 'Date Activated',
@@ -122,13 +97,10 @@ class DeviceShowLabelsTable extends Component {
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
-    let allIntegrations = labels_by_device && labels_by_device.entries.map(e => (e.channels.map(c => c.id))).flat();
-    let numOfUniqueIntegrations = allIntegrations.filter((item, index) => (allIntegrations.indexOf(item) === index)).length;
-
     return (
       <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${numOfEntries} Label${numOfEntries > 1 || numOfEntries === 0 ? 's' : ''} Attached providing ${numOfUniqueIntegrations} Integration${numOfUniqueIntegrations > 1 || numOfUniqueIntegrations === 0 ? 's' : ''}`}
+        title={`${numOfEntries} Label${numOfEntries > 1 || numOfEntries === 0 ? 's' : ''} Attached`}
         extra={
           <Button
             type="primary"

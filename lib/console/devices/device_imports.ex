@@ -27,5 +27,4 @@ defmodule Console.Devices.DeviceImports do
     |> cast(attrs, [:user_id, :type, :status, :successful_devices, :organization_id])
     |> validate_required([:user_id, :organization_id, :type, :status])
   end
-
 end
