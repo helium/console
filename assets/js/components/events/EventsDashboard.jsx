@@ -244,6 +244,7 @@ class EventsDashboard extends Component {
   render() {
     const { rows, expandedRowKeys, expandAll } = this.state
 
+    // events will come in separately and related events will have same router_uuid
     const aggregatedRows = rows ? Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
       let firstEvent = orderedRouterEvents[0];
