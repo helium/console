@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { withRouter, Link, NavLink } from 'react-router-dom'
-import Logo from '../../../img/logo-horizontalwhite.svg'
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

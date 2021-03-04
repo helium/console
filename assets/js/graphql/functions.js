@@ -8,19 +8,6 @@ export const FUNCTION_FRAGMENT = gql`
     type,
     format,
     active,
-    labels {
-      id,
-      name,
-      color,
-      channels {
-        name,
-        id,
-      },
-      function {
-        id,
-        name
-      }
-    }
   }
 `
 
@@ -46,13 +33,4 @@ export const FUNCTION_SHOW = gql`
     }
   }
   ${FUNCTION_FRAGMENT}
-`
-
-export const ALL_FUNCTIONS = gql`
-  query AllFunctionsQuery {
-    allFunctions {
-      id,
-      name
-    }
-  }
 `

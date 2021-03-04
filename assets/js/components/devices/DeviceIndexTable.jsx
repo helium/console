@@ -21,7 +21,6 @@ const { Option } = Select
 const columnKeyNameText = {
   dev_eui: "Device EUI",
   labels: "Labels",
-  channels: "Integrations",
   frame_up: "Frame Up",
   frame_down: "Frame Down",
   total_packets: "Packets Transferred",
@@ -39,7 +38,6 @@ class DeviceIndexTable extends Component {
     columnsToShow: {
       dev_eui: true,
       labels: true,
-      channels: true,
       frame_up: true,
       frame_down: true,
       total_packets: true,
@@ -137,8 +135,6 @@ class DeviceIndexTable extends Component {
                       key={l.name}
                       text={l.name}
                       color={l.color}
-                      hasIntegrations={l.channels.length > 0}
-                      hasFunction={l.function}
                       onClick={e => {
                         e.stopPropagation();
                         history.push(`/labels/${l.id}`)}
@@ -151,8 +147,6 @@ class DeviceIndexTable extends Component {
                     text={l.name}
                     color={l.color}
                     closable
-                    hasIntegrations={l.channels.length > 0}
-                    hasFunction={l.function}
                     onClose={e => {
                       e.preventDefault()
                       this.props.openDevicesRemoveLabelModal([l], record)
@@ -167,30 +161,6 @@ class DeviceIndexTable extends Component {
             }
           </React.Fragment>
         }
-      },
-      {
-        title: 'Integrations',
-        dataIndex: 'channels',
-        render: (text, record) => (
-          <div>
-            {
-              record.channels.map(c => (
-                <a
-                  key={c.id}
-                  style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
-                >
-                  {c.name}
-                </a>
-              ))
-            }
-          </div>
-        )
       },
       {
         title: 'Frame Up',

@@ -6,17 +6,6 @@ export const ALL_RESOURCES = gql`
       id,
       name,
       color,
-      channels {
-        id,
-        name,
-        type_name,
-        type
-      },
-      function {
-        id,
-        name,
-        format
-      }
     }
     allFunctions {
       id,

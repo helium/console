@@ -5,7 +5,6 @@ import { createDevice } from '../../actions/device'
 import { displayError } from '../../util/messages'
 import withGql from '../../graphql/withGql'
 import { ALL_LABELS } from '../../graphql/labels'
-import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';

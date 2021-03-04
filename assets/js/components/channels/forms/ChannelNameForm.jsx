@@ -1,8 +1,6 @@
 import React from 'react';
-import { Typography, Input, Form } from 'antd';
+import { Typography, Input, Form, Button, Card } from 'antd';
 const { Text } = Typography
-import { Card } from 'antd';
-
 
 const ChannelNameForm = (props) => (
   <div>
@@ -18,6 +16,16 @@ const ChannelNameForm = (props) => (
           />
         </Form.Item>
       </Form>
+      <div style={{ marginTop: 20 }}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={props.handleStep3Submit}
+          disabled={!props.validInput}
+        >
+          Add Integration
+        </Button>
+      </div>
     </Card>
   </div>
 )
