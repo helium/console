@@ -173,7 +173,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
             dc_used = 
-              case event.sub_category == "uplink_confirmed" || event.sub_category == "uplink_unconfirmed" do
+              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
                 true -> event.data["dc"]["used"]
                 false -> 0
               end
@@ -186,7 +186,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             }, "router")
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: device, event: created_event } ->
-            if event["sub_category"] == "uplink_confirmed" || event["sub_category"] == "uplink_unconfirmed" do
+            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] do
               cond do
                 organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
                   Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
