@@ -245,7 +245,7 @@ class EventsDashboard extends Component {
     const { rows, expandedRowKeys, expandAll } = this.state
 
     // events will come in separately and related events will have same router_uuid
-    const aggregatedRows = rows ? Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
+    const aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
       let firstEvent = orderedRouterEvents[0];
 
@@ -272,7 +272,7 @@ class EventsDashboard extends Component {
           event => this.isDataString(event.data) ? JSON.parse(event.data).integration : event.data.integration
         ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description }))
       })
-    }) : [];
+    });
 
     const columns = [
       {
