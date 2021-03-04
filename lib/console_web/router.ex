@@ -45,7 +45,6 @@ defmodule ConsoleWeb.Router do
     post "/generic/devices/import", DeviceController, :import_generic
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
-    post "/labels/remove_function", LabelController, :remove_function
     post "/labels/debug", LabelController, :debug
     post "/labels/swap_label", LabelController, :swap_label
     post "/labels/update_notification_settings", LabelNotificationSettingsController, :update
@@ -56,8 +55,6 @@ defmodule ConsoleWeb.Router do
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
-    post "/channels_labels", LabelController, :add_labels_to_channel
-    post "/channels_labels/delete", LabelController, :delete_labels_from_channel
 
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]
