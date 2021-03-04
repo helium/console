@@ -27,23 +27,6 @@ defmodule ConsoleWeb.Router.DeviceView do
       organization_id: device.organization_id,
       active: device.active,
     }
-
-    device_attrs =
-      if Map.has_key?(device, :adr_allowed) do
-        Map.put(device_attrs, :adr_allowed, true)
-      else
-        device_attrs
-      end
-
-    if Map.has_key?(device, :multi_buy) do
-      Map.put(device_attrs, :multi_buy, device.multi_buy)
-      |> ChannelView.append_channels(device.channels)
-      |> LabelView.append_labels(device.labels)
-    else
-      device_attrs
-      |> ChannelView.append_channels(device.channels)
-      |> LabelView.append_labels(device.labels)
-    end
   end
 
   def render("device_short.json", %{device: device}) do

@@ -5,6 +5,7 @@ import { AutoComplete } from 'antd';
 import find from 'lodash/find'
 import LabelTag from './LabelTag'
 
+// new device modal
 class LabelAppliedNew extends Component {
   state = {
     searchLabels: []
@@ -42,8 +43,6 @@ class LabelAppliedNew extends Component {
               <LabelTag
                 text={l.name}
                 color={l.color}
-                hasIntegrations={l.channels.length > 0}
-                hasFunction={find(this.props.allLabels, { id: l.id }).function}
               />
             ),
             value: l.name

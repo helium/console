@@ -30,13 +30,4 @@ defmodule ConsoleWeb.InvitationView do
       type: "invitations"
     }
   end
-
-  def append_invitations(json, invitations) do
-    if Ecto.assoc_loaded?(invitations) do
-      invitations_json = render_many(invitations, InvitationView, "invitation.json")
-      Map.put(json, :invitations, invitations_json)
-    else
-      json
-    end
-  end
 end

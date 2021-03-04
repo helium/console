@@ -17,7 +17,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :last_connected, :naive_datetime
     field :labels, list_of(:label)
-    field :channels, list_of(:channel)
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
@@ -61,8 +60,6 @@ defmodule ConsoleWeb.Schema do
     field :creator, :string
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
-    field :channels, list_of(:channel)
-    field :function, :function
     field :device_count, :integer
     field :multi_buy, :integer
     field :adr_allowed, :boolean
@@ -83,9 +80,6 @@ defmodule ConsoleWeb.Schema do
     field :aws_access_key, :string
     field :topic, :string
     field :active, :boolean
-    field :labels, list_of(:label)
-    field :devices, list_of(:device)
-    field :device_count, :integer
     field :downlink_token, :string
     field :credentials, type: :credentials
     field :payload_template, :string
@@ -153,7 +147,6 @@ defmodule ConsoleWeb.Schema do
     field :type, :string
     field :format, :string
     field :active, :boolean
-    field :labels, list_of(:label)
   end
 
   object :event do
@@ -229,10 +222,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.events/2
     end
 
-    field :all_devices, list_of(:device) do
-      resolve &Console.Devices.DeviceResolver.all/2
-    end
-
     @desc "Get paginated labels"
     paginated field :labels, :paginated_labels do
       resolve(&Console.Labels.LabelResolver.paginate/2)
@@ -261,23 +250,10 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Channels.ChannelResolver.paginate/2)
     end
 
-    @desc "Get all channels under current organization"
-    field :organization_channels, list_of(:channel) do
-      resolve &Console.Channels.ChannelResolver.all/2
-    end
-
     @desc "Get a single channel"
     field :channel, :channel do
       arg :id, non_null(:id)
       resolve &Console.Channels.ChannelResolver.find/2
-    end
-
-    field :all_channels, list_of(:channel) do
-      resolve &Console.Channels.ChannelResolver.all/2
-    end
-
-    field :all_functions, list_of(:function) do
-      resolve &Console.Functions.FunctionResolver.all/2
     end
 
     @desc "Get paginated memberships"

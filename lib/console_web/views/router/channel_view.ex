@@ -23,14 +23,5 @@ defmodule ConsoleWeb.Router.ChannelView do
         downlink_token: channel.downlink_token,
         payload_template: channel.payload_template,
       }
-    case Map.get(channel, :function) do
-      nil -> channel_json
-      _ -> channel_json |> FunctionView.append_function(channel.function)
-    end
-  end
-
-  def append_channels(json, channels) do
-    channels_json = render_many(channels, ChannelView, "channel.json")
-    Map.put(json, :channels, channels_json)
   end
 end

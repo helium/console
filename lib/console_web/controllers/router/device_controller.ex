@@ -30,76 +30,12 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
-    devices = Enum.map(devices, fn d ->
-      if length(d.labels) > 0 do
-        Map.put(d, :channels, Ecto.assoc(d.labels, :channels) |> Repo.all() |> Enum.uniq())
-      else
-        Map.put(d, :channels, [])
-      end
-    end)
 
     render(conn, "devices.json", devices: devices)
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id) |> Repo.preload([labels: [:channels, :function]])
-    device =
-      if length(device.labels) > 0 do
-        channels_with_functions_and_channels =
-          device.labels
-          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) > 0 end)
-          |> Enum.map(fn l ->
-            Enum.map(l.channels, fn c -> Map.put(c, :function, l.function) end)
-          end)
-          |> List.flatten()
-
-        channels_with_functions_no_channels =
-          device.labels
-          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) == 0 end)
-          |> Enum.map(fn l ->
-            %{
-              function: l.function,
-              id: "no_integration_id",
-              name: "Console Debug Integration",
-              type: "console",
-              credentials: %{},
-              active: false,
-              organization_id: "no_organization_id",
-              downlink_token: "no_downlink_token",
-              payload_template: nil,
-            }
-          end)
-          |> List.flatten()
-
-        channels_without_functions =
-          device.labels
-          |> Enum.filter(fn l -> l.function == nil || l.function.active == false end)
-          |> Enum.map(fn l -> l.channels end)
-          |> List.flatten()
-          |> Enum.uniq()
-          |> Enum.map(fn c -> Map.put(c, :function, nil) end)
-
-        adr_allowed = device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.find(fn s -> s == true end)
-        device =
-          case adr_allowed do
-            true -> Map.put(device, :adr_allowed, true)
-            _ -> device
-          end
-
-        multi_buy_value = device.labels |> Enum.map(fn l -> l.multi_buy end) |> Enum.max
-        case multi_buy_value do
-          0 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-          10 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, 9999) #9999 is the value for router to indicate all available packets
-          _ ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, multi_buy_value)
-        end
-      else
-        Map.put(device, :channels, [])
-      end
+    device = Devices.get_device!(id) |> Repo.preload([:labels])
 
     render(conn, "show.json", device: device)
   end

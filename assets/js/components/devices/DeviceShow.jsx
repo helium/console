@@ -208,11 +208,6 @@ class DeviceShow extends Component {
     } = this.state
     const { loading, error, device } = this.props.deviceShowQuery;
 
-    const channels = device && device.labels.reduce(
-      (acc, label) => acc.concat(label.channels.filter(c => c.type === 'http')),
-      []
-    );
-
     if (loading) return <DeviceShowSkeleton user={this.props.user} />;
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
 
@@ -508,21 +503,19 @@ class DeviceShow extends Component {
                 iconBackground='#40A9FF'
                 iconPosition='middle'
                 message='Send a manual downlink using an HTTP integration'
-                disabled={channels.length === 0}
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
               >
                 <Downlink
                   src="DeviceShow"
                   onSend={(payload, confirm, port, position) => {
-                    analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
-                    this.props.sendDownlinkMessage(
-                      payload,
-                      port,
-                      confirm,
-                      position,
-                      [device.id],
-                      channels
-                    )
+                    // this.props.sendDownlinkMessage(
+                    //   payload,
+                    //   port,
+                    //   confirm,
+                    //   position,
+                    //   [device.id],
+                    //   channels
+                    // )
                   }}
                   onClear={() => {
                     analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": [device.id] });

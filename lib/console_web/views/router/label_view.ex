@@ -13,9 +13,4 @@ defmodule ConsoleWeb.Router.LabelView do
       organization_id: label.organization_id,
     }
   end
-
-  def append_labels(json, labels) do
-    labels_json = render_many(labels, LabelView, "label.json")
-    Map.put(json, :labels, labels_json)
-  end
 end

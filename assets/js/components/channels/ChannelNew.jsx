@@ -18,14 +18,10 @@ import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
 import ChannelPayloadTemplate from './ChannelPayloadTemplate'
-import LabelTag from '../common/LabelTag'
-import LabelsAppliedNew from '../common/LabelsAppliedNew';
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
-import { ALL_LABELS } from '../../graphql/labels'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
-import DecoderForm from './DecoderForm';
 import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
 const { Text } = Typography
 const { Option } = Select
@@ -39,11 +35,7 @@ class ChannelNew extends Component {
     showNextSteps: false,
     credentials: {},
     channelName: "",
-    labels: {},
     templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
-    func: {
-      format: 'cayenne'
-    }
   }
 
   componentDidMount() {
@@ -57,7 +49,6 @@ class ChannelNew extends Component {
         showNextSteps: false,
         credentials: {},
         channelName: "",
-        labels: [],
         templateBody: "",
         validInput: true
       })
@@ -69,22 +60,6 @@ class ChannelNew extends Component {
 
   handleStep3Input = (e) => {
     this.setState({ channelName: e.target.value})
-  }
-
-  handleDecoderSelection = payload => {
-    let func;
-    if (payload.format === 'custom') {
-      func = {
-        format: 'custom',
-        id: payload.func ? payload.func.id : null
-      };
-    } else {
-      func = {
-        name: this.state.channelName,
-        format: 'cayenne'
-      }
-    }
-    this.setState({ func, templateBody: payload.format === 'cayenne' ? adafruitTemplate : "" });
   }
 
   getRootType = (type) => {
@@ -106,7 +81,7 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody, func } = this.state
+    const { channelName, type, credentials, templateBody } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     let payload = {
       channel: {
@@ -116,16 +91,7 @@ class ChannelNew extends Component {
         payload_template: type === "http" || type === "mqtt" || type === "adafruit" ? templateBody : undefined,
       }
     };
-    if (type === 'adafruit') {
-      payload.func = func;
-    } else {
-      payload.labels = labels;
-    }
     this.props.createChannel(payload);
-  }
-
-  handleLabelsUpdate = (labels) => {
-    this.setState({ labels });
   }
 
   handleTemplateUpdate = (templateBody) => {
@@ -166,7 +132,7 @@ class ChannelNew extends Component {
   }
 
   render() {
-    const { showNextSteps, type, labels } = this.state
+    const { showNextSteps, type } = this.state
 
     return(
       <DashboardLayout
@@ -208,46 +174,20 @@ class ChannelNew extends Component {
           </Card>
         )}
         { showNextSteps && (
-            <ChannelNameForm
-              channelName={this.state.channelName}
-              onInputUpdate={this.handleStep3Input}
-            />
+          <ChannelNameForm
+            channelName={this.state.channelName}
+            onInputUpdate={this.handleStep3Input}
+            validInput={this.state.validInput}
+            handleStep3Submit={this.handleStep3Submit}
+          />
         )}
-        { showNextSteps && type === 'adafruit' && (
-          <DecoderForm onChange={this.handleDecoderSelection}>
-            <div style={{ marginTop: 20 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={this.handleStep3Submit}
-                disabled={!this.state.validInput}
-              >
-                Add Integration
-              </Button>
-            </div>
-          </DecoderForm>
-        )}
-        { showNextSteps && type !== 'adafruit' && (
-          <Card title={"Step 4 - Apply Integration to Label (Can be added later)"}>
-            <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
-            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
-            <div style={{ marginTop: 20 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={this.handleStep3Submit}
-                disabled={!this.state.validInput}
-              >
-                Add Integration
-              </Button>
-            </div>
-          </Card>
-        )}
+
+
         { showNextSteps && (type === "http" || type === "mqtt") && (
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody}
             handleTemplateUpdate={this.handleTemplateUpdate}
-            functions={labels.labelsApplied ? labels.labelsApplied.map(l => l.function) : []}
+            functions={[]}
             from="channelNew"
           />
         )}

@@ -2,13 +2,12 @@ import React, { Component } from 'react'
 import { Tag } from 'antd';
 import { ApiOutlined } from '@ant-design/icons';
 
-const LabelTag = ({ text, color, style, closable, onClose, hasIntegrations, isNew, hasFunction, onClick }) => {
+const LabelTag = ({ text, color, style, closable, onClose, isNew, onClick }) => {
   let labelColor = color ? color : "geekblue"
-  if (hasFunction) labelColor = labelColorsHex[labelColor]
 
   return (
     <Tag style={style} color={labelColor} closable={closable} onClose={onClose} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default'}}>
-      {hasIntegrations ? <ApiOutlined style={{ fontSize: 14 }}/> : "" } {isNew && "NEW -"} {text}
+      {isNew && "NEW -"} {text}
     </Tag>
   )
 }
