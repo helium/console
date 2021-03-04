@@ -14,13 +14,12 @@ defmodule Console.Devices do
     Repo.all(Device)
   end
 
-  def get_organization_device_count(organization) do
-    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
-    length(devices)
-  end
-
+  def get_device(id), do: Repo.get(Device, id)
   def get_device!(id), do: Repo.get!(Device, id)
 
+  def get_device(organization, id) do
+     Repo.get_by(Device, [id: id, organization_id: organization.id])
+  end
   def get_device!(organization, id) do
      Repo.get_by!(Device, [id: id, organization_id: organization.id])
   end
@@ -77,7 +76,7 @@ defmodule Console.Devices do
       |> Repo.one()
   end
 
-  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
+  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization]) do
     Repo.preload(device, assoc)
   end
 
@@ -149,7 +148,6 @@ defmodule Console.Devices do
   end
 
   def create_import(%Organization{} = organization, user_id, type) do
-
     %DeviceImports{}
     |> DeviceImports.create_changeset(%{
       organization_id: organization.id,

@@ -23,8 +23,4 @@ defmodule ConsoleWeb.OrganizationView do
       role: organization.role
     }
   end
-
-  def append_organization(json, organization) do
-    Map.put(json, :organization, render_one(organization, OrganizationView, "organization.json"))
-  end
 end

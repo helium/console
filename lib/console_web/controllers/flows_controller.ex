@@ -39,20 +39,6 @@ defmodule ConsoleWeb.FlowsController do
         {:error, "failed to remove functions from labels"}
       end
     end)
-    |> Ecto.Multi.run(:removed_channels, fn _repo, _ ->
-      count =
-        Enum.map(channels_to_remove, fn edge ->
-          {1, _} = Labels.delete_labels_from_channel([Map.get(edge, "source")], Map.get(edge, "target"), current_organization)
-          1
-        end)
-        |> Enum.sum()
-
-      if count == Enum.count(channels_to_remove) do
-        {:ok, "success"}
-      else
-        {:error, "failed to remove integrations from labels"}
-      end
-    end)
     |> Ecto.Multi.run(:added_functions, fn _repo, _ ->
       count =
         Enum.map(functions_to_add, fn edge ->
@@ -67,22 +53,6 @@ defmodule ConsoleWeb.FlowsController do
         {:ok, "success"}
       else
         {:error, "failed to add functions to labels"}
-      end
-    end)
-    |> Ecto.Multi.run(:added_channels, fn _repo, _ ->
-      count =
-        Enum.map(channels_to_add, fn edge ->
-          channel = Channels.get_channel!(current_organization, Map.get(edge, "target"))
-
-          {:ok, 1, _} = Labels.add_labels_to_channel([Map.get(edge, "source")], channel, current_organization)
-          1
-        end)
-        |> Enum.sum()
-
-      if count == Enum.count(channels_to_add) do
-        {:ok, "success"}
-      else
-        {:error, "failed to add integrations to labels"}
       end
     end)
     |> Repo.transaction()

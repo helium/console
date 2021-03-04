@@ -5,13 +5,10 @@ import { bindActionCreators } from 'redux';
 import withGql from '../../graphql/withGql'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import LabelsAppliedExisting from '../common/LabelsAppliedExisting'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
-import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
 import { FUNCTION_SHOW } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
-import { updateLabel, createLabel } from '../../actions/label'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
 import { PauseOutlined, DeleteOutlined, SaveOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -37,9 +34,6 @@ class FunctionShow extends Component {
     body: "",
     codeUpdated: false,
     showDeleteFunctionModal: false,
-    showRemoveFunctionLabelModal: false,
-    functionSelected: null,
-    labelToRemove: null,
   }
 
   componentDidMount() {
@@ -96,37 +90,16 @@ class FunctionShow extends Component {
     })
   }
 
-  openDeleteFunctionModal = (functionSelected) => {
-    this.setState({ showDeleteFunctionModal: true, functionSelected })
+  openDeleteFunctionModal = () => {
+    this.setState({ showDeleteFunctionModal: true })
   }
 
   closeDeleteFunctionModal = () => {
     this.setState({ showDeleteFunctionModal: false })
   }
 
-  openRemoveFunctionLabelModal = (labelToRemove) => {
-    const fxn = this.props.functionShowQuery.function
-    this.setState({ showRemoveFunctionLabelModal: true, functionSelected: fxn, labelToRemove })
-  }
-
-  closeRemoveFunctionLabelModal = () => {
-    this.setState({ showRemoveFunctionLabelModal: false })
-  }
-
-  updateLabelFunction = (label_id) => {
-    const function_id = this.props.match.params.id
-    this.props.updateLabel(label_id, { function_id })
-    analyticsLogger.logEvent("ACTION_ADD_EXISTING_LABEL_TO_FUNCTION", { "function_id": function_id, "label_id": label_id })
-  }
-
-  createLabelAttachFunction = (name) => {
-    const function_id = this.props.match.params.id
-    this.props.createLabel({ name, function_id }, false)
-    analyticsLogger.logEvent("ACTION_ADD_NEW_LABEL_TO_FUNCTION", { "function_id": function_id, "label_name": name })
-  }
-
   render() {
-    const {name, type, format, body, codeUpdated, showDeleteFunctionModal, showRemoveFunctionLabelModal} = this.state
+    const {name, type, format, body, codeUpdated, showDeleteFunctionModal } = this.state
     const { loading, error } = this.props.functionShowQuery
     const fxn = this.props.functionShowQuery.function
 
@@ -166,7 +139,7 @@ class FunctionShow extends Component {
               icon={<DeleteOutlined />}
               onClick={e => {
                 e.stopPropagation()
-                this.openDeleteFunctionModal(fxn)
+                this.openDeleteFunctionModal()
               }}
             >
               Delete Function
@@ -174,9 +147,7 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <Card
-
- title="Function Details">
+        <Card title="Function Details">
           <Text>Update Function</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
@@ -243,33 +214,11 @@ class FunctionShow extends Component {
           )
         }
 
-        <UserCan>
-          <Card
-            title="Labels Applied To">
-            <Text style={{marginBottom: 20, display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
-
-            <LabelsAppliedExisting
-              labels={fxn.labels}
-              updateLabelFunction={this.updateLabelFunction}
-              createLabelAttachFunction={this.createLabelAttachFunction}
-              openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
-              current_function={fxn}
-            />
-          </Card>
-        </UserCan>
-
         <DeleteFunctionModal
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
-          functionToDelete={this.state.functionSelected}
+          functionToDelete={fxn}
           redirect
-        />
-
-        <RemoveFunctionLabelModal
-          open={showRemoveFunctionLabelModal}
-          onClose={this.closeRemoveFunctionLabelModal}
-          functionSelected={this.state.functionSelected}
-          labelToRemove={this.state.labelToRemove}
         />
       </DashboardLayout>
     )
@@ -283,7 +232,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction, updateFunction, updateLabel, createLabel }, dispatch);
+  return bindActionCreators({ deleteFunction, updateFunction }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

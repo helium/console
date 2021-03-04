@@ -24,17 +24,4 @@ defmodule ConsoleWeb.DeviceView do
       errors: [error]
     }
   end
-
-  def render("events.json", %{events: events}) do
-    render_many(events, EventView, "event.json")
-  end
-
-  defp append_events(json, events) do
-    if Ecto.assoc_loaded?(events) do
-      events_json = render_many(events, EventView, "event.json")
-      Map.put(json, :events, events_json)
-    else
-      json
-    end
-  end
 end

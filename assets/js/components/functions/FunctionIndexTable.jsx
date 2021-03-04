@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom'
 import get from 'lodash/get'
-import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
@@ -70,44 +69,6 @@ class FunctionIndexTable extends Component {
         title: 'Type',
         dataIndex: 'format',
         render: text => <span>{functionFormats[text]}</span>
-      },
-      {
-        title: 'Applied To',
-        dataIndex: 'labels',
-        render: (labels, record) => {
-          return <React.Fragment>
-            {
-              labels.map(l => (
-                <UserCan
-                  key={l.id}
-                  alternate={
-                    <LabelTag
-                      key={l.name}
-                      text={l.name}
-                      color={l.color}
-                      hasIntegrations={l.channels && l.channels.length > 0}
-                      hasFunction
-                    />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    color={l.color}
-                    closable
-                    hasIntegrations={l.channels && l.channels.length > 0}
-                    hasFunction
-                    onClose={e => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      this.props.openRemoveFunctionLabelModal(record, l)
-                    }}
-                  />
-                </UserCan>
-              ))
-            }
-          </React.Fragment>
-        }
       },
       {
         title: '',

@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
-import LabelsAppliedNew from '../common/LabelsAppliedNew'
 import FunctionValidator from './FunctionValidator'
-import FunctionMoveLabelModal from './FunctionMoveLabelModal'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
@@ -20,7 +18,6 @@ class FunctionNew extends Component {
     type: null,
     format: null,
     body: "function Decoder(bytes, port) { \n\n  return decoded; \n}",
-    labels: null,
   }
 
   componentDidMount() {
@@ -35,27 +32,10 @@ class FunctionNew extends Component {
 
   handleFunctionUpdate = body => this.setState({ body })
 
-  handleLabelsUpdate = labels => {
-    this.setState({ labels })
-  }
-
-  confirmOrOpenModal = (label, openModal, confirm) => {
-    if (label.function) {
-      openModal(label);
-    } else {
-      confirm(label);
-    }
-  }
 
   handleSubmit = () => {
-    const {name, type, format, body, labels} = this.state
+    const {name, type, format, body} = this.state
     const fxn = { name, type, format, body }
-    if (labels) {
-      fxn.labels = {
-        labelsApplied: labels.labelsApplied.map(l => l.id),
-        newLabels: labels.newLabels.map(l => l.name)
-      }
-    }
     this.props.createFunction(fxn)
 
     analyticsLogger.logEvent("ACTION_CREATE_FUNCTION", { "name": name, "type": type, "format": format })
@@ -105,30 +85,18 @@ class FunctionNew extends Component {
         {
           type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
         }
-
-        <UserCan>
-          <Card            title="Labels Applied To">
-            <Text style={{margin: '10px 0 20px', display: 'block'}}>Labels are necessary to apply Functions to devices</Text>
-            <LabelsAppliedNew
-              handleLabelsUpdate={this.handleLabelsUpdate}
-              addOrPrompt={this.confirmOrOpenModal}
-              ConfirmationModal={FunctionMoveLabelModal}
-            />
-
-            <UserCan>
-              <Button
-                icon={<SaveOutlined />}
-                type="primary"
-                onClick={this.handleSubmit}
-                disabled={!type || !format || name.length === 0}
-                style={{ marginTop: 20 }}
-              >
-                Save Function
-              </Button>
-            </UserCan>
-          </Card>
-        </UserCan>
-
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <UserCan>
+            <Button
+              icon={<SaveOutlined />}
+              type="primary"
+              onClick={this.handleSubmit}
+              disabled={!type || !format || name.length === 0}
+            >
+              Save Function
+            </Button>
+          </UserCan>
+        </div>
       </DashboardLayout>
     )
   }

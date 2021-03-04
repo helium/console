@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, Button, Typography, Input, Divider, Select, Tabs, Slider, Switch } from 'antd';
-import LabelTag, { labelColors } from '../common/LabelTag'
+import { labelColors } from '../common/LabelTag'
 import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
@@ -184,7 +184,7 @@ class UpdateLabelModal extends Component {
                 />
               </TabPane>
               <TabPane tab="Webhooks" key="webhook" style={{ maxHeight: '375px', overflowY: 'scroll' }}>
-                <WebhookSettings 
+                <WebhookSettings
                   label_id={this.props.label.id}
                   notificationSettings={notificationWebhooks.reduce(
                     (obj, item) => (obj[item.key] = { key: item.key, value: item.value, url: item.url, notes: item.notes, label_id: this.props.label.id }, obj), {}

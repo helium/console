@@ -8,10 +8,7 @@ import UserCan from '../common/UserCan'
 import { primaryBlue } from '../../util/colors'
 import { displayError } from '../../util/messages'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import ChannelShowLabelsApplied from './ChannelShowLabelsApplied'
 import ChannelPayloadTemplate from './ChannelPayloadTemplate'
-import ChannelShowAddLabelModal from './ChannelShowAddLabelModal'
-import ChannelShowRemoveLabelModal from './ChannelShowRemoveLabelModal'
 import HttpDetails from './HttpDetails'
 import AwsDetails from './AwsDetails'
 import AzureForm from './forms/AzureForm.jsx'
@@ -34,9 +31,6 @@ class ChannelShow extends Component {
   state = {
     newName: "",
     credentials: {},
-    selectedLabel: null,
-    showChannelShowAddLabelModal: false,
-    showChannelShowRemoveLabelModal: false,
     showDownlinkToken: false,
     templateBody: undefined,
     validInput: true,
@@ -107,32 +101,6 @@ class ChannelShow extends Component {
     }
   }
 
-  handleSelectLabel = (selectedLabel) => {
-    this.setState({ selectedLabel })
-  }
-
-  handleOpenChannelShowAddLabelModal = () => {
-    const { selectedLabel } = this.state
-
-    if (!selectedLabel) {
-      displayError("Please select a label to add to this integration.")
-    } else {
-      this.setState({ showChannelShowAddLabelModal: true })
-    }
-  }
-
-  handleCloseChannelShowAddLabelModal = () => {
-    this.setState({ showChannelShowAddLabelModal: false })
-  }
-
-  handleOpenChannelShowRemoveLabelModal = (selectedLabel) => {
-    this.setState({ showChannelShowRemoveLabelModal: true, selectedLabel })
-  }
-
-  handleCloseChannelShowRemoveLabelModal = () => {
-    this.setState({ showChannelShowRemoveLabelModal: false })
-  }
-
   handleTemplateUpdate = (templateBody) => {
     this.setState({ templateBody });
   }
@@ -160,7 +128,7 @@ class ChannelShow extends Component {
   }
 
   render() {
-    const { loading, error, channel, allLabels } = this.props.channelShowQuery
+    const { loading, error, channel } = this.props.channelShowQuery
 
     if (loading) return <ChannelShowSkeleton user={this.props.user} />;
     if (error) return (
@@ -212,8 +180,6 @@ class ChannelShow extends Component {
             <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
             <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
             <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-            <Paragraph><Text strong> Devices Piped-- </Text></Paragraph>
-            <Paragraph>{channel.devices.length} Connected Devices</Paragraph>
             </Col>
             <Col span={12}>
               {channel.type === "http" && (
@@ -285,37 +251,15 @@ class ChannelShow extends Component {
           </Card>
         </UserCan>
 
-        <ChannelShowLabelsApplied
-          handleSelectLabel={this.handleSelectLabel}
-          allLabels={allLabels}
-          channel={channel}
-          handleClickAdd={this.handleOpenChannelShowAddLabelModal}
-          handleClickRemove={this.handleOpenChannelShowRemoveLabelModal}
-        />
-
         {((channel.type == 'http' && channel.endpoint !== 'https://lora.mydevices.com/v1/networks/helium/uplink') || channel.type == 'mqtt') && (
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody || ""}
             handleTemplateUpdate={this.handleTemplateUpdate}
             updateChannelTemplate={this.updateChannelTemplate}
             channel={channel}
-            functions={channel.labels.map(l => find(allLabels, {id: l.id}).function).filter(f => f)}
+            functions={[]}
           />
         )}
-
-        <ChannelShowAddLabelModal
-          open={this.state.showChannelShowAddLabelModal}
-          onClose={this.handleCloseChannelShowAddLabelModal}
-          label={find(allLabels, { id: this.state.selectedLabel })}
-          channel={channel}
-        />
-
-        <ChannelShowRemoveLabelModal
-          open={this.state.showChannelShowRemoveLabelModal}
-          onClose={this.handleCloseChannelShowRemoveLabelModal}
-          label={find(allLabels, { id: this.state.selectedLabel })}
-          channel={channel}
-        />
       </DashboardLayout>
     )
   }
