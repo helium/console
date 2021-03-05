@@ -55,7 +55,7 @@ defmodule Console.Devices.DeviceResolver do
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
       Console.Repo,
-      "(SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT count(*) FROM events where device_id = $1 and reported_at_epoch > $4)",
+      "(SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $4)",
       [device_id, unix1d, unix7d, unix30d]
     )
     counts = List.flatten(result.rows)
@@ -101,13 +101,13 @@ defmodule Console.Devices.DeviceResolver do
       |> limit(50)
       |> order_by(desc: :reported_at_naive)
       |> Repo.all()
-    
-    events = 
+
+    events =
       Enum.map(events, fn e ->
-        data = 
+        data =
           case e.data do
             nil -> %{}
-            _ -> Map.new(e.data, fn {k, v} -> {String.to_atom(k), v} 
+            _ -> Map.new(e.data, fn {k, v} -> {String.to_atom(k), v}
             end)
           end
         e |> Map.put(:data, Jason.encode!(data))

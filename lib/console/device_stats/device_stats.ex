@@ -4,7 +4,7 @@ defmodule Console.DeviceStats do
 
   alias Console.DeviceStats.DeviceStat
 
-  def create_event(attrs \\ %{}) do
+  def create_stat(attrs \\ %{}) do
     %DeviceStat{}
     |> DeviceStat.changeset(attrs)
     |> Repo.insert()
