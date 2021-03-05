@@ -91,14 +91,15 @@ defmodule Console.Jobs do
     settings_device_stops_working = LabelNotificationSettings.get_label_notification_settings_by_key("device_stops_transmitting")
     Enum.each(settings_device_stops_working, fn setting -> 
       # value in the setting determines period of time to check if device stopped connecting
-      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: String.to_integer(setting.value)))
+      buffer = String.to_integer(setting.value)
+      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: -buffer))
     end)
   end
 
   defp check_device_stop_transmitting(label_id, starting_from) do
     devices = Devices.get_devices_for_label(label_id)
     Enum.each(devices, fn device ->
-      if device.last_connected != nil and device.last_connected < starting_from do
+      if device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
         # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
