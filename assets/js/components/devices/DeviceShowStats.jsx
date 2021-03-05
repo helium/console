@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { blueForDeviceStatsLarge } from '../../util/colors'
-import { DEVICE_SHOW_STATS } from '../../graphql/devices'
+import { DEVICE_SHOW_STATS, DEVICE_SHOW_DC_STATS } from '../../graphql/devices'
 import { Typography, Card, Col, Spin, Row } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import withGql from '../../graphql/withGql'
@@ -17,48 +17,45 @@ class DeviceShowStats extends Component {
       <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: false }) }}>
         <Text style={{ fontWeight: 600, marginRight: 15, color: this.state.showDC ? "#777777" : "#000000" }}>Packets Transferred</Text>
       </a>
-      {
-        false && (
-          <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: true }) }}>
-            <Text style={{ fontWeight: 600, color: !this.state.showDC ? "#777777" : "#000000" }}>DC Used</Text>
-          </a>
-        )
-      }
+
+      <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: true }) }}>
+        <Text style={{ fontWeight: 600, color: !this.state.showDC ? "#777777" : "#000000" }}>DC Used</Text>
+      </a>
     </span>
   )
 
   render() {
     const { device, smallerText } = this.props
-    const { loading, error, device_stats } = this.props.deviceStatsQuery
+    const { device_stats } = this.props.deviceStatsQuery
+    const { device_dc_stats } = this.props.deviceDcStatsQuery
     const { showDC } = this.state
 
-    if (loading) return (
-      <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
-        <Row>
-        <Col span={12}>
-          <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
-          <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
-          <div style={{ marginBottom: 30 }} />
-          <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
-          <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
-        </Col>
-        <Col span={12}>
-          <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
-          <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
-          <div style={{ marginBottom: 30 }} />
-          <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
-          <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
-        </Col>
-        </Row>
-      </Card>
-    )
-    if (error) return (
-      <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </Card>
-    )
-
     if (!showDC) {
+      if (this.props.deviceStatsQuery.loading) return (
+        <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Row>
+          <Col span={12}>
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+            <div style={{ marginBottom: 30 }} />
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+          </Col>
+          <Col span={12}>
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+            <div style={{ marginBottom: 30 }} />
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+          </Col>
+          </Row>
+        </Card>
+      )
+      if (this.props.deviceStatsQuery.error) return (
+        <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </Card>
+      )
       return (
         <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
           <Row>
@@ -80,6 +77,31 @@ class DeviceShowStats extends Component {
         </Card>
       )
     } else {
+      if (this.props.deviceDcStatsQuery.loading) return (
+        <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Row>
+          <Col span={12}>
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+            <div style={{ marginBottom: 30 }} />
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+          </Col>
+          <Col span={12}>
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+            <div style={{ marginBottom: 30 }} />
+            <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
+            <Spin indicator={antLoader} style={{ marginTop: 10 }}/>
+          </Col>
+          </Row>
+        </Card>
+      )
+      if (this.props.deviceDcStatsQuery.error) return (
+        <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </Card>
+      )
       return (
         <Card title={this.renderTitle()} style={{ height: 'calc(100% - 20px)', minWidth: 350 }}>
           <Row>
@@ -88,14 +110,14 @@ class DeviceShowStats extends Component {
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.dc_usage}</Text><br/>
             <div style={{ marginBottom: 30 }} />
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
-            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>-</Text><br/>
+            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_dc_stats.dc_last_30d}</Text><br/>
           </Col>
           <Col span={12}>
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 7 Days</Text><br/>
-            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>-</Text><br/>
+            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_dc_stats.dc_last_7d}</Text><br/>
             <div style={{ marginBottom: 30 }} />
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 24 Hours</Text><br/>
-            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>-</Text><br/>
+            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_dc_stats.dc_last_1d}</Text><br/>
           </Col>
           </Row>
         </Card>
@@ -104,4 +126,7 @@ class DeviceShowStats extends Component {
   }
 }
 
-export default withGql(DeviceShowStats, DEVICE_SHOW_STATS, props => ({ fetchPolicy: 'cache-first', variables: { id: props.device.id, }, name: 'deviceStatsQuery' }))
+export default withGql(
+  withGql(DeviceShowStats, DEVICE_SHOW_DC_STATS, props => ({ fetchPolicy: 'cache-first', variables: { id: props.device.id, }, name: 'deviceDcStatsQuery' })),
+  DEVICE_SHOW_STATS, props => ({ fetchPolicy: 'cache-first', variables: { id: props.device.id, }, name: 'deviceStatsQuery' })
+)

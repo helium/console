@@ -70,6 +70,32 @@ defmodule Console.Devices.DeviceResolver do
     }
   end
 
+  def get_device_dc_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
+
+    current_unix = DateTime.utc_now() |> DateTime.to_unix()
+    unix1d = current_unix - 86400
+    unix7d = current_unix - 86400 * 7
+    unix30d = current_unix - 86400 * 30
+
+    {:ok, device_id} = Ecto.UUID.dump(device.id)
+    result = Ecto.Adapters.SQL.query!(
+      Console.Repo,
+      "(SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $4)",
+      [device_id, unix1d, unix7d, unix30d]
+    )
+    counts = List.flatten(result.rows)
+
+    {
+      :ok,
+      %{
+        dc_last_1d: Enum.at(counts, 0),
+        dc_last_7d: Enum.at(counts, 1),
+        dc_last_30d: Enum.at(counts, 2),
+      }
+    }
+  end
+
   def all(_, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
