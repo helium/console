@@ -187,96 +187,102 @@
 
                                  <!-- content -->
                                  <%= if @num_devices == 1 do %>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      The device <b><%= List.first(@details)["device_name"] %></b> has joined the Organization <b><%= @organization_name%></b> via OTAA at <b><%= List.first(@details)["time"] %></b>.
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td width="100%" height="10"></td>
-                                 </tr>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Details for Hotspot(s) that sent the device packet:
-                                    </td>
-                                  </tr>
-                                  <ul>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                    <%= Enum.map(d["hotspots"], fn(h) -> %>
-                                       <tr>
+                                    <tr>
                                        <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                          <li>Hotspot <b><%= h["name"] %></b>: RSSI <b><%= h["rssi"] %></b>, SNR <b><%= h["snr"] %></b>, Frequency <b><%= h["frequency"] %></b>, Spreading <b><%= h["spreading"] %></b></li>
+                                       The device <b><%= List.first(@details)["device_name"] %></b> has joined the Organization <b><%= @organization_name%></b> via OTAA at <b><%= List.first(@details)["time"] %></b>.
                                        </td>
+                                    </tr>
+                                    <tr>
+                                       <td width="100%" height="10"></td>
+                                    </tr>
+                                    <%= if @has_hotspot_info do %>
+                                       <tr>
+                                          <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                          Details for Hotspot(s) that sent the device packet:
+                                          </td>
                                        </tr>
-                                    <% end) %>
-                                  <% end) %>
-                                  </ul>
+                                       <ul>
+                                       <%= Enum.map(@details, fn(d) -> %>
+                                          <%= if d["hotspot"] do %>
+                                             <tr>
+                                             <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                                <li>Hotspot <b><%= d["hotspot"]["name"] %></b>: RSSI <b><%= d["hotspot"]["rssi"] %></b>, SNR <b><%= d["hotspot"]["snr"] %></b>, Frequency <b><%= d["hotspot"]["frequency"] %></b>, Spreading <b><%= d["hotspot"]["spreading"] %></b></li>
+                                             </td>
+                                             </tr>
+                                          <% end %>
+                                       <% end) %>
+                                       </ul>
+                                    <% end %>
                                  <% end %>
                                  
                                  <%= if @num_devices > 1 && @num_devices <= 5 do %>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      The devices:
-                                    </td>
-                                  </tr>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      <li><b><%= d["device_name"] %></b></li>
-                                    </td>
-                                  </tr>
-                                  <% end) %>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      have joined the Organization <b><%= @organization_name%></b> via OTAA at <b><%= List.first(@details)["time"] %></b>.
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td width="100%" height="10"></td>
-                                 </tr>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Hotspot details that sent device packet include:
-                                    </td>
-                                  </tr>
-                                  <ul>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                    <%= Enum.map(d["hotspots"], fn(h) -> %>
-                                       <tr>
+                                    <tr>
                                        <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                          <li>RSSI <b><%= h["rssi"] %></b>, SNR <b><%= h["snr"] %></b>, Frequency <b><%= h["frequency"] %></b>, Spreading <b><%= h["spreading"] %></b></li>
+                                       The devices:
                                        </td>
-                                       </tr>
+                                    </tr>
+                                    <%= Enum.map(@details, fn(d) -> %>
+                                    <tr>
+                                       <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                       <li><b><%= d["device_name"] %></b></li>
+                                       </td>
+                                    </tr>
                                     <% end) %>
-                                  <% end) %>
-                                  </ul>
+                                    <tr>
+                                       <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                       have joined the Organization <b><%= @organization_name%></b> via OTAA at <b><%= List.first(@details)["time"] %></b>.
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td width="100%" height="10"></td>
+                                    </tr>
+                                    <%= if @has_hotspot_info do %>
+                                       <tr>
+                                          <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                          Hotspot details that sent device packet include:
+                                          </td>
+                                       </tr>
+                                       <ul>
+                                       <%= Enum.map(@details, fn(d) -> %>
+                                          <%= if d["hotspot"] do %>
+                                             <tr>
+                                             <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                                <li>Hotspot <b><%= d["hotspot"]["name"] %></b>: RSSI <b><%= d["hotspot"]["rssi"] %></b>, SNR <b><%= d["hotspot"]["snr"] %></b>, Frequency <b><%= d["hotspot"]["frequency"] %></b>, Spreading <b><%= d["hotspot"]["spreading"] %></b></li>
+                                             </td>
+                                             </tr>
+                                          <% end %>
+                                       <% end) %>
+                                       </ul>
+                                    <% end %>
                                  <% end %>
 
                                  <%= if @num_devices > 5 do %>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      More than 5 devices that belong to the Organization <b><%= @organization_name %></b> joined via OTAA at <b><%= List.first(@details)["time"] %></b>.
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td width="100%" height="10"></td>
-                                 </tr>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Hotspot details that sent device packet include:
-                                    </td>
-                                  </tr>
-                                  <ul>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                    <%= Enum.map(d["hotspots"], fn(h) -> %>
-                                       <tr>
+                                    <tr>
                                        <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                          <li>RSSI <b><%= h["rssi"] %></b>, SNR <b><%= h["snr"] %></b>, Frequency <b><%= h["frequency"] %></b>, Spreading <b><%= h["spreading"] %></b></li>
+                                       More than 5 devices that belong to the Organization <b><%= @organization_name %></b> joined via OTAA at <b><%= List.first(@details)["time"] %></b>.
                                        </td>
+                                    </tr>
+                                    <tr>
+                                       <td width="100%" height="10"></td>
+                                    </tr>
+                                    <%= if @has_hotspot_info do %>
+                                       <tr>
+                                          <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                          Hotspot details that sent device packet include:
+                                          </td>
                                        </tr>
-                                    <% end) %>
-                                  <% end) %>
-                                  </ul>
+                                       <ul>
+                                       <%= Enum.map(@details, fn(d) -> %>
+                                          <%= if d["hotspot"] do %>
+                                             <tr>
+                                             <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                                <li>Hotspot <b><%= d["hotspot"]["name"] %></b>: RSSI <b><%= d["hotspot"]["rssi"] %></b>, SNR <b><%= d["hotspot"]["snr"] %></b>, Frequency <b><%= d["hotspot"]["frequency"] %></b>, Spreading <b><%= d["hotspot"]["spreading"] %></b></li>
+                                             </td>
+                                             </tr>
+                                          <% end %>
+                                       <% end) %>
+                                       </ul>
+                                    <% end %>
                                  <% end %>
                                  <!-- end of content -->
                                  <tr>

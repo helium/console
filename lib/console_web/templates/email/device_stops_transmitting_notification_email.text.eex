@@ -1,13 +1,15 @@
 <%= @label_name %> Notification
 
 <%= if @num_devices == 1 do %>
-    The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> stopped transmitting on <%= List.first(@details)["time"] %>.
+  The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> stopped transmitting on <%= List.first(@details)["time"] %>.
+  <%= if @has_hotspot_info do %>
     Details for Hotspot(s) that sent the last received device packet:
-  <%= Enum.map(@details, fn(d) -> %>
-    <%= Enum.map(d["hotspots"], fn(h) -> %>
-      Hotspot <%= h["name"] %>: RSSI <%= h["rssi"] %>, SNR <%= h["snr"] %>, Frequency <%= h["frequency"] %>, Spreading <%= h["spreading"] %>
+    <%= Enum.map(@details, fn(d) -> %>
+      <%= if d["hotspot"] do %>
+        Hotspot <%= d["hotspot"]["name"] %>: RSSI <%= d["hotspot"]["rssi"] %>, SNR <%= d["hotspot"]["snr"] %>, Frequency <%= d["hotspot"]["frequency"] %>, Spreading <%= d["hotspot"]["spreading"] %>
+      <% end %>
     <% end) %>
-  <% end) %>
+  <% end %>
 <% end %>
 <%= if @num_devices > 1 && @num_devices <= 5 do %>
   The devices:
@@ -15,12 +17,14 @@
     <%= d["device_name"] %>
   <% end) %>
   that belong to the Organization <%= @organization_name%> stopped transmitting on <%= List.first(@details)["time"] %>.
-  Hotspot details that sent last received device packet include:
-  <%= Enum.map(@details, fn(d) -> %>
-    <%= Enum.map(d["hotspots"], fn(h) -> %>
-      RSSI <%= h["rssi"] %>, SNR <%= h["snr"] %>, Frequency <%= h["frequency"] %>, Spreading <%= h["spreading"] %>
+  <%= if @has_hotspot_info do %>
+    Hotspot details that sent last received device packet include:
+    <%= Enum.map(@details, fn(d) -> %>
+      <%= if d["hotspot"] do %>
+        Hotspot <%= d["hotspot"]["name"] %>: RSSI <%= d["hotspot"]["rssi"] %>, SNR <%= d["hotspot"]["snr"] %>, Frequency <%= d["hotspot"]["frequency"] %>, Spreading <%= d["hotspot"]["spreading"] %>
+      <% end %>
     <% end) %>
-  <% end) %>
+  <% end %>
 <% end %>
 <%= if @num_devices > 5 do %>
   More than 5 devices that belong to the Organization <%= @organization_name %> stopped transmitting on <%= List.first(@details)["time"] %>.

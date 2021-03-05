@@ -195,22 +195,24 @@
                                   <tr>
                                     <td width="100%" height="10"></td>
                                  </tr>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Details for Hotspot(s) that sent last received device packet:
-                                    </td>
-                                  </tr>
-                                  <ul>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                    <%= Enum.map(d["hotspots"], fn(h) -> %>
+                                 <%= if @has_hotspot_info do %>
+                                    <tr>
+                                       <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                       Details for Hotspot that sent last received device packet:
+                                       </td>
+                                    </tr>
+                                    <ul>
+                                    <%= Enum.map(@details, fn(d) -> %>
                                        <tr>
                                        <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                          <li>Hotspot <b><%= h["name"] %></b>: RSSI <b><%= h["rssi"] %></b>, SNR <b><%= h["snr"] %></b>, Frequency <b><%= h["frequency"] %></b>, Spreading <b><%= h["spreading"] %></b></li>
+                                          <%= if d["hotspot"] do %>
+                                             <li>Hotspot <b><%= d["hotspot"]["name"] %></b>: RSSI <b><%= d["hotspot"]["rssi"] %></b>, SNR <b><%= d["hotspot"]["snr"] %></b>, Frequency <b><%= d["hotspot"]["frequency"] %></b>, Spreading <b><%= d["hotspot"]["spreading"] %></b></li>
+                                          <% end %>
                                        </td>
                                        </tr>
                                     <% end) %>
-                                  <% end) %>
-                                  </ul>
+                                    </ul>
+                                    <% end %>
                                  <% end %>
                                  
                                  <%= if @num_devices > 1 && @num_devices <= 5 do %>
@@ -234,22 +236,24 @@
                                   <tr>
                                     <td width="100%" height="10"></td>
                                  </tr>
-                                  <tr>
-                                    <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                      Hotspot details that sent last received device packet include:
-                                    </td>
-                                  </tr>
-                                  <ul>
-                                  <%= Enum.map(@details, fn(d) -> %>
-                                    <%= Enum.map(d["hotspots"], fn(h) -> %>
+                                 <%= if @has_hotspot_info do %>
+                                    <tr>
+                                       <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
+                                       Hotspot details that sent last received device packet include:
+                                       </td>
+                                    </tr>
+                                    <ul>
+                                    <%= Enum.map(@details, fn(d) -> %>
                                        <tr>
                                        <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 22px;padding: 0 60px" st-title="rightimage-title">
-                                          <li>RSSI <b><%= h["rssi"] %></b>, SNR <b><%= h["snr"] %></b>, Frequency <b><%= h["frequency"] %></b>, Spreading <b><%= h["spreading"] %></b></li>
+                                          <%= if d["hotspot"] do %>
+                                             <li>Hotspot <b><%= d["hotspot"]["name"] %></b>: RSSI <b><%= d["hotspot"]["rssi"] %></b>, SNR <b><%= d["hotspot"]["snr"] %></b>, Frequency <b><%= d["hotspot"]["frequency"] %></b>, Spreading <b><%= d["hotspot"]["spreading"] %></b></li>
+                                          <% end %>
                                        </td>
                                        </tr>
                                     <% end) %>
-                                  <% end) %>
-                                  </ul>
+                                    </ul>
+                                    <% end %>
                                  <% end %>
 
                                  <%= if @num_devices > 5 do %>
