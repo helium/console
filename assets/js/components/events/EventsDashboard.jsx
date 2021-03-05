@@ -333,7 +333,7 @@ class EventsDashboard extends Component {
             </Checkbox>
           </span>
           <a
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(aggregatedRows, null, 2))}`}
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
             download="event-debug.json"
             onClick={() => { analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id }) }}
           >
