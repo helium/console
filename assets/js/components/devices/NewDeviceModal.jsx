@@ -8,6 +8,7 @@ import { ALL_LABELS } from '../../graphql/labels'
 import LabelTag from '../common/LabelTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Modal, Button, Typography, Input, Select, Divider } from 'antd';
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import LabelAppliedNew from '../common/LabelAppliedNew';
 const { Text } = Typography
 const { Option } = Select
@@ -22,6 +23,7 @@ class NewDeviceModal extends Component {
     appEUI: randomString(16),
     appKey: randomString(32),
     labelName: null,
+    showAppKey: false,
   }
 
   componentDidUpdate(prevProps) {
@@ -119,11 +121,31 @@ class NewDeviceModal extends Component {
         <Input
           placeholder="App Key"
           name="appKey"
-          value={this.state.appKey}
+          value={
+            this.state.showAppKey ? this.state.appKey : '✱'.repeat(28)
+          }
+          disabled={!this.state.showAppKey}
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
           maxLength={56}
-          addonBefore="App Key"
+          addonBefore={
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              App Key
+              {
+                this.state.showAppKey ? (
+                  <EyeOutlined
+                    onClick={() => this.setState({ showAppKey: !this.state.showAppKey })}
+                    style={{ marginLeft: 5 }}
+                  />
+                ) : (
+                  <EyeInvisibleOutlined
+                    onClick={() => this.setState({ showAppKey: !this.state.showAppKey })}
+                    style={{ marginLeft: 5 }}
+                  />
+                )
+              }
+            </div>
+          }
           suffix={
             <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>{Math.floor(this.state.appKey.length / 2)} / 16 Bytes</Text>
           }
