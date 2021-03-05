@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
-import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
@@ -34,12 +32,19 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
-const categoryTag = (category) => {
+const categoryTag = (category, subCategories) => {
   switch(category) {
     case "uplink":
+      if (subCategories.includes('uplink_dropped')) return <Text>Uplink Dropped</Text>;
       return <Text>Uplink</Text>
     case "downlink":
-      return <Text>Downlink</Text>
+      if (subCategories.includes('downlink_dropped')) {
+        return <Text>Downlink Dropped</Text>;
+      } else if (subCategories.includes('downlink_ack')) {
+        return <Text>Acknowledge</Text>;
+      } else {
+        return <Text>Downlink</Text>;
+      }
     case "join_request":
       return <Text>Join Request</Text>
     case "join_accept":
@@ -285,7 +290,7 @@ class EventsDashboard extends Component {
       {
         title: 'Type',
         dataIndex: 'category',
-        render: data => <Text>{categoryTag(data)}</Text>
+        render: (data, row) => <Text>{categoryTag(row.category, row.sub_categories)}</Text>
       },
       {
         title: 'Time',
@@ -328,7 +333,7 @@ class EventsDashboard extends Component {
             </Checkbox>
           </span>
           <a
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(aggregatedRows, null, 2))}`}
             download="event-debug.json"
             onClick={() => { analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id }) }}
           >
