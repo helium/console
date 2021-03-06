@@ -213,7 +213,10 @@ defmodule ConsoleWeb.Router.DeviceController do
             details = %{
               device_name: event_device.name,
               time: time,
-              # hotspots: Enum.map(event.hotspots, fn h -> %{ name: h.name, rssi: h.rssi, snr: h.snr, spreading: h.spreading, frequency: h.frequency } end)
+              hotspot: case event.data["hotspot"] != nil do
+                false -> nil
+                true -> event.data["hotspot"]
+              end
             }
             device_labels = Enum.map(event_device.labels, fn l -> l.id end)
             LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
