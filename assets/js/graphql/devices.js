@@ -51,6 +51,16 @@ export const DEVICE_SHOW_STATS = gql`
   }
 `
 
+export const DEVICE_SHOW_DC_STATS = gql`
+  query DeviceShowDcStatsQuery ($id: ID!) {
+    device_dc_stats(id: $id) {
+      dc_last_1d,
+      dc_last_7d,
+      dc_last_30d
+    }
+  }
+`
+
 export const ALL_IMPORTS = gql`
   query PaginatedImportsQuery ($page: Int, $pageSize: Int) {
     device_imports(page: $page, pageSize: $pageSize) {

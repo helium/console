@@ -435,11 +435,6 @@ class DeviceShow extends Component {
                   <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
                   <td><Tag style={{fontWeight: 500, fontSize: 14}} color="#9254DE">OTAA</Tag></td>
                 </tr>
-                <tr style={{height: '20px'}} />
-                <tr style={{height: '30px'}}>
-                  <td><Text strong>DC Used</Text></td>
-                  <td><Text>{device.dc_usage} DC</Text></td>
-                </tr>
               </tbody>
             </table>
           </Card>

@@ -29,6 +29,12 @@ defmodule ConsoleWeb.Schema do
     field :packets_last_30d, :integer
   end
 
+  object :device_dc_stats do
+    field :dc_last_1d, :integer
+    field :dc_last_7d, :integer
+    field :dc_last_30d, :integer
+  end
+
   object :mqtt_topic do
     field :topic, :string
   end
@@ -213,6 +219,11 @@ defmodule ConsoleWeb.Schema do
     field :device_stats, :device_stats do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.get_device_stats/2
+    end
+
+    field :device_dc_stats, :device_dc_stats do
+      arg :id, non_null(:id)
+      resolve &Console.Devices.DeviceResolver.get_device_dc_stats/2
     end
 
     @desc "Get device import jobs"

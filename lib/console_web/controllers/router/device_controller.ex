@@ -9,6 +9,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Channels
   alias Console.Organizations
   alias Console.Devices.Device
+  alias Console.DeviceStats
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
@@ -134,13 +135,13 @@ defmodule ConsoleWeb.Router.DeviceController do
       |> Map.delete("id")
 
     event = case event["category"] do
-      "uplink" -> 
+      "uplink" ->
         cond do
           is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
           event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])
           true -> event |> Map.put("frame_up", nil)
         end
-      "downlink" -> 
+      "downlink" ->
         cond do
           is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_down", event["data"]["fcnt"])
           event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_down", event["data"]["fcnt"])
@@ -148,7 +149,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         end
       _ -> event
     end
-    
+
     # event =
     #   case event["data"]["dc"]["used"] do
     #     nil -> Map.put(event["data"]["dc"], "used", 0)
@@ -172,18 +173,34 @@ defmodule ConsoleWeb.Router.DeviceController do
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
-            dc_used = 
+            dc_used =
               case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
                 true -> event.data["dc"]["used"]
                 false -> 0
               end
+            packet_count = if dc_used == 0, do: 0, else: 1
+
             Devices.update_device(device, %{
               "last_connected" => event.reported_at_naive,
               "frame_up" => event.data["frame_up"],
               "frame_down" => event.data["frame_down"],
-              "total_packets" => device.total_packets + 1,
+              "total_packets" => device.total_packets + packet_count,
               "dc_usage" => device.dc_usage + dc_used,
             }, "router")
+          end)
+          |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+              DeviceStats.create_stat(%{
+                "router_uuid" => event.router_uuid,
+                "payload_size" => event.data["payload_size"],
+                "dc_used" => event.data["dc"]["used"],
+                "reported_at_epoch" => event.reported_at_epoch,
+                "device_id" => device.id,
+                "organization_id" => device.organization_id
+              })
+            else
+              {:ok, %{}}
+            end
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: device, event: created_event } ->
             if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] do
