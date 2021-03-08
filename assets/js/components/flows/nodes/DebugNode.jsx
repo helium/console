@@ -1,6 +1,6 @@
 import React from 'react';
 import { Handle } from 'react-flow-renderer';
-import Logo from '../../../img/debug-node-logo.svg'
+import Logo from '../../../../img/debug-node-logo.svg'
 import { Typography } from 'antd';
 const { Text } = Typography
 
