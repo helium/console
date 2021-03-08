@@ -11,59 +11,21 @@ const { Text } = Typography
 
 class FlowsIndex extends Component {
   state = {
-    selectedNode: null,
     hasChanges: false,
   }
-
-  selectNode = selectedNode => this.setState({ selectedNode })
 
   setChangesState = hasChanges => {
     this.setState({ hasChanges })
   }
 
   submitChanges = (edgesToRemove, edgesToAdd) => {
-    const removeEdges =
-      Object.values(edgesToRemove).map(edge => {
-        if (edge.target[0] === 'c') {
-          return {
-            source: edge.source.slice(6),
-            target: edge.target.slice(8),
-            type: "channel",
-          }
-        }
-        if (edge.target[0] === 'f') {
-          return {
-            source: edge.source.slice(6),
-            target: edge.target.slice(9),
-            type: "function",
-          }
-        }
-      })
-
-    const addEdges = Object.values(edgesToAdd).map(edge => {
-      if (edge.target[0] === 'c') {
-        return {
-          source: edge.source.slice(6),
-          target: edge.target.slice(8),
-          type: "channel",
-        }
-      }
-      if (edge.target[0] === 'f') {
-        return {
-          source: edge.source.slice(6),
-          target: edge.target.slice(9),
-          type: "function",
-        }
-      }
-    })
-
-    updateEdges(removeEdges, addEdges)
-    .then(status => {
-      if (status == 200) {
-        this.props.allResourcesQuery.refetch()
-      }
-    })
-    .catch(err => {})
+    // updateEdges(removeEdges, addEdges)
+    // .then(status => {
+    //   if (status == 200) {
+    //     this.props.allResourcesQuery.refetch()
+    //   }
+    // })
+    // .catch(err => {})
   }
 
   render() {
@@ -78,7 +40,22 @@ class FlowsIndex extends Component {
         </div>
       </DashboardLayout>
     )
-    const { allLabels, allFunctions, allChannels } = this.props.allResourcesQuery.data
+    const { allLabels, allFunctions, allChannels, allDevices } = this.props.allResourcesQuery.data
+
+    const deviceElements =
+      allDevices
+        .reduce((acc, device) => {
+          return acc.concat(
+            {
+              id: `device-${device.id}`,
+              type: 'deviceNode',
+              data: {
+                label: device.name,
+              },
+              position: { x: 0, y: 0 },
+            }
+          )
+        }, [])
 
     const labelElements =
       allLabels
@@ -128,16 +105,11 @@ class FlowsIndex extends Component {
           )
         }, [])
 
-
-
     const elements =
       labelElements
+      .concat(deviceElements)
       .concat(functionElements)
       .concat(channelElements)
-
-    const unconnectedLabels = []
-    const unconnectedFunctions = []
-    const unconnectedChannels = []
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
@@ -147,10 +119,6 @@ class FlowsIndex extends Component {
         />
         <FlowsWorkspace
           initialElements={elements}
-          selectNode={this.selectNode}
-          unconnectedLabels={unconnectedLabels}
-          unconnectedFunctions={unconnectedFunctions}
-          unconnectedChannels={unconnectedChannels}
           submitChanges={this.submitChanges}
           setChangesState={this.setChangesState}
           hasChanges={this.state.hasChanges}

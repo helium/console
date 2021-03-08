@@ -5,10 +5,11 @@ import find from 'lodash/find'
 import omit from 'lodash/omit'
 import FlowsSidebar from './FlowsSidebar'
 import FlowsSettingsBar from './FlowsSettingsBar'
-import LabelNode from './LabelNode'
-import FunctionNode from './FunctionNode'
-import ChannelNode from './ChannelNode'
-import DebugNode from './DebugNode'
+import LabelNode from './nodes/LabelNode'
+import FunctionNode from './nodes/FunctionNode'
+import ChannelNode from './nodes/ChannelNode'
+import DebugNode from './nodes/DebugNode'
+import DeviceNode from './nodes/DeviceNode'
 import dagre from 'dagre'
 
 const LEFT_RIGHT_LAYOUT = 'LR'
@@ -49,10 +50,11 @@ const nodeTypes = {
   labelNode: LabelNode,
   functionNode: FunctionNode,
   channelNode: ChannelNode,
-  debugNode: DebugNode
+  debugNode: DebugNode,
+  deviceNode: DeviceNode
 };
 
-export default ({ initialElements, selectNode, unconnectedChannels, unconnectedFunctions, unconnectedLabels, submitChanges, setChangesState, hasChanges }) => {
+export default ({ initialElements, submitChanges, setChangesState, hasChanges }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
@@ -63,109 +65,70 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
 
   const [edgesToRemove, updateEdgeMapRemove] = useState({})
   const [edgesToAdd, updateEdgeMapAdd] = useState({})
-  const [nodeDroppedIn, updateNodeDroppedIn] = useState(false)
 
   useEffect(() => {
-    if (!hasChanges) {
+    if (!hasChanges) { // resets workspace after save button press
       setElements(elsMap => originalElementsState)
     }
   }, [initialElements])
 
   useEffect(() => {
-    const hasChangesNew = Object.keys(edgesToRemove).length > 0 || Object.keys(edgesToAdd).length > 0 || nodeDroppedIn
+    const hasChangesNew = Object.keys(edgesToRemove).length > 0 || Object.keys(edgesToAdd).length > 0
     if (hasChanges !== hasChangesNew) {
       setChangesState(hasChangesNew)
     }
   })
 
-  // const onElementClick = (e, el) => selectNode(el)
-
-  const onDragOver = event => {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
-  }
-
-  const onDrop = event => {
-    event.preventDefault()
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
-    const id = event.dataTransfer.getData('node/id')
-    const type = event.dataTransfer.getData('node/type')
-    const name = event.dataTransfer.getData('node/name')
-
-    const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left - 75,
-      y: event.clientY - reactFlowBounds.top,
-    })
-
-    let data = { label: name }
-    if (type == 'channelNode') {
-      data = Object.assign({}, data, {
-        type_name: event.dataTransfer.getData('node/channel_type_name'),
-        type: event.dataTransfer.getData('node/channel_type')
-      })
-    }
-
-    if (type == 'functionNode') {
-      data = Object.assign({}, data, {
-        format: event.dataTransfer.getData('node/function_format'),
-      })
-    }
-
-    const newNode = { id, type, position, data }
-    setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
-    updateNodeDroppedIn(true)
-  }
-
   const onElementsRemove = (elementsToRemove) => {
-    if (isEdge(elementsToRemove[0])) {
-      const id = elementsToRemove[0].id
-
-      if (originalElementsState[id] && elementsMap[id]) {
-        setElements(elsMap => omit(elsMap, [id]))
-        updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [id]: elementsToRemove[0] }))
-      }
-      if (!originalElementsState[id] && elementsMap[id]) {
-        setElements(elsMap => omit(elsMap, [id]))
-        updateEdgeMapAdd(edgeMap => omit(edgeMap, [id]))
-      }
-    }
+    // if (isEdge(elementsToRemove[0])) {
+    //   const id = elementsToRemove[0].id
+    //
+    //   if (originalElementsState[id] && elementsMap[id]) {
+    //     setElements(elsMap => omit(elsMap, [id]))
+    //     updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [id]: elementsToRemove[0] }))
+    //   }
+    //   if (!originalElementsState[id] && elementsMap[id]) {
+    //     setElements(elsMap => omit(elsMap, [id]))
+    //     updateEdgeMapAdd(edgeMap => omit(edgeMap, [id]))
+    //   }
+    // }
   }
 
-  const onElementsAdd = ({ source, target }) => {
-    const id = "edge-" + source + "-" + target
-    const newEdge = { id, source, target }
-
-    if (target[0] === 'f' && !elementsMap[id]) {
-      const existingFunctionNode =
-        getOutgoers(elementsMap[source], Object.values(elementsMap))
-        .find(node => node.type === 'functionNode')
-
-      if (existingFunctionNode) {
-        const existingFunctionEdgeId = "edge-" + source + "-" + existingFunctionNode.id
-
-        setElements(elsMap => omit(elsMap, [existingFunctionEdgeId]))
-        updateEdgeMapAdd(edgeMap => omit(edgeMap, [existingFunctionEdgeId]))
-        if (originalElementsState[existingFunctionEdgeId]) {
-          updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [existingFunctionEdgeId]: originalElementsState[existingFunctionEdgeId] }))
-        }
-      }
-    }
-
-    if (!originalElementsState[id] && !elementsMap[id]) {
-      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
-      updateEdgeMapAdd(edgeMap => Object.assign({}, edgeMap, { [newEdge.id]: newEdge }))
-    }
-    if (originalElementsState[id] && !elementsMap[id]) {
-      setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
-      updateEdgeMapRemove(edgeMap => omit(edgeMap, [newEdge.id]))
-    }
+  const onElementsAdd = (params) => {
+    // const id = "edge-" + source + "-" + target
+    // const newEdge = { id, source, target }
+    console.log(params)
+    //
+    // if (target[0] === 'f' && !elementsMap[id]) {
+    //   const existingFunctionNode =
+    //     getOutgoers(elementsMap[source], Object.values(elementsMap))
+    //     .find(node => node.type === 'functionNode')
+    //
+    //   if (existingFunctionNode) {
+    //     const existingFunctionEdgeId = "edge-" + source + "-" + existingFunctionNode.id
+    //
+    //     setElements(elsMap => omit(elsMap, [existingFunctionEdgeId]))
+    //     updateEdgeMapAdd(edgeMap => omit(edgeMap, [existingFunctionEdgeId]))
+    //     if (originalElementsState[existingFunctionEdgeId]) {
+    //       updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [existingFunctionEdgeId]: originalElementsState[existingFunctionEdgeId] }))
+    //     }
+    //   }
+    // }
+    //
+    // if (!originalElementsState[id] && !elementsMap[id]) {
+    //   setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+    //   updateEdgeMapAdd(edgeMap => Object.assign({}, edgeMap, { [newEdge.id]: newEdge }))
+    // }
+    // if (originalElementsState[id] && !elementsMap[id]) {
+    //   setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+    //   updateEdgeMapRemove(edgeMap => omit(edgeMap, [newEdge.id]))
+    // }
   }
 
   const resetElementsMap = () => {
     setElements(elsMap => originalElementsState)
     updateEdgeMapRemove(edgeMap => ({}))
     updateEdgeMapAdd(edgeMap => ({}))
-    updateNodeDroppedIn(false)
   }
 
   return (
@@ -175,21 +138,12 @@ export default ({ initialElements, selectNode, unconnectedChannels, unconnectedF
           elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
           onLoad={onLoad}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
           onElementsRemove={onElementsRemove}
           onConnect={onElementsAdd}
-        />
-        <FlowsSidebar
-          unconnectedLabels={unconnectedLabels}
-          unconnectedFunctions={unconnectedFunctions}
-          unconnectedChannels={unconnectedChannels}
-          elementsMap={elementsMap}
         />
         <FlowsSettingsBar
           edgesToRemove={edgesToRemove}
           edgesToAdd={edgesToAdd}
-          nodeDroppedIn={nodeDroppedIn}
           resetElementsMap={resetElementsMap}
           submitChanges={() => submitChanges(edgesToRemove, edgesToAdd)}
         />

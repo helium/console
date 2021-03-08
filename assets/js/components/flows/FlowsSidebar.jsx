@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Typography, Button } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import LabelNode from './LabelNode'
-import FunctionNode from './FunctionNode'
-import ChannelNode from './ChannelNode'
-import DebugNode from './DebugNode'
+import LabelNode from './nodes/LabelNode'
+import FunctionNode from './nodes/FunctionNode'
+import ChannelNode from './nodes/ChannelNode'
+import DebugNode from './nodes/DebugNode'
 const { Text } = Typography
 
 export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, elementsMap }) => {

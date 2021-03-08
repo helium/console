@@ -297,6 +297,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Functions.FunctionResolver.all/2
     end
 
+    field :all_devices, list_of(:device) do
+      resolve &Console.Devices.DeviceResolver.all/2
+    end
+
     @desc "Search for devices and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string
