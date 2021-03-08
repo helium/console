@@ -2,6 +2,10 @@ import { gql } from '@apollo/client';
 
 export const ALL_RESOURCES = gql`
   query AllResourcesQuery {
+    allDevices {
+      id,
+      name
+    }
     allLabels {
       id,
       name,
