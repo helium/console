@@ -223,7 +223,10 @@ defmodule ConsoleWeb.Router.DeviceController do
 
         with {:ok, %{ event: event, device: device, organization: organization }} <- result do
           publish_created_event(event, device)
-          check_org_dc_balance(organization, prev_dc_balance)
+
+          if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+            check_org_dc_balance(organization, prev_dc_balance)
+          end
 
           if event_device.last_connected == nil do
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
