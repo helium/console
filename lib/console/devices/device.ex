@@ -4,8 +4,12 @@ defmodule Console.Devices.Device do
 
   alias Console.Organizations.Organization
   alias Console.Events.Event
+  alias Console.Channels.Channel
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
+  alias Console.Functions.Function
+  alias Console.Connections.DeviceChannel
+  alias Console.Connections.DeviceFunction
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -27,6 +31,8 @@ defmodule Console.Devices.Device do
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
+    many_to_many :channels, Channel, join_through: DeviceChannel, on_delete: :delete_all
+    many_to_many :functions, Function, join_through: DeviceFunction, on_delete: :delete_all
 
     timestamps()
   end
@@ -46,7 +52,7 @@ defmodule Console.Devices.Device do
 
   def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
     alphabet = '0123456789ABCDEF'
-    device_params = 
+    device_params =
       Map.merge(device_params, %{
         "dev_eui" => Helpers.generate_string(16, alphabet),
         "app_eui" => Helpers.generate_string(16, alphabet),

@@ -23,7 +23,6 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
       conn
       |> put_status(:created)
@@ -58,7 +57,6 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
       ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
       conn
       |> put_resp_header("message", "#{label.name} deleted successfully")
@@ -71,7 +69,6 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
       ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
       conn
       |> put_resp_header("message", "Labels deleted successfully")
@@ -94,7 +91,6 @@ defmodule ConsoleWeb.LabelController do
           end
 
         ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{destination_label.id}:label_update", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
 
         conn
@@ -142,7 +138,6 @@ defmodule ConsoleWeb.LabelController do
       label = Labels.get_label!(label_id)
       ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
       conn
       |> put_resp_header("message", "Device(s) successfully removed from label")
@@ -156,7 +151,6 @@ defmodule ConsoleWeb.LabelController do
     with {_, nil} <- Labels.delete_labels_from_device(labels, device_id, current_organization) do
       device = Devices.get_device!(device_id)
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device.id}:device_update", %{})
 
@@ -171,7 +165,6 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, devices} <- Labels.delete_all_labels_from_devices(devices, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
       broadcast_router_update_devices(devices)
 
       conn
@@ -185,7 +178,6 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, labels} <- Labels.delete_all_devices_from_labels(labels, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
       assoc_labels = labels |> Labels.multi_fetch_assoc([:devices])
       assoc_devices = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
@@ -202,7 +194,6 @@ defmodule ConsoleWeb.LabelController do
 
     Labels.delete_all_labels_from_devices_for_org(current_organization)
     ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
-    ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
     conn
       |> put_resp_header("message", "All devices successfully removed from labels")
@@ -232,7 +223,6 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, _, _} <- Labels.add_devices_to_label(device_ids, destination_label.id, current_organization),
       {_, nil} <- Labels.delete_devices_from_label(device_ids, label_id, current_organization) do
         ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
 
@@ -264,7 +254,6 @@ defmodule ConsoleWeb.LabelController do
 
         with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
           ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{conn.assigns.current_organization.id}:label_list_update", %{})
-          ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
@@ -295,7 +284,6 @@ defmodule ConsoleWeb.LabelController do
         device = Devices.get_device!(List.first(devices))
 
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device.id}:device_update", %{})

@@ -7,6 +7,10 @@ defmodule Console.Channels.Channel do
   alias Console.Channels.Channel
   alias Console.Labels.Label
   alias Console.Labels.ChannelsLabels
+  alias Console.Devices.Device
+  alias Console.Functions.Function
+  alias Console.Connections.DeviceChannel
+  alias Console.Connections.FunctionChannel
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -22,7 +26,8 @@ defmodule Console.Channels.Channel do
     field :time_first_uplink, :naive_datetime
 
     belongs_to :organization, Organization
-    many_to_many :labels, Label, join_through: ChannelsLabels, on_delete: :delete_all
+    many_to_many :devices, Device, join_through: DeviceChannel, on_delete: :delete_all
+    many_to_many :functions, Function, join_through: FunctionChannel, on_delete: :delete_all
 
     timestamps()
   end

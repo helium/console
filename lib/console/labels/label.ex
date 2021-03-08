@@ -23,9 +23,7 @@ defmodule Console.Labels.Label do
     field :adr_allowed, :boolean
 
     belongs_to :organization, Organization
-    belongs_to :function, Function
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
-    many_to_many :channels, Channel, join_through: ChannelsLabels, on_delete: :delete_all
     has_many :label_notification_settings, LabelNotificationSetting, on_delete: :delete_all
     has_many :label_notification_events, LabelNotificationEvent, on_delete: :delete_all
     has_many :label_notification_webhooks, LabelNotificationWebhook, on_delete: :delete_all
