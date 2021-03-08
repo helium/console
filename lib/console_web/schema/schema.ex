@@ -289,6 +289,14 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Organizations.OrganizationResolver.all/2
     end
 
+    field :all_channels, list_of(:channel) do
+      resolve &Console.Channels.ChannelResolver.all/2
+    end
+
+    field :all_functions, list_of(:function) do
+      resolve &Console.Functions.FunctionResolver.all/2
+    end
+
     @desc "Search for devices and channels"
     field :search_results, list_of(:search_result) do
       arg :query, :string

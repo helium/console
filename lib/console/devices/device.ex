@@ -5,9 +5,11 @@ defmodule Console.Devices.Device do
   alias Console.Organizations.Organization
   alias Console.Events.Event
   alias Console.Channels.Channel
-  alias Console.Devices
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
+  alias Console.Functions.Function
+  alias Console.Connections.DeviceChannel
+  alias Console.Connections.DeviceFunction
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -29,6 +31,8 @@ defmodule Console.Devices.Device do
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
+    many_to_many :channels, Channel, join_through: DeviceChannel, on_delete: :delete_all
+    many_to_many :functions, Function, join_through: DeviceFunction, on_delete: :delete_all
 
     timestamps()
   end
