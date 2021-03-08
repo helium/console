@@ -36,7 +36,6 @@ const addDagreLayoutToElements = (elements, direction = TOP_BOTTOM_LAYOUT) => {
       el.sourcePosition = isHorizontal ? 'right' : 'bottom';
       // unfortunately we need this little hack to pass a slightly different position in order to notify react flow about the change
       let x = nodeWithPosition.x + Math.random() / 1000
-      if (el.type == 'channelNode') x += 250
       el.position = {
         x: x - 50,
         y: nodeWithPosition.y + 20,

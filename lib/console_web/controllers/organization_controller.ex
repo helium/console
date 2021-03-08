@@ -6,8 +6,6 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.Organizations
   alias Console.Devices
   alias Console.DcPurchases
-  alias Console.Auth
-  alias Console.Auth.User
   alias Console.Email
   alias Console.Mailer
 
