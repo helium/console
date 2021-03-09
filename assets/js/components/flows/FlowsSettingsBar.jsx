@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Typography, Button } from 'antd';
 const { Text } = Typography
 
-export default ({ edgesToRemove, edgesToAdd, nodeDroppedIn, resetElementsMap, submitChanges }) => {
-  if ((Object.keys(edgesToRemove).length + Object.keys(edgesToAdd).length) > 0 || nodeDroppedIn) {
+export default ({ hasChanges, resetElementsMap, submitChanges }) => {
+  if (hasChanges) {
     return (
       <div style={{
         position: 'absolute',

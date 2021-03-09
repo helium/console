@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
+import { isEdge } from 'react-flow-renderer';
 import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
@@ -18,14 +19,17 @@ class FlowsIndex extends Component {
     this.setState({ hasChanges })
   }
 
-  submitChanges = (edgesToRemove, edgesToAdd) => {
-    // updateEdges(removeEdges, addEdges)
-    // .then(status => {
-    //   if (status == 200) {
-    //     this.props.allResourcesQuery.refetch()
-    //   }
-    // })
-    // .catch(err => {})
+  submitChanges = (newElementsMap) => {
+    const edgesToAdd = Object.values(newElementsMap).filter(el => isEdge(el))
+    const edgesToRemove = []
+
+    updateEdges(edgesToRemove, edgesToAdd)
+    .then(status => {
+      if (status == 200) {
+        this.props.allResourcesQuery.refetch()
+      }
+    })
+    .catch(err => {})
   }
 
   render() {
