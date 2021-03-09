@@ -8,6 +8,7 @@ defmodule Console.Connections.FunctionChannel do
   schema "functions_channels" do
     belongs_to :function, Console.Functions.Function
     belongs_to :channel, Console.Channels.Channel
+    belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
   end

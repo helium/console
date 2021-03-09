@@ -63,72 +63,29 @@ export default ({ initialElements, submitChanges, setChangesState, hasChanges })
   const originalElementsState = layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {})
   const [elementsMap, setElements] = useState(originalElementsState);
 
-  const [edgesToRemove, updateEdgeMapRemove] = useState({})
-  const [edgesToAdd, updateEdgeMapAdd] = useState({})
-
-  useEffect(() => {
-    if (!hasChanges) { // resets workspace after save button press
-      setElements(elsMap => originalElementsState)
-    }
-  }, [initialElements])
-
-  useEffect(() => {
-    const hasChangesNew = Object.keys(edgesToRemove).length > 0 || Object.keys(edgesToAdd).length > 0
-    if (hasChanges !== hasChangesNew) {
-      setChangesState(hasChangesNew)
-    }
-  })
-
-  const onElementsRemove = (elementsToRemove) => {
-    // if (isEdge(elementsToRemove[0])) {
-    //   const id = elementsToRemove[0].id
-    //
-    //   if (originalElementsState[id] && elementsMap[id]) {
-    //     setElements(elsMap => omit(elsMap, [id]))
-    //     updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [id]: elementsToRemove[0] }))
-    //   }
-    //   if (!originalElementsState[id] && elementsMap[id]) {
-    //     setElements(elsMap => omit(elsMap, [id]))
-    //     updateEdgeMapAdd(edgeMap => omit(edgeMap, [id]))
-    //   }
-    // }
+  const onElementDragStop = (event, node) => {
+    const updatedNode = Object.assign({}, elementsMap[node.id], {position: {x: node.position.x, y: node.position.y}})
+    setElements(elsMap => Object.assign({}, elsMap, { [node.id]: updatedNode }))
   }
 
-  const onElementsAdd = (params) => {
-    // const id = "edge-" + source + "-" + target
-    // const newEdge = { id, source, target }
-    console.log(params)
-    //
-    // if (target[0] === 'f' && !elementsMap[id]) {
-    //   const existingFunctionNode =
-    //     getOutgoers(elementsMap[source], Object.values(elementsMap))
-    //     .find(node => node.type === 'functionNode')
-    //
-    //   if (existingFunctionNode) {
-    //     const existingFunctionEdgeId = "edge-" + source + "-" + existingFunctionNode.id
-    //
-    //     setElements(elsMap => omit(elsMap, [existingFunctionEdgeId]))
-    //     updateEdgeMapAdd(edgeMap => omit(edgeMap, [existingFunctionEdgeId]))
-    //     if (originalElementsState[existingFunctionEdgeId]) {
-    //       updateEdgeMapRemove(edgeMap => Object.assign({}, edgeMap, { [existingFunctionEdgeId]: originalElementsState[existingFunctionEdgeId] }))
-    //     }
-    //   }
-    // }
-    //
-    // if (!originalElementsState[id] && !elementsMap[id]) {
-    //   setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
-    //   updateEdgeMapAdd(edgeMap => Object.assign({}, edgeMap, { [newEdge.id]: newEdge }))
-    // }
-    // if (originalElementsState[id] && !elementsMap[id]) {
-    //   setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
-    //   updateEdgeMapRemove(edgeMap => omit(edgeMap, [newEdge.id]))
-    // }
+  const onElementsRemove = (elementsToRemove) => {
+    if (isEdge(elementsToRemove[0])) {
+      setElements(elsMap => omit(elsMap, [id]))
+      setChangesState(true)
+    }
+  }
+
+  const onElementsAdd = ({source, target}) => {
+    const id = "edge-" + source + "-" + target
+    const newEdge = { id, source, target }
+
+    setElements(elsMap => Object.assign({}, elsMap, { [id]: newEdge }))
+    setChangesState(true)
   }
 
   const resetElementsMap = () => {
     setElements(elsMap => originalElementsState)
-    updateEdgeMapRemove(edgeMap => ({}))
-    updateEdgeMapAdd(edgeMap => ({}))
+    setChangesState(false)
   }
 
   return (
@@ -140,12 +97,12 @@ export default ({ initialElements, submitChanges, setChangesState, hasChanges })
           onLoad={onLoad}
           onElementsRemove={onElementsRemove}
           onConnect={onElementsAdd}
+          onNodeDragStop={onElementDragStop}
         />
         <FlowsSettingsBar
-          edgesToRemove={edgesToRemove}
-          edgesToAdd={edgesToAdd}
+          hasChanges={hasChanges}
           resetElementsMap={resetElementsMap}
-          submitChanges={() => submitChanges(edgesToRemove, edgesToAdd)}
+          submitChanges={() => submitChanges(elementsMap)}
         />
       </div>
     </ReactFlowProvider>

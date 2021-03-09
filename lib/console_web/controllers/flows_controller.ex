@@ -3,12 +3,9 @@ defmodule ConsoleWeb.FlowsController do
   import Ecto.Query
 
   alias Console.Repo
-  alias Console.Functions
-  alias Console.Functions.Function
-  alias Console.Labels
-  alias Console.Labels.Label
-  alias Console.Channels
-  alias Console.Channels.Channel
+  alias Console.Connections.DeviceFunction
+  alias Console.Connections.FunctionChannel
+  alias Console.Connections.DeviceChannel
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -16,51 +13,83 @@ defmodule ConsoleWeb.FlowsController do
   def update_edges(conn, %{"removeEdges" => remove_edges, "addEdges" => add_edges}) do
     current_organization = conn.assigns.current_organization
 
-    functions_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "function" end)
-    channels_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "channel" end)
-    functions_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "function" end)
-    channels_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "channel" end)
-
     result =
-    Ecto.Multi.new()
-    |> Ecto.Multi.run(:removed_functions, fn _repo, _ ->
-      label_ids = Enum.map(functions_to_remove, fn edge -> Map.get(edge, "source") end)
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:added_devices_functions, fn _repo, _ ->
+        edges =
+          Enum.filter(add_edges, fn edge ->
+            edge["source"] |> String.first() == "d" and edge["target"] |> String.first() == "f"
+          end)
+          |> Enum.map(fn edge ->
+            %{
+              device_id: edge["source"] |> String.trim_leading("device-"),
+              function_id: edge["target"] |> String.trim_leading("function-"),
+              organization_id: current_organization.id,
+            }
+            |> put_timestamps()
+          end)
 
-      {count, _} =
-        from(l in Label,
-          where: l.organization_id == ^current_organization.id and l.id in ^label_ids,
-          select: l.id,
-        )
-        |> Repo.update_all(set: [function_id: nil])
+        { count, _ }= Repo.insert_all(DeviceFunction, edges)
+        if count == length(edges) do
+          {:ok, "success"}
+        else
+          {:error, "Failed to connect devices to functions"}
+        end
+      end)
+      |> Ecto.Multi.run(:added_functions_channels, fn _repo, _ ->
+        edges =
+          Enum.filter(add_edges, fn edge ->
+            edge["source"] |> String.first() == "f" and edge["target"] |> String.first() == "c"
+          end)
+          |> Enum.map(fn edge ->
+            %{
+              function_id: edge["source"] |> String.trim_leading("function-"),
+              channel_id: edge["target"] |> String.trim_leading("channel-"),
+              organization_id: current_organization.id,
+            }
+            |> put_timestamps()
+          end)
 
-      if count == Enum.count(functions_to_remove) do
-        {:ok, "success"}
-      else
-        {:error, "failed to remove functions from labels"}
-      end
-    end)
-    |> Ecto.Multi.run(:added_functions, fn _repo, _ ->
-      count =
-        Enum.map(functions_to_add, fn edge ->
-          function = Functions.get_function!(current_organization, Map.get(edge, "target"))
+        { count, _ }= Repo.insert_all(FunctionChannel, edges)
+        if count == length(edges) do
+          {:ok, "success"}
+        else
+          {:error, "Failed to connect functions to integrations"}
+        end
+      end)
+      |> Ecto.Multi.run(:added_devices_channels, fn _repo, _ ->
+        edges =
+          Enum.filter(add_edges, fn edge ->
+            edge["source"] |> String.first() == "d" and edge["target"] |> String.first() == "c"
+          end)
+          |> Enum.map(fn edge ->
+            %{
+              device_id: edge["source"] |> String.trim_leading("device-"),
+              channel_id: edge["target"] |> String.trim_leading("channel-"),
+              organization_id: current_organization.id,
+            }
+            |> put_timestamps()
+          end)
 
-          {:ok, _} = Labels.add_function_to_labels(function, [Map.get(edge, "source")], current_organization)
-          1
-        end)
-        |> Enum.sum()
-
-      if count == Enum.count(functions_to_add) do
-        {:ok, "success"}
-      else
-        {:error, "failed to add functions to labels"}
-      end
-    end)
-    |> Repo.transaction()
+        { count, _ }= Repo.insert_all(DeviceChannel, edges)
+        if count == length(edges) do
+          {:ok, "success"}
+        else
+          {:error, "Failed to connect devices to functions"}
+        end
+      end)
+      |> Repo.transaction()
 
     with {:ok, _} <- result do
       conn
       |> put_resp_header("message", "Updated all edges successfully")
       |> send_resp(:ok, "")
     end
+  end
+
+  defp put_timestamps(struct) do
+    struct
+    |> Map.put(:inserted_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+    |> Map.put(:updated_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
   end
 end
