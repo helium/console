@@ -8,6 +8,7 @@ defmodule Console.Connections.DeviceChannel do
   schema "devices_channels" do
     belongs_to :device, Console.Devices.Device
     belongs_to :channel, Console.Channels.Channel
+    belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
   end
