@@ -70,12 +70,15 @@ export const Auth0Provider = ({
 
         if (isAuthenticated) {
           const user = await auth0FromHook.getUser();
-          const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
-          window.Intercom('boot', {
-            app_id: 'uj330shp',
-            email: user.email,
-            user_hash: hash
-          })
+
+          if (!process.env.SELF_HOSTED) {
+            const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
+            window.Intercom('boot', {
+              app_id: 'uj330shp',
+              email: user.email,
+              user_hash: hash
+            })
+          }
 
           setUser(user);
         }

@@ -75,18 +75,20 @@ class PurchaseCreditModal extends Component {
   }
 
   componentDidMount() {
-    const elements = stripe.elements()
+    if (!process.env.SELF_HOSTED) {
+      const elements = stripe.elements()
 
-    const style = {
-      base: {
-        color: "#32325d",
+      const style = {
+        base: {
+          color: "#32325d",
+        }
       }
-    }
-    this.card = elements.create("card", { style: style })
+      this.card = elements.create("card", { style: style })
 
-    this.card.on('focus', () => {
-      this.setState({ paymentMethodSelected: undefined })
-    })
+      this.card.on('focus', () => {
+        this.setState({ paymentMethodSelected: undefined })
+      })
+    }
 
     this.props.getRouterAddress()
     .then(({data}) => {
