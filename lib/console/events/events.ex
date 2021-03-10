@@ -24,7 +24,7 @@ defmodule Console.Events do
   def create_event(attrs \\ %{}) do
     reported_at_naive =
       attrs["reported_at"]
-      |> DateTime.from_unix!()
+      |> DateTime.from_unix!(:millisecond)
       |> DateTime.to_naive()
     reported_at = Integer.to_string(attrs["reported_at"])
 

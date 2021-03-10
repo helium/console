@@ -102,12 +102,12 @@ class PacketGraph extends Component {
 
     events.forEach(event => {
       const currentTime = Date.now() / 1000
-      const eventTime =  event.reported_at
+      const eventTime =  parseInt(event.reported_at) / 1000
       const timeDiff = currentTime - eventTime
       const integrations = event.integrations
       const hotspots = event.hotspots
 
-      if ( timeDiff < 300 ) {
+      if (timeDiff < 300) {
         if (integrations[0] && integrations[0].status == 'success') {
           success.push({
             x: timeDiff,
