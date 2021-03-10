@@ -71,11 +71,11 @@ export const PREMADE_CHANNEL_TYPES = [
     info: "This Integration simplifies sending data to the Datacake IoT platform.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake"
   },
-  // {
-  //   name: "TagoIO",
-  //   link: "/integrations/new/tago",
-  //   img: `${Tago}` ,
-  //   info: "This Integration simplifies sending data to the TagoIO platform.",
-  //   docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"
-  // },
+  {
+    name: "TagoIO",
+    link: "/integrations/new/tago",
+    img: `${Tago}` ,
+    info: "This Integration simplifies sending data to the TagoIO platform.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"
+  },
 ]
