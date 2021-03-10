@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
+import { formatDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
@@ -129,7 +129,7 @@ class EventsDashboard extends Component {
         { title: 'Hotspot Name', dataIndex: 'name' },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
-        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>}
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ]
     } else {
       hotspotColumns = [
@@ -138,7 +138,7 @@ class EventsDashboard extends Component {
         { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
-        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>}
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ]
     }
 
@@ -296,7 +296,7 @@ class EventsDashboard extends Component {
         title: 'Time',
         dataIndex: 'reported_at',
         align: 'left',
-        render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
+        render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>
       }
     ]
 
