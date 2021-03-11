@@ -214,38 +214,36 @@ defmodule ConsoleWeb.Router.DeviceController do
           end
 
           case event.category do
-            # "up" ->
-              # Enum.each(event.channels, fn channel ->
-              #   if channel.id != "no_channel" and channel.id != "no_integration_id" do
-              #     event_channel = Channels.get_channel(channel.id) |> Repo.preload([:labels])
-              #     labels = Enum.map(event_channel.labels, fn l -> l.id end)
+            "uplink" ->
+              if event.data["integration"]["id"] != "no_channel" do
+                event_integration = Channels.get_channel(event.data["integration"]["id"]) |> Repo.preload([:labels])
+                labels = Enum.map(event_integration.labels, fn l -> l.id end)
 
-              #     if event_channel.time_first_uplink == nil do
-              #       Channels.update_channel(event_channel, organization, %{ time_first_uplink: event.reported_at_naive })
-              #       { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-              #       details = %{ time: time, channel_name: event_channel.name, channel_id: event_channel.id }
-              #       LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
-              #     end
+                if event_integration.time_first_uplink == nil do
+                  Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
+                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                  details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
+                  LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
+                end
 
-              #     if channel.status != "success" do
-              #       { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-              #       details = %{
-              #         channel_name: event_channel.name,
-              #         channel_id: event_channel.id,
-              #         time: time
-              #       }
-              #       limit = %{ integration_id: event_channel.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-              #       LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
-              #     end
-              #   end
-              # end)
-            # "down" ->
-            #   if List.first(event.hotspots).status != "success" do
-            #     details = %{ device_id: event_device.id, device_name: event_device.name }
-            #     device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-            #     limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-            #     LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
-            #   end
+                if event.data["integration"]["status"] != "success" do
+                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                  details = %{
+                    channel_name: event_integration.name,
+                    channel_id: event_integration.id,
+                    time: time
+                  }
+                  limit = %{ integration_id: event_integration.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+                  LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+                end
+              end
+            "downlink" ->
+              if event.sub_category == "downlink_dropped" do
+                details = %{ device_id: event_device.id, device_name: event_device.name }
+                device_labels = Enum.map(event_device.labels, fn l -> l.id end)
+                limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
+                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
+              end
             _ -> nil
           end
 
