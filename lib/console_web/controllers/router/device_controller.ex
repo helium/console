@@ -106,30 +106,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
-    # for passing to debug panel, not stored in db
-    # channels_with_debug =
-    #   event["channels"]
-    #   |> Enum.map(fn c ->
-    #     case c["debug"] do
-    #       nil -> c
-    #       value -> Map.put(c, "debug", Jason.encode!(value))
-    #     end
-    #   end)
-    #   |> Enum.map(fn c ->
-    #     c |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
-    #   end)
-
-    # for storing event in db, no debug info attached
-    # channels_without_debug =
-    #   event["channels"]
-    #   |> Enum.map(fn c ->
-    #     Map.drop(c, ["debug"])
-    #   end)
-
-    # payload = event["payload"]
-
     event = event
-      # |> Map.put("channels", channels_without_debug)
       |> Map.put("reported_at_epoch", event["reported_at"])
       |> Map.put("router_uuid", event["id"])
       |> Map.delete("id")
@@ -149,12 +126,6 @@ defmodule ConsoleWeb.Router.DeviceController do
         end
       _ -> event
     end
-
-    # event =
-    #   case event["data"]["dc"]["used"] do
-    #     nil -> Map.put(event["data"]["dc"], "used", 0)
-    #     dc -> Map.put(event["data"]["dc"], "used", dc)
-    #   end
 
     # store info before updating device
     event_device = Devices.get_device(device_id) |> Repo.preload([:labels])
@@ -285,22 +256,9 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   defp publish_created_event(event, device) do
-    # event =
-      # case payload do
-      #   nil ->
-      #     Map.merge(event, %{
-      #       device_name: device.name,
-      #       # hotspots: Jason.encode!(event.hotspots),
-      #       # channels: Jason.encode!(event.channels)
-      #     })
-      #   _ ->
-      #     Map.merge(event, %{
-      #       device_name: device.name,
-      #       # payload: payload,
-      #       # hotspots: Jason.encode!(event.hotspots),
-      #       # channels: Jason.encode!(channels_with_debug)
-      #     })
-      # end
+    event = Map.merge(event, %{
+      device_name: device.name
+    })
 
     event_to_publish =
       event

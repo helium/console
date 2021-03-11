@@ -10,11 +10,12 @@ const { Text } = Typography
 
 class DebugEntry extends Component {
   state = {
-    show1: true,
-    show2: false,
-    show3: false,
-    show4: false,
-    channelView: {},
+    showEventInfo: true,
+    showDeviceInfo: false,
+    showHotspotInfo: false,
+    showIntegrationInfo: false,
+    showReq: false,
+    showRes: false
   }
 
   toggleView = view => {
@@ -22,9 +23,9 @@ class DebugEntry extends Component {
   }
 
   render() {
-    const { data } = this.props
-    const { show1, show2, show3, show4 } = this.state
-    const stringJSON = JSON.stringify(data, null, 2)
+    const { event } = this.props
+    const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo } = this.state
+    const stringJSON = JSON.stringify(event, null, 2)
 
     const menu = (
       <Menu>
@@ -41,55 +42,56 @@ class DebugEntry extends Component {
             Save JSON File
           </a>
         </Menu.Item>
-        <Menu.Item style={{ color: '#F5222D'}} onClick={() => this.props.clearSingleEntry(data.id)}>
+        <Menu.Item style={{ color: '#F5222D'}} onClick={() => this.props.clearSingleEntry(event.id)}>
           Clear Entry
         </Menu.Item>
       </Menu>
     )
 
     return (
-      <div key={data.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
+      <div key={event.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>
             {
-              show1 ? (
+              showEventInfo ? (
                 <EyeFilled
                   style={{ color: '#FFFFFF', marginRight: 10 }}
-                  onClick={() => this.toggleView("show1")}
+                  onClick={() => this.toggleView("showEventInfo")}
                 />
               ) : (
                 <EyeInvisibleFilled
                   style={{ color: '#8C8C8C', marginRight: 10 }}
-                  onClick={() => this.toggleView("show1")}
+                  onClick={() => this.toggleView("showEventInfo")}
                 />
               )
             }
-            <Text style={{ color: show1 ? '#FFFFFF' : '#8C8C8C' }}>Packet Information</Text>
+            <Text style={{ color: showEventInfo ? '#FFFFFF' : '#8C8C8C' }}>Event Information</Text>
           </span>
 
           <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ color: '#8C8C8C' }}>{moment.unix(data.reported_at).fromNow()}</Text>
+            <Text style={{ color: '#8C8C8C' }}>{moment(parseInt(event.reported_at)).fromNow()}</Text>
             <Dropdown overlay={menu}>
               <EllipsisOutlined style={{ color: '#8C8C8C', marginLeft: 10, fontSize: 16 }} />
             </Dropdown>
           </span>
         </div>
         {
-          this.state.show1 && (
+          this.state.showEventInfo && (
             <div style={{ marginBottom: 20 }}>
               <pre style={{ color: debugTextColor }}>
                 {JSON.stringify(
                     {
-                      "id": data.id,
-                      "category": data.category,
-                      "description": data.description,
-                      "fcnt_up": data.frame_up,
-                      "fcnt_down": data.frame_down,
-                      "payload": data.payload,
-                      "payload_hex": data.payload_hex,
-                      "payload_size": data.payload_size,
-                      "port": data.port,
-                      "reported_at": data.reported_at,
+                      "id": event.id,
+                      "router_uuid": event.router_uuid,
+                      "category": event.category,
+                      "sub_category": event.sub_category,
+                      "description": event.description,
+                      ...(event.category === 'uplink' && {"fcnt_up": event.data.fcnt}),
+                      ...(event.category === 'downlink' && {"fcnt_down": event.data.fcnt}),
+                      "payload": event.data.payload,
+                      "payload_size": event.data.payload_size,
+                      "port": event.data.port,
+                      "reported_at": event.reported_at,
                     }, null, 2
                 )}
               </pre>
@@ -98,28 +100,28 @@ class DebugEntry extends Component {
         }
         <div style={{ marginBottom: 5 }}>
         {
-          show2 ? (
+          showDeviceInfo ? (
             <EyeFilled
               style={{ color: '#FFFFFF', marginRight: 10 }}
-              onClick={() => this.toggleView("show2")}
+              onClick={() => this.toggleView("showDeviceInfo")}
             />
           ) : (
             <EyeInvisibleFilled
               style={{ color: '#8C8C8C', marginRight: 10 }}
-              onClick={() => this.toggleView("show2")}
+              onClick={() => this.toggleView("showDeviceInfo")}
             />
           )
         }
-          <Text style={{ color: show2 ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
+          <Text style={{ color: showDeviceInfo ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
         </div>
         {
-          this.state.show2 && (
+          this.state.showDeviceInfo && (
             <div style={{ marginBottom: 20 }}>
               <pre style={{ color: debugTextColor }}>
                 {JSON.stringify(
                     {
-                      "name": data.device_name,
-                      "devaddr": data.devaddr,
+                      "name": event.device_name,
+                      "devaddr": event.data.devaddr,
                     }, null, 2
                 )}
               </pre>
@@ -128,148 +130,108 @@ class DebugEntry extends Component {
         }
         <div style={{ marginBottom: 5 }}>
           {
-            show3 ? (
+            showHotspotInfo ? (
               <EyeFilled
                 style={{ color: '#FFFFFF', marginRight: 10 }}
-                onClick={() => this.toggleView("show3")}
+                onClick={() => this.toggleView("showHotspotInfo")}
               />
             ) : (
               <EyeInvisibleFilled
                 style={{ color: '#8C8C8C', marginRight: 10 }}
-                onClick={() => this.toggleView("show3")}
+                onClick={() => this.toggleView("showHotspotInfo")}
               />
             )
           }
-          <Text style={{ color: show3 ? '#FFFFFF' : '#8C8C8C' }}>Hotspots</Text>
+          <Text style={{ color: showHotspotInfo ? '#FFFFFF' : '#8C8C8C' }}>Hotspot</Text>
         </div>
         {
-          this.state.show3 && data.hotspots.map(h => (
-            <div key={h.id} style={{ marginBottom: 20 }}>
+          this.state.showHotspotInfo && 
+            <div style={{ marginBottom: 20 }}>
               <pre style={{ color: debugTextColor }}>
-                {JSON.stringify(h, null, 2)}
+                {JSON.stringify(event.data.hotspot, null, 2)}
               </pre>
             </div>
-          ))
         }
         <div style={{ marginBottom: 5 }}>
           {
-            show4 ? (
+            showIntegrationInfo ? (
               <EyeFilled
                 style={{ color: '#FFFFFF', marginRight: 10 }}
-                onClick={() => this.toggleView("show4")}
+                onClick={() => this.toggleView("showIntegrationInfo")}
               />
             ) : (
               <EyeInvisibleFilled
                 style={{ color: '#8C8C8C', marginRight: 10 }}
-                onClick={() => this.toggleView("show4")}
+                onClick={() => this.toggleView("showIntegrationInfo")}
               />
             )
           }
-          <Text style={{ color: show4 ? '#FFFFFF' : '#8C8C8C' }}>Integrations</Text>
+          <Text style={{ color: showIntegrationInfo ? '#FFFFFF' : '#8C8C8C' }}>Integration</Text>
         </div>
-        {
-          this.state.show4 && data.channels.map(c => (
-            <div key={c.id} style={{ marginBottom: 20 }}>
-              {
-                c.debug && (
-                  <span style={{ marginLeft: 25 }}>
-                    <Icon
-                      type={this.state.channelView[c.id] && this.state.channelView[c.id].req ? "eye" : "eye-invisible"}
-                      theme="filled"
-                      style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
-                      onClick={() => {
-                        if (this.state.channelView[c.id]) {
-                          this.setState({
-                            channelView: {
-                              [c.id]: {
-                                req: !this.state.channelView[c.id].req,
-                                res: this.state.channelView[c.id].res,
-                              }
-                            }
-                          })
-                        } else {
-                          this.setState({
-                            channelView: {
-                              [c.id]: {
-                                req: true,
-                                res: false,
-                              }
-                            }
-                          })
-                        }
-                      }}
-                    />
-                    <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].req ? "#FFFFFF" : '#8C8C8C' }}>Debug Request</Text>
-                  </span>
-                )
-              }
-              {
-                c.debug && (
-                  <span style={{ marginLeft: 15 }}>
-                    <Icon
-                      type={this.state.channelView[c.id] && this.state.channelView[c.id].res ? "eye" : "eye-invisible"}
-                      theme="filled"
-                      style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
-                      onClick={() => {
-                        if (this.state.channelView[c.id]) {
-                          this.setState({
-                            channelView: {
-                              [c.id]: {
-                                req: this.state.channelView[c.id].req,
-                                res: !this.state.channelView[c.id].res,
-                              }
-                            }
-                          })
-                        } else {
-                          this.setState({
-                            channelView: {
-                              [c.id]: {
-                                req: false,
-                                res: true,
-                              }
-                            }
-                          })
-                        }
-                      }}
-                    />
-                    <Text style={{ color: this.state.channelView[c.id] && this.state.channelView[c.id].res ? "#FFFFFF" : '#8C8C8C' }}>Debug Response</Text>
-                  </span>
-                )
-              }
+        <div style={{ marginBottom: 20 }}>
+          {
+            event.data.req && (
+              <span style={{ marginLeft: 25 }}>
+                <Icon
+                  type={this.state.showReq ? "eye" : "eye-invisible"}
+                  theme="filled"
+                  style={{ color: this.state.showReq ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
+                  onClick={() => { this.setState({ showReq: !this.state.showReq }) }}
+                />
+                <Text style={{ color: this.state.showReq ? "#FFFFFF" : '#8C8C8C' }}>Debug Request</Text>
+              </span>
+            )
+          }
+          {
+            event.data.res && (
+              <span style={{ marginLeft: 15 }}>
+                <Icon
+                  type={this.state.showRes ? "eye" : "eye-invisible"}
+                  theme="filled"
+                  style={{ color: this.state.showRes ? "#FFFFFF" : '#8C8C8C', marginRight: 10 }}
+                  onClick={() => { this.setState({ showRes: !this.state.showRes }) }}
+                />
+                <Text style={{ color: this.state.showRes ? "#FFFFFF" : '#8C8C8C' }}>Debug Response</Text>
+              </span>
+            )
+          }
+          {
+            event.data.integration && (
+              <React.Fragment>
               <pre style={{ color: debugTextColor, marginLeft: 25 }}>
                 {JSON.stringify(
                     {
-                      "id": c.id,
-                      "name": c.name,
-                      "description": c.description,
-                      "status": c.status,
-                      "decoded_payload": c.debug && c.debug.req && c.debug.req.body.decoded && c.debug.req.body.decoded.payload
+                      "id": event.data.integration.id,
+                      "name": event.data.integration.name,
+                      "status": event.data.integration.status,
+                      "decoded_payload": event.data.req && event.data.req.body.decoded && event.data.req.body.decoded.payload
                     }, null, 2
                 )}
               </pre>
               <div style={{ marginLeft: 50 }}>
                 {
-                  this.state.channelView[c.id] && this.state.channelView[c.id].req && (
+                  this.state.showReq && (
                     <pre style={{ color: debugTextColor }}>
                       {JSON.stringify(
-                          c.debug.req, null, 2
+                          event.data.req, null, 2
                       )}
                     </pre>
                   )
                 }
                 {
-                  this.state.channelView[c.id] && this.state.channelView[c.id].res && (
+                  this.state.showRes && (
                     <pre style={{ color: debugTextColor }}>
                       {JSON.stringify(
-                          c.debug.res, null, 2
+                          event.data.res, null, 2
                       )}
                     </pre>
                   )
                 }
               </div>
-            </div>
-          ))
-        }
+              </React.Fragment>
+            )
+          }
+        </div>
       </div>
     )
   }

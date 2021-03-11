@@ -281,6 +281,8 @@ class EventsDashboard extends Component {
       })
     });
 
+    aggregatedRows.sort((a, b) => (a.reported_at < b.reported_at) ? 1 : -1);
+
     const columns = [
       {
         title: 'Frame Count',
