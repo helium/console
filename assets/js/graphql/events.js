@@ -4,17 +4,14 @@ export const EVENT_FRAGMENT = gql`
   fragment EventFragment on Event {
     id,
     description,
-    payload_size,
-    payload,
+    data,
     device_name,
     category,
     frame_up,
     frame_down,
     reported_at,
-    port,
-    devaddr,
-    hotspots,
-    channels
+    sub_category,
+    router_uuid
   }
 `
 

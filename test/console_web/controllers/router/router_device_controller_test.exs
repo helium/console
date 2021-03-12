@@ -83,53 +83,40 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id })
       channel_0 = insert(:channel, %{ organization_id: organization.id })
-      timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00])
+      timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00], :millisecond)
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
         |> post("/api/router/devices/#{device_0.id}/event", %{
-          "dc" => %{
-            "balance" => 3000,
-            "nonce" => 0
-          },
-          "category" => "up",
+          "id" => "UUID-V4",
+          "category" => "uplink",
+          "sub_category" => "ack",
           "description" => "test description",
           "reported_at" => timestamp,
-          "frame_up" => 2,
-          "frame_down" => 10,
-          "payload" => "payload",
-          "payload_size" => 2,
-          "port" => 1,
-          "devaddr" => "yesssss",
-          "hotspots" => [
-            %{
-              "id" => "hotspot_id2",
+          "device_id" => "device_uuid",
+          "data" => %{
+            "fcnt" => 2,
+            "payload_size" => 12,
+            "payload" => "base64 payload",
+            "port" => 1,
+            "devaddr" => "devaddr",
+            "hotspot" => %{
+              "id" => "hotspot_id",
               "name" => "hotspot name",
-              "reported_at" => timestamp,
-              "status" => "success",
               "rssi" => -30,
               "snr" => 0.2,
               "spreading" => "SF9BW125",
-              "frequency" => 923.3
-            }
-          ],
-          "channels" => [
-            %{
-              "id" => channel_0.id,
-              "name" => "channel name",
-              "reported_at" => timestamp,
-              "status" => "success",
-              "description" => "what happened",
-              "debug" => %{
-              	"req" => %{
-              		"body" => "{\"app_eui\":\"DC10DEE2C0381F05\",\"dev_eui\":\"73BA0F7B47FCB3F6\",\"devaddr\":\"E2DE10DC\",\"fcnt\":9753,\"hotspots\":[{\"frequency\":913.0999755859375,\"id\":\"11tkAbgqHU2qU7GTiuwjggEDaYsmRDsbPsJjw5ezsu54coQE7Cu\",\"name\":\"fancy-fossilized-moose\",\"reported_at\":1586977541,\"rssi\":-64.0,\"snr\":12.0,\"spreading\":\"SF9BW125\",\"status\":\"success\"}],\"id\":\"a9bccdd2-ff89-47d0-b60f-8f01634c195f\",\"metadata\":{\"labels\":[{\"id\":\"aae7f89c-b6e8-49e8-9ea4-7e1109f54d87\",\"name\":\"RequestBin\",\"organization_id\":\"847e51db-25bd-4ff5-8fc3-33b459a68a22\"}]},\"name\":\"Pierre-Test-Device\",\"payload\":\"SGVsbG8sIHdvcmxkIQ==\",\"port\":1,\"reported_at\":1586977541}",
-              		"headers" => %{"Content-Type" => "application/json"},
-              		"method" => "post",
-              		"url" => "https://enssngw32yjbk.x.pipedream.net/"
-              	}
-              }
-            }
-          ]
+              "frequency" => 923.3,
+              "channel" => 12,
+              "lat" => 37.00001962582851,
+              "long" => -120.9000053210367
+            },
+            "dc" => %{
+              "balance" => 3000,
+              "nonce" => 0,
+              "used" => 1
+            },
+          }
         })
 
       assert response(resp_conn, 200)

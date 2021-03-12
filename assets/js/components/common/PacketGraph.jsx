@@ -98,24 +98,24 @@ class PacketGraph extends Component {
   updateChart = (events) => {
     const success = []
     const error = []
-    const noChannel = []
+    const noIntegration = []
 
     events.forEach(event => {
       const currentTime = Date.now() / 1000
-      const eventTime =  event.reported_at
+      const eventTime =  parseInt(event.reported_at) / 1000
       const timeDiff = currentTime - eventTime
-      const channels = JSON.parse(event.channels)
-      const hotspots = JSON.parse(event.hotspots)
+      const integrations = event.integrations
+      const hotspots = event.hotspots
 
-      if ( timeDiff < 300 ) {
-        if (channels[0] && channels[0].status == 'success') {
+      if (timeDiff < 300) {
+        if (integrations[0] && integrations[0].status == 'success') {
           success.push({
             x: timeDiff,
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: hotspots[0] ? hotspots[0].name : "unknown"
           })
-        } else if (channels[0] && channels[0].status == 'error') {
+        } else if (integrations[0] && integrations[0].status == 'error') {
           error.push({
             x: timeDiff,
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
@@ -123,7 +123,7 @@ class PacketGraph extends Component {
             h: hotspots[0] ? hotspots[0].name : "unknown"
           })
         } else {
-          noChannel.push({
+          noIntegration.push({
             x: timeDiff,
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
@@ -148,7 +148,7 @@ class PacketGraph extends Component {
           },
           {
             label: 'No Channel',
-            data: noChannel,
+            data: noIntegration,
             backgroundColor: 'rgba(255, 0, 0, 0.5)'
           },
         ]

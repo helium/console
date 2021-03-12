@@ -1,11 +1,7 @@
 import moment from 'moment'
 
-export const formatDatetime = (datetime, format = 'LLL') => (
-  moment.utc(datetime).utcOffset(moment().utcOffset()).format(format)
-)
-
-export const formatUnixDatetime = (datetime, format = 'll') => (
-  `${moment.unix(datetime).utcOffset(moment().utcOffset()).format(format)} ${moment.unix(datetime).utcOffset(moment().utcOffset()).format("LTS")}`
+export const formatDatetime = (datetime, format = 'll') => (
+  `${moment(parseInt(datetime)).utcOffset(moment().utcOffset()).format(format)} ${moment(parseInt(datetime)).utcOffset(moment().utcOffset()).format("h:mm:ss.SSS A")}`
 )
 
 export const formatDatetimeAgo = (datetime) => (
@@ -13,5 +9,5 @@ export const formatDatetimeAgo = (datetime) => (
 )
 
 export const getDiffInSeconds = (datetime) => (
-  moment().diff(moment.unix(datetime), 'seconds')
+  moment().diff(moment(datetime), 'seconds')
 )

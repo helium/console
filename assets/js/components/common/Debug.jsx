@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DebugEntry from './DebugEntry'
-import omit from 'lodash/omit'
 import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
 import { Typography, Popover, Button } from 'antd';
 import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -44,34 +43,14 @@ class Debug extends Component {
     })
   }
 
+  getUniqueRouterUuids = () => (
+    [...new Set(this.state.data.map(e => e.router_uuid))]
+  )
+
   updateData = event => {
-    if (this.state.data.length === 10) return
-    if (!event.hasOwnProperty("payload")) return
-
-    const hotspots = JSON.parse(event.hotspots)
-    const channels = JSON.parse(event.channels)
-
-    event.hotspots = hotspots || []
-    if (channels) {
-      event.channels = channels.map(channel => {
-        if (channel.debug) {
-          channel.debug = JSON.parse(channel["debug"])
-          if (channel.debug.req && channel.debug.req.body) {
-            try {
-              channel.debug.req.body =  JSON.parse(channel.debug.req.body)
-            } catch(e) {}
-          }
-          if (channel.debug.res && channel.debug.res.body) {
-            try {
-              channel.debug.res.body = JSON.parse(channel.debug.res.body)
-            } catch(e) {}
-          }
-        }
-        return channel
-      })
-    } else {
-      event.channels = []
-    }
+    // since events come in deaggregated from router, limit to 10 unique router_uuids (incl. all its related events)
+    const uniqueRouterUuids = this.getUniqueRouterUuids()
+    if (!uniqueRouterUuids.includes(event.router_uuid) && uniqueRouterUuids.length === 10) return
 
     const { data } = this.state
     this.setState({ data: [event].concat(data) })
@@ -92,9 +71,9 @@ class Debug extends Component {
       <div style={{ height: 'calc(100% - 55px)', width: '100%', overflow: 'scroll'}} className="no-scroll-bar">
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 0 }}>
           <Text style={{ color: 'white' }}>
-            <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 10 Packets</span>
+            <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 40 Events</span>
           </Text>
-          <Popover content="Debug mode only shows a limited amount of packets at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
+          <Popover content="Debug mode only shows a limited amount of events at once. Click refresh to see more." placement="bottom" overlayStyle={{ width: 220 }}>
             <InfoCircleOutlined style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
           </Popover>
           <div style={{ flexGrow: 1 }}/>
@@ -112,7 +91,7 @@ class Debug extends Component {
           {
             data.map(d => (
               <span key={d.id}>
-                <DebugEntry data={d} clearSingleEntry={this.clearSingleEntry}/>
+                <DebugEntry event={d} clearSingleEntry={this.clearSingleEntry}/>
               </span>
             ))
           }

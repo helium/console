@@ -43,15 +43,19 @@ defmodule Console.Jobs do
       end
       recipients = Organizations.get_memberships_by_organization_and_role(label.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
       details = Enum.map(events, fn (e) -> e.details end)
+      has_hotspot_info = case Enum.find(details, fn d -> d["hotspot"] !== nil end) do
+        nil -> false
+        _ -> true
+      end
 
       # send email specific to the type of event
       case identifiers.key do
         "device_deleted" -> Email.device_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+        "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, label.name, details, organization.name, label.id, has_hotspot_info) |> Mailer.deliver_later()
         "integration_stops_working" -> Email.integration_stops_working_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+        "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, label.name, details, organization.name, label.id, has_hotspot_info) |> Mailer.deliver_later()
         "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
         "integration_receives_first_event" -> Email.integration_receives_first_event_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
       end
@@ -87,14 +91,15 @@ defmodule Console.Jobs do
     settings_device_stops_working = LabelNotificationSettings.get_label_notification_settings_by_key("device_stops_transmitting")
     Enum.each(settings_device_stops_working, fn setting -> 
       # value in the setting determines period of time to check if device stopped connecting
-      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: String.to_integer(setting.value)))
+      buffer = String.to_integer(setting.value)
+      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: -buffer))
     end)
   end
 
-  def check_device_stop_transmitting(label_id, starting_from) do
+  defp check_device_stop_transmitting(label_id, starting_from) do
     devices = Devices.get_devices_for_label(label_id)
     Enum.each(devices, fn device ->
-      if device.last_connected != nil and device.last_connected < starting_from do
+      if device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
         # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
@@ -102,9 +107,10 @@ defmodule Console.Jobs do
           device_name: device.name, 
           device_id: device.id,
           time: last_connected_time,
-          hotspots: Enum.map(event.hotspots, fn h -> 
-            %{ name: h["name"], rssi: h["rssi"], snr: h["snr"], spreading: h["spreading"], frequency: h["frequency"] } 
-          end)
+          hotspot: case event.data["hotspot"] != nil do
+            false -> nil
+            true -> event.data["hotspot"]
+          end
         }
         limit = %{ device_id: device.id, time_buffer: Timex.shift(Timex.now, hours: -24) }
         LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details, limit) 

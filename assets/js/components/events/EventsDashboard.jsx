@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { formatUnixDatetime, getDiffInSeconds } from '../../util/time'
+import { formatDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
-import uniqBy from 'lodash/uniqBy';
 import groupBy from 'lodash/groupBy';
+import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
@@ -33,24 +32,25 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
-const categoryTag = (category) => {
+const categoryTag = (category, subCategories) => {
   switch(category) {
-    case "up":
+    case "uplink":
+      if (subCategories.includes('uplink_dropped')) return <Text>Uplink Dropped</Text>;
       return <Text>Uplink</Text>
-    case "down":
-      return <Text>Downlink</Text>
-    case "ack":
-      return <Text>Acknowledge</Text>
-    case "join_req":
+    case "downlink":
+      if (subCategories.includes('downlink_dropped')) {
+        return <Text>Downlink Dropped</Text>;
+      } else if (subCategories.includes('downlink_ack')) {
+        return <Text>Acknowledge</Text>;
+      } else {
+        return <Text>Downlink</Text>;
+      }
+    case "join_request":
       return <Text>Join Request</Text>
     case "join_accept":
       return <Text>Join Accept</Text>
-    case "packet_dropped":
-      return <Text>Packet Dropped</Text>
-    case "channel_crash":
-      return <Text>Channel Crashed</Text>
-    case "channel_start_error":
-      return <Text>Channel Start Error</Text>
+    case "misc":
+      return <Text>Misc. Integration Error</Text>
   }
 }
 
@@ -106,11 +106,11 @@ class EventsDashboard extends Component {
     })
   }
 
-  toggleExpandAll = () => {
+  toggleExpandAll = (aggregatedRows) => {
     if (this.state.expandAll) {
       this.setState({ expandAll: false, expandedRowKeys: [] })
     } else {
-      this.setState({ expandAll: true, expandedRowKeys: this.state.rows.map(r => r.id) })
+      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) })
     }
   }
 
@@ -123,12 +123,13 @@ class EventsDashboard extends Component {
   }
 
   renderExpanded = record => {
-    let hotspotColumns
-    if (record.category == 'ack' || record.category == 'down') {
+    let hotspotColumns;
+    if (record.category === 'downlink') {
       hotspotColumns = [
         { title: 'Hotspot Name', dataIndex: 'name' },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ]
     } else {
       hotspotColumns = [
@@ -137,22 +138,32 @@ class EventsDashboard extends Component {
         { title: 'SNR', dataIndex: 'snr', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Frequency', dataIndex: 'frequency', render: data => <span>{(Math.round(data * 100) / 100).toFixed(2)}</span> },
         { title: 'Spreading', dataIndex: 'spreading' },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ]
     }
 
+    const lorawanColumns = [
+      { title: 'Payload Size', dataIndex: 'payload_size' },
+      { title: 'Port', dataIndex: 'port' },
+      { title: 'Devaddr', dataIndex: 'devaddr' }
+    ];
+
     const channelColumns = [
       { title: 'Integration Name', dataIndex: 'name' },
-      { title: 'Message', render: (data, record) => <Text>{statusBadge(record.status)}{record.description}</Text> }
-    ]
+      { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> }
+    ];
 
     return (
       <Row gutter={10}>
         <Col span={22}>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={hotspotColumns} dataSource={JSON.parse(record.hotspots)} pagination={false} rowKey={record => record.id}/>
+            <Table columns={lorawanColumns} dataSource={[record]} pagination={false} rowKey={record => record.id}/>
           </Card>
           <Card  bodyStyle={{padding: 0}}>
-            <Table columns={channelColumns} dataSource={JSON.parse(record.channels)} pagination={false} rowKey={record => record.id}/>
+            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
+          </Card>
+          <Card  bodyStyle={{padding: 0}}>
+            <Table columns={channelColumns} dataSource={record.integrations} pagination={false} rowKey={record => record.id}/>
           </Card>
         </Col>
       </Row>
@@ -161,103 +172,134 @@ class EventsDashboard extends Component {
 
   renderFrameIcons = row => {
     switch(row.category) {
-      case "up":
-        return (
-          <Tag style={styles.tag} color="#4091F7">
-            <CaretUpOutlined style={{ marginRight: 1 }}/>
-            {row.frame_up}
-          </Tag>
-        )
-      case "down":
-        return (
-          <Tag style={styles.tag} color="#FA541C">
-            <CaretDownOutlined style={{ marginRight: 1 }}/>
-            {row.frame_down}
-          </Tag>
-        )
-      case "ack":
-        return (
-          <Tag style={styles.tag} color="#A0D911">
-            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
-          </Tag>
-        )
-      case "join_req":
-        return (
-          <Tag style={styles.tag} color="#4091F7">
-            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
-          </Tag>
-        )
+      case "uplink":
+        // per router, uplink_dropped will never be associated to another subcategory of uplink
+        if (row.sub_categories.includes('uplink_dropped')) {
+          return (
+            <span>
+              <Tag style={styles.tag} color="#D9D9D9">
+                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+                {row.fct}
+              </Tag>
+              <Popover
+                content={row.description}
+                placement="top"
+                overlayStyle={{ width: 220 }}
+              >
+                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+                </Tag>
+              </Popover>
+            </span>
+          );
+        } else {
+          return (
+            <Tag style={styles.tag} color="#4091F7">
+              <CaretUpOutlined style={{ marginRight: 1 }}/>
+              {row.fct}
+            </Tag>
+          )
+        }
+      case "downlink":
+        // per router, downlink_dropped will never be associated to another subcategory of downlink
+        if (row.sub_categories.includes('downlink_dropped')) {
+          return (
+            <span>
+              <Tag style={styles.tag} color="#D9D9D9">
+                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+                {row.fct}
+              </Tag>
+              <Popover
+                content={row.description}
+                placement="top"
+                overlayStyle={{ width: 220 }}
+              >
+                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+                </Tag>
+              </Popover>
+            </span>
+          );
+        } else {
+          return (
+            <Tag style={styles.tag} color="#FA541C">
+              <CaretDownOutlined style={{ marginRight: 1 }}/>
+              {row.fct}
+            </Tag>
+          );
+        }
+      case "join_request":
       case "join_accept":
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
-            {row.frame_up}
           </Tag>
         )
-      case "packet_dropped":
-        return (
-          <span>
-            <Tag style={styles.tag} color="#D9D9D9">
-              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-              {row.frame_up}
-            </Tag>
-            <Popover
-              content={row.description}
-              placement="top"
-              overlayStyle={{ width: 220 }}
-            >
-              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-              </Tag>
-            </Popover>
-          </span>
-        )
-      case "channel_crash":
+      case "misc":
         return (
           <Tag style={styles.tag} color="#D9D9D9">
             <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.frame_up}
-          </Tag>
-        )
-      case "channel_start_error":
-        return (
-          <Tag style={styles.tag} color="#D9D9D9">
-            <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-            {row.frame_up}
           </Tag>
         )
     }
   }
 
+  isDataString = data => {
+    return typeof data === 'string';
+  }
+
   render() {
     const { rows, expandedRowKeys, expandAll } = this.state
 
+    // events will come in separately and related events will have same router_uuid
+    const aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
+      const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
+      let firstEvent = orderedRouterEvents[0];
+
+      // data field might initially come in as json when new event is added but normally won't
+      let firstEventData = firstEvent.data;
+      if (this.isDataString(firstEvent.data)) {
+        firstEventData = JSON.parse(firstEvent.data);
+      }
+      
+      return ({
+        id: firstEvent.router_uuid,
+        description: firstEvent.description,
+        reported_at: firstEvent.reported_at,
+        category: firstEvent.category,
+        sub_categories: orderedRouterEvents.map(e => e.sub_category),
+        fct: firstEvent.frame_up || firstEvent.frame_down,
+        payload_size: firstEventData.payload_size,
+        port: firstEventData.port,
+        devaddr: firstEventData.devaddr,
+        hotspots: orderedRouterEvents.filter(
+          event => this.isDataString(event.data) ? JSON.parse(event.data).hotspot : event.data.hotspot
+        ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
+        integrations: orderedRouterEvents.filter(
+          event => this.isDataString(event.data) ? JSON.parse(event.data).integration : event.data.integration
+        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description }))
+      })
+    });
+
+    aggregatedRows.sort((a, b) => (a.reported_at < b.reported_at) ? 1 : -1);
+
     const columns = [
       {
+        title: 'Frame Count',
+        dataIndex: 'data',
+        render: (data, row) => this.renderFrameIcons(row)
+      },
+      {
+        title: 'Type',
         dataIndex: 'category',
-        render: data => <Text>{categoryTag(data)}</Text>
+        render: (data, row) => <Text>{categoryTag(row.category, row.sub_categories)}</Text>
       },
       {
         title: 'Time',
         dataIndex: 'reported_at',
         align: 'left',
-        render: data => <Text style={{textAlign:'left'}}>{formatUnixDatetime(data)}</Text>
-      },
-      {
-        title: 'Frame Count',
-        dataIndex: 'frame_up',
-        render: (data, row) => this.renderFrameIcons(row)
-      },
-      {
-        title: 'Port',
-        dataIndex: 'port',
-      },
-      {
-        title: 'Dev Address',
-        dataIndex: 'devaddr',
-      },
+        render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>
+      }
     ]
 
     const { loading, error } = this.props.deviceEventsQuery
@@ -276,7 +318,7 @@ class EventsDashboard extends Component {
           </Text>
         </div>
         <div style={{padding: 20, boxSizing: 'border-box'}}>
-        <PacketGraph events={this.state.rows} />
+        <PacketGraph events={aggregatedRows} />
         </div>
         <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
           <span>
@@ -285,7 +327,7 @@ class EventsDashboard extends Component {
             </Text>
 
             <Checkbox
-              onChange={this.toggleExpandAll}
+              onChange={() => this.toggleExpandAll(aggregatedRows)}
               checked={expandAll}
               style={{ marginLeft: 20 }}
             >
@@ -303,7 +345,7 @@ class EventsDashboard extends Component {
           </a>
         </div>
         <Table
-          dataSource={rows}
+          dataSource={aggregatedRows}
           columns={columns}
           rowKey={record => record.id}
           pagination={false}
