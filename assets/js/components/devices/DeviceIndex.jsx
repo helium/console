@@ -54,6 +54,11 @@ class DeviceIndex extends Component {
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
 
+    if (!this.props.devicesQuery.loading) {
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
+    }
+
     this.importChannel = socket.channel("graphql:device_import_update", {})
     this.importChannel.join()
     this.importChannel.on(`graphql:device_import_update:${currentOrganizationId}:import_list_updated`, (message) => {
