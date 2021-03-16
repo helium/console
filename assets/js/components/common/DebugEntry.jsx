@@ -196,7 +196,7 @@ class DebugEntry extends Component {
             )
           }
           {
-            event.data.integration && (
+            event.data.integration && this.state.showIntegrationInfo && (
               <React.Fragment>
               <pre style={{ color: debugTextColor, marginLeft: 25 }}>
                 {JSON.stringify(
@@ -204,7 +204,7 @@ class DebugEntry extends Component {
                       "id": event.data.integration.id,
                       "name": event.data.integration.name,
                       "status": event.data.integration.status,
-                      "decoded_payload": event.data.req && event.data.req.body.decoded && event.data.req.body.decoded.payload
+                      "decoded_payload": event.data.req && event.data.req.body && event.data.req.body.decoded && event.data.req.body.decoded.payload
                     }, null, 2
                 )}
               </pre>
