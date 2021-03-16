@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
-import { isEdge } from 'react-flow-renderer';
+import { isEdge, isNode } from 'react-flow-renderer';
 import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
-import { updateEdges } from '../../actions/flows'
+import { updateFlows } from '../../actions/flows'
 import DashboardLayout from '../common/DashboardLayout'
 import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
@@ -20,10 +20,9 @@ class FlowsIndex extends Component {
   }
 
   submitChanges = (newElementsMap) => {
-    const edgesToAdd = Object.values(newElementsMap).filter(el => isEdge(el))
-    const edgesToRemove = []
+    const completePaths = getCompleteFlows(newElementsMap)
 
-    updateEdges(edgesToRemove, edgesToAdd)
+    updateFlows(completePaths)
     .then(status => {
       if (status == 200) {
         this.props.allResourcesQuery.refetch()
@@ -143,6 +142,32 @@ class FlowsIndex extends Component {
       </DashboardLayout>
     )
   }
+}
+
+const getCompleteFlows = (newElementsMap) => {
+  const deviceAndLabelNodes = Object.values(newElementsMap).filter(el => el.type === 'deviceNode' || el.type === 'labelNode')
+  const edges = Object.values(newElementsMap).filter(el => isEdge(el))
+  let paths = []
+
+  const getPaths = (node, path) => {
+    if (node.type === 'channelNode') {
+      paths.push(path)
+      return
+    }
+
+    edges.forEach(edge => {
+      if (edge.source === node.id) {
+        const nextNode = newElementsMap[edge.target]
+        getPaths(nextNode, path.concat({ type: nextNode.type, id: nextNode.id }))
+      }
+    })
+  }
+
+  deviceAndLabelNodes.forEach(node => {
+    getPaths(node, [{ type: node.type, id: node.id }])
+  })
+
+  return paths
 }
 
 export default withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'network-only', variables: {}, name: 'allResourcesQuery' }))

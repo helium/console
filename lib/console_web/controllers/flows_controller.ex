@@ -3,85 +3,52 @@ defmodule ConsoleWeb.FlowsController do
   import Ecto.Query
 
   alias Console.Repo
+  alias Console.Flows
+  alias Console.Flows.Flow
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
-  def update_edges(conn, %{"removeEdges" => remove_edges, "addEdges" => add_edges}) do
+  def update_edges(conn, %{"completeFlows" => complete_flows}) do
     current_organization = conn.assigns.current_organization
 
-    # result =
-    #   Ecto.Multi.new()
-    #   |> Ecto.Multi.run(:added_devices_functions, fn _repo, _ ->
-    #     edges =
-    #       Enum.filter(add_edges, fn edge ->
-    #         edge["source"] |> String.first() == "d" and edge["target"] |> String.first() == "f"
-    #       end)
-    #       |> Enum.map(fn edge ->
-    #         %{
-    #           device_id: edge["source"] |> String.trim_leading("device-"),
-    #           function_id: edge["target"] |> String.trim_leading("function-"),
-    #           organization_id: current_organization.id,
-    #         }
-    #         |> put_timestamps()
-    #       end)
-    #
-    #     { count, _ }= Repo.insert_all(DeviceFunction, edges)
-    #     if count == length(edges) do
-    #       {:ok, "success"}
-    #     else
-    #       {:error, "Failed to connect devices to functions"}
-    #     end
-    #   end)
-    #   |> Ecto.Multi.run(:added_functions_channels, fn _repo, _ ->
-    #     edges =
-    #       Enum.filter(add_edges, fn edge ->
-    #         edge["source"] |> String.first() == "f" and edge["target"] |> String.first() == "c"
-    #       end)
-    #       |> Enum.map(fn edge ->
-    #         %{
-    #           function_id: edge["source"] |> String.trim_leading("function-"),
-    #           channel_id: edge["target"] |> String.trim_leading("channel-"),
-    #           organization_id: current_organization.id,
-    #         }
-    #         |> put_timestamps()
-    #       end)
-    #
-    #     { count, _ }= Repo.insert_all(FunctionChannel, edges)
-    #     if count == length(edges) do
-    #       {:ok, "success"}
-    #     else
-    #       {:error, "Failed to connect functions to integrations"}
-    #     end
-    #   end)
-    #   |> Ecto.Multi.run(:added_devices_channels, fn _repo, _ ->
-    #     edges =
-    #       Enum.filter(add_edges, fn edge ->
-    #         edge["source"] |> String.first() == "d" and edge["target"] |> String.first() == "c"
-    #       end)
-    #       |> Enum.map(fn edge ->
-    #         %{
-    #           device_id: edge["source"] |> String.trim_leading("device-"),
-    #           channel_id: edge["target"] |> String.trim_leading("channel-"),
-    #           organization_id: current_organization.id,
-    #         }
-    #         |> put_timestamps()
-    #       end)
-    #
-    #     { count, _ }= Repo.insert_all(DeviceChannel, edges)
-    #     if count == length(edges) do
-    #       {:ok, "success"}
-    #     else
-    #       {:error, "Failed to connect devices to functions"}
-    #     end
-    #   end)
-    #   |> Repo.transaction()
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:deleted_flows, fn _repo, _ ->
+        { count, nil } = from(f in Flow, where: f.organization_id == ^current_organization.id) |> Repo.delete_all()
 
-    # with {:ok, _} <- result do
+        {:ok, count}
+      end)
+      |> Ecto.Multi.run(:added_flows, fn _repo, _ ->
+        parsed_flows =
+          complete_flows
+          |> Enum.map(fn flow ->
+            Enum.reduce(flow, %{}, fn node, acc ->
+              case node["type"] do
+                "deviceNode" -> Map.put(acc, :device_id, node["id"] |> String.trim_leading("device-"))
+                "labelNode" -> Map.put(acc, :label_id, node["id"] |> String.trim_leading("label-"))
+                "channelNode" -> Map.put(acc, :channel_id, node["id"] |> String.trim_leading("channel-"))
+                "functionNode" -> Map.put(acc, :function_id, node["id"] |> String.trim_leading("function-"))
+              end
+            end)
+            |> Map.put(:organization_id, current_organization.id)
+            |> put_timestamps()
+          end)
+
+        { count, _ }= Repo.insert_all(Flow, parsed_flows)
+        if count == length(parsed_flows) do
+          {:ok, "success"}
+        else
+          {:error, "Failed to connect all flows"}
+        end
+      end)
+      |> Repo.transaction()
+
+    with {:ok, _} <- result do
       conn
       |> put_resp_header("message", "Updated all edges successfully")
       |> send_resp(:ok, "")
-    # end
+    end
   end
 
   defp put_timestamps(struct) do
