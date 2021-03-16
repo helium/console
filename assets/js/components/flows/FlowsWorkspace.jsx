@@ -70,7 +70,7 @@ export default ({ initialElements, submitChanges, setChangesState, hasChanges })
 
   const onElementsRemove = (elementsToRemove) => {
     if (isEdge(elementsToRemove[0])) {
-      setElements(elsMap => omit(elsMap, [id]))
+      setElements(elsMap => omit(elsMap, [elementsToRemove[0].id]))
       setChangesState(true)
     }
   }

@@ -1,8 +1,8 @@
 import * as rest from '../util/rest';
 
-export const updateEdges = (removeEdges, addEdges) => {
+export const updateFlows = (completeFlows) => {
   return rest.post(`/api/flows/update`, {
-    removeEdges, addEdges
+    completeFlows
   })
   .then(res => res.status)
 }
