@@ -255,6 +255,7 @@
                                       <%= if @num_devices == 1 do %>
                                         The device <b><%= List.first(@details)["device_name"] %></b> that belongs to the Organization <b><%= @organization_name%></b> stopped transmitting on <b><%= List.first(@details)["time"] %></b>.
                                         <br />
+                                        <br />
                                         <%= if @has_hotspot_info do %>
                                           Details for Hotspot that sent last received device packet:
                                           <ul style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
