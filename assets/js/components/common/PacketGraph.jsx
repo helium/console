@@ -44,10 +44,10 @@ class PacketGraph extends Component {
           ticks: {
             beginAtZero: true,
             min: 0,
-            max: 300,
-            stepSize: 30,
+            max: 300000,
+            stepSize: 30000,
             callback: (value) => {
-              if (value !== 0) return '-' + value + 's';
+              if (value !== 0) return '-' + (parseInt(value)/1000) + 's';
               else return value + 's'
             }
           },
@@ -101,13 +101,13 @@ class PacketGraph extends Component {
     const noIntegration = []
 
     events.forEach(event => {
-      const currentTime = Date.now() / 1000
-      const eventTime =  parseInt(event.reported_at) / 1000
+      const currentTime = Date.now()
+      const eventTime =  parseInt(event.reported_at)
       const timeDiff = currentTime - eventTime
       const integrations = event.integrations
       const hotspots = event.hotspots
 
-      if (timeDiff < 300) {
+      if (timeDiff < 300000) {
         if (integrations[0] && integrations[0].status == 'success') {
           success.push({
             x: timeDiff,
