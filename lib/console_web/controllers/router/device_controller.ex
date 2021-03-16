@@ -112,7 +112,7 @@ defmodule ConsoleWeb.Router.DeviceController do
       |> Map.delete("id")
 
     event = case event["category"] do
-      "uplink" ->
+      category when category in ["uplink", "join_request", "join_accept"] ->
         cond do
           is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
           event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])

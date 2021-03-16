@@ -230,9 +230,11 @@ class EventsDashboard extends Component {
         }
       case "join_request":
       case "join_accept":
+        console.log(row)
         return (
           <Tag style={styles.tag} color="#4091F7">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
+            {row.fct}
           </Tag>
         )
       case "misc":
@@ -268,7 +270,7 @@ class EventsDashboard extends Component {
         reported_at: firstEvent.reported_at,
         category: firstEvent.category,
         sub_categories: orderedRouterEvents.map(e => e.sub_category),
-        fct: firstEvent.frame_up || firstEvent.frame_down,
+        fct: firstEvent.frame_down || firstEvent.frame_up,
         payload_size: firstEventData.payload_size,
         port: firstEventData.port,
         devaddr: firstEventData.devaddr,
