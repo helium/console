@@ -196,7 +196,7 @@ class DebugEntry extends Component {
             )
           }
           {
-            event.data.integration && (
+            event.data.integration && this.state.showIntegrationInfo && (
               <React.Fragment>
               <pre style={{ color: debugTextColor, marginLeft: 25 }}>
                 {JSON.stringify(
