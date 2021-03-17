@@ -335,7 +335,7 @@ class EventsDashboard extends Component {
         title: 'Type',
         dataIndex: 'category',
         render: (data, row) => {
-          const integrationResponse = row.integrations.find(i => i.subCategory === 'uplink_integration_res');
+          const integrationResponse = row.integrations && row.integrations.find(i => i.subCategory === 'uplink_integration_res');
           const integrationError = integrationResponse && integrationResponse.status === 'error';
           return <Text>{categoryTag(row.category, row.sub_categories, integrationError)}</Text>;
         }
