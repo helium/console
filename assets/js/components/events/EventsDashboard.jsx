@@ -8,7 +8,7 @@ import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
 import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, CheckSquareFilled, CloseSquareFilled } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
@@ -32,18 +32,39 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
+const confirmedTag = (confirmed) => {
+  if (confirmed) {
+    return (
+      <React.Fragment>
+        (Confirmed <CheckSquareFilled style={{ fontSize: '15px', color: 'green' }} />)
+      </React.Fragment>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        (Unconfirmed <CloseSquareFilled style={{ fontSize: '15px', color: 'deepskyblue' }} />)
+      </React.Fragment>
+    );
+  }
+}
+
 const categoryTag = (category, subCategories) => {
   switch(category) {
     case "uplink":
-      if (subCategories.includes('uplink_dropped')) return <Text>Uplink Dropped</Text>;
-      return <Text>Uplink</Text>
+      if (subCategories.includes('uplink_dropped')) {
+        return <Text>Uplink Dropped</Text>;
+      } else if (subCategories.includes('uplink_integration_req') || subCategories.includes('uplink_integration_res')) {
+        return <Text>Uplink</Text>;
+      } else {
+        return <Text>Uplink {confirmedTag(subCategories.includes('uplink_confirmed'))}</Text>;
+      }
     case "downlink":
       if (subCategories.includes('downlink_dropped')) {
         return <Text>Downlink Dropped</Text>;
       } else if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink</Text>;
+        return <Text>Downlink ({subCategories.includes('downlink_confirmed') ? 'Confirmed' : 'Unconfirmed'})</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
@@ -63,6 +84,11 @@ const statusBadge = (status) => {
     default:
       return <Badge status="default" />
   }
+}
+
+const messageType = subCategory => {
+  const messageTypes = { uplink_integration_req: "Integration Request", uplink_integration_res: "Integration Response" };
+  return messageTypes[subCategory];
 }
 
 class EventsDashboard extends Component {
@@ -148,10 +174,21 @@ class EventsDashboard extends Component {
       { title: 'Devaddr', dataIndex: 'devaddr' }
     ];
 
-    const channelColumns = [
-      { title: 'Integration Name', dataIndex: 'name' },
-      { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> }
-    ];
+    let channelColumns;
+    if (record.category === 'uplink') {
+      channelColumns = [
+        { title: 'Integration Name', dataIndex: 'name' },
+        { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>},
+        { title: 'Message Type', dataIndex: 'subCategory', render: data => messageType(data)}
+      ];
+    } else {
+      channelColumns = [
+        { title: 'Integration Name', dataIndex: 'name' },
+        { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
+      ];
+    }
 
     return (
       <Row gutter={10}>
@@ -278,7 +315,7 @@ class EventsDashboard extends Component {
         ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
         integrations: orderedRouterEvents.filter(
           event => this.isDataString(event.data) ? JSON.parse(event.data).integration : event.data.integration
-        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description }))
+        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description, time: ie.reported_at, subCategory: ie.sub_category }))
       })
     });
 
