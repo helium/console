@@ -32,31 +32,13 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
-const confirmedTag = (subCategories) => {
-  if (subCategories.includes('uplink_confirmed') || subCategories.includes('downlink_confirmed')) {
-    return (
-      <React.Fragment>
-        (Confirmed <CheckSquareFilled style={{ fontSize: '15px', color: 'green' }} />)
-      </React.Fragment>
-    );
-  } else if (subCategories.includes('uplink_unconfirmed') || subCategories.includes('downlink_unconfirmed')) {
-    return (
-      <React.Fragment>
-        (Unconfirmed <CloseSquareFilled style={{ fontSize: '15px', color: 'deepskyblue' }} />)
-      </React.Fragment>
-    );
-  } else {
-    return;
-  }
-}
-
 const categoryTag = (category, subCategories) => {
   switch(category) {
     case "uplink":
       if (subCategories.includes('uplink_dropped')) {
         return <Text>Uplink Dropped</Text>;
       } else {
-        return <Text>Uplink {confirmedTag(subCategories)}</Text>;
+        return <Text>Uplink</Text>;
       }
     case "downlink":
       if (subCategories.includes('downlink_dropped')) {
@@ -64,7 +46,7 @@ const categoryTag = (category, subCategories) => {
       } else if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink {confirmedTag(subCategories)}</Text>;
+        return <Text>Downlink</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
