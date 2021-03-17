@@ -321,6 +321,10 @@ class EventsDashboard extends Component {
 
     aggregatedRows.sort((a, b) => (a.reported_at < b.reported_at) ? 1 : -1);
 
+    // prevent orphaning events since they come in decoupled
+    // 50 as we expect ~3 rows per event
+    if (aggregatedRows.length > 50) aggregatedRows.pop();
+
     const columns = [
       {
         title: 'Frame Count',
