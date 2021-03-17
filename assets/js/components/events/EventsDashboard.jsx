@@ -328,7 +328,7 @@ class EventsDashboard extends Component {
     if (aggregatedRows.length > 50) aggregatedRows.pop();
 
 
-    // handle filtering of dropped packets
+    // handle filtering of dropped uplinks
     if (!this.state.showInactive) {
       aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_device_inactive');
     }
@@ -389,14 +389,14 @@ class EventsDashboard extends Component {
             </Checkbox>
 
             <Text strong style={{ marginLeft: 40, fontSize: 13, color: 'rgba(0, 0, 0, 0.85)'}}>
-              Show Dropped Packets:
+              Show Dropped Uplinks:
             </Text>
             <Checkbox
               onChange={() => this.toggleShowLate()}
               checked={showLate}
               style={{ marginLeft: 20 }}
             >
-              Late Arrival
+              Late
             </Checkbox>
             <Checkbox
               onChange={() => this.toggleShowInactive()}
