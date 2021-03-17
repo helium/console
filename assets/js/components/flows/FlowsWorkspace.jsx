@@ -10,41 +10,6 @@ import FunctionNode from './nodes/FunctionNode'
 import ChannelNode from './nodes/ChannelNode'
 import DebugNode from './nodes/DebugNode'
 import DeviceNode from './nodes/DeviceNode'
-import dagre from 'dagre'
-
-const LEFT_RIGHT_LAYOUT = 'LR'
-const TOP_BOTTOM_LAYOUT = 'TB'
-
-const dagreGraph = new dagre.graphlib.Graph()
-dagreGraph.setDefaultEdgeLabel(() => ({}))
-
-const addDagreLayoutToElements = (elements, direction = TOP_BOTTOM_LAYOUT) => {
-  const isHorizontal = direction === LEFT_RIGHT_LAYOUT;
-  dagreGraph.setGraph({ rankdir: direction });
-  elements.forEach((el) => {
-    if (isNode(el)) {
-      dagreGraph.setNode(el.id, { width: 200, height: 70 });
-    } else {
-      dagreGraph.setEdge(el.source, el.target);
-    }
-  });
-  dagre.layout(dagreGraph);
-
-  return elements.map((el) => {
-    if (isNode(el)) {
-      const nodeWithPosition = dagreGraph.node(el.id);
-      el.targetPosition = isHorizontal ? 'left' : 'top';
-      el.sourcePosition = isHorizontal ? 'right' : 'bottom';
-      // unfortunately we need this little hack to pass a slightly different position in order to notify react flow about the change
-      let x = nodeWithPosition.x + Math.random() / 1000
-      el.position = {
-        x: x - 50,
-        y: nodeWithPosition.y + 20,
-      };
-    }
-    return el;
-  });
-};
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -54,25 +19,32 @@ const nodeTypes = {
   deviceNode: DeviceNode
 };
 
-export default ({ initialElements, submitChanges, setChangesState, hasChanges }) => {
+export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
-  const layoutedElements = addDagreLayoutToElements(initialElements, LEFT_RIGHT_LAYOUT)
-  const originalElementsState = layoutedElements.reduce((acc, el) => Object.assign({}, acc, { [el.id]: el }), {})
-  const [elementsMap, setElements] = useState(originalElementsState);
+  const [elementsMap, setElements] = useState(initialElementsMap);
 
   const onElementDragStop = (event, node) => {
     const updatedNode = Object.assign({}, elementsMap[node.id], {position: {x: node.position.x, y: node.position.y}})
     setElements(elsMap => Object.assign({}, elsMap, { [node.id]: updatedNode }))
+    setChangesState(true)
   }
 
   const onElementsRemove = (elementsToRemove) => {
     if (isEdge(elementsToRemove[0])) {
       setElements(elsMap => omit(elsMap, [elementsToRemove[0].id]))
-      setChangesState(true)
     }
+    if (isNode(elementsToRemove[0])) {
+      const edges =
+        Object.values(elementsMap)
+        .filter(el => isEdge(el) && (el.source === elementsToRemove[0].id || el.target === elementsToRemove[0].id))
+        .map(el => el.id)
+
+      setElements(elsMap => omit(elsMap, edges.concat(elementsToRemove[0].id)))
+    }
+    setChangesState(true)
   }
 
   const onElementsAdd = ({source, target}) => {
@@ -84,7 +56,7 @@ export default ({ initialElements, submitChanges, setChangesState, hasChanges })
   }
 
   const resetElementsMap = () => {
-    setElements(elsMap => originalElementsState)
+    setElements(elsMap => initialElementsMap)
     setChangesState(false)
   }
 

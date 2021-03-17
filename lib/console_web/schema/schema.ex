@@ -122,6 +122,7 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :received_free_dc, :boolean
     field :webhook_key, :string
+    field :flow, :string
   end
 
   object :api_key do

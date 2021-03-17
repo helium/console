@@ -77,6 +77,9 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
               },
               allDevices: {
                 merge: false
+              },
+              organization: {
+                merge: false
               }
             },
           },
