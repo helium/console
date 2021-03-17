@@ -34,16 +34,14 @@ const base64ToHex = str => {
 
 const categoryTag = (category, subCategories) => {
   switch(category) {
+    case "uplink_dropped":
+      return <Text>Uplink Dropped</Text>;
     case "uplink":
-      if (subCategories.includes('uplink_dropped')) {
-        return <Text>Uplink Dropped</Text>;
-      } else {
-        return <Text>Uplink</Text>;
-      }
+      return <Text>Uplink</Text>;
+    case "downlink_dropped":
+      return <Text>Downlink Dropped</Text>;
     case "downlink":
-      if (subCategories.includes('downlink_dropped')) {
-        return <Text>Downlink Dropped</Text>;
-      } else if (subCategories.includes('downlink_ack')) {
+      if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
         return <Text>Downlink</Text>;
@@ -78,6 +76,8 @@ class EventsDashboard extends Component {
     rows: [],
     expandedRowKeys: [],
     expandAll: false,
+    showLate: false,
+    showInactive: false
   }
 
   componentDidUpdate(prevProps) {
@@ -120,6 +120,14 @@ class EventsDashboard extends Component {
     } else {
       this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) })
     }
+  }
+
+  toggleShowLate = () => {
+    this.setState({ showLate: !this.state.showLate });
+  }
+
+  toggleShowInactive = () => {
+    this.setState({ showInactive: !this.state.showInactive });
   }
 
   onExpandRow = (expandRow, row) => {
@@ -191,62 +199,56 @@ class EventsDashboard extends Component {
 
   renderFrameIcons = row => {
     switch(row.category) {
+      case "uplink_dropped":
+        return (
+          <span>
+            <Tag style={styles.tag} color="#D9D9D9">
+              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+              {row.fct}
+            </Tag>
+            <Popover
+              content={row.description}
+              placement="top"
+              overlayStyle={{ width: 220 }}
+            >
+              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+              </Tag>
+            </Popover>
+          </span>
+        );
       case "uplink":
-        // per router, uplink_dropped will never be associated to another subcategory of uplink
-        if (row.sub_categories.includes('uplink_dropped')) {
-          return (
-            <span>
-              <Tag style={styles.tag} color="#D9D9D9">
-                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-                {row.fct}
-              </Tag>
-              <Popover
-                content={row.description}
-                placement="top"
-                overlayStyle={{ width: 220 }}
-              >
-                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-                </Tag>
-              </Popover>
-            </span>
-          );
-        } else {
-          return (
-            <Tag style={styles.tag} color="#4091F7">
-              <CaretUpOutlined style={{ marginRight: 1 }}/>
+        return (
+          <Tag style={styles.tag} color="#4091F7">
+            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            {row.fct}
+          </Tag>
+        );
+      case "downlink_dropped":
+        return (
+          <span>
+            <Tag style={styles.tag} color="#D9D9D9">
+              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
               {row.fct}
             </Tag>
-          )
-        }
+            <Popover
+              content={row.description}
+              placement="top"
+              overlayStyle={{ width: 220 }}
+            >
+              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+              </Tag>
+            </Popover>
+          </span>
+        );
       case "downlink":
-        // per router, downlink_dropped will never be associated to another subcategory of downlink
-        if (row.sub_categories.includes('downlink_dropped')) {
-          return (
-            <span>
-              <Tag style={styles.tag} color="#D9D9D9">
-                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-                {row.fct}
-              </Tag>
-              <Popover
-                content={row.description}
-                placement="top"
-                overlayStyle={{ width: 220 }}
-              >
-                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-                </Tag>
-              </Popover>
-            </span>
-          );
-        } else {
-          return (
-            <Tag style={styles.tag} color="#FA541C">
-              <CaretDownOutlined style={{ marginRight: 1 }}/>
-              {row.fct}
-            </Tag>
-          );
-        }
+        return (
+          <Tag style={styles.tag} color="#FA541C">
+            <CaretDownOutlined style={{ marginRight: 1 }}/>
+            {row.fct}
+          </Tag>
+        );
       case "join_request":
       case "join_accept":
         return (
@@ -269,10 +271,10 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const { rows, expandedRowKeys, expandAll } = this.state
+    const { rows, expandedRowKeys, expandAll, showLate, showInactive } = this.state
 
     // events will come in separately and related events will have same router_uuid
-    const aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
+    let aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
       let firstEvent = orderedRouterEvents[0];
 
@@ -306,6 +308,16 @@ class EventsDashboard extends Component {
     // prevent orphaning events since they come in decoupled
     // 50 as we expect ~3 rows per event
     if (aggregatedRows.length > 50) aggregatedRows.pop();
+
+
+    // handle filtering of dropped uplinks
+    if (!this.state.showInactive) {
+      aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_device_inactive');
+    }
+
+    if (!this.state.showLate) {
+      aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_late');
+    }
 
     const columns = [
       {
@@ -356,6 +368,24 @@ class EventsDashboard extends Component {
               style={{ marginLeft: 20 }}
             >
               Expand All
+            </Checkbox>
+
+            <Text strong style={{ marginLeft: 40, fontSize: 13, color: 'rgba(0, 0, 0, 0.85)'}}>
+              Show Dropped Uplinks:
+            </Text>
+            <Checkbox
+              onChange={() => this.toggleShowLate()}
+              checked={showLate}
+              style={{ marginLeft: 20 }}
+            >
+              Late
+            </Checkbox>
+            <Checkbox
+              onChange={() => this.toggleShowInactive()}
+              checked={showInactive}
+              style={{ marginLeft: 20 }}
+            >
+              Inactive Device
             </Checkbox>
           </span>
           <a
