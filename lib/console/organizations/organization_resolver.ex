@@ -21,7 +21,7 @@ defmodule Console.Organizations.OrganizationResolver do
 
   def find(%{id: id}, %{context: %{current_user: current_user}}) do
     organization = Organizations.get_organization!(current_user, id)
-    {:ok, organization}
+    {:ok, Map.put(organization, :flow, Poison.encode!(organization.flow))}
   end
 
   def all(_, %{context: %{current_user: current_user}}) do

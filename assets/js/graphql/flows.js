@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const ALL_RESOURCES = gql`
-  query AllResourcesQuery {
+  query AllResourcesQuery ($id: ID!) {
     allDevices {
       id,
       name
@@ -21,6 +21,9 @@ export const ALL_RESOURCES = gql`
       name,
       type_name,
       type
+    }
+    organization(id: $id) {
+      flow
     }
   }
 `

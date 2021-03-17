@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
+import { connect } from 'react-redux'
 import { isEdge, isNode } from 'react-flow-renderer';
 import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
-import { updateFlows } from '../../actions/flows'
+import { updateFlows } from '../../actions/flow'
 import DashboardLayout from '../common/DashboardLayout'
 import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
@@ -20,12 +21,13 @@ class FlowsIndex extends Component {
   }
 
   submitChanges = (newElementsMap) => {
-    const completePaths = getCompleteFlows(newElementsMap)
+    const [completePaths, elementPositions] = getCompleteFlows(newElementsMap)
 
-    updateFlows(completePaths)
+    updateFlows(completePaths, elementPositions)
     .then(status => {
       if (status == 200) {
         this.props.allResourcesQuery.refetch()
+        this.setState({ hasChanges: false })
       }
     })
     .catch(err => {})
@@ -43,76 +45,10 @@ class FlowsIndex extends Component {
         </div>
       </DashboardLayout>
     )
-    const { allLabels, allFunctions, allChannels, allDevices } = this.props.allResourcesQuery.data
 
-    const deviceElements =
-      allDevices
-        .reduce((acc, device) => {
-          return acc.concat(
-            {
-              id: `device-${device.id}`,
-              type: 'deviceNode',
-              data: {
-                label: device.name,
-              },
-              position: { x: 0, y: 0 },
-            }
-          )
-        }, [])
-
-    const labelElements =
-      allLabels
-        .reduce((acc, label) => {
-          return acc.concat(
-            {
-              id: `label-${label.id}`,
-              type: 'labelNode',
-              data: {
-                label: label.name,
-              },
-              position: { x: 0, y: 0 },
-            }
-          )
-        }, [])
-
-    const functionElements =
-      allFunctions
-        .reduce((acc, func) => {
-          return acc.concat(
-            {
-              id: `function-${func.id}`,
-              type: 'functionNode',
-              data: {
-                label: func.name,
-                format: func.format
-              },
-              position: { x: 0, y: 0 },
-            }
-          )
-        }, [])
-
-    const channelElements =
-      allChannels
-        .reduce((acc, channel) => {
-          return acc.concat(
-            {
-              id: `channel-${channel.id}`,
-              type: 'channelNode',
-              data: {
-                label: channel.name,
-                type_name: channel.type_name,
-                type: channel.type
-              },
-              position: { x: 0, y: 0 },
-            }
-          )
-        }, [])
-
-    const elements =
-      labelElements
-      .concat(deviceElements)
-      .concat(functionElements)
-      .concat(channelElements)
+    const { organization } = this.props.allResourcesQuery.data
+    const flowPositions = JSON.parse(organization.flow)
+    const initialElementsMap = generateInitialElementsMap(this.props.allResourcesQuery.data, flowPositions)
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
@@ -121,7 +57,7 @@ class FlowsIndex extends Component {
           message='You have unsaved changes, are you sure you want to leave this page?'
         />
         <FlowsWorkspace
-          initialElements={elements}
+          initialElementsMap={initialElementsMap}
           submitChanges={this.submitChanges}
           setChangesState={this.setChangesState}
           hasChanges={this.state.hasChanges}
@@ -167,7 +103,95 @@ const getCompleteFlows = (newElementsMap) => {
     getPaths(node, [{ type: node.type, id: node.id }])
   })
 
-  return paths
+  const elementPositions = Object.keys(newElementsMap).reduce((acc, key) => {
+    if (isNode(newElementsMap[key])) {
+      const element = {
+        position: newElementsMap[key].position
+      }
+      return Object.assign({}, acc, { [key]: element })
+    } else {
+      const edge = {
+        source: newElementsMap[key].source,
+        target: newElementsMap[key].target,
+      }
+      return Object.assign({}, acc, { edges: acc.edges.concat(edge) })
+    }
+  }, { edges: [] })
+
+  return [paths, elementPositions]
 }
 
-export default withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'network-only', variables: {}, name: 'allResourcesQuery' }))
+const generateInitialElementsMap = (data, flowPositions) => {
+  const {allLabels, allFunctions, allChannels, allDevices} = data
+  let initialElementsMap = {}
+
+  allDevices.forEach(device => {
+    if (flowPositions[`device-${device.id}`]) {
+      initialElementsMap[`device-${device.id}`] = {
+        id: `device-${device.id}`,
+        type: 'deviceNode',
+        data: {
+          label: device.name,
+        },
+        position: flowPositions[`device-${device.id}`].position,
+      }
+    }
+  })
+  allLabels.forEach(label => {
+    if (flowPositions[`label-${label.id}`]) {
+      initialElementsMap[`label-${label.id}`] = {
+        id: `label-${label.id}`,
+        type: 'labelNode',
+        data: {
+          label: label.name,
+        },
+        position: flowPositions[`label-${label.id}`].position,
+      }
+    }
+  })
+  allFunctions.forEach(func => {
+    if (flowPositions[`function-${func.id}`]) {
+      initialElementsMap[`function-${func.id}`] = {
+        id: `function-${func.id}`,
+        type: 'functionNode',
+        data: {
+          label: func.name,
+          format: func.format
+        },
+        position: flowPositions[`function-${func.id}`].position,
+      }
+    }
+  })
+  allChannels.forEach(channel => {
+    if (flowPositions[`channel-${channel.id}`]) {
+      initialElementsMap[`channel-${channel.id}`] = {
+        id: `channel-${channel.id}`,
+        type: 'channelNode',
+        data: {
+          label: channel.name,
+          type_name: channel.type_name,
+          type: channel.type
+        },
+        position: flowPositions[`channel-${channel.id}`].position,
+      }
+    }
+  })
+  flowPositions.edges && flowPositions.edges.forEach(edge => {
+    if (initialElementsMap[edge.source] && initialElementsMap[edge.target]) {
+      const id = "edge-" + edge.source + "-" + edge.target
+      const element = { id, source: edge.source, target: edge.target }
+      initialElementsMap[id] = element
+    }
+  })
+  return initialElementsMap
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(FlowsIndex, ALL_RESOURCES, props => ({ fetchPolicy: 'network-only', variables: {id: props.currentOrganizationId}, name: 'allResourcesQuery' }))
+)

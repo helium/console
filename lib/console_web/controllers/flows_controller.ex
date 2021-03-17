@@ -3,13 +3,14 @@ defmodule ConsoleWeb.FlowsController do
   import Ecto.Query
 
   alias Console.Repo
+  alias Console.Organizations
   alias Console.Flows
   alias Console.Flows.Flow
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
-  def update_edges(conn, %{"completeFlows" => complete_flows}) do
+  def update_edges(conn, %{"completeFlows" => complete_flows, "elementPositions" => flow_positions}) do
     current_organization = conn.assigns.current_organization
 
     result =
@@ -41,6 +42,9 @@ defmodule ConsoleWeb.FlowsController do
         else
           {:error, "Failed to connect all flows"}
         end
+      end)
+      |> Ecto.Multi.run(:updated_organization, fn _repo, _ ->
+        Organizations.update_organization(current_organization, %{ flow: flow_positions })
       end)
       |> Repo.transaction()
 
