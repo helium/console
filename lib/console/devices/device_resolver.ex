@@ -89,9 +89,9 @@ defmodule Console.Devices.DeviceResolver do
     {
       :ok,
       %{
-        dc_last_1d: Enum.at(counts, 0),
-        dc_last_7d: Enum.at(counts, 1),
-        dc_last_30d: Enum.at(counts, 2),
+        dc_last_1d: Enum.at(counts, 0) || 0,
+        dc_last_7d: Enum.at(counts, 1) || 0,
+        dc_last_30d: Enum.at(counts, 2) || 0,
       }
     }
   end
