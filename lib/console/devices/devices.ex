@@ -38,13 +38,6 @@ defmodule Console.Devices do
      Repo.get_by(Device, [id: id, organization_id: organization.id])
   end
 
-  def get_device_and_lock_for_add_device_event(device_id) do
-    Device
-      |> where([d], d.id == ^device_id)
-      |> lock("FOR UPDATE")
-      |> Repo.one()
-  end
-
   def get_device(id), do: Repo.get(Device, id)
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
