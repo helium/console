@@ -151,13 +151,19 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
             packet_count = if dc_used == 0, do: 0, else: 1
 
-            Devices.update_device(device, %{
+            device_updates = %{
               "last_connected" => event.reported_at_naive,
-              "frame_up" => event.frame_up,
-              "frame_down" => event.frame_down,
               "total_packets" => device.total_packets + packet_count,
               "dc_usage" => device.dc_usage + dc_used,
-            }, "router")
+            }
+
+            device_updates = cond do
+              is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
+              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
+              true -> device_updates
+            end
+
+            Devices.update_device(device, device_updates, "router")
           end)
           |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
             if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
