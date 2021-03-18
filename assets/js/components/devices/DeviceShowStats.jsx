@@ -61,7 +61,7 @@ class DeviceShowStats extends Component {
           <Row>
           <Col span={12}>
             <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
-            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_stats.packets_last_30d}</Text><br/>
+            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.total_packets}</Text><br/>
             <div style={{ marginBottom: 30 }} />
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_stats.packets_last_30d}</Text><br/>
@@ -107,7 +107,7 @@ class DeviceShowStats extends Component {
           <Row>
           <Col span={12}>
             <Text style={{ fontSize: 16, fontWeight: '300' }}>All Time</Text><br/>
-            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_dc_stats.dc_last_30d}</Text><br/>
+            <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device.dc_usage}</Text><br/>
             <div style={{ marginBottom: 30 }} />
             <Text style={{ fontSize: 16, fontWeight: '300' }}>Last 30 Days</Text><br/>
             <Text style={{ fontSize: smallerText ? 32 : 46, color: blueForDeviceStatsLarge, position: 'relative' }}>{device_dc_stats.dc_last_30d}</Text><br/>
