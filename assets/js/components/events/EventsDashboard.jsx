@@ -7,8 +7,8 @@ import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
-import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, CheckSquareFilled, CloseSquareFilled } from '@ant-design/icons';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox, Tooltip } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, ShrinkOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
@@ -32,19 +32,25 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
-const categoryTag = (category, subCategories) => {
+const integrationErrorTag = () => (
+  <Tooltip title="Integration Response Error">
+    <ShrinkOutlined style={{color: 'red', fontSize: 20}} />
+  </Tooltip>
+);
+
+const categoryTag = (category, subCategories, integrationError) => {
   switch(category) {
     case "uplink_dropped":
       return <Text>Uplink Dropped</Text>;
     case "uplink":
-      return <Text>Uplink</Text>;
+      return <Text>Uplink {integrationError && integrationErrorTag()}</Text>;
     case "downlink_dropped":
       return <Text>Downlink Dropped</Text>;
     case "downlink":
       if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink</Text>;
+        return <Text>Downlink {integrationError && integrationErrorTag()}</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
@@ -328,7 +334,11 @@ class EventsDashboard extends Component {
       {
         title: 'Type',
         dataIndex: 'category',
-        render: (data, row) => <Text>{categoryTag(row.category, row.sub_categories)}</Text>
+        render: (data, row) => {
+          const integrationResponse = row.integrations && row.integrations.find(i => i.subCategory === 'uplink_integration_res');
+          const integrationError = integrationResponse && integrationResponse.status === 'error';
+          return <Text>{categoryTag(row.category, row.sub_categories, integrationError)}</Text>;
+        }
       },
       {
         title: 'Time',
