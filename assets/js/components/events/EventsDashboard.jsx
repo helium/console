@@ -282,7 +282,11 @@ class EventsDashboard extends Component {
     // events will come in separately and related events will have same router_uuid
     let aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
-      let firstEvent = orderedRouterEvents[0];
+
+      // grab the oldest one unless it's from the specified sub_categories which will not have fcnt
+      let firstEvent = orderedRouterEvents.find(e => 
+        !['uplink_integration_req', 'uplink_integration_res', 'misc_integration_error'].includes(e.sub_category)
+      ) || orderedRouterEvents[0];
 
       // data field might initially come in as json when new event is added but normally won't
       let firstEventData = firstEvent.data;
