@@ -43,14 +43,14 @@ const categoryTag = (category, subCategories, integrationError) => {
     case "uplink_dropped":
       return <Text>Uplink Dropped</Text>;
     case "uplink":
-      return <Text>Uplink {integrationError ? integrationErrorTag() : ''}</Text>;
+      return <Text>Uplink {integrationError && integrationErrorTag()}</Text>;
     case "downlink_dropped":
       return <Text>Downlink Dropped</Text>;
     case "downlink":
       if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink {integrationError ? integrationErrorTag() : ''}</Text>;
+        return <Text>Downlink {integrationError && integrationErrorTag()}</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
