@@ -159,7 +159,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             device_updates = cond do
               is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
-              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_up)
+              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
               true -> device_updates
             end
 
