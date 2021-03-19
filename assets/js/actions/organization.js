@@ -88,6 +88,7 @@ export const joinOrganization = (token) => {
         dispatch(fetchedOrganization(response.data[0]));
         localStorage.setItem('organization', JSON.stringify(response.data[0]));
         dispatch(push('/'));
+        setTimeout(() => { window.location.reload(true); }, 50);
       })
   }
 }
