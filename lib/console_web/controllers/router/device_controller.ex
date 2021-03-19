@@ -60,8 +60,8 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Enum.map(fn l ->
             %{
               function: l.function,
-              id: "no_integration_id",
-              name: "Console Debug Integration",
+              id: "no_channel",
+              name: "Internal Integration",
               type: "console",
               credentials: %{},
               active: false,
@@ -223,7 +223,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
           case event.category do
             "uplink" ->
-              if event.data["integration"] != nil and event.data["integration"]["id"] != "no_integration_id" and event.data["integration"]["id"] != "no_channel" do
+              if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"]) |> Repo.preload([:labels])
                 labels = Enum.map(event_integration.labels, fn l -> l.id end)
 
