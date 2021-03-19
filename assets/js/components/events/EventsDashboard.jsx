@@ -316,8 +316,7 @@ class EventsDashboard extends Component {
     aggregatedRows.sort((a, b) => (a.reported_at < b.reported_at) ? 1 : -1);
 
     // prevent orphaning events since they come in decoupled
-    // 50 as we expect ~3 rows per event
-    if (aggregatedRows.length > 50) aggregatedRows.pop();
+    if (aggregatedRows.length > 100) aggregatedRows.splice(aggregatedRows.length - 5);
 
 
     // handle filtering of dropped uplinks
