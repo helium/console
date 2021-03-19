@@ -60,8 +60,8 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Enum.map(fn l ->
             %{
               function: l.function,
-              id: "no_integration_id",
-              name: "Console Debug Integration",
+              id: "no_channel",
+              name: "Internal Integration",
               type: "console",
               credentials: %{},
               active: false,
@@ -112,13 +112,13 @@ defmodule ConsoleWeb.Router.DeviceController do
       |> Map.delete("id")
 
     event = case event["category"] do
-      category when category in ["uplink", "join_request", "join_accept"] ->
+      category when category in ["uplink", "join_request", "join_accept", "uplink_dropped"] ->
         cond do
           is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
           event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])
           true -> event |> Map.put("frame_up", nil)
         end
-      "downlink" ->
+      category when category in ["downlink", "downlink_dropped"] ->
         cond do
           is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_down", event["data"]["fcnt"])
           event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_down", event["data"]["fcnt"])
@@ -144,6 +144,8 @@ defmodule ConsoleWeb.Router.DeviceController do
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
+            locked_device = Devices.get_device_and_lock_for_add_device_event(device.id)
+
             dc_used =
               case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
                 true -> event.data["dc"]["used"]
@@ -151,13 +153,19 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
             packet_count = if dc_used == 0, do: 0, else: 1
 
-            Devices.update_device(device, %{
+            device_updates = %{
               "last_connected" => event.reported_at_naive,
-              "frame_up" => event.data["frame_up"],
-              "frame_down" => event.data["frame_down"],
-              "total_packets" => device.total_packets + packet_count,
-              "dc_usage" => device.dc_usage + dc_used,
-            }, "router")
+              "total_packets" => locked_device.total_packets + packet_count,
+              "dc_usage" => locked_device.dc_usage + dc_used,
+            }
+
+            device_updates = cond do
+              is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
+              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
+              true -> device_updates
+            end
+
+            Devices.update_device(locked_device, device_updates, "router")
           end)
           |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
             if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do

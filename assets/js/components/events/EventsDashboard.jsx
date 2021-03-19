@@ -7,8 +7,8 @@ import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
-import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox, Tooltip } from 'antd';
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, ShrinkOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
@@ -32,18 +32,25 @@ const base64ToHex = str => {
   return result.toUpperCase();
 }
 
-const categoryTag = (category, subCategories) => {
+const integrationErrorTag = () => (
+  <Tooltip title="Integration Response Error">
+    <ShrinkOutlined style={{color: 'red', fontSize: 20}} />
+  </Tooltip>
+);
+
+const categoryTag = (category, subCategories, integrationError) => {
   switch(category) {
+    case "uplink_dropped":
+      return <Text>Uplink Dropped</Text>;
     case "uplink":
-      if (subCategories.includes('uplink_dropped')) return <Text>Uplink Dropped</Text>;
-      return <Text>Uplink</Text>
+      return <Text>Uplink {integrationError && integrationErrorTag()}</Text>;
+    case "downlink_dropped":
+      return <Text>Downlink Dropped</Text>;
     case "downlink":
-      if (subCategories.includes('downlink_dropped')) {
-        return <Text>Downlink Dropped</Text>;
-      } else if (subCategories.includes('downlink_ack')) {
+      if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink</Text>;
+        return <Text>Downlink {integrationError && integrationErrorTag()}</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
@@ -65,11 +72,18 @@ const statusBadge = (status) => {
   }
 }
 
+const messageType = subCategory => {
+  const messageTypes = { uplink_integration_req: "Integration Request", uplink_integration_res: "Integration Response" };
+  return messageTypes[subCategory];
+}
+
 class EventsDashboard extends Component {
   state = {
     rows: [],
     expandedRowKeys: [],
     expandAll: false,
+    showLate: false,
+    showInactive: false
   }
 
   componentDidUpdate(prevProps) {
@@ -114,6 +128,14 @@ class EventsDashboard extends Component {
     }
   }
 
+  toggleShowLate = () => {
+    this.setState({ showLate: !this.state.showLate });
+  }
+
+  toggleShowInactive = () => {
+    this.setState({ showInactive: !this.state.showInactive });
+  }
+
   onExpandRow = (expandRow, row) => {
     if (expandRow) {
       this.setState({ expandedRowKeys: this.state.expandedRowKeys.concat(row.id) })
@@ -148,10 +170,21 @@ class EventsDashboard extends Component {
       { title: 'Devaddr', dataIndex: 'devaddr' }
     ];
 
-    const channelColumns = [
-      { title: 'Integration Name', dataIndex: 'name' },
-      { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> }
-    ];
+    let channelColumns;
+    if (record.category === 'uplink') {
+      channelColumns = [
+        { title: 'Integration Name', dataIndex: 'name' },
+        { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>},
+        { title: 'Message Type', dataIndex: 'subCategory', render: data => messageType(data)}
+      ];
+    } else {
+      channelColumns = [
+        { title: 'Integration Name', dataIndex: 'name' },
+        { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> },
+        { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
+      ];
+    }
 
     return (
       <Row gutter={10}>
@@ -172,62 +205,56 @@ class EventsDashboard extends Component {
 
   renderFrameIcons = row => {
     switch(row.category) {
+      case "uplink_dropped":
+        return (
+          <span>
+            <Tag style={styles.tag} color="#D9D9D9">
+              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
+              {row.fct}
+            </Tag>
+            <Popover
+              content={row.description}
+              placement="top"
+              overlayStyle={{ width: 220 }}
+            >
+              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+              </Tag>
+            </Popover>
+          </span>
+        );
       case "uplink":
-        // per router, uplink_dropped will never be associated to another subcategory of uplink
-        if (row.sub_categories.includes('uplink_dropped')) {
-          return (
-            <span>
-              <Tag style={styles.tag} color="#D9D9D9">
-                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-                {row.fct}
-              </Tag>
-              <Popover
-                content={row.description}
-                placement="top"
-                overlayStyle={{ width: 220 }}
-              >
-                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-                </Tag>
-              </Popover>
-            </span>
-          );
-        } else {
-          return (
-            <Tag style={styles.tag} color="#4091F7">
-              <CaretUpOutlined style={{ marginRight: 1 }}/>
+        return (
+          <Tag style={styles.tag} color="#4091F7">
+            <CaretUpOutlined style={{ marginRight: 1 }}/>
+            {row.fct}
+          </Tag>
+        );
+      case "downlink_dropped":
+        return (
+          <span>
+            <Tag style={styles.tag} color="#D9D9D9">
+              <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
               {row.fct}
             </Tag>
-          )
-        }
+            <Popover
+              content={row.description}
+              placement="top"
+              overlayStyle={{ width: 220 }}
+            >
+              <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
+                <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
+              </Tag>
+            </Popover>
+          </span>
+        );
       case "downlink":
-        // per router, downlink_dropped will never be associated to another subcategory of downlink
-        if (row.sub_categories.includes('downlink_dropped')) {
-          return (
-            <span>
-              <Tag style={styles.tag} color="#D9D9D9">
-                <CloseOutlined style={{ fontSize: 16, marginRight: 3, position: 'relative', top: 1.5 }} />
-                {row.fct}
-              </Tag>
-              <Popover
-                content={row.description}
-                placement="top"
-                overlayStyle={{ width: 220 }}
-              >
-                <Tag style={{ ...styles.tag, paddingRight: 0, cursor: "pointer" }} color="#D9D9D9">
-                  <InfoOutlined style={{ marginLeft: -4, marginRight: 3 }} />
-                </Tag>
-              </Popover>
-            </span>
-          );
-        } else {
-          return (
-            <Tag style={styles.tag} color="#FA541C">
-              <CaretDownOutlined style={{ marginRight: 1 }}/>
-              {row.fct}
-            </Tag>
-          );
-        }
+        return (
+          <Tag style={styles.tag} color="#FA541C">
+            <CaretDownOutlined style={{ marginRight: 1 }}/>
+            {row.fct}
+          </Tag>
+        );
       case "join_request":
       case "join_accept":
         return (
@@ -250,12 +277,16 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const { rows, expandedRowKeys, expandAll } = this.state
+    const { rows, expandedRowKeys, expandAll, showLate, showInactive } = this.state
 
     // events will come in separately and related events will have same router_uuid
-    const aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
+    let aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
-      let firstEvent = orderedRouterEvents[0];
+
+      // grab the oldest one unless it's from the specified sub_categories which will not have fcnt
+      let firstEvent = orderedRouterEvents.find(e => 
+        !['uplink_integration_req', 'uplink_integration_res', 'misc_integration_error'].includes(e.sub_category)
+      ) || orderedRouterEvents[0];
 
       // data field might initially come in as json when new event is added but normally won't
       let firstEventData = firstEvent.data;
@@ -278,11 +309,24 @@ class EventsDashboard extends Component {
         ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
         integrations: orderedRouterEvents.filter(
           event => this.isDataString(event.data) ? JSON.parse(event.data).integration : event.data.integration
-        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description }))
+        ).map(ie => ({ ...(this.isDataString(ie.data) ? JSON.parse(ie.data).integration : ie.data.integration), description: ie.description, time: ie.reported_at, subCategory: ie.sub_category }))
       })
     });
 
     aggregatedRows.sort((a, b) => (a.reported_at < b.reported_at) ? 1 : -1);
+
+    // prevent orphaning events since they come in decoupled
+    if (aggregatedRows.length > 100) aggregatedRows.splice(aggregatedRows.length - 5);
+
+
+    // handle filtering of dropped uplinks
+    if (!this.state.showInactive) {
+      aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_device_inactive');
+    }
+
+    if (!this.state.showLate) {
+      aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_late');
+    }
 
     const columns = [
       {
@@ -293,7 +337,11 @@ class EventsDashboard extends Component {
       {
         title: 'Type',
         dataIndex: 'category',
-        render: (data, row) => <Text>{categoryTag(row.category, row.sub_categories)}</Text>
+        render: (data, row) => {
+          const integrationResponse = row.integrations && row.integrations.find(i => i.subCategory === 'uplink_integration_res');
+          const integrationError = integrationResponse && integrationResponse.status === 'error';
+          return <Text>{categoryTag(row.category, row.sub_categories, integrationError)}</Text>;
+        }
       },
       {
         title: 'Time',
@@ -333,6 +381,24 @@ class EventsDashboard extends Component {
               style={{ marginLeft: 20 }}
             >
               Expand All
+            </Checkbox>
+
+            <Text strong style={{ marginLeft: 40, fontSize: 13, color: 'rgba(0, 0, 0, 0.85)'}}>
+              Show Dropped Uplinks:
+            </Text>
+            <Checkbox
+              onChange={() => this.toggleShowLate()}
+              checked={showLate}
+              style={{ marginLeft: 20 }}
+            >
+              Late
+            </Checkbox>
+            <Checkbox
+              onChange={() => this.toggleShowInactive()}
+              checked={showInactive}
+              style={{ marginLeft: 20 }}
+            >
+              Inactive Device
             </Checkbox>
           </span>
           <a

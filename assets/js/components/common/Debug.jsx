@@ -8,6 +8,11 @@ const { Text } = Typography
 import Loader from '../../../img/debug-loader.png'
 
 class Debug extends Component {
+  constructor(props) {
+    super(props);
+    this.listRef = React.createRef();
+  }
+
   state = {
     data: []
   }
@@ -30,6 +35,21 @@ class Debug extends Component {
       this.channel.on(`graphql:label_show_debug:${this.props.labelId}:get_event`, (message) => {
         this.updateData(message)
       })
+    }
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    if (prevState.data.length > 0 && prevState.data.length < this.state.data.length) {
+      const list = this.listRef.current;
+      return list.scrollHeight - list.scrollTop;
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (snapshot !== null) {
+      const list = this.listRef.current;
+      list.scrollTop = list.scrollHeight - snapshot;
     }
   }
 
@@ -68,7 +88,7 @@ class Debug extends Component {
       </div>
     )
     return (
-      <div style={{ height: 'calc(100% - 55px)', width: '100%', overflow: 'scroll'}} className="no-scroll-bar">
+      <div style={{ height: 'calc(100% - 55px)', width: '100%', overflow: 'scroll'}} className="no-scroll-bar" ref={this.listRef}>
         <div style={{ width: '100%', backgroundColor: debugSidebarHeaderColor, padding: '25px 30px 25px 30px', display: 'flex', flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 0 }}>
           <Text style={{ color: 'white' }}>
             <span style={{ fontWeight: '500' }}>Displaying</span> <span style={{ fontWeight: '300' }}>{data.length} / 40 Events</span>

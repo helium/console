@@ -89,9 +89,9 @@ defmodule Console.Devices.DeviceResolver do
     {
       :ok,
       %{
-        dc_last_1d: Enum.at(counts, 0),
-        dc_last_7d: Enum.at(counts, 1),
-        dc_last_30d: Enum.at(counts, 2),
+        dc_last_1d: Enum.at(counts, 0) || 0,
+        dc_last_7d: Enum.at(counts, 1) || 0,
+        dc_last_30d: Enum.at(counts, 2) || 0,
       }
     }
   end
@@ -124,7 +124,7 @@ defmodule Console.Devices.DeviceResolver do
 
     events = Event
       |> where([e], e.device_id == ^device.id)
-      |> limit(50)
+      |> limit(250)
       |> order_by(desc: :reported_at_naive)
       |> Repo.all()
 
