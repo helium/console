@@ -12,6 +12,13 @@ class DeviceShowStats extends Component {
     showDC: false
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.device.total_packets !== this.props.device.total_packets) {
+      this.props.deviceStatsQuery.refetch()
+      this.props.deviceDcStatsQuery.refetch()
+    }
+  }
+
   renderTitle = () => (
     <span>
       <a href="#" onClick={e => { e.preventDefault(); this.setState({ showDC: false }) }}>
