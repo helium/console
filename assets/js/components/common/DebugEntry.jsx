@@ -50,6 +50,9 @@ class DebugEntry extends Component {
 
     return (
       <div key={event.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
+        <React.Fragment>
+          <Text style={{ color: '#1890ff', fontSize: '18px', fontWeight: 'bold' }}>{event.category}{event.sub_category !== "undefined" && `: ${event.sub_category}`}</Text>
+        </React.Fragment>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>
             {
@@ -98,22 +101,23 @@ class DebugEntry extends Component {
             </div>
           )
         }
-        <div style={{ marginBottom: 5 }}>
         {
-          showDeviceInfo ? (
-            <EyeFilled
-              style={{ color: '#FFFFFF', marginRight: 10 }}
-              onClick={() => this.toggleView("showDeviceInfo")}
-            />
-          ) : (
-            <EyeInvisibleFilled
-              style={{ color: '#8C8C8C', marginRight: 10 }}
-              onClick={() => this.toggleView("showDeviceInfo")}
-            />
-          )
+          event.device_name && 
+            <div style={{ marginBottom: 5 }}>
+              { showDeviceInfo ? (
+                <EyeFilled
+                  style={{ color: '#FFFFFF', marginRight: 10 }}
+                  onClick={() => this.toggleView("showDeviceInfo")}
+                />
+              ) : (
+                <EyeInvisibleFilled
+                  style={{ color: '#8C8C8C', marginRight: 10 }}
+                  onClick={() => this.toggleView("showDeviceInfo")}
+                />
+              )}
+              <Text style={{ color: showDeviceInfo ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
+            </div>
         }
-          <Text style={{ color: showDeviceInfo ? '#FFFFFF' : '#8C8C8C' }}>Device Information</Text>
-        </div>
         {
           this.state.showDeviceInfo && (
             <div style={{ marginBottom: 20 }}>
@@ -128,22 +132,25 @@ class DebugEntry extends Component {
             </div>
           )
         }
-        <div style={{ marginBottom: 5 }}>
-          {
-            showHotspotInfo ? (
-              <EyeFilled
-                style={{ color: '#FFFFFF', marginRight: 10 }}
-                onClick={() => this.toggleView("showHotspotInfo")}
-              />
-            ) : (
-              <EyeInvisibleFilled
-                style={{ color: '#8C8C8C', marginRight: 10 }}
-                onClick={() => this.toggleView("showHotspotInfo")}
-              />
-            )
-          }
-          <Text style={{ color: showHotspotInfo ? '#FFFFFF' : '#8C8C8C' }}>Hotspot</Text>
-        </div>
+        {
+          event.data && event.data.hotspot &&
+            <div style={{ marginBottom: 5 }}>
+              {
+                showHotspotInfo ? (
+                  <EyeFilled
+                    style={{ color: '#FFFFFF', marginRight: 10 }}
+                    onClick={() => this.toggleView("showHotspotInfo")}
+                  />
+                ) : (
+                  <EyeInvisibleFilled
+                    style={{ color: '#8C8C8C', marginRight: 10 }}
+                    onClick={() => this.toggleView("showHotspotInfo")}
+                  />
+                )
+              }
+              <Text style={{ color: showHotspotInfo ? '#FFFFFF' : '#8C8C8C' }}>Hotspot</Text>
+            </div>
+        }
         {
           this.state.showHotspotInfo && 
             <div style={{ marginBottom: 20 }}>
@@ -152,22 +159,25 @@ class DebugEntry extends Component {
               </pre>
             </div>
         }
-        <div style={{ marginBottom: 5 }}>
-          {
-            showIntegrationInfo ? (
-              <EyeFilled
-                style={{ color: '#FFFFFF', marginRight: 10 }}
-                onClick={() => this.toggleView("showIntegrationInfo")}
-              />
-            ) : (
-              <EyeInvisibleFilled
-                style={{ color: '#8C8C8C', marginRight: 10 }}
-                onClick={() => this.toggleView("showIntegrationInfo")}
-              />
-            )
-          }
-          <Text style={{ color: showIntegrationInfo ? '#FFFFFF' : '#8C8C8C' }}>Integration</Text>
-        </div>
+        {
+          event.data && event.data.integration &&
+            <div style={{ marginBottom: 5 }}>
+            {
+              showIntegrationInfo ? (
+                <EyeFilled
+                  style={{ color: '#FFFFFF', marginRight: 10 }}
+                  onClick={() => this.toggleView("showIntegrationInfo")}
+                />
+              ) : (
+                <EyeInvisibleFilled
+                  style={{ color: '#8C8C8C', marginRight: 10 }}
+                  onClick={() => this.toggleView("showIntegrationInfo")}
+                />
+              )
+            }
+            <Text style={{ color: showIntegrationInfo ? '#FFFFFF' : '#8C8C8C' }}>Integration</Text>
+          </div>
+        }
         <div style={{ marginBottom: 20 }}>
           {
             event.data.req && (
