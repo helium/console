@@ -50,6 +50,9 @@ class DebugEntry extends Component {
 
     return (
       <div key={event.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
+        <React.Fragment>
+          <Text style={{ color: '#1890ff', fontSize: '18px', fontWeight: 'bold' }}>{event.category}{event.sub_category !== "undefined" && `: ${event.sub_category}`}</Text>
+        </React.Fragment>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>
             {
