@@ -32,7 +32,9 @@ class JoinOrganizationPrompt extends Component {
     const { joinOrganization, invitationToken } = this.props
     joinOrganization(
       invitationToken
-    );
+    ).then(() => {
+      window.location.reload(true);
+    });
   }
 
   render() {
