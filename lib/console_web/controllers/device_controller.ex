@@ -452,4 +452,12 @@ defmodule ConsoleWeb.DeviceController do
   defp broadcast_router_update_devices(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
+
+  def get_all_events(conn, %{ "device_id" => device_id }) do
+    events = Devices.get_all_events(device_id)
+
+    conn
+    |> put_status(:ok)
+    |> render("events.json", events: events)
+  end
 end

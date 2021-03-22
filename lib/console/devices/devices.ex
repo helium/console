@@ -157,4 +157,9 @@ defmodule Console.Devices do
     from(d in Device, where: d.id in ^device_ids and d.organization_id == ^organization.id)
     |> Repo.update_all(set: [active: active])
   end
+
+  def get_all_events(device_id) do
+    from(e in Event, where: e.device_id == ^device_id)
+    |> Repo.all()
+  end
 end

@@ -25,6 +25,10 @@ defmodule ConsoleWeb.DeviceView do
     }
   end
 
+  def render("events.json", %{events: events}) do
+    render_many(events, EventView, "event.json")
+  end
+
   defp append_events(json, events) do
     if Ecto.assoc_loaded?(events) do
       events_json = render_many(events, EventView, "event.json")
