@@ -32,6 +32,7 @@ export default ({ data, unconnected }) => {
           type="source"
           position="right"
           style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #9E59F6', height: '12px', width: '12px' }}
+          isValidConnection={connection => connection.target.slice(0,8) !== "function" }
         />
       )}
       <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>

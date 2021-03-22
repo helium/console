@@ -139,6 +139,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'deviceNode',
       data: {
         label: device.name,
+        id: `device-${device.id}`
       },
       position: [0,0]
     }
@@ -155,6 +156,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'labelNode',
       data: {
         label: label.name,
+        id: `label-${label.id}`
       },
       position: [0,0]
     }
@@ -171,6 +173,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'functionNode',
       data: {
         label: func.name,
+        id: `function-${func.id}`,
         format: func.format
       },
       position: [0,0]
@@ -188,6 +191,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'channelNode',
       data: {
         label: channel.name,
+        id: `channel-${channel.id}`,
         type_name: channel.type_name,
         type: channel.type
       },

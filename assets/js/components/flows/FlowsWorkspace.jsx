@@ -77,7 +77,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
       y: event.clientY - reactFlowBounds.top,
     })
 
-    let data = { label: name }
+    let data = { label: name, id }
     if (type == 'channelNode') {
       data = Object.assign({}, data, {
         type_name: event.dataTransfer.getData('node/channel_type_name'),
