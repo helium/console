@@ -212,7 +212,7 @@ export const sendClearDownlinkQueue = (payload) => {
 
 export const getAllEvents = (deviceId) => {
   return (dispatch) => {
-    return rest.get(`/api/events/${deviceId}`)
+    return rest.get(`/api/devices/${deviceId}/events`)
       .then(response => {
         return response.data;
       });
