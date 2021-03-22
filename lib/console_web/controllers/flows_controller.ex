@@ -36,11 +36,11 @@ defmodule ConsoleWeb.FlowsController do
             |> put_timestamps()
           end)
 
-        { count, _ }= Repo.insert_all(Flow, parsed_flows)
+        { count, _ } = Repo.insert_all(Flow, parsed_flows, on_conflict: :nothing)
         if count == length(parsed_flows) do
           {:ok, "success"}
         else
-          {:error, "Failed to connect all flows"}
+          {:error, "fail"}
         end
       end)
       |> Ecto.Multi.run(:updated_organization, fn _repo, _ ->
@@ -48,10 +48,14 @@ defmodule ConsoleWeb.FlowsController do
       end)
       |> Repo.transaction()
 
-    with {:ok, _} <- result do
-      conn
-      |> put_resp_header("message", "Updated all edges successfully")
-      |> send_resp(:ok, "")
+    case result do
+      {:ok, _} ->
+        conn
+        |> put_resp_header("message", "Updated all edges successfully")
+        |> send_resp(:ok, "")
+      {:error, :added_flows, "fail", _} ->
+        {:error, :bad_request, "Failed to connect all flows. Please make sure you are not duplicating flows with the same nodes."}
+      _ -> result
     end
   end
 
