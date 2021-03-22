@@ -17,12 +17,15 @@ defmodule ConsoleWeb.EventView do
     %{
       id: event.id,
       description: event.description,
-      payload_size: event.payload_size,
+      category: event.category,
+      sub_category: event.sub_category,
       reported_at: event.reported_at,
+      data: event.data,
+      frame_up: event.frame_up,
+      frame_down: event.frame_down,
+      organization_id: event.organization_id,
+      router_uuid: event.router_uuid
     }
-    |> append_device(event.device)
-    |> append_gateway(event.gateway)
-    |> append_channel(event.channel)
   end
 
   defp append_device(json, device) do

@@ -11,6 +11,8 @@ import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbo
 import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, ShrinkOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
+import { bindActionCreators } from 'redux'
+import { getAllEvents } from '../../actions/device'
 
 const styles = {
   tag: {
@@ -401,15 +403,23 @@ class EventsDashboard extends Component {
               Inactive Device
             </Checkbox>
           </span>
-          <a
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(rows, null, 2))}`}
-            download="event-debug.json"
-            onClick={() => { analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id }) }}
-          >
-            <Button size="small">
+            <Button onClick={() => {
+              analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id })
+              this.props.getAllEvents(this.props.device_id)
+              .then(events => {
+                const json = JSON.stringify(events, null, 2);
+                const blob = new Blob([json],{type:'application/json'});
+                const href = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = href;
+                link.download = "event-debug.json";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              })}}
+            size="small">
               Export JSON
             </Button>
-          </a>
         </div>
         <Table
           dataSource={aggregatedRows}
@@ -431,6 +441,10 @@ function mapStateToProps(state, ownProps) {
   }
 }
 
-export default connect(mapStateToProps, null)(
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getAllEvents }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(EventsDashboard, DEVICE_EVENTS, props => ({ fetchPolicy: 'network-only', variables: { device_id: props.device_id, }, name: 'deviceEventsQuery' }))
 )
