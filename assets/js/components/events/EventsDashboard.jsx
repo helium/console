@@ -340,8 +340,8 @@ class EventsDashboard extends Component {
         title: 'Type',
         dataIndex: 'category',
         render: (data, row) => {
-          const integrationResponse = row.integrations && row.integrations.find(i => i.subCategory === 'uplink_integration_res');
-          const integrationError = integrationResponse && integrationResponse.status === 'error';
+          const integrationResponses = row.integrations && row.integrations.filter(i => i.subCategory === 'uplink_integration_res');
+          const integrationError = integrationResponses.findIndex(i => i.status === 'error') === -1 ? false : true;
           return <Text>{categoryTag(row.category, row.sub_categories, integrationError)}</Text>;
         }
       },
