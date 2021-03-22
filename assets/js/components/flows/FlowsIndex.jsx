@@ -48,7 +48,7 @@ class FlowsIndex extends Component {
 
     const { organization } = this.props.allResourcesQuery.data
     const flowPositions = JSON.parse(organization.flow)
-    const initialElementsMap = generateInitialElementsMap(this.props.allResourcesQuery.data, flowPositions)
+    const [initialElementsMap, nodesByType] = generateInitialElementsMap(this.props.allResourcesQuery.data, flowPositions)
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} >
@@ -61,6 +61,10 @@ class FlowsIndex extends Component {
           submitChanges={this.submitChanges}
           setChangesState={this.setChangesState}
           hasChanges={this.state.hasChanges}
+          labels={nodesByType.labels}
+          channels={nodesByType.channels}
+          functions={nodesByType.functions}
+          devices={nodesByType.devices}
         />
         {
           false && this.state.selectedNode && (
@@ -124,56 +128,75 @@ const getCompleteFlows = (newElementsMap) => {
 const generateInitialElementsMap = (data, flowPositions) => {
   const {allLabels, allFunctions, allChannels, allDevices} = data
   let initialElementsMap = {}
+  const labels = []
+  const devices = []
+  const functions = []
+  const channels = []
 
   allDevices.forEach(device => {
+    const node = {
+      id: `device-${device.id}`,
+      type: 'deviceNode',
+      data: {
+        label: device.name,
+      },
+      position: [0,0]
+    }
+    devices.push(node)
+
     if (flowPositions[`device-${device.id}`]) {
-      initialElementsMap[`device-${device.id}`] = {
-        id: `device-${device.id}`,
-        type: 'deviceNode',
-        data: {
-          label: device.name,
-        },
-        position: flowPositions[`device-${device.id}`].position,
-      }
+      initialElementsMap[`device-${device.id}`] = node
+      node.position = flowPositions[`device-${device.id}`].position
     }
   })
   allLabels.forEach(label => {
+    const node = {
+      id: `label-${label.id}`,
+      type: 'labelNode',
+      data: {
+        label: label.name,
+      },
+      position: [0,0]
+    }
+    labels.push(node)
+
     if (flowPositions[`label-${label.id}`]) {
-      initialElementsMap[`label-${label.id}`] = {
-        id: `label-${label.id}`,
-        type: 'labelNode',
-        data: {
-          label: label.name,
-        },
-        position: flowPositions[`label-${label.id}`].position,
-      }
+      initialElementsMap[`label-${label.id}`] = node
+      node.position = flowPositions[`label-${label.id}`].position
     }
   })
   allFunctions.forEach(func => {
+    const node = {
+      id: `function-${func.id}`,
+      type: 'functionNode',
+      data: {
+        label: func.name,
+        format: func.format
+      },
+      position: [0,0]
+    }
+    functions.push(node)
+
     if (flowPositions[`function-${func.id}`]) {
-      initialElementsMap[`function-${func.id}`] = {
-        id: `function-${func.id}`,
-        type: 'functionNode',
-        data: {
-          label: func.name,
-          format: func.format
-        },
-        position: flowPositions[`function-${func.id}`].position,
-      }
+      initialElementsMap[`function-${func.id}`] = node
+      node.position = flowPositions[`function-${func.id}`].position
     }
   })
   allChannels.forEach(channel => {
+    const node = {
+      id: `channel-${channel.id}`,
+      type: 'channelNode',
+      data: {
+        label: channel.name,
+        type_name: channel.type_name,
+        type: channel.type
+      },
+      position: [0,0],
+    }
+    channels.push(node)
     if (flowPositions[`channel-${channel.id}`]) {
-      initialElementsMap[`channel-${channel.id}`] = {
-        id: `channel-${channel.id}`,
-        type: 'channelNode',
-        data: {
-          label: channel.name,
-          type_name: channel.type_name,
-          type: channel.type
-        },
-        position: flowPositions[`channel-${channel.id}`].position,
-      }
+      initialElementsMap[`channel-${channel.id}`] = node
+      node.position = flowPositions[`channel-${channel.id}`].position
     }
   })
   flowPositions.edges && flowPositions.edges.forEach(edge => {
@@ -183,7 +206,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       initialElementsMap[id] = element
     }
   })
-  return initialElementsMap
+  return [initialElementsMap, { labels, devices, functions, channels }]
 }
 
 function mapStateToProps(state, ownProps) {

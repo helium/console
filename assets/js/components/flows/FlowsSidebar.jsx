@@ -4,11 +4,12 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import LabelNode from './nodes/LabelNode'
 import FunctionNode from './nodes/FunctionNode'
 import ChannelNode from './nodes/ChannelNode'
+import DeviceNode from './nodes/DeviceNode'
 import DebugNode from './nodes/DebugNode'
 const { Text } = Typography
 
-export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, elementsMap }) => {
-  const [showUnconnectedNodes, toggleUnconnectedNodes] = useState(false)
+export default ({ devices, labels, functions, channels }) => {
+  const [showMenu, toggleMenu] = useState(false)
 
   const onDragStart = (event, node) => {
     event.dataTransfer.setData('node/id', node.id)
@@ -27,10 +28,6 @@ export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, 
     event.dataTransfer.effectAllowed = 'move';
   }
 
-  const unconnectedLabelsNotDraggedIn = unconnectedLabels.filter(node => !elementsMap[node.id])
-  const unconnectedFunctionsNotDraggedIn = unconnectedFunctions.filter(node => !elementsMap[node.id])
-  const unconnectedChannelsNotDraggedIn = unconnectedChannels.filter(node => !elementsMap[node.id])
-
   return (
     <div style={{
       position: 'absolute',
@@ -44,41 +41,51 @@ export default ({ unconnectedLabels, unconnectedFunctions, unconnectedChannels, 
       overflowY: 'scroll'
     }}>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontSize: 16 }} strong>Unconnected Nodes</Text>
+        <Text style={{ fontSize: 16 }} strong>All Nodes</Text>
         <Button
-          onClick={() => toggleUnconnectedNodes(!showUnconnectedNodes)}
-          icon={showUnconnectedNodes ? <MinusOutlined /> : <PlusOutlined />}
+          onClick={() => toggleMenu(!showMenu)}
+          icon={showMenu ? <MinusOutlined /> : <PlusOutlined />}
           size="small"
         />
       </div>
       {
-        showUnconnectedNodes && (
+        showMenu && (
           <div style={{ paddingLeft: 20, paddingRight: 20, marginTop: 10 }}>
             <div>
-              <Text strong>Labels ({unconnectedLabelsNotDraggedIn.length})</Text>
+              <Text strong>Labels</Text>
             </div>
             {
-              unconnectedLabelsNotDraggedIn.map(node => (
+              labels.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
                   <LabelNode data={node.data} unconnected={true} />
                 </div>
               ))
             }
             <div>
-              <Text strong>Functions ({unconnectedFunctionsNotDraggedIn.length})</Text>
+              <Text strong>Devices</Text>
             </div>
             {
-              unconnectedFunctionsNotDraggedIn.map(node => (
+              devices.map(node => (
+                <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
+                  <DeviceNode data={node.data} unconnected={true} />
+                </div>
+              ))
+            }
+            <div>
+              <Text strong>Functions</Text>
+            </div>
+            {
+              functions.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
                   <FunctionNode data={node.data} unconnected={true} />
                 </div>
               ))
             }
             <div>
-              <Text strong>Integrations ({unconnectedChannelsNotDraggedIn.length})</Text>
+              <Text strong>Integrations</Text>
             </div>
             {
-              unconnectedChannelsNotDraggedIn.map(node => (
+              channels.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
                   <ChannelNode data={node.data} unconnected={true} />
                 </div>
