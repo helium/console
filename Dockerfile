@@ -11,6 +11,8 @@ RUN mix do local.hex --force, local.rebar --force
 
 # set build ENV
 ENV MIX_ENV=prod
+ARG socket_check_origin
+ENV SOCKET_CHECK_ORIGIN=$socket_check_origin
 
 # install mix dependencies
 COPY mix.lock mix.lock

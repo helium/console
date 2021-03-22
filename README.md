@@ -32,6 +32,8 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
   * Clone the repo and `cd console`
   * Change `/config/releases-template.exs` into `/config/releases.exs`
+  * Change `/docker-compose-template.yaml` into `/docker-compose.yaml`
+  * Update socket_check_origin on line 7 of `/docker-compose.yaml` with your own host
   * Sign up with Auth0 (https://auth0.com/)
   * Create .env and .env-router files in root folder
   * Populate .env file with the following
