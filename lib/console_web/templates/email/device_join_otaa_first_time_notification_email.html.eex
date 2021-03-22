@@ -309,7 +309,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 20px 20px;">
+                                <td>
                                     <!-- Button : BEGIN -->
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
@@ -323,7 +323,7 @@
                             </tr>
                             <!-- Spacing -->
                               <tr>
-                                <td width="100%" height="25"></td>
+                                <td width="100%" height="45"></td>
                               </tr>
                             <!-- Spacing -->
 
@@ -343,7 +343,7 @@
                   </tr>
                 <!-- Spacing -->
                 <tr>
-                    <td align="center"  style="padding: 20px 0;">
+                    <td align="center">
                   <!-- Helium Console Logo -->
                       <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/greysignoff.png") %>"></a>
                   </td>

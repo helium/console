@@ -251,7 +251,7 @@
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                     <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Activate your API Key</h1>
-                                    <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 10px;">
+                                    <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
                                       Hi there, 
                                       <br />
                                       <br />
@@ -260,7 +260,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 20px 20px;">
+                                <td>
                                     <!-- Button : BEGIN -->
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
@@ -274,7 +274,7 @@
                             </tr>
                             <!-- Spacing -->
                               <tr>
-                                <td width="100%" height="25"></td>
+                                <td width="100%" height="45"></td>
                               </tr>
                             <!-- Spacing -->
 

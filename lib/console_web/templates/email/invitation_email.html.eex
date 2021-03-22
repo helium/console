@@ -245,7 +245,7 @@
                             </tr>
                             <!-- Spacing -->
                               <tr>
-                                <td width="100%" height="20"></td>
+                                <td width="100%" height="60"></td>
                               </tr>
                             <!-- Spacing -->
                             <tr>
@@ -279,7 +279,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding: 0 20px 20px;">
+                                <td>
                                     <!-- Button : BEGIN -->
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
@@ -293,7 +293,7 @@
                             </tr>
                             <!-- Spacing -->
                               <tr>
-                                <td width="100%" height="25"></td>
+                                <td width="100%" height="45"></td>
                               </tr>
                             <!-- Spacing -->
 
