@@ -19,7 +19,7 @@ const nodeTypes = {
   deviceNode: DeviceNode
 };
 
-export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges }) => {
+export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges, labels, functions, channels, devices }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
@@ -60,6 +60,42 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
     setChangesState(false)
   }
 
+  const onDragOver = event => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }
+
+  const onDrop = event => {
+    event.preventDefault()
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect()
+    const id = event.dataTransfer.getData('node/id')
+    const type = event.dataTransfer.getData('node/type')
+    const name = event.dataTransfer.getData('node/name')
+
+    const position = reactFlowInstance.project({
+      x: event.clientX - reactFlowBounds.left - 75,
+      y: event.clientY - reactFlowBounds.top,
+    })
+
+    let data = { label: name }
+    if (type == 'channelNode') {
+      data = Object.assign({}, data, {
+        type_name: event.dataTransfer.getData('node/channel_type_name'),
+        type: event.dataTransfer.getData('node/channel_type')
+      })
+    }
+
+    if (type == 'functionNode') {
+      data = Object.assign({}, data, {
+        format: event.dataTransfer.getData('node/function_format'),
+      })
+    }
+
+    const newNode = { id, type, position, data }
+    setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
+    setChangesState(true)
+  }
+
   return (
     <ReactFlowProvider>
       <div ref={reactFlowWrapper} style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -70,6 +106,14 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
           onElementsRemove={onElementsRemove}
           onConnect={onElementsAdd}
           onNodeDragStop={onElementDragStop}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+        />
+        <FlowsSidebar
+          labels={labels}
+          functions={functions}
+          channels={channels}
+          devices={devices}
         />
         <FlowsSettingsBar
           hasChanges={hasChanges}
