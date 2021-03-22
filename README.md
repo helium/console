@@ -31,7 +31,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Running Console+Router with Docker
 
   * Clone the repo and `cd console`
-  * Update host at the top of `/config/releases.exs`
+  * Change `/config/releases-template.exs` into `/config/releases.exs`
   * Sign up with Auth0 (https://auth0.com/)
   * Create .env and .env-router files in root folder
   * Populate .env file with the following
