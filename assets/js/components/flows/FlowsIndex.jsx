@@ -98,13 +98,13 @@ const getCompleteFlows = (newElementsMap) => {
     edges.forEach(edge => {
       if (edge.source === node.id) {
         const nextNode = newElementsMap[edge.target]
-        getPaths(nextNode, path.concat({ type: nextNode.type, id: nextNode.id }))
+        getPaths(nextNode, path.concat({ type: nextNode.type, id: nextNode.data.id }))
       }
     })
   }
 
   deviceAndLabelNodes.forEach(node => {
-    getPaths(node, [{ type: node.type, id: node.id }])
+    getPaths(node, [{ type: node.type, id: node.data.id }])
   })
 
   const elementPositions = Object.keys(newElementsMap).reduce((acc, key) => {
@@ -112,7 +112,14 @@ const getCompleteFlows = (newElementsMap) => {
       const element = {
         position: newElementsMap[key].position
       }
-      return Object.assign({}, acc, { [key]: element })
+      if (key.indexOf("_copy") !== -1) {
+        return Object.assign({}, acc, {
+          [key]: element,
+          copies: acc.copies.concat(Object.assign({}, { id: key }, element))
+        })
+      } else {
+        return Object.assign({}, acc, { [key]: element })
+      }
     } else {
       const edge = {
         source: newElementsMap[key].source,
@@ -120,7 +127,7 @@ const getCompleteFlows = (newElementsMap) => {
       }
       return Object.assign({}, acc, { edges: acc.edges.concat(edge) })
     }
-  }, { edges: [] })
+  }, { edges: [], copies: [] })
 
   return [paths, elementPositions]
 }
@@ -203,6 +210,29 @@ const generateInitialElementsMap = (data, flowPositions) => {
       node.position = flowPositions[`channel-${channel.id}`].position
     }
   })
+
+  // currently only function nodes can be duplicated
+  flowPositions.copies.map(copiedNode => {
+    const originalId = copiedNode.id.slice(0, copiedNode.id.indexOf("_copy"))
+    const func = initialElementsMap[originalId]
+
+    const node = {
+      id: copiedNode.id,
+      type: 'functionNode',
+      data: {
+        label: func.data.label,
+        id: `function-${func.data.id}`,
+        format: func.data.format
+      },
+      position: [0,0]
+    }
+
+    if (flowPositions[copiedNode.id]) {
+      initialElementsMap[copiedNode.id] = node
+      node.position = flowPositions[copiedNode.id].position
+    }
+  })
+
   flowPositions.edges && flowPositions.edges.forEach(edge => {
     if (initialElementsMap[edge.source] && initialElementsMap[edge.target]) {
       const id = "edge-" + edge.source + "-" + edge.target

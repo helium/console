@@ -29,5 +29,6 @@ defmodule Console.Flows.Flow do
       :function_id,
       :label_id,
     ])
+    |> unique_constraint(:device_id, name: :unique_flow_entry_index, message: "This flow already exists")
   end
 end

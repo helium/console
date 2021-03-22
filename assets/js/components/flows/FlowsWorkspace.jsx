@@ -78,21 +78,30 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
     })
 
     let data = { label: name, id }
-    if (type == 'channelNode') {
+    if (type === 'channelNode') {
       data = Object.assign({}, data, {
         type_name: event.dataTransfer.getData('node/channel_type_name'),
         type: event.dataTransfer.getData('node/channel_type')
       })
     }
 
-    if (type == 'functionNode') {
+    if (type === 'functionNode') {
       data = Object.assign({}, data, {
         format: event.dataTransfer.getData('node/function_format'),
       })
     }
 
     const newNode = { id, type, position, data }
-    setElements(elsMap => Object.assign({}, elsMap, { [id]: newNode }))
+
+    if (type === 'functionNode' && elementsMap[id]) {
+      let i = 1
+      while (elementsMap[id + "_copy" + i]) {
+        i ++
+      }
+      newNode.id = id + "_copy" + i
+    }
+
+    setElements(elsMap => Object.assign({}, elsMap, { [newNode.id]: newNode }))
     setChangesState(true)
   }
 
