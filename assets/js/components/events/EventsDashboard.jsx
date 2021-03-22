@@ -404,6 +404,7 @@ class EventsDashboard extends Component {
             </Checkbox>
           </span>
             <Button onClick={() => {
+              analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id })
               this.props.getAllEvents(this.props.device_id)
               .then(events => {
                 const json = JSON.stringify(events, null, 2);
