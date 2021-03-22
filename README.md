@@ -51,6 +51,8 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   SITE_DOMAIN_MAILGUN=[Your Mailgun host domain (optional)]
   DATABASE_DB=console
   DATABASE_HOST=postgres
+  DATABASE_USER=postgres
+  DATABASE_PASSWORD=postgres
   ```
   * Populate .env-router file with the following
   ```
