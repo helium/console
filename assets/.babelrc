@@ -4,7 +4,7 @@
       "env",
       {
         "targets": {
-          "node": "10"
+          "node": "14"
         }
       }
     ],
