@@ -454,7 +454,7 @@ defmodule ConsoleWeb.DeviceController do
   end
 
   def get_all_events(conn, %{ "device_id" => device_id }) do
-    events = Devices.get_all_events(device_id)
+    events = Devices.get_all_events_last_day(device_id)
 
     conn
     |> put_status(:ok)

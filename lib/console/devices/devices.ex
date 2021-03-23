@@ -158,8 +158,11 @@ defmodule Console.Devices do
     |> Repo.update_all(set: [active: active])
   end
 
-  def get_all_events(device_id) do
-    from(e in Event, where: e.device_id == ^device_id)
+  def get_all_events_last_day(device_id) do
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+
+    from(e in Event, where: e.device_id == ^device_id and e.reported_at_epoch > ^unix1d)
     |> Repo.all()
   end
 end
