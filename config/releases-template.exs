@@ -9,10 +9,17 @@ secret_key_base = System.get_env("SECRET_KEY_BASE") ||
   """
 config :console, ConsoleWeb.Endpoint,
   server: true,
-  url: [host: "example.com", port: 80], # UPDATE TO YOUR HOST (localhost, test.com, etc.)
+  url: [host: "localhost"],
   cache_static_manifest: "priv/static/cache_manifest.json",
   http: [:inet6, port: 4000],
   secret_key_base: secret_key_base
+
+# config :console, ConsoleWeb.Endpoint, # sample endpoint config for non-localhost
+#   load_from_system_env: true,
+#   url: [scheme: "https", host: "example.com", port: 443],
+#   force_ssl: [rewrite_on: [:x_forwarded_proto]],
+#   cache_static_manifest: "priv/static/cache_manifest.json",
+#   secret_key_base: secret_key_base
 
 db_host = System.get_env("DATABASE_HOST") ||
   raise """
