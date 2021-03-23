@@ -26,6 +26,7 @@
     "mapbox-gl": "^1.6.0",
     "moment": "^2.29.1",
     "mustache": "^4.1.0",
+    "node-fetch": "^2.6.1",
     "npm": "^7.7.0",
     "numeral": "^2.0.6",
     "phoenix": "file:../deps/phoenix",
