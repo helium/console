@@ -54,7 +54,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   ```
   * Populate .env-router file with the following
   ```
-  ROUTER_SEED_NODES=/ip4/34.222.64.221/tcp/2154,/ip4/34.208.255.251/tcp/2154
+  ROUTER_SEED_NODES=/ip4/35.166.211.46/tcp/2154,/ip4/44.236.95.167/tcp/2154
   ROUTER_CONSOLE_ENDPOINT=http://helium_console:4000
   ROUTER_CONSOLE_WS_ENDPOINT=ws://helium_console:4000/socket/router/websocket
   ROUTER_CONSOLE_SECRET=[Random 64 char secret key from above]
