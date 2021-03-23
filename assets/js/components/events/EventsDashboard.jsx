@@ -40,19 +40,25 @@ const integrationErrorTag = () => (
   </Tooltip>
 );
 
+const integrationMissingTag = () => (
+  <Tooltip title="No Integration Attached">
+    <ShrinkOutlined style={{color: 'grey', fontSize: 20}} />
+  </Tooltip>
+)
+
 const categoryTag = (category, subCategories, integrationError) => {
   switch(category) {
     case "uplink_dropped":
       return <Text>Uplink Dropped</Text>;
     case "uplink":
-      return <Text>Uplink {integrationError && integrationErrorTag()}</Text>;
+      return <Text>Uplink</Text>;
     case "downlink_dropped":
       return <Text>Downlink Dropped</Text>;
     case "downlink":
       if (subCategories.includes('downlink_ack')) {
         return <Text>Acknowledge</Text>;
       } else {
-        return <Text>Downlink {integrationError && integrationErrorTag()}</Text>;
+        return <Text>Downlink</Text>;
       }
     case "join_request":
       return <Text>Join Request</Text>
@@ -342,7 +348,8 @@ class EventsDashboard extends Component {
         render: (data, row) => {
           const integrationResponses = row.integrations && row.integrations.filter(i => i.subCategory === 'uplink_integration_res');
           const integrationError = integrationResponses.findIndex(i => i.status === 'error') === -1 ? false : true;
-          return <Text>{categoryTag(row.category, row.sub_categories, integrationError)}</Text>;
+          const integrationMissing = row.integrations.findIndex(i => i.id === 'no_channel') === -1 ? false : true;
+          return <Text>{categoryTag(row.category, row.sub_categories)} {integrationError && integrationErrorTag()}{integrationMissing && integrationMissingTag()}</Text>;
         }
       },
       {
