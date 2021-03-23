@@ -47,10 +47,10 @@ defmodule Console.Devices.DeviceResolver do
   def get_device_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
 
-    current_unix = DateTime.utc_now() |> DateTime.to_unix()
-    unix1d = current_unix - 86400
-    unix7d = current_unix - 86400 * 7
-    unix30d = current_unix - 86400 * 30
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix7d = current_unix - 86400000 * 7
+    unix30d = current_unix - 86400000 * 30
 
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
@@ -73,10 +73,10 @@ defmodule Console.Devices.DeviceResolver do
   def get_device_dc_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
 
-    current_unix = DateTime.utc_now() |> DateTime.to_unix()
-    unix1d = current_unix - 86400
-    unix7d = current_unix - 86400 * 7
-    unix30d = current_unix - 86400 * 30
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix7d = current_unix - 86400000 * 7
+    unix30d = current_unix - 86400000 * 30
 
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
