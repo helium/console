@@ -55,8 +55,10 @@ const categoryTag = (category, subCategories, integrationError) => {
     case "downlink_dropped":
       return <Text>Downlink Dropped</Text>;
     case "downlink":
-      if (subCategories.includes('downlink_ack')) {
-        return <Text>Acknowledge</Text>;
+      if (subCategories.includes('downlink_queued')) {
+        return <Text>Downlink Queued</Text>;
+      } else if (subCategories.includes('downlink_ack')) {
+          return <Text>Acknowledge</Text>;
       } else {
         return <Text>Downlink</Text>;
       }
