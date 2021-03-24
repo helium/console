@@ -453,8 +453,8 @@ defmodule ConsoleWeb.DeviceController do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
 
-  def get_all_events(conn, %{ "device_id" => device_id }) do
-    events = Devices.get_all_events_last_day(device_id)
+  def get_events(conn, %{ "device_id" => device_id }) do
+    events = Devices.get_events(device_id)
 
     conn
     |> put_status(:ok)

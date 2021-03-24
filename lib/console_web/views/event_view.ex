@@ -24,7 +24,8 @@ defmodule ConsoleWeb.EventView do
       frame_up: event.frame_up,
       frame_down: event.frame_down,
       organization_id: event.organization_id,
-      router_uuid: event.router_uuid
+      router_uuid: event.router_uuid,
+      device_id: event.device_id
     }
   end
 
