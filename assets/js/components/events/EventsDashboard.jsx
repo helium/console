@@ -117,10 +117,6 @@ class EventsDashboard extends Component {
 
   addEvent = event => {
     const { rows, expandAll } = this.state
-    const lastEvent = rows[rows.length - 1]
-    if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
-      rows.pop()
-    }
 
     const expandedRowKeys = expandAll ? this.state.expandedRowKeys.concat(event.id) : this.state.expandedRowKeys
 
@@ -327,7 +323,6 @@ class EventsDashboard extends Component {
 
     // prevent orphaning events since they come in decoupled
     if (aggregatedRows.length > 100) aggregatedRows.splice(aggregatedRows.length - 5);
-
 
     // handle filtering of dropped uplinks
     if (!this.state.showInactive) {
