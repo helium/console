@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { formatDatetime, getDiffInSeconds } from '../../util/time'
+import { formatDatetime } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
