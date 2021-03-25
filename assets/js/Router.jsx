@@ -77,7 +77,7 @@ const Router = (props) => {
   if (loading) {
     return <div style={{position: 'absolute', top: 'calc(50% - 20px)', left: 'calc(50% - 20px)'}}><Spin size="large" /></div>
   }
-  const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/devices' : '/welcome';
+  const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/flows' : '/welcome';
   return (
     <PersistGate loading={null} persistor={persistor}>
       { /* ConnectedRouter will use the store from Provider automatically */ }

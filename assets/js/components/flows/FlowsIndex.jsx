@@ -51,7 +51,7 @@ class FlowsIndex extends Component {
     const [initialElementsMap, nodesByType] = generateInitialElementsMap(this.props.allResourcesQuery.data, flowPositions)
 
     return (
-      <DashboardLayout fullHeightWidth user={this.props.user} >
+      <DashboardLayout fullHeightWidth user={this.props.user} noFooter>
         <Prompt
           when={this.state.hasChanges}
           message='You have unsaved changes, are you sure you want to leave this page?'
