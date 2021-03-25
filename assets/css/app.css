@@ -96,8 +96,7 @@ h1 {
 }
 
 .ant-layout-sider {
-  background: #f6f8fa;
-  border-right: 1px solid #e1e4e8;
+  background: #ffffff;
 }
 
 :focus {
@@ -191,6 +190,7 @@ h1 {
   background: #24292e;
   height: 55px;
   line-height: 55px;
+  padding: 0 25px;
 }
 
 .no-padding-card {
@@ -221,10 +221,6 @@ h1 {
 .ant-page-header {
   padding-left: 3px;
   padding-bottom: 40px;
-}
-
-.ant-layout-header {
-  padding: 0 25px;
 }
 
 .ant-page-header-heading-title {
@@ -371,29 +367,15 @@ tr.ant-table-expanded-row:hover {
   height: 0;
 }
 
-.ant-menu-dark,
-.ant-menu-dark .ant-menu-sub {
-  background: #f6f8fa;
-}
-
 .menu-link {
-  background: #f6f8fa;
-  color: #1b1f23;
-  display: block;
-  padding: 22px 20px;
-  position: relative;
-  font-size: 16px;
-  border-left: 0px solid #38a2ff;
-  font-weight: 400;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  color: #242528;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .menu-link:hover,
 .menu-link.is-active {
   color: #048aff;
-  transition: all 0.2s ease;
-  border-left: 10px solid #38a2ff;
 }
 
 .ant-select-dropdown-menu-item {

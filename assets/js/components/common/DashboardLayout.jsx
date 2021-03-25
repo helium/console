@@ -16,7 +16,7 @@ class DashboardLayout extends Component {
   }
 
   render() {
-    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth, noFooter } = this.props;
 
     return (
       <Layout style={{height: '100%', width: '100%'}}>
@@ -45,7 +45,7 @@ class DashboardLayout extends Component {
             <Content>
               {
                 fullHeightWidth ? (
-                  <div style={{ height: '100%', width: '100%' }}>
+                  <div style={{ height: '100%', width: '100%', backgroundColor: '#F5F7F9' }}>
                   {this.props.children}
                   </div>
                 ) : (
@@ -54,20 +54,22 @@ class DashboardLayout extends Component {
                   </ContentLayout>
                 )
               }
-              <Footer style={{ flexShrink: '0', padding: '10px 10px', marginBottom: '-150px', overflow: 'hidden' }}>
-                <div style={{ flexDirection: 'row', display: 'flex' }}>
-                <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
-                  {[
-                      { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},
-                      { title: 'How-to Videos', url: 'https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo' },
-                      { title: 'Community Discord', url: 'http://chat.helium.com' },
-                      { title: 'Engineering Blog', url: 'http://engineering.helium.com' }
-                    ].map(link =>
-                      <a key={link.title} href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
-                    )}
-                  <div style={{ marginLeft: 'auto' }}>© 2021 Helium Systems Inc.</div>
-                </div>
-              </Footer>
+              {
+                !noFooter && (<Footer style={{ flexShrink: '0', padding: '10px 10px', marginBottom: '-150px', overflow: 'hidden' }}>
+                  <div style={{ flexDirection: 'row', display: 'flex' }}>
+                  <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
+                    {[
+                        { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},
+                        { title: 'How-to Videos', url: 'https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo' },
+                        { title: 'Community Discord', url: 'http://chat.helium.com' },
+                        { title: 'Engineering Blog', url: 'http://engineering.helium.com' }
+                      ].map(link =>
+                        <a key={link.title} href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
+                      )}
+                    <div style={{ marginLeft: 'auto' }}>© 2021 Helium Systems Inc.</div>
+                  </div>
+                </Footer>)
+              }
             </Content>
           </Layout>
         </Layout>
