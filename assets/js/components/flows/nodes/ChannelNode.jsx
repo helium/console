@@ -17,7 +17,7 @@ const channelIcons = {
 export default ({ data, unconnected }) => {
   return (
     <div style={{
-      background: '#1D4676',
+      background: '#12CB9E',
       padding: 15,
       borderRadius: 5,
       minWidth: 150,
@@ -28,7 +28,7 @@ export default ({ data, unconnected }) => {
           <Handle
             type="target"
             position="left"
-            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #1D4676', height: '12px', width: '12px' }}
+            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #12CB9E', height: '12px', width: '12px' }}
           />
         )
       }
