@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { formatDatetime } from '../../util/time'
+import { formatDatetime, getDiffInSeconds } from '../../util/time'
 import analyticsLogger from '../../util/analyticsLogger';
 import groupBy from 'lodash/groupBy';
 import sortBy from 'lodash/sortBy';
@@ -117,13 +117,21 @@ class EventsDashboard extends Component {
 
   addEvent = event => {
     const { rows, expandAll } = this.state
-
     const expandedRowKeys = expandAll ? this.state.expandedRowKeys.concat(event.id) : this.state.expandedRowKeys
 
-    this.setState({
-      rows: [event].concat(rows),
-      expandedRowKeys
-    })
+    const lastEvent = rows[rows.length - 1];
+    if (rows.length > 100 && getDiffInSeconds(parseInt(lastEvent.reported_at)) > 300) {
+      const lastRouterId = lastEvent.router_uuid;
+      this.setState({
+        rows: [event].concat(rows.filter(event => (event.router_uuid !== lastRouterId))),
+        expandedRowKeys
+      })
+    } else {
+      this.setState({
+        rows: [event].concat(rows),
+        expandedRowKeys
+      })
+    }
   }
 
   toggleExpandAll = (aggregatedRows) => {
