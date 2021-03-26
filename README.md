@@ -80,7 +80,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   * In root directory, copy server environment templates
   ```
   cp templates/docker-compose-server.yaml docker-compose.yaml
-  cp templates/nginx.conf nginx.conf
+  cp templates/nginx-default.conf nginx.conf
   ```
   * Get a certificate (https://certbot.eff.org/instructions)
   * Update `nginx.conf` with cert and key information
