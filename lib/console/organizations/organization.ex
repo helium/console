@@ -4,6 +4,8 @@ defmodule Console.Organizations.Organization do
   alias Console.Helpers
   alias Console.Organizations.Organization
 
+  @discovery_mode_org_name "Discovery Mode (Helium)"
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "organizations" do
@@ -78,7 +80,7 @@ defmodule Console.Organizations.Organization do
   defp check_against_discovery_name(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
-        valid_name = name != "Discovery Mode (Helium)"
+        valid_name = name != @discovery_mode_org_name
         case valid_name do
           false -> add_error(changeset, :message, "Please choose a different organization name")
           true -> changeset

@@ -103,7 +103,6 @@ defmodule ConsoleWeb.V1.DeviceController do
       {:error, :forbidden, "Request must come from Discovery Mode (Helium) organization"}
     else
       existing_device = Devices.get_device_for_hotspot_address(address)
-
       if existing_device == nil do
         with {:ok, %Device{} = device} <- Devices.create_device(%{ "hotspot_address" => address, "organization_id" => current_organization.id }, current_organization) do
           discovery_mode_label = Labels.get_label_by_name("Discovery Mode", discovery_mode_organization.id)

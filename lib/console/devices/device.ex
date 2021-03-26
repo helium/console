@@ -62,7 +62,9 @@ defmodule Console.Devices.Device do
       device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :hotspot_address, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
+      |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for dev_eui, app_eui, and app_key must be unique, please try again")
   end
 
   def update_changeset(device, attrs) do
