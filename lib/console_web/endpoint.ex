@@ -4,7 +4,7 @@ defmodule ConsoleWeb.Endpoint do
   use Appsignal.Phoenix
 
   socket "/socket", ConsoleWeb.UserSocket,
-    websocket: [timeout: 45_000, check_origin: ["//localhost", "//127.0.0.1", "https://*.helium.com"]]
+    websocket: [timeout: 45_000, check_origin: ["//localhost", System.get_env("SOCKET_CHECK_ORIGIN") || "https://*.helium.com"]]
 
   socket "/socket/router", ConsoleWeb.RouterSocket,
     websocket: [timeout: 45_000]

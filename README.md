@@ -84,6 +84,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   ```
   * Get a certificate (https://certbot.eff.org/instructions)
   * Update `nginx.conf` with cert and key information
+  * Update `docker-config.yaml` `socket_check_origin` to reflect your hosted URL
   * Build with `docker-compose build`
   * Run with `docker-compose up`
 
