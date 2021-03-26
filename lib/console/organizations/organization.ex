@@ -4,6 +4,8 @@ defmodule Console.Organizations.Organization do
   alias Console.Helpers
   alias Console.Organizations.Organization
 
+  @discovery_mode_org_name "Discovery Mode (Helium)"
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "organizations" do
@@ -42,6 +44,7 @@ defmodule Console.Organizations.Organization do
     |> validate_required(:name, message: "Organization Name is required")
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
     |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
+    |> check_against_discovery_name
     |> check_name
     |> put_webhook_key()
   end
@@ -72,6 +75,18 @@ defmodule Console.Organizations.Organization do
     organization
     |> changeset(attrs)
     |> put_assoc(:users, [user])
+  end
+
+  defp check_against_discovery_name(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
+        valid_name = name != @discovery_mode_org_name
+        case valid_name do
+          false -> add_error(changeset, :message, "Please choose a different organization name")
+          true -> changeset
+        end
+      _ -> changeset
+    end
   end
 
   defp check_name(changeset) do

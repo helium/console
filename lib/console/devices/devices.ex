@@ -8,6 +8,7 @@ defmodule Console.Devices do
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
   alias Console.Channels.Channel
+  alias Console.Organizations.Organization
 
   def list_devices do
     Repo.all(Device)
@@ -70,6 +71,12 @@ defmodule Console.Devices do
     Repo.all(query)
   end
 
+  def get_device_for_hotspot_address(address) do
+    Device
+      |> where([d], d.hotspot_address == ^address)
+      |> Repo.one()
+  end
+
   def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
     Repo.preload(device, assoc)
   end
@@ -77,12 +84,19 @@ defmodule Console.Devices do
   def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
     cond do
-      count > 9999 ->
+      organization.name !== @discovery_mode_org_name and count > 9999 ->
         {:error, :forbidden, "Device limit for organization reached"}
       true ->
-        %Device{}
-        |> Device.create_changeset(attrs)
-        |> Repo.insert()
+        cond do
+          attrs["hotspot_address"] != nil ->
+            %Device{}
+            |> Device.create_discovery_changeset(attrs)
+            |> Repo.insert()
+          true ->
+            %Device{}
+            |> Device.create_changeset(attrs)
+            |> Repo.insert()
+        end
     end
   end
 

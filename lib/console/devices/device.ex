@@ -24,6 +24,7 @@ defmodule Console.Devices.Device do
     field :last_connected, :naive_datetime
     field :dc_usage, :integer
     field :active, :boolean
+    field :hotspot_address, :string
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
@@ -44,6 +45,24 @@ defmodule Console.Devices.Device do
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
+  end
+
+  def create_discovery_changeset(device, device_params = %{ "name" => name, "hotspot_address" => hotspot_address, "organization_id" => organization_id }) do
+    alphabet = '0123456789ABCDEF'
+    device_params = 
+      Map.merge(device_params, %{
+        "dev_eui" => Helpers.generate_string(16, alphabet),
+        "app_eui" => Helpers.generate_string(16, alphabet),
+        "app_key" => Helpers.generate_string(32, alphabet),
+      })
+
+    changeset =
+      device
+      |> cast(device_params, [:name, :dev_eui, :app_eui, :app_key, :hotspot_address, :organization_id])
+      |> put_change(:oui, Application.fetch_env!(:console, :oui))
+      |> check_attrs_format()
+      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for dev_eui, app_eui, and app_key must be unique, please try again")
   end
 
   def update_changeset(device, attrs) do

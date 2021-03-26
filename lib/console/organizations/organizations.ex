@@ -79,6 +79,12 @@ defmodule Console.Organizations do
       |> Repo.one()
   end
 
+  def get_discovery_mode_org() do
+    Organization
+      |> where([o], o.name == "Discovery Mode (Helium)")
+      |> Repo.one()
+  end
+
   def get_organization!(id) do
     Repo.get!(Organization, id)
   end

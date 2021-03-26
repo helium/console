@@ -120,6 +120,7 @@ defmodule ConsoleWeb.Router do
     post "/labels/:id/multi_buy", LabelController, :update_multi_buy
     post "/labels/:id/notification_email", LabelNotificationSettingsController, :update
     post "/labels/:id/notification_webhook", LabelNotificationWebhooksController, :update
+    post "/devices/discover", DeviceController, :discover_device
   end
 
   if Mix.env == :dev do

@@ -81,6 +81,70 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/#{device["id"]}")
       assert response(resp_conn, 200) # device show does not give back other org devices
       assert Devices.get_device(device["id"]) == nil
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "discovery device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111",
+          "hotspot_address" => "some_address"
+        })
+      device = json_response(resp_conn, 201)
+      assert device["hotspot_address"] == nil # device not created through discover endpoint should not have hotspot_address
+    end
+
+    test "discovery mode endpoint works properly", %{"conn": conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization, %{
+        name: "Discovery Mode (Helium)"
+      })
+      api_key = insert(:api_key, %{
+        organization_id: organization.id,
+        active: true,
+        key: :crypto.hash(:sha256, key)
+      })
+      label = insert(:label, %{
+        name: "Discovery Mode",
+        organization_id: organization.id
+      })
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
+        "hotspot_name" => "some-hotspot-name",
+        "hotspot_address" => "hotspot_address",
+        "wallet_id" => "wallet_id",
+        "signature" => "signature"
+      })
+      assert response(resp_conn, 200) 
+
+      created_device = List.first(Devices.get_devices_for_label(label.id))
+      assert created_device != nil
+      assert created_device.name == "some-hotspot-name"
+      assert created_device.hotspot_address == "hotspot_address"
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
+        "hotspot_name" => "some-hotspot-name",
+        "hotspot_address" => "hotspot_address",
+        "wallet_id" => "wallet_id",
+        "signature" => "signature"
+      })
+      assert response(resp_conn, 200)
+
+      organization_2 = insert(:organization) # not the discovery mode helium org
+      key_2 = "dqWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      api_key = insert(:api_key, %{
+        organization_id: organization_2.id,
+        active: true,
+        key: :crypto.hash(:sha256, key_2)
+      })
+      resp_conn = build_conn() |> put_req_header("key", key_2) |> post("/api/v1/devices/discover", %{
+        "hotspot_address" => "some_other_hotspot_address",
+        "wallet_id" => "wallet_id",
+        "signature" => "signature",
+        "hotspot_name" => "some-other-hotspot-name"
+      })
+      assert response(resp_conn, 403)
     end
   end
 end

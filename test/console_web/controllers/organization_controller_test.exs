@@ -34,5 +34,10 @@ defmodule ConsoleWeb.OrganizationControllerTest do
       resp_conn = delete conn, organization_path(conn, :delete, another_org.id), %{ "destination_org_id" => "no-transfer"}
       assert response(resp_conn, 403) # cannot delete org if user is not admin
     end
+
+    test "cannot create organization with discovery mode org name", %{conn: conn} do
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "Discovery Mode (Helium)" }}
+      assert response(resp_conn, 422)
+    end
   end
 end
