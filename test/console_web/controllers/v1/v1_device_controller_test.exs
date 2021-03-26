@@ -111,7 +111,8 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       })
 
       resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
-        "address" => "hotspot_address",
+        "hotspot_name" => "some-hotspot-name",
+        "hotspot_address" => "hotspot_address",
         "wallet_id" => "wallet_id",
         "signature" => "signature"
       })
@@ -119,10 +120,12 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       created_device = List.first(Devices.get_devices_for_label(label.id))
       assert created_device != nil
-      assert created_device.name == "hotspot-hotspot_address"
+      assert created_device.name == "some-hotspot-name"
+      assert created_device.hotspot_address == "hotspot_address"
 
       resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
-        "address" => "hotspot_address",
+        "hotspot_name" => "some-hotspot-name",
+        "hotspot_address" => "hotspot_address",
         "wallet_id" => "wallet_id",
         "signature" => "signature"
       })
@@ -136,9 +139,10 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
         key: :crypto.hash(:sha256, key_2)
       })
       resp_conn = build_conn() |> put_req_header("key", key_2) |> post("/api/v1/devices/discover", %{
-        "address" => "some_other_hotspot_address",
+        "hotspot_address" => "some_other_hotspot_address",
         "wallet_id" => "wallet_id",
-        "signature" => "signature"
+        "signature" => "signature",
+        "hotspot_name" => "some-other-hotspot-name"
       })
       assert response(resp_conn, 403)
     end

@@ -97,7 +97,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def discover_device(conn, params = %{ "address" => address, "wallet_id" => wallet_id, "signature" => signature }) do
+  def discover_device(conn, params = %{ "hotspot_name" => name, "hotspot_address" => address, "wallet_id" => wallet_id, "signature" => signature }) do
     current_organization = conn.assigns.current_organization
     discovery_mode_organization = Organizations.get_discovery_mode_org()
     if current_organization.id !== discovery_mode_organization.id do
@@ -105,7 +105,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     else
       existing_device = Devices.get_device_for_hotspot_address(address)
       if existing_device == nil do
-        with {:ok, %Device{} = device} <- Devices.create_device(%{ "hotspot_address" => address, "organization_id" => current_organization.id }, current_organization) do
+        with {:ok, %Device{} = device} <- Devices.create_device(%{ "name" => name, "hotspot_address" => address, "organization_id" => current_organization.id }, current_organization) do
           discovery_mode_label = Labels.get_label_by_name("Discovery Mode", discovery_mode_organization.id)
           Labels.add_devices_to_label([device.id], discovery_mode_label.id, current_organization)
           ConsoleWeb.Endpoint.broadcast("device:all", "device:all:discover:devices", %{ "address" => address, "wallet_id" => wallet_id, "signature" => signature, "device_id" => device.id })
