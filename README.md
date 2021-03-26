@@ -37,7 +37,6 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   cp templates/.env .env
   cp templates/.env-router .env-router
   cp templates/docker-compose-local.yaml docker-compose.yaml
-  cp templates/releases.exs config/releases.exs
   ```
   * Populate .env file with the following
   ```
