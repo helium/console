@@ -55,6 +55,20 @@ defmodule Console.Channels.ChannelResolver do
 
   def all(_, %{context: %{current_organization: current_organization}}) do
     channels = Ecto.assoc(current_organization, :channels) |> Repo.all()
+
+    channels = Enum.map(channels, fn channel ->
+      case channel.type do
+        "http" ->
+          channel
+          |> Map.put(:endpoint, channel.credentials["endpoint"])
+        "mqtt" ->
+          channel
+          |> Map.put(:endpoint, channel.credentials["endpoint"])
+        _ ->
+          channel
+      end
+    end)
+
     {:ok, channels}
   end
 end

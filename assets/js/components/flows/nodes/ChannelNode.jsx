@@ -25,6 +25,7 @@ export default ({ data, unconnected }) => {
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
         <img src={ChannelIcon} style={{ height: 16, display: 'block' }} />
         <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
+        <Text style={{ fontSize: 10, color: '#ffffff', position: 'relative', top: -5 }}>Integration Type: {data.type}</Text>
       </div>
     </div>
   );

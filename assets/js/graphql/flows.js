@@ -21,7 +21,8 @@ export const ALL_RESOURCES = gql`
       id,
       name,
       type_name,
-      type
+      type,
+      endpoint
     }
     organization(id: $id) {
       flow

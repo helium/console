@@ -6,6 +6,7 @@ import { Prompt } from 'react-router'
 import find from 'lodash/find'
 import { ALL_RESOURCES } from '../../graphql/flows'
 import { updateFlows } from '../../actions/flow'
+import { getIntegrationTypeForFlows } from '../../util/flows'
 import DashboardLayout from '../common/DashboardLayout'
 import FlowsWorkspace from './FlowsWorkspace'
 import { Typography } from 'antd';
@@ -194,6 +195,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
     }
   })
   allChannels.forEach(channel => {
+    const type = getIntegrationTypeForFlows(channel.endpoint, channel.type)
+
     const node = {
       id: `channel-${channel.id}`,
       type: 'channelNode',
@@ -201,7 +204,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         label: channel.name,
         id: `channel-${channel.id}`,
         type_name: channel.type_name,
-        type: channel.type
+        type,
       },
       position: [0,0],
     }
