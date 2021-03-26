@@ -81,6 +81,18 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/#{device["id"]}")
       assert response(resp_conn, 200) # device show does not give back other org devices
       assert Devices.get_device(device["id"]) == nil
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "discovery device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111",
+          "hotspot_address" => "some_address"
+        })
+      device = json_response(resp_conn, 201)
+      assert device["hotspot_address"] == nil # device not created through discover endpoint should not have hotspot_address
     end
 
     test "discovery mode endpoint works properly", %{"conn": conn} do

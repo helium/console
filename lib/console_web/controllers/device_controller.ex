@@ -21,7 +21,11 @@ defmodule ConsoleWeb.DeviceController do
   def create(conn, %{"device" => device_params, "label" => label}) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
-    device_params = Map.merge(device_params, %{"organization_id" => current_organization.id})
+    device_params = 
+      Map.merge(device_params, %{
+        "organization_id" => current_organization.id
+      })
+      |> Map.drop(["hotspot_address"])
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       case label["labelApplied"] do

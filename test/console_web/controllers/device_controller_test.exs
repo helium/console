@@ -36,6 +36,14 @@ defmodule ConsoleWeb.DeviceControllerTest do
         "label" => nil
       }
       assert json_response(resp_conn, 201)
+
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "discovery", "dev_eui" => "aaaaaaaaaaaaaaa2", "app_eui" => "aaaaaaaaaaaaaaa3", "app_key" => "cccccccccccccccccccccccccccccccc", "hotspot_address" => "some_address" },
+        "label" => nil
+      }
+      device2 = json_response(resp_conn, 201)
+      device2 = Devices.get_device!(device2["id"])
+      assert device2.hotspot_address == nil # device not created through discover endpoint should not have hotspot_address
     end
 
     test "create devices with label linked properly", %{conn: conn} do
