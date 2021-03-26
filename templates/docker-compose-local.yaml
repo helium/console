@@ -1,10 +1,7 @@
 version: '3'
 services:
   console:
-    build:
-      context: .
-      args:
-        socket_check_origin: "//*.example.com"
+    build: .
     image: helium/console:latest
     container_name: helium_console
     restart: always
@@ -31,18 +28,5 @@ services:
       - 2154:2154
     volumes:
       - "./data/router:/var/data"
-    depends_on:
-      - console
-  nginx:
-    image: nginx:latest
-    container_name: helium_nginx
-    restart: always
-    volumes:
-      - "./data/nginx:/var/log/nginx"
-      - "./nginx.conf:/etc/nginx/conf.d/default.conf"
-      - "/etc/letsencrypt:/etc/letsencrypt"
-    ports:
-      - 80:80
-      - 443:443
     depends_on:
       - console

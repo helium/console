@@ -1,0 +1,45 @@
+version: '3'
+services:
+  console:
+    build: .
+    image: helium/console:latest
+    container_name: helium_console
+    restart: always
+    env_file: .env
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    container_name: helium_postgres
+    restart: always
+    volumes:
+      - "./data/postgres/:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_DB=console
+      - POSTGRES_PASSWORD=postgres
+  router:
+    image: quay.io/team-helium/router:latest
+    container_name: helium_router
+    restart: always
+    env_file: .env-router
+    ports:
+      - 2154:2154
+    volumes:
+      - "./data/router:/var/data"
+    depends_on:
+      - console
+  nginx:
+    image: nginx:latest
+    container_name: helium_nginx
+    restart: always
+    volumes:
+      - "./data/nginx:/var/log/nginx"
+      - "./nginx.conf:/etc/nginx/conf.d/default.conf"
+      - "/etc/letsencrypt:/etc/letsencrypt"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - console

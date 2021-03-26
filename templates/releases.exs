@@ -14,13 +14,6 @@ config :console, ConsoleWeb.Endpoint,
   http: [:inet6, port: 4000],
   secret_key_base: secret_key_base
 
-# config :console, ConsoleWeb.Endpoint, # sample endpoint config for non-localhost
-#   load_from_system_env: true,
-#   url: [scheme: "https", host: "example.com", port: 443],
-#   force_ssl: [rewrite_on: [:x_forwarded_proto]],
-#   cache_static_manifest: "priv/static/cache_manifest.json",
-#   secret_key_base: secret_key_base
-
 db_host = System.get_env("DATABASE_HOST") ||
   raise """
   environment variable DATABASE_HOST is missing.
