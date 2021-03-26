@@ -19,6 +19,10 @@ defmodule Console.Helpers do
     |> binary_part(0, length)
   end
 
+  def generate_string(length, alphabet) do
+    for _ <- 1..length, into: "", do: <<Enum.random(alphabet)>>
+  end
+
   def geocodeLatLng(lat, lng) do
     case HTTPoison.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lng}&key=#{Application.get_env(:console, :google_maps_secret)}") do
       {:ok, response} ->

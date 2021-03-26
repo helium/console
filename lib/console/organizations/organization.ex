@@ -42,6 +42,7 @@ defmodule Console.Organizations.Organization do
     |> validate_required(:name, message: "Organization Name is required")
     |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
     |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
+    |> check_against_discovery_name
     |> check_name
     |> put_webhook_key()
   end
@@ -72,6 +73,18 @@ defmodule Console.Organizations.Organization do
     organization
     |> changeset(attrs)
     |> put_assoc(:users, [user])
+  end
+
+  defp check_against_discovery_name(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
+        valid_name = name != "Discovery Mode (Helium)"
+        case valid_name do
+          false -> add_error(changeset, :message, "Please choose a different organization name")
+          true -> changeset
+        end
+      _ -> changeset
+    end
   end
 
   defp check_name(changeset) do
