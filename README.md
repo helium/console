@@ -31,13 +31,15 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Running Console+Router with Docker
 
   * Clone the repo and `cd console`
-  * Change `/config/releases-template.exs` into `/config/releases.exs`
-  * Change `/docker-compose-template.yaml` into `/docker-compose.yaml`
-  * Update socket_check_origin on line 7 of `/docker-compose.yaml` with your own host
   * Sign up with Auth0 (https://auth0.com/)
-  * Create .env and .env-router files in root folder
+  * In root directory, copy environment templates
+  ```
+  cp templates/.env .env
+  cp templates/.env-router .env-router
+  cp templates/docker-compose-local.yaml docker-compose.yaml
+  cp templates/releases.exs config/releases.exs
+  ```
   * Populate .env file with the following
-
   ```
   SECRET_KEY_BASE=[Random 64 char secret key]
   CLOAK_SECRET_KEY=[Run in iex: 32 |> :crypto.strong_rand_bytes() |> Base.encode64()]
@@ -61,17 +63,29 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   ROUTER_SEED_NODES=/ip4/35.166.211.46/tcp/2154,/ip4/44.236.95.167/tcp/2154
   ROUTER_CONSOLE_ENDPOINT=http://helium_console:4000
   ROUTER_CONSOLE_WS_ENDPOINT=ws://helium_console:4000/socket/router/websocket
-  ROUTER_CONSOLE_SECRET=[Random 64 char secret key from above]
+  ROUTER_CONSOLE_SECRET=[Same secret from .env file]
   ROUTER_OUI=3
   ROUTER_DEFAULT_DEVADDR=AAQASA==
   ROUTER_SC_OPEN_DC_AMOUNT=100000
   ROUTER_SC_EXPIRATION_INTERVAL=45
   ```
-
   * Build with `docker-compose build`
   * Run with `docker-compose up`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## Running Console+Router with Docker on a Server
+
+  * Follow steps in the [previous section](#running-console+router-with-docker)
+  * In root directory, copy server environment templates
+  ```
+  cp templates/docker-compose-server.yaml docker-compose.yaml
+  cp templates/nginx.conf nginx.conf
+  ```
+  * Get a certificate (https://certbot.eff.org/instructions)
+  * Update `nginx.conf` with cert and key information
+  * Build with `docker-compose build`
+  * Run with `docker-compose up`
 
 ## Questions
 
