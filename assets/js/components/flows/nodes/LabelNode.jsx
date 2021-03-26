@@ -2,21 +2,22 @@ import React from 'react';
 import { Handle } from 'react-flow-renderer';
 import { Typography } from 'antd';
 const { Text } = Typography
-import { TagFilled } from '@ant-design/icons';
+import GroupsIcon from '../../../../img/label-node-icon.svg'
 
 export default ({ data, unconnected }) => {
   return (
     <div style={{
       background: '#2C79EE',
-      padding: 15,
+      padding: "10px 15px 10px 15px",
       borderRadius: 5,
-      minWidth: 150,
+      minWidth: 200,
       minHeight: 50,
     }}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <TagFilled style={{ fontSize: 20, marginRight: 8, color: '#ffffff' }}/>
+        <img src={GroupsIcon} style={{ height: 14, marginRight: 8 }} />
         <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
       </div>
+      <Text style={{ display: 'block', fontSize: 12, color: '#ffffff' }}>{data.deviceCount || 0} Devices</Text>
       {!unconnected && (
         <Handle
           type="source"

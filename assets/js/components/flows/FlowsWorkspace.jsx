@@ -91,6 +91,12 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
       })
     }
 
+    if (type === 'labelNode') {
+      data = Object.assign({}, data, {
+        deviceCount: event.dataTransfer.getData('node/label_device_count'),
+      })
+    }
+
     const newNode = { id, type, position, data }
 
     if (type === 'functionNode' && elementsMap[id]) {

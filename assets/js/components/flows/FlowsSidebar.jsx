@@ -30,6 +30,10 @@ export default ({ devices, labels, functions, channels }) => {
       event.dataTransfer.setData('node/channel_type', node.data.type)
     }
 
+    if (node.type == 'labelNode') {
+      event.dataTransfer.setData('node/label_device_count', node.data.deviceCount)
+    }
+
     if (node.type == 'functionNode') {
       event.dataTransfer.setData('node/function_format', node.data.format)
     }

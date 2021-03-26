@@ -75,6 +75,7 @@ export const ALL_LABELS = gql`
       id,
       name,
       color,
+      device_count
     }
   }
 `
