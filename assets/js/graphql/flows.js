@@ -10,6 +10,7 @@ export const ALL_RESOURCES = gql`
       id,
       name,
       color,
+      device_count
     }
     allFunctions {
       id,

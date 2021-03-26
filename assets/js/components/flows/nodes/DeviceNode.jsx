@@ -9,7 +9,7 @@ export default ({ data, unconnected }) => {
       background: '#2C79EE',
       padding: 15,
       borderRadius: 5,
-      minWidth: 150,
+      minWidth: 200,
       minHeight: 50,
     }}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>

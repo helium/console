@@ -2,25 +2,15 @@ import React from 'react';
 import { Handle } from 'react-flow-renderer';
 import { Typography } from 'antd';
 const { Text } = Typography
-import Azure from '../../../../img/azure-channel.svg'
-import Aws from '../../../../img/aws-channel.svg'
-import Google from '../../../../img/google-channel.svg'
-import Mqtt from '../../../../img/mqtt-channel.svg'
-import Http from '../../../../img/http-channel.svg'
-
-const channelIcons = {
-  aws: Aws,
-  http: Http,
-  mqtt: Mqtt
-}
+import ChannelIcon from '../../../../img/channel-node-icon.svg'
 
 export default ({ data, unconnected }) => {
   return (
     <div style={{
       background: '#12CB9E',
-      padding: 15,
+      padding: '10px 15px 6px 15px',
       borderRadius: 5,
-      minWidth: 150,
+      minWidth: 200,
       minHeight: 50,
     }}>
       {
@@ -32,12 +22,9 @@ export default ({ data, unconnected }) => {
           />
         )
       }
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <img style={{ width: 40, marginRight: 8 }} src={channelIcons[data.type]} draggable={false}/>
-        <div>
-          <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
-          <Text style={{ fontSize: 10, color: '#ffffff' }}>{data.type_name}</Text>
-        </div>
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+        <img src={ChannelIcon} style={{ height: 16, display: 'block' }} />
+        <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
       </div>
     </div>
   );

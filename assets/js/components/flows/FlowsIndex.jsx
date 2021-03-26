@@ -163,7 +163,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'labelNode',
       data: {
         label: label.name,
-        id: `label-${label.id}`
+        id: `label-${label.id}`,
+        deviceCount: label.device_count
       },
       position: [0,0]
     }
