@@ -193,6 +193,10 @@ h1 {
   padding: 0 25px;
 }
 
+.ant-layout-footer {
+  background: #F5F7F9;
+}
+
 .no-padding-card {
   padding: 0;
   padding-top: 20px;
@@ -220,7 +224,6 @@ h1 {
 
 .ant-page-header {
   padding-left: 3px;
-  padding-bottom: 40px;
 }
 
 .ant-page-header-heading-title {
@@ -229,7 +232,6 @@ h1 {
 
 .ant-page-header-heading {
   overflow: initial;
-  margin-bottom: 20px;
 }
 
 .ant-empty-image {
@@ -475,6 +477,7 @@ a.version-link {
 .blankstateWrapper {
   width: 100%;
   padding-top: 100px;
+  padding-bottom: 100px;
   margin: 0 auto;
   position: relative;
 }
