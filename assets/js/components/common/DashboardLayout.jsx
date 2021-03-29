@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
+import { NavLink } from 'react-router-dom'
 import ContentLayout from './ContentLayout'
 import { Layout, Tag, Popover, Button } from 'antd';
-import { ToolOutlined } from '@ant-design/icons';
+import { ToolOutlined, PlusCircleFilled } from '@ant-design/icons';
 const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
@@ -71,6 +72,29 @@ class DashboardLayout extends Component {
                 </Footer>)
               }
             </Content>
+            <Popover
+              overlayClassName="add-menu-popover"
+              content={
+                <div style={{ width: 130 }}>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new=true"}>Add Device</NavLink>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/labels/?show_new=true"}>Add Label</NavLink>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/functions/new"}>Add Function</NavLink>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/integrations/new"}>Add Integration</NavLink>
+                </div>
+              }
+              placement="left"
+            >
+              <PlusCircleFilled
+                style={{
+                  position: "absolute",
+                  bottom: 100,
+                  right: 30,
+                  fontSize: 40,
+                  cursor: 'pointer',
+                  zIndex: 100,
+                }}
+              />
+            </Popover>
           </Layout>
         </Layout>
       </Layout>

@@ -81,7 +81,7 @@ export default ({ devices, labels, functions, channels }) => {
               {
                 tab === "labels" ? <img src={GroupsIcon} style={{ height: 20 }} /> : <img src={GroupsGreyIcon} style={{ height: 20 }} />
               }
-              <Text style={{ display: 'block', color: tab === "labels" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Groups</Text>
+              <Text style={{ display: 'block', color: tab === "labels" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Labels</Text>
             </div>
             <div
               style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "devices" ? '4px solid #2C79EE' : '4px solid #ffffff'  }}

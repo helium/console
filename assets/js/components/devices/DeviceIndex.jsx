@@ -78,6 +78,10 @@ class DeviceIndex extends Component {
         displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
       }
     })
+
+    if (this.props.history.location.search === "?show_new=true") {
+      this.openCreateDeviceModal()
+    }
   }
 
   componentWillUnmount() {

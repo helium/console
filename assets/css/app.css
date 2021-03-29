@@ -378,6 +378,25 @@ tr.ant-table-expanded-row:hover {
   color: #048aff;
 }
 
+.add-menu-selection {
+  color: #242528;
+  font-size: 14px;
+  font-weight: 500;
+  display: block;
+  border-radius: 2px;
+  padding-left: 8px;
+  padding-right: 4px;
+}
+
+.add-menu-selection:hover {
+  color: #242528;
+  background-color: #F5F7F9;
+}
+
+.add-menu-popover .ant-popover-inner-content {
+  padding: 6px;
+}
+
 .ant-select-dropdown-menu-item {
   font-weight: 300;
 }

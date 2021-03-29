@@ -21,6 +21,10 @@ class LabelIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_LABELS_INDEX")
+
+    if (this.props.history.location.search === "?show_new=true") {
+      this.openCreateLabelModal()
+    }
   }
 
   openCreateLabelModal = () => {
