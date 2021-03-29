@@ -35,10 +35,6 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channel } = this.state
     return (
       <DashboardLayout title="Integrations" user={this.props.user}>
-      <p style={{fontSize: 16, marginBottom: 20, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>
-        Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.
-        <a href="https://docs.helium.com/use-the-network/console/integrations/" target="_blank"> Tell me more about Console Integrations.</a>
-      </p>
       <div style={{ display: 'block' }}>
         <UserCan>
           <Card title="Add a Prebuilt Integration" className="integrationcard" bodyStyle={{ overflowX: 'scroll' }}>

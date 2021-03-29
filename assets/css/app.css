@@ -472,16 +472,6 @@ a.version-link {
   padding: 6px 12px;
 }
 
-p.page-description {
-  font-size: 16px;
-  margin-bottom: 20px;
-  max-width: 600px;
-  margin-top: -30px;
-  padding-left: 4px;
-  font-weight: 300px;
-  position: relative;
-}
-
 .blankstateWrapper {
   width: 100%;
   padding-top: 100px;

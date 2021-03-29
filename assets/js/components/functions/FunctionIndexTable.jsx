@@ -177,9 +177,6 @@ class FunctionIndexTable extends Component {
         {
           functions.entries.length > 0 && (
             <div>
-              <p className="page-description">
-                Functions are operators that can be applied to Labels and act on the data of any devices in those Labels. <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank"> Tell me more about functions.</a>
-              </p>
             <Card
               bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
               title={`${functions.totalEntries} Functions`}
