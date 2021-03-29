@@ -113,7 +113,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
         "hotspot_name" => "some-hotspot-name",
         "hotspot_address" => "hotspot_address",
-        "wallet_id" => "wallet_id",
+        "transaction_id" => "transaction_id",
         "signature" => "signature"
       })
       assert response(resp_conn, 200) 
@@ -126,7 +126,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/devices/discover", %{
         "hotspot_name" => "some-hotspot-name",
         "hotspot_address" => "hotspot_address",
-        "wallet_id" => "wallet_id",
+        "transaction_id" => "transaction_id",
         "signature" => "signature"
       })
       assert response(resp_conn, 200)
@@ -140,7 +140,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       })
       resp_conn = build_conn() |> put_req_header("key", key_2) |> post("/api/v1/devices/discover", %{
         "hotspot_address" => "some_other_hotspot_address",
-        "wallet_id" => "wallet_id",
+        "transaction_id" => "transaction_id",
         "signature" => "signature",
         "hotspot_name" => "some-other-hotspot-name"
       })
