@@ -8,6 +8,8 @@ import DeviceNode from './nodes/DeviceNode'
 import DebugNode from './nodes/DebugNode'
 import GroupsIcon from '../../../img/flows-sidebar-groups-icon.svg'
 import GroupsGreyIcon from '../../../img/flows-sidebar-groups-icon-grey.svg'
+import DevicesIcon from '../../../img/flows-sidebar-groups-icon.svg'
+import DevicesGreyIcon from '../../../img/flows-sidebar-groups-icon-grey.svg'
 import FunctionIcon from '../../../img/flows-sidebar-functions-icon.svg'
 import FunctionGreyIcon from '../../../img/flows-sidebar-functions-icon-grey.svg'
 import UtilityIcon from '../../../img/flows-sidebar-utilities-icon.svg'
@@ -49,11 +51,10 @@ export default ({ devices, labels, functions, channels }) => {
       backgroundColor: '#ffffff',
       borderRadius: 6,
       zIndex: 100,
-      width: 280,
-      maxHeight: 'calc(100vh - 95px)',
-      overflowY: 'scroll',
+      width: 340,
       boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)'
     }}>
+
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
         <Text style={{ fontSize: 12, color: '#596777', fontWeight: 600 }}>NODES</Text>
         <div onClick={() => toggleMenu(!showMenu)} style={{ cursor: 'pointer'}}>
@@ -81,6 +82,16 @@ export default ({ devices, labels, functions, channels }) => {
                 tab === "labels" ? <img src={GroupsIcon} style={{ height: 20 }} /> : <img src={GroupsGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "labels" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Groups</Text>
+            </div>
+            <div
+              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "devices" ? '4px solid #2C79EE' : '4px solid #ffffff'  }}
+              onClick={() => setTab("devices")}
+              className="noselect"
+            >
+              {
+                tab === "devices" ? <img src={DevicesIcon} style={{ height: 20 }} /> : <img src={DevicesGreyIcon} style={{ height: 20 }} />
+              }
+              <Text style={{ display: 'block', color: tab === "devices" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Devices</Text>
             </div>
             <div
               style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "functions" ? '4px solid #9E59F6' : '4px solid #ffffff' }}
@@ -117,7 +128,7 @@ export default ({ devices, labels, functions, channels }) => {
       }
       {
         showMenu && (
-          <div style={{ paddingLeft: 10, paddingRight: 10, marginTop: 10 }}>
+          <div style={{ paddingLeft: 10, paddingRight: 10, marginTop: 10, maxHeight: 'calc(100vh - 220px)', overflowY: 'scroll' }}>
             {
               tab === 'labels' && labels.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
@@ -126,7 +137,7 @@ export default ({ devices, labels, functions, channels }) => {
               ))
             }
             {
-              tab === 'utilities' && devices.map(node => (
+              tab === 'devices' && devices.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
                   <DeviceNode data={node.data} unconnected={true} />
                 </div>
@@ -136,6 +147,13 @@ export default ({ devices, labels, functions, channels }) => {
               tab === 'functions' && functions.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
                   <FunctionNode data={node.data} unconnected={true} />
+                </div>
+              ))
+            }
+            {
+              tab === 'utilities' && [{ id: "none" }].map(node => (
+                <div style={{ marginBottom: 12 }} key={node.id} onDragStart={(event) => onDragStart(event, node)}>
+                  <p>No Utilities</p>
                 </div>
               ))
             }

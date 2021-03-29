@@ -85,6 +85,7 @@ defmodule Console.Devices.DeviceResolver do
   def all(_, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
+      |> limit(50)
       |> Repo.all()
 
     {:ok, devices}
