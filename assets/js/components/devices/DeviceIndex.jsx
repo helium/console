@@ -17,7 +17,12 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { IndexSkeleton } from '../common/IndexSkeleton';
+import DevicesImg from '../../../img/devices.svg'
+import HomeIcon from '../../../img/devices/device-index-home-icon.svg'
+import AllIcon from '../../../img/devices/device-index-all-icon.svg'
+import PlusIcon from '../../../img/devices/device-index-plus-icon.svg'
 const { Text } = Typography
+import _JSXStyle from "styled-jsx/style"
 
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
@@ -26,6 +31,7 @@ let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 class DeviceIndex extends Component {
   state = {
+    showPage: 'allDevices',
     showCreateDeviceModal: false,
     showDeleteDeviceModal: false,
     showImportDevicesModal: false,
@@ -188,22 +194,24 @@ class DeviceIndex extends Component {
       showDeviceRemoveAllLabelsModal,
       labelsSelected,
       deviceToRemoveLabel,
-      importComplete
+      importComplete,
+      showPage
     } = this.state
 
     const { devices, loading, error } = this.props.devicesQuery;
     const { device_imports } = this.props.importsQuery;
-
-    const hasDevices = devices && devices.entries.length > 0;
 
     const createDeviceButton = () => (
       <UserCan>
         <Button
           size="large"
           icon={<PlusOutlined />}
-          onClick={this.openImportDevicesModal}
+          onClick={() => {
+            this.setState({ showPage: 'allDevices' })
+            this.openImportDevicesModal()
+          }}
           disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
-          style={{marginRight: hasDevices ? 0 : 10, borderRadius: 4 }}
+          style={{marginRight: showPage !== 'home' ? 0 : 10, borderRadius: 4 }}
         >
           Import Devices
         </Button>
@@ -211,7 +219,10 @@ class DeviceIndex extends Component {
           size="large"
           type="primary"
           icon={<PlusOutlined />}
-          onClick={this.openCreateDeviceModal}
+          onClick={() => {
+            this.setState({ showPage: 'allDevices' })
+            this.openCreateDeviceModal()
+          }}
           style={{ borderRadius: 4 }}
         >
           Add Device
@@ -225,33 +236,137 @@ class DeviceIndex extends Component {
         title={title}
         user={this.props.user}
         extra={
-          hasDevices && createDeviceButton()
+          showPage === "allDevices" && createDeviceButton()
         }
       >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden' }}>
-          <div style={{ padding: 20, backgroundColor: '#D3E0EE' }}>
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row' }}>
+            <div
+              style={{
+                backgroundColor: '#ACC6DD',
+                borderRadius: 6,
+                padding: 10,
+                cursor: 'pointer',
+                height: 50,
+                width: 50,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 12
+              }}
+              onClick={() => this.setState({ showPage: 'home'})}
+            >
+              <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
+            </div>
 
+            <div style={{
+              backgroundColor: '#ACC6DD',
+              borderRadius: 6,
+              padding: '5px 10px 5px 10px',
+              cursor: 'pointer',
+              height: 50,
+              display: 'flex',
+              flexDirection: 'column',
+              marginRight: 12
+            }} onClick={() => this.setState({ showPage: 'allDevices'})}>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
+                <Text style={{ color: '#3C6B95', fontWeight: 500 }}>All Devices</Text>
+              </div>
+              <Text style={{ color: '#3C6B95', fontSize: 10 }}>{devices && devices.totalEntries} Devices</Text>
+            </div>
+
+            <div style={{
+              backgroundColor: '#ACC6DD',
+              borderRadius: 6,
+              padding: 10,
+              cursor: 'pointer',
+              height: 50,
+              width: 50,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 12
+            }}>
+              <img src={PlusIcon} style={{ height: 20 }} />
+            </div>
           </div>
           {
-            (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-             loading ? <IndexSkeleton title={title} /> :
-             <DeviceIndexTable
-               openDeleteDeviceModal={this.openDeleteDeviceModal}
-               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
-               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
-               onChangePageSize={this.handleChangePageSize}
-               noDevicesButton={createDeviceButton}
-               handleChangePage={this.handleChangePage}
-               devices={devices}
-               history={this.props.history}
-               handleChangePage={this.handleChangePage}
-               handleSortChange={this.handleSortChange}
-               pageSize={this.state.pageSize}
-               column={this.state.column}
-               order={this.state.order}
-               userEmail={this.props.user.email}
-             />
+            showPage === "home" && (
+              <div className="blankstateWrapper">
+              <div className="message">
+                <img src={DevicesImg} />
+                <h1>Devices</h1>
+                { createDeviceButton() }
+                <div className="explainer">
+                  <p>Devices can be added to the Helium network.</p>
+                  <p>More details about adding devices can be found <a href="https://docs.helium.com/use-the-network/console/adding-devices" target="_blank"> here.</a></p>
+                </div>
+              </div>
+              <style jsx>{`
+                  .message {
+                    width: 100%;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    text-align: center;
+                  }
+                  .explainer {
+                    padding: 20px 60px 1px 60px;
+                    border-radius: 20px;
+                    text-align: center;
+                    margin-top: 20px;
+                    box-sizing: border-box;
+                    border: none;
+                  }
+                  .explainer p {
+                    color: #565656;
+                    font-size: 15px;
+                  }
+                  .explainer p a {
+                    color: #096DD9;
+                  }
+                  h1, p  {
+                    color: #242425;
+                  }
+                  h1 {
+                    font-size: 46px;
+                    margin-bottom: 10px;
+                    font-weight: 600;
+                    margin-top: 10px;
+                  }
+                  p {
+                    font-size: 20px;
+                    font-weight: 300;
+                    margin-bottom: 10px;
+                  }
+                `}</style>
+              </div>
+            )
+          }
+          {
+            showPage === 'allDevices' && error && <Text>Data failed to load, please reload the page and try again</Text>
+          }
+          {
+            showPage === 'allDevices' && !loading &&  (
+              <DeviceIndexTable
+                openDeleteDeviceModal={this.openDeleteDeviceModal}
+                openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+                openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+                openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+                onChangePageSize={this.handleChangePageSize}
+                noDevicesButton={createDeviceButton}
+                handleChangePage={this.handleChangePage}
+                devices={devices}
+                history={this.props.history}
+                handleChangePage={this.handleChangePage}
+                handleSortChange={this.handleSortChange}
+                pageSize={this.state.pageSize}
+                column={this.state.column}
+                order={this.state.order}
+                userEmail={this.props.user.email}
+              />
             )
           }
         </div>
