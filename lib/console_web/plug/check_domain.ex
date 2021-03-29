@@ -16,7 +16,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
       |> Plug.Conn.halt()
     else
       case conn.host do
-        "staging-console.helium.com" -> conn
+        "helium-console-staging.herokuapp.com" -> conn
         "console.helium.com" -> conn
         "www.example.com" -> conn
         "localhost" -> conn
