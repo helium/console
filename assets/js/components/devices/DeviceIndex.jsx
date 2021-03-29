@@ -219,7 +219,7 @@ class DeviceIndex extends Component {
       </UserCan>
     );
 
-    const title = "Devices";
+    const title = "My Devices";
     return(
       <DashboardLayout
         title={title}
@@ -228,28 +228,33 @@ class DeviceIndex extends Component {
           hasDevices && createDeviceButton()
         }
       >
-        {
-          (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-            loading ? <IndexSkeleton title={title} /> :
-            <DeviceIndexTable
-              openDeleteDeviceModal={this.openDeleteDeviceModal}
-              openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-              openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
-              openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
-              onChangePageSize={this.handleChangePageSize}
-              noDevicesButton={createDeviceButton}
-              handleChangePage={this.handleChangePage}
-              devices={devices}
-              history={this.props.history}
-              handleChangePage={this.handleChangePage}
-              handleSortChange={this.handleSortChange}
-              pageSize={this.state.pageSize}
-              column={this.state.column}
-              order={this.state.order}
-              userEmail={this.props.user.email}
-            />
-          )
-        }
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden' }}>
+          <div style={{ padding: 20, backgroundColor: '#D3E0EE' }}>
+
+          </div>
+          {
+            (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
+             loading ? <IndexSkeleton title={title} /> :
+             <DeviceIndexTable
+               openDeleteDeviceModal={this.openDeleteDeviceModal}
+               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+               onChangePageSize={this.handleChangePageSize}
+               noDevicesButton={createDeviceButton}
+               handleChangePage={this.handleChangePage}
+               devices={devices}
+               history={this.props.history}
+               handleChangePage={this.handleChangePage}
+               handleSortChange={this.handleSortChange}
+               pageSize={this.state.pageSize}
+               column={this.state.column}
+               order={this.state.order}
+               userEmail={this.props.user.email}
+             />
+            )
+          }
+        </div>
 
         <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 

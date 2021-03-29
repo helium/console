@@ -274,8 +274,7 @@ class DeviceIndexTable extends Component {
                   text-align: center;
                   margin-top: 50px;
                   box-sizing: border-box;
-      border: none;
-      background: #F6F8FA;
+                  border: none;
                 }
 
                 .explainer p {
