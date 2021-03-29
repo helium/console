@@ -222,17 +222,12 @@
 	        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
 		        <!-- Email Header : BEGIN -->
 	            <tr>
-	                <td align="center" style="padding: 20px 0;">
+	                <td align="center" style="padding: 55px 0 85px 0;">
                   <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" alt="helium_logo" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/logo.png") %>"></a>
+                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/logo.png") %>"></a>
                   </td>
 	            </tr>
 		        <!-- Email Header : END -->
-            <!-- Spacing -->
-              <tr>
-                <td width="100%" height="65"></td>
-              </tr>
-            <!-- Spacing -->
 
                 <!-- 1 Column Text + Button : BEGIN -->
                 <tr>
@@ -240,7 +235,7 @@
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
                               <td style="display: flex;justify-content: center;">
-                                  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/lock.png") %>" width="80" border="0" height="80" alt="security_image" style="position: absolute; top: 120px; left: 0; right: 0; margin: auto;">
+                                  <img src="<%= static_url(ConsoleWeb.Endpoint, "/images/lock.png") %>" width="80" border="0" height="80" alt="security_image" style="position: absolute; top: 150px; left: 0; right: 0; margin: auto;">
                               </td>
                             </tr>
                             <!-- Spacing -->
