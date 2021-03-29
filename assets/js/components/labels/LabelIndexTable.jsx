@@ -221,9 +221,6 @@ class LabelIndexTable extends Component {
         }
         {labels.entries.length > 0 && (
           <div>
-            <p className="page-description">
-              Labels are a powerful mechanism to organize devices. <a href="https://docs.helium.com/use-the-network/console/labels" target="_blank"> Tell me more about Labels.</a>
-            </p>
           <Card
         bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
         title={`${labels.totalEntries} ${labels.totalEntries == 1 ? "Label" : "Labels"}`}

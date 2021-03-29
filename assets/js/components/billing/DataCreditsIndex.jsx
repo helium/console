@@ -201,9 +201,6 @@ class DataCreditsIndex extends Component {
 
     return (
       <div>
-        <p className="page-description" style={{ maxWidth: "450px" }}>
-          Data Credits (also known as DCs) are used to pay all transaction fees on the Helium Network. <a href="https://docs.helium.com/use-the-network/console/data-credits" target="_blank"> Tell me more about Data Credits.</a>
-        </p>
         <Row gutter={16}>
           <Col span={8}>
             <Card
