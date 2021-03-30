@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, Typography, Input, InputNumber, Row, Col, Radio, Checkbox, Tooltip, Button as RegularButton } from 'antd';
 import DownlinkImage from '../../../img/downlink.svg';
 import { ClearOutlined } from '@ant-design/icons';
+import find from 'lodash/find'
 
 const { Title, Text } = Typography;
 const { Group, Button } = Radio;
@@ -14,7 +15,8 @@ class Downlink extends Component {
     payloadType: 'bytes',
     payload: '',
     position: 'last',
-    showRefresh: false
+    showRefresh: false,
+    queue: []
   }
 
   componentDidMount() {
@@ -25,17 +27,15 @@ class Downlink extends Component {
     if (src === "DeviceShow") {
       this.channel = socket.channel("graphql:device_show_downlink", {})
       this.channel.join()
-      this.channel.on(`graphql:device_show_downlink:${id}:update_queue`, (message) => {
-        // render the queue items
-        console.log(message)
+      this.channel.on(`graphql:device_show_downlink:${id}:update_queue`, ({ queue, device }) => {
+        this.setState({ queue: queue.map(q => Object.assign({}, q, { device_id: device })) })
       })
     }
     if (this.props.src === "LabelShow") {
       this.channel = socket.channel("graphql:label_show_downlink", {})
       this.channel.join()
-      this.channel.on(`graphql:label_show_downlink:${id}:update_queue`, (message) => {
-        // render the queue items
-        console.log(message)
+      this.channel.on(`graphql:label_show_downlink:${id}:update_queue`, ({ queue, device, label }) => {
+        console.log(queue, device, label)
       })
     }
   }
@@ -52,11 +52,11 @@ class Downlink extends Component {
   }
 
   render() {
-    const { src, onSend, onClear } = this.props
+    const { src, onSend, onClear, devices } = this.props
     const { position, port, confirm, payload, payloadType } = this.state
 
     return (
-      <React.Fragment>
+      <div>
         <div style={{position: 'relative'}}>
           <Card style={{marginRight: 20, marginLeft: 20, marginTop: -25}}>
             <Title style={{fontSize: 22}}>Add Downlink Payload</Title>
@@ -124,18 +124,40 @@ class Downlink extends Component {
             )
           }
         </div>
-        <div style={{marginRight: 20, marginLeft: 20, marginTop: 15}}>
-          <RegularButton
-            size="large"
-            type="primary"
-            icon={<ClearOutlined />}
-            onClick={() => {onClear()}}
-            style={{ borderRadius: 4 }}
-          >
-            {src === "DeviceShow" ? "Clear Queue for Device" : "Clear Queue for All Label's Devices"}
-          </RegularButton>
+        <div style={{marginRight: 20, marginLeft: 20, marginTop: 25, marginBottom: 20 }}>
+          <Text style={{ color: '#40A9FF', fontWeight: 500, fontSize: 18 }}>Downlink Queue: {this.state.queue.length}</Text>
         </div>
-      </React.Fragment>
+        <div style={{ height: "calc(100vh - 435px)", overflow: 'scroll' }}>
+          {
+            this.state.queue.map((q, index) => (
+              <Card style={{marginRight: 20, marginLeft: 20 }} key={"downlink" + index}>
+                <Row gutter={[16, 16]}>
+                  <Col span={16}>
+                    <div style={{ marginBottom: 4 }}><Text strong>Device: {find(devices, {id: q.device_id}) ? find(devices, {id: q.device_id}).name : q.device_id}</Text></div>
+                    <Text>Payload</Text>
+                    <Input style={{ width: '100%' }} defaultValue={q.payload}/>
+                  </Col>
+                  <Col span={8}>
+                    <div style={{ marginBottom: 4 }}><Text strong>Status: {q.confirmed ? "Confirmed" : "Unconfirmed"}</Text></div>
+                    <Text>FPort</Text>
+                    <Input style={{ width: '100%' }} defaultValue={q.port}/>
+                  </Col>
+                </Row>
+              </Card>
+            ))
+          }
+          <div style={{marginRight: 20, marginLeft: 20, marginTop: 15, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <RegularButton
+              type="primary"
+              icon={<ClearOutlined />}
+              onClick={() => {onClear()}}
+              style={{ borderRadius: 4 }}
+            >
+              {src === "DeviceShow" ? "Clear Queue for Device" : "Clear Queue for All Label's Devices"}
+            </RegularButton>
+          </div>
+        </div>
+      </div>
     )
   }
 }

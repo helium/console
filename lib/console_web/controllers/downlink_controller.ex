@@ -56,7 +56,7 @@ defmodule ConsoleWeb.DownlinkController do
   defp get_label_downlink_queue(label) do
     assoc_device_ids = label |> Labels.fetch_assoc([:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
     if length(assoc_device_ids) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:fetch_queue", %{ "label" => label.id, "devices" => assoc_device_ids })
+      ConsoleWeb.Endpoint.broadcast("label:all", "label:all:downlink:fetch_queue", %{ "label" => label.id, "devices" => assoc_device_ids })
     end
   end
 end

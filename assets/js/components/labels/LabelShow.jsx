@@ -268,6 +268,7 @@ class LabelShow extends Component {
                 src="LabelShow"
                 socket={this.props.socket}
                 id={label.id}
+                devices={label.devices}
                 onSend={(payload, confirm, port, position) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
                   this.props.sendDownlinkMessage(
