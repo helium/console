@@ -3,6 +3,7 @@ import { Card, Typography, Input, InputNumber, Row, Col, Radio, Checkbox, Toolti
 import DownlinkImage from '../../../img/downlink.svg';
 import { ClearOutlined } from '@ant-design/icons';
 import find from 'lodash/find'
+import remove from 'lodash/remove'
 
 const { Title, Text } = Typography;
 const { Group, Button } = Radio;
@@ -35,7 +36,13 @@ class Downlink extends Component {
       this.channel = socket.channel("graphql:label_show_downlink", {})
       this.channel.join()
       this.channel.on(`graphql:label_show_downlink:${id}:update_queue`, ({ queue, device, label }) => {
+<<<<<<< HEAD
         console.log(queue, device, label)
+=======
+        const cleanedQueue = remove(this.state.queue, i => i.device_id !== device)
+        const updatedQueue = cleanedQueue.concat(queue.map(q => Object.assign({}, q, { device_id: device })))
+        this.setState({ queue: updatedQueue })
+>>>>>>> b99ee5e9c6510262ad3f874dc7f376a6c5a2d090
       })
     }
   }
