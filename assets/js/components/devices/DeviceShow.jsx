@@ -510,6 +510,7 @@ class DeviceShow extends Component {
                 <Downlink
                   src="DeviceShow"
                   id={device.id}
+                  devices={[device]}
                   socket={this.props.socket}
                   onSend={(payload, confirm, port, position) => {
                     analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
