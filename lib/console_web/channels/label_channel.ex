@@ -5,11 +5,8 @@ defmodule ConsoleWeb.LabelChannel do
     {:ok, socket}
   end
 
-  def handle_in("downlink:update_queue", payload, socket) do
-    IO.inspect payload
-    # check payload for label id and broadcast to the correct label
-    # ConsoleWeb.Endpoint.broadcast("graphql:label_show_downlink", "graphql:label_show_downlink:#{id}:update_queue", payload)
-
+  def handle_in("downlink:update_queue", payload = %{ "device" => _, "label" => id, "queue" => queue }, socket) do
+    ConsoleWeb.Endpoint.broadcast("graphql:label_show_downlink", "graphql:label_show_downlink:#{id}:update_queue", payload)
     {:reply, :ok, socket}
   end
 end
