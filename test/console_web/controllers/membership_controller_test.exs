@@ -16,7 +16,7 @@ defmodule ConsoleWeb.MembershipControllerTest do
       another_membership = insert(:membership, %{ organization_id: another_org.id, user_id: another_user.id, email: another_user.email, role: "read" })
 
       assert_error_sent 404, fn ->
-        resp_conn = put conn, membership_path(conn, :update, another_membership.id), %{ "membership" => %{}}
+        put conn, membership_path(conn, :update, another_membership.id), %{ "membership" => %{}}
       end # cannot update membership of someone not in current org
 
       membership = insert(:membership, %{ organization_id: current_organization_id, user_id: another_user.id, email: another_user.email, role: "read" })
@@ -39,7 +39,7 @@ defmodule ConsoleWeb.MembershipControllerTest do
       another_membership = insert(:membership, %{ organization_id: another_org.id, user_id: another_user.id, email: another_user.email, role: "read" })
 
       assert_error_sent 404, fn ->
-        resp_conn = delete conn, membership_path(conn, :delete, another_membership.id)
+        delete conn, membership_path(conn, :delete, another_membership.id)
       end # cannot delete membership of someone not in current org
 
       membership = insert(:membership, %{ organization_id: current_organization_id, user_id: another_user.id, email: another_user.email, role: "read" })

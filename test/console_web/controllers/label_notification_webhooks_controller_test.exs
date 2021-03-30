@@ -4,8 +4,6 @@ defmodule ConsoleWeb.LabelNotificationWebhooksControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  alias Console.LabelNotificationWebhooks
-
   describe "label_notification_webhooks" do
     setup [:authenticate_user]
 
@@ -14,7 +12,7 @@ defmodule ConsoleWeb.LabelNotificationWebhooksControllerTest do
       label_1 = insert(:label, %{ organization_id: organization_id })
 
       resp_conn = post conn, label_notification_webhooks_path(conn, :update), %{
-        "label_notification_webhooks": [%{
+        label_notification_webhooks: [%{
         "key" => "device_join_otaa_first_time",
         "url" => "http://hello.com",
         "value" => "1",
@@ -30,7 +28,7 @@ defmodule ConsoleWeb.LabelNotificationWebhooksControllerTest do
       label_2 = insert(:label, %{ organization_id: organization_id })
 
       resp_conn = post conn, label_notification_webhooks_path(conn, :update), %{
-        "label_notification_webhooks": [%{
+        label_notification_webhooks: [%{
         "key" => "device_join_otaa_first_time",
         "url" => "http://howdy.com",
         "value" => "1",
@@ -41,7 +39,7 @@ defmodule ConsoleWeb.LabelNotificationWebhooksControllerTest do
       assert List.first(resp["webhooks"])["label_id"] == label_2.id
 
       resp_conn = post conn, label_notification_webhooks_path(conn, :update), %{
-        "label_notification_webhooks": [%{
+        label_notification_webhooks: [%{
         "key" => "device_join_otaa_first_time",
         "url" => "http://goodbye.com",
         "value" => "1",

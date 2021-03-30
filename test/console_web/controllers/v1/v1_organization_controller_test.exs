@@ -4,7 +4,7 @@ defmodule ConsoleWeb.V1OrganizationControllerTest do
   import Console.Factory
 
   describe "organizations" do
-    test "inactive api keys do not work", %{conn: conn} do
+    test "inactive api keys do not work", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization)
       api_key = insert(:api_key, %{
@@ -17,10 +17,10 @@ defmodule ConsoleWeb.V1OrganizationControllerTest do
       assert response(resp_conn, 401) == "{\"message\":\"api_key_needs_email_verification\"}"
     end
 
-    test "gets organization properly", %{conn: conn} do
+    test "gets organization properly", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization)
-      api_key = insert(:api_key, %{
+      insert(:api_key, %{
         organization_id: organization.id,
         key: :crypto.hash(:sha256, key),
         active: true

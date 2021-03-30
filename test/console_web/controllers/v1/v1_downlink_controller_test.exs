@@ -4,7 +4,7 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
   import Console.Factory
 
   describe "downlink" do
-    test "queues a down properly", %{conn: conn} do
+    test "queues a down properly", %{conn: _conn} do
       azure_channel = insert(:channel, %{ downlink_token: "token1" })
       resp_conn = build_conn() |> post("/api/v1/down/#{azure_channel.id}/#{azure_channel.downlink_token}")
       assert response(resp_conn, 400) # not http channel cannot downlink

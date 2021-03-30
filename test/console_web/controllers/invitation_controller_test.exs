@@ -16,11 +16,11 @@ defmodule ConsoleWeb.InvitationControllerTest do
       another_org = insert(:organization)
 
       assert_error_sent 404, fn ->
-        resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{}}
+        post conn, invitation_path(conn, :create), %{ "invitation" => %{}}
       end
 
       assert_error_sent 404, fn ->
-        resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => another_org.id }}
+        post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => another_org.id }}
       end
 
       resp_conn = post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => current_organization_id }}
@@ -119,7 +119,7 @@ defmodule ConsoleWeb.InvitationControllerTest do
              |> put_req_header("authorization", user.id <> " " <> user.email)
              |> put_req_header("organization", organization.id)
 
-      resp_conn = post conn2, user_join_from_invitation_path(conn2, :accept), %{
+      post conn2, user_join_from_invitation_path(conn2, :accept), %{
         "invitation" => %{
           "token" => invitation.token
         }

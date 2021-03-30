@@ -1,10 +1,8 @@
 defmodule ConsoleWeb.RouterSessionControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.Factory
-
   describe "sessions" do
-    test "router can get session token", %{conn: conn} do
+    test "router can get session token", %{conn: _conn} do
       assert_error_sent 400, fn ->
         build_conn() |> post("/api/router/sessions")
       end # no router secret
@@ -21,7 +19,7 @@ defmodule ConsoleWeb.RouterSessionControllerTest do
       assert Map.get(token, "jwt") != nil
     end
 
-    test "router can refresh session token", %{conn: conn} do
+    test "router can refresh session token", %{conn: _conn} do
       assert_error_sent 500, fn ->
         build_conn() |> post("/api/router/sessions/refresh", %{ "jwt" => "agsafsafs" })
       end # fake token

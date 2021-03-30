@@ -4,8 +4,6 @@ defmodule ConsoleWeb.LabelNotificationSettingsControllerTest do
   import Console.FactoryHelper
   import Console.Factory
 
-  alias Console.LabelNotificationSettings
-
   describe "label_notification_settings" do
     setup [:authenticate_user]
 
@@ -14,7 +12,7 @@ defmodule ConsoleWeb.LabelNotificationSettingsControllerTest do
       label_1 = insert(:label, %{ organization_id: organization_id })
 
       resp_conn = post conn, label_notification_settings_path(conn, :update), %{
-        "label_notification_settings": [%{
+        label_notification_settings: [%{
         "key" => "device_join_otaa_first_time",
         "recipients" => "admin",
         "value" => "1",
@@ -30,7 +28,7 @@ defmodule ConsoleWeb.LabelNotificationSettingsControllerTest do
       label_2 = insert(:label, %{ organization_id: organization_id })
 
       resp_conn = post conn, label_notification_settings_path(conn, :update), %{
-        "label_notification_settings": [%{
+        label_notification_settings: [%{
         "key" => "device_join_otaa_first_time",
         "recipients" => "admin",
         "value" => "0",
@@ -40,8 +38,8 @@ defmodule ConsoleWeb.LabelNotificationSettingsControllerTest do
       resp = json_response(resp_conn, 200)
       assert List.first(resp["settings"])["label_id"] == label_2.id
 
-      resp_conn = post conn, label_notification_settings_path(conn, :update), %{
-        "label_notification_settings": [%{
+      post conn, label_notification_settings_path(conn, :update), %{
+        label_notification_settings: [%{
         "key" => "device_join_otaa_first_time",
         "recipients" => "admin",
         "value" => "1",
