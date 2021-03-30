@@ -132,6 +132,7 @@ defmodule ConsoleWeb.Router do
 
     get "/invitations/accept/:token", InvitationController, :redirect_to_register, as: "accept_invitation"
     get "/api_keys/accept/:token", ApiKeyController, :accept, as: "accept_api_key"
+    get "/google14b344de8ed0f4f1.html", PageController, :google_verify
 
     get "/*path", PageController, :index
   end
