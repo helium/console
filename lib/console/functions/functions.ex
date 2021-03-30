@@ -40,15 +40,7 @@ defmodule Console.Functions do
   end
 
   def delete_function(%Function{} = function) do
-    labels = fetch_assoc(function).labels
-    Repo.transaction(fn ->
-      Enum.each(labels, fn label ->
-        label
-        |> Label.changeset(%{ "function_id" => nil })
-        |> Repo.update!()
-      end)
-      Repo.delete!(function)
-    end)
+    Repo.delete(function)
   end
 
   defp get_organization_function_count(organization) do

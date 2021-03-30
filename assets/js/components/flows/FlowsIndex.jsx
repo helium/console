@@ -216,24 +216,26 @@ const generateInitialElementsMap = (data, flowPositions) => {
   })
 
   // currently only function nodes can be duplicated
-  flowPositions.copies.map(copiedNode => {
+  flowPositions.copies && flowPositions.copies.map(copiedNode => {
     const originalId = copiedNode.id.slice(0, copiedNode.id.indexOf("_copy"))
     const func = initialElementsMap[originalId]
 
-    const node = {
-      id: copiedNode.id,
-      type: 'functionNode',
-      data: {
-        label: func.data.label,
-        id: `function-${func.data.id}`,
-        format: func.data.format
-      },
-      position: [0,0]
-    }
+    if (func) {
+      const node = {
+        id: copiedNode.id,
+        type: 'functionNode',
+        data: {
+          label: func.data.label,
+          id: `function-${func.data.id}`,
+          format: func.data.format
+        },
+        position: [0,0]
+      }
 
-    if (flowPositions[copiedNode.id]) {
-      initialElementsMap[copiedNode.id] = node
-      node.position = flowPositions[copiedNode.id].position
+      if (flowPositions[copiedNode.id]) {
+        initialElementsMap[copiedNode.id] = node
+        node.position = flowPositions[copiedNode.id].position
+      }
     }
   })
 
