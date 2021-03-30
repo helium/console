@@ -1,9 +1,6 @@
 defmodule Console.LabelNotificationWebhooks do
   import Ecto.Query, warn: false
   alias Console.Repo
-  alias Ecto.Multi
-
-  alias Console.Labels.Label
   alias Console.Labels.LabelNotificationWebhook
 
   def get_label_notification_webhook!(id), do: Repo.get!(LabelNotificationWebhook, id)

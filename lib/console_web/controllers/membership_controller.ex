@@ -3,8 +3,6 @@ defmodule ConsoleWeb.MembershipController do
 
   alias Console.Organizations
   alias Console.Organizations
-  alias Console.Organizations.Membership
-  alias Console.Auth
 
   plug ConsoleWeb.Plug.AuthorizeAction
 

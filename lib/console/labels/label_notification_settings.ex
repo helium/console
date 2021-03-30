@@ -1,9 +1,6 @@
 defmodule Console.LabelNotificationSettings do
   import Ecto.Query, warn: false
   alias Console.Repo
-  alias Ecto.Multi
-
-  alias Console.Labels.Label
   alias Console.Labels.LabelNotificationSetting
   
   def get_label_notification_setting!(id), do: Repo.get!(LabelNotificationSetting, id)

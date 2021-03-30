@@ -4,8 +4,6 @@ defmodule Console.Devices.Device do
 
   alias Console.Organizations.Organization
   alias Console.Events.Event
-  alias Console.Channels.Channel
-  alias Console.Devices
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
   alias Console.Helpers
@@ -37,8 +35,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
-    changeset =
-      device
+    device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
@@ -47,7 +44,7 @@ defmodule Console.Devices.Device do
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
   end
 
-  def create_discovery_changeset(device, device_params = %{ "name" => name, "hotspot_address" => hotspot_address, "organization_id" => organization_id }) do
+  def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
     alphabet = '0123456789ABCDEF'
     device_params = 
       Map.merge(device_params, %{
@@ -56,8 +53,7 @@ defmodule Console.Devices.Device do
         "app_key" => Helpers.generate_string(32, alphabet),
       })
 
-    changeset =
-      device
+    device
       |> cast(device_params, [:name, :dev_eui, :app_eui, :app_key, :hotspot_address, :organization_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
@@ -69,8 +65,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
-    changeset =
-      device
+    device
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
@@ -79,8 +74,7 @@ defmodule Console.Devices.Device do
   end
 
   def router_update_changeset(device, attrs) do
-    changeset =
-      device
+    device
       |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage])
   end
 

@@ -3,9 +3,7 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Devices.Device
   alias Console.Devices.DeviceImports
   alias Console.Events.Event
-  alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
-  alias Console.Channels
   import Ecto.Query
 
   def paginate(%{page: page, page_size: page_size, column: column, order: order }, %{context: %{current_organization: current_organization}}) do

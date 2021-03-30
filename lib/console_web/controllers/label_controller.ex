@@ -6,9 +6,7 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Devices
   alias Console.Channels
   alias Console.Functions
-  alias Console.Organizations
   alias Console.Labels.Label
-  alias Console.Labels.DevicesLabels
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -94,7 +92,6 @@ defmodule ConsoleWeb.LabelController do
 
   def delete(conn, %{"labels" => labels}) do
     current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(List.first(labels))
 
     labels_to_delete = Labels.get_labels(current_organization, labels) |> Labels.multi_fetch_assoc([:devices])
     assoc_devices = Enum.map(labels_to_delete, fn l -> l.devices end) |> List.flatten() |> Enum.uniq()
@@ -173,7 +170,7 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
     channel = Ecto.assoc(current_organization, :channels) |> Repo.get(channel_id)
 
-    with {:ok, count, first_label} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
+    with {:ok, count, _first_label} <- Labels.add_labels_to_channel(labels, channel, current_organization) do
       msg =
         case count do
           0 -> "All selected labels are already in integration"

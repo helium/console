@@ -3,13 +3,9 @@ defmodule ConsoleWeb.DeviceController do
 
   alias Console.Repo
   alias Console.Devices
-  alias Console.Devices.DeviceImports
-  alias Console.Channels
   alias Console.Labels
-  alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Labels
-  alias Console.LabelNotificationSettings
   alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -104,7 +100,6 @@ defmodule ConsoleWeb.DeviceController do
 
   def delete(conn, %{"devices" => devices, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(List.first(devices))
     list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
     # grab info for notifications before device(s) deletion
@@ -148,8 +143,7 @@ defmodule ConsoleWeb.DeviceController do
       fn d -> %{ device_id: d.id, labels: Enum.map(d.labels, fn l -> l.id end), device_name: d.name } end
     )
 
-    device = organization_id
-    |> Devices.delete_all_devices_for_org()
+    Devices.delete_all_devices_for_org(organization_id)
     ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{organization_id}:device_list_update", %{})
     ConsoleWeb.Endpoint.broadcast("graphql:nav_labels", "graphql:nav_labels:#{conn.assigns.current_user.id}:update_list", %{})
 
@@ -173,8 +167,7 @@ defmodule ConsoleWeb.DeviceController do
   def set_active(conn, %{ "device_ids" => device_ids, "active" => active, "label_id" => label_id }) do
     current_organization = conn.assigns.current_organization
 
-    with {count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
-      device = Devices.get_device!(current_organization, device_ids |> List.first())
+    with {_count, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
 
       if label_id != "none" do
@@ -445,7 +438,7 @@ defmodule ConsoleWeb.DeviceController do
 
   def debug(conn, %{"device" => device_id}) do
     current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(current_organization, device_id)
+    _device = Devices.get_device!(current_organization, device_id)
 
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:debug:devices", %{ "devices" => [device_id] })
 

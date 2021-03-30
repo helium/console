@@ -4,8 +4,6 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Organizations
   alias Console.Organizations
   alias Console.Organizations.Invitation
-  alias Console.Organizations.Membership
-  alias Console.Auth
   alias Console.Email
   alias Console.Mailer
 
@@ -35,7 +33,7 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def redirect_to_register(conn, %{"token" => token}) do
-    with {true, %Invitation{} = inv} <- Organizations.valid_invitation_token?(token) do
+    with {true, %Invitation{} = _inv} <- Organizations.valid_invitation_token?(token) do
       conn
       |> redirect(
         to: "/join_organization?invitation=#{token}"
@@ -56,7 +54,7 @@ defmodule ConsoleWeb.InvitationController do
       with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
         organization = Organizations.get_organization!(invitation.organization_id)
         Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
-        {:ok, invitation} = Organizations.mark_invitation_used(invitation)
+        {:ok, _invitation} = Organizations.mark_invitation_used(invitation)
         ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{organization.id}:invitation_list_update", %{})
 
         membership = Organizations.get_membership!(conn.assigns.current_user, organization)
@@ -80,7 +78,6 @@ defmodule ConsoleWeb.InvitationController do
   end
 
   def delete(conn, %{"id" => id}) do
-    current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
 
     invitation = Organizations.get_invitation!(current_organization, id)

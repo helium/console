@@ -1,7 +1,5 @@
 defmodule ConsoleWeb.V1.OrganizationController do
   use ConsoleWeb, :controller
-  alias Console.Repo
-  import Ecto.Query
 
   action_fallback(ConsoleWeb.FallbackController)
 

@@ -7,10 +7,7 @@ defmodule Console.Auth do
   alias Console.Repo
 
   alias Console.Auth.User
-  alias Console.Organizations.Invitation
-  alias Console.Organizations.Organization
   alias Console.Organizations
-  alias Console.Helpers
 
   def list_users() do
     Repo.all(User)
@@ -29,7 +26,7 @@ defmodule Console.Auth do
       Ecto.Multi.new()
       |> Ecto.Multi.insert(:user, user_changeset)
       |> Ecto.Multi.run(:organization, fn _repo, %{user: user} ->
-        Console.Organizations.create_organization(user, organization_attrs)
+        Organizations.create_organization(user, organization_attrs)
       end)
       |> Repo.transaction()
 

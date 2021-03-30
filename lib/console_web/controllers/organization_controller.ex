@@ -6,8 +6,6 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.Organizations
   alias Console.Devices
   alias Console.DcPurchases
-  alias Console.Auth
-  alias Console.Auth.User
   alias Console.Email
   alias Console.Mailer
 
@@ -144,7 +142,7 @@ defmodule ConsoleWeb.OrganizationController do
             "organization_id" => destination_org.id
           }
 
-          {:ok, destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
+          {:ok, _destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
           ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{destination_org.id}:update_dc_table", %{})
         end
 

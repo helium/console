@@ -1,6 +1,5 @@
 defmodule Console.Organizations.OrganizationResolver do
   alias Console.Repo
-  alias Console.Organizations.Membership
   alias Console.Organizations.Organization
   alias Console.Organizations
 

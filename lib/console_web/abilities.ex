@@ -1,7 +1,7 @@
 defmodule ConsoleWeb.Abilities do
   alias Console.Organizations.Membership
 
-  def can?(%Membership{role: "admin"}, action, controller) do
+  def can?(%Membership{role: "admin"}, _action, _controller) do
     true
   end
 

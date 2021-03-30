@@ -1,7 +1,5 @@
 defmodule ConsoleWeb.Plug.PutCurrentOrganization do
   alias Console.Organizations
-  alias Console.Organizations.Organization
-  alias Console.Organizations.Membership
 
   import Plug.Conn, only: [assign: 3, send_resp: 3, halt: 1, get_req_header: 2]
 

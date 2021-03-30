@@ -4,11 +4,9 @@ defmodule ConsoleWeb.FlowsController do
 
   alias Console.Repo
   alias Console.Functions
-  alias Console.Functions.Function
   alias Console.Labels
   alias Console.Labels.Label
   alias Console.Channels
-  alias Console.Channels.Channel
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -29,7 +27,7 @@ defmodule ConsoleWeb.FlowsController do
       {count, _} =
         from(l in Label,
           where: l.organization_id == ^current_organization.id and l.id in ^label_ids,
-          select: l.id,
+          select: l.id
         )
         |> Repo.update_all(set: [function_id: nil])
 

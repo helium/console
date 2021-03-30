@@ -2,7 +2,6 @@ defmodule Console.Organizations.Membership do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias Console.Auth.User
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}

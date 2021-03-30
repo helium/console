@@ -8,7 +8,6 @@ defmodule Console.Channels do
 
   alias Console.Channels.Channel
   alias Console.Organizations.Organization
-  alias Console.Organizations
   alias Console.Labels.ChannelsLabels
   alias Console.Labels.DevicesLabels
 
@@ -61,7 +60,7 @@ defmodule Console.Channels do
     end
   end
 
-  def update_channel(%Channel{} = channel, %Organization{} = organization, attrs) do
+  def update_channel(%Channel{} = channel, %Organization{} = _organization, attrs) do
     channel
     |> Channel.update_changeset(attrs)
     |> Repo.update()
