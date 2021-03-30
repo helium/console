@@ -19,7 +19,7 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
-import { sendClearDownlinkQueue } from '../../actions/device'
+import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
 import { LABEL_SHOW } from '../../graphql/labels'
 import analyticsLogger from '../../util/analyticsLogger'
 import withGql from '../../graphql/withGql'
@@ -266,6 +266,8 @@ class LabelShow extends Component {
             >
               <Downlink
                 src="LabelShow"
+                socket={this.props.socket}
+                id={label.id}
                 onSend={(payload, confirm, port, position) => {
                   analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
                   this.props.sendDownlinkMessage(
@@ -281,6 +283,7 @@ class LabelShow extends Component {
                   analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": label.devices.map(device => device.id) });
                   this.props.sendClearDownlinkQueue({ label_id: label.id });
                 }}
+                fetchDownlinkQueue={() => this.props.fetchDownlinkQueue(label.id, "label")}
               />
             </Sidebar>
           }
@@ -297,7 +300,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, sendClearDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, sendClearDownlinkQueue, fetchDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

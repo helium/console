@@ -17,7 +17,8 @@ import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
-import { updateDevice, toggleDeviceDebug, sendClearDownlinkQueue } from '../../actions/device'
+import { updateDevice, toggleDeviceDebug } from '../../actions/device'
+import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -508,6 +509,8 @@ class DeviceShow extends Component {
               >
                 <Downlink
                   src="DeviceShow"
+                  id={device.id}
+                  socket={this.props.socket}
                   onSend={(payload, confirm, port, position) => {
                     analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
                     this.props.sendDownlinkMessage(
@@ -523,6 +526,7 @@ class DeviceShow extends Component {
                     analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": [device.id] });
                     this.props.sendClearDownlinkQueue({ device_id: device.id });
                   }}
+                  fetchDownlinkQueue={() => this.props.fetchDownlinkQueue(device.id, "device")}
                 />
               </Sidebar>
             }
@@ -539,7 +543,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendClearDownlinkQueue, sendDownlinkMessage }, dispatch)
+  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendClearDownlinkQueue, sendDownlinkMessage, fetchDownlinkQueue }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -201,15 +201,6 @@ const sanitizeParams = (params) => {
   return params
 }
 
-export const sendClearDownlinkQueue = (payload) => {
-  return (dispatch) => {
-    rest.post(
-      '/api/clear_downlink_queue',
-      payload
-    );
-  }
-}
-
 export const getAllEvents = (deviceId) => {
   return (dispatch) => {
     return rest.get(`/api/devices/${deviceId}/events`)

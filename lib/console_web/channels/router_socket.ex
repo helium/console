@@ -3,6 +3,7 @@ defmodule ConsoleWeb.RouterSocket do
 
   channel("device:*", ConsoleWeb.DeviceChannel)
   channel("organization:*", ConsoleWeb.OrganizationChannel)
+  channel("label:*", ConsoleWeb.LabelChannel)
 
   def connect(%{"token" => token}, socket) do
     case ConsoleWeb.Guardian.decode_and_verify(token) do
