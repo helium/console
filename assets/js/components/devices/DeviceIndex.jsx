@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
+import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DashboardLayout from '../common/DashboardLayout';
 import NewDeviceModal from './NewDeviceModal';
 import ImportDevicesModal from './import/ImportDevicesModal';
@@ -240,7 +241,7 @@ class DeviceIndex extends Component {
         }
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row' }}>
+          <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
             <div
               style={{
                 backgroundColor: '#ACC6DD',
@@ -249,11 +250,12 @@ class DeviceIndex extends Component {
                 cursor: 'pointer',
                 height: 50,
                 width: 50,
+                minWidth: 50,
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginRight: 12
+                marginRight: 12,
               }}
               onClick={() => this.setState({ showPage: 'home'})}
             >
@@ -266,15 +268,17 @@ class DeviceIndex extends Component {
               padding: '5px 10px 5px 10px',
               cursor: 'pointer',
               height: 50,
+              width: 110,
+              minWidth: 110,
               display: 'flex',
               flexDirection: 'column',
               marginRight: 12
             }} onClick={() => this.setState({ showPage: 'allDevices'})}>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
-                <Text style={{ color: '#3C6B95', fontWeight: 500 }}>All Devices</Text>
+                <Text style={{ color: '#3C6B95', fontWeight: 500, whiteSpace: 'nowrap' }}>All Devices</Text>
               </div>
-              <Text style={{ color: '#3C6B95', fontSize: 10 }}>{devices && devices.totalEntries} Devices</Text>
+              <Text style={{ color: '#3C6B95', fontSize: 10, whiteSpace: 'nowrap' }}>{devices && devices.totalEntries} Devices</Text>
             </div>
 
             <div style={{
@@ -284,14 +288,18 @@ class DeviceIndex extends Component {
               cursor: 'pointer',
               height: 50,
               width: 50,
+              minWidth: 50,
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              marginRight: 12
+              marginRight: 12,
+              whiteSpace: 'nowrap'
             }}>
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
+
+            <DeviceIndexLabelsBar />
           </div>
           {
             showPage === "home" && (
