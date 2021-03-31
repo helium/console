@@ -6,15 +6,16 @@ import { Typography } from 'antd';
 const { Text } = Typography
 import GroupsIcon from '../../../img/label-node-icon.svg'
 
-const Node = ({ name, device_count }) => (
+const Node = ({ name, device_count, selectLabel, id }) => (
   <div style={{
     background: '#2C79EE',
     padding: "4px 24px 4px 8px",
     borderRadius: 5,
     height: 50,
     overflow: 'hidden',
-    marginRight: 12
-  }}>
+    marginRight: 12,
+    cursor: "pointer"
+  }} onClick={() => selectLabel("Label+" + id)}>
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
       <img src={GroupsIcon} style={{ height: 11, marginRight: 4 }} />
       <Text style={{ display: 'block', fontSize: 14, color: '#ffffff', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
@@ -49,7 +50,7 @@ class DeviceIndexLabelsBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {allLabels.map(l => (
-          <Node key={l.id} name={l.name} device_count={l.device_count}/>
+          <Node key={l.id} name={l.name} device_count={l.device_count} id={l.id} selectLabel={this.props.selectLabel} />
         ))}
       </div>
     )
