@@ -270,9 +270,15 @@ class EventsDashboard extends Component {
           </Tag>
         );
       case "join_request":
-      case "join_accept":
         return (
           <Tag style={styles.tag} color="#4091F7">
+            <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
+            {row.fct}
+          </Tag>
+        )
+      case "join_accept":
+        return (
+          <Tag style={styles.tag} color="#FA541C">
             <CheckOutlined style={{ fontSize: 12, marginRight: 3 }} />
             {row.fct}
           </Tag>
