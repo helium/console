@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.ChannelControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.FactoryHelper
   import Console.Factory
 
   alias Console.Channels
@@ -106,14 +105,14 @@ defmodule ConsoleWeb.ChannelControllerTest do
     end
 
     test "creates adafruit channels properly", %{conn: conn} do
-      resp_conn = post conn, channel_path(conn, :create), %{ 
+      resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "adafruit"
 
-      resp_conn = post conn, channel_path(conn, :create), %{ 
+      resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
@@ -122,8 +121,8 @@ defmodule ConsoleWeb.ChannelControllerTest do
       channel = channel |> Channels.fetch_assoc([:labels])
       [head] = channel.labels
       assert head.name == "adafruit2" # has label with same name as channel
-      
-      resp_conn = post conn, channel_path(conn, :create), %{ 
+
+      resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit3", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
@@ -134,7 +133,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       [head] = function.labels
       assert head.name == "adafruit3" # function has label with same name as channel
 
-      resp_conn = post conn, channel_path(conn, :create), %{ 
+      resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_name}}/json" }, "downlink" => %{ topic: "user" } }, "name" => "adafruit4", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }

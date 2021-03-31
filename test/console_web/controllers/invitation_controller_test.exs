@@ -3,7 +3,6 @@ defmodule ConsoleWeb.InvitationControllerTest do
   import Plug.Conn
   import Phoenix.ConnTest
 
-  import Console.FactoryHelper
   import Console.Factory
 
   alias Console.Organizations

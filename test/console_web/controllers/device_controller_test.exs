@@ -1,7 +1,5 @@
 defmodule ConsoleWeb.DeviceControllerTest do
   use ConsoleWeb.ConnCase
-
-  import Console.FactoryHelper
   import Console.Factory
 
   alias Console.Devices
