@@ -3,10 +3,9 @@ defmodule Console.ApiKeys.ApiKeyResolver do
   import Ecto.Query
 
   alias Console.ApiKeys.ApiKey
-  alias Console.Auth.User
   alias Console.Organizations.Membership
 
-  def all(_, %{context: %{current_organization: current_organization, current_user: current_user, current_membership: current_membership}}) do
+  def all(_, %{context: %{current_organization: current_organization, current_user: _current_user, current_membership: current_membership}}) do
     case current_membership.role do
       "read" -> {:ok, []}
       _ ->

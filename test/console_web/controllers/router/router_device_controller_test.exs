@@ -4,7 +4,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
   import Console.Factory
 
   describe "devices" do
-    test "router can get devices by dev and app eui", %{conn: conn} do
+    test "router can get devices by dev and app eui", %{conn: _conn} do
       resp_conn = build_conn() |> post("/api/router/sessions", %{
         "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
       })
@@ -55,7 +55,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       assert devices_json |> List.first() |> Map.get("channels") |> length() == 2
     end
 
-    test "router can get single device by id", %{conn: conn} do
+    test "router can get single device by id", %{conn: _conn} do
       resp_conn = build_conn()
         |> post("/api/router/sessions", %{
           "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
@@ -72,7 +72,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       assert json_response(resp_conn, 200)
     end
 
-    test "router add event to device event log", %{conn: conn} do
+    test "router add event to device event log", %{conn: _conn} do
       resp_conn = build_conn()
         |> post("/api/router/sessions", %{
           "secret" => "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
@@ -82,7 +82,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
 
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id })
-      channel_0 = insert(:channel, %{ organization_id: organization.id })
+      insert(:channel, %{ organization_id: organization.id })
       timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00], :millisecond)
 
       resp_conn = build_conn()

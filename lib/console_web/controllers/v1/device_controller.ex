@@ -1,7 +1,5 @@
 defmodule ConsoleWeb.V1.DeviceController do
   use ConsoleWeb, :controller
-  alias Console.Repo
-  import Ecto.Query
 
   alias Console.Organizations
   alias Console.Labels
@@ -24,7 +22,6 @@ defmodule ConsoleWeb.V1.DeviceController do
   end
 
   def index(conn, %{"dev_eui" => dev_eui}) do
-    current_organization = conn.assigns.current_organization
     devices = Devices.get_by_dev_eui(dev_eui)
 
     case length(devices) do
@@ -36,7 +33,6 @@ defmodule ConsoleWeb.V1.DeviceController do
   end
 
   def index(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
-    current_organization = conn.assigns.current_organization
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
 
     case length(devices) do
@@ -97,7 +93,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def discover_device(conn, params = %{ "hotspot_name" => name, "hotspot_address" => address, "transaction_id" => transaction_id, "signature" => signature }) do
+  def discover_device(conn, _params = %{ "hotspot_name" => name, "hotspot_address" => address, "transaction_id" => transaction_id, "signature" => signature }) do
     current_organization = conn.assigns.current_organization
     discovery_mode_organization = Organizations.get_discovery_mode_org()
     if current_organization.id !== discovery_mode_organization.id do

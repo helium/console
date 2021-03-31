@@ -26,7 +26,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert json_response(resp_conn, 422) # attrs must be correct length
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, device_path(conn, :create), %{
+        post conn, device_path(conn, :create), %{
           "device" => %{ "name" => "n", "dev_eui" => "a", "app_eui" => "b", "app_key" => "c" }
         }
       end # payload must contain label_id key
@@ -84,7 +84,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       not_my_org = insert(:organization)
       not_my_device = insert(:device, %{ organization_id: not_my_org.id })
       assert_error_sent 404, fn ->
-        resp_conn = put conn, device_path(conn, :update, not_my_device.id), %{ "device" => %{ "name" => "device not mine" }}
+        put conn, device_path(conn, :update, not_my_device.id), %{ "device" => %{ "name" => "device not mine" }}
       end # does not update device not in own org
 
       resp_conn = post conn, device_path(conn, :create), %{
@@ -111,7 +111,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       not_my_org = insert(:organization)
       not_my_device = insert(:device, %{ organization_id: not_my_org.id })
       assert_error_sent 404, fn ->
-        resp_conn = delete conn, device_path(conn, :delete, not_my_device.id)
+        delete conn, device_path(conn, :delete, not_my_device.id)
       end # does not delete device not in own org
 
       resp_conn = post conn, device_path(conn, :create), %{
@@ -161,7 +161,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
       not_my_device = insert(:device, %{ organization_id: not_my_org.id })
 
       assert_error_sent 404, fn ->
-        resp_conn = post conn, device_path(conn, :debug), %{ "device" => not_my_device.id}
+        post conn, device_path(conn, :debug), %{ "device" => not_my_device.id}
       end
 
       resp_conn = post conn, device_path(conn, :create), %{

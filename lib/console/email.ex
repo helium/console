@@ -5,7 +5,6 @@ defmodule Console.Email do
   alias Console.ApiKeys.ApiKey
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Invitation
-  alias Console.Organizations.Membership
   alias Console.Organizations.Organization
   alias DateTime
 

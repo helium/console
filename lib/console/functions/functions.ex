@@ -4,7 +4,6 @@ defmodule Console.Functions do
 
   alias Console.Functions.Function
   alias Console.Organizations.Organization
-  alias Console.Labels
   alias Console.Labels.Label
 
   def get_function!(organization, id) do

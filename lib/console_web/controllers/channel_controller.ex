@@ -6,9 +6,7 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Labels
   alias Console.Labels.Label
   alias Console.Channels.Channel
-  alias Console.Organizations
   alias Console.Functions
-  alias Console.LabelNotificationSettings
   alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -46,7 +44,6 @@ defmodule ConsoleWeb.ChannelController do
 
   def create(conn, %{"channel" => channel_params, "func" => function_params}) do
     current_organization = conn.assigns.current_organization
-    user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     result =
@@ -62,7 +59,7 @@ defmodule ConsoleWeb.ChannelController do
         end
       end)
       |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
-        with {:ok, length, label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
+        with {:ok, _length, _label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
           {:ok, "label attached success"}
         end
       end)
@@ -81,7 +78,7 @@ defmodule ConsoleWeb.ChannelController do
 
       case result do
         {:error, _, changeset, _} -> {:error, changeset}
-        {:ok, %{ channel: channel, label: label, label_attached: _label_attached, function: function}} ->
+        {:ok, %{ channel: channel, label: _label, label_attached: _label_attached, function: _function}} ->
           broadcast_router_update_devices(channel)
 
           conn
@@ -154,7 +151,7 @@ defmodule ConsoleWeb.ChannelController do
         case length(channel.labels) do
           0 -> "The Integration #{channel.name} has been deleted"
           _ ->
-            labels = Enum.reduce(channel.labels, "", fn (l, acc) -> acc = acc <> l.name <> ", " end)
+            labels = Enum.reduce(channel.labels, "", fn (l, acc) -> acc <> l.name <> ", " end)
             "The devices with label #{labels}are no longer connected to Integration #{channel.name}"
         end
 
@@ -167,12 +164,12 @@ defmodule ConsoleWeb.ChannelController do
   def get_ubidots_url(conn, %{"token" => token, "name" => name}) do
     headers = [{"Content-Type", "application/json"}, {"x-auth-token", token}]
     body = Jason.encode!(%{
-      "name": name,
-      "description": "Plugin created using Ubidots APIv2",
-      "settings": %{
-        "device_type_name": "Helium",
-        "helium_labels_as": "tags",
-        "token": token
+      name: name,
+      description: "Plugin created using Ubidots APIv2",
+      settings: %{
+        device_type_name: "Helium",
+        helium_labels_as: "tags",
+        token: token
       }
     })
     response = HTTPoison.post "https://industrial.api.ubidots.com/api/v2.0/plugin_types/~helium/plugins/", body, headers

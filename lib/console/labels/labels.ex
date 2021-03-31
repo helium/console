@@ -1,7 +1,6 @@
 defmodule Console.Labels do
   import Ecto.Query, warn: false
   alias Console.Repo
-  alias Ecto.Multi
 
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
@@ -12,7 +11,6 @@ defmodule Console.Labels do
   alias Console.Devices.Device
   alias Console.Devices
   alias Console.Channels
-  alias Console.Organizations
   alias Console.Organizations.Organization
 
   def get_organization_label_count(organization) do

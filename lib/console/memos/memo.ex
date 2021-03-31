@@ -7,7 +7,7 @@ defmodule Console.Memos.Memo do
   schema "memos" do
     field :memo, :string
 
-    belongs_to :organization, Organization
+    belongs_to :organization, Console.Organizations.Organization
 
     timestamps()
   end

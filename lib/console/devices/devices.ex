@@ -5,10 +5,9 @@ defmodule Console.Devices do
   alias Console.Devices.Device
   alias Console.Devices.DeviceImports
   alias Console.Organizations.Organization
-  alias Console.Events.Event
   alias Console.Labels.DevicesLabels
-  alias Console.Channels.Channel
   alias Console.Organizations.Organization
+  alias Console.Events.Event
 
   def list_devices do
     Repo.all(Device)
@@ -84,7 +83,7 @@ defmodule Console.Devices do
   def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
     cond do
-      organization.name !== @discovery_mode_org_name and count > 9999 ->
+      organization.name !== "Discovery Mode (Helium)" and count > 9999 ->
         {:error, :forbidden, "Device limit for organization reached"}
       true ->
         cond do

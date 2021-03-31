@@ -138,12 +138,12 @@ class Downlink extends Component {
                   <Col span={16}>
                     <div style={{ marginBottom: 4 }}><Text strong>Device: {find(devices, {id: q.device_id}) ? find(devices, {id: q.device_id}).name : q.device_id}</Text></div>
                     <Text>Payload</Text>
-                    <Input style={{ width: '100%' }} defaultValue={q.payload} onChange={e => e.preventDefault()}/>
+                    <Input style={{ width: '100%' }} defaultValue={q.payload} disabled/>
                   </Col>
                   <Col span={8}>
                     <div style={{ marginBottom: 4 }}><Text strong>Status: {q.confirmed ? "Confirmed" : "Unconfirmed"}</Text></div>
                     <Text>FPort</Text>
-                    <Input style={{ width: '100%' }} defaultValue={q.port} onChange={e => e.preventDefault()}/>
+                    <Input style={{ width: '100%' }} defaultValue={q.port} disabled/>
                   </Col>
                 </Row>
               </Card>

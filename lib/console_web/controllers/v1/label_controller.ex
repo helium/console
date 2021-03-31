@@ -1,11 +1,8 @@
 defmodule ConsoleWeb.V1.LabelController do
   use ConsoleWeb, :controller
-  alias Console.Repo
-  import Ecto.Query
 
   alias Console.Organizations
   alias Console.Devices
-  alias Console.Auth
   alias Console.Labels
   alias Console.Labels.Label
   action_fallback(ConsoleWeb.FallbackController)

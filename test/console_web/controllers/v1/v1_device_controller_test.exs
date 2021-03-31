@@ -6,7 +6,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
   alias Console.Devices
 
   describe "devices" do
-    test "inactive api keys do not work", %{conn: conn} do
+    test "inactive api keys do not work", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization)
       api_key = insert(:api_key, %{
@@ -19,10 +19,10 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       assert response(resp_conn, 401) == "{\"message\":\"api_key_needs_email_verification\"}"
     end
 
-    test "CRUD actions work properly", %{conn: conn} do
+    test "CRUD actions work properly", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization)
-      api_key = insert(:api_key, %{
+      insert(:api_key, %{
         organization_id: organization.id,
         key: :crypto.hash(:sha256, key),
         active: true
@@ -36,7 +36,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       assert json_response(resp_conn, 200) == [] # returns no devices when no devices created in org
 
       assert_error_sent 400, fn ->
-        resp_conn = build_conn()
+        build_conn()
           |> put_req_header("key", key)
           |> post("/api/v1/devices", %{ "name" => "device", "dev_eui" => "1", "app_eui" => "2" })
       end # not all device attrs in body
@@ -95,12 +95,12 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       assert device["hotspot_address"] == nil # device not created through discover endpoint should not have hotspot_address
     end
 
-    test "discovery mode endpoint works properly", %{"conn": conn} do
+    test "discovery mode endpoint works properly", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization, %{
         name: "Discovery Mode (Helium)"
       })
-      api_key = insert(:api_key, %{
+      insert(:api_key, %{
         organization_id: organization.id,
         active: true,
         key: :crypto.hash(:sha256, key)
@@ -133,7 +133,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       organization_2 = insert(:organization) # not the discovery mode helium org
       key_2 = "dqWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
-      api_key = insert(:api_key, %{
+      insert(:api_key, %{
         organization_id: organization_2.id,
         active: true,
         key: :crypto.hash(:sha256, key_2)

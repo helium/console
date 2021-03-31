@@ -2,9 +2,7 @@ defmodule ConsoleWeb.V1.DownlinkController do
   use ConsoleWeb, :controller
   alias Console.Repo
   alias Console.Devices
-  alias Console.Labels
   alias Console.Channels
-  import Ecto.Query
 
   action_fallback(ConsoleWeb.FallbackController)
 

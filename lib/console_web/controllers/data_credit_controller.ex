@@ -1,6 +1,5 @@
 defmodule ConsoleWeb.DataCreditController do
   use ConsoleWeb, :controller
-  alias Console.Repo
   alias Console.Email
   alias Console.Memos
   alias Console.Organizations
@@ -109,7 +108,7 @@ defmodule ConsoleWeb.DataCreditController do
   def set_default_payment_method(conn, %{ "defaultPaymentId" => defaultPaymentId }) do
     current_organization = conn.assigns.current_organization
 
-    with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
+    with {:ok, %Organization{} = _organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
       ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
       # Send email about payment method changed
       Organizations.get_administrators(current_organization)
@@ -225,7 +224,7 @@ defmodule ConsoleWeb.DataCreditController do
             }
         end
 
-      with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, attrs) do
+      with {:ok, %Organization{} = _organization} <- Organizations.update_organization(current_organization, attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
         conn
         |> put_resp_header("message", "Automatic payments updated successfully")
@@ -275,9 +274,9 @@ defmodule ConsoleWeb.DataCreditController do
             "user_id" => current_user.id,
           }
 
-          {:ok, to_org_dc_purchase} = Map.merge(attrs, %{"from_organization" => from_org_updated.name, "organization_id" => to_org_updated.id })
+          {:ok, _to_org_dc_purchase} = Map.merge(attrs, %{"from_organization" => from_org_updated.name, "organization_id" => to_org_updated.id })
           |> DcPurchases.create_dc_purchase()
-          {:ok, from_org_dc_purchase} = Map.merge(attrs, %{"to_organization" => to_org_updated.name, "organization_id" => from_org_updated.id })
+          {:ok, _from_org_dc_purchase} = Map.merge(attrs, %{"to_organization" => to_org_updated.name, "organization_id" => from_org_updated.id })
           |> DcPurchases.create_dc_purchase()
           ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{from_org_updated.id}:update_dc_table", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{to_org_updated.id}:update_dc_table", %{})
@@ -321,7 +320,7 @@ defmodule ConsoleWeb.DataCreditController do
             [] ->
               now = DateTime.utc_now() |> DateTime.truncate(:second)
               seconds_to_add = 60 - now.second + (59 - now.minute) * 60
-              next_price_timestamp = now |> DateTime.add(seconds_to_add, :second) |> DateTime.to_unix
+              now |> DateTime.add(seconds_to_add, :second) |> DateTime.to_unix
             list ->
               List.first(list)["time"]
           end

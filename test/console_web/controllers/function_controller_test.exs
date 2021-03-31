@@ -74,7 +74,7 @@ defmodule ConsoleWeb.FunctionControllerTest do
       not_my_org = insert(:organization)
       not_my_function = insert(:function, %{ organization_id: not_my_org.id })
       assert_error_sent 404, fn ->
-        resp_conn = put conn, function_path(conn, :update, not_my_function.id), %{ "function" => %{ "name" => "function2" }}
+        put conn, function_path(conn, :update, not_my_function.id), %{ "function" => %{ "name" => "function2" }}
       end # does not update function not in own org
 
       resp_conn = post conn, function_path(conn, :create), %{ "function" => %{ "name" => "function", "type" => "decoder", "format" => "cayenne", "body" => "none" }}
@@ -96,7 +96,7 @@ defmodule ConsoleWeb.FunctionControllerTest do
       not_my_org = insert(:organization)
       not_my_function = insert(:function, %{ organization_id: not_my_org.id })
       assert_error_sent 404, fn ->
-        resp_conn = delete conn, function_path(conn, :delete, not_my_function.id)
+        delete conn, function_path(conn, :delete, not_my_function.id)
       end # does not delete function not in own org
 
       resp_conn = post conn, function_path(conn, :create), %{ "function" => %{ "name" => "function", "type" => "decoder", "format" => "cayenne", "body" => "none" }}

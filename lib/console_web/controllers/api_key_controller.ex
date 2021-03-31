@@ -1,6 +1,5 @@
 defmodule ConsoleWeb.ApiKeyController do
   use ConsoleWeb, :controller
-  alias Console.Repo
   alias Console.ApiKeys
   alias Console.Email
   alias Console.Mailer

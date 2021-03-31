@@ -47,7 +47,7 @@ defmodule ConsoleWeb.Router.DeviceView do
   end
 
   def render("device_short.json", %{device: device}) do
-    device_attrs = %{
+    %{
       id: device.id,
       name: device.name,
       dev_eui: device.dev_eui,

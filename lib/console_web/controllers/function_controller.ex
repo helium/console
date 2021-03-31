@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.FunctionController do
   use ConsoleWeb, :controller
 
-  alias Console.Repo
   alias Console.Functions
   alias Console.Functions.Function
   alias Console.Labels

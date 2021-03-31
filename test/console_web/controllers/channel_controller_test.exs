@@ -36,7 +36,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(resp_conn, 422) # type not valid
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "http", "type" => "http" }
         }
       end # does not have labels attr in payload
@@ -56,7 +56,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(resp_conn, 422) # name already used
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "http_channel", "type" => "http" },
           "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
@@ -77,14 +77,14 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert channel.downlink_token != nil # downlink token only for http
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "mqtt_channel", "type" => "mqtt" },
           "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
       end # invalid mqtt credentials
 
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://m1.helium.com" }, "name" => "mqtt_channel", "type" => "mqtt" },
           "labels" => %{"labelsApplied" => [], "newLabels" => []}
         }
@@ -107,14 +107,14 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
     test "creates adafruit channels properly", %{conn: conn} do
       resp_conn = post conn, channel_path(conn, :create), %{ 
-        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "adafruit"
 
       resp_conn = post conn, channel_path(conn, :create), %{ 
-        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
@@ -124,7 +124,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert head.name == "adafruit2" # has label with same name as channel
       
       resp_conn = post conn, channel_path(conn, :create), %{ 
-        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ "topic": "helium/{{device_id}}/tx" } }, "name" => "adafruit3", "type" => "mqtt" },
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit3", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
@@ -135,7 +135,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert head.name == "adafruit3" # function has label with same name as channel
 
       resp_conn = post conn, channel_path(conn, :create), %{ 
-        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_name}}/json" }, "downlink" => %{ "topic": "user" } }, "name" => "adafruit4", "type" => "mqtt" },
+        "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_name}}/json" }, "downlink" => %{ topic: "user" } }, "name" => "adafruit4", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
@@ -145,21 +145,21 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "create channels with labels linked properly", %{conn: conn} do
       # channel is still created even if labels do not parse by design
       assert_error_sent 500, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel2", "type" => "google" },
           "labels" => []
         }
       end # labels attr invalid type
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel3", "type" => "google" },
           "labels" => %{"labelsApplied" => [%{"id" => 1}]}
         }
       end # labels attr content invalid type
 
       assert_error_sent 400, fn ->
-        resp_conn = post conn, channel_path(conn, :create), %{
+        post conn, channel_path(conn, :create), %{
           "channel" => %{ "credentials" => %{}, "name" => "channel4", "type" => "google" },
           "labels" => %{"labelsApplied" => [%{"id" => 'gjkahksf'}]}
         }
@@ -185,7 +185,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "updates channels properly", %{conn: conn} do
       not_my_channel = insert(:channel)
       assert_error_sent 404, fn ->
-        resp_conn = put conn, channel_path(conn, :update, not_my_channel.id), %{ "channel" => %{ "name" => "channel2" }}
+        put conn, channel_path(conn, :update, not_my_channel.id), %{ "channel" => %{ "name" => "channel2" }}
       end # does not update channel not in own org
 
       resp_conn = post conn, channel_path(conn, :create), %{
@@ -215,7 +215,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     test "delete channels properly", %{conn: conn} do
       not_my_channel = insert(:channel)
       assert_error_sent 404, fn ->
-        resp_conn = delete conn, channel_path(conn, :delete, not_my_channel.id)
+        delete conn, channel_path(conn, :delete, not_my_channel.id)
       end # does not delete channel not in own org
 
       resp_conn = post conn, channel_path(conn, :create), %{

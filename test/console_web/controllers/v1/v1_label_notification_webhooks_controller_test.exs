@@ -3,10 +3,8 @@ defmodule ConsoleWeb.V1LabelNotificationWebhooksControllerTest do
 
   import Console.Factory
 
-  alias Console.LabelNotificationWebhooks
-
   describe "label notification webhooks" do
-    test "inactive api keys do not work", %{conn: conn} do
+    test "inactive api keys do not work", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization)
       api_key = insert(:api_key, %{
@@ -20,10 +18,10 @@ defmodule ConsoleWeb.V1LabelNotificationWebhooksControllerTest do
     end
   end
 
-  test "update works properly", %{conn: conn} do
+  test "update works properly", %{conn: _conn} do
     key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
     organization = insert(:organization)
-    api_key = insert(:api_key, %{
+    insert(:api_key, %{
       organization_id: organization.id,
       key: :crypto.hash(:sha256, key),
       active: true

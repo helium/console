@@ -2,10 +2,8 @@ defmodule ConsoleWeb.LabelNotificationWebhooksController do
   use ConsoleWeb, :controller
 
   alias Console.Repo
-  alias Console.Labels.LabelNotificationWebhook
   alias Console.LabelNotificationWebhooks
   alias Console.Labels
-  alias Console.Labels.Label
 
   plug ConsoleWeb.Plug.AuthorizeAction
 

@@ -1,17 +1,11 @@
 defmodule ConsoleWeb.Router.OrganizationController do
   use ConsoleWeb, :controller
-  alias Console.Repo
-  import Ecto.Query
-  import ConsoleWeb.AuthErrorHandler
 
   alias Console.Organizations
-  alias Console.Organizations.Organization
   alias Console.Memos
   alias Console.Memos.Memo
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
-  alias Console.Channels
-  alias Console.Channels.Channel
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -39,7 +33,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
         case DcPurchases.get_by_payment_id(memo.memo) do
           nil ->
             organization = Organizations.get_organization!(memo.organization_id)
-            with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+            with {:ok, %DcPurchase{} = _dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
               Organizations.update_organization(organization, %{ "received_free_dc" => false })
 
               ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})

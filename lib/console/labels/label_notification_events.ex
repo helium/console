@@ -1,9 +1,6 @@
 defmodule Console.LabelNotificationEvents do
   import Ecto.Query, warn: false
   alias Console.Repo
-  alias Ecto.Multi
-
-  alias Console.Labels.Label
   alias Console.Labels.LabelNotificationEvent
   alias Console.LabelNotificationSettings
   alias Console.LabelNotificationWebhooks

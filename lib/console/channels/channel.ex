@@ -4,9 +4,7 @@ defmodule Console.Channels.Channel do
   alias Console.Helpers
 
   alias Console.Organizations.Organization
-  alias Console.Channels
   alias Console.Channels.Channel
-  alias Console.Devices.Device
   alias Console.Labels.Label
   alias Console.Labels.ChannelsLabels
 

@@ -1,8 +1,7 @@
 defmodule Console.FactoryHelper do
   import Plug.Conn
-  import Phoenix.ConnTest
+  
   import Console.Factory
-  import ConsoleWeb.Guardian
 
   alias Console.Organizations
 

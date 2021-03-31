@@ -2,7 +2,6 @@ defmodule ConsoleWeb.UserSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: ConsoleWeb.Schema
   alias Console.Organizations
-  alias Console.Organizations.Organization
   alias Console.Auth
   require Logger
 
@@ -40,7 +39,7 @@ defmodule ConsoleWeb.UserSocket do
     end
   end
 
-  def connect(_params, socket) do
+  def connect(_params, _socket) do
     :error
   end
 

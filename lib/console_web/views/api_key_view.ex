@@ -1,6 +1,5 @@
 defmodule ConsoleWeb.ApiKeyView do
   use ConsoleWeb, :view
-  alias ConsoleWeb.ApiKeyView
 
   def render("show.json", %{api_key: api_key, key: key}) do
     %{

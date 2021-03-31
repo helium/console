@@ -1,14 +1,11 @@
 defmodule Console.Organizations do
   import Ecto.Query, warn: false
-  alias Ecto.UUID
   alias Console.Repo
 
   alias Console.Organizations.Organization
-  alias Console.Organizations
   alias Console.Devices
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
-  alias Console.Auth
   alias Console.Auth.User
   alias Console.ApiKeys.ApiKey
 
@@ -109,14 +106,14 @@ defmodule Console.Organizations do
     Repo.get_by!(Membership, [id: id, organization_id: organization.id])
   end
 
-  def get_invitation!(%Organization{} = organization, id) do
-    Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
-  end
-
   def get_membership!(%User{id: user_id}, %Organization{id: organization_id}) do
     query = from m in Membership,
       where: m.user_id == ^user_id and m.organization_id == ^organization_id
     Repo.one(query)
+  end
+
+  def get_invitation!(%Organization{} = organization, id) do
+    Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
   end
 
   def get_last_viewed_org_membership(%User{id: user_id}) do

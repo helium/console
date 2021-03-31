@@ -27,10 +27,10 @@ defmodule ConsoleWeb.OrganizationControllerTest do
 
       another_org = insert(:organization)
       assert_error_sent 404, fn ->
-        resp_conn = delete conn, organization_path(conn, :delete, another_org.id), %{ "destination_org_id" => "no-transfer"}
+        delete conn, organization_path(conn, :delete, another_org.id), %{ "destination_org_id" => "no-transfer"}
       end # cannot delete other orgs
 
-      another_membership = insert(:membership, %{ organization_id: another_org.id, user_id: current_user.id, email: current_user.email, role: "read" })
+      insert(:membership, %{ organization_id: another_org.id, user_id: current_user.id, email: current_user.email, role: "read" })
       resp_conn = delete conn, organization_path(conn, :delete, another_org.id), %{ "destination_org_id" => "no-transfer"}
       assert response(resp_conn, 403) # cannot delete org if user is not admin
     end

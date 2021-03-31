@@ -1,8 +1,6 @@
 defmodule ConsoleWeb.Router.DeviceController do
   use ConsoleWeb, :controller
   alias Console.Repo
-  import Ecto.Query
-  import ConsoleWeb.AuthErrorHandler
 
   alias Console.Labels
   alias Console.Devices
@@ -181,7 +179,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               {:ok, %{}}
             end
           end)
-          |> Ecto.Multi.run(:organization, fn _repo, %{ device: device, event: created_event } ->
+          |> Ecto.Multi.run(:organization, fn _repo, %{ device: _device, event: created_event } ->
             if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] do
               cond do
                 organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->

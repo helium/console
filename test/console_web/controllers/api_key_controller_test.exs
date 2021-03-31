@@ -28,15 +28,15 @@ defmodule ConsoleWeb.ApiKeyControllerTest do
       resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes", "role" => "admin" }}
       assert response(resp_conn, 422) # name already used
 
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes1", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes2", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes3", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes4", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes5", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes6", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes7", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes8", "role" => "admin" }}
-      resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes9", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes1", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes2", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes3", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes4", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes5", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes6", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes7", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes8", "role" => "admin" }}
+      post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "yes9", "role" => "admin" }}
       resp_conn = post conn, api_key_path(conn, :create), %{ "api_key" => %{ "name" => "no more", "role" => "admin" }}
       assert response(resp_conn, 403) # create only 10 api keys max
     end

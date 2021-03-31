@@ -2,10 +2,8 @@ defmodule ConsoleWeb.LabelNotificationSettingsController do
   use ConsoleWeb, :controller
 
   alias Console.Repo
-  alias Console.Labels.LabelNotificationSetting
   alias Console.LabelNotificationSettings
   alias Console.Labels
-  alias Console.Labels.Label
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
