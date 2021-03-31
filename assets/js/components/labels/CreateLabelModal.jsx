@@ -17,12 +17,12 @@ class CreateLabelModal extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  handleSubmit = (e, redirect = false) => {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { labelName } = this.state;
 
     analyticsLogger.logEvent("ACTION_CREATE_LABEL", {"name": labelName})
-    this.props.createLabel({ name: labelName }, redirect)
+    this.props.createLabel({ name: labelName })
 
     this.props.onClose()
   }
@@ -43,9 +43,6 @@ class CreateLabelModal extends Component {
           </Button>,
           <Button key="submit" onClick={this.handleSubmit}>
             Add Label
-          </Button>,
-          <Button key="submit2" onClick={e => this.handleSubmit(e, true)} type="primary">
-            Add Label & Manage
           </Button>
         ]}
       >

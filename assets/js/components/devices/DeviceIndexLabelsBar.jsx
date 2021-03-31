@@ -16,7 +16,7 @@ const Node = ({ name, device_count }) => (
     marginRight: 12
   }}>
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-      <img src={GroupsIcon} style={{ height: 12, marginRight: 4 }} />
+      <img src={GroupsIcon} style={{ height: 11, marginRight: 4 }} />
       <Text style={{ display: 'block', fontSize: 14, color: '#ffffff', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
     </div>
     <Text style={{ display: 'block', fontSize: 12, color: '#ffffff', whiteSpace: 'nowrap' }}>{device_count || 0} Devices</Text>

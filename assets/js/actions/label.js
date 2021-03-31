@@ -2,16 +2,14 @@ import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 
-export const createLabel = (label, redirect) => {
+export const createLabel = (label) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(label)
 
     rest.post('/api/labels', {
         label: labelParams
       })
-      .then(response => {
-        if (redirect) dispatch(push(`/labels/${response.data.id}`))
-      })
+      .then(response => {})
   }
 }
 
