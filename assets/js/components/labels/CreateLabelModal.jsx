@@ -32,7 +32,7 @@ class CreateLabelModal extends Component {
 
     return (
       <Modal
-        title="Add Label"
+        title="Add a New Label"
         visible={open}
         onCancel={onClose}
         centered

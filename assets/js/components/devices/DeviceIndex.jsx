@@ -9,6 +9,7 @@ import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
+import CreateLabelModal from '../labels/CreateLabelModal'
 import { PAGINATED_DEVICES, ALL_IMPORTS } from '../../graphql/devices';
 import withGql from '../../graphql/withGql'
 import get from 'lodash/get';
@@ -39,6 +40,7 @@ class DeviceIndex extends Component {
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
     showDeviceRemoveAllLabelsModal: false,
+    showCreateLabelModal: false,
     devicesSelected: null,
     labelsSelected: null,
     deviceToRemoveLabel: null,
@@ -159,6 +161,14 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: false })
   }
 
+  openCreateLabelModal = () => {
+    this.setState({ showCreateLabelModal: true })
+  }
+
+  closeCreateLabelModal = () => {
+    this.setState({ showCreateLabelModal: false })
+  }
+
   handleSortChange = (column, order) => {
     const { page, pageSize } = this.state
 
@@ -193,6 +203,7 @@ class DeviceIndex extends Component {
       showDevicesAddLabelModal,
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
+      showCreateLabelModal,
       labelsSelected,
       deviceToRemoveLabel,
       importComplete,
@@ -295,7 +306,7 @@ class DeviceIndex extends Component {
               alignItems: 'center',
               marginRight: 12,
               whiteSpace: 'nowrap'
-            }}>
+            }} onClick={this.openCreateLabelModal}>
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
 
@@ -412,6 +423,11 @@ class DeviceIndex extends Component {
           allDevicesSelected={this.state.allDevicesSelected}
           devicesToDelete={this.state.devicesSelected}
           totalDevices={devices && devices.totalEntries}
+        />
+
+        <CreateLabelModal
+          open={showCreateLabelModal}
+          onClose={this.closeCreateLabelModal}
         />
       </DashboardLayout>
     )

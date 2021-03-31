@@ -25,22 +25,17 @@ const Node = ({ name, device_count }) => (
 
 class DeviceIndexLabelsBar extends Component {
   componentDidMount() {
-    // const { socket, currentOrganizationId } = this.props
-    //
-    // this.channel = socket.channel("graphql:labels_index_table", {})
-    // this.channel.join()
-    // this.channel.on(`graphql:labels_index_table:${currentOrganizationId}:label_list_update`, (message) => {
-    //   this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
-    // })
+    const { socket, currentOrganizationId } = this.props
+
+    this.channel = socket.channel("graphql:device_index_labels_bar", {})
+    this.channel.join()
+    this.channel.on(`graphql:device_index_labels_bar:${currentOrganizationId}:label_list_update`, (message) => {
+      this.props.allLabelsQuery.refetch()
+    })
   }
 
   componentWillUnmount() {
-    // this.channel.leave()
-  }
-
-  refetchPaginatedEntries = () => {
-    // const { refetch } = this.props.paginatedLabelsQuery
-    // refetch({ page, pageSize })
+    this.channel.leave()
   }
 
   render() {
