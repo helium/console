@@ -1,6 +1,8 @@
 defmodule Console.Factory do
+  import Plug.Conn
   use ExMachina.Ecto, repo: Console.Repo
 
+  alias Console.Organizations
   alias Console.Organizations.Organization
   alias Console.ApiKeys.ApiKey
   alias Console.Labels.Label
@@ -10,6 +12,16 @@ defmodule Console.Factory do
   alias Console.Devices.Device
   alias Console.Functions.Function
   alias Console.Organizations.Membership
+
+  def authenticate_user(%{conn: conn}) do
+    user = params_for(:user)
+    {:ok, organization} = Organizations.create_organization(user, params_for(:organization))
+    conn = conn
+           |> put_req_header("accept", "application/json")
+           |> put_req_header("authorization", user.id <> " " <> user.email)
+           |> put_req_header("organization", organization.id)
+    {:ok, conn: conn}
+  end
 
   def user_factory do
     %{

@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.LabelNotificationWebhooksControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.FactoryHelper
   import Console.Factory
 
   describe "label_notification_webhooks" do

@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.DownlinkControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.FactoryHelper
   import Console.Factory
 
   describe "channels" do

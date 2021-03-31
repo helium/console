@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.FunctionControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.FactoryHelper
   import Console.Factory
 
   alias Console.Functions

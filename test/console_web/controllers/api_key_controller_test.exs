@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.ApiKeyControllerTest do
   use ConsoleWeb.ConnCase
 
-  import Console.FactoryHelper
   import Console.Factory
 
   alias Console.ApiKeys
