@@ -320,7 +320,7 @@ class EventsDashboard extends Component {
         reported_at: firstEvent.reported_at,
         category: firstEvent.category,
         sub_categories: orderedRouterEvents.map(e => e.sub_category),
-        fct: firstEvent.frame_down || firstEvent.frame_up,
+        fct: firstEvent.frame_down !== null ? firstEvent.frame_down : firstEvent.frame_up,
         payload_size: firstEventData.payload_size,
         port: firstEventData.port,
         devaddr: firstEventData.devaddr,
