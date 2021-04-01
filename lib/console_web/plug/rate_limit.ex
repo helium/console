@@ -6,7 +6,7 @@ defmodule ConsoleWeb.Plug.RateLimit do
   def call(conn, [action, limit]) do
     ip_address = conn |> get_req_header("cf-connecting-ip") |> List.first()
 
-    if Mix.env == :test do
+    if Application.get_env(:console, :env) == :test do
       conn
     else
       case Hammer.check_rate("#{action}:#{ip_address}", 60_000, limit) do

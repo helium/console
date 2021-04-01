@@ -12,9 +12,9 @@ defmodule Console.Application do
       # Start the Ecto repository
       supervisor(Console.Repo, []),
       # Start the endpoint when the application starts
+      worker(ConsoleWeb.Monitor, [%{}]),
       supervisor(ConsoleWeb.Endpoint, []),
       supervisor(Absinthe.Subscription, [ConsoleWeb.Endpoint]),
-      worker(ConsoleWeb.Monitor, [%{}]),
       # Start your own worker by calling: Console.Worker.start_link(arg1, arg2, arg3)
       # worker(Console.Worker, [arg1, arg2, arg3]),
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
