@@ -476,6 +476,7 @@ class DeviceShow extends Component {
         />
 
         <Sidebar
+          backgroundColor={debugSidebarBackgroundColor}
           show={showDebugSidebar}
           toggle={this.handleToggleDebug}
           sidebarIcon={<BugOutlined />}
@@ -499,6 +500,7 @@ class DeviceShow extends Component {
                 iconPosition='middle'
                 message='Send a manual downlink using an HTTP integration'
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
+                backgroundColor={debugSidebarBackgroundColor}
               >
                 <Downlink
                   src="DeviceShow"

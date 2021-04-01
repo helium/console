@@ -231,6 +231,7 @@ class LabelShow extends Component {
         />
 
         <Sidebar
+          backgroundColor={debugSidebarBackgroundColor}
           show={this.state.showDebugSidebar}
           toggle={this.handleToggleDebug}
           sidebarIcon={<BugOutlined />}
@@ -248,6 +249,7 @@ class LabelShow extends Component {
           {
             label &&
             <Sidebar
+              backgroundColor={debugSidebarBackgroundColor}
               show={this.state.showDownlinkSidebar}
               toggle={this.handleToggleDownlink}
               sidebarIcon={<img src={DownlinkImage}/>}
