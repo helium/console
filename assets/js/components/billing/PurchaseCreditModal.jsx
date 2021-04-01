@@ -108,7 +108,7 @@ class PurchaseCreditModal extends Component {
     }
 
     if(prevProps.open && !this.props.open) {
-      this.card.unmount()
+      this.card && this.card.unmount()
     }
   }
 
