@@ -21,7 +21,7 @@ defmodule ConsoleWeb.DeviceController do
   def create(conn, %{"device" => device_params, "label" => label}) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
-    device_params = 
+    device_params =
       Map.merge(device_params, %{
         "organization_id" => current_organization.id
       })
@@ -92,6 +92,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
