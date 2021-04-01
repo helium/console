@@ -314,7 +314,7 @@ class DeviceIndexTable extends Component {
               }
             })}
             rowClassName="clickable-row"
-            style={{ minWidth: 800, overflowX: 'scroll' }}
+            style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
             <Pagination
