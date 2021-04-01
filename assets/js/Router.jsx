@@ -21,8 +21,6 @@ import ChannelShow from './components/channels/ChannelShow';
 import ChannelNew from './components/channels/ChannelNew';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
-import LabelIndex from './components/labels/LabelIndex';
-import LabelShow from './components/labels/LabelShow';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';

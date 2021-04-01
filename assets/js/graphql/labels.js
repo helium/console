@@ -39,21 +39,6 @@ export const LABEL_SHOW = gql`
   ${LABEL_FRAGMENT}
 `
 
-export const PAGINATED_LABELS = gql`
-  query PaginatedLabelsQuery ($page: Int, $pageSize: Int) {
-    labels(page: $page, pageSize: $pageSize) {
-      entries {
-        ...LabelFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
-      pageNumber
-    }
-  }
-  ${LABEL_FRAGMENT}
-`
-
 // For LabelAddDeviceModal
 export const ALL_LABELS_DEVICES = gql`
   query LabelsDevicesQuery {

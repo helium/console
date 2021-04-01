@@ -24,7 +24,6 @@ defmodule ConsoleWeb.LabelController do
       })
 
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
-      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
 
       conn
@@ -59,7 +58,6 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
 
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
-      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
 
       conn
@@ -73,7 +71,6 @@ defmodule ConsoleWeb.LabelController do
     label = Labels.get_label!(List.first(labels))
 
     with {:ok, _} <- Labels.delete_labels(labels, current_organization.id) do
-      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
 
       conn
@@ -146,7 +143,7 @@ defmodule ConsoleWeb.LabelController do
       ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
-      
+
       conn
       |> put_resp_header("message", "Device(s) successfully removed from label")
       |> send_resp(:no_content, "")
@@ -187,7 +184,6 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
 
     with {:ok, labels} <- Labels.delete_all_devices_from_labels(labels, current_organization) do
-      ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
 
       assoc_labels = labels |> Labels.multi_fetch_assoc([:devices])
@@ -225,25 +221,6 @@ defmodule ConsoleWeb.LabelController do
     |> send_resp(:no_content, "")
   end
 
-  def swap_label(conn, %{ "label_id" => label_id, "destination_label_id" => destination_label_id }) do
-    current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(current_organization, label_id) |> Labels.fetch_assoc([:devices])
-    destination_label = Labels.get_label!(current_organization, destination_label_id)
-    device_ids = label.devices |> Enum.map(fn d -> d.id end)
-
-    with {:ok, _, _} <- Labels.add_devices_to_label(device_ids, destination_label.id, current_organization),
-      {_, nil} <- Labels.delete_devices_from_label(device_ids, label_id, current_organization) do
-        ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{current_organization.id}:label_list_update", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label.id}:update_label_devices", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
-
-        conn
-        |> put_resp_header("message", "Devices have been successfully swapped to new label")
-        |> send_resp(:no_content, "")
-    end
-  end
-
   defp create_label_and_apply_to_devices(devices, label_name, organization, user, conn) do
     current_organization = conn.assigns.current_organization
     cond do
@@ -265,7 +242,6 @@ defmodule ConsoleWeb.LabelController do
           |> Repo.transaction()
 
         with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
-          ConsoleWeb.Endpoint.broadcast("graphql:labels_index_table", "graphql:labels_index_table:#{conn.assigns.current_organization.id}:label_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})

@@ -34,10 +34,6 @@ class NavDrawer extends Component {
           <NavLink to={"/functions"} activeClassName="is-active" className="menu-link">Functions</NavLink>
           {history.location.pathname.indexOf('/functions') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
-        <div style={{ position: 'relative' }}>
-          <NavLink to={"/labels"} activeClassName="is-active" className="menu-link">Labels</NavLink>
-          {history.location.pathname.indexOf('/labels') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
-        </div>
         <div style={{ marginBottom: 30, position: 'relative' }}>
           <NavLink to={"/integrations"} activeClassName="is-active" className="menu-link">Integrations</NavLink>
           {history.location.pathname.indexOf('/integrations') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
