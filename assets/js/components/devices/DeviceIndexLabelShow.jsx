@@ -25,26 +25,26 @@ class DeviceIndexLabelShow extends Component {
   }
 
   componentDidMount() {
-    // const labelId = this.props.match.params.id
-    // const { socket } = this.props
-    //
-    // this.channel = socket.channel("graphql:label_show", {})
-    // this.channel.join()
-    // this.channel.on(`graphql:label_show:${labelId}:label_update`, (message) => {
-    //   this.props.labelShowQuery.refetch()
-    // })
+    const labelId = this.props.id
+    const { socket } = this.props
+
+    this.channel = socket.channel("graphql:label_show", {})
+    this.channel.join()
+    this.channel.on(`graphql:label_show:${labelId}:label_update`, (message) => {
+      this.props.labelShowQuery.refetch()
+    })
   }
 
   componentWillUnmount() {
-    // this.channel.leave()
+    this.channel.leave()
   }
 
   componentDidUpdate(prevProps) {
-    // if (prevProps.match.params.id !== this.props.match.params.id) {
-    //   this.channel.on(`graphql:label_show:${this.props.match.params.id}:label_update`, (message) => {
-    //     this.props.labelShowQuery.refetch()
-    //   })
-    // }
+    if (prevProps.id !== this.props.id) {
+      this.channel.on(`graphql:label_show:${this.props.id}:label_update`, (message) => {
+        this.props.labelShowQuery.refetch()
+      })
+    }
   }
 
   openUpdateLabelModal = () => {
@@ -84,19 +84,19 @@ class DeviceIndexLabelShow extends Component {
   }
 
   handleUpdateLabel = (name, color) => {
-    const labelId = this.props.match.params.id
+    const labelId = this.props.id
     const attrs = name ? { name, color } : { color }
     this.props.updateLabel(labelId, attrs)
   }
 
   handleUpdateLabelMultiBuy = multiBuyValue => {
-    const labelId = this.props.match.params.id
+    const labelId = this.props.id
     const attrs = { multi_buy: multiBuyValue }
     this.props.updateLabel(labelId, attrs)
   }
 
   handleUpdateAdrSetting = adrValue => {
-    const labelId = this.props.match.params.id
+    const labelId = this.props.id
     const attrs = { adr_allowed: adrValue }
     this.props.updateLabel(labelId, attrs)
   }
