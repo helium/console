@@ -2,16 +2,14 @@ import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 
-export const createLabel = (label, redirect) => {
+export const createLabel = (label) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(label)
 
     rest.post('/api/labels', {
         label: labelParams
       })
-      .then(response => {
-        if (redirect) dispatch(push(`/labels/${response.data.id}`))
-      })
+      .then(response => {})
   }
 }
 
@@ -102,34 +100,6 @@ export const removeAllLabelsFromDevices = (devices) => {
       rest.post(`/api/devices_labels/delete`).then(response => {})
     }
 
-  }
-}
-
-export const removeAllDevicesFromLabels = (labels) => {
-  return (dispatch) => {
-    rest.post(`/api/devices_labels/delete`, {
-      labels: labels.map(l => l.id),
-    })
-    .then(response => {})
-  }
-}
-
-export const toggleLabelDebug = (label_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/debug`, {
-      label: label_id
-    })
-    .then(response => {})
-  }
-}
-
-export const swapLabel = (label_id, destination_label_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/swap_label`, {
-      label_id,
-      destination_label_id,
-    })
-    .then(response => {})
   }
 }
 

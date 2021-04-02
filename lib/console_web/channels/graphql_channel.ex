@@ -45,7 +45,7 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
-  def join("graphql:labels_index_table", _message, socket) do
+  def join("graphql:device_index_labels_bar", _message, socket) do
     {:ok, socket}
   end
 

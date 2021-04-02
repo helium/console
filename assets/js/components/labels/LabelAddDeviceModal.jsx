@@ -155,4 +155,4 @@ class LabelAddDeviceModal extends Component {
   }
 }
 
-export default withGql(LabelAddDeviceModal, ALL_LABELS_DEVICES, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allResourcesQuery' }))
+export default withGql(LabelAddDeviceModal, ALL_LABELS_DEVICES, props => ({ fetchPolicy: 'network-only', variables: {}, name: 'allResourcesQuery' }))

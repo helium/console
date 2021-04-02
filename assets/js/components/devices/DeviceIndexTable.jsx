@@ -49,6 +49,8 @@ class DeviceIndexTable extends Component {
     if (columnsToShow) {
       this.setState({ columnsToShow: JSON.parse(columnsToShow) })
     }
+
+    this.props.handleChangePage(1) // this refetches the table when switching back from label show
   }
 
   handleSelectOption = (value) => {
@@ -132,10 +134,6 @@ class DeviceIndexTable extends Component {
                       key={l.name}
                       text={l.name}
                       color={l.color}
-                      onClick={e => {
-                        e.stopPropagation();
-                        history.push(`/labels/${l.id}`)}
-                      }
                     />
                   }
                 >
@@ -148,10 +146,6 @@ class DeviceIndexTable extends Component {
                       e.preventDefault()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      history.push(`/labels/${l.id}`)}
-                    }
                   />
                 </UserCan>
               )) : <Text type="danger">None</Text>
@@ -314,7 +308,7 @@ class DeviceIndexTable extends Component {
               }
             })}
             rowClassName="clickable-row"
-            style={{ minWidth: 800, overflowX: 'scroll' }}
+            style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
             <Pagination
