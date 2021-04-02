@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import NavPointTriangle from './NavPointTriangle'
 import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { ALL_LABELS } from '../../graphql/labels'
@@ -6,21 +7,24 @@ import { Typography } from 'antd';
 const { Text } = Typography
 import GroupsIcon from '../../../img/label-node-icon.svg'
 
-const Node = ({ name, device_count, selectLabel, id }) => (
+const Node = ({ name, device_count, selectLabel, id, currentPage }) => (
   <div style={{
     background: '#2C79EE',
     padding: "4px 24px 4px 8px",
     borderRadius: 5,
     height: 50,
-    overflow: 'hidden',
     marginRight: 12,
-    cursor: "pointer"
+    cursor: "pointer",
+    position: 'relative'
   }} onClick={() => selectLabel("Label+" + id)}>
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
       <img src={GroupsIcon} style={{ height: 11, marginRight: 4 }} />
       <Text style={{ display: 'block', fontSize: 14, color: '#ffffff', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
     </div>
     <Text style={{ display: 'block', fontSize: 12, color: '#ffffff', whiteSpace: 'nowrap' }}>{device_count || 0} Devices</Text>
+    {
+      currentPage === "Label+" + id && <NavPointTriangle />
+    }
   </div>
 )
 
@@ -50,7 +54,7 @@ class DeviceIndexLabelsBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {allLabels.map(l => (
-          <Node key={l.id} name={l.name} device_count={l.device_count} id={l.id} selectLabel={this.props.selectLabel} />
+          <Node key={l.id} name={l.name} device_count={l.device_count} id={l.id} selectLabel={this.props.selectLabel} currentPage={this.props.currentPage}/>
         ))}
       </div>
     )

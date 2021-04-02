@@ -23,6 +23,10 @@ body {
   line-height: 34px;
 }
 
+.ant-table-cell {
+  white-space: nowrap;
+}
+
 .ant-input,
 .ant-select {
   font-size: 16px;

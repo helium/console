@@ -169,7 +169,7 @@ class LabelShowTable extends Component {
     const { loading, error, devices_by_label } = this.props.paginatedDevicesQuery
     const { devicesSelected, label } = this.props;
 
-    if (loading) return <SkeletonLayout />;
+    if (loading) return <div style={{ padding: 40 }}><SkeletonLayout /></div>;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
