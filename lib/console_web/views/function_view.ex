@@ -18,6 +18,7 @@ defmodule ConsoleWeb.FunctionView do
       format: function.format,
       body: function.body,
       active: function.active,
+      updated_at: function.updated_at
     }
   end
 end

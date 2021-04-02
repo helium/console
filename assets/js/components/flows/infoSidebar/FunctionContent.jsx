@@ -1,23 +1,21 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import withGql from '../../graphql/withGql'
-import DashboardLayout from '../common/DashboardLayout'
-import UserCan from '../common/UserCan'
-import FunctionValidator from './FunctionValidator'
-import DeleteFunctionModal from './DeleteFunctionModal'
-import { FUNCTION_SHOW } from '../../graphql/functions'
-import { deleteFunction, updateFunction } from '../../actions/function'
-import analyticsLogger from '../../util/analyticsLogger'
-import { Typography, Card, Button, Input, Select } from 'antd';
-import { PauseOutlined, DeleteOutlined, SaveOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { FunctionShowSkeleton } from './FunctionShowSkeleton';
-const { Text } = Typography
-const { Option } = Select
-import FunctionDetailsCard from './FunctionDetailsCard';
+import withGql from '../../../graphql/withGql'
+import { PauseOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Typography } from 'antd';
+const { Text } = Typography;
+import UserCan from '../../common/UserCan'
+import FunctionDetailsCard from '../../functions/FunctionDetailsCard';
+import { FUNCTION_SHOW } from '../../../graphql/functions'
+import { deleteFunction, updateFunction } from '../../../actions/function';
+import analyticsLogger from '../../../util/analyticsLogger'
+import FunctionValidator from '../../functions/FunctionValidator';
+import DeleteFunctionModal from '../../functions/DeleteFunctionModal';
+import moment from 'moment'
+import { Link } from 'react-router-dom';
 
-class FunctionShow extends Component {
+class FunctionContent extends Component {
   state = {
     name: "",
     type: undefined,
@@ -28,8 +26,8 @@ class FunctionShow extends Component {
   }
 
   componentDidMount() {
-    const functionId = this.props.match.params.id
-    analyticsLogger.logEvent("ACTION_NAV_FUNCTION_SHOW", {"id": functionId})
+    const functionId = this.props.id
+    analyticsLogger.logEvent("ACTION_FUNCTION_INFO_SIDEBAR", {"id": functionId})
 
     const { socket } = this.props
 
@@ -57,7 +55,7 @@ class FunctionShow extends Component {
 
   handleSubmit = () => {
     const {name, type, format, body} = this.state
-    const functionId = this.props.match.params.id
+    const functionId = this.props.id
     const fxn = this.props.functionShowQuery.function
 
     const newAttrs = {}
@@ -91,29 +89,22 @@ class FunctionShow extends Component {
 
   render() {
     const {name, type, format, body, codeUpdated, showDeleteFunctionModal } = this.state
-    const { loading, error } = this.props.functionShowQuery
-    const fxn = this.props.functionShowQuery.function
+    const { loading, error } = this.props.functionShowQuery;
+    const fxn = this.props.functionShowQuery.function;
 
-    if (loading) return <FunctionShowSkeleton user={this.props.user}/>
+    if (loading) return null; // TODO skeleton
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
-    )
+    );
 
     return (
-      <DashboardLayout
-        user={this.props.user}
-        title={`${fxn.name}`}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/functions"><Text style={{ color: "#8C8C8C" }}>Functions&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;{fxn.name}</Text>
-          </div>
-        }
-        extra={
-          <UserCan>
+      <React.Fragment>
+        <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{fxn.name}</Text>
+        <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(fxn.updated_at).local().format('l LT')}</Text>
+        <UserCan>
+          <div style={{ marginTop: 20, marginBottom: 20 }}>
             <Button
-              size="large"
-              style={{ borderRadius: 4 }}
+              style={{ borderRadius: 4, marginRight: 5 }}
               type="default"
               icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
               onClick={() => {
@@ -121,10 +112,21 @@ class FunctionShow extends Component {
                 analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
               }}
             >
-              {fxn.active ? "Pause" : "Start"} Function
+              {fxn.active ? "Pause" : "Start"}
             </Button>
+            <Link to={`/functions/${this.props.id}`}>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                icon={<EditOutlined />}
+                onClick={e => {
+                  // e.stopPropagation()
+                  // redirect to show page
+                }}
+              >
+                Edit
+              </Button>
+            </Link>
             <Button
-              size="large"
               style={{ borderRadius: 4 }}
               type="danger"
               icon={<DeleteOutlined />}
@@ -133,24 +135,24 @@ class FunctionShow extends Component {
                 this.openDeleteFunctionModal()
               }}
             >
-              Delete Function
+              Delete
             </Button>
-          </UserCan>
-        }
-      >
-        <FunctionDetailsCard 
-          fxn={fxn}
-          name={name}
-          type={type}
-          format={format}
-          body={body}
-          handleSelectFunctionType={this.handleSelectFunctionType}
-          handleInputUpdate={this.handleInputUpdate}
-          handleSelectFormat={this.handleSelectFormat}
-          clearInputs={this.clearInputs}
-          handleSubmit={this.handleSubmit}
-          horizontal={true}
-        />
+          </div>
+          <FunctionDetailsCard
+            fxn={fxn}
+            name={name}
+            type={type}
+            format={format}
+            body={body}
+            handleSelectFunctionType={this.handleSelectFunctionType}
+            handleInputUpdate={this.handleInputUpdate}
+            handleSelectFormat={this.handleSelectFormat}
+            clearInputs={this.clearInputs}
+            handleSubmit={this.handleSubmit}
+          />
+        </UserCan>
+
+        {/* TODO fix the function validator being squished into the sidebar */}
         {
           (format === 'custom' || (fxn.format === 'custom' && !format)) && (
             <FunctionValidator
@@ -167,8 +169,8 @@ class FunctionShow extends Component {
           functionToDelete={fxn}
           redirect
         />
-      </DashboardLayout>
-    )
+      </React.Fragment>
+    );
   }
 }
 
@@ -183,5 +185,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(FunctionShow, FUNCTION_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.match.params.id }, name: 'functionShowQuery' }))
+  withGql(FunctionContent, FUNCTION_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.id }, name: 'functionShowQuery' }))
 )

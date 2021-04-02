@@ -90,6 +90,7 @@ defmodule ConsoleWeb.Schema do
     field :credentials, type: :credentials
     field :payload_template, :string
     field :time_first_uplink, :naive_datetime
+    field :updated_at, :naive_datetime
   end
 
   paginated object :membership do
@@ -154,6 +155,7 @@ defmodule ConsoleWeb.Schema do
     field :type, :string
     field :format, :string
     field :active, :boolean
+    field :updated_at, :naive_datetime
   end
 
   object :event do

@@ -12,7 +12,8 @@ import DebugNode from './nodes/DebugNode'
 import DeviceNode from './nodes/DeviceNode'
 import Sidebar from '../common/Sidebar';
 import { InfoOutlined } from '@ant-design/icons';
-import NodeInfo from './NodeInfo';
+import NodeInfo from './infoSidebar/NodeInfo';
+import analyticsLogger from '../../util/analyticsLogger'
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -26,7 +27,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
   const [showInfoSidebar, setShowInfoSidebar] = useState(false);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
@@ -116,6 +117,16 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
     setChangesState(true)
   }
 
+  const handleToggleSidebar = () => {
+    if (!showInfoSidebar) {
+      analyticsLogger.logEvent("ACTION_OPEN_NODE_INFO_SIDEBAR", { "id": selectedNodeId })
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_NODE_INFO_SIDEBAR", { "id": selectedNodeId })
+    }
+
+    setShowInfoSidebar(!showInfoSidebar);
+  }
+
   return (
     <Fragment>
       <ReactFlowProvider>
@@ -132,7 +143,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
             onSelectionChange={elements => {
               if (elements && elements.length === 1 && elements[0].type !== 'default') {
                 setShowInfoSidebar(true);
-                setSelectedNode(elements[0].id);
+                setSelectedNodeId(elements[0].id);
                 console.log(elements);
               }
             }}
@@ -154,8 +165,13 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
         backgroundColor='white'
         show={showInfoSidebar}
         message='Information'
+        width={500}
+        toggle={handleToggleSidebar}
       >
-        <NodeInfo />
+        <NodeInfo 
+          id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
+          type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
+        />
       </Sidebar>
     </Fragment>
   );

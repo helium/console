@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { debugSidebarBackgroundColor } from '../../util/colors'
-import { Typography, Icon, Tooltip } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
+import { Typography, Tooltip, Button } from 'antd';
 const { Text } = Typography
 
 class Sidebar extends Component {
@@ -14,6 +14,7 @@ class Sidebar extends Component {
   }
 
   handleToggle = () => {
+    console.log("HERE!!!!!!!!!!!!!!")
     const { toggle, disabled } = this.props;
     if (!disabled) {
       toggle();
@@ -21,7 +22,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage, message, backgroundColor } = this.props;
+    const { show, width, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage, message, backgroundColor } = this.props;
     let topPercentage;
     switch (iconPosition) {
       case 'top':
@@ -39,7 +40,7 @@ class Sidebar extends Component {
           background: backgroundColor,
           position: 'absolute',
           top: 55,
-          width: show ? 650 : 0,
+          width: show ? width : 0,
           height: 'calc(100vh - 55px)',
           right: 0,
           zIndex: show ? 10 : 1,
@@ -76,6 +77,15 @@ class Sidebar extends Component {
               </Text>
             </div>
           </Tooltip>
+        }
+        {
+          !this.props.sidebarIcon && show && (
+            <Button 
+              style={{ border: 'none', top: '35px', left: '35px' }} 
+              onClick={this.handleToggle} 
+              icon={<CloseOutlined style={{ fontSize: 30, color: '#D2DDE8' }} />}
+            />
+          )
         }
         {
           show && this.props.children

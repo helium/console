@@ -483,6 +483,7 @@ class DeviceShow extends Component {
           iconBackground={debugSidebarBackgroundColor}
           iconPosition='top'
           message='Access Debug mode to view device packet transfer'
+          width={650}
         >
           <Debug
             deviceId={this.props.match.params.id}
@@ -501,6 +502,7 @@ class DeviceShow extends Component {
                 message='Send a manual downlink using an HTTP integration'
                 disabledMessage='Please attach a label with an HTTP integration to use Downlink'
                 backgroundColor={debugSidebarBackgroundColor}
+                width={650}
               >
                 <Downlink
                   src="DeviceShow"
