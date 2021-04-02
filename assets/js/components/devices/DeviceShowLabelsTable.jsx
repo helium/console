@@ -57,7 +57,7 @@ class DeviceShowLabelsTable extends Component {
         dataIndex: 'name',
         render: (text, record) => (
           <React.Fragment>
-            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
+            <Link to="#">{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} />
           </React.Fragment>
         )
       },
@@ -112,9 +112,6 @@ class DeviceShowLabelsTable extends Component {
         }
       >
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/labels/${record.id}`)
-          })}
           columns={columns}
           dataSource={labels_by_device.entries}
           rowKey={record => record.id}

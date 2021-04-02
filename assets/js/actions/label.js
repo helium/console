@@ -103,34 +103,6 @@ export const removeAllLabelsFromDevices = (devices) => {
   }
 }
 
-export const removeAllDevicesFromLabels = (labels) => {
-  return (dispatch) => {
-    rest.post(`/api/devices_labels/delete`, {
-      labels: labels.map(l => l.id),
-    })
-    .then(response => {})
-  }
-}
-
-export const toggleLabelDebug = (label_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/debug`, {
-      label: label_id
-    })
-    .then(response => {})
-  }
-}
-
-export const swapLabel = (label_id, destination_label_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/swap_label`, {
-      label_id,
-      destination_label_id,
-    })
-    .then(response => {})
-  }
-}
-
 export const updateLabelNotificationSettings = (settings) => {
   return (dispatch) => {
     rest.post(`/api/labels/update_notification_settings`, {

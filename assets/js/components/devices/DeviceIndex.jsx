@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
+import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
 import NewDeviceModal from './NewDeviceModal';
 import ImportDevicesModal from './import/ImportDevicesModal';
@@ -195,6 +196,10 @@ class DeviceIndex extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order);
   }
 
+  handleSelectLabel = label => {
+    this.setState({ showPage: label })
+  }
+
   render() {
     const {
       showCreateDeviceModal,
@@ -310,7 +315,7 @@ class DeviceIndex extends Component {
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
 
-            <DeviceIndexLabelsBar />
+            <DeviceIndexLabelsBar selectLabel={this.handleSelectLabel} />
           </div>
           {
             showPage === "home" && (
@@ -386,6 +391,11 @@ class DeviceIndex extends Component {
                 order={this.state.order}
                 userEmail={this.props.user.email}
               />
+            )
+          }
+          {
+            showPage.indexOf("Label") !== -1 && (
+              <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
             )
           }
         </div>

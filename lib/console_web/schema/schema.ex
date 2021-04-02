@@ -231,13 +231,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.events/2
     end
 
-    @desc "Get paginated labels"
-    paginated field :labels, :paginated_labels do
-      arg :column, non_null(:string)
-      arg :order, non_null(:string)
-      resolve(&Console.Labels.LabelResolver.paginate/2)
-    end
-
     @desc "Get paginated labels for specified device ID"
     paginated field :labels_by_device, :paginated_labels do
       arg :device_id, non_null(:id)

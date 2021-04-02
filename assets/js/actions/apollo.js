@@ -37,9 +37,6 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
           case "ChannelShowQuery":
             store.dispatch(replace("/integrations"))
             break
-          case "LabelShowQuery":
-            store.dispatch(replace("/labels"))
-            break
           case "FunctionShowQuery":
             store.dispatch(replace("/functions"))
             break

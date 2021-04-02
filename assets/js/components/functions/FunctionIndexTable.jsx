@@ -120,7 +120,7 @@ class FunctionIndexTable extends Component {
 
               <div className="explainer">
                 <h2>What are Functions?</h2>
-                <p>Functions are operators that can be applied to <a href="/labels">Labels</a> and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
+                <p>Functions are operators that can be applied to Labels and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
                 <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank">here</a>.</p>
               </div>
 
