@@ -132,10 +132,6 @@ class DeviceIndexTable extends Component {
                       key={l.name}
                       text={l.name}
                       color={l.color}
-                      onClick={e => {
-                        e.stopPropagation();
-                        history.push(`/labels/${l.id}`)}
-                      }
                     />
                   }
                 >
@@ -148,10 +144,6 @@ class DeviceIndexTable extends Component {
                       e.preventDefault()
                       this.props.openDevicesRemoveLabelModal([l], record)
                     }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      history.push(`/labels/${l.id}`)}
-                    }
                   />
                 </UserCan>
               )) : <Text type="danger">None</Text>
