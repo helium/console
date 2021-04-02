@@ -37,6 +37,11 @@ class LabelShowTable extends Component {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
+
+    if (!this.props.paginatedDevicesQuery.loading) {
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
+    }
   }
 
   componentWillUnmount() {

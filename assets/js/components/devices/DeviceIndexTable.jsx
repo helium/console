@@ -49,6 +49,8 @@ class DeviceIndexTable extends Component {
     if (columnsToShow) {
       this.setState({ columnsToShow: JSON.parse(columnsToShow) })
     }
+
+    this.props.handleChangePage(1) // this refetches the table when switching back from label show
   }
 
   handleSelectOption = (value) => {
