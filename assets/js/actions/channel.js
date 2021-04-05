@@ -39,27 +39,17 @@ export const deleteChannel = (id) => {
   }
 }
 
-export const sendDownlinkMessage = (payload, port, confirmed, position, devices, channels) => {
-  return (dispatch) => {
-    channels.forEach((channel) => {
-      if (devices.length > 0) {
-        Promise.all(
-          devices.map(device => {
-            return rest.post(
-              `/api/v1/down/${channel.id}/${channel.downlink_token}/${device}`,
-              { payload_raw: payload, port, confirmed, position, from: 'console_downlink_queue' }
-            );
-          })
-        ).then(()=> {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
-        ).catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)});
-      } else {
-        rest.post(
-          `/api/v1/down/${channel.id}/${channel.downlink_token}/`,
-          { payload_raw: payload, port, confirmed, position, from: 'console_downlink_queue' }
-        ).then(() => {displayInfo(`Successfully queued downlink for integration ${channel.name}`)}
-        ).catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)});
+export const sendDownlinkMessage = (payload, port, confirmed, position, device, channels) => {
+  return async (dispatch) => {
+    if (device) {
+      for (let i = 0; i < channels.length; i++) {
+        await postToDownlinkController(payload, port, confirmed, position, device, channels[i])
       }
-    });
+    } else {
+      for (let i = 0; i < channels.length; i++) {
+        await postToDownlinkController(payload, port, confirmed, position, "", channels[i])
+      }
+    }
   }
 }
 
@@ -72,4 +62,13 @@ const sanitizeParams = (params) => {
     params.credentials.headers = headers
   }
   return params
+}
+
+const postToDownlinkController = (payload, port, confirmed, position, device, channel) => {
+  return rest.post(
+    `/api/v1/down/${channel.id}/${channel.downlink_token}/${device}`,
+    { payload_raw: payload, port, confirmed, position, from: 'console_downlink_queue' }
+  )
+  .then(() => {displayInfo(`Successfully queued downlink for integration ${channel.name}`)})
+  .catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)})
 }
