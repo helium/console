@@ -14,7 +14,6 @@ class Sidebar extends Component {
   }
 
   handleToggle = () => {
-    console.log("HERE!!!!!!!!!!!!!!")
     const { toggle, disabled } = this.props;
     if (!disabled) {
       toggle();
