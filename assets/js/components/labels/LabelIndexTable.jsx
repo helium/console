@@ -20,12 +20,16 @@ import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
 const { Option } = Select
+const DEFAULT_COLUMN = "name"
+const DEFAULT_ORDER = "asc"
 
 class LabelIndexTable extends Component {
   state = {
     page: 1,
     pageSize: 10,
     selectedRows: [],
+    column: DEFAULT_COLUMN,
+    order: DEFAULT_ORDER,
   }
 
   componentDidMount() {
@@ -34,7 +38,7 @@ class LabelIndexTable extends Component {
     this.channel = socket.channel("graphql:labels_index_table", {})
     this.channel.join()
     this.channel.on(`graphql:labels_index_table:${currentOrganizationId}:label_list_update`, (message) => {
-      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize, this.state.column, this.state.order)
     })
   }
 
@@ -52,13 +56,13 @@ class LabelIndexTable extends Component {
   handleChangePage = (page) => {
     this.setState({ page })
 
-    const { pageSize } = this.state
-    this.refetchPaginatedEntries(page, pageSize)
+    const { pageSize, column, order } = this.state
+    this.refetchPaginatedEntries(page, pageSize, column, order)
   }
 
-  refetchPaginatedEntries = (page, pageSize) => {
+  refetchPaginatedEntries = (page, pageSize, column, order) => {
     const { refetch } = this.props.paginatedLabelsQuery
-    refetch({ page, pageSize })
+    refetch({ page, pageSize, column, order })
   }
 
   handleDeleteLabelClick = (label) => {
@@ -66,11 +70,29 @@ class LabelIndexTable extends Component {
     else this.props.openDeleteLabelModal([label])
   }
 
+  handleSort = (pagi, filter, sorter) => {
+    const { page, pageSize, order, column } = this.state
+
+    if (column == sorter.field && order == 'asc') {
+      this.setState({ order: 'desc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'desc')
+    }
+    if (column == sorter.field && order == 'desc') {
+      this.setState({ order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, column, 'asc')
+    }
+    if (column != sorter.field) {
+      this.setState({ column: sorter.field, order: 'asc' })
+      this.refetchPaginatedEntries(page, pageSize, sorter.field, 'asc')
+    }
+  }
+
   render() {
     const columns = [
       {
         title: 'Labels',
         dataIndex: 'name',
+        sorter: true,
         render: (text, record) => (
           <React.Fragment>
             <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
@@ -112,10 +134,12 @@ class LabelIndexTable extends Component {
       },
       {
         title: 'Creator',
+        sorter: true,
         dataIndex: 'creator',
       },
       {
         title: 'Date Activated',
+        sorter: true,
         dataIndex: 'inserted_at',
         render: data => moment.utc(data).local().format('lll')
       },
@@ -257,6 +281,7 @@ class LabelIndexTable extends Component {
               pagination={false}
               rowSelection={rowSelection}
               rowClassName="clickable-row"
+              onChange={this.handleSort}
               style={{ minWidth: 800 }}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
@@ -290,5 +315,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedLabelsQuery' }))
+  withGql(LabelIndexTable, PAGINATED_LABELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedLabelsQuery' }))
 )

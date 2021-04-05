@@ -50,8 +50,8 @@ export const LABEL_SHOW = gql`
 `
 
 export const PAGINATED_LABELS = gql`
-  query PaginatedLabelsQuery ($page: Int, $pageSize: Int) {
-    labels(page: $page, pageSize: $pageSize) {
+  query PaginatedLabelsQuery ($page: Int, $pageSize: Int, $column: String, $order: String) {
+    labels(page: $page, pageSize: $pageSize, column: $column, order: $order) {
       entries {
         ...LabelFragment
       },
