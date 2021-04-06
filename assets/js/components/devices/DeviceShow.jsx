@@ -17,7 +17,7 @@ import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
-import { updateDevice, toggleDeviceDebug } from '../../actions/device'
+import { updateDevice } from '../../actions/device'
 import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { DEVICE_SHOW } from '../../graphql/devices'
@@ -132,6 +132,11 @@ class DeviceShow extends Component {
     this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
   }
 
+  handleToggleDebug = () => {
+    const { showDebugSidebar } = this.state
+    this.setState({ showDebugSidebar: !showDebugSidebar })
+  }
+
   toggleNameInput = () => {
     const { showNameInput } = this.state
     this.setState({ showNameInput: !showNameInput })
@@ -174,18 +179,6 @@ class DeviceShow extends Component {
 
   closeDeleteDeviceModal = () => {
     this.setState({ showDeleteDeviceModal: false })
-  }
-
-  handleToggleDebug = () => {
-    const { showDebugSidebar } = this.state
-
-    if (!showDebugSidebar) {
-      this.props.toggleDeviceDebug(this.props.match.params.id)
-      analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", { "id": this.props.match.params.id })
-    } else {
-      analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", { "id": this.props.match.params.id })
-    }
-    this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
   toggleDeviceActive = (active) => {
@@ -490,7 +483,6 @@ class DeviceShow extends Component {
         >
           <Debug
             deviceId={this.props.match.params.id}
-            refresh={() => this.props.toggleDeviceDebug(this.props.match.params.id)}
           />
         </Sidebar>
 
@@ -543,7 +535,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, toggleDeviceDebug, sendClearDownlinkQueue, sendDownlinkMessage, fetchDownlinkQueue }, dispatch)
+  return bindActionCreators({ updateDevice, sendClearDownlinkQueue, sendDownlinkMessage, fetchDownlinkQueue }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -17,7 +17,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { updateLabel, addDevicesToLabels, toggleLabelDebug, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
+import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
 import { sendDownlinkMessage } from '../../actions/channel'
 import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
 import { LABEL_SHOW } from '../../graphql/labels'
@@ -126,22 +126,15 @@ class LabelShow extends Component {
     this.props.updateLabelNotificationWebhooks(webhooks);
   }
 
-  handleToggleDebug = () => {
-    const { showDebugSidebar } = this.state
-
-    if (!showDebugSidebar) {
-      this.props.toggleLabelDebug(this.props.match.params.id)
-      analyticsLogger.logEvent("ACTION_OPEN_LABEL_DEBUG", { "id": this.props.match.params.id })
-    } else {
-      analyticsLogger.logEvent("ACTION_CLOSE_LABEL_DEBUG", { "id": this.props.match.params.id })
-    }
-    this.setState({ showDebugSidebar: !showDebugSidebar })
-  }
-
   handleToggleDownlink = () => {
     const { showDownlinkSidebar } = this.state;
 
     this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
+  }
+
+  handleToggleDebug = () => {
+    const { showDebugSidebar } = this.state
+    this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
   render() {
@@ -247,7 +240,6 @@ class LabelShow extends Component {
         >
           <Debug
             labelId={this.props.match.params.id}
-            refresh={() => this.props.toggleLabelDebug(this.props.match.params.id)}
           />
         </Sidebar>
 
@@ -301,7 +293,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, toggleLabelDebug, sendDownlinkMessage, sendClearDownlinkQueue, fetchDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, sendDownlinkMessage, sendClearDownlinkQueue, fetchDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

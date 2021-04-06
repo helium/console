@@ -63,15 +63,6 @@ export const deleteDevices = (devices, label_id = "none") => {
   }
 }
 
-export const toggleDeviceDebug = (device_id) => {
-  return (dispatch) => {
-    rest.post(`/api/devices/debug`, {
-      device: device_id
-    })
-    .then(response => {})
-  }
-}
-
 export const setDevicesActive = (device_ids, active, label_id = "none") => {
   return (dispatch) => {
     rest.post(`/api/devices/set_active`, {

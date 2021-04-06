@@ -337,20 +337,6 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  def debug(conn, %{"label" => label_id}) do
-    current_organization = conn.assigns.current_organization
-    label = Labels.get_label!(current_organization, label_id)
-    label = Labels.fetch_assoc(label, [:devices])
-    devices = label.devices |> Enum.map(fn d -> d.id end)
-
-    if length(devices) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:debug:devices", %{ "devices" => devices })
-    end
-
-    conn
-    |> send_resp(:no_content, "")
-  end
-
   def swap_label(conn, %{ "label_id" => label_id, "destination_label_id" => destination_label_id }) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(current_organization, label_id) |> Labels.fetch_assoc([:devices])
