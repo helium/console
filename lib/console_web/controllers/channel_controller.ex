@@ -1,13 +1,8 @@
 defmodule ConsoleWeb.ChannelController do
   use ConsoleWeb, :controller
 
-  alias Console.Repo
   alias Console.Channels
-  alias Console.Labels
-  alias Console.Labels.Label
   alias Console.Channels.Channel
-  alias Console.Functions
-  alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -15,7 +10,6 @@ defmodule ConsoleWeb.ChannelController do
 
   def create(conn, %{"channel" => channel_params}) do
     current_organization = conn.assigns.current_organization
-    user = conn.assigns.current_user
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do

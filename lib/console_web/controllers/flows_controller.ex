@@ -4,7 +4,6 @@ defmodule ConsoleWeb.FlowsController do
 
   alias Console.Repo
   alias Console.Organizations
-  alias Console.Flows
   alias Console.Flows.Flow
 
   plug ConsoleWeb.Plug.AuthorizeAction

@@ -4,8 +4,6 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Repo
   alias Console.Labels
   alias Console.Devices
-  alias Console.Channels
-  alias Console.Functions
   alias Console.Labels.Label
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -72,7 +70,7 @@ defmodule ConsoleWeb.LabelController do
     if length(devices) == 0 and length(labels) == 0 do
       {:error, :bad_request, "Please select a device or label"}
     else
-      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
+      with {:ok, count, _devices_labels} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
         msg =
           case count do
             0 -> "All selected devices are already in label"

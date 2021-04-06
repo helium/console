@@ -6,7 +6,6 @@ defmodule ConsoleWeb.DeviceController do
   alias Console.Labels
   alias Console.Devices.Device
   alias Console.Labels
-  alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -83,7 +82,6 @@ defmodule ConsoleWeb.DeviceController do
 
   def delete(conn, %{"devices" => devices, "label_id" => label_id}) do
     current_organization = conn.assigns.current_organization
-    list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
     with {:ok, _} <- Devices.delete_devices(devices, current_organization.id) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
@@ -102,8 +100,7 @@ defmodule ConsoleWeb.DeviceController do
   def delete(conn, _params) do
     organization_id = conn.assigns.current_organization.id
 
-    device = organization_id
-    |> Devices.delete_all_devices_for_org()
+    Devices.delete_all_devices_for_org(organization_id)
     ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{organization_id}:device_list_update", %{})
 
     conn
