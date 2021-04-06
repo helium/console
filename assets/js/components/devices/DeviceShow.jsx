@@ -518,7 +518,7 @@ class DeviceShow extends Component {
                       port,
                       confirm,
                       position,
-                      [device.id],
+                      device.id,
                       channels
                     )
                   }}
