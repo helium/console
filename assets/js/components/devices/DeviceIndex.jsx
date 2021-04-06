@@ -4,6 +4,7 @@ import DeviceIndexTable from './DeviceIndexTable';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
+import NavPointTriangle from './NavPointTriangle';
 import NewDeviceModal from './NewDeviceModal';
 import ImportDevicesModal from './import/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
@@ -272,10 +273,12 @@ class DeviceIndex extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 12,
+                position: 'relative'
               }}
               onClick={() => this.setState({ showPage: 'home'})}
             >
               <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
+              {showPage === 'home' && <NavPointTriangle />}
             </div>
 
             <div style={{
@@ -288,13 +291,15 @@ class DeviceIndex extends Component {
               minWidth: 110,
               display: 'flex',
               flexDirection: 'column',
-              marginRight: 12
+              marginRight: 12,
+              position: 'relative'
             }} onClick={() => this.setState({ showPage: 'allDevices'})}>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
                 <Text style={{ color: '#3C6B95', fontWeight: 500, whiteSpace: 'nowrap' }}>All Devices</Text>
               </div>
               <Text style={{ color: '#3C6B95', fontSize: 10, whiteSpace: 'nowrap' }}>{devices && devices.totalEntries} Devices</Text>
+              {showPage === 'allDevices' && <NavPointTriangle />}
             </div>
 
             <div style={{
@@ -310,12 +315,13 @@ class DeviceIndex extends Component {
               justifyContent: 'center',
               alignItems: 'center',
               marginRight: 12,
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              position: 'relative'
             }} onClick={this.openCreateLabelModal}>
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
 
-            <DeviceIndexLabelsBar selectLabel={this.handleSelectLabel} />
+            <DeviceIndexLabelsBar selectLabel={this.handleSelectLabel} currentPage={showPage}/>
           </div>
           {
             showPage === "home" && (

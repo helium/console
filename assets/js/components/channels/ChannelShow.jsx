@@ -158,6 +158,7 @@ class ChannelShow extends Component {
           </div>
         }
       >
+        <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
         <Card title="Integration Details">
           <UserCan alternate={<Text strong>{channel.name}</Text>}>
             <Input
@@ -260,6 +261,7 @@ class ChannelShow extends Component {
             functions={[]}
           />
         )}
+        </div>
       </DashboardLayout>
     )
   }

@@ -23,6 +23,10 @@ body {
   line-height: 34px;
 }
 
+.ant-table-cell {
+  white-space: nowrap;
+}
+
 .ant-input,
 .ant-select {
   font-size: 16px;
@@ -378,6 +382,28 @@ tr.ant-table-expanded-row:hover {
 .menu-link:hover,
 .menu-link.is-active {
   color: #048aff;
+}
+
+.menu-link-function {
+  color: #242528;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.menu-link-function:hover,
+.menu-link-function.is-active {
+  color: #9E59F6;
+}
+
+.menu-link-channel {
+  color: #242528;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.menu-link-channel:hover,
+.menu-link-channel.is-active {
+  color: #12CB9E;
 }
 
 .add-menu-selection {

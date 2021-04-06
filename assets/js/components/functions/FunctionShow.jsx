@@ -138,7 +138,7 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <FunctionDetailsCard 
+        <FunctionDetailsCard
           fxn={fxn}
           name={name}
           type={type}

@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Menu, Typography } from 'antd'
 import Caret from '../../../img/menu-caret.svg'
+import CaretF from '../../../img/menu-caret-function.svg'
+import CaretC from '../../../img/menu-caret-channel.svg'
 const { Text } = Typography
 const SHOW_LABELS_KEY = 'showLabels';
 
@@ -31,12 +33,12 @@ class NavDrawer extends Component {
           {history.location.pathname.indexOf('/devices') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/functions"} activeClassName="is-active" className="menu-link">Functions</NavLink>
-          {history.location.pathname.indexOf('/functions') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink to={"/functions"} activeClassName="is-active" className="menu-link-function">Functions</NavLink>
+          {history.location.pathname.indexOf('/functions') !== -1 && <img src={CaretF} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ marginBottom: 30, position: 'relative' }}>
-          <NavLink to={"/integrations"} activeClassName="is-active" className="menu-link">Integrations</NavLink>
-          {history.location.pathname.indexOf('/integrations') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink to={"/integrations"} activeClassName="is-active" className="menu-link-channel">Integrations</NavLink>
+          {history.location.pathname.indexOf('/integrations') !== -1 && <img src={CaretC} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div><Text style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>ADMIN</Text></div>
         <div style={{ position: 'relative' }}>

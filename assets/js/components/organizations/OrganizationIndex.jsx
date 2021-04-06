@@ -58,12 +58,12 @@ class OrganizationIndex extends Component {
           </UserCan>
         }
       >
-        <Card title="Organizations" bodyStyle={{padding:'0', paddingTop: 1, overflowX: 'scroll' }}>
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <OrganizationsTable
             openDeleteOrganizationModal={this.openDeleteOrganizationModal}
             user={this.props.user}
           />
-        </Card>
+        </div>
 
         <NewOrganizationModal
           open={showOrganizationModal}
