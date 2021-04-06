@@ -38,7 +38,6 @@ defmodule ConsoleWeb.Router do
     post "/users", InvitationController, :accept, as: "user_join_from_invitation"
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
-    post "/devices/debug", DeviceController, :debug
     post "/devices/set_active", DeviceController, :set_active
     get "/devices/:device_id/events", DeviceController, :get_events
     get "/ttn/devices", DeviceController, :get_ttn
@@ -46,7 +45,6 @@ defmodule ConsoleWeb.Router do
     post "/generic/devices/import", DeviceController, :import_generic
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
-    post "/labels/debug", LabelController, :debug
     post "/labels/swap_label", LabelController, :swap_label
     post "/labels/update_notification_settings", LabelNotificationSettingsController, :update
     post "/labels/update_notification_webhooks", LabelNotificationWebhooksController, :update

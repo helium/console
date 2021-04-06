@@ -380,16 +380,6 @@ defmodule ConsoleWeb.DeviceController do
     end)
   end
 
-  def debug(conn, %{"device" => device_id}) do
-    current_organization = conn.assigns.current_organization
-    _device = Devices.get_device!(current_organization, device_id)
-
-    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:debug:devices", %{ "devices" => [device_id] })
-
-    conn
-    |> send_resp(:no_content, "")
-  end
-
   defp broadcast_router_update_devices(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
