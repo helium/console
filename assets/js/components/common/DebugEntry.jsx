@@ -45,6 +45,37 @@ class DebugEntry extends Component {
     }
   }
 
+  renderHeader = (category, subCategory) => {
+    // to display category and subcategory in natural language
+    const subCategoryMap = {
+      uplink_integration_req: 'Integration request',
+      uplink_integration_res: 'Integration response',
+      uplink_dropped_late: 'Late',
+      uplink_dropped_device_inactive: 'Device inactive',
+      uplink_dropped_not_enough_dc: 'Insufficient DC',
+      uplink_unconfirmed: 'Unconfirmed',
+      uplink_confirmed: 'Confirmed',
+      downlink_dropped_misc: 'Miscellaneous',
+      downlink_dropped_payload_size_exceeded: 'Payload size exceeded',
+      downlink_unconfirmed: 'Unconfirmed',
+      downlink_confirmed: 'Confirmed',
+      downlink_queued: 'Queued',
+      downlink_ack: 'Acknowledge',
+      misc_integration_error: 'Integration error',
+    }
+    return (
+      <Text style={{ color: '#1890ff', fontSize: '18px', fontWeight: 'bold' }}>
+        {category[0].toUpperCase() + category.substring(1).replace('_', ' ')}
+        {subCategory !== "undefined" && `: 
+          ${subCategoryMap[subCategory] ? 
+            subCategoryMap[subCategory] : 
+            subCategory[0].toUpperCase() + subCategory.substring(1).replace('_', ' ')
+          }
+        `}
+      </Text>
+    );
+  }
+
   render() {
     const { event } = this.props
     const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo } = this.state
@@ -74,7 +105,7 @@ class DebugEntry extends Component {
     return (
       <div key={event.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
         <React.Fragment>
-          <Text style={{ color: '#1890ff', fontSize: '18px', fontWeight: 'bold' }}>{event.category}{event.sub_category !== "undefined" && `: ${event.sub_category}`}</Text>
+          {this.renderHeader(event.category, event.sub_category)}
         </React.Fragment>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>

@@ -216,7 +216,6 @@ class DeviceShow extends Component {
 
     if (loading) return <DeviceShowSkeleton user={this.props.user} />;
     if (error) return <Text>Data failed to load, please reload the page and try again</Text>
-
     const smallerText = device.total_packets > 10000
 
     return(
@@ -519,7 +518,7 @@ class DeviceShow extends Component {
                       port,
                       confirm,
                       position,
-                      [device.id],
+                      device.id,
                       channels
                     )
                   }}

@@ -8,6 +8,7 @@ defmodule Console.ApiKeys.ApiKeyResolver do
   def all(_, %{context: %{current_organization: current_organization, current_user: _current_user, current_membership: current_membership}}) do
     case current_membership.role do
       "read" -> {:ok, []}
+      "manager" -> {:ok, []}
       _ ->
         keys =
           ApiKey
@@ -30,7 +31,7 @@ defmodule Console.ApiKeys.ApiKeyResolver do
             }
           )
           |> Repo.all()
-          
+
         {:ok, keys}
     end
   end

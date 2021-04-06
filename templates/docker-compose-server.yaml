@@ -4,7 +4,7 @@ services:
     build:
       context: .
       args:
-        socket_check_origin: "//*.example.com"
+        socket_check_origin: "https//console.example.com"
     image: helium/console:latest
     container_name: helium_console
     restart: always

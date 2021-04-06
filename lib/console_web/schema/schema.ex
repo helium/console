@@ -243,6 +243,8 @@ defmodule ConsoleWeb.Schema do
 
     @desc "Get paginated labels"
     paginated field :labels, :paginated_labels do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
       resolve(&Console.Labels.LabelResolver.paginate/2)
     end
 

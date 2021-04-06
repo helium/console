@@ -2,4 +2,4 @@ Hi there,
 
 You have added a new API Key <%= @key_name %> on Helium Console. Please activate it by visiting the link below.
 
-Visit <%= accept_api_key_url(ConsoleWeb.Endpoint, :accept, @token) %> to activate your key
+Visit <%= @url <> "/api_keys/accept/" <> @token %> to activate your key

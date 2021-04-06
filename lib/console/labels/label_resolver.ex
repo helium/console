@@ -4,10 +4,13 @@ defmodule Console.Labels.LabelResolver do
   alias Console.Labels.DevicesLabels
   import Ecto.Query
 
-  def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
+  def paginate(%{page: page, page_size: page_size, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
+    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
       |> preload([:devices, :channels, :function, :label_notification_settings, :label_notification_webhooks])
+      |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, labels}

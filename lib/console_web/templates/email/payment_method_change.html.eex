@@ -144,7 +144,7 @@
 	    .button-td-primary:hover,
 	    .button-a-primary:hover {
 	      filter: brightness(0.9);
-	    } 
+	    }
 
 	    /* Media Queries */
 	    @media screen and (max-width: 480px) {
@@ -224,7 +224,7 @@
 	            <tr>
 	                <td align="center" style="padding: 55px 0;">
                   <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/logo.png") %>"></a>
+                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
                   </td>
 	            </tr>
 		        <!-- Email Header : END -->
@@ -242,7 +242,7 @@
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
                                     <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Data Credits Alert</h1>
                                     <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 15px;">
-                                      Hi there, 
+                                      Hi there,
                                       <br />
                                       <br />
                                       An administrator of <%= @organization_name %> made changes to your payment methods on Helium Console.
@@ -253,7 +253,7 @@
                             </tr>
                             <tr>
                               <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 14px; color: #333333;line-height: 22px;">
-                                You can view additional information regarding data credits <a target="_blank" href="<%= static_url(ConsoleWeb.Endpoint, "/datacredits") %>">here</a>.
+                                You can view additional information regarding data credits <a target="_blank" href="<%= @url <> "/datacredits" %>">here</a>.
                               </td>
                             </tr>
                             <!-- Spacing -->
@@ -280,7 +280,7 @@
                 <tr>
                     <td align="center"  style="padding: 20px 0;">
                   <!-- Helium Console Logo -->
-                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= static_url(ConsoleWeb.Endpoint, "/images/greysignoff.png") %>"></a>
+                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
                   </td>
                 </tr>
             </table>
