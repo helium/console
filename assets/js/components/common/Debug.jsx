@@ -115,7 +115,6 @@ class Debug extends Component {
             shape="circle"
             onClick={() => {
               this.setState({ data: [] })
-              this.props.refresh()
             }}
           />
         </div>
