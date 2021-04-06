@@ -83,10 +83,10 @@ class Downlink extends Component {
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Input placeholder="Enter Payload" onChange={(e) => this.setState({ payload: e.target.value })} style={{ marginRight: 16 }}/>
 
-                <Tooltip title='Select bytes to send a Base64 encoded payload, or fields to have the payload Base64 encoded for you.' placement='left'>
+                <Tooltip title='Select Base64 to send a Base64 encoded payload, or Text to have the payload Base64 encoded for you.' placement='left'>
                   <Group value={payloadType} onChange={(el) => this.setState({ payloadType: el.target.value})} buttonStyle="solid" style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Button value="bytes">Bytes</Button>
-                    <Button value="fields">Fields</Button>
+                    <Button value="bytes">Base64</Button>
+                    <Button value="fields">Text</Button>
                   </Group>
                 </Tooltip>
               </div>
