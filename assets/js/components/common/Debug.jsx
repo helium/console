@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DebugEntry from './DebugEntry'
 import { debugSidebarHeaderColor, debugTextColor } from '../../util/colors'
-import { Typography, Popover, Button } from 'antd';
+import { Typography, Popover, Button, Checkbox } from 'antd';
 import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Loader from '../../../img/debug-loader.png'
@@ -14,7 +14,8 @@ class Debug extends Component {
   }
 
   state = {
-    data: []
+    data: [],
+    expandAll: false
   }
 
   componentDidMount() {
@@ -76,8 +77,12 @@ class Debug extends Component {
     this.setState({ data: [event].concat(data) })
   }
 
+  toggleExpandAll = () => {
+    this.setState({ expandAll: !this.state.expandAll })
+  }
+
   render = () => {
-    const { data } = this.state
+    const { data, expandAll } = this.state
 
     if (data.length === 0) return (
       <div style={{ height: 'calc(100% - 55px)', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -97,6 +102,13 @@ class Debug extends Component {
             <InfoCircleOutlined style={{ color: 'white', fontSize: 18, marginLeft: 10 }}/>
           </Popover>
           <div style={{ flexGrow: 1 }}/>
+          <Checkbox
+            onChange={() => this.toggleExpandAll()}
+            checked={expandAll}
+            style={{ marginRight: 20, color: 'white' }}
+          >
+            Expand All
+          </Checkbox>
           <Button
             type="primary"
             icon={<ReloadOutlined />}
@@ -111,7 +123,7 @@ class Debug extends Component {
           {
             data.map(d => (
               <span key={d.id}>
-                <DebugEntry event={d} clearSingleEntry={this.clearSingleEntry}/>
+                <DebugEntry event={d} clearSingleEntry={this.clearSingleEntry} expandAll={expandAll} />
               </span>
             ))
           }

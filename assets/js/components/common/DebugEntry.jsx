@@ -22,6 +22,29 @@ class DebugEntry extends Component {
     this.setState({ [view]: !this.state[view] })
   }
 
+  componentDidUpdate(prevProps) {
+    const { expandAll } = this.props;
+
+    if (prevProps.expandAll && !expandAll) {
+      this.setState({
+        showDeviceInfo: false,
+        showHotspotInfo: false,
+        showIntegrationInfo: false,
+        showReq: false,
+        showRes: false
+      });
+    } else if (!prevProps.expandAll && expandAll) {
+      this.setState({
+        showEventInfo: true,
+        showDeviceInfo: true,
+        showHotspotInfo: true,
+        showIntegrationInfo: true,
+        showReq: true,
+        showRes: true
+      });
+    }
+  }
+
   renderHeader = (category, subCategory) => {
     // to display category and subcategory in natural language
     const subCategoryMap = {
