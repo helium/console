@@ -5,8 +5,6 @@ export const DEVICE_FRAGMENT = gql`
     id,
     name,
     dev_eui,
-    app_eui,
-    app_key,
     frame_up,
     frame_down,
     last_connected,
@@ -21,6 +19,8 @@ export const DEVICE_SHOW = gql`
   query DeviceShowQuery ($id: ID!) {
     device(id: $id) {
       ...DeviceFragment
+      app_eui
+      app_key
       labels {
         name,
         id,
