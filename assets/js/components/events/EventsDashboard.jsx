@@ -357,7 +357,7 @@ class EventsDashboard extends Component {
         title: 'Type',
         dataIndex: 'category',
         render: (data, row) => {
-          const integrationResponses = row.integrations && row.integrations.filter(i => i.subCategory === 'uplink_integration_res');
+          const integrationResponses = row.integrations ? row.integrations.filter(i => i.subCategory === 'uplink_integration_res') : [];
           const integrationError = integrationResponses.findIndex(i => i.status === 'error') === -1 ? false : true;
 
           const externalIntegrations = row.integrations ? row.integrations.filter(i => i.name !== 'Internal Integration') : [];
