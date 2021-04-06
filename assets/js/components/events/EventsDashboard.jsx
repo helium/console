@@ -359,7 +359,10 @@ class EventsDashboard extends Component {
         render: (data, row) => {
           const integrationResponses = row.integrations && row.integrations.filter(i => i.subCategory === 'uplink_integration_res');
           const integrationError = integrationResponses.findIndex(i => i.status === 'error') === -1 ? false : true;
-          const integrationMissing = row.integrations.findIndex(i => i.id === 'no_channel') === -1 ? false : true;
+
+          const externalIntegrations = row.integrations.filter(i => i.name !== 'Internal Integration');
+          const integrationMissing = externalIntegrations.findIndex(i => i.id === 'no_channel') === -1 ? false : true;
+          
           return <Text>{categoryTag(row.category, row.sub_categories)} {integrationError && integrationErrorTag()}{integrationMissing && integrationMissingTag()}</Text>;
         }
       },
