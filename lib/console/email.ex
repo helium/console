@@ -102,6 +102,7 @@ defmodule Console.Email do
     |> from("Helium <console@helium.com>")
     |> put_header("Reply-To", "console@helium.com")
     |> put_html_layout({ConsoleWeb.LayoutView, "email.html"})
+    |> assign(:url, System.get_env("SOCKET_CHECK_ORIGIN") || "http://localhost:4000")
   end
 
   defp current_time do
@@ -194,7 +195,7 @@ defmodule Console.Email do
     |> assign(:label_id, label_id)
     |> render(:integration_stops_working_notification_email)
   end
-  
+
   def device_stops_transmitting_notification_email(recipients, label_name, details, organization_name, label_id, has_hotspot_info) do
     base_email()
     |> to(recipients)
