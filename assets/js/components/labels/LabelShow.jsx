@@ -134,6 +134,11 @@ class LabelShow extends Component {
 
   handleToggleDebug = () => {
     const { showDebugSidebar } = this.state
+    if (!showDebugSidebar) {
+      analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", { "id": this.props.match.params.id })
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", { "id": this.props.match.params.id })
+    }
     this.setState({ showDebugSidebar: !showDebugSidebar })
   }
 
