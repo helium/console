@@ -1,7 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements, addEdge, getOutgoers } from 'react-flow-renderer';
-import findIndex from 'lodash/findIndex'
-import find from 'lodash/find'
 import omit from 'lodash/omit'
 import FlowsSidebar from './FlowsSidebar'
 import FlowsSettingsBar from './FlowsSettingsBar'
@@ -10,6 +8,9 @@ import FunctionNode from './nodes/FunctionNode'
 import ChannelNode from './nodes/ChannelNode'
 import DebugNode from './nodes/DebugNode'
 import DeviceNode from './nodes/DeviceNode'
+import Sidebar from '../common/Sidebar';
+import NodeInfo from './infoSidebar/NodeInfo';
+import analyticsLogger from '../../util/analyticsLogger'
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -22,6 +23,8 @@ const nodeTypes = {
 export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges, labels, functions, channels, devices }) => {
   const reactFlowWrapper = useRef(null)
   const [reactFlowInstance, setReactFlowInstance] = useState(null)
+  const [showInfoSidebar, setShowInfoSidebar] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
   const onLoad = (_reactFlowInstance) => setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
@@ -111,31 +114,62 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
     setChangesState(true)
   }
 
+  const handleToggleSidebar = () => {
+    if (!showInfoSidebar) {
+      analyticsLogger.logEvent("ACTION_OPEN_NODE_INFO_SIDEBAR", { "id": selectedNodeId })
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_NODE_INFO_SIDEBAR", { "id": selectedNodeId })
+    }
+
+    setShowInfoSidebar(!showInfoSidebar);
+  }
+
   return (
-    <ReactFlowProvider>
-      <div ref={reactFlowWrapper} style={{ position: 'relative', height: '100%', width: '100%' }}>
-        <ReactFlow
-          elements={Object.values(elementsMap)}
-          nodeTypes={nodeTypes}
-          onLoad={onLoad}
-          onElementsRemove={onElementsRemove}
-          onConnect={onElementsAdd}
-          onNodeDragStop={onElementDragStop}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
+    <Fragment>
+      <ReactFlowProvider>
+        <div ref={reactFlowWrapper} style={{ position: 'relative', height: '100%', width: '100%' }}>
+          <ReactFlow
+            elements={Object.values(elementsMap)}
+            nodeTypes={nodeTypes}
+            onLoad={onLoad}
+            onElementsRemove={onElementsRemove}
+            onConnect={onElementsAdd}
+            onNodeDragStop={onElementDragStop}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onSelectionChange={elements => {
+              if (elements && elements.length === 1 && elements[0].type !== 'default') {
+                setShowInfoSidebar(true);
+                setSelectedNodeId(elements[0].id);
+              }
+            }}
+            selectNodesOnDrag={false}
+          />
+          <FlowsSidebar
+            labels={labels}
+            functions={functions}
+            channels={channels}
+            devices={devices}
+          />
+          <FlowsSettingsBar
+            hasChanges={hasChanges}
+            resetElementsMap={resetElementsMap}
+            submitChanges={() => submitChanges(elementsMap)}
+          />
+        </div>
+      </ReactFlowProvider>
+      <Sidebar
+        backgroundColor='white'
+        show={showInfoSidebar}
+        message='Information'
+        width={500}
+        toggle={handleToggleSidebar}
+      >
+        <NodeInfo 
+          id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
+          type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
         />
-        <FlowsSidebar
-          labels={labels}
-          functions={functions}
-          channels={channels}
-          devices={devices}
-        />
-        <FlowsSettingsBar
-          hasChanges={hasChanges}
-          resetElementsMap={resetElementsMap}
-          submitChanges={() => submitChanges(elementsMap)}
-        />
-      </div>
-    </ReactFlowProvider>
+      </Sidebar>
+    </Fragment>
   );
 };

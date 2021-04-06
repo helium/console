@@ -8,6 +8,7 @@ export const FUNCTION_FRAGMENT = gql`
     type,
     format,
     active,
+    updated_at
   }
 `
 

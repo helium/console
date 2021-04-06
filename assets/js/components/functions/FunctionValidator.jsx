@@ -54,8 +54,7 @@ class FunctionValidator extends Component {
     return (
       <Row gutter={20} type="flex">
         <Col sm={14}>
-          <Card
- title={this.props.title} style={{ height: 560, overflow: 'hidden'}} bodyStyle={{ padding: 0 }}>
+          <Card title={this.props.title} style={{ height: 560, overflow: 'hidden'}} bodyStyle={{ padding: 0 }}>
             <div style={{ height: 503, overflowY: 'scroll' }}>
               <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
                 <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
@@ -128,7 +127,20 @@ class FunctionValidator extends Component {
             </Row>
             <div style={{ marginTop: 24 }}>
               <Text>Payload Output</Text>
-              <textarea id="validatorOutput" style={{ minHeight: 340, maxHeight: 340, marginTop: 5, width: '100%', padding: 10, paddingTop: 5, border: 'solid 1px #d9d9d9', borderRadius: 5 }} disabled />
+              <textarea 
+                id="validatorOutput" 
+                style={{ 
+                  minHeight: 340, 
+                  maxHeight: 340, 
+                  marginTop: 5, 
+                  width: '100%', 
+                  padding: 10, 
+                  paddingTop: 5, 
+                  border: 'solid 1px #d9d9d9', 
+                  borderRadius: 5 
+                }} 
+                disabled 
+              />
             </div>
           </Card>
         </Col>
