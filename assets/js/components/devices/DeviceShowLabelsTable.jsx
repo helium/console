@@ -68,7 +68,7 @@ class DeviceShowLabelsTable extends Component {
           return (
           <div>
             {
-              record.channels.map(c => (
+              record.channels.length > 0 ? record.channels.map(c => (
                 <a
                   key={c.id}
                   style={{ marginRight: 8 }}
@@ -81,7 +81,7 @@ class DeviceShowLabelsTable extends Component {
                 >
                   {c.name}
                 </a>
-              ))
+              )) : <Text type="danger">None</Text>
             }
           </div>
         )}
