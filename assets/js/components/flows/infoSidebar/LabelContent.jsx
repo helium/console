@@ -22,7 +22,7 @@ const { Option } = Select
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 
-class GroupContent extends Component {
+class LabelContent extends Component {
   state = {
     page: 1,
     pageSize: 10,
@@ -347,7 +347,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(
-    withGql(GroupContent, 
+    withGql(LabelContent, 
       PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, labelId: props.id, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' })),
       LABEL_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.id }, name: 'labelQuery' })
   )

@@ -5,7 +5,7 @@ import GroupNodeIcon from '../../../../img/filled-group-node-icon.svg';
 import FunctionContent from './FunctionContent';
 import ChannelContent from './ChannelContent';
 import DeviceContent from './DeviceContent';
-import GroupContent from './GroupContent';
+import LabelContent from './LabelContent';
 
 export default ({ id, type }) => {
   const renderTopIcon = () => {
@@ -32,7 +32,7 @@ export default ({ id, type }) => {
       case 'utility':
         return null;
       case 'label':
-        return <GroupContent id={id} type={type} />;
+        return <LabelContent id={id} type={type} />;
       case 'channel':
         return (<ChannelContent id={id} type={type} />);
     }
