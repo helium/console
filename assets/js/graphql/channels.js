@@ -15,7 +15,8 @@ export const CHANNEL_FRAGMENT = gql`
       uplink {
         topic
       }
-    }
+    },
+    updated_at
   }
 `
 
