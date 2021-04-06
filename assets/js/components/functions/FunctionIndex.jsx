@@ -31,7 +31,7 @@ class FunctionIndex extends Component {
 
     return (
       <DashboardLayout
-        title="Functions"
+        title="My Functions"
         user={this.props.user}
         extra={
           <UserCan>

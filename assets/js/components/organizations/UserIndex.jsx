@@ -86,21 +86,20 @@ class UserIndex extends Component {
           </UserCan>
         }
       >
-        <Card
-          title="Members"
-          bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflowX: 'scroll' }}
-        >
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Members</Text>
+          </div>
           <MembersTable
             openEditMembershipModal={this.openEditMembershipModal}
             openDeleteUserModal={this.openDeleteUserModal}
             user={user}
           />
-        </Card>
-
-        <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0, overflowX: 'scroll' }}>
-          <header style={{ ...styles.header, marginTop: 1 }} />
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Invitations</Text>
+          </div>
           <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} user={user} />
-        </Card>
+        </div>
 
         <NewUserModal
           open={this.state.newUserOpen}

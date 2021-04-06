@@ -34,7 +34,7 @@ class ChannelIndex extends Component {
   render() {
     const { showDeleteChannelModal, channel } = this.state
     return (
-      <DashboardLayout title="Integrations" user={this.props.user}>
+      <DashboardLayout title="My Integrations" user={this.props.user}>
       <div style={{ display: 'block' }}>
         <UserCan>
           <Card title="Add a Prebuilt Integration" className="integrationcard" bodyStyle={{ overflowX: 'scroll' }}>

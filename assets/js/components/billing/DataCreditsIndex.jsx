@@ -338,15 +338,17 @@ class DataCreditsIndex extends Component {
           </UserCan>
         }
       >
-        {
-          error && <Text>Data failed to load, please reload the page and try again</Text>
-        }
-        {
-          organization && organization.dc_balance_nonce == 0 && this.renderBlankState()
-        }
-        {
-          organization && organization.dc_balance_nonce != 0 && this.renderContent()
-        }
+        <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          {
+            error && <Text>Data failed to load, please reload the page and try again</Text>
+          }
+          {
+            organization && organization.dc_balance_nonce == 0 && this.renderBlankState()
+          }
+          {
+            organization && organization.dc_balance_nonce != 0 && this.renderContent()
+          }
+        </div>
 
         <DefaultPaymentModal
           open={showDefaultPaymentModal}
