@@ -20,7 +20,7 @@ export const createDevice = (params, label) => {
   return (dispatch) => {
     const deviceParams = sanitizeParams(params)
 
-    rest.post('/api/devices', {
+    return rest.post('/api/devices', {
         device: deviceParams,
         label: label,
       })

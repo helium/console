@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
+import DeviceNew from './DeviceNew';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
 import NavPointTriangle from '../common/NavPointTriangle';
-import NewDeviceModal from './NewDeviceModal';
 import ImportDevicesModal from './import/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
@@ -37,7 +37,6 @@ let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 class DeviceIndex extends Component {
   state = {
     showPage: 'allDevices',
-    showCreateDeviceModal: false,
     showDeleteDeviceModal: false,
     showImportDevicesModal: false,
     showDevicesAddLabelModal: false,
@@ -95,14 +94,6 @@ class DeviceIndex extends Component {
   componentWillUnmount() {
     this.channel.leave()
     this.importChannel.leave()
-  }
-
-  openCreateDeviceModal = () => {
-    this.setState({ showCreateDeviceModal: true })
-  }
-
-  closeCreateDeviceModal = () => {
-    this.setState({ showCreateDeviceModal: false })
   }
 
   openDevicesAddLabelModal = (devicesSelected) => {
@@ -194,7 +185,7 @@ class DeviceIndex extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order);
   }
 
-  handleSelectLabel = label => {
+  handleChangeView = label => {
     this.setState({ showPage: label })
   }
 
@@ -282,8 +273,9 @@ class DeviceIndex extends Component {
               marginRight: 12,
               whiteSpace: 'nowrap',
               position: 'relative'
-            }} onClick={() => {}}>
+            }} onClick={() => this.setState({ showPage: 'new'})}>
               <img src={PlusDeviceIcon} style={{ height: 20 }} />
+              {showPage === 'new' && <NavPointTriangle />}
             </div>
 
             <div style={{
@@ -305,7 +297,7 @@ class DeviceIndex extends Component {
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
 
-            <DeviceIndexLabelsBar selectLabel={this.handleSelectLabel} currentPage={showPage}/>
+            <DeviceIndexLabelsBar selectLabel={this.handleChangeView} currentPage={showPage}/>
           </div>
           {
             showPage === "home" && (
@@ -387,13 +379,14 @@ class DeviceIndex extends Component {
             )
           }
           {
+            showPage === 'new' && <DeviceNew handleChangeView={this.handleChangeView}/>
+          }
+          {
             showPage.indexOf("Label") !== -1 && (
               <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
             )
           }
         </div>
-
-        <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
 
         <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal} importComplete={importComplete}/>
 
