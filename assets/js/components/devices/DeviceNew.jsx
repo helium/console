@@ -8,7 +8,7 @@ import { ALL_LABELS } from '../../graphql/labels'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button, Typography, Input } from 'antd';
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { EyeOutlined, EyeInvisibleOutlined, SaveOutlined } from '@ant-design/icons';
 import LabelAppliedNew from '../common/LabelAppliedNew';
 const { Text } = Typography
 import find from 'lodash/find'
@@ -136,7 +136,7 @@ class DeviceNew extends Component {
         </Card>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <UserCan>
-            <Button key="submit" onClick={this.handleSubmit} style={{ margin: 0 }}>
+            <Button key="submit" icon={<SaveOutlined />} onClick={this.handleSubmit} style={{ margin: 0 }}>
               Save Device
             </Button>
           </UserCan>

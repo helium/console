@@ -376,7 +376,7 @@ class DeviceIndex extends Component {
             showPage === 'newLabel' && <LabelNew handleChangeView={this.handleChangeView}/>
           }
           {
-            showPage.indexOf("Label-") !== -1 && (
+            showPage.indexOf("Label+") !== -1 && (
               <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
             )
           }

@@ -6,6 +6,7 @@ import { grayForModalCaptions } from '../../util/colors'
 import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import { Card, Button, Typography, Input } from 'antd';
+import { SaveOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
 class LabelNew extends Component {
@@ -43,7 +44,7 @@ class LabelNew extends Component {
         </Card>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <UserCan>
-            <Button key="submit" onClick={this.handleSubmit} style={{ margin: 0 }}>
+            <Button key="submit" icon={<SaveOutlined />} onClick={this.handleSubmit} style={{ margin: 0 }}>
               Save Label
             </Button>
           </UserCan>
