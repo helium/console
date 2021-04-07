@@ -22,7 +22,7 @@ class Downlink extends Component {
 
   componentDidMount() {
     const { id, src, fetchDownlinkQueue, socket } = this.props
-    // fetchDownlinkQueue()
+    fetchDownlinkQueue()
     this.showRefreshTimer = setTimeout(() => this.setState({ showRefresh: true }), REFRESH_TIME_TO_WAIT)
 
     if (src === "DeviceShow") {
@@ -127,17 +127,14 @@ class Downlink extends Component {
             )
           }
         </div>
-        {
-          false && (
-            <div style={{marginRight: 20, marginLeft: 20, marginTop: 25, marginBottom: 20 }}>
-              <Text style={{ color: '#40A9FF', fontWeight: 500, fontSize: 18 }}>Downlink Queue: {this.state.queue.length}</Text>
-            </div>
-          )
-        }
+
+        <div style={{marginRight: 20, marginLeft: 20, marginTop: 25, marginBottom: 20 }}>
+          <Text style={{ color: '#40A9FF', fontWeight: 500, fontSize: 18 }}>Downlink Queue: {this.state.queue.length}</Text>
+        </div>
 
         <div style={{ height: "calc(100vh - 435px)", overflow: 'scroll' }}>
           {
-            false && this.state.queue.map((q, index) => (
+            this.state.queue.map((q, index) => (
               <Card style={{marginRight: 20, marginLeft: 20 }} key={"downlink" + index}>
                 <Row gutter={[16, 16]}>
                   <Col span={16}>
