@@ -200,12 +200,74 @@ class EventsDashboard extends Component {
       ];
     }
 
+    let macColumns = [{ title: 'MAC Command', dataIndex: 'command' }];
+
+    if (record.mac) {
+      let uniqueMacCommands = [...new Set(record.mac.map(m => m.command))];
+      uniqueMacCommands.forEach(command => {
+        switch (command) {
+          case 'link_adr_ans':
+            macColumns = [
+              ...macColumns,
+              { title: 'Power Ack', dataIndex: 'power_ack' },
+              { title: 'Data Rate Ack', dataIndex: 'data_rate_ack' },
+              { title: 'Channel Mask Ack', dataIndex: 'channel_mask_ack' }
+            ];
+            break;
+          case 'rx_param_setup_ans':
+            macColumns = [
+              ...macColumns,
+              { title: 'RX1 Offset Ack', dataIndex: 'rx1_offset_ack' },
+              { title: 'RX2 Data Rate Ack', dataIndex: 'rx2_data_rate_ack' },
+              { title: 'Channel Ack', dataIndex: 'channel_ack' }
+            ];
+            break;
+          case 'dev_status_ans':
+            macColumns = [
+              ...macColumns,
+              { title: 'Battery', dataIndex: 'battery' },
+              { title: 'Margin', dataIndex: 'margin' }
+            ];
+            break;
+          case 'new_channel_ans':
+            macColumns = [
+              ...macColumns,
+              { title: '', dataIndex: 'data_rate_ok' },
+              { title: '', dataIndex: 'channel_freq_ok' },
+            ];
+            break;
+          case 'di_channel_ans':
+            macColumns = [
+              ...macColumns,
+              { title: 'Uplink Freq Exists', dataIndex: 'uplink_freq_exists' },
+              { title: 'Channel Freq OK', dataIndex: 'channel_freq_ok' }
+            ];
+            break;
+          case 'device_time_req':
+          case 'rx_timing_setup_ans':
+          case 'tx_param_setup_ans':
+          case 'link_check_req':
+          case 'duty_cycle_ans':
+          default:
+            break;
+        }
+      })
+    }
+    console.log(record.mac)
+
     return (
       <Row gutter={10}>
         <Col span={22}>
           <Card  bodyStyle={{padding: 0}}>
             <Table columns={lorawanColumns} dataSource={[record]} pagination={false} rowKey={record => record.id}/>
           </Card>
+          {
+            record.mac && (
+              <Card  bodyStyle={{padding: 0}}>
+                <Table columns={macColumns} dataSource={record.mac} pagination={false} rowKey={record => record.id}/>
+              </Card>
+            )
+          }
           <Card  bodyStyle={{padding: 0}}>
             <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
           </Card>
@@ -324,6 +386,7 @@ class EventsDashboard extends Component {
         payload_size: firstEventData.payload_size,
         port: firstEventData.port,
         devaddr: firstEventData.devaddr,
+        mac: firstEventData.mac,
         hotspots: orderedRouterEvents.filter(
           event => this.isDataString(event.data) ? JSON.parse(event.data).hotspot : event.data.hotspot
         ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
