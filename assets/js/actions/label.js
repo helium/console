@@ -6,7 +6,7 @@ export const createLabel = (label) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(label)
 
-    rest.post('/api/labels', {
+    return rest.post('/api/labels', {
         label: labelParams
       })
       .then(response => {})

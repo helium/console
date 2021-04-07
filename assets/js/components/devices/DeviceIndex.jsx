@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
 import DeviceNew from './DeviceNew';
+import LabelNew from '../labels/LabelNew';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
@@ -11,7 +12,6 @@ import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
-import CreateLabelModal from '../labels/CreateLabelModal'
 import { PAGINATED_DEVICES, ALL_IMPORTS } from '../../graphql/devices';
 import withGql from '../../graphql/withGql'
 import get from 'lodash/get';
@@ -42,7 +42,6 @@ class DeviceIndex extends Component {
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
     showDeviceRemoveAllLabelsModal: false,
-    showCreateLabelModal: false,
     devicesSelected: null,
     labelsSelected: null,
     deviceToRemoveLabel: null,
@@ -151,14 +150,6 @@ class DeviceIndex extends Component {
     this.setState({ showDeleteDeviceModal: false })
   }
 
-  openCreateLabelModal = () => {
-    this.setState({ showCreateLabelModal: true })
-  }
-
-  closeCreateLabelModal = () => {
-    this.setState({ showCreateLabelModal: false })
-  }
-
   handleSortChange = (column, order) => {
     const { page, pageSize } = this.state
 
@@ -197,7 +188,6 @@ class DeviceIndex extends Component {
       showDevicesAddLabelModal,
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
-      showCreateLabelModal,
       labelsSelected,
       deviceToRemoveLabel,
       importComplete,
@@ -293,8 +283,9 @@ class DeviceIndex extends Component {
               marginRight: 12,
               whiteSpace: 'nowrap',
               position: 'relative'
-            }} onClick={this.openCreateLabelModal}>
+            }} onClick={() => this.setState({ showPage: 'newLabel' })}>
               <img src={PlusIcon} style={{ height: 20 }} />
+              {showPage === 'newLabel' && <NavPointTriangle />}
             </div>
 
             <DeviceIndexLabelsBar selectLabel={this.handleChangeView} currentPage={showPage}/>
@@ -382,7 +373,10 @@ class DeviceIndex extends Component {
             showPage === 'new' && <DeviceNew handleChangeView={this.handleChangeView}/>
           }
           {
-            showPage.indexOf("Label") !== -1 && (
+            showPage === 'newLabel' && <LabelNew handleChangeView={this.handleChangeView}/>
+          }
+          {
+            showPage.indexOf("Label-") !== -1 && (
               <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
             )
           }
@@ -419,11 +413,6 @@ class DeviceIndex extends Component {
           allDevicesSelected={this.state.allDevicesSelected}
           devicesToDelete={this.state.devicesSelected}
           totalDevices={devices && devices.totalEntries}
-        />
-
-        <CreateLabelModal
-          open={showCreateLabelModal}
-          onClose={this.closeCreateLabelModal}
         />
       </DashboardLayout>
     )
