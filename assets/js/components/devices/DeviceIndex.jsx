@@ -4,7 +4,7 @@ import DeviceIndexTable from './DeviceIndexTable';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
-import NavPointTriangle from './NavPointTriangle';
+import NavPointTriangle from '../common/NavPointTriangle';
 import NewDeviceModal from './NewDeviceModal';
 import ImportDevicesModal from './import/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
@@ -20,11 +20,12 @@ import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { IndexSkeleton } from '../common/IndexSkeleton';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 import DevicesImg from '../../../img/devices.svg'
 import HomeIcon from '../../../img/devices/device-index-home-icon.svg'
 import AllIcon from '../../../img/devices/device-index-all-icon.svg'
 import PlusIcon from '../../../img/devices/device-index-plus-icon.svg'
+import PlusDeviceIcon from '../../../img/devices/device-index-plus-device-icon.svg'
 const { Text } = Typography
 import _JSXStyle from "styled-jsx/style"
 
@@ -219,43 +220,11 @@ class DeviceIndex extends Component {
     const { devices, loading, error } = this.props.devicesQuery;
     const { device_imports } = this.props.importsQuery;
 
-    const createDeviceButton = () => (
-      <UserCan>
-        <Button
-          size="large"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            this.setState({ showPage: 'allDevices' })
-            this.openImportDevicesModal()
-          }}
-          disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
-          style={{marginRight: showPage !== 'home' ? 0 : 10, borderRadius: 4 }}
-        >
-          Import Devices
-        </Button>
-        <Button
-          size="large"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            this.setState({ showPage: 'allDevices' })
-            this.openCreateDeviceModal()
-          }}
-          style={{ borderRadius: 4 }}
-        >
-          Add Device
-        </Button>
-      </UserCan>
-    );
-
     const title = "My Devices";
     return(
       <DashboardLayout
         title={title}
         user={this.props.user}
-        extra={
-          showPage === "allDevices" && createDeviceButton()
-        }
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
@@ -317,6 +286,25 @@ class DeviceIndex extends Component {
               marginRight: 12,
               whiteSpace: 'nowrap',
               position: 'relative'
+            }} onClick={() => {}}>
+              <img src={PlusDeviceIcon} style={{ height: 20 }} />
+            </div>
+
+            <div style={{
+              backgroundColor: '#ACC6DD',
+              borderRadius: 6,
+              padding: 10,
+              cursor: 'pointer',
+              height: 50,
+              width: 50,
+              minWidth: 50,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 12,
+              whiteSpace: 'nowrap',
+              position: 'relative'
             }} onClick={this.openCreateLabelModal}>
               <img src={PlusIcon} style={{ height: 20 }} />
             </div>
@@ -329,7 +317,6 @@ class DeviceIndex extends Component {
               <div className="message">
                 <img src={DevicesImg} />
                 <h1>Devices</h1>
-                { createDeviceButton() }
                 <div className="explainer">
                   <p>Devices can be added to the Helium network.</p>
                   <p>More details about adding devices can be found <a href="https://docs.helium.com/use-the-network/console/adding-devices" target="_blank"> here.</a></p>
@@ -379,6 +366,9 @@ class DeviceIndex extends Component {
             showPage === 'allDevices' && error && <Text>Data failed to load, please reload the page and try again</Text>
           }
           {
+            showPage === 'allDevices' && loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+          }
+          {
             showPage === 'allDevices' && !loading &&  (
               <DeviceIndexTable
                 openDeleteDeviceModal={this.openDeleteDeviceModal}
@@ -386,7 +376,6 @@ class DeviceIndex extends Component {
                 openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
                 openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
                 onChangePageSize={this.handleChangePageSize}
-                noDevicesButton={createDeviceButton}
                 handleChangePage={this.handleChangePage}
                 devices={devices}
                 history={this.props.history}
@@ -396,6 +385,8 @@ class DeviceIndex extends Component {
                 column={this.state.column}
                 order={this.state.order}
                 userEmail={this.props.user.email}
+                deviceImports={device_imports}
+                openImportDevicesModal={this.openImportDevicesModal}
               />
             )
           }

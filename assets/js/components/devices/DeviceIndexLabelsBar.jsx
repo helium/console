@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import NavPointTriangle from './NavPointTriangle'
+import NavPointTriangle from '../common/NavPointTriangle'
 import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { ALL_LABELS } from '../../graphql/labels'

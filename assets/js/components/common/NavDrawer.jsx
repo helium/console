@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Menu, Typography } from 'antd'
 import Caret from '../../../img/menu-caret.svg'
+import CaretD from '../../../img/menu-caret-device.svg'
 import CaretF from '../../../img/menu-caret-function.svg'
 import CaretC from '../../../img/menu-caret-channel.svg'
 const { Text } = Typography
@@ -29,8 +30,8 @@ class NavDrawer extends Component {
         </div>
         <div><Text style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>NODES</Text></div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/devices"} activeClassName="is-active" className="menu-link">Devices</NavLink>
-          {history.location.pathname.indexOf('/devices') !== -1 && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink to={"/devices"} activeClassName="is-active" className="menu-link-device">Devices</NavLink>
+          {history.location.pathname.indexOf('/devices') !== -1 && <img src={CaretD} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ position: 'relative' }}>
           <NavLink to={"/functions"} activeClassName="is-active" className="menu-link-function">Functions</NavLink>

@@ -10,7 +10,7 @@ import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { StatusIcon } from '../common/StatusIcon'
 const { Text } = Typography
 const { Option } = Select
@@ -224,7 +224,7 @@ class DeviceIndexTable extends Component {
       return this.state.columnsToShow[col.dataIndex]
     })
 
-    const { noDevicesButton, devices, onChangePageSize } = this.props;
+    const { devices, onChangePageSize, deviceImports } = this.props;
 
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
@@ -238,59 +238,60 @@ class DeviceIndexTable extends Component {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Devices</Text>
           <div>
-          <Popover
-            trigger="click"
-            placement="bottom"
-            content={
-              <div>
-                {
-                  Object.keys(this.state.columnsToShow).map(key => (
-                    <div key={key}>
-                      <Checkbox
-                        onChange={e => this.updateColumns(key, e.target.checked)}
-                        checked={this.state.columnsToShow[key]}
-                      >
-                        {columnKeyNameText[key]}
-                      </Checkbox>
-                    </div>
-                  ))
-                }
-              </div>
-            }
-          >
-            <Button style={{marginRight: 10}}>Edit Columns</Button>
-          </Popover>
-          <Select
-            value={`${devices.pageSize} results`}
-            onSelect={onChangePageSize}
-            style={{marginRight: 10}}
-          >
-            <Option value={10}>10</Option>
-            <Option value={25}>25</Option>
-            <Option value={100}>100</Option>
-          </Select>
-          <UserCan>
-            <Select
-              value="Quick Action"
-              style={{ width: 270, marginRight: 10 }}
-              onSelect={this.handleSelectOption}
+            <UserCan>
+              <Button
+                icon={<PlusOutlined />}
+                onClick={this.props.openImportDevicesModal}
+                disabled={!(deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing"))}
+                style={{marginRight: 10, borderRadius: 4 }}
+              >
+                Import Devices
+              </Button>
+            </UserCan>
+            <Popover
+              trigger="click"
+              placement="bottom"
+              content={
+                <div>
+                  {
+                    Object.keys(this.state.columnsToShow).map(key => (
+                      <div key={key}>
+                        <Checkbox
+                          onChange={e => this.updateColumns(key, e.target.checked)}
+                          checked={this.state.columnsToShow[key]}
+                        >
+                          {columnKeyNameText[key]}
+                        </Checkbox>
+                      </div>
+                    ))
+                  }
+                </div>
+              }
             >
-              <Option value="addLabel" disabled={selectedRows.length === 0}>Add Label to Selected Devices</Option>
-              <Option value="removeAllLabels" disabled={selectedRows.length === 0}>Remove All Labels From Selected Devices</Option>
-              {
-                selectedRows.find(r => r.active === false) && (
-                  <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
-                )
-              }
+              <Button style={{marginRight: 10}}>Edit Columns</Button>
+            </Popover>
+            <UserCan>
+              <Select
+                value="Quick Action"
+                style={{ width: 270, marginRight: 10 }}
+                onSelect={this.handleSelectOption}
+              >
+                <Option value="addLabel" disabled={selectedRows.length === 0}>Add Label to Selected Devices</Option>
+                <Option value="removeAllLabels" disabled={selectedRows.length === 0}>Remove All Labels From Selected Devices</Option>
+                {
+                  selectedRows.find(r => r.active === false) && (
+                    <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
+                  )
+                }
 
-              {
-                (selectedRows.length == 0 || !selectedRows.find(r => r.active === false)) && (
-                  <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
-                )
-              }
-              <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
-            </Select>
-          </UserCan>
+                {
+                  (selectedRows.length == 0 || !selectedRows.find(r => r.active === false)) && (
+                    <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
+                  )
+                }
+                <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              </Select>
+            </UserCan>
           </div>
         </div>
 
@@ -310,7 +311,16 @@ class DeviceIndexTable extends Component {
             rowClassName="clickable-row"
             style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>
+            <Select
+              value={`${devices.pageSize} results`}
+              onSelect={onChangePageSize}
+              style={{ marginRight: 40, paddingTop: 2 }}
+            >
+              <Option value={10}>10</Option>
+              <Option value={25}>25</Option>
+              <Option value={100}>100</Option>
+            </Select>
             <Pagination
               current={devices.pageNumber}
               pageSize={devices.pageSize}

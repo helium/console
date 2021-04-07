@@ -11,7 +11,6 @@ class FunctionIndex extends Component {
   state = {
     showDeleteFunctionModal: false,
     functionSelected: null,
-    labelToRemove: null,
   }
 
   componentDidMount() {
@@ -33,19 +32,6 @@ class FunctionIndex extends Component {
       <DashboardLayout
         title="My Functions"
         user={this.props.user}
-        extra={
-          <UserCan>
-            <Button
-              size="large"
-              icon={<CodeOutlined />}
-              style={{ borderRadius: 4 }}
-              type="primary"
-              onClick={() => this.props.history.push('/functions/new')}
-            >
-              Add Function
-            </Button>
-          </UserCan>
-        }
       >
         <FunctionIndexTable
           history={this.props.history}

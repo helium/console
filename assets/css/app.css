@@ -381,6 +381,17 @@ tr.ant-table-expanded-row:hover {
 
 .menu-link:hover,
 .menu-link.is-active {
+  color: #9d9d9d;
+}
+
+.menu-link-device {
+  color: #242528;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.menu-link-device:hover,
+.menu-link-device.is-active {
   color: #048aff;
 }
 

@@ -11,7 +11,11 @@ import withGql from '../../graphql/withGql'
 import FunctionsImg from '../../../img/functions.svg'
 import { Table, Button, Pagination, Typography, Card, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { IndexSkeleton } from '../common/IndexSkeleton';
+import { SkeletonLayout } from '../common/SkeletonLayout';
+import NavPointTriangle from '../common/NavPointTriangle';
+import HomeIcon from '../../../img/functions/function-index-home-icon.svg'
+import PlusIcon from '../../../img/functions/function-index-plus-icon.svg'
+import AllIcon from '../../../img/functions/function-index-all-icon.svg'
 import _JSXStyle from "styled-jsx/style"
 
 const { Text } = Typography
@@ -26,6 +30,7 @@ class FunctionIndexTable extends Component {
   state = {
     page: 1,
     pageSize: 10,
+    showPage: "allFunctions"
   }
 
   componentDidMount() {
@@ -102,80 +107,135 @@ class FunctionIndexTable extends Component {
     ]
 
     const { functions, loading, error } = this.props.paginatedFunctionsQuery
-
-    if (loading) return <IndexSkeleton title="Functions" />;
-    if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    )
+    const { showPage} = this.state
 
     return (
       <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+        <div style={{ padding: 20, backgroundColor: '#DCD3EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
+          <div
+            style={{
+              backgroundColor: '#B39FDA',
+              borderRadius: 6,
+              padding: 10,
+              cursor: 'pointer',
+              height: 50,
+              width: 50,
+              minWidth: 50,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 12,
+              position: 'relative'
+            }}
+            onClick={() => this.setState({ showPage: 'home'})}
+          >
+            <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
+            {showPage === 'home' && <NavPointTriangle />}
+          </div>
+
+          <div style={{
+            backgroundColor: '#B39FDA',
+            borderRadius: 6,
+            padding: '5px 10px 5px 10px',
+            cursor: 'pointer',
+            height: 50,
+            width: 120,
+            minWidth: 120,
+            display: 'flex',
+            flexDirection: 'column',
+            marginRight: 12,
+            position: 'relative'
+          }} onClick={() => this.setState({ showPage: 'allFunctions'})}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
+              <Text style={{ color: '#8261C2', fontWeight: 500, whiteSpace: 'nowrap' }}>All Functions</Text>
+            </div>
+            <Text style={{ color: '#8261C2', fontSize: 10, whiteSpace: 'nowrap' }}>{functions && functions.totalEntries} Functions</Text>
+            {showPage === 'allFunctions' && <NavPointTriangle />}
+          </div>
+
+          <div style={{
+            backgroundColor: '#B39FDA',
+            borderRadius: 6,
+            padding: 10,
+            cursor: 'pointer',
+            height: 50,
+            width: 50,
+            minWidth: 50,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 12,
+            whiteSpace: 'nowrap',
+            position: 'relative'
+          }} onClick={this.openCreateLabelModal}>
+            <img src={PlusIcon} style={{ height: 20 }} />
+          </div>
+        </div>
         {
-          functions.entries.length === 0 && (
+          showPage === "home" && (
             <div className="blankstateWrapper">
               <div className="message">
               <img src={FunctionsImg} />
-              <h1>No Functions</h1>
-              <p>You haven’t added any functions yet.</p>
+              <h1>Functions</h1>
 
               <div className="explainer">
-                <h2>What are Functions?</h2>
-                <p>Functions are operators that can be applied to Labels and act on the data of any <a href="/devices">devices</a> in those Labels.</p>
+                <p>Functions are operators that can be applied to devices and labels. They act on the data of these linked devices and labels.</p>
                 <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/functions/" target="_blank">here</a>.</p>
               </div>
 
             </div>
           <style jsx>{`
-             .message {
-                width: 100%;
-                max-width: 500px;
-                margin: 0 auto;
-                text-align: center;
-              }
-
-              .explainer {
-                padding: 20px 60px;
-                border-radius: 20px;
-                text-align: center;
-                margin-top: 50px;
-                box-sizing: border-box;
-                border: none;
-                background: #F6F8FA;
-              }
-
-              .explainer h2 {
-                color: #242424;
-                font-size: 20px;
-              }
-              .explainer p {
-                color: #565656;
-                font-size: 15px;
-              }
-
-              .explainer p a {
-                color: #096DD9;
-              }
-
-              h1, p {
-                color: #242425;
-              }
-              h1 {
-                font-size: 46px;
-                margin-bottom: 10px;
-                font-weight: 600;
-                margin-top: 10px;
-              }
-              p {
-                font-size: 20px;
-                font-weight: 300;
-              }
+            .message {
+              width: 100%;
+              max-width: 500px;
+              margin: 0 auto;
+              text-align: center;
+            }
+            .explainer {
+              padding: 20px 60px 1px 60px;
+              border-radius: 20px;
+              text-align: center;
+              margin-top: 20px;
+              box-sizing: border-box;
+              border: none;
+            }
+            .explainer p {
+              color: #565656;
+              font-size: 15px;
+            }
+            .explainer p a {
+              color: #096DD9;
+            }
+            h1, p  {
+              color: #242425;
+            }
+            h1 {
+              font-size: 46px;
+              margin-bottom: 10px;
+              font-weight: 600;
+              margin-top: 10px;
+            }
+            p {
+              font-size: 20px;
+              font-weight: 300;
+              margin-bottom: 10px;
+            }
             `}</style>
 
           </div>
           )
         }
         {
-          functions.entries.length > 0 && (
+          showPage === 'allFunctions' && error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          showPage === 'allFunctions' && loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+        }
+        {
+          showPage === 'allFunctions' && !loading && (
             <div>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
                 <Text style={{ fontSize: 22, fontWeight: 600 }}>All Functions</Text>
