@@ -88,6 +88,11 @@ const messageType = subCategory => {
 }
 
 class EventsDashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.listRef = React.createRef();
+  }
+
   state = {
     rows: [],
     expandedRowKeys: [],
@@ -138,7 +143,9 @@ class EventsDashboard extends Component {
     if (this.state.expandAll) {
       this.setState({ expandAll: false, expandedRowKeys: [] })
     } else {
-      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) })
+      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) }, () => {
+        this.listRef.current.scrollIntoView(); // prevent scrolling to bottom
+      })
     }
   }
 
@@ -444,15 +451,17 @@ class EventsDashboard extends Component {
               Export JSON
             </Button>
         </div>
-        <Table
-          dataSource={aggregatedRows}
-          columns={columns}
-          rowKey={record => record.id}
-          pagination={false}
-          expandedRowRender={this.renderExpanded}
-          expandedRowKeys={expandedRowKeys}
-          onExpand={this.onExpandRow}
-        />
+        <div ref={this.listRef}>
+          <Table
+            dataSource={aggregatedRows}
+            columns={columns}
+            rowKey={record => record.id}
+            pagination={false}
+            expandedRowRender={this.renderExpanded}
+            expandedRowKeys={expandedRowKeys}
+            onExpand={this.onExpandRow}
+          />
+        </div>
       </div>
     )
   }
