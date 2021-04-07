@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom'
 import get from 'lodash/get'
 import UserCan from '../common/UserCan'
+import FunctionNew from './FunctionNew'
 import { updateFunction } from '../../actions/function'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -170,8 +171,9 @@ class FunctionIndexTable extends Component {
             marginRight: 12,
             whiteSpace: 'nowrap',
             position: 'relative'
-          }} onClick={this.openCreateLabelModal}>
+          }} onClick={() => this.setState({ showPage: 'new'})}>
             <img src={PlusIcon} style={{ height: 20 }} />
+            {showPage === 'new' && <NavPointTriangle />}
           </div>
         </div>
         {
@@ -263,6 +265,9 @@ class FunctionIndexTable extends Component {
               </div>
             </div>
           )
+        }
+        {
+          showPage === 'new' && <FunctionNew />
         }
       </div>
     )

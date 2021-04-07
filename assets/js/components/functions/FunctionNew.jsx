@@ -6,7 +6,7 @@ import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
 import { createFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Typography, Card, Button, Input, Select } from 'antd';
+import { Typography, Button, Input, Select, Card } from 'antd';
 import { SaveOutlined } from '@ant-design/icons';
 const { Text } = Typography
 const { Option } = Select
@@ -44,10 +44,9 @@ class FunctionNew extends Component {
   render() {
     const { name, type, format, body } = this.state
     return (
-      <DashboardLayout title="Add Function" user={this.props.user}>
+      <div style={{ padding: '30px 30px 20px 30px' }}>
         <Card title="Step 1 - Enter Function Details">
-          <Text>Enter Function Name</Text>
-          <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Input
               placeholder="e.g. My Decoder"
               name="name"
@@ -89,7 +88,6 @@ class FunctionNew extends Component {
           <UserCan>
             <Button
               icon={<SaveOutlined />}
-              type="primary"
               onClick={this.handleSubmit}
               disabled={!type || !format || name.length === 0}
             >
@@ -97,7 +95,7 @@ class FunctionNew extends Component {
             </Button>
           </UserCan>
         </div>
-      </DashboardLayout>
+      </div>
     )
   }
 }

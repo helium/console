@@ -180,7 +180,7 @@ h1 {
 }
 
 .ant-card {
-  border-radius: 10px;
+  border-radius: 6px;
   margin-bottom: 20px;
   overflow: hidden;
   font-size: 16px;
@@ -205,17 +205,24 @@ h1 {
   padding: 0;
   padding-top: 20px;
 }
+
 .ant-card-body button.ant-btn {
   margin-right: 16px;
   margin-bottom: 0px;
 }
 
 .ant-card-head {
-  font-size: 17px;
+  font-size: 14px;
   border-bottom: 1px solid #e1e4e8;
-  padding: 0px 22px;
+  padding: 0px 12px;
   background: #f6f8fa;
   font-weight: 600;
+  text-transform: uppercase;
+  min-height: 32px;
+}
+
+.ant-card-head-title {
+  padding: 8px 0px;
 }
 
 .ant-card-bordered {
