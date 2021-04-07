@@ -29,7 +29,6 @@ const columnKeyNameText = {
 @connect(null, mapDispatchToProps)
 class DeviceIndexTable extends Component {
   state = {
-    page: 1,
     selectedRows: [],
     allSelected: false,
     columnsToShow: {
