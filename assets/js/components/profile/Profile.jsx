@@ -120,9 +120,13 @@ class Profile extends Component {
 
     return(
       <DashboardLayout title="Profile" user={this.props.user}>
-        <Card title="Profile Details"
-          extra={
-            <Fragment>
+        <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <Card title="Profile Details">
+            <Descriptions bordered column={4}>
+              <Descriptions.Item span ={4} label="Your Email is">{email}</Descriptions.Item>
+            </Descriptions>
+
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
               <UserCan noManager>
                 <Button
                   type="primary"
@@ -139,55 +143,52 @@ class Profile extends Component {
                   analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
                   logOut()
                 }}
+                style={{ marginRight: 0 }}
               >
                 Log Out
               </Button>
-            </Fragment>
-          }
-        >
-          <Descriptions bordered column={4}>
-            <Descriptions.Item span ={4} label="Your Email is">{email}</Descriptions.Item>
-          </Descriptions>
-        </Card>
-
-        <UserCan noManager>
-          <Card title="Your API Keys">
-            <Input
-              placeholder="Enter key name"
-              onChange={this.handleInputUpdate}
-              style={{ width: 180 }}
-            />
-            <Select
-              placeholder="Select key role"
-              style={{ width: 180, marginLeft: 10 }}
-              onChange={this.handleSelectOption}
-            >
-              <Option value={role}><RoleName role={role} /></Option>
-            </Select>
-            <Button
-              type="primary"
-              onClick={this.handleSubmit}
-              style={{ marginLeft: 10 }}
-            >
-              Generate Key
-            </Button>
-
-            {
-              apiKeys && (
-                <div style={{ marginTop: 20, overflowX: 'scroll' }}>
-                  <Table
-                    columns={columns}
-                    dataSource={apiKeys}
-                    rowKey={record => record.id}
-                    pagination={false}
-                    bordered
-                    style={{ minWidth: 800 }}
-                  />
-                </div>
-              )
-            }
+            </div>
           </Card>
-        </UserCan>
+
+          <UserCan noManager>
+            <Card title="Your API Keys">
+              <Input
+                placeholder="Enter key name"
+                onChange={this.handleInputUpdate}
+                style={{ width: 180 }}
+              />
+              <Select
+                placeholder="Select key role"
+                style={{ width: 180, marginLeft: 10 }}
+                onChange={this.handleSelectOption}
+              >
+                <Option value={role}><RoleName role={role} /></Option>
+              </Select>
+              <Button
+                type="primary"
+                onClick={this.handleSubmit}
+                style={{ marginLeft: 10 }}
+              >
+                Generate Key
+              </Button>
+
+              {
+                apiKeys && (
+                  <div style={{ marginTop: 20, overflowX: 'scroll' }}>
+                    <Table
+                      columns={columns}
+                      dataSource={apiKeys}
+                      rowKey={record => record.id}
+                      pagination={false}
+                      bordered
+                      style={{ minWidth: 800 }}
+                    />
+                  </div>
+                )
+              }
+            </Card>
+          </UserCan>
+        </div>
 
         <ProfileNewKeyModal
           newKey={newKey}

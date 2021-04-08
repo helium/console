@@ -138,35 +138,37 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <FunctionDetailsCard
-          fxn={fxn}
-          name={name}
-          type={type}
-          format={format}
-          body={body}
-          handleSelectFunctionType={this.handleSelectFunctionType}
-          handleInputUpdate={this.handleInputUpdate}
-          handleSelectFormat={this.handleSelectFormat}
-          clearInputs={this.clearInputs}
-          handleSubmit={this.handleSubmit}
-          horizontal={true}
-        />
-        {
-          (format === 'custom' || (fxn.format === 'custom' && !format)) && (
-            <FunctionValidator
-              handleFunctionUpdate={this.handleFunctionUpdate}
-              body={(body === "" && !codeUpdated) ? fxn.body : body}
-              title="Custom Script"
-            />
-          )
-        }
+        <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <FunctionDetailsCard
+            fxn={fxn}
+            name={name}
+            type={type}
+            format={format}
+            body={body}
+            handleSelectFunctionType={this.handleSelectFunctionType}
+            handleInputUpdate={this.handleInputUpdate}
+            handleSelectFormat={this.handleSelectFormat}
+            clearInputs={this.clearInputs}
+            handleSubmit={this.handleSubmit}
+            horizontal={true}
+          />
+          {
+            (format === 'custom' || (fxn.format === 'custom' && !format)) && (
+              <FunctionValidator
+                handleFunctionUpdate={this.handleFunctionUpdate}
+                body={(body === "" && !codeUpdated) ? fxn.body : body}
+                title="Custom Script"
+              />
+            )
+          }
 
-        <DeleteFunctionModal
-          open={showDeleteFunctionModal}
-          onClose={this.closeDeleteFunctionModal}
-          functionToDelete={fxn}
-          redirect
-        />
+          <DeleteFunctionModal
+            open={showDeleteFunctionModal}
+            onClose={this.closeDeleteFunctionModal}
+            functionToDelete={fxn}
+            redirect
+          />
+        </div>
       </DashboardLayout>
     )
   }
