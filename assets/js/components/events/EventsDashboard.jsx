@@ -324,7 +324,7 @@ class EventsDashboard extends Component {
             </Card>
           </TabPane>
         }
-        { record.mac && 
+        { record.mac && record.mac.length > 0 && 
           <TabPane tab={`MAC Commands (${record.mac.length})`} key="mac">
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
               {record.mac.map((mac, index) => {
