@@ -188,7 +188,7 @@ class DeviceIndexTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
             <UserCan>
               <Popover
                 content={`This device is currently ${record.active ? "active" : "inactive"}`}

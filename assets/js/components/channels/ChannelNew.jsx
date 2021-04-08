@@ -31,27 +31,15 @@ import { adafruitTemplate } from '../../util/integrationTemplates'
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
   state = {
-    type: this.props.match.params.id,
+    type: null,
     showNextSteps: false,
     credentials: {},
     channelName: "",
-    templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
+    templateBody: "",
   }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_CHANNELS_NEW")
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.match.params.id !== this.props.match.params.id)
-      this.setState({
-        type: this.props.match.params.id,
-        showNextSteps: false,
-        credentials: {},
-        channelName: "",
-        templateBody: "",
-        validInput: true
-      })
   }
 
   handleStep2Input = (credentials, validInput = true) => {
@@ -98,6 +86,14 @@ class ChannelNew extends Component {
     this.setState({ templateBody });
   }
 
+  handleSelectType = type => {
+    this.setState({
+      type,
+      showNextSteps: false,
+      templateBody: type === 'adafruit' ? adafruitTemplate : ""
+    })
+  }
+
   renderForm = () => {
     switch (this.state.type) {
       case "aws":
@@ -125,50 +121,32 @@ class ChannelNew extends Component {
     }
   }
 
-  getIntegrationType = () => {
-    return [...PREMADE_CHANNEL_TYPES, ...NEW_CHANNEL_TYPES].filter(t => (
-      t.link.split("new/")[1] === this.state.type)
-    );
-  }
-
   render() {
     const { showNextSteps, type } = this.state
 
     return(
-      <DashboardLayout
-        title="Add Integration"
-        user={this.props.user}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
-            {type ?
-              (<Link to="/integrations/new"><Text style={{ color: `${type ? "#8C8C8C" : ""}` }}>&nbsp;&nbsp;Add Integration&nbsp;&nbsp;/</Text></Link>) :
-              (<Text>&nbsp;&nbsp;Add Integration</Text>)
-            }
-            <Text>&nbsp;&nbsp;{type ? this.getIntegrationType()[0].name : null}</Text>
-          </div>
-        }
-      >
-
-      <Card title="Step 1 – Choose an Integration Type">
-        {type && (
-          <div className="flexwrapper" style={{ justifyContent: "space-between", alignItems: "center" }}>
-            <IntegrationTypeTileSimple type={type} />
-            <Link to="/integrations/new"><Button size="small">Change</Button></Link>
-          </div>
-        )}
+      <div style={{ padding: '30px 30px 20px 30px' }}>
         {!type && (
           <div style={{ display: 'block' }}>
             <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
-              <ChannelPremadeRow />
+              <ChannelPremadeRow selectType={this.handleSelectType} />
             </Card>
             <Card size="small" title="Add a Custom Integration" className="integrationcard">
-              <ChannelCreateRow />
+              <ChannelCreateRow selectType={this.handleSelectType} />
             </Card>
           </div>
         )}
-        </Card>
-        { type && (
+
+        {type && (
+          <Card title="Step 1 – Choose an Integration Type">
+            <div className="flexwrapper" style={{ justifyContent: "space-between", alignItems: "center" }}>
+              <IntegrationTypeTileSimple type={type} />
+              <Link to="#" onClick={() => this.setState({type: null})}><Button size="small">Change</Button></Link>
+            </div>
+          </Card>
+        )}
+
+        {type && (
           <Card title="Step 2 - Endpoint Details">
             {this.renderForm()}
           </Card>
@@ -181,8 +159,6 @@ class ChannelNew extends Component {
             handleStep3Submit={this.handleStep3Submit}
           />
         )}
-
-
         { showNextSteps && (type === "http" || type === "mqtt") && (
           <ChannelPayloadTemplate
             templateBody={this.state.templateBody}
@@ -197,14 +173,11 @@ class ChannelNew extends Component {
             flex-wrap: wrap;
 
           }
-
           .integrationcard {
             flex-grow: 1;
           }
-
-
           `}</style>
-      </DashboardLayout>
+      </div>
     )
   }
 }

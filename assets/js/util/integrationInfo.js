@@ -13,67 +13,67 @@ import Tago from '../../img/tago.png';
 export const NEW_CHANNEL_TYPES = [
   {
     name: "HTTP",
-    link: "/integrations/new/http",
+    type: "http",
     img: `${Http}`,
     info: "This integration allows for sending data to an endpoint, as well as receiving data, over HTTP.",
     docLink: 'https://docs.helium.com/use-the-network/console/integrations/http/'
   },
   {
     name: "MQTT",
-    link: "/integrations/new/mqtt",
+    type: "mqtt",
     img: `${Mqtt}`,
     info: "This Integration allows for sending data to an endpoint, as well as receiving data, over the MQTT protocol.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/mqtt" },
   {
     name: "AWS IoT Core",
-    link: "/integrations/new/aws",
+    type: "aws",
     img: `${Aws}`,
     info: "This Integration automates the complexity of securely connecting your devices to AWS IoT Core.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/aws-iot-core"
   },
-  // { name: "Azure IoT", link: "/integrations/new/azure", img: `${Azure}`, inactive: true },
-  // { name: "Google IoT", link: "/integrations/new/google", img: `${Google}`, inactive: true },
+  // { name: "Azure IoT", type: "azure", img: `${Azure}`, inactive: true },
+  // { name: "Google IoT", type: "google", img: `${Google}`, inactive: true },
 ]
 
 export const PREMADE_CHANNEL_TYPES = [
   {
     name: "Helium Cargo",
-    link: "/integrations/new/cargo",
+    type: "cargo",
     img: `${Cargo}`,
     info: "Cargo is an in-house mapping tool used at Helium.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/cargo"
   },
   {
     name: "myDevices Cayenne",
-    link: "/integrations/new/mydevices",
+    type: "mydevices",
     img: `${MyDevices}`,
     info: "myDevices Cayenne lets you quickly visualize real-time data sent over the Helium Network.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/mydevices-cayenne"
   },
   {
     name: "Ubidots",
-    link: "/integrations/new/ubidots",
+    type: "ubidots",
     img: `${Ubidots}` ,
     info: "Use the Ubidots platform to send data to the cloud from any Internet-enabled device.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots"
   },
   {
     name: "Adafruit IO",
-    link: "/integrations/new/adafruit",
+    type: "adafruit",
     img: `${Adafruit}` ,
     info: "This Integration automates the complexity of securely connecting your devices to Adafruit IO.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/adafruitio"
   },
   {
     name: "Datacake",
-    link: "/integrations/new/datacake",
+    type: "datacake",
     img: `${Datacake}` ,
     info: "This Integration simplifies sending data to the Datacake IoT platform.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake"
   },
   {
     name: "TagoIO",
-    link: "/integrations/new/tago",
+    type: "tago",
     img: `${Tago}` ,
     info: "This Integration simplifies sending data to the TagoIO platform.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"

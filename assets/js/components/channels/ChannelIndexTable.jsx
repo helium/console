@@ -23,18 +23,20 @@ class ChannelIndexTable extends Component {
         title: '',
         key: 'action',
         render: (text, record) => (
-          <UserCan>
-            <Button
-              type="danger"
-              icon={<DeleteOutlined />}
-              shape="circle"
-              size="small"
-              onClick={e => {
-                e.stopPropagation()
-                this.props.openDeleteChannelModal(record)
-              }}
-            />
-          </UserCan>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+            <UserCan>
+              <Button
+                type="danger"
+                icon={<DeleteOutlined />}
+                shape="circle"
+                size="small"
+                onClick={e => {
+                  e.stopPropagation()
+                  this.props.openDeleteChannelModal(record)
+                }}
+              />
+            </UserCan>
+          </div>
         )
       },
     ]

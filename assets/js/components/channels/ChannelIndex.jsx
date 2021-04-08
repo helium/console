@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import ChannelIndexTable from './ChannelIndexTable'
+import ChannelNew from './ChannelNew'
 import DashboardLayout from '../common/DashboardLayout'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -111,7 +112,7 @@ class ChannelIndex extends Component {
                 <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
                 <Text style={{ color: '#00673a', fontWeight: 500, whiteSpace: 'nowrap' }}>All Integrations</Text>
               </div>
-              <Text style={{ color: '#00673a', fontSize: 10, whiteSpace: 'nowrap' }}> Integrations</Text>
+              <Text style={{ color: '#00673a', fontSize: 10, whiteSpace: 'nowrap' }}>{channels && channels.entries.length} Integrations</Text>
               {showPage === 'allChannels' && <NavPointTriangle />}
             </div>
 
@@ -203,6 +204,9 @@ class ChannelIndex extends Component {
                 handleChangePage={this.handleChangePage}
               />
             )
+          }
+          {
+            showPage === 'new' && <ChannelNew />
           }
 
           <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channelSelected}/>
