@@ -6,6 +6,7 @@ import LabelNew from '../labels/LabelNew';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
 import DeviceIndexLabelShow from './DeviceIndexLabelShow';
 import DashboardLayout from '../common/DashboardLayout';
+import AddResourceButton from '../common/AddResourceButton';
 import NavPointTriangle from '../common/NavPointTriangle';
 import ImportDevicesModal from './import/ImportDevicesModal';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
@@ -87,6 +88,14 @@ class DeviceIndex extends Component {
         displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
       }
     })
+
+    if (this.props.history.location.search === '?show_new=true') {
+      this.setState({ showPage: "new" })
+    }
+
+    if (this.props.history.location.search === '?show_new_label=true') {
+      this.setState({ showPage: "newLabel" })
+    }
   }
 
   componentWillUnmount() {
@@ -201,6 +210,7 @@ class DeviceIndex extends Component {
       <DashboardLayout
         title={title}
         user={this.props.user}
+        noAddButton
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
@@ -412,6 +422,8 @@ class DeviceIndex extends Component {
           devicesToDelete={this.state.devicesSelected}
           totalDevices={devices && devices.totalEntries}
         />
+
+        <AddResourceButton deviceCallback={() => this.setState({ showPage: 'new' })} labelCallback={() => this.setState({ showPage: 'newLabel' })}/>
       </DashboardLayout>
     )
   }

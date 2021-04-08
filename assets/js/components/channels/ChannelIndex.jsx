@@ -4,6 +4,7 @@ import withGql from '../../graphql/withGql'
 import ChannelIndexTable from './ChannelIndexTable'
 import ChannelNew from './ChannelNew'
 import DashboardLayout from '../common/DashboardLayout'
+import AddResourceButton from '../common/AddResourceButton'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { PAGINATED_CHANNELS } from '../../graphql/channels'
@@ -39,6 +40,10 @@ class ChannelIndex extends Component {
     if (!this.props.paginatedChannelsQuery.loading) {
       this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     }
+
+    if (this.props.history.location.search === '?show_new=true') {
+      this.setState({ showPage: "new" })
+    }
   }
 
   componentWillUnmount() {
@@ -70,7 +75,7 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channelSelected, showPage } = this.state
 
     return (
-      <DashboardLayout title="My Integrations" user={this.props.user}>
+      <DashboardLayout title="My Integrations" user={this.props.user} noAddButton>
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <div style={{ padding: 20, backgroundColor: '#0dc699', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
             <div
@@ -208,9 +213,11 @@ class ChannelIndex extends Component {
           {
             showPage === 'new' && <ChannelNew />
           }
-
-          <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channelSelected}/>
         </div>
+
+        <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channelSelected}/>
+
+        <AddResourceButton channelCallback={() => this.setState({ showPage: 'new' })} />
       </DashboardLayout>
     )
   }

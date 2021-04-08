@@ -296,49 +296,46 @@ class DataCreditsIndex extends Component {
       <DashboardLayout
         title="Data Credits"
         user={this.props.user}
-        extra={
-          <UserCan noManager>
-            {
-              organization && organization.dc_balance_nonce != 0 ? (
-                <React.Fragment>
-                  {
-                    (!organization.received_free_dc || organization.dc_balance > 10000) && (
-                      <Button
-                        size="large"
-                        style={{ borderRadius: 4 }}
-                        icon={<RightCircleOutlined />}
-                        onClick={() => this.openModal("showOrganizationTransferDCModal")}
-                      >
-                        Transfer DC to Org
-                      </Button>
-                    )
-                  }
-                  <Button
-                    size="large"
-                    icon={<SyncOutlined />}
-                    onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
-                  >
-                    Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
-                  </Button>
-                  <Button
-                    size="large"
-                    type="primary"
-                    icon={<WalletOutlined />}
-                    onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ marginLeft: 20, borderRadius: 4 }}
-                  >
-                    Purchase Data Credits
-                  </Button>
-                </React.Fragment>
-              ) : (
-                <div />
-              )
-            }
-          </UserCan>
-        }
       >
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: '0px 0px 20px 30px' }}>
+            <UserCan noManager>
+              {
+                organization && organization.dc_balance_nonce != 0 ? (
+                  <React.Fragment>
+                    {
+                      (!organization.received_free_dc || organization.dc_balance > 10000) && (
+                        <Button
+                          style={{ borderRadius: 4 }}
+                          icon={<RightCircleOutlined />}
+                          onClick={() => this.openModal("showOrganizationTransferDCModal")}
+                        >
+                          Transfer DC to Org
+                        </Button>
+                      )
+                    }
+                    <Button
+                      icon={<SyncOutlined />}
+                      onClick={() => this.openModal("showAutomaticRenewalModal")}
+                      style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
+                    >
+                      Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<WalletOutlined />}
+                      onClick={() => this.openModal("showPurchaseCreditModal")}
+                      style={{ marginLeft: 20, borderRadius: 4 }}
+                    >
+                      Purchase Data Credits
+                    </Button>
+                  </React.Fragment>
+                ) : (
+                  <div />
+                )
+              }
+            </UserCan>
+          </div>
           {
             error && <Text>Data failed to load, please reload the page and try again</Text>
           }
