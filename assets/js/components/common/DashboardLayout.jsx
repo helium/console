@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import TopBar from './TopBar'
 import NavDrawer from './NavDrawer'
-import { NavLink } from 'react-router-dom'
 import ContentLayout from './ContentLayout'
-import { Layout, Tag, Popover, Button } from 'antd';
-import { ToolOutlined, PlusCircleFilled } from '@ant-design/icons';
+import AddResourceButton from './AddResourceButton'
+import { Layout, Popover, Button } from 'antd';
+import { ToolOutlined } from '@ant-design/icons';
 const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {
@@ -17,7 +17,7 @@ class DashboardLayout extends Component {
   }
 
   render() {
-    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth, noFooter } = this.props;
+    const { classes, title, extra, breadCrumbs, noSideNav, noHeaderPadding, user, fullHeightWidth, noFooter, noAddButton } = this.props;
 
     return (
       <Layout style={{height: '100%', width: '100%'}}>
@@ -72,29 +72,9 @@ class DashboardLayout extends Component {
                 </Footer>)
               }
             </Content>
-            <Popover
-              overlayClassName="add-menu-popover"
-              content={
-                <div style={{ width: 130 }}>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new=true"}>Add Device</NavLink>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new_label=true"}>Add Label</NavLink>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/functions?show_new=true"}>Add Function</NavLink>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/integrations?show_new=true"}>Add Integration</NavLink>
-                </div>
-              }
-              placement="left"
-            >
-              <PlusCircleFilled
-                style={{
-                  position: "absolute",
-                  bottom: 100,
-                  right: 30,
-                  fontSize: 40,
-                  cursor: 'pointer',
-                  zIndex: 100,
-                }}
-              />
-            </Popover>
+            {
+              !noAddButton && <AddResourceButton />
+            }
           </Layout>
         </Layout>
       </Layout>

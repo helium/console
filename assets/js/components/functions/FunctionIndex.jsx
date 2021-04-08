@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import AddResourceButton from '../common/AddResourceButton'
 import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
@@ -38,6 +39,10 @@ class FunctionIndex extends Component {
     if (!this.props.paginatedFunctionsQuery.loading) {
       this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
     }
+
+    if (this.props.history.location.search === '?show_new=true') {
+      this.setState({ showPage: "new" })
+    }
   }
 
   componentWillUnmount() {
@@ -72,6 +77,7 @@ class FunctionIndex extends Component {
       <DashboardLayout
         title="My Functions"
         user={this.props.user}
+        noAddButton
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <div style={{ padding: 20, backgroundColor: '#DCD3EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
@@ -217,6 +223,8 @@ class FunctionIndex extends Component {
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={this.state.functionSelected}
         />
+
+        <AddResourceButton functionCallback={() => this.setState({ showPage: 'new' })} />
       </DashboardLayout>
     )
   }
