@@ -5,7 +5,7 @@ import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integration
 
 export const IntegrationTypeTileSimple = props => {
   const { type } = props;
-  const { img, name, info, docLink } = [...NEW_CHANNEL_TYPES, ...PREMADE_CHANNEL_TYPES].filter(channel => channel.link.includes(type))[0];
+  const { img, name, info, docLink } = [...NEW_CHANNEL_TYPES, ...PREMADE_CHANNEL_TYPES].filter(channel => channel.type === type)[0];
 
   return (
     <div>

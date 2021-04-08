@@ -77,9 +77,9 @@ class DashboardLayout extends Component {
               content={
                 <div style={{ width: 130 }}>
                   <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new=true"}>Add Device</NavLink>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new=true"}>Add Label</NavLink>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/devices?show_new_label=true"}>Add Label</NavLink>
                   <NavLink className="add-menu-selection" activeClassName="is-active" to={"/functions?show_new=true"}>Add Function</NavLink>
-                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/integrations/new"}>Add Integration</NavLink>
+                  <NavLink className="add-menu-selection" activeClassName="is-active" to={"/integrations?show_new=true"}>Add Integration</NavLink>
                 </div>
               }
               placement="left"

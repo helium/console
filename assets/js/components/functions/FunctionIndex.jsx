@@ -9,7 +9,6 @@ import DeleteFunctionModal from './DeleteFunctionModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import NavPointTriangle from '../common/NavPointTriangle';
-import FunctionsImg from '../../../img/functions.svg'
 import HomeIcon from '../../../img/functions/function-index-home-icon.svg'
 import PlusIcon from '../../../img/functions/function-index-plus-icon.svg'
 import AllIcon from '../../../img/functions/function-index-all-icon.svg'
@@ -143,7 +142,6 @@ class FunctionIndex extends Component {
             showPage === "home" && (
               <div className="blankstateWrapper">
                 <div className="message">
-                <img src={FunctionsImg} />
                 <h1>Functions</h1>
 
                 <div className="explainer">

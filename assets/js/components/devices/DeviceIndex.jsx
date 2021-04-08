@@ -21,7 +21,6 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { Button, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { SkeletonLayout } from '../common/SkeletonLayout';
-import DevicesImg from '../../../img/devices.svg'
 import HomeIcon from '../../../img/devices/device-index-home-icon.svg'
 import AllIcon from '../../../img/devices/device-index-all-icon.svg'
 import PlusIcon from '../../../img/devices/device-index-plus-icon.svg'
@@ -294,7 +293,6 @@ class DeviceIndex extends Component {
             showPage === "home" && (
               <div className="blankstateWrapper">
               <div className="message">
-                <img src={DevicesImg} />
                 <h1>Devices</h1>
                 <div className="explainer">
                   <p>Devices can be added to the Helium network.</p>
