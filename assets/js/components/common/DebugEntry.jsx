@@ -299,7 +299,7 @@ class DebugEntry extends Component {
             )
           }
           {
-            event.data.mac && (
+            event.data.mac && event.data.mac.length > 0 && (
               <div style={{ marginBottom: 5 }}>
                 { showMacInfo ? (
                   <EyeFilled
