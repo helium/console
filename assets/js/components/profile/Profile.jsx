@@ -123,7 +123,7 @@ class Profile extends Component {
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <Card title="Profile Details">
             <Descriptions bordered column={4}>
-              <Descriptions.Item span ={4} label="Your Email is">{email}</Descriptions.Item>
+              <Descriptions.Item span={4} label="Your Email is">{email}</Descriptions.Item>
             </Descriptions>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
