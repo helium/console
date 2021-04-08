@@ -317,7 +317,7 @@ class DebugEntry extends Component {
             )
           }
           {
-            event.data.mac && this.state.showMacInfo && (
+            event.data.mac && event.data.mac.length > 0 && this.state.showMacInfo && (
               <div style={{ marginTop: 20 }}>
               <pre style={{ color: debugTextColor }}>
                 {JSON.stringify(event.data.mac, null, 2)}
