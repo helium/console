@@ -88,6 +88,11 @@ const messageType = subCategory => {
 }
 
 class EventsDashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.listRef = React.createRef();
+  }
+
   state = {
     rows: [],
     expandedRowKeys: [],
@@ -138,7 +143,9 @@ class EventsDashboard extends Component {
     if (this.state.expandAll) {
       this.setState({ expandAll: false, expandedRowKeys: [] })
     } else {
-      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) })
+      this.setState({ expandAll: true, expandedRowKeys: aggregatedRows.map(r => r.id) }, () => {
+        this.listRef.current.scrollIntoView(); // prevent scrolling to bottom
+      })
     }
   }
 
@@ -420,9 +427,14 @@ class EventsDashboard extends Component {
         title: 'Type',
         dataIndex: 'category',
         render: (data, row) => {
-          const integrationResponses = row.integrations && row.integrations.filter(i => i.subCategory === 'uplink_integration_res');
+          const integrationResponses = row.integrations ? row.integrations.filter(i => i.subCategory === 'uplink_integration_res') : [];
           const integrationError = integrationResponses.findIndex(i => i.status === 'error') === -1 ? false : true;
-          const integrationMissing = row.integrations.findIndex(i => i.id === 'no_channel') === -1 ? false : true;
+
+          const externalIntegrations = row.integrations ? row.integrations.filter(i => i.name !== 'Internal Integration') : [];
+          const missingExternalIntegration = externalIntegrations.findIndex(i => i.id === 'no_channel') !== -1;
+          const onlyInternalIntegration = row.integrations && row.integrations.length > 0 && externalIntegrations.length === 0;
+          const integrationMissing = missingExternalIntegration || onlyInternalIntegration ? true : false;
+
           return <Text>{categoryTag(row.category, row.sub_categories)} {integrationError && integrationErrorTag()}{integrationMissing && integrationMissingTag()}</Text>;
         }
       },
@@ -502,15 +514,17 @@ class EventsDashboard extends Component {
               Export JSON
             </Button>
         </div>
-        <Table
-          dataSource={aggregatedRows}
-          columns={columns}
-          rowKey={record => record.id}
-          pagination={false}
-          expandedRowRender={this.renderExpanded}
-          expandedRowKeys={expandedRowKeys}
-          onExpand={this.onExpandRow}
-        />
+        <div ref={this.listRef}>
+          <Table
+            dataSource={aggregatedRows}
+            columns={columns}
+            rowKey={record => record.id}
+            pagination={false}
+            expandedRowRender={this.renderExpanded}
+            expandedRowKeys={expandedRowKeys}
+            onExpand={this.onExpandRow}
+          />
+        </div>
       </div>
     )
   }

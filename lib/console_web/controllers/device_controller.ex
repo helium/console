@@ -17,7 +17,7 @@ defmodule ConsoleWeb.DeviceController do
   def create(conn, %{"device" => device_params, "label" => label}) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
-    device_params = 
+    device_params =
       Map.merge(device_params, %{
         "organization_id" => current_organization.id
       })
@@ -434,16 +434,6 @@ defmodule ConsoleWeb.DeviceController do
         _ -> acc
       end
     end)
-  end
-
-  def debug(conn, %{"device" => device_id}) do
-    current_organization = conn.assigns.current_organization
-    _device = Devices.get_device!(current_organization, device_id)
-
-    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:debug:devices", %{ "devices" => [device_id] })
-
-    conn
-    |> send_resp(:no_content, "")
   end
 
   defp broadcast_router_update_devices(%Device{} = device) do
