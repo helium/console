@@ -312,7 +312,7 @@ class DebugEntry extends Component {
                     onClick={() => this.toggleView("showMacInfo")}
                   />
                 )}
-                <Text style={{ color: showMacInfo ? '#FFFFFF' : '#8C8C8C' }}>MAC Command Information</Text>
+                <Text style={{ color: showMacInfo ? '#FFFFFF' : '#8C8C8C' }}>MAC Commands</Text>
               </div>
             )
           }
