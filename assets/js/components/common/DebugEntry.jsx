@@ -14,6 +14,7 @@ class DebugEntry extends Component {
     showDeviceInfo: false,
     showHotspotInfo: false,
     showIntegrationInfo: false,
+    showMacInfo: false,
     showReq: false,
     showRes: false
   }
@@ -30,6 +31,7 @@ class DebugEntry extends Component {
         showDeviceInfo: false,
         showHotspotInfo: false,
         showIntegrationInfo: false,
+        showMacInfo: false,
         showReq: false,
         showRes: false
       });
@@ -39,6 +41,7 @@ class DebugEntry extends Component {
         showDeviceInfo: true,
         showHotspotInfo: true,
         showIntegrationInfo: true,
+        showMacInfo: true,
         showReq: true,
         showRes: true
       });
@@ -78,7 +81,7 @@ class DebugEntry extends Component {
 
   render() {
     const { event } = this.props
-    const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo } = this.state
+    const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo, showMacInfo } = this.state
     const stringJSON = JSON.stringify(event, null, 2)
 
     const menu = (
@@ -293,6 +296,33 @@ class DebugEntry extends Component {
                 }
               </div>
               </React.Fragment>
+            )
+          }
+          {
+            event.data.mac && (
+              <div style={{ marginBottom: 5 }}>
+                { showMacInfo ? (
+                  <EyeFilled
+                    style={{ color: '#FFFFFF', marginRight: 10 }}
+                    onClick={() => this.toggleView("showMacInfo")}
+                  />
+                ) : (
+                  <EyeInvisibleFilled
+                    style={{ color: '#8C8C8C', marginRight: 10 }}
+                    onClick={() => this.toggleView("showMacInfo")}
+                  />
+                )}
+                <Text style={{ color: showMacInfo ? '#FFFFFF' : '#8C8C8C' }}>MAC Command Information</Text>
+              </div>
+            )
+          }
+          {
+            event.data.mac && this.state.showMacInfo && (
+              <div style={{ marginTop: 20 }}>
+              <pre style={{ color: debugTextColor }}>
+                {JSON.stringify(event.data.mac, null, 2)}
+              </pre>
+              </div>
             )
           }
         </div>
