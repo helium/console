@@ -7,8 +7,9 @@ import sortBy from 'lodash/sortBy';
 import PacketGraph from '../common/PacketGraph'
 import { DEVICE_EVENTS } from '../../graphql/events'
 import withGql from '../../graphql/withGql'
-import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox, Tooltip } from 'antd';
-import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, ShrinkOutlined } from '@ant-design/icons';
+import { Badge, Card, Col, Row, Typography, Table, Tag, Popover, Button, Checkbox, Tooltip, Tabs } from 'antd';
+const { TabPane } = Tabs;
+import { CaretDownOutlined, CaretUpOutlined, CheckOutlined, InfoOutlined, CloseOutlined, ShrinkOutlined, SettingFilled } from '@ant-design/icons';
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import { bindActionCreators } from 'redux'
@@ -98,7 +99,9 @@ class EventsDashboard extends Component {
     expandedRowKeys: [],
     expandAll: false,
     showLate: false,
-    showInactive: false
+    showInactive: false,
+    showMacEventsOnly: false,
+    tab: 'general'
   }
 
   componentDidUpdate(prevProps) {
@@ -157,6 +160,10 @@ class EventsDashboard extends Component {
     this.setState({ showInactive: !this.state.showInactive });
   }
 
+  toggleShowMacEventsOnly = () => {
+    this.setState({ showMacEventsOnly: !this.state.showMacEventsOnly });
+  }
+
   onExpandRow = (expandRow, row) => {
     if (expandRow) {
       this.setState({ expandedRowKeys: this.state.expandedRowKeys.concat(row.id) })
@@ -165,7 +172,102 @@ class EventsDashboard extends Component {
     }
   }
 
-  renderExpanded = record => {
+  renderMacInfo = mac => {
+    switch (mac.command) {
+      case 'link_adr_ans':
+        return (
+          <React.Fragment>
+            <tr>
+              <td><Text strong>Power Ack:</Text></td>
+              <td>{mac.power_ack}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Data Rate Ack:</Text></td>
+              <td>{mac.data_rate_ack}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Channel Mask Ack:</Text></td>
+              <td>{mac.channel_mask_ack}</td>
+            </tr>
+          </React.Fragment>
+        );
+      case 'rx_param_setup_ans':
+        return (
+          <React.Fragment>
+            <tr>
+              <td><Text strong>RX1 Offset Ack:</Text></td>
+              <td>{mac.rx1_offset_ack}</td>
+            </tr>
+            <tr>
+              <td><Text strong>RX2 Data Rate Ack:</Text></td>
+              <td>{mac.rx2_data_rate_ack}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Channel Ack:</Text></td>
+              <td>{mac.channel_ack}</td>
+            </tr>
+          </React.Fragment>
+        );
+      case 'dev_status_ans':
+        return (
+          <React.Fragment>
+            <tr>
+              <td><Text strong>Battery:</Text></td>
+              <td>{mac.battery}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Margin:</Text></td>
+              <td>{mac.margin}</td>
+            </tr>
+          </React.Fragment>
+        );
+      case 'new_channel_ans':
+        return (
+          <React.Fragment>
+            <tr>
+              <td><Text strong>Data Rate OK:</Text></td>
+              <td>{mac.data_rate_ok}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Channel Freq OK:</Text></td>
+              <td>{mac.channel_freq_ok}</td>
+            </tr>
+          </React.Fragment>
+        );
+      case 'di_channel_ans':
+        return (
+          <React.Fragment>
+            <tr>
+              <td><Text strong>Uplink Freq Exists:</Text></td>
+              <td>{mac.uplink_freq_exists}</td>
+            </tr>
+            <tr>
+              <td><Text strong>Channel Freq OK:</Text></td>
+              <td>{mac.channel_freq_ok}</td>
+            </tr>
+          </React.Fragment>
+        );
+      case 'device_time_req':
+      case 'rx_timing_setup_ans':
+      case 'tx_param_setup_ans':
+      case 'link_check_req':
+      case 'duty_cycle_ans':
+      default:
+        return (
+          <tr><td>
+            <Text>No additional information</Text>
+          </td></tr>
+        );
+    }
+  }
+
+  renderExpandedTabs = record => {
+    const lorawanColumns = [
+      { title: 'Payload Size', dataIndex: 'payload_size' },
+      { title: 'Port', dataIndex: 'port' },
+      { title: 'Devaddr', dataIndex: 'devaddr' }
+    ];
+
     let hotspotColumns;
     if (record.category === 'downlink') {
       hotspotColumns = [
@@ -183,13 +285,7 @@ class EventsDashboard extends Component {
         { title: 'Spreading', dataIndex: 'spreading' },
         { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ]
-    }
-
-    const lorawanColumns = [
-      { title: 'Payload Size', dataIndex: 'payload_size' },
-      { title: 'Port', dataIndex: 'port' },
-      { title: 'Devaddr', dataIndex: 'devaddr' }
-    ];
+    };
 
     let channelColumns;
     if (record.category === 'uplink') {
@@ -205,23 +301,48 @@ class EventsDashboard extends Component {
         { title: 'Status', render: (data, record) => <Text>{statusBadge(record.status)}{record.status}</Text> },
         { title: 'Time', dataIndex: 'time', render: data => <Text style={{textAlign:'left'}}>{formatDatetime(data)}</Text>}
       ];
-    }
+    };
 
     return (
-      <Row gutter={10}>
-        <Col span={22}>
+      <Tabs defaultActiveKey="general" size="large" centered onTabClick={tab => this.setState({ tab })}>
+        <TabPane tab="General" key="general">
           <Card  bodyStyle={{padding: 0}}>
             <Table columns={lorawanColumns} dataSource={[record]} pagination={false} rowKey={record => record.id}/>
           </Card>
-          <Card  bodyStyle={{padding: 0}}>
-            <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
-          </Card>
-          <Card  bodyStyle={{padding: 0}}>
-            <Table columns={channelColumns} dataSource={record.integrations} pagination={false} rowKey={record => record.id}/>
-          </Card>
-        </Col>
-      </Row>
-    )
+        </TabPane>
+        { record.hotspots &&
+          <TabPane tab={`Hotspots (${record.hotspots.length})`} key="hotspots">
+            <Card  bodyStyle={{padding: 0}}>
+              <Table columns={hotspotColumns} dataSource={record.hotspots} pagination={false} rowKey={record => record.id}/>
+            </Card>
+          </TabPane>
+        }
+        { record.integrations &&
+          <TabPane tab={`Integration Messages (${record.integrations.length})`} key="integrations">
+            <Card  bodyStyle={{padding: 0}}>
+              <Table columns={channelColumns} dataSource={record.integrations} pagination={false} rowKey={record => record.id}/>
+            </Card>
+          </TabPane>
+        }
+        { record.mac && 
+          <TabPane tab={`MAC Commands (${record.mac.length})`} key="mac">
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+              {record.mac.map((mac, index) => {
+                return (
+                  <div style={{ width: '25%', float: 'left' }} key={mac.command + index}>
+                    <Card size='small' title={mac.command} style={index !== 0 && (index + 1) % 4 === 0 ? {} : { marginRight: '10px' }}>
+                      <table>
+                        <tbody>{this.renderMacInfo(mac)}</tbody>
+                      </table>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+          </TabPane>
+        }
+      </Tabs>
+    );
   }
 
   renderFrameIcons = row => {
@@ -304,7 +425,7 @@ class EventsDashboard extends Component {
   }
 
   render() {
-    const { rows, expandedRowKeys, expandAll, showLate, showInactive } = this.state
+    const { rows, expandedRowKeys, expandAll, showLate, showInactive, showMacEventsOnly } = this.state
 
     // events will come in separately and related events will have same router_uuid
     let aggregatedRows = Object.values(groupBy(rows, 'router_uuid')).map(routerEvents => {
@@ -331,6 +452,7 @@ class EventsDashboard extends Component {
         payload_size: firstEventData.payload_size,
         port: firstEventData.port,
         devaddr: firstEventData.devaddr,
+        mac: firstEventData.mac,
         hotspots: orderedRouterEvents.filter(
           event => this.isDataString(event.data) ? JSON.parse(event.data).hotspot : event.data.hotspot
         ).map(he => ({ ...(this.isDataString(he.data) ? JSON.parse(he.data).hotspot : he.data.hotspot), time: he.reported_at })),
@@ -354,6 +476,10 @@ class EventsDashboard extends Component {
       aggregatedRows = aggregatedRows.filter(row => row.sub_categories[0] !== 'uplink_dropped_late');
     }
 
+    if (this.state.showMacEventsOnly) {
+      aggregatedRows = aggregatedRows.filter(row => row.mac && row.mac.length > 0);
+    }
+
     const columns = [
       {
         title: 'Frame Count',
@@ -374,6 +500,24 @@ class EventsDashboard extends Component {
 
           return <Text>{categoryTag(row.category, row.sub_categories)} {integrationError && integrationErrorTag()}{integrationMissing && integrationMissingTag()}</Text>;
         }
+      },
+      {
+        title: 'Content',
+        dataIndex: 'mac',
+        render: (data, row) => (
+          row.mac && row.mac.length > 0 && (
+            <Tooltip title="MAC Command(s)">
+              <Tag style={styles.tag} color="#4091F7"><SettingFilled /></Tag>
+            </Tooltip>
+          )
+        )
+      },
+      {
+        title: 'No. of Hotspots',
+        dataIndex: 'hotspots',
+        render: (data, row) => (
+          data && data.length ? <Text>{data.length}</Text> : <Text>0</Text>
+        )
       },
       {
         title: 'Time',
@@ -432,6 +576,14 @@ class EventsDashboard extends Component {
             >
               Inactive Device
             </Checkbox>
+
+            <Checkbox
+              onChange={() => this.toggleShowMacEventsOnly()}
+              checked={showMacEventsOnly}
+              style={{ marginLeft: 40 }}
+            >
+              Filter Events w/ Commands
+            </Checkbox>
           </span>
             <Button onClick={() => {
               analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", { device_id: this.props.device_id })
@@ -451,13 +603,13 @@ class EventsDashboard extends Component {
               Export JSON
             </Button>
         </div>
-        <div ref={this.listRef}>
+        <div id="event-log" ref={this.listRef}>
           <Table
             dataSource={aggregatedRows}
             columns={columns}
             rowKey={record => record.id}
             pagination={false}
-            expandedRowRender={this.renderExpanded}
+            expandedRowRender={this.renderExpandedTabs}
             expandedRowKeys={expandedRowKeys}
             onExpand={this.onExpandRow}
           />

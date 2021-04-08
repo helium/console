@@ -509,3 +509,7 @@ p.page-description {
 .react-flow__edge-path {
   stroke-width: 5px;
 }
+
+#event-log .ant-table-tbody > tr > td {
+  padding: 10px;
+}

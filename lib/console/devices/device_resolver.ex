@@ -122,7 +122,7 @@ defmodule Console.Devices.DeviceResolver do
 
     events = Event
       |> where([e], e.device_id == ^device.id)
-      |> limit(150)
+      |> limit(250)
       |> order_by(desc: :reported_at_naive)
       |> Repo.all()
 
