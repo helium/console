@@ -99,7 +99,7 @@ class FunctionValidator extends Component {
             title="Script Validator"
             style={{ height: 560 }}
             extra={
-              <PlayCircleFilled style={{ color: primaryBlue, fontSize: 22 }} onClick={this.runValidator}/>
+              <PlayCircleFilled style={{ color: "#9F59F7", fontSize: 22 }} onClick={this.runValidator}/>
             }
           >
             <Row gutter={10}>
@@ -127,19 +127,19 @@ class FunctionValidator extends Component {
             </Row>
             <div style={{ marginTop: 24 }}>
               <Text>Payload Output</Text>
-              <textarea 
-                id="validatorOutput" 
-                style={{ 
-                  minHeight: 340, 
-                  maxHeight: 340, 
-                  marginTop: 5, 
-                  width: '100%', 
-                  padding: 10, 
-                  paddingTop: 5, 
-                  border: 'solid 1px #d9d9d9', 
-                  borderRadius: 5 
-                }} 
-                disabled 
+              <textarea
+                id="validatorOutput"
+                style={{
+                  minHeight: 340,
+                  maxHeight: 340,
+                  marginTop: 5,
+                  width: '100%',
+                  padding: 10,
+                  paddingTop: 5,
+                  border: 'solid 1px #d9d9d9',
+                  borderRadius: 5
+                }}
+                disabled
               />
             </div>
           </Card>
