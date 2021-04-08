@@ -603,7 +603,7 @@ class EventsDashboard extends Component {
               Export JSON
             </Button>
         </div>
-        <div ref={this.listRef}>
+        <div id="event-log" ref={this.listRef}>
           <Table
             dataSource={aggregatedRows}
             columns={columns}
