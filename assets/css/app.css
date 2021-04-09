@@ -510,6 +510,7 @@ p.page-description {
   stroke-width: 5px;
 }
 
-#event-log .ant-table-tbody > tr > td {
+#event-log .ant-table-tbody > tr > td,
+#event-log .ant-table-thead > tr > th {
   padding: 10px;
 }
