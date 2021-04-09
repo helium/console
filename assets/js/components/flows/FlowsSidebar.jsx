@@ -56,9 +56,9 @@ export default ({ devices, labels, functions, channels }) => {
     }}>
 
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10 }}>
-        <Text style={{ fontSize: 12, color: '#596777', fontWeight: 600 }}>NODES</Text>
+        <Text className="noselect" style={{ fontSize: 12, color: '#596777', fontWeight: 600 }}>NODES</Text>
         <div onClick={() => toggleMenu(!showMenu)} style={{ cursor: 'pointer'}}>
-          {showMenu ? <MinusOutlined style={{ color: '#BECDDC', fontSize: 14 }} /> : <PlusOutlined style={{ color: '#BECDDC', fontSize: 14 }} />}
+          {showMenu ? <MinusOutlined className="noselect" style={{ color: '#BECDDC', fontSize: 14 }} /> : <PlusOutlined className="noselect" style={{ color: '#BECDDC', fontSize: 14 }} />}
         </div>
       </div>
       {
@@ -79,7 +79,7 @@ export default ({ devices, labels, functions, channels }) => {
               className="noselect"
             >
               {
-                tab === "labels" ? <img src={GroupsIcon} style={{ height: 20 }} /> : <img src={GroupsGreyIcon} style={{ height: 20 }} />
+                tab === "labels" ? <img draggable="false" src={GroupsIcon} style={{ height: 20 }} /> : <img draggable="false" src={GroupsGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "labels" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Labels</Text>
             </div>
@@ -89,7 +89,7 @@ export default ({ devices, labels, functions, channels }) => {
               className="noselect"
             >
               {
-                tab === "devices" ? <img src={DevicesIcon} style={{ height: 20 }} /> : <img src={DevicesGreyIcon} style={{ height: 20 }} />
+                tab === "devices" ? <img draggable="false" src={DevicesIcon} style={{ height: 20 }} /> : <img draggable="false" src={DevicesGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "devices" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Devices</Text>
             </div>
@@ -99,7 +99,7 @@ export default ({ devices, labels, functions, channels }) => {
               className="noselect"
             >
               {
-                tab === "functions" ? <img src={FunctionIcon} style={{ height: 20 }} /> : <img src={FunctionGreyIcon} style={{ height: 20 }} />
+                tab === "functions" ? <img draggable="false" src={FunctionIcon} style={{ height: 20 }} /> : <img draggable="false" src={FunctionGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "functions" ? '#9E59F6' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Functions</Text>
             </div>
@@ -109,7 +109,7 @@ export default ({ devices, labels, functions, channels }) => {
               className="noselect"
             >
               {
-                tab === "utilities" ? <img src={UtilityIcon} style={{ height: 20 }} /> : <img src={UtilityGreyIcon} style={{ height: 20 }} />
+                tab === "utilities" ? <img draggable="false" src={UtilityIcon} style={{ height: 20 }} /> : <img draggable="false" src={UtilityGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "utilities" ? '#F18F47' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Utilities</Text>
             </div>
@@ -119,7 +119,7 @@ export default ({ devices, labels, functions, channels }) => {
               className="noselect"
             >
               {
-                tab === "channels" ? <img src={IntegrationIcon} style={{ height: 20 }} /> : <img src={IntegrationGreyIcon} style={{ height: 20 }} />
+                tab === "channels" ? <img draggable="false" src={IntegrationIcon} style={{ height: 20 }} /> : <img draggable="false" src={IntegrationGreyIcon} style={{ height: 20 }} />
               }
               <Text style={{ display: 'block', color: tab === "channels" ? '#12CB9E' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Integrations</Text>
             </div>
