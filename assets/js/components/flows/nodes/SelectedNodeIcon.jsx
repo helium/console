@@ -8,16 +8,7 @@ export default () => {
       justifyContent: 'center', 
       alignItems: 'center' 
     }}>
-      <img src={SelectedIcon} style={{ 
-        position: 'absolute',
-        top: '-40px',
-        height: 35,
-        opacity: 0,
-        animationName: 'bounceIn',
-        animationDuration: '400ms',
-        animationTimingFunction: 'linear',
-        animationFillMode: 'forwards'
-      }} />
+      <img src={SelectedIcon} id="selected-node-icon" />
     </div>
   );
 }
