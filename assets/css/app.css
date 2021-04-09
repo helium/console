@@ -198,7 +198,7 @@ h1 {
 }
 
 .ant-layout-footer {
-  background: #F5F7F9;
+  background: #f5f7f9;
 }
 
 .no-padding-card {
@@ -410,7 +410,7 @@ tr.ant-table-expanded-row:hover {
 
 .menu-link-function:hover,
 .menu-link-function.is-active {
-  color: #9E59F6;
+  color: #9e59f6;
 }
 
 .menu-link-channel {
@@ -421,7 +421,7 @@ tr.ant-table-expanded-row:hover {
 
 .menu-link-channel:hover,
 .menu-link-channel.is-active {
-  color: #12CB9E;
+  color: #12cb9e;
 }
 
 .add-menu-selection {
@@ -436,7 +436,7 @@ tr.ant-table-expanded-row:hover {
 
 .add-menu-selection:hover {
   color: #242528;
-  background-color: #F5F7F9;
+  background-color: #f5f7f9;
 }
 
 .add-menu-popover .ant-popover-inner-content {
@@ -550,10 +550,58 @@ a.version-link {
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+#selected-node-icon {
+  position: absolute;
+  top: -40px;
+  height: 35;
+  -webkit-animation: bounce 2s;
+  animation: bounce 2s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes bounce {
+  0%,
+  25%,
+  50%,
+  75%,
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -webkit-transform: translateY(-18px);
+    transform: translateY(-18px);
+  }
+  60% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  25%,
+  50%,
+  75%,
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -webkit-transform: translateY(-18px);
+    transform: translateY(-18px);
+  }
+  60% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
 }
