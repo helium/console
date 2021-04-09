@@ -87,7 +87,7 @@ class TopBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <img src={Logo} style={{height:33, position: 'relative', top: '-1px', display: 'inline-block'}}/>
+          <img draggable="false" src={Logo} style={{height:33, position: 'relative', top: '-1px', display: 'inline-block'}}/>
           {
             this.props.showNav ? (
               <MenuFoldOutlined
@@ -106,7 +106,7 @@ class TopBar extends Component {
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <MediaQuery minWidth={720}>
-            <Link to="/welcome">
+            <Link to="/welcome" draggable="false">
               <HomeOutlined style={{ color: '#ffffff', fontSize: 18, position: 'relative', top: 2 }}/>
             </Link>
           </MediaQuery>
@@ -121,6 +121,7 @@ class TopBar extends Component {
                     <span
                       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
                       onClick={() => this.props.push("/datacredits")}
+                      className="noselect"
                     >
                       <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
                       <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
@@ -129,8 +130,9 @@ class TopBar extends Component {
                   onVisibleChange={this.refreshDC}
                 >
                   <div style={{ height: 30, backgroundColor: organization.dc_balance > 1000 ? '#000000' : '#FF4D4F', borderRadius: 30, paddingLeft: 10, paddingRight: 10, marginLeft: 6 }}>
-                    <img style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
+                    <img draggable="false" style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
                       <Text
+                        className="noselect"
                         style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -12, cursor: 'default' }}
                       >
                         {numeral(organization.dc_balance).format('0,0')}
@@ -145,9 +147,9 @@ class TopBar extends Component {
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <MediaQuery minWidth={720}>
             <div style={{ display: 'flex', flexDirection: 'column', height: 55, alignItems: 'flex-end'}}>
-              <Text style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
+              <Text className="noselect" style={{ color: "#FFFFFF", fontWeight: 500, position: 'relative', top: -7 }}>{user && user.email}</Text>
               <div style={{ position: 'relative', top: -45 }}>
-                <Dropdown visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
+                <Dropdown className="noselect" visible={this.state.orgMenuVisible} trigger={['click']} onVisibleChange={visible => this.setState({ orgMenuVisible: visible })} overlay={<OrganizationMenu current={currentOrganizationName} orgs={otherOrgs} handleClick={e => { this.handleOrgMenuClick(e, otherOrgs) }} />} placement="bottomRight">
                   <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{ color: "#38A2FF", fontWeight: 500}}>
                     {currentOrganizationName} {<DownOutlined />}
                   </a>
@@ -156,7 +158,7 @@ class TopBar extends Component {
             </div>
           </MediaQuery>
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
-            <img src={this.state.userMenuVisible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
+            <img draggable="false" src={this.state.userMenuVisible ? ProfileActive : ProfileInactive} style={{ height:30, marginLeft: 15, cursor: 'pointer' }}/>
           </Dropdown>
         </div>
 
@@ -174,12 +176,12 @@ const menu = (handleClick, currentOrganizationName) => (
     {
       currentOrganizationName && (
         <Menu.Item key="/profile">
-          <Text>My Account</Text>
+          <Text className="noselect">My Account</Text>
         </Menu.Item>
       )
     }
     <Menu.Item key="logout">
-      <Text style={{ color: redForTablesDeleteText }}>Log Out</Text>
+      <Text className="noselect" style={{ color: redForTablesDeleteText }}>Log Out</Text>
     </Menu.Item>
   </Menu>
 )
