@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
-import ReactFlow, { ReactFlowProvider, isNode, isEdge, removeElements, addEdge, getOutgoers } from 'react-flow-renderer';
+import ReactFlow, { 
+  ReactFlowProvider, 
+  isNode, 
+  isEdge, 
+  removeElements, 
+  addEdge, 
+  getOutgoers, 
+  useStoreActions 
+} from 'react-flow-renderer';
 import omit from 'lodash/omit'
 import FlowsSidebar from './FlowsSidebar'
 import FlowsSettingsBar from './FlowsSettingsBar'
@@ -8,7 +16,7 @@ import FunctionNode from './nodes/FunctionNode'
 import ChannelNode from './nodes/ChannelNode'
 import DebugNode from './nodes/DebugNode'
 import DeviceNode from './nodes/DeviceNode'
-import Sidebar from '../common/Sidebar';
+import InfoSidebar from './infoSidebar/InfoSidebar';
 import NodeInfo from './infoSidebar/NodeInfo';
 import analyticsLogger from '../../util/analyticsLogger'
 
@@ -157,19 +165,17 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
             submitChanges={() => submitChanges(elementsMap)}
           />
         </div>
+        <InfoSidebar
+          show={showInfoSidebar}
+          width={500}
+          toggle={handleToggleSidebar}
+        >
+          <NodeInfo 
+            id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
+            type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
+          />
+        </InfoSidebar>
       </ReactFlowProvider>
-      <Sidebar
-        backgroundColor='white'
-        show={showInfoSidebar}
-        message='Information'
-        width={500}
-        toggle={handleToggleSidebar}
-      >
-        <NodeInfo 
-          id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
-          type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
-        />
-      </Sidebar>
     </Fragment>
   );
 };
