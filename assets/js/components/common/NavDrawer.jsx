@@ -25,34 +25,34 @@ class NavDrawer extends Component {
     return (
       <div style={{ backgroundColor: '#F5F7F9', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end', paddingRight: 40}}>
         <div style={{ marginBottom: 30, position: 'relative' }}>
-          <NavLink to={"/flows"} activeClassName="is-active" className="menu-link">Flows</NavLink>
-          {history.location.pathname === '/flows' && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/flows"} activeClassName="is-active" className="menu-link">Flows</NavLink>
+          {history.location.pathname === '/flows' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
-        <div><Text style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>NODES</Text></div>
+        <div><Text className="noselect" style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>NODES</Text></div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/devices"} activeClassName="is-active" className="menu-link-device">Devices</NavLink>
-          {history.location.pathname.indexOf('/devices') !== -1 && <img src={CaretD} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/devices"} activeClassName="is-active" className="menu-link-device">Devices</NavLink>
+          {history.location.pathname.indexOf('/devices') !== -1 && <img draggable="false" src={CaretD} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/functions"} activeClassName="is-active" className="menu-link-function">Functions</NavLink>
-          {history.location.pathname.indexOf('/functions') !== -1 && <img src={CaretF} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/functions"} activeClassName="is-active" className="menu-link-function">Functions</NavLink>
+          {history.location.pathname.indexOf('/functions') !== -1 && <img draggable="false" src={CaretF} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ marginBottom: 30, position: 'relative' }}>
-          <NavLink to={"/integrations"} activeClassName="is-active" className="menu-link-channel">Integrations</NavLink>
-          {history.location.pathname.indexOf('/integrations') !== -1 && <img src={CaretC} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/integrations"} activeClassName="is-active" className="menu-link-channel">Integrations</NavLink>
+          {history.location.pathname.indexOf('/integrations') !== -1 && <img draggable="false" src={CaretC} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
-        <div><Text style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>ADMIN</Text></div>
+        <div><Text className="noselect" style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>ADMIN</Text></div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/organizations"} activeClassName="is-active" className="menu-link">Organizations</NavLink>
-          {history.location.pathname === '/organizations' && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
-        </div>
-        <div style={{ position: 'relative' }}>
-          <NavLink to={"/datacredits"} activeClassName="is-active" className="menu-link">Data Credits</NavLink>
-          {history.location.pathname === '/datacredits' && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/organizations"} activeClassName="is-active" className="menu-link">Organizations</NavLink>
+          {history.location.pathname === '/organizations' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ position: 'relative' }}>
-          <NavLink to={"/users"} activeClassName="is-active" className="menu-link">Users</NavLink>
-          {history.location.pathname === '/users' && <img src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/datacredits"} activeClassName="is-active" className="menu-link">Data Credits</NavLink>
+          {history.location.pathname === '/datacredits' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+        </div>
+        <div style={{ position: 'relative' }}>
+          <NavLink draggable="false" to={"/users"} activeClassName="is-active" className="menu-link">Users</NavLink>
+          {history.location.pathname === '/users' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
       </div>
     )

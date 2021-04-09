@@ -9,10 +9,10 @@ export default ({ deviceCallback, labelCallback, functionCallback, channelCallba
       overlayClassName="add-menu-popover"
       content={
         <div style={{ width: 130 }}>
-          <NavLink className="add-menu-selection" activeClassName="is-active" onClick={deviceCallback} to={"/devices?show_new=true"}>Add Device</NavLink>
-          <NavLink className="add-menu-selection" activeClassName="is-active" onClick={labelCallback} to={"/devices?show_new_label=true"}>Add Label</NavLink>
-          <NavLink className="add-menu-selection" activeClassName="is-active" onClick={functionCallback} to={"/functions?show_new=true"}>Add Function</NavLink>
-          <NavLink className="add-menu-selection" activeClassName="is-active" onClick={channelCallback} to={"/integrations?show_new=true"}>Add Integration</NavLink>
+          <NavLink draggable="false" className="add-menu-selection noselect" activeClassName="is-active" onClick={deviceCallback} to={"/devices?show_new=true"}>Add Device</NavLink>
+          <NavLink draggable="false" className="add-menu-selection noselect" activeClassName="is-active" onClick={labelCallback} to={"/devices?show_new_label=true"}>Add Label</NavLink>
+          <NavLink draggable="false" className="add-menu-selection noselect" activeClassName="is-active" onClick={functionCallback} to={"/functions?show_new=true"}>Add Function</NavLink>
+          <NavLink draggable="false" className="add-menu-selection noselect" activeClassName="is-active" onClick={channelCallback} to={"/integrations?show_new=true"}>Add Integration</NavLink>
         </div>
       }
       placement="left"

@@ -9,14 +9,14 @@ class OrganizationMenu extends Component {
   render() {
     const { current, orgs, handleClick, role, dispatch, ...rest } = this.props;
     return (
-      <Menu {...rest} onClick={handleClick}>
+      <Menu {...rest} onClick={handleClick} className="noselect">
         <Menu.ItemGroup title="Current Organization">
-          <Menu.Item key='current'><Link to="/organizations">{current}</Link></Menu.Item>
+          <Menu.Item key='current'><Link draggable="false" to="/organizations">{current}</Link></Menu.Item>
         </Menu.ItemGroup>
         {orgs.length > 0 && <Menu.Divider /> &&
         <Menu.ItemGroup title="Switch Organization">
           {orgs.map(org => (
-            <Menu.Item key={org.id}>{org.name}</Menu.Item>
+            <Menu.Item draggable="false" key={org.id}>{org.name}</Menu.Item>
           ))}
         </Menu.ItemGroup>}
         {role === 'admin' && <Menu.Divider />}
