@@ -1,27 +1,31 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Handle } from 'react-flow-renderer';
 import { Typography } from 'antd';
-const { Text } = Typography
+const { Text } = Typography;
+import SelectedNodeIcon from './SelectedNodeIcon';
 
-export default ({ data, unconnected }) => {
+export default ({ data, unconnected, selected }) => {
   return (
-    <div style={{
-      background: '#2C79EE',
-      padding: 15,
-      borderRadius: 5,
-      minWidth: 200,
-      minHeight: 50,
-    }}>
-      <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
+    <Fragment>
+      {selected && <SelectedNodeIcon />}
+      <div style={{
+        background: '#2C79EE',
+        padding: 15,
+        borderRadius: 5,
+        minWidth: 200,
+        minHeight: 50,
+      }}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
+        </div>
+        {!unconnected && (
+          <Handle
+            type="source"
+            position="right"
+            style={{ borderRadius: 10, background: '#ffffff', border: '3.5px solid #2C79EE', height: '12px', width: '12px' }}
+          />
+        )}
       </div>
-      {!unconnected && (
-        <Handle
-          type="source"
-          position="right"
-          style={{ borderRadius: 10, background: '#ffffff', border: '3.5px solid #2C79EE', height: '12px', width: '12px' }}
-        />
-      )}
-    </div>
+    </Fragment>
   );
 };
