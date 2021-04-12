@@ -420,6 +420,23 @@ class EventsDashboard extends Component {
     }
   }
 
+  renderMacCommandIcons = row => {
+    return (row.mac && row.mac.length > 0 && (
+      <Tooltip title="MAC Command(s)">
+        <Tag style={styles.tag} color="#4091F7"><SettingFilled /></Tag>
+      </Tooltip>)
+    );
+  }
+
+  renderEventIcons = row => {
+    return (
+      <React.Fragment>
+        {this.renderFrameIcons(row)}
+        {this.renderMacCommandIcons(row)}
+      </React.Fragment>
+    )
+  }
+
   isDataString = data => {
     return typeof data === 'string';
   }
@@ -482,9 +499,9 @@ class EventsDashboard extends Component {
 
     const columns = [
       {
-        title: 'Frame Count',
+        title: 'Event',
         dataIndex: 'data',
-        render: (data, row) => this.renderFrameIcons(row)
+        render: (data, row) => this.renderEventIcons(row)
       },
       {
         title: 'Type',
@@ -500,17 +517,6 @@ class EventsDashboard extends Component {
 
           return <Text>{categoryTag(row.category, row.sub_categories)} {integrationError && integrationErrorTag()}{integrationMissing && integrationMissingTag()}</Text>;
         }
-      },
-      {
-        title: 'Content',
-        dataIndex: 'mac',
-        render: (data, row) => (
-          row.mac && row.mac.length > 0 && (
-            <Tooltip title="MAC Command(s)">
-              <Tag style={styles.tag} color="#4091F7"><SettingFilled /></Tag>
-            </Tooltip>
-          )
-        )
       },
       {
         title: 'No. of Hotspots',
