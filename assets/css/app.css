@@ -605,3 +605,8 @@ a.version-link {
     transform: translateY(-10px);
   }
 }
+
+#event-log .ant-table-tbody > tr > td,
+#event-log .ant-table-thead > tr > th {
+  padding: 10px;
+}
