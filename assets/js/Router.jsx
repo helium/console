@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
-
-import { persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Spin } from 'antd';
 import { ApolloProvider } from '@apollo/client';
+import { persistor, history } from './store/configureStore';
+import { fetchOrganization } from './actions/organization';
+import { setupApolloClient } from './actions/apollo';
+import { useAuth0  } from './components/auth/Auth0Provider';
 
 // Routes
 import { connect } from 'react-redux';
@@ -22,14 +24,11 @@ import ChannelNew from './components/channels/ChannelNew';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
-import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
-import { fetchOrganization } from './actions/organization';
-import { setupApolloClient } from './actions/apollo';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt';
 
 const Router = (props) => {

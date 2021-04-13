@@ -271,10 +271,6 @@ h1 {
   font-size: 14px;
 }
 
-.colorpicker {
-  height: 39px;
-}
-
 @keyframes rotate {
   to {
     transform: rotate(360deg);
