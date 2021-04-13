@@ -46,15 +46,9 @@ defmodule Console.Organizations.Invitation do
   defp put_token(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
-        put_change(changeset, :token, generate_token(64))
+        put_change(changeset, :token, Helpers.generate_token(64))
       _ -> changeset
     end
-  end
-
-  defp generate_token(length) do
-    :crypto.strong_rand_bytes(length)
-    |> Base.url_encode64
-    |> binary_part(0, length)
   end
 
   defp downcase_email(attrs) do
