@@ -29,3 +29,16 @@ export const ALL_RESOURCES = gql`
     }
   }
 `
+
+export const FLOWS_BY_DEVICE = gql`
+  query FlowsByDevice ($deviceId: ID!) {
+    flowsByDevice(deviceId: $deviceId) {
+      id,
+      organization_id,
+      device_id,
+      label_id,
+      function_id,
+      channel_id
+    }
+  }
+`

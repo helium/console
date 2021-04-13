@@ -34,6 +34,15 @@ defmodule ConsoleWeb.Schema do
     field :dc_last_30d, :integer
   end
 
+  object :flow do
+    field :id, :id
+    field :organization_id, :id
+    field :device_id, :id
+    field :label_id, :id
+    field :function_id, :id
+    field :channel_id, :id
+  end
+
   object :mqtt_topic do
     field :topic, :string
   end
@@ -204,6 +213,12 @@ defmodule ConsoleWeb.Schema do
       arg :column, non_null(:string)
       arg :order, non_null(:string)
       resolve(&Console.Devices.DeviceResolver.paginate_by_label/2)
+    end
+
+    @desc "Get flows for specified device ID"
+    field :flows_by_device, list_of(:flow) do
+      arg :device_id, non_null(:id)
+      resolve(&Console.Flows.FlowResolver.get_by_device/2)
     end
 
     @desc "Get a single device"

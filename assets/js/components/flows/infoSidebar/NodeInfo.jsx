@@ -1,7 +1,8 @@
 import React from 'react';
 import FilledFunctionIcon from '../../../../img/filled-function-node-icon.svg';
 import FilledChannelNodeIcon from '../../../../img/filled-channel-node-icon.svg';
-import GroupNodeIcon from '../../../../img/filled-group-node-icon.svg';
+import FilledGroupNodeIcon from '../../../../img/filled-group-node-icon.svg';
+import FilledDeviceNodeIcon from '../../../../img/filled-device-node-icon.svg';
 import FunctionContent from './FunctionContent';
 import ChannelContent from './ChannelContent';
 import DeviceContent from './DeviceContent';
@@ -13,9 +14,9 @@ export default ({ id, type }) => {
       case 'function':
         return <img src={FilledFunctionIcon} style={{ height: 50 }} />;
       case 'device':
-        return null;
+        return <img src={FilledDeviceNodeIcon} style={{ height: 50 }} />;
       case 'label':
-        return <img src={GroupNodeIcon} style={{ height: 50 }} />;
+        return <img src={FilledGroupNodeIcon} style={{ height: 50 }} />;
       case 'utility':
         return null;
       case 'channel':
