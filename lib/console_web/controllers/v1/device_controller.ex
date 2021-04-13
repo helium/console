@@ -84,7 +84,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         "organization_id" => current_organization.id,
         "oui" => Application.fetch_env!(:console, :oui)
       })
-      |> Map.drop(["hotspot_address"])
+      |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       conn

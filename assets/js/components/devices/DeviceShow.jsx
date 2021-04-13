@@ -369,6 +369,62 @@ class DeviceShow extends Component {
                       )}
                     </td>
                   </tr>
+                  <UserCan>
+                  <tr style={{height: '30px'}}>
+                    <td style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <Text strong>App Key</Text>
+                      {
+                        showAppKey ? (
+                          <EyeOutlined
+                            onClick={() => this.setState({ showAppKey: !showAppKey })}
+                            style={{ marginLeft: 5 }}
+                          />
+                        ) : (
+                          <EyeInvisibleOutlined
+                            onClick={() => this.setState({ showAppKey: !showAppKey })}
+                            style={{ marginLeft: 5 }}
+                          />
+                        )
+                      }
+                    </td>
+                    <td>
+                      {showAppKeyInput && (
+                        <OutsideClick
+                          onOutsideClick={this.toggleAppKeyInput}
+                        >
+                          <Input
+                            name="newAppKey"
+                            placeholder={device.app_key}
+                            value={this.state.newAppKey}
+                            onChange={this.handleInputUpdate}
+                            maxLength={32}
+                            style={{ width: 300, marginRight: 5 }}
+                          />
+                          <Button
+                            type="primary"
+                            name="newAppKey"
+                            onClick={() => this.handleAppKeyUpdate(device.id)}
+                          >
+                            Update
+                          </Button>
+                        </OutsideClick>
+                      )}
+                      {!showAppKeyInput && showAppKey && (
+                        <React.Fragment>
+                          {
+                            device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
+                          }
+                          <Button size="small" onClick={this.toggleAppKeyInput}>
+                            <EditOutlined />
+                          </Button>
+                        </React.Fragment>
+                      )}
+                      {!showAppKeyInput && !showAppKey && (
+                        <Text code>************************</Text>
+                      )}
+                    </td>
+                  </tr>
+                </UserCan>
                 <tr style={{height: '20px'}} />
                 <tr style={{height: '30px'}}>
                   <td style={{width: '150px'}}><Text strong>Activation Method</Text></td>
