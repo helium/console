@@ -132,21 +132,21 @@ export default ({ devices, labels, functions, channels }) => {
             {
               tab === 'labels' && labels.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
-                  <LabelNode data={node.data} unconnected={true} />
+                  <LabelNode data={node.data} fromSidebar={true} />
                 </div>
               ))
             }
             {
               tab === 'devices' && devices.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
-                  <DeviceNode data={node.data} unconnected={true} />
+                  <DeviceNode data={node.data} fromSidebar={true} />
                 </div>
               ))
             }
             {
               tab === 'functions' && functions.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
-                  <FunctionNode data={node.data} unconnected={true} />
+                  <FunctionNode data={node.data} fromSidebar={true} />
                 </div>
               ))
             }
@@ -160,7 +160,7 @@ export default ({ devices, labels, functions, channels }) => {
             {
               tab === 'channels' && channels.map(node => (
                 <div style={{ marginBottom: 12 }} key={node.id} draggable onDragStart={(event) => onDragStart(event, node)}>
-                  <ChannelNode data={node.data} unconnected={true} />
+                  <ChannelNode data={node.data} fromSidebar={true} />
                 </div>
               ))
             }
