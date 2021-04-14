@@ -107,3 +107,10 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
     }
   }
 `
+export const GET_DEVICE_NAME = gql`
+  query DeviceNameQuery ($id: ID!) {
+    device(id: $id) {
+      name
+    }
+  }
+`

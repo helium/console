@@ -35,3 +35,11 @@ export const FUNCTION_SHOW = gql`
   }
   ${FUNCTION_FRAGMENT}
 `
+
+export const GET_FUNCTION_NAME = gql`
+  query FunctionNameQuery ($id: ID!) {
+    function(id: $id) {
+      name
+    }
+  }
+`

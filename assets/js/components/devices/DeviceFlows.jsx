@@ -169,10 +169,7 @@ componentDidMount() {
     const elements = this.generateElements(flowsByDevice);
 
     return (
-      <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title='Flows'
-      >
+      <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
         <FlowsLayout elements={elements} />
       </Card>
     );
