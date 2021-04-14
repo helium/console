@@ -1,5 +1,4 @@
 @import "~mapbox-gl/dist/mapbox-gl.css";
-@import "./mapbox.css";
 @import "./chartjs.css";
 @import "~antd/dist/antd.css";
 @import url("https://use.typekit.net/qfu3tzp.css");
@@ -175,10 +174,6 @@ h1 {
   border-bottom: 0px;
 }
 
-.labellist .labelrowwrapper:last-of-type {
-  padding-bottom: 8px;
-}
-
 .ant-card {
   border-radius: 6px;
   margin-bottom: 20px;
@@ -201,10 +196,6 @@ h1 {
   background: #f5f7f9;
 }
 
-.no-padding-card {
-  padding: 0;
-  padding-top: 20px;
-}
 
 .ant-card-body button.ant-btn {
   margin-right: 16px;
@@ -278,10 +269,6 @@ h1 {
 .ant-tag {
   font-weight: 600;
   font-size: 14px;
-}
-
-.colorpicker .ant-select-selection--single {
-  height: 39px;
 }
 
 @keyframes rotate {
@@ -492,10 +479,6 @@ tr.ant-table-expanded-row:hover {
 .ant-typography strong {
   font-weight: 400;
   color: rgba(0, 0, 0, 1);
-}
-
-.ant-tooltip-inner {
-  background-color: #000000;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

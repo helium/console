@@ -1,6 +1,5 @@
 import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
-import { percentOfTimeLeft } from './jwt.js'
 import { getIdTokenClaims } from '../components/auth/Auth0Provider'
 
 export const get = async (path, params = {}, extraHeaders = {}) => {

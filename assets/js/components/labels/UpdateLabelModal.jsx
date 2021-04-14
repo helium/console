@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography, Input, Divider, Select, Tabs, Slider, Switch } from 'antd';
+import { Modal, Button, Typography, Input, Divider, Tabs, Slider, Switch } from 'antd';
 import { labelColors } from '../common/LabelTag'
-import SquareTag from '../common/SquareTag'
 import analyticsLogger from '../../util/analyticsLogger'
 import { grayForModalCaptions } from '../../util/colors'
 import NotificationSettings from './NotificationSettings';
 import WebhookSettings from './WebhookSettings';
 const { Text } = Typography
-const { Option } = Select
 const { TabPane } = Tabs
 
 class UpdateLabelModal extends Component {
@@ -24,10 +22,6 @@ class UpdateLabelModal extends Component {
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value})
-  }
-
-  handleColorSelect = (color) => {
-    this.setState({ color })
   }
 
   handleNotificationSettingsChange = (settings, type) => {
@@ -121,17 +115,6 @@ class UpdateLabelModal extends Component {
                 onChange={this.handleInputUpdate}
                 style={{ marginBottom: 20, marginTop: 4 }}
               />
-
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
-                <Text strong style={{ fontSize: 16, marginRight: 10 }}>Label Color</Text>
-                <Select value={this.state.color} name="color" onChange={this.handleColorSelect} className="colorpicker">
-                  {
-                    labelColors.map((c,i) => (
-                      <Option key={i} value={c}><SquareTag color={c} /></Option>
-                    ))
-                  }
-                </Select>
-              </div>
             </div>
           </TabPane>
           <TabPane tab="Packets" key="packets">

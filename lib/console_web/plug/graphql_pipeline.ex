@@ -8,5 +8,4 @@ defmodule ConsoleWeb.Plug.GraphqlPipeline do
   plug ConsoleWeb.Plug.PutCurrentUser
   plug ConsoleWeb.Plug.PutCurrentOrganization
   plug ConsoleWeb.Plug.GraphqlContext
-  # plug ConsoleWeb.Plug.ConnInterceptor # good for debugging
 end

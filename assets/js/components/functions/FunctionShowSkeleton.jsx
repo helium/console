@@ -8,10 +8,7 @@ export const FunctionShowSkeleton = ({user}) => {
       <DashboardLayout user={user}>
         <Skeleton title={true} paragraph={{ rows: 0 }} active />
         <Card>
-          <Skeleton title={false} paragraph={{ rows: 3 }} active />
-        </Card>
-        <Card>
-          <Skeleton title={false} paragraph={{ rows: 3 }} active />
+          <Skeleton title={false} paragraph={{ rows: 6 }} active />
         </Card>
       </DashboardLayout>
     );
