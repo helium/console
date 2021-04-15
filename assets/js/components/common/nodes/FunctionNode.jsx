@@ -7,14 +7,6 @@ import { Typography } from 'antd';
 const { Text } = Typography;
 import FunctionIcon from '../../../../img/function-node-icon.svg';
 
-const nodeStyle = {
-  background: '#9E59F6',
-  padding: '10px 15px',
-  borderRadius: 5,
-  minWidth: 200,
-  minHeight: 30,
-};
-
 class FunctionNode extends Component {
   render() {
     const { loading, error } = this.props.functionNameQuery;
@@ -25,20 +17,22 @@ class FunctionNode extends Component {
 
     return (
       <Fragment>
-        <div style={nodeStyle}>
-          <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+        <div style={{ background: '#9E59F6' }} className="simple-node">
+          <div className="node-content">
             <img src={FunctionIcon} style={{ height: 16, marginRight: 8 }} />
             <Text style={{ display: 'block', fontSize: 13, color: '#ffffff', fontWeight: 500 }}>{thisFunction.name}</Text>
           </div>
           <Handle
             type="target"
             position="left"
-            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #9E59F6', height: '12px', width: '12px' }}
+            className="node-handle"
+            style={{ border: '3.5px solid #9E59F6' }}
           />
           <Handle
             type="source"
             position="right"
-            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #9E59F6', height: '12px', width: '12px' }}
+            className="node-handle"
+            style={{ border: '3.5px solid #9E59F6' }}
           />
         </div>
       </Fragment>

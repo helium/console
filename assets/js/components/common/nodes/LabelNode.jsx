@@ -7,22 +7,6 @@ import { Typography } from 'antd';
 const { Text } = Typography;
 import GroupsIcon from '../../../../img/label-node-icon.svg';
 
-const handleStyle = {
-  borderRadius: 10,
-  background: '#ffffff',
-  border: '3.5px solid #2C79EE',
-  height: '12px',
-  width: '12px'
-};
-
-const nodeStyle = {
-  background: '#2C79EE',
-  padding: '10px 15px',
-  borderRadius: 5,
-  minWidth: 200,
-  minHeight: 30,
-};
-
 class LabelNode extends Component {
   render() {
     const { loading, error } = this.props.labelNameQuery;
@@ -33,13 +17,13 @@ class LabelNode extends Component {
 
     return (
       <Fragment>
-        <div style={nodeStyle}>
-          <Handle type="target" position="left" style={handleStyle} />
-          <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+        <div style={{ background: '#2C79EE' }} className="simple-node">
+          <Handle type="target" position="left" className="node-handle" style={{ border: '3.5px solid #2C79EE' }} />
+          <div className="node-content">
             <img src={GroupsIcon} style={{ height: 14, marginRight: 8 }} />
             <Text style={{ display: 'block', fontSize: 13, color: '#ffffff', fontWeight: 500 }}>{label.name}</Text>
           </div>
-          <Handle type="source" position="right" style={handleStyle} />
+          <Handle type="source" position="right" className="node-handle" style={{ border: '3.5px solid #2C79EE' }} />
         </div>
       </Fragment>
     );

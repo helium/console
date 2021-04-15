@@ -16,21 +16,16 @@ class ChannelNode extends Component {
     const { channel } = this.props.channelNameQuery.data;
     return (
       <Fragment>
-        <div style={{
-          background: '#12CB9E',
-          padding: '10px 15px',
-          borderRadius: 5,
-          minWidth: 200,
-          minHeight: 30,
-        }}>
+        <div style={{ background: '#12CB9E' }} className="simple-node">
           <Handle
+            className="node-handle"
             type="target"
             position="left"
-            style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #12CB9E', height: '12px', width: '12px' }}
+            style={{ border: '3.5px solid #12CB9E' }}
           />
-          <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <div className="node-content">
+          <img src={ChannelIcon} style={{ height: 16, display: 'block', marginRight: 8 }} />
             <Text style={{ display: 'block', fontSize: 13, color: '#ffffff', fontWeight: 500 }}>{channel.name}</Text>
-            <img src={ChannelIcon} style={{ height: 16, display: 'block', marginLeft: 8 }} />
           </div>
         </div>
       </Fragment>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { ReactFlowProvider } from 'react-flow-renderer';
 import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { Card, Typography } from 'antd';
@@ -170,7 +171,11 @@ componentDidMount() {
 
     return (
       <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
-        <FlowsLayout elements={elements} />
+        <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*flowsByDevice.length}px` }}>
+          <ReactFlowProvider>
+            <FlowsLayout elements={elements} />
+          </ReactFlowProvider>
+        </div>
       </Card>
     );
   }

@@ -196,7 +196,6 @@ h1 {
   background: #f5f7f9;
 }
 
-
 .ant-card-body button.ant-btn {
   margin-right: 16px;
   margin-bottom: 0px;
@@ -592,4 +591,27 @@ a.version-link {
 #event-log .ant-table-tbody > tr > td,
 #event-log .ant-table-thead > tr > th {
   padding: 10px;
+}
+
+.simple-node {
+  padding: 10px 15px;
+  border-radius: 5px;
+  min-width: 150px;
+  min-height: 30px;
+}
+
+.node-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.node-handle {
+  height: 100%;
+  border-radius: 10px;
+  background: #ffffff;
+  height: 12px;
+  width: 12px;
 }

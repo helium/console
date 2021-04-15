@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactFlow, {
-  ReactFlowProvider,
   isNode,
-  // useStoreState // TODO
+  useStoreState
 } from 'react-flow-renderer';
 import dagre from 'dagre';
+import find from 'lodash/find';
 
 import LabelNode from './nodes/LabelNode';
 import FunctionNode from './nodes/FunctionNode';
@@ -21,14 +21,17 @@ const nodeTypes = {
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 400; // TODO remove
-const nodeHeight = 36; // TODO remove
+const getLayoutedElements = (elements, nodeSizes) => {
+  const DEFAULT_NODE_WIDTH = 300; // TODO reduce so that flow can be shorter + fix if node is wider than this
+  const DEFAULT_NODE_HEIGHT = 30;
 
-const getLayoutedElements = (elements) => {
   dagreGraph.setGraph({ rankdir: 'LR' });
 
   elements.forEach((el) => {
     if (isNode(el)) {
+      const existingNode = find(nodeSizes, {id: el.id});
+      let nodeWidth = existingNode ? existingNode.width : DEFAULT_NODE_WIDTH;
+      let nodeHeight = existingNode ? existingNode.height : DEFAULT_NODE_HEIGHT;
       dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
     } else {
       dagreGraph.setEdge(el.source, el.target);
@@ -43,9 +46,13 @@ const getLayoutedElements = (elements) => {
       el.targetPosition = 'left';
       el.sourcePosition = 'right';
 
-      // unfortunately we need this little hack to pass a slightly different position
-      // to notify react flow about the change. Moreover we are shifting the dagre node position
-      // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
+      const existingNode = find(nodeSizes, {id: el.id});
+      let nodeWidth = existingNode ? existingNode.width : DEFAULT_NODE_WIDTH;
+      let nodeHeight = existingNode ? existingNode.height : DEFAULT_NODE_HEIGHT;
+
+      // unfortunate hack needed to pass a slightly different position to notify change to react flow
+      // shifts the dagre node position (anchor=center center) to the top left
+      // so it matches the react flow node anchor point
       el.position = {
         x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
         y: nodeWithPosition.y - nodeHeight / 2,
@@ -57,23 +64,29 @@ const getLayoutedElements = (elements) => {
 };
 
 export default ({ elements }) => {
-  // const nodes = useStoreState(state => state.nodes) // TODO and then node.__rf.width, node.__rf.height
+  const nodes = useStoreState((state) => state.nodes);
+  const nodeSizes = nodes.map(node => (
+    { 
+      id: node.id,
+      width: node.__rf.width,
+      height: node.__rf.height
+    }
+  ));
+
+  const layoutedElements = getLayoutedElements(elements, nodeSizes);
+  const [flowElements] = useState(layoutedElements); // prevents render loop
 
   return (
-    <div style={{ padding: '25px', height: '500px', width: '1000px' }}>
-      <ReactFlowProvider>
-        <ReactFlow 
-          elements={getLayoutedElements(elements)}
-          nodeTypes={nodeTypes}
-          nodesDraggable={false}
-          nodesConnectable={false}
-          elementsSelectable={false}
-          zoomOnScroll={false}
-          zoomOnPinch={false}
-          zoomOnDoubleClick={false}
-          paneMoveable={false}
-        />
-      </ReactFlowProvider>
-    </div>
+    <ReactFlow
+      elements={flowElements}
+      nodeTypes={nodeTypes}
+      nodesDraggable={false}
+      nodesConnectable={false}
+      elementsSelectable={false}
+      zoomOnScroll={false}
+      zoomOnPinch={false}
+      zoomOnDoubleClick={false}
+      paneMoveable={false}
+    />
   ); 
 }
