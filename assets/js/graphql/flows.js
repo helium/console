@@ -29,3 +29,37 @@ export const ALL_RESOURCES = gql`
     }
   }
 `
+
+export const FLOWS_BY_DEVICE = gql`
+  query FlowsByDevice ($deviceId: ID!) {
+    flowsByDevice(deviceId: $deviceId) {
+      id,
+      organization_id,
+      device_id,
+      label_id,
+      function_id,
+      channel_id
+    }
+  }
+`
+
+export const GET_RESOURCES_NAMES = gql`
+  query GetResourcesNames ($deviceIds: [ID]!, $channelIds: [ID]!, $functionIds: [ID]!, $labelIds: [ID]!) {
+    deviceNames(deviceIds: $deviceIds) {
+      id,
+      name
+    }
+    channelNames(channelIds: $channelIds) {
+      id,
+      name
+    }
+    functionNames(functionIds: $functionIds) {
+      id,
+      name
+    }
+    labelNames(labelIds: $labelIds) {
+      id,
+      name
+    }
+  }
+`

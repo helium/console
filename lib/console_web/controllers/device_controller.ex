@@ -51,6 +51,7 @@ defmodule ConsoleWeb.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
 
       if device_params["active"] != nil do
         ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})

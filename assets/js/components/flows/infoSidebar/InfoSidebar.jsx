@@ -24,12 +24,16 @@ export default ({ toggle, show, width, children }) => {
       transition: 'all 0.5s ease',
       boxShadow: '10px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'
     }}>
-      <Button 
-        style={{ border: 'none', top: '35px', left: '35px' }} 
-        onClick={handleToggle} 
-        icon={<CloseOutlined style={{ fontSize: 30, color: '#D2DDE8' }} />}
-      />
-      {show && children}
+      {show && (
+        <React.Fragment>
+          <Button 
+            style={{ border: 'none', top: '35px', left: '35px' }} 
+            onClick={handleToggle} 
+            icon={<CloseOutlined style={{ fontSize: 30, color: '#D2DDE8' }} />}
+          />
+          {children}
+        </React.Fragment>
+      )}
     </div>
   );
 }

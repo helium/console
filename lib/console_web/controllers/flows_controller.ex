@@ -49,6 +49,7 @@ defmodule ConsoleWeb.FlowsController do
 
     case result do
       {:ok, _} ->
+        ConsoleWeb.Endpoint.broadcast("graphql:flows_update", "graphql:flows_update:#{current_organization.id}:organization_flows_update", %{})
         conn
         |> put_resp_header("message", "Updated all edges successfully")
         |> send_resp(:ok, "")

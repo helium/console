@@ -24,4 +24,11 @@ defmodule Console.Functions.FunctionResolver do
     functions = Ecto.assoc(current_organization, :functions) |> Repo.all()
     {:ok, functions}
   end
+
+  def get_names(%{function_ids: function_ids}, %{context: %{current_organization: current_organization}}) do
+    query = from f in Function,
+      where: f.organization_id == ^current_organization.id and f.id in ^function_ids
+
+    {:ok, query |> Repo.all()}
+  end
 end

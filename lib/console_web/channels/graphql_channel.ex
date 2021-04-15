@@ -92,4 +92,12 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:label_show_downlink", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:flows_update", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:resources_update", _message, socket) do
+    {:ok, socket}
+  end
 end

@@ -28,6 +28,7 @@ defmodule ConsoleWeb.FunctionController do
     with {:ok, %Function{} = function} <- Functions.update_function(function, function_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:function_show", "graphql:function_show:#{function.id}:function_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
 
       conn
       |> put_resp_header("message", "Function #{function.name} updated successfully")

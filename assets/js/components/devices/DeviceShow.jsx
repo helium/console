@@ -17,6 +17,7 @@ import DevicesAddLabelModal from './DevicesAddLabelModal'
 import DeviceCredentials from './DeviceCredentials'
 import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
+import DeviceFlows from './DeviceFlows';
 import { updateDevice } from '../../actions/device'
 import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
 import { sendDownlinkMessage } from '../../actions/channel'
@@ -445,6 +446,8 @@ class DeviceShow extends Component {
           openRemoveLabelFromDeviceModal={this.openDeviceRemoveLabelModal}
           openDevicesAddLabelModal={this.openDevicesAddLabelModal}
         />
+
+        <DeviceFlows deviceId={this.props.match.params.id} />
 
         <Card title="Real Time Packets"
           bodyStyle={{padding: 0, overflowX: "scroll" }}
