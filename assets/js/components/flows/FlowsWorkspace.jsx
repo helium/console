@@ -6,7 +6,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import omit from 'lodash/omit'
 import FlowsSidebar from './FlowsSidebar'
-import FlowsSettingsBar from './FlowsSettingsBar'
+import FlowsUpdateButtons from './FlowsUpdateButtons'
 import LabelNode from './nodes/LabelNode'
 import FunctionNode from './nodes/FunctionNode'
 import ChannelNode from './nodes/ChannelNode'
@@ -157,7 +157,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
             channels={channels}
             devices={devices}
           />
-          <FlowsSettingsBar
+          <FlowsUpdateButtons
             hasChanges={hasChanges}
             resetElementsMap={resetElementsMap}
             submitChanges={() => submitChanges(elementsMap)}
