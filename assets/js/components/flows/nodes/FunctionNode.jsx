@@ -11,7 +11,7 @@ const functionFormats = {
   custom: "Custom"
 }
 
-export default ({ data, unconnected, selected }) => {
+export default ({ data, fromSidebar, selected }) => {
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
@@ -21,11 +21,12 @@ export default ({ data, unconnected, selected }) => {
         borderRadius: 5,
         minWidth: 200,
         minHeight: 50,
+        position: 'relative'
       }}>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <img src={FunctionIcon} style={{ height: 16 }} />
         </div>
-        {!unconnected && (
+        {!fromSidebar && (
           <Handle
             type="target"
             position="left"
@@ -33,13 +34,39 @@ export default ({ data, unconnected, selected }) => {
           />
         )}
 
-        {!unconnected && (
+        {!fromSidebar && (
           <Handle
             type="source"
             position="right"
             style={{ height: '100%', borderRadius: 10, background: '#ffffff', border: '3.5px solid #9E59F6', height: '12px', width: '12px' }}
             isValidConnection={connection => connection.target.slice(0,8) !== "function" }
           />
+        )}
+
+        {fromSidebar && (
+          <div style={{
+            height: 12,
+            width: 12,
+            backgroundColor: 'white',
+            borderRadius: 6,
+            position: 'absolute',
+            top: 'calc(50% - 6px)',
+            right: -4,
+            border: '3.5px solid #9E59F6'
+          }} />
+        )}
+
+        {fromSidebar && (
+          <div style={{
+            height: 12,
+            width: 12,
+            backgroundColor: 'white',
+            borderRadius: 6,
+            position: 'absolute',
+            top: 'calc(50% - 6px)',
+            left: -4.5,
+            border: '3.5px solid #9E59F6'
+          }} />
         )}
         <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <div>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, Fragment } from 'react';
-import ReactFlow, { 
-  ReactFlowProvider, 
-  isNode, 
+import ReactFlow, {
+  ReactFlowProvider,
+  isNode,
   isEdge
 } from 'react-flow-renderer';
 import omit from 'lodash/omit'
@@ -40,6 +40,8 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
   }
 
   const onElementsRemove = (elementsToRemove) => {
+    if (!elementsToRemove[0]) return
+
     if (isEdge(elementsToRemove[0])) {
       setElements(elsMap => omit(elsMap, [elementsToRemove[0].id]))
     }
@@ -166,7 +168,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
           width={500}
           toggle={handleToggleSidebar}
         >
-          <NodeInfo 
+          <NodeInfo
             id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
             type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
           />

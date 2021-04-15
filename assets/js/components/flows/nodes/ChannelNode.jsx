@@ -5,7 +5,7 @@ const { Text } = Typography;
 import ChannelIcon from '../../../../img/channel-node-icon.svg';
 import SelectedNodeIcon from './SelectedNodeIcon';
 
-export default ({ data, unconnected, selected }) => {
+export default ({ data, fromSidebar, selected }) => {
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
@@ -15,9 +15,10 @@ export default ({ data, unconnected, selected }) => {
         borderRadius: 5,
         minWidth: 200,
         minHeight: 50,
+        position: 'relative'
       }}>
         {
-          !unconnected && (
+          !fromSidebar && (
             <Handle
               type="target"
               position="left"
@@ -25,6 +26,19 @@ export default ({ data, unconnected, selected }) => {
             />
           )
         }
+
+        {fromSidebar && (
+          <div style={{
+            height: 12,
+            width: 12,
+            backgroundColor: 'white',
+            borderRadius: 6,
+            position: 'absolute',
+            top: 'calc(50% - 6px)',
+            left: -4.5,
+            border: '3.5px solid #12CB9E'
+          }} />
+        )}
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
           <img src={ChannelIcon} style={{ height: 16, display: 'block' }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
