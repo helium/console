@@ -55,7 +55,9 @@ export const sendDownlinkMessage = (payload, port, confirmed, position, device, 
 
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
-  if (params.credentials && params.credentials.endpoint) params.credentials.endpoint = sanitizeHtml(params.credentials.endpoint)
+  if (params.credentials && params.credentials.endpoint) {
+    params.credentials.endpoint = sanitizeHtml(params.credentials.endpoint).replaceAll('&amp;', "&")
+  }
   if (params.credentials && params.credentials.headers) {
     const headers = {}
     Object.keys(params.credentials.headers).forEach(k => headers[sanitizeHtml(k)] = sanitizeHtml(params.credentials.headers[k]) )
