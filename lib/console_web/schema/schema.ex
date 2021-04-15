@@ -221,6 +221,26 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Flows.FlowResolver.get_by_device/2)
     end
 
+    field :device_names, list_of(:device) do
+      arg :device_ids, non_null(list_of(:id))
+      resolve(&Console.Devices.DeviceResolver.get_names/2)
+    end
+
+    field :channel_names, list_of(:channel) do
+      arg :channel_ids, non_null(list_of(:id))
+      resolve(&Console.Channels.ChannelResolver.get_names/2)
+    end
+
+    field :function_names, list_of(:function) do
+      arg :function_ids, non_null(list_of(:id))
+      resolve(&Console.Functions.FunctionResolver.get_names/2)
+    end
+
+    field :label_names, list_of(:label) do
+      arg :label_ids, non_null(list_of(:id))
+      resolve(&Console.Labels.LabelResolver.get_names/2)
+    end
+
     @desc "Get a single device"
     field :device, :device do
       arg :id, non_null(:id)

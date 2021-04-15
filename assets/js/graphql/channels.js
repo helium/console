@@ -52,11 +52,3 @@ export const PAGINATED_CHANNELS = gql`
   }
   ${CHANNEL_FRAGMENT}
 `
-
-export const GET_CHANNEL_NAME = gql`
-  query ChannelNameQuery ($id: ID!) {
-    channel(id: $id) {
-      name
-    }
-  }
-`

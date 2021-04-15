@@ -26,6 +26,7 @@ defmodule ConsoleWeb.ChannelController do
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
 
       conn
       |> put_resp_header("message", "Integration #{channel.name} updated successfully")

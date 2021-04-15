@@ -71,4 +71,11 @@ defmodule Console.Channels.ChannelResolver do
 
     {:ok, channels}
   end
+
+  def get_names(%{channel_ids: channel_ids}, %{context: %{current_organization: current_organization}}) do
+    query = from c in Channel,
+      where: c.organization_id == ^current_organization.id and c.id in ^channel_ids
+
+    {:ok, query |> Repo.all()}
+  end
 end

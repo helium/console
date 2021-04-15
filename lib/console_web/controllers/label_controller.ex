@@ -36,6 +36,7 @@ defmodule ConsoleWeb.LabelController do
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
 
       msg =
         cond do

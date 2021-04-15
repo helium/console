@@ -82,11 +82,3 @@ export const PAGINATED_LABELS_BY_DEVICE = gql`
     }
   }
 `
-
-export const GET_LABEL_NAME = gql`
-  query LabelNameQuery ($id: ID!) {
-    label(id: $id) {
-      name
-    }
-  }
-`

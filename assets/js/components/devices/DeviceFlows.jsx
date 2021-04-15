@@ -1,34 +1,107 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import { ReactFlowProvider } from 'react-flow-renderer';
-import withGql from '../../graphql/withGql'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Card, Typography } from 'antd';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
-import { FLOWS_BY_DEVICE } from '../../graphql/flows'
+import { FLOWS_BY_DEVICE, GET_RESOURCES_NAMES } from '../../graphql/flows'
 import FlowsLayout from '../common/FlowsLayout';
+import { useQuery } from '@apollo/client';
 
-class DeviceFlows extends Component {
-refetchEntries = () => {
-  const { refetch } = this.props.deviceFlowsQuery;
-  refetch();
-}
+const FETCH_POLICY = 'cache-and-network';
 
-componentDidMount() {
-    const { currentOrganizationId, socket } = this.props;
+export default ({ deviceId }) => {
+  const { 
+    loading: flowsByDeviceLoading, 
+    error: flowsByDeviceError, 
+    data: flowsByDeviceData, 
+    refetch: flowsByDeviceRefetch 
+  } = useQuery(FLOWS_BY_DEVICE, {
+    variables: { deviceId },
+    fetchPolicy: FETCH_POLICY
+  });
 
-    this.channel = socket.channel("graphql:flows_update", {});
-    this.channel.join();
-    this.channel.on(`graphql:flows_update:${currentOrganizationId}:organization_flows_update`, (message) => {
-      this.refetchEntries();
+  let flowsByDevice  = (flowsByDeviceData && flowsByDeviceData.flowsByDevice) || [];
+  let deviceIds = [];
+  let channelIds = [];
+  let labelIds = [];
+  let functionIds = [];
+
+  flowsByDevice && flowsByDevice.forEach(flow => {
+    if (flow.channel_id && !channelIds.includes(flow.channel_id)) {
+      channelIds.push(flow.channel_id);
+    }
+    if (flow.function_id && !functionIds.includes(flow.function_id)) {
+      functionIds.push(flow.function_id);
+    }
+    if (flow.device_id && !deviceIds.includes(flow.device_id)) {
+      deviceIds.push(flow.device_id);
+    }
+    if (flow.label_id && !labelIds.includes(flow.label_id)) {
+      labelIds.push(flow.label_id);
+    }
+  });
+
+  const { 
+    loading: getResourcesNamesLoading, 
+    error: getResourcesNamesError, 
+    data: getResourcesNamesData, 
+    refetch: getResourcesNamesRefetch 
+  } = useQuery(GET_RESOURCES_NAMES, {
+    skip: !flowsByDeviceData,
+    variables: { deviceIds, channelIds, functionIds, labelIds },
+    fetchPolicy: FETCH_POLICY
+  });
+
+  const deviceNameMap = {};
+  const channelNameMap = {};
+  const functionNameMap = {};
+  const labelNameMap = {};
+  if (getResourcesNamesData) {
+    getResourcesNamesData.deviceNames.forEach(dn => {
+      deviceNameMap[dn.id] = dn.name;
+    });
+    getResourcesNamesData.channelNames.forEach(cn => {
+      channelNameMap[cn.id] = cn.name;
+    });
+    getResourcesNamesData.functionNames.forEach(fn => {
+      functionNameMap[fn.id] = fn.name;
+    });
+    getResourcesNamesData.labelNames.forEach(ln => {
+      labelNameMap[ln.id] = ln.name;
+    });
+  }
+
+  const socket = useSelector(state => state.apollo.socket);
+  const currentOrganizationId = useSelector(state => state.organization.currentOrganizationId);
+  const flowChannel = socket.channel("graphql:flows_update", {});
+  const resourcesChannel = socket.channel("graphql:resources_update", {});
+
+  useEffect(() => {
+    // executed when mounted
+    flowChannel.join();
+    flowChannel.on(`graphql:flows_update:${currentOrganizationId}:organization_flows_update`, (message) => {
+      flowsByDeviceRefetch();
     })
-  }
 
-  componentWillUnmount() {
-    this.channel.leave();
-  }
+    resourcesChannel.join();
+    resourcesChannel.on(`graphql:resources_update:${currentOrganizationId}:organization_resources_update`, (message) => {
+      getResourcesNamesRefetch();
+    })
 
-  addCopyIfNodeExisting = (nodeId, existingElements) => {
+    // executed when unmounted
+    return () => {
+      flowChannel.leave();
+      resourcesChannel.leave();
+    }
+  }, []);
+
+  if (flowsByDeviceLoading || getResourcesNamesLoading) return <SkeletonLayout />;
+  if (flowsByDeviceError || getResourcesNamesError) return (
+    <Text>Data failed to load, please reload the page and try again</Text>
+  );
+
+  const addCopyIfNodeExisting = (nodeId, existingElements) => {
     if (nodeId in existingElements) {
       let i = 1;
       while (existingElements[nodeId + "_copy" + i]) {
@@ -40,31 +113,31 @@ componentDidMount() {
     }
   }
 
-  generateElements = (flows) => {
+  const generateElements = (id, flows) => {
     let elements = {};
 
     flows.forEach(f => {
       const functionId = f.function_id;
       const channelId = f.channel_id;
-      const deviceId = f.device_id || this.props.deviceId;
+      const deviceId = f.device_id || id;
       const labelId = f.label_id;
 
       let functionNodeId = `function-${functionId}`;
-      functionNodeId = this.addCopyIfNodeExisting(functionNodeId, elements);
+      functionNodeId = addCopyIfNodeExisting(functionNodeId, elements);
 
       let channelNodeId = `channel-${channelId}`;
-      channelNodeId = this.addCopyIfNodeExisting(channelNodeId, elements);
+      channelNodeId = addCopyIfNodeExisting(channelNodeId, elements);
 
       let deviceNodeId = `device-${deviceId}`;
-      deviceNodeId = this.addCopyIfNodeExisting(deviceNodeId, elements);
+      deviceNodeId = addCopyIfNodeExisting(deviceNodeId, elements);
 
       let labelNodeId = `label-${labelId}`;
-      labelNodeId = this.addCopyIfNodeExisting(labelNodeId, elements);
+      labelNodeId = addCopyIfNodeExisting(labelNodeId, elements);
 
       elements[channelNodeId] = {
         id: channelNodeId,
         data: {
-          label: channelId
+          label: channelNameMap[channelId]
         },
         position: [0,0],
         type: 'channelNode'
@@ -74,7 +147,7 @@ componentDidMount() {
         elements[functionNodeId] = {
           id: functionNodeId,
           data: {
-            label: functionId
+            label: functionNameMap[functionId] || ''
           },
           position: [0,0],
           type: 'functionNode'
@@ -91,7 +164,7 @@ componentDidMount() {
         elements[deviceNodeId] ={
           id: deviceNodeId,
           data: {
-            label: deviceId
+            label: deviceNameMap[deviceId]
           },
           position: [0,0],
           type: 'deviceNode'
@@ -99,7 +172,7 @@ componentDidMount() {
         elements[labelNodeId] = {
           id: labelNodeId,
           data: {
-            label: labelId
+            label: labelNameMap[labelId]
           },
           position: [0,0],
           type: 'labelNode'
@@ -131,7 +204,7 @@ componentDidMount() {
         elements[deviceNodeId] = {
           id: deviceNodeId,
           data: {
-            label: deviceId
+            label: deviceNameMap[deviceId]
           },
           position: [0,0],
           type: 'deviceNode'
@@ -158,36 +231,15 @@ componentDidMount() {
     return Object.values(elements);
   }
 
-  render() {
-    const { loading, error } = this.props.deviceFlowsQuery;
+  const elements = generateElements(deviceId, flowsByDevice);
 
-    if (loading) return <SkeletonLayout />;
-    if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    );
-
-    const { flowsByDevice } = this.props.deviceFlowsQuery.data;
-    const elements = this.generateElements(flowsByDevice);
-
-    return (
-      <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
-        <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*flowsByDevice.length}px` }}>
-          <ReactFlowProvider>
-            <FlowsLayout elements={elements} />
-          </ReactFlowProvider>
-        </div>
-      </Card>
-    );
-  }
+  return (
+    <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
+      <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*flowsByDevice.length}px` }}>
+        <ReactFlowProvider>
+          <FlowsLayout elements={elements} />
+        </ReactFlowProvider>
+      </div>
+    </Card>
+  );
 }
-
-function mapStateToProps(state) {
-  return {
-    socket: state.apollo.socket,
-    currentOrganizationId: state.organization.currentOrganizationId
-  };
-}
-
-export default connect(mapStateToProps, null)(
-  withGql(DeviceFlows, FLOWS_BY_DEVICE, props => ({ fetchPolicy: 'cache-first', variables: { deviceId: props.deviceId }, name: 'deviceFlowsQuery' }))
-)

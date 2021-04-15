@@ -47,4 +47,11 @@ defmodule Console.Labels.LabelResolver do
 
     {:ok, labels}
   end
+
+  def get_names(%{label_ids: label_ids}, %{context: %{current_organization: current_organization}}) do
+    query = from l in Label,
+      where: l.organization_id == ^current_organization.id and l.id in ^label_ids
+
+    {:ok, query |> Repo.all()}
+  end
 end

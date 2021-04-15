@@ -42,3 +42,24 @@ export const FLOWS_BY_DEVICE = gql`
     }
   }
 `
+
+export const GET_RESOURCES_NAMES = gql`
+  query GetResourcesNames ($deviceIds: [ID]!, $channelIds: [ID]!, $functionIds: [ID]!, $labelIds: [ID]!) {
+    deviceNames(deviceIds: $deviceIds) {
+      id,
+      name
+    }
+    channelNames(channelIds: $channelIds) {
+      id,
+      name
+    }
+    functionNames(functionIds: $functionIds) {
+      id,
+      name
+    }
+    labelNames(labelIds: $labelIds) {
+      id,
+      name
+    }
+  }
+`
