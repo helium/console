@@ -3,7 +3,30 @@ import { Handle } from 'react-flow-renderer';
 import { Typography } from 'antd';
 const { Text } = Typography;
 import ChannelIcon from '../../../../img/channel-node-icon.svg';
+import AdafruitIcon from '../../../../img/channels/adafruit.png';
+import AwsIcon from '../../../../img/channels/aws.png';
+import AzureIcon from '../../../../img/channels/azure.png';
+import CargoIcon from '../../../../img/channels/cargo.png';
+import CayenneIcon from '../../../../img/channels/cayenne.png';
+import DatacakeIcon from '../../../../img/channels/datacake.png';
+import HttpIcon from '../../../../img/channels/http.png';
+import MqttIcon from '../../../../img/channels/mqtt.png';
+import TagoIcon from '../../../../img/channels/tago.png';
+import UbidotsIcon from '../../../../img/channels/ubidots.png';
 import SelectedNodeIcon from './SelectedNodeIcon';
+
+const imgMap = {
+  adafruit: AdafruitIcon,
+  aws: AwsIcon,
+  azure: AzureIcon,
+  cargo: CargoIcon,
+  cayenne: CayenneIcon,
+  datacake: DatacakeIcon,
+  http: HttpIcon,
+  mqtt: MqttIcon,
+  tago: TagoIcon,
+  ubidots: UbidotsIcon
+}
 
 export default ({ data, fromSidebar, selected }) => {
   return (
@@ -11,11 +34,16 @@ export default ({ data, fromSidebar, selected }) => {
       {selected && <SelectedNodeIcon />}
       <div style={{
         background: '#12CB9E',
-        padding: '10px 15px 6px 15px',
         borderRadius: 5,
         minWidth: 200,
         minHeight: 50,
-        position: 'relative'
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        maxHeight: 60,
+        minHeight: 60
       }}>
         {
           !fromSidebar && (
@@ -39,10 +67,12 @@ export default ({ data, fromSidebar, selected }) => {
             border: '3.5px solid #12CB9E'
           }} />
         )}
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '10px 15px 6px 15px', alignItems: 'flex-end' }}>
           <img src={ChannelIcon} style={{ height: 16, display: 'block' }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
-          <Text style={{ fontSize: 10, color: '#ffffff', position: 'relative', top: -5 }}>Integration Type: {data.type}</Text>
+        </div>
+        <div style={{ borderRadius: '0px 5px 5px 0px', overflow: 'hidden' }}>
+          <img src={imgMap[data.type]} style={{ height: 60, width: 60 }} />
         </div>
       </div>
     </Fragment>
