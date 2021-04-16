@@ -18,31 +18,29 @@ const nodeTypes = {
   deviceNode: DeviceNode
 };
 
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
-const getLayoutedElements = (elements, nodeSizes) => {
+const getLayoutElements = (elements, nodeSizes) => {
   const DEFAULT_NODE_WIDTH = 300; // TODO reduce so that flow can be shorter + fix if node is wider than this
   const DEFAULT_NODE_HEIGHT = 30;
-
-  dagreGraph.setGraph({ rankdir: 'LR' });
+  const g = new dagre.graphlib.Graph({});
+  g.setGraph({ rankdir: 'LR' });
+  g.setDefaultEdgeLabel(() => ({}));
 
   elements.forEach((el) => {
     if (isNode(el)) {
       const existingNode = find(nodeSizes, {id: el.id});
       let nodeWidth = existingNode ? existingNode.width : DEFAULT_NODE_WIDTH;
       let nodeHeight = existingNode ? existingNode.height : DEFAULT_NODE_HEIGHT;
-      dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
+      g.setNode(el.id, { width: nodeWidth, height: nodeHeight });
     } else {
-      dagreGraph.setEdge(el.source, el.target);
+      g.setEdge(el.source, el.target);
     }
   });
-
-  dagre.layout(dagreGraph);
+  
+  dagre.layout(g);
 
   return elements.map((el) => {
     if (isNode(el)) {
-      const nodeWithPosition = dagreGraph.node(el.id);
+      const nodeWithPosition = g.node(el.id);
       el.targetPosition = 'left';
       el.sourcePosition = 'right';
 
@@ -61,11 +59,11 @@ const getLayoutedElements = (elements, nodeSizes) => {
 
     return el;
   });
-};
+}
 
 export default ({ elements }) => {
-  const nodes = useStoreState((state) => state.nodes);
-  const nodeSizes = nodes.map(node => (
+  const nodeStates = useStoreState((state) => state.nodes);
+  const nodeSizes = nodeStates.map(node => (
     { 
       id: node.id,
       width: node.__rf.width,
@@ -73,8 +71,8 @@ export default ({ elements }) => {
     }
   ));
 
-  const layoutedElements = getLayoutedElements(elements, nodeSizes);
-  const [flowElements] = useState(layoutedElements); // prevents render loop
+  const layoutedElements = getLayoutElements(elements, nodeSizes);
+  const [flowElements] = useState(layoutedElements);
 
   return (
     <ReactFlow
