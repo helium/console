@@ -18,7 +18,7 @@ const nodeTypes = {
   deviceNode: DeviceNode
 };
 
-const createGraphLayout = (elements, nodeSizes) => {
+const getLayoutElements = (elements, nodeSizes) => {
   const DEFAULT_NODE_WIDTH = 300; // TODO reduce so that flow can be shorter + fix if node is wider than this
   const DEFAULT_NODE_HEIGHT = 30;
   const g = new dagre.graphlib.Graph({});
@@ -71,7 +71,7 @@ export default ({ elements }) => {
     }
   ));
 
-  const layoutedElements = createGraphLayout(elements, nodeSizes);
+  const layoutedElements = getLayoutElements(elements, nodeSizes);
   const [flowElements] = useState(layoutedElements);
 
   return (
