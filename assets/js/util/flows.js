@@ -1,4 +1,5 @@
 export const getIntegrationTypeForFlows = (endpoint, type) => {
+  if (!endpoint) return type
   if (endpoint === "https://cargo.helium.com/api/payloads") return "cargo"
   if (endpoint === "https://lora.mydevices.com/v1/networks/helium/uplink") return "cayenne"
   if (endpoint === "https://api.datacake.co/integrations/lorawan/helium/") return "datacake"

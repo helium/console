@@ -17,10 +17,8 @@ export default ({ data, fromSidebar, selected }) => {
         minHeight: 50,
         position: 'relative'
       }}>
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-          <img src={DeviceIcon} style={{ height: 16 }} />
-        </div>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <img draggable="false" src={DeviceIcon} style={{ height: 14, marginRight: 8 }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
         </div>
         {!fromSidebar && (
@@ -39,7 +37,7 @@ export default ({ data, fromSidebar, selected }) => {
             position: 'absolute',
             top: 'calc(50% - 6px)',
             right: -4,
-            border: '3.5px solid #2C79EE'
+            border: '3.5px solid #A6B8CC'
           }} />
         )}
       </div>

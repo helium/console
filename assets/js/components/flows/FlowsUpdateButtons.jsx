@@ -7,10 +7,9 @@ export default ({ hasChanges, resetElementsMap, submitChanges }) => {
     return (
       <div style={{
         position: 'absolute',
-        top: 0,
-        right: 0,
-        backgroundColor: '#f7f8fa',
-        zIndex: 100,
+        bottom: 150,
+        right: 20,
+        zIndex: 150,
         padding: 10,
         maxHeight: 'calc(100vh - 55px)',
         overflowY: 'scroll'

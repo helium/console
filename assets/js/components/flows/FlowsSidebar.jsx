@@ -8,8 +8,8 @@ import DeviceNode from './nodes/DeviceNode'
 import DebugNode from './nodes/DebugNode'
 import GroupsIcon from '../../../img/flows-sidebar-groups-icon.svg'
 import GroupsGreyIcon from '../../../img/flows-sidebar-groups-icon-grey.svg'
-import DevicesIcon from '../../../img/flows-sidebar-groups-icon.svg'
-import DevicesGreyIcon from '../../../img/flows-sidebar-groups-icon-grey.svg'
+import DevicesIcon from '../../../img/flows-sidebar-devices-icon.svg'
+import DevicesGreyIcon from '../../../img/flows-sidebar-devices-icon-grey.svg'
 import FunctionIcon from '../../../img/flows-sidebar-functions-icon.svg'
 import FunctionGreyIcon from '../../../img/flows-sidebar-functions-icon-grey.svg'
 import UtilityIcon from '../../../img/flows-sidebar-utilities-icon.svg'
@@ -84,14 +84,14 @@ export default ({ devices, labels, functions, channels }) => {
               <Text style={{ display: 'block', color: tab === "labels" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Labels</Text>
             </div>
             <div
-              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "devices" ? '4px solid #2C79EE' : '4px solid #ffffff'  }}
+              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "devices" ? '4px solid #A6B8CC' : '4px solid #ffffff'  }}
               onClick={() => setTab("devices")}
               className="noselect"
             >
               {
                 tab === "devices" ? <img draggable="false" src={DevicesIcon} style={{ height: 20 }} /> : <img draggable="false" src={DevicesGreyIcon} style={{ height: 20 }} />
               }
-              <Text style={{ display: 'block', color: tab === "devices" ? '#2C79EE' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Devices</Text>
+              <Text style={{ display: 'block', color: tab === "devices" ? '#A6B8CC' : '#D8E2EC', fontWeight: 500, marginTop: 4 }}>Devices</Text>
             </div>
             <div
               style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 5, marginRight: 5, paddingBottom: 10, borderBottom: tab === "functions" ? '4px solid #9E59F6' : '4px solid #ffffff' }}

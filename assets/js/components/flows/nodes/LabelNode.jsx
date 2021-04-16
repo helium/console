@@ -18,7 +18,7 @@ export default ({ data, fromSidebar, selected }) => {
         position: 'relative'
       }}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-          <img src={GroupsIcon} style={{ height: 14, marginRight: 8 }} />
+          <img src={GroupsIcon} draggable="false" style={{ height: 14, marginRight: 8 }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
         </div>
         <Text style={{ display: 'block', fontSize: 12, color: '#ffffff' }}>{data.deviceCount || 0} Devices</Text>

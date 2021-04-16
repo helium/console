@@ -24,7 +24,7 @@ export default ({ data, fromSidebar, selected }) => {
         position: 'relative'
       }}>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-          <img src={FunctionIcon} style={{ height: 16 }} />
+          <img draggable="false" src={FunctionIcon} style={{ height: 16 }} />
         </div>
         {!fromSidebar && (
           <Handle
