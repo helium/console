@@ -36,6 +36,8 @@ export default ({ deviceId }) => {
     }
     if (flow.device_id && !deviceIds.includes(flow.device_id)) {
       deviceIds.push(flow.device_id);
+    } else {
+      deviceIds.push(deviceId);
     }
     if (flow.label_id && !labelIds.includes(flow.label_id)) {
       labelIds.push(flow.label_id);
@@ -235,7 +237,7 @@ export default ({ deviceId }) => {
 
   return (
     <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
-      <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*flowsByDevice.length}px` }}>
+      <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*(flowsByDevice.length || 50)}px` }}>
         <ReactFlowProvider>
           <FlowsLayout elements={elements} />
         </ReactFlowProvider>
