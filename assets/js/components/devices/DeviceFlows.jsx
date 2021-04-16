@@ -237,11 +237,13 @@ export default ({ deviceId }) => {
 
   return (
     <Card bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }} title='Flows'>
+      {elements.length > 0 ?
       <div style={{ padding: '20px', position: "relative", width: "1000px", height: `${85*(flowsByDevice.length || 50)}px` }}>
         <ReactFlowProvider>
           <FlowsLayout elements={elements} />
         </ReactFlowProvider>
-      </div>
+      </div> 
+      : <div style={{ textAlign: 'center', padding: '20px 0', color: 'grey' }}>No flows exist for this device</div>}
     </Card>
   );
 }
