@@ -68,11 +68,11 @@ export default ({ data, fromSidebar, selected }) => {
           }} />
         )}
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '10px 15px 6px 15px', alignItems: 'flex-end' }}>
-          <img src={ChannelIcon} style={{ height: 16, display: 'block' }} />
+          <img src={ChannelIcon} draggable="false" style={{ height: 16, display: 'block' }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
         </div>
         <div style={{ borderRadius: '0px 5px 5px 0px', overflow: 'hidden' }}>
-          <img src={imgMap[data.type]} style={{ height: 60, width: 60 }} />
+          <img src={imgMap[data.type]} draggable="false" style={{ height: 60, width: 60 }} />
         </div>
       </div>
     </Fragment>

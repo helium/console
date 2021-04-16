@@ -18,7 +18,7 @@ export default ({ data, fromSidebar, selected }) => {
         position: 'relative'
       }}>
         <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-          <img src={DeviceIcon} style={{ height: 14, marginRight: 8 }} />
+          <img draggable="false" src={DeviceIcon} style={{ height: 14, marginRight: 8 }} />
           <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
         </div>
         {!fromSidebar && (
