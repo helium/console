@@ -169,7 +169,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
           toggle={handleToggleSidebar}
         >
           <NodeInfo
-            id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1]}
+            id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split('_copy')[0]}
             type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
           />
         </InfoSidebar>
