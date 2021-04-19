@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ChooseImportType from './import/ChooseImportType';
 import { createDevice } from '../../actions/device'
 import { displayError } from '../../util/messages'
 import withGql from '../../graphql/withGql'
@@ -56,8 +57,8 @@ class DeviceNew extends Component {
 
     return (
       <div style={{ padding: '30px 30px 20px 30px' }}>
-        <Text style={{ fontSize: 22, fontWeight: 600 }}>All Devices</Text>
-        <Row gutter={20} style={{ marginTop: 20 }}>
+        <Text style={{ fontSize: 22, fontWeight: 600 }}>Add New Device</Text>
+        <Row gutter={30} style={{ marginTop: 20 }}>
           <Col span={12}>
             <Card title="Enter Device Details">
               <Input
@@ -129,7 +130,6 @@ class DeviceNew extends Component {
                 }
               />
 
-
               <Text style={{marginTop: 30, display: 'block'}} strong>Attach a Label (Optional)</Text>
               <LabelAppliedNew
                 allLabels={allLabels}
@@ -146,6 +146,9 @@ class DeviceNew extends Component {
             </div>
           </Col>
           <Col span={12}>
+            <div style={{ display: 'flex', 'flexDirection': 'column', alignItems: 'center' }}>
+              <ChooseImportType onImportSelect={this.props.setImportType} />
+            </div>
           </Col>
         </Row>
       </div>
