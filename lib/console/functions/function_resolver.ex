@@ -10,7 +10,20 @@ defmodule Console.Functions.FunctionResolver do
       |> preload([labels: [:channels]])
       |> Repo.paginate(page: page, page_size: page_size)
 
-    {:ok, functions}
+    entries = functions.entries
+      |> Enum.map(fn f ->
+        Map.put(f, :labels,
+          Enum.map(f.labels, fn l ->
+            Map.put(l, :channels,
+              Enum.map(l.channels, fn c ->
+                Map.drop(c, [:downlink_token])
+              end)
+            )
+          end)
+        )
+      end)
+
+    {:ok, Map.put(functions, :entries, entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
@@ -18,6 +31,17 @@ defmodule Console.Functions.FunctionResolver do
       |> where([f], f.id == ^id and f.organization_id == ^current_organization.id)
       |> preload([labels: [:channels, :function]])
       |> Repo.one!()
+
+    function = function
+      |> Map.put(:labels,
+        Enum.map(function.labels, fn l ->
+          Map.put(l, :channels,
+            Enum.map(l.channels, fn c ->
+              Map.drop(c, [:downlink_token])
+            end)
+          )
+        end)
+      )
 
     {:ok, function}
   end

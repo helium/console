@@ -13,7 +13,23 @@ defmodule Console.Labels.LabelResolver do
       |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    {:ok, labels}
+    entries = labels.entries
+      |> Enum.map(fn l ->
+        devices = l.devices
+          |> Enum.map(fn d ->
+            Map.drop(d, [:app_key])
+          end)
+
+        channels = l.channels
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+        l
+        |> Map.put(:devices, devices)
+        |> Map.put(:channels, channels)
+      end)
+
+    {:ok, Map.put(labels, :entries, entries)}
   end
 
   def paginate_by_device(%{page: page, page_size: page_size, device_id: device_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
@@ -26,13 +42,32 @@ defmodule Console.Labels.LabelResolver do
       preload: [:channels, :function],
       order_by: ^order_by
 
-    {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
+    labels = query |> Repo.paginate(page: page, page_size: page_size)
+    entries = labels.entries
+      |> Enum.map(fn l ->
+        channels = l.channels
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+        Map.put(l, :channels, channels)
+      end)
+
+    {:ok, Map.put(labels, :entries, entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     label = Ecto.assoc(current_organization, :labels) |> preload([:channels, :devices, :function, :label_notification_settings, :label_notification_webhooks]) |> Repo.get!(id)
 
-    {:ok, label}
+    devices = label.devices
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+      end)
+    channels = label.channels
+      |> Enum.map(fn c ->
+        Map.drop(c, [:downlink_token])
+      end)
+
+    {:ok, label |> Map.put(:devices, devices) |> Map.put(:channels, channels)}
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do
@@ -43,7 +78,6 @@ defmodule Console.Labels.LabelResolver do
       select: %{label_id: l.id, device_count: count(d.id)}
 
     device_counts = Repo.all(device_count_query)
-
 
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
@@ -58,6 +92,13 @@ defmodule Console.Labels.LabelResolver do
               end)
 
           label |> Map.put(:device_count, device_count)
+      end)
+      |> Enum.map(fn l ->
+        channels = l.channels
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+        Map.put(l, :channels, channels)
       end)
 
     {:ok, labels}

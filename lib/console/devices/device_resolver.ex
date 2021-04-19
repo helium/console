@@ -23,8 +23,27 @@ defmodule Console.Devices.DeviceResolver do
           end)
           |> List.flatten()
           |> Enum.uniq()
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+
+        labels =
+          Enum.map(d.labels, fn l ->
+            Map.drop(l, [:devices])
+          end)
+          |> Enum.map(fn l ->
+            Map.put(l, :channels,
+              Enum.map(l.channels, fn c ->
+                Map.drop(c, [:downlink_token])
+              end)
+            )
+          end)
 
         Map.put(d, :channels, channels)
+        |> Map.put(:labels, labels)
+      end)
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
       end)
 
     {:ok, Map.put(devices, :entries, entries)}
@@ -35,10 +54,21 @@ defmodule Console.Devices.DeviceResolver do
 
     device =
       case current_membership.role do
-        "read" -> device |> Map.put(:app_key, nil)
+        "read" ->
+          device
+          |> Map.drop([:app_key])
+          |> Map.put(:labels,
+            device.labels
+              |> Enum.map(fn l ->
+                Map.put(l, :channels,
+                  Enum.map(l.channels, fn c ->
+                    Map.drop(c, [:downlink_token])
+                  end)
+                )
+              end)
+          )
         _ -> device
       end
-
     {:ok, device}
   end
 
@@ -98,6 +128,9 @@ defmodule Console.Devices.DeviceResolver do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
       |> Repo.all()
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+      end)
 
     {:ok, devices}
   end
@@ -112,7 +145,23 @@ defmodule Console.Devices.DeviceResolver do
       preload: [labels: [:channels, :function]],
       order_by: ^order_by
 
-    {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
+    devices = query |> Repo.paginate(page: page, page_size: page_size)
+
+    entries = devices.entries
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+        |> Map.put(:labels,
+          Enum.map(d.labels, fn l ->
+            Map.put(l, :channels,
+              Enum.map(l.channels, fn c ->
+                Map.drop(c, [:downlink_token])
+              end)
+            )
+          end)
+        )
+      end)
+
+    {:ok, Map.put(devices, :entries, entries)}
   end
 
   def events(%{device_id: id}, %{context: %{current_organization: current_organization}}) do

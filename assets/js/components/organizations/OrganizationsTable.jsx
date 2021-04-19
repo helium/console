@@ -101,7 +101,7 @@ class OrganizationsTable extends Component {
         title: 'Webhook Key',
         key: 'webhook',
         render: (text, record) => (
-         <WebhookKeyField data={record.webhook_key} />
+          record.webhook_key ? <WebhookKeyField data={record.webhook_key} /> : <span />
         )
       },
       {
