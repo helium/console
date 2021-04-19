@@ -11,7 +11,7 @@ import DragAndDrop from '../../common/DragAndDrop';
 
 const { Text, Title } = Typography
 
-const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScanFailed}) => {
+const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScanFailed, deviceImports}) => {
   const [open, setOpen] = useState(false);
   if (genericImportScanFailed) return (
     <Fragment>
@@ -66,25 +66,32 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
       >
         <Text style={{width: '100%', textAlign: 'center', marginBottom: 20, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
       </Popover>
-
-      <Button
-        type="primary"
-        onClick={() => onImportSelect('ttn')}
-        style={{ width: '100%', marginLeft: 60, marginRight: 60 }}
-      >
-        Import from The Things Network
-      </Button>
-      <DragAndDrop fileSelected={(file) => {
-        let fileReader = new FileReader();
-        fileReader.onloadend = () => {
-          scanGenericDevices(fileReader.result, (type) => onImportSelect(type));
-        }
-        fileReader.readAsText(file);
-      }}>
-        <Text style={{textAlign: 'center', margin: '30px 80px', color: blueForDeviceStatsLarge}}>
-          Drag .csv file here or click to choose file
-        </Text>
-      </DragAndDrop>
+      {
+        (deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing")) ? (
+          <Fragment>
+            <Button
+              type="primary"
+              onClick={() => onImportSelect('ttn')}
+              style={{ width: '100%', marginLeft: 60, marginRight: 60 }}
+            >
+              Import from The Things Network
+            </Button>
+            <DragAndDrop fileSelected={(file) => {
+              let fileReader = new FileReader();
+              fileReader.onloadend = () => {
+                scanGenericDevices(fileReader.result, (type) => onImportSelect(type));
+              }
+              fileReader.readAsText(file);
+            }}>
+              <Text style={{textAlign: 'center', margin: '30px 80px', color: blueForDeviceStatsLarge}}>
+                Drag .csv file here or click to choose file
+              </Text>
+            </DragAndDrop>
+          </Fragment>
+        ) : (
+          <Text strong>Please wait while your import completes...</Text>
+        )
+      }
     </Fragment>
   )
 }

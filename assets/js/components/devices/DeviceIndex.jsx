@@ -378,7 +378,7 @@ class DeviceIndex extends Component {
             )
           }
           {
-            showPage === 'new' && <DeviceNew handleChangeView={this.handleChangeView} setImportType={this.setImportType}/>
+            showPage === 'new' && <DeviceNew deviceImports={device_imports} handleChangeView={this.handleChangeView} setImportType={this.setImportType}/>
           }
           {
             showPage === 'newLabel' && <LabelNew handleChangeView={this.handleChangeView}/>

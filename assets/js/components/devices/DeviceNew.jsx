@@ -59,7 +59,7 @@ class DeviceNew extends Component {
       <div style={{ padding: '30px 30px 20px 30px' }}>
         <Text style={{ fontSize: 22, fontWeight: 600 }}>Add New Device</Text>
         <Row gutter={30} style={{ marginTop: 20 }}>
-          <Col span={12}>
+          <Col span={14}>
             <Card title="Enter Device Details">
               <Input
                 placeholder="Device Name"
@@ -145,9 +145,9 @@ class DeviceNew extends Component {
               </UserCan>
             </div>
           </Col>
-          <Col span={12}>
+          <Col span={10}>
             <div style={{ display: 'flex', 'flexDirection': 'column', alignItems: 'center' }}>
-              <ChooseImportType onImportSelect={this.props.setImportType} />
+              <ChooseImportType onImportSelect={this.props.setImportType} deviceImports={this.props.deviceImports}/>
             </div>
           </Col>
         </Row>
