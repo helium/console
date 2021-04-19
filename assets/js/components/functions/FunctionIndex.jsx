@@ -15,6 +15,7 @@ import PlusIcon from '../../../img/functions/function-index-plus-icon.svg'
 import AllIcon from '../../../img/functions/function-index-all-icon.svg'
 import _JSXStyle from "styled-jsx/style"
 import { Typography } from 'antd';
+import TableHeader from '../common/TableHeader';
 const { Text } = Typography
 
 class FunctionIndex extends Component {
@@ -79,71 +80,23 @@ class FunctionIndex extends Component {
         user={this.props.user}
         noAddButton
       >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ padding: 20, backgroundColor: '#DCD3EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
-            <div
-              style={{
-                backgroundColor: '#B39FDA',
-                borderRadius: 6,
-                padding: 10,
-                cursor: 'pointer',
-                height: 50,
-                width: 50,
-                minWidth: 50,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: 12,
-                position: 'relative'
-              }}
-              onClick={() => this.setState({ showPage: 'home'})}
-            >
-              <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
-              {showPage === 'home' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#B39FDA',
-              borderRadius: 6,
-              padding: '5px 10px 5px 10px',
-              cursor: 'pointer',
-              height: 50,
-              width: 120,
-              minWidth: 120,
-              display: 'flex',
-              flexDirection: 'column',
-              marginRight: 12,
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'allFunctions'})}>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
-                <Text style={{ color: '#8261C2', fontWeight: 500, whiteSpace: 'nowrap' }}>All Functions</Text>
-              </div>
-              <Text style={{ color: '#8261C2', fontSize: 10, whiteSpace: 'nowrap' }}>{functions && functions.totalEntries} Functions</Text>
-              {showPage === 'allFunctions' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#B39FDA',
-              borderRadius: 6,
-              padding: 10,
-              cursor: 'pointer',
-              height: 50,
-              width: 50,
-              minWidth: 50,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-              whiteSpace: 'nowrap',
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'new'})}>
-              <img src={PlusIcon} style={{ height: 20 }} />
-              {showPage === 'new' && <NavPointTriangle />}
-            </div>
-          </div>
+        <TableHeader
+          backgroundColor='#DCD3EE'
+          goHome={() => { this.setState({ showPage: 'home' })}}
+          otherColor='#B39FDA'
+          homeIcon={HomeIcon}
+          goToAll={() => { this.setState({ showPage: 'allFunctions'})}}
+          allIcon={AllIcon}
+          textColor='#8261C2'
+          allText='All Functions'
+          allSubtext={`${functions && functions.totalEntries} Functions`} // TODO fix undefined
+          onHomePage={showPage === 'home'}
+          onAllPage={showPage === 'allFunctions'}
+          onNewPage={showPage === 'new'}
+          addIcon={PlusIcon}
+          goToNew={() => { this.setState({ showPage: 'new' })}}
+          allButtonStyles={{ width: 120, minWidth: 120 }}
+        >
           {
             showPage === "home" && (
               <div className="blankstateWrapper">
@@ -193,7 +146,6 @@ class FunctionIndex extends Component {
                 margin-bottom: 10px;
               }
               `}</style>
-
             </div>
             )
           }
@@ -216,7 +168,7 @@ class FunctionIndex extends Component {
           {
             showPage === 'new' && <FunctionNew />
           }
-        </div>
+        </TableHeader>
 
         <DeleteFunctionModal
           open={showDeleteFunctionModal}

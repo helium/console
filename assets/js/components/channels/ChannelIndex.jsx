@@ -16,6 +16,7 @@ import AllIcon from '../../../img/channels/channel-index-all-icon.svg'
 import _JSXStyle from "styled-jsx/style"
 import { Typography } from 'antd';
 import { Card } from 'antd';
+import TableHeader from '../common/TableHeader';
 const { Text } = Typography
 
 class ChannelIndex extends Component {
@@ -76,72 +77,23 @@ class ChannelIndex extends Component {
 
     return (
       <DashboardLayout title="My Integrations" user={this.props.user} noAddButton>
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ padding: 20, backgroundColor: '#0dc699', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
-            <div
-              style={{
-                backgroundColor: '#10b48c',
-                borderRadius: 6,
-                padding: 10,
-                cursor: 'pointer',
-                height: 50,
-                width: 50,
-                minWidth: 50,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: 12,
-                position: 'relative'
-              }}
-              onClick={() => this.setState({ showPage: 'home'})}
-            >
-              <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
-              {showPage === 'home' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#10b48c',
-              borderRadius: 6,
-              padding: '5px 10px 5px 10px',
-              cursor: 'pointer',
-              height: 50,
-              width: 120,
-              minWidth: 134,
-              display: 'flex',
-              flexDirection: 'column',
-              marginRight: 12,
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'allChannels'})}>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
-                <Text style={{ color: '#00673a', fontWeight: 500, whiteSpace: 'nowrap' }}>All Integrations</Text>
-              </div>
-              <Text style={{ color: '#00673a', fontSize: 10, whiteSpace: 'nowrap' }}>{channels && channels.entries.length} Integrations</Text>
-              {showPage === 'allChannels' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#10b48c',
-              borderRadius: 6,
-              padding: 10,
-              cursor: 'pointer',
-              height: 50,
-              width: 50,
-              minWidth: 50,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-              whiteSpace: 'nowrap',
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'new'})}>
-              <img src={PlusIcon} style={{ height: 20 }} />
-              {showPage === 'new' && <NavPointTriangle />}
-            </div>
-          </div>
-
+        <TableHeader
+          backgroundColor='#0dc699'
+          goHome={() => { this.setState({ showPage: 'home'})}}
+          otherColor='#10b48c'
+          homeIcon={HomeIcon}
+          goToAll={() => { this.setState({ showPage: 'allChannels' })}}
+          allIcon={AllIcon}
+          textColor='#00673a'
+          allText='All Integrations'
+          allSubtext={`${(channels && channels.entries.length)} Integrations`} // TODO fix undefined
+          onHomePage={showPage === 'home'}
+          onAllPage={showPage === 'allChannels'}
+          onNewPage={showPage === 'new'}
+          addIcon={PlusIcon}
+          goToNew={() => { this.setState({ showPage: 'new' })}}
+          allButtonStyles={{ width: 134, minWidth: 134 }}
+        >
           {
             showPage === "home" && (
               <div className="blankstateWrapper">
@@ -213,7 +165,7 @@ class ChannelIndex extends Component {
           {
             showPage === 'new' && <ChannelNew />
           }
-        </div>
+        </TableHeader>
 
         <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channelSelected}/>
 
