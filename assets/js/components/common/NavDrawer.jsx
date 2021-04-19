@@ -43,8 +43,8 @@ class NavDrawer extends Component {
         </div>
         <div><Text className="noselect" style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>CONFIGS</Text></div>
         <div style={{ position: 'relative' }}>
-          <NavLink draggable="false" to={"/notifications"} activeClassName="is-active" className="menu-link">Notifications</NavLink>
-          {history.location.pathname === '/notifications' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/alerts"} activeClassName="is-active" className="menu-link">Alerts</NavLink>
+          {history.location.pathname === '/alerts' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ position: 'relative' }}>
           <NavLink draggable="false" to={"/adr"} activeClassName="is-active" className="menu-link">ADR</NavLink>
