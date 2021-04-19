@@ -7,31 +7,33 @@ export default (props) => {
   return (
     <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
       <div style={{ padding: 20, backgroundColor: props.backgroundColor, display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
-        <div
-          style={{
-            backgroundColor: props.otherColor,
-            borderRadius: 6,
-            padding: 10,
-            cursor: 'pointer',
-            height: 50,
-            width: 50,
-            minWidth: 50,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 12,
-            position: 'relative'
-          }}
-          onClick={props.goHome}
-        >
-          <img src={props.homeIcon} style={{ height: 20, paddingLeft: 2 }} />
-          {props.onHomePage && <NavPointTriangle />}
-        </div>
+        {!props.noHome && 
+          <div
+            style={{
+              backgroundColor: props.otherColor,
+              borderRadius: 6,
+              padding: 10,
+              cursor: 'pointer',
+              height: 50,
+              width: 50,
+              minWidth: 50,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 12,
+              position: 'relative'
+            }}
+            onClick={props.goHome}
+          >
+            <img src={props.homeIcon} style={{ height: 20, paddingLeft: 2 }} />
+            {props.onHomePage && <NavPointTriangle />}
+          </div>
+        }
         <div 
           style={{
             backgroundColor: props.otherColor,
-            borderRadius: 6,
+            borderRadius: props.borderRadius ? props.borderRadius : 6,
             padding: '5px 10px 5px 10px',
             cursor: 'pointer',
             height: 50,
@@ -53,7 +55,7 @@ export default (props) => {
         </div>
         <div style={{
           backgroundColor: props.otherColor,
-          borderRadius: 6,
+          borderRadius: props.borderRadius ? props.borderRadius : 6,
           padding: 10,
           cursor: 'pointer',
           height: 50,
