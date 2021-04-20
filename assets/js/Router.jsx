@@ -27,7 +27,7 @@ import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
-import NotificationsIndex from './components/notifications/NotificationsIndex';
+import AlertsIndex from './components/alerts/AlertsIndex';
 import AdrIndex from './components/adr/AdrIndex';
 import MultiplePacketsIndex from './components/multiple-packets/MultiplePacketsIndex';
 import NoOrganization from './components/organizations/NoOrganization';
@@ -110,7 +110,7 @@ const Router = (props) => {
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
                         <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
-                        <Route exact path="/notifications" component={props => <NotificationsIndex user={user} {...props}/>} />
+                        <Route exact path="/alerts" component={props => <AlertsIndex user={user} {...props}/>} />
                         <Route exact path="/adr" component={props => <AdrIndex user={user} {...props}/>} />
                         <Route exact path="/multiple-packets" component={props => <MultiplePacketsIndex user={user} {...props}/>} />
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>

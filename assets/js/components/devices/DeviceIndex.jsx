@@ -28,6 +28,7 @@ import PlusIcon from '../../../img/devices/device-index-plus-icon.svg'
 import PlusDeviceIcon from '../../../img/devices/device-index-plus-device-icon.svg'
 const { Text } = Typography
 import _JSXStyle from "styled-jsx/style"
+import TableHeader from '../common/TableHeader';
 
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
@@ -214,10 +215,24 @@ class DeviceIndex extends Component {
         user={this.props.user}
         noAddButton
       >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ padding: 20, backgroundColor: '#D3E0EE', display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
-            <div
-              style={{
+        <TableHeader
+          backgroundColor='#D3E0EE'
+          goHome={() => { this.setState({ showPage: 'home'})}}
+          otherColor='#ACC6DD'
+          homeIcon={HomeIcon}
+          goToAll={() => { this.setState({ showPage: 'allDevices'})}}
+          allIcon={AllIcon}
+          textColor='#3C6B95'
+          allText='All Devices'
+          allSubtext={devices && devices.totalEntries + ' Devices'}
+          onHomePage={showPage === 'home'}
+          onAllPage={showPage === 'allDevices'}
+          onNewPage={showPage === 'new'}
+          addIcon={PlusDeviceIcon}
+          goToNew={() => { this.setState({ showPage: 'new'})}}
+          extraContent={
+            <React.Fragment>
+              <div style={{
                 backgroundColor: '#ACC6DD',
                 borderRadius: 6,
                 padding: 10,
@@ -230,77 +245,16 @@ class DeviceIndex extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 12,
+                whiteSpace: 'nowrap',
                 position: 'relative'
-              }}
-              onClick={() => this.setState({ showPage: 'home'})}
-            >
-              <img src={HomeIcon} style={{ height: 20, paddingLeft: 2 }} />
-              {showPage === 'home' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#ACC6DD',
-              borderRadius: 6,
-              padding: '5px 10px 5px 10px',
-              cursor: 'pointer',
-              height: 50,
-              width: 110,
-              minWidth: 110,
-              display: 'flex',
-              flexDirection: 'column',
-              marginRight: 12,
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'allDevices'})}>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img src={AllIcon} style={{ height: 12, marginRight: 4 }} />
-                <Text style={{ color: '#3C6B95', fontWeight: 500, whiteSpace: 'nowrap' }}>All Devices</Text>
+              }} onClick={() => this.setState({ showPage: 'newLabel' })}>
+                <img src={PlusIcon} style={{ height: 20 }} />
+                {showPage === 'newLabel' && <NavPointTriangle />}
               </div>
-              <Text style={{ color: '#3C6B95', fontSize: 10, whiteSpace: 'nowrap' }}>{devices && devices.totalEntries} Devices</Text>
-              {showPage === 'allDevices' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#ACC6DD',
-              borderRadius: 6,
-              padding: 10,
-              cursor: 'pointer',
-              height: 50,
-              width: 50,
-              minWidth: 50,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-              whiteSpace: 'nowrap',
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'new'})}>
-              <img src={PlusDeviceIcon} style={{ height: 20 }} />
-              {showPage === 'new' && <NavPointTriangle />}
-            </div>
-
-            <div style={{
-              backgroundColor: '#ACC6DD',
-              borderRadius: 6,
-              padding: 10,
-              cursor: 'pointer',
-              height: 50,
-              width: 50,
-              minWidth: 50,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 12,
-              whiteSpace: 'nowrap',
-              position: 'relative'
-            }} onClick={() => this.setState({ showPage: 'newLabel' })}>
-              <img src={PlusIcon} style={{ height: 20 }} />
-              {showPage === 'newLabel' && <NavPointTriangle />}
-            </div>
-
-            <DeviceIndexLabelsBar selectLabel={this.handleChangeView} currentPage={showPage}/>
-          </div>
+              <DeviceIndexLabelsBar selectLabel={this.handleChangeView} currentPage={showPage}/>
+            </React.Fragment>
+          }
+        >
           {
             showPage === "home" && (
               <div className="blankstateWrapper">
@@ -388,7 +342,7 @@ class DeviceIndex extends Component {
               <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
             )
           }
-        </div>
+        </TableHeader>
 
         <ImportDevicesModal
           open={showImportDevicesModal}
