@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
 import DashboardLayout from '../common/DashboardLayout'
 import TableHeader from '../common/TableHeader'
 import NavPointTriangle from '../common/NavPointTriangle';
@@ -50,7 +49,7 @@ export default (props) => {
               <Text style={{ fontSize: 22, fontWeight: 600, display: 'block', marginBottom: 10 }}>Adaptive Data Rate</Text>
               <Text style={{ fontSize: 16, fontWeight: 400, display: 'block', marginBottom: 15 }}>Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect.</Text>
               <Text style={{ fontSize: 16, fontWeight: 300, display: 'block', marginBottom: 15 }}>ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity.</Text>
-              <NavLink style={{ fontSize: 16, fontWeight: 400, display: 'block', textDecoration: 'underline' }} to={"#"}>Learn more about ADR</NavLink>
+              <a style={{ fontSize: 16, fontWeight: 400, display: 'block', textDecoration: 'underline' }} target="_blank" href="https://docs.helium.com/use-the-network/console/adr/">Learn more about ADR</a>
             </div>
           </Col>
           <Col span={12}>
