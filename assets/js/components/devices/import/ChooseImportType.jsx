@@ -16,7 +16,7 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
   if (genericImportScanFailed) return (
     <Fragment>
       <img src={Warning} style={{marginBottom: 10, height: 50, objectFit: 'cover'}}/>
-      <Title style={{fontSize: 22, width: '100%', textAlign: 'center'}}>Invalid Filetype</Title>
+      <Title style={{fontSize: 26, width: '100%', textAlign: 'center'}}>Invalid Filetype</Title>
       <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 10px'}}>
         <b>Sorry. The file you supplied doesn’t appear to be formatted correctly.</b>
         <br/>
@@ -50,7 +50,7 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
   return (
     <Fragment>
       <img src={ImportIcon} style={{marginBottom: 10, height: 50, objectFit: 'cover'}}/>
-      <Title style={{fontSize: 22}}>Import Devices</Title>
+      <Title style={{fontSize: 26}}>Import Devices</Title>
       <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 10px'}}>
         You can import your devices directly from the Things Network, or in bulk via .csv upload.
       </Text>
