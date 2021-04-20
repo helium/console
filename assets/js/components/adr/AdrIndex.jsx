@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import DashboardLayout from '../common/DashboardLayout'
-import TableHeader from '../common/TableHeader'
 import NavPointTriangle from '../common/NavPointTriangle';
 import AddResourceButton from '../common/AddResourceButton'
 import HomeIcon from '../../../img/adr/adr-all-icon.svg'
