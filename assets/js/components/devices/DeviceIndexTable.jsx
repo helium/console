@@ -10,7 +10,7 @@ import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { StatusIcon } from '../common/StatusIcon'
 const { Text } = Typography
 const { Option } = Select
@@ -223,7 +223,7 @@ class DeviceIndexTable extends Component {
       return this.state.columnsToShow[col.dataIndex]
     })
 
-    const { devices, onChangePageSize, deviceImports } = this.props;
+    const { devices, onChangePageSize } = this.props;
 
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
@@ -237,16 +237,6 @@ class DeviceIndexTable extends Component {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Devices</Text>
           <div>
-            <UserCan>
-              <Button
-                icon={<PlusOutlined />}
-                onClick={this.props.openImportDevicesModal}
-                disabled={!(deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing"))}
-                style={{marginRight: 10, borderRadius: 4 }}
-              >
-                Import Devices
-              </Button>
-            </UserCan>
             <Popover
               trigger="click"
               placement="bottom"

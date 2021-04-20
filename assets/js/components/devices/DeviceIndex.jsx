@@ -50,7 +50,8 @@ class DeviceIndex extends Component {
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
     allDevicesSelected: false,
-    importComplete: false
+    importComplete: false,
+    importType: ''
   }
 
   componentDidMount() {
@@ -146,10 +147,6 @@ class DeviceIndex extends Component {
     }
   }
 
-  openImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: true });
-  }
-
   closeImportDevicesModal = () => {
     this.setState({ showImportDevicesModal: false, importComplete: false });
   }
@@ -188,6 +185,10 @@ class DeviceIndex extends Component {
     this.setState({ showPage: label })
   }
 
+  setImportType = importType => {
+    this.setState({ importType, showImportDevicesModal: true })
+  }
+
   render() {
     const {
       showCreateDeviceModal,
@@ -199,6 +200,7 @@ class DeviceIndex extends Component {
       labelsSelected,
       deviceToRemoveLabel,
       importComplete,
+      importType,
       showPage
     } = this.state
 
@@ -372,13 +374,11 @@ class DeviceIndex extends Component {
                 column={this.state.column}
                 order={this.state.order}
                 userEmail={this.props.user.email}
-                deviceImports={device_imports}
-                openImportDevicesModal={this.openImportDevicesModal}
               />
             )
           }
           {
-            showPage === 'new' && <DeviceNew handleChangeView={this.handleChangeView}/>
+            showPage === 'new' && <DeviceNew deviceImports={device_imports} handleChangeView={this.handleChangeView} setImportType={this.setImportType}/>
           }
           {
             showPage === 'newLabel' && <LabelNew handleChangeView={this.handleChangeView}/>
@@ -390,7 +390,12 @@ class DeviceIndex extends Component {
           }
         </div>
 
-        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal} importComplete={importComplete}/>
+        <ImportDevicesModal
+          open={showImportDevicesModal}
+          onClose={this.closeImportDevicesModal}
+          importComplete={importComplete}
+          importType={importType}
+        />
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}

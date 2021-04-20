@@ -6,17 +6,18 @@ import { Button, Typography, Popover } from 'antd';
 import { blueForDeviceStatsLarge, dragAndDropBackgroundColor } from '../../../util/colors';
 import { scanGenericDevices } from '../../../actions/device';
 import Warning from '../../../../img/warning.svg';
+import ImportIcon from '../../../../img/device-import-icon.svg';
 import DragAndDrop from '../../common/DragAndDrop';
 
 const { Text, Title } = Typography
 
-const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScanFailed}) => {
+const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScanFailed, deviceImports}) => {
   const [open, setOpen] = useState(false);
   if (genericImportScanFailed) return (
     <Fragment>
-      <img src={Warning} style={{marginBottom: 10, height: 80, objectFit: 'cover'}}/>
-      <Title style={{fontSize: 40, width: '100%', textAlign: 'center'}}>Invalid Filetype</Title>
-      <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 20px'}}>
+      <img src={Warning} style={{marginBottom: 10, height: 50, objectFit: 'cover'}}/>
+      <Title style={{fontSize: 26, width: '100%', textAlign: 'center'}}>Invalid Filetype</Title>
+      <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 10px'}}>
         <b>Sorry. The file you supplied doesn’t appear to be formatted correctly.</b>
         <br/>
         Please ensure it is a csv file, with correctly formatted headers.
@@ -31,7 +32,7 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
           </Text>
         }
       >
-        <Text style={{width: '100%', textAlign: 'center', marginBottom: 40, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
+        <Text style={{width: '100%', textAlign: 'center', marginBottom: 20, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
       </Popover>
       <DragAndDrop fileSelected={(file) => {
         let fileReader = new FileReader();
@@ -48,8 +49,9 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
   )
   return (
     <Fragment>
-      <Title style={{fontSize: 40}}>Import Devices</Title>
-      <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 20px'}}>
+      <img src={ImportIcon} style={{marginBottom: 10, height: 50, objectFit: 'cover'}}/>
+      <Title style={{fontSize: 26}}>Import Devices</Title>
+      <Text style={{width: '100%', textAlign: 'center', margin: '0px 40px 10px'}}>
         You can import your devices directly from the Things Network, or in bulk via .csv upload.
       </Text>
       <Popover
@@ -62,27 +64,34 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
           </Text>
         }
       >
-        <Text style={{width: '100%', textAlign: 'center', marginBottom: 40, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
+        <Text style={{width: '100%', textAlign: 'center', marginBottom: 20, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
       </Popover>
-      
-      <Button
-        type="primary"
-        onClick={() => onImportSelect('ttn')}
-        style={{ width: '100%', marginLeft: 60, marginRight: 60 }}
-      >
-        Import from The Things Network
-      </Button>
-      <DragAndDrop fileSelected={(file) => {
-        let fileReader = new FileReader();
-        fileReader.onloadend = () => {
-          scanGenericDevices(fileReader.result, (type) => onImportSelect(type));
-        }
-        fileReader.readAsText(file);
-      }}>
-        <Text style={{textAlign: 'center', margin: '30px 80px', color: blueForDeviceStatsLarge}}>
-          Drag .csv file here or click to choose file
-        </Text>
-      </DragAndDrop>
+      {
+        (deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing")) ? (
+          <Fragment>
+            <Button
+              type="primary"
+              onClick={() => onImportSelect('ttn')}
+              style={{ width: '100%', marginLeft: 60, marginRight: 60 }}
+            >
+              Import from The Things Network
+            </Button>
+            <DragAndDrop fileSelected={(file) => {
+              let fileReader = new FileReader();
+              fileReader.onloadend = () => {
+                scanGenericDevices(fileReader.result, (type) => onImportSelect(type));
+              }
+              fileReader.readAsText(file);
+            }}>
+              <Text style={{textAlign: 'center', margin: '30px 80px', color: blueForDeviceStatsLarge}}>
+                Drag .csv file here or click to choose file
+              </Text>
+            </DragAndDrop>
+          </Fragment>
+        ) : (
+          <Text strong>Please wait while your import completes...</Text>
+        )
+      }
     </Fragment>
   )
 }
