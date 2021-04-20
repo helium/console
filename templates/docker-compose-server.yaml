@@ -27,6 +27,9 @@ services:
     container_name: helium_router
     restart: always
     env_file: .env-router
+    # Double check your DNS by running the following command and looking for "DNS Servers"
+    # > systemd-resolve --status
+    dns: 172.31.0.2
     ports:
       - 2154:2154
     volumes:
