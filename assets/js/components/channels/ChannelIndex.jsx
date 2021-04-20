@@ -86,7 +86,7 @@ class ChannelIndex extends Component {
           allIcon={AllIcon}
           textColor='#00673a'
           allText='All Integrations'
-          allSubtext={`${(channels && channels.entries.length)} Integrations`} // TODO fix undefined
+          allSubtext={channels && channels.entries.length + ' Integrations'}
           onHomePage={showPage === 'home'}
           onAllPage={showPage === 'allChannels'}
           onNewPage={showPage === 'new'}

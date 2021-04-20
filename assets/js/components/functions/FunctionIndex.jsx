@@ -89,7 +89,7 @@ class FunctionIndex extends Component {
           allIcon={AllIcon}
           textColor='#8261C2'
           allText='All Functions'
-          allSubtext={`${functions && functions.totalEntries} Functions`} // TODO fix undefined
+          allSubtext={functions && functions.totalEntries + ' Functions'}
           onHomePage={showPage === 'home'}
           onAllPage={showPage === 'allFunctions'}
           onNewPage={showPage === 'new'}

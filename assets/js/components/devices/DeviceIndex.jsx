@@ -222,7 +222,7 @@ class DeviceIndex extends Component {
           allIcon={AllIcon}
           textColor='#3C6B95'
           allText='All Devices'
-          allSubtext={`${devices && devices.totalEntries} Devices`} // TODO fix undefined
+          allSubtext={devices && devices.totalEntries + ' Devices'}
           onHomePage={showPage === 'home'}
           onAllPage={showPage === 'allDevices'}
           onNewPage={showPage === 'new'}
