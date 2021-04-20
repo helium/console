@@ -38,11 +38,11 @@ export default (props) => {
   const renderForm = () => {
     switch (props.alertType) {
       case 'device/group':
-        return (<div>device</div>)
+        return (<div>[placeholder]</div>);
       case 'function':
-        return (<div>function</div>)
+        return (<div>[placeholder]</div>);
       case 'integration':
-        return (<div>integration</div>)
+        return (<div>[placeholder]</div>);
       default:
         return null;
     }
@@ -56,7 +56,7 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#2C79EE', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("HERE") }}
+            onClick={() => { console.log("[placeholder]") }}
           >
             Create Device/Group Alert
           </Button>
@@ -67,7 +67,7 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#9F59F7', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("HERE") }}
+            onClick={() => { console.log("[placeholder]") }}
           >
             Create Function Alert
           </Button>
@@ -78,7 +78,7 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#12CB9E', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("HERE") }}
+            onClick={() => { console.log("[placeholder]") }}
           >
             Create Integration Alert
           </Button>
@@ -92,16 +92,16 @@ export default (props) => {
     <div style={{ padding: '30px 30px 20px 30px' }}>
       <Button icon={<ArrowLeftOutlined />} style={{ border: 'none' }} onClick={props.back}>Back</Button>
       <Row style={{ marginTop: '10px' }}>
-        <Col span={12} style={{ padding: '70px 80px' }}>
+        <Col span={10} style={{ padding: '70px 80px' }}>
           <img src={renderIcon()} />
           <h1 style={{ marginTop: 10, fontSize: '23px', fontWeight: 600 }}>{renderTitle()}</h1>
           <div>
-            <p>Alerts can be created for Device/Group Nodes, Function Nodes or Integration Nodes.</p>
+            <p style={{ fontSize: '16px' }}>Alerts can be created for Device/Group Nodes, Function Nodes or Integration Nodes.</p>
             <p><a>Learn more about alerts</a></p>
           </div>
         </Col>
         <Col span={12} style={{ padding: '40px 20px'}}>
-          <Text strong>Alert Name</Text>
+          <Text style={{ fontSize: '16px' }} strong>Alert Name</Text>
           <Input
             onChange={e => { setName(e.target.value) }}
             value={name}

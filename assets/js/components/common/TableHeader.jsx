@@ -46,7 +46,7 @@ export default (props) => {
           }}
           onClick={props.goToAll}
         >
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: '100px' }}>
             <img src={props.allIcon} style={{ height: 12, marginRight: 4 }} />
             <Text style={{ color: props.textColor, fontWeight: 500, whiteSpace: 'nowrap' }}>{props.allText}</Text>
           </div>

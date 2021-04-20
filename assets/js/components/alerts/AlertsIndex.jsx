@@ -6,10 +6,13 @@ import AllIcon from '../../../img/alerts/alert-index-all-icon.svg'
 import AlertIcon from '../../../img/alerts/alert-index-add-icon.svg'
 import AddResourceButton from '../common/AddResourceButton'
 import AlertNew from '../alerts/AlertNew';
+import AlertIndexTable from './AlertIndexTable'
+import AlertTypeButton from './AlertTypeButton'
 
 export default (props) => {
   const [showPage, setShowPage] = useState('allAlerts');
   const [alertType, setAlertType] = useState(null);
+
   return (
     <DashboardLayout
       title="My Alerts"
@@ -38,111 +41,41 @@ export default (props) => {
       >
         {
           showPage === "new" && alertType === null && (
-            <div className="blankstateWrapper">
-            <div className="message">
+            <div className="blankstateWrapper" style={{ height: '600px', paddingTop: '100px' }}>
+            <div style={{width: '100%', maxWidth: '500px', margin: '0 auto', textAlign: 'center'}}>
               <img src={AlertIcon} />
               <h1>Choose Type of Alert</h1>
-              <div className="explainer">
-                <p>Alerts can be created for Device/Group Nodes, Function Nodes or Integration Nodes.</p>
+              <div style={{ padding: '10px 60px 1px 60px', margin: '10px 0px' }}>
+                <p style={{ fontSize: '16px', color: '#565656' }}>Alerts can be created for Device/Group Nodes, Function Nodes or Integration Nodes.</p>
               </div>
               <div style={{ flexDirection: 'row', display: 'flex' }}>
-                <div 
-                  style={{
-                    backgroundColor: '#2C79EE',
-                    borderRadius: '30px',
-                    padding: '5px 10px 5px 10px',
-                    cursor: 'pointer',
-                    height: 50,
-                    width: 150,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    marginRight: 12,
-                    position: 'relative',
-                    color: 'white',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontWeight: 500
-                  }}
+                <AlertTypeButton
+                  backgroundColor='#2C79EE'
                   onClick={() => { setAlertType('device/group') }}
                 >
                   Device/Group Alert
-                </div>
-                <div 
-                  style={{
-                    backgroundColor: '#9F59F7',
-                    borderRadius: '30px',
-                    padding: '5px 10px 5px 10px',
-                    cursor: 'pointer',
-                    height: 50,
-                    width: 150,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    marginRight: 12,
-                    position: 'relative',
-                    color: 'white',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontWeight: 500
-                  }}
+                </AlertTypeButton>
+                <AlertTypeButton
+                  backgroundColor='#9F59F7'
                   onClick={() => { setAlertType('function') }}
                 >
                   Function Alert
-                </div>
-                <div 
-                  style={{
-                    backgroundColor: '#12CB9E',
-                    borderRadius: '30px',
-                    padding: '5px 10px 5px 10px',
-                    cursor: 'pointer',
-                    height: 50,
-                    width: 150,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    marginRight: 12,
-                    position: 'relative',
-                    color: 'white',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontWeight: 500
-                  }}
+                </AlertTypeButton>
+                <AlertTypeButton
+                  backgroundColor='#12CB9E'
                   onClick={() => { setAlertType('integration') }}
                 >
                   Integration Alert
-                </div>
+                </AlertTypeButton>
               </div>
             </div>
             <style jsx>{`
-                .message {
-                  width: 100%;
-                  max-width: 500px;
-                  margin: 0 auto;
-                  text-align: center;
-                }
-                .explainer {
-                  padding: 10px 60px 1px 60px;
-                  border-radius: 20px;
-                  text-align: center;
-                  margin: 10px 0px;
-                  box-sizing: border-box;
-                  border: none;
-                }
-                .explainer p {
-                  color: #565656;
-                  font-size: 15px;
-                }
-                .explainer p a {
-                  color: #096DD9;
-                }
-                h1, p  {
-                  color: #242425;
-                }
                 h1 {
                   font-size: 30px;
                   margin: 10px 0px;
                   font-weight: 600;
                 }
                 p {
-                  font-size: 20px;
                   font-weight: 300;
                   margin-bottom: 10px;
                 }
@@ -153,6 +86,11 @@ export default (props) => {
         {
           showPage === 'new' && alertType && (
             <AlertNew alertType={alertType} back={() => { setAlertType(null) }} />
+          )
+        }
+        {
+          showPage === 'allAlerts' && (
+            <AlertIndexTable />
           )
         }
       </TableHeader>
