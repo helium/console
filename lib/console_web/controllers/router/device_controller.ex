@@ -270,7 +270,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     event = Map.merge(event, %{
       device_name: device.name
     })
-    
+
     event_to_publish =
       event
       |> Map.from_struct()
