@@ -95,12 +95,6 @@ class DeviceIndexLabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
-  handleUpdateAdrSetting = adrValue => {
-    const labelId = this.props.id
-    const attrs = { adr_allowed: adrValue }
-    this.props.updateLabel(labelId, attrs)
-  }
-
   handleUpdateLabelNotificationSettings = notifications => {
     this.props.updateLabelNotificationSettings(notifications);
   }
@@ -139,7 +133,6 @@ class DeviceIndexLabelShow extends Component {
         <UpdateLabelModal
           handleUpdateLabel={this.handleUpdateLabel}
           handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-          handleUpdateAdrSetting={this.handleUpdateAdrSetting}
           handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
           handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
           open={this.state.showUpdateLabelModal}
