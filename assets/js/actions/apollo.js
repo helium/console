@@ -72,7 +72,7 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
             }
           }
         })
-        const newLink = authErrorLink.concat(authLink.concat(httpLink))
+        const newLink = authErrorLink.concat(newAuthLink.concat(httpLink))
         const newApolloClient = createApolloClient(newLink)
         socket.disconnect()
         socket = createSocket(newTokenClaims.__raw, currentOrganizationId)
