@@ -8,10 +8,14 @@ import AddResourceButton from '../common/AddResourceButton'
 import AlertNew from '../alerts/AlertNew';
 import AlertIndexTable from './AlertIndexTable'
 import AlertTypeButton from './AlertTypeButton'
+import { ALL_ALERTS } from '../../graphql/alerts'
+import { useQuery } from '@apollo/client';
 
 export default (props) => {
   const [showPage, setShowPage] = useState('allAlerts');
   const [alertType, setAlertType] = useState(null);
+  const { loading, error, data, refetch } = useQuery(ALL_ALERTS);
+  console.log(data)
 
   return (
     <DashboardLayout

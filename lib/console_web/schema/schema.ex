@@ -60,6 +60,15 @@ defmodule ConsoleWeb.Schema do
     field :label_id, :id
   end
 
+  object :alert do
+    field :id, :id
+    field :name, :string
+    field :last_triggered_at, :string
+    field :node_type, :string
+    field :config, :string
+    field :organization_id, :id
+  end
+
   object :label_notification_webhook do
     field :key, :string
     field :url, :string
@@ -280,6 +289,10 @@ defmodule ConsoleWeb.Schema do
     field :label, :label do
       arg :id, non_null(:id)
       resolve &Console.Labels.LabelResolver.find/2
+    end
+
+    field :all_alerts, list_of(:alert) do
+      resolve &Console.Alerts.AlertResolver.all/2
     end
 
     field :all_labels, list_of(:label) do

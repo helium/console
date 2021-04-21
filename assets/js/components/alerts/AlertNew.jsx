@@ -5,9 +5,12 @@ import AddDeviceAlertIcon from '../../../img/alerts/device-group-alert-add-icon.
 import AddFunctionAlertIcon from '../../../img/alerts/function-alert-add-icon.svg';
 import AddIntegrationAlertIcon from '../../../img/alerts/channel-alert-add-icon.svg';
 import Text from 'antd/lib/typography/Text';
+import { useDispatch } from "react-redux";
+import { createAlert } from '../../actions/alert'
 
 export default (props) => {
   const [name, setName] = useState('');
+  const dispatch = useDispatch();
 
   const renderIcon = () => {
     switch (props.alertType) {
@@ -56,7 +59,15 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#2C79EE', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("[placeholder]") }}
+            onClick={() => { dispatch(createAlert({
+              name: name,
+              config: {
+                email: {
+                  device_deleted: 'hello'
+                }
+              },
+              node_type: 'device/group'
+            })) }}
           >
             Create Device/Group Alert
           </Button>
