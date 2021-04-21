@@ -44,7 +44,7 @@ export default ({ id, type }) => {
       <div style={{ position: 'absolute', top: '30px', right: '35px' }}>
         {renderTopIcon()}
       </div>
-      <div style={{ padding: 40, marginTop: 20 }}>
+      <div style={{ marginTop: 20 }}>
         {renderMain()}
       </div>
     </React.Fragment>

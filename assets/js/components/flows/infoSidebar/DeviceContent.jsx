@@ -160,7 +160,7 @@ class DeviceContent extends Component {
     const smallerText = device.total_packets > 10000
 
     return(
-      <React.Fragment>
+      <div style={{ padding: 40 }}>
         <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{device.name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(device.updated_at).local().format('l LT')}</Text>
         <div style={{ marginTop: 10 }}>
@@ -354,7 +354,7 @@ class DeviceContent extends Component {
             from="deviceShow"
           />
         </div>
-      </React.Fragment>
+      </div>
     )
   }
 }

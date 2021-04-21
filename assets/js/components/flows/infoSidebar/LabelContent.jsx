@@ -248,7 +248,7 @@ class LabelContent extends Component {
     const { selectedDevices } = this.state
 
     return (
-      <React.Fragment>
+      <div style={{ padding: 40 }}>
         <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label.name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(label.updated_at).local().format('l LT')}</Text>
         <div style={{ marginTop: 10 }}>
@@ -330,7 +330,7 @@ class LabelContent extends Component {
         onClose={this.closeUpdateLabelModal}
         label={label}
       />
-      </React.Fragment>
+      </div>
     )
   }
 }
@@ -347,7 +347,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(
-    withGql(LabelContent, 
+    withGql(LabelContent,
       PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, labelId: props.id, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' })),
       LABEL_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.id }, name: 'labelQuery' })
   )
