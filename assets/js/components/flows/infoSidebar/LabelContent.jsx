@@ -5,6 +5,8 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import UserCan from '../../common/UserCan'
+import AlertNodeSettings from './AlertNodeSettings'
+import AdrNodeSettings from './AdrNodeSettings'
 import { redForTablesDeleteText } from '../../../util/colors'
 import { updateDevice, setDevicesActive } from '../../../actions/device'
 import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../../actions/label'
@@ -316,17 +318,17 @@ class LabelContent extends Component {
           <TabPane tab="Debug" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Alerts" key="3">
-            Content of Tab Pane 3
+          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+            <AlertNodeSettings />
           </TabPane>
-          <TabPane tab="ADR" key="4">
-            Content of Tab Pane 4
+          <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
+            <AdrNodeSettings from="label" />
           </TabPane>
           <TabPane tab="Packets" key="5">
             Content of Tab Pane 5
           </TabPane>
         </Tabs>
-        
+
         <RemoveDevicesFromLabelModal
           label={label}
           open={this.state.showRemoveDevicesFromLabelModal}

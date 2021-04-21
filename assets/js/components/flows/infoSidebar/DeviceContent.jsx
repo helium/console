@@ -4,6 +4,8 @@ import OutsideClick from 'react-outside-click-handler';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import UserCan from '../../common/UserCan'
+import AlertNodeSettings from './AlertNodeSettings'
+import AdrNodeSettings from './AdrNodeSettings'
 import DashboardLayout from '../../common/DashboardLayout'
 import DeviceCredentials from '../../devices/DeviceCredentials'
 import DeleteDeviceModal from '../../devices/DeleteDeviceModal';
@@ -355,11 +357,11 @@ class DeviceContent extends Component {
           <TabPane tab="Debug" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Alerts" key="3">
-            Content of Tab Pane 3
+          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+            <AlertNodeSettings />
           </TabPane>
-          <TabPane tab="ADR" key="4">
-            Content of Tab Pane 4
+          <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
+            <AdrNodeSettings from="device" />
           </TabPane>
           <TabPane tab="Packets" key="5">
             Content of Tab Pane 5
