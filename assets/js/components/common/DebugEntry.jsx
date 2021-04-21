@@ -96,7 +96,6 @@ class DebugEntry extends Component {
   }
 
   render() {
-    console.log(this.props)
     const { event } = this.props
     const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo, showMacInfo } = this.state
     const stringJSON = JSON.stringify(event, null, 2)
