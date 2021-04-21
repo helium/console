@@ -27,6 +27,7 @@ services:
     env_file: .env-router
     ports:
       - 2154:2154
+      - 8080:8080 # gateway grpc
     volumes:
       - "./data/router:/var/data"
     depends_on:
