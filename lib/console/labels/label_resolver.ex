@@ -55,17 +55,23 @@ defmodule Console.Labels.LabelResolver do
     {:ok, Map.put(labels, :entries, entries)}
   end
 
-  def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
+  def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
     label = Ecto.assoc(current_organization, :labels) |> preload([:channels, :devices, :function, :label_notification_settings, :label_notification_webhooks]) |> Repo.get!(id)
 
     devices = label.devices
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
       end)
-    channels = label.channels
-      |> Enum.map(fn c ->
-        Map.drop(c, [:downlink_token])
-      end)
+
+    channels =
+      case current_membership.role do
+        "read" ->
+          label.channels
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+        _ -> label.channels
+      end
 
     {:ok, label |> Map.put(:devices, devices) |> Map.put(:channels, channels)}
   end
