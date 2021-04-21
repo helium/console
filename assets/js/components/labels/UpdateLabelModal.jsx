@@ -194,7 +194,7 @@ class UpdateLabelModal extends Component {
               </TabPane>
             </Tabs>
           </TabPane>
-          <TabPane tab="ADR (Beta)" key="adr">
+          <TabPane tab="ADR" key="adr">
             <div style={{ padding: '30px 50px'}}>
               <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Switch
