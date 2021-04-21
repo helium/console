@@ -391,10 +391,24 @@ class EventsDashboard extends Component {
           </span>
         );
       case "downlink":
+        if (row && row.sub_categories && row.sub_categories.includes('downlink_queued')) {
+          return (
+            <Tag style={styles.tag} color="#FA541C">
+              <CaretDownOutlined />
+            </Tag>
+          );
+        } else {
+          return (
+            <Tag style={styles.tag} color="#FA541C">
+              <CaretDownOutlined style={{ marginRight: 1 }}/>
+              {row.fct}
+            </Tag>
+          );
+        }
         return (
           <Tag style={styles.tag} color="#FA541C">
             <CaretDownOutlined style={{ marginRight: 1 }}/>
-            {row.fct}
+            {!(row && row.subCategories && row.subCategories.includes('downlink_queued')) && row.fct}
           </Tag>
         );
       case "join_request":
