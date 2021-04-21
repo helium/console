@@ -1,7 +1,6 @@
 import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
-import { percentOfTimeLeft } from './jwt.js'
-import { getIdTokenClaims } from '../components/auth/Auth0Provider'
+import { getIdTokenClaims, logout } from '../components/auth/Auth0Provider'
 
 export const get = async (path, params = {}, extraHeaders = {}) => {
   return axios({
@@ -51,9 +50,15 @@ const headers = async () => {
   if (organizationId) {
     Object.assign(headerParams, { organization: organizationId })
   }
-  const tokenClaims = await getIdTokenClaims();
-  const apikey = tokenClaims.__raw
 
+  let tokenClaims = store.getState().apollo.tokenClaims
+  if (!tokenClaims) {
+    tokenClaims = await getIdTokenClaims();
+  } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
+    return logout()
+  }
+
+  const apikey = tokenClaims.__raw
   Object.assign(headerParams, {
     'Authorization': `Bearer ${apikey}`
   })
