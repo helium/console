@@ -29,6 +29,7 @@ export const DEVICE_SHOW = gql`
           name,
           id,
           type,
+          downlink_token
         },
         function {
           id,
