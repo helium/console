@@ -23,6 +23,22 @@ class DebugEntry extends Component {
     this.setState({ [view]: !this.state[view] })
   }
 
+  componentDidMount() {
+    const { expandAll } = this.props;
+
+    if (expandAll) {
+      this.setState({
+        showEventInfo: true,
+        showDeviceInfo: true,
+        showHotspotInfo: true,
+        showIntegrationInfo: true,
+        showMacInfo: true,
+        showReq: true,
+        showRes: true
+      });
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const { expandAll } = this.props;
 
