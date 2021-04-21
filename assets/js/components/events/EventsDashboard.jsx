@@ -405,12 +405,6 @@ class EventsDashboard extends Component {
             </Tag>
           );
         }
-        return (
-          <Tag style={styles.tag} color="#FA541C">
-            <CaretDownOutlined style={{ marginRight: 1 }}/>
-            {!(row && row.subCategories && row.subCategories.includes('downlink_queued')) && row.fct}
-          </Tag>
-        );
       case "join_request":
         return (
           <Tag style={styles.tag} color="#4091F7">
