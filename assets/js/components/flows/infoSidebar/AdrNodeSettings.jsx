@@ -2,11 +2,11 @@ import React from 'react';
 import { Switch, Typography } from 'antd';
 const { Text } = Typography
 
-export default ({ checked, from }) => (
+export default ({ checked, from, updateAdr }) => (
   <div>
     <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
       <Switch
-        onChange={() => {}}
+        onChange={adrValue => updateAdr(adrValue)}
         checked={checked}
         style={{ marginRight: 8 }}
       />

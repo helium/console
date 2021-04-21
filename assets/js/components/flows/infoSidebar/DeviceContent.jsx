@@ -107,6 +107,12 @@ class DeviceContent extends Component {
     }
   }
 
+  handleUpdateAdrSetting = adrValue => {
+    const deviceId = this.props.id
+    const attrs = { adr_allowed: adrValue }
+    this.props.updateDevice(deviceId, attrs)
+  }
+
   handleToggleDownlink = () => {
     const { showDownlinkSidebar } = this.state;
 
@@ -361,7 +367,7 @@ class DeviceContent extends Component {
             <AlertNodeSettings />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
-            <AdrNodeSettings from="device" />
+            <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
             Content of Tab Pane 5

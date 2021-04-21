@@ -50,22 +50,21 @@ class LabelContent extends Component {
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
 
+    this.labelChannel = socket.channel("graphql:label_show", {})
+    this.labelChannel.join()
+    this.labelChannel.on(`graphql:label_show:${this.props.id}:label_update`, (message) => {
+      this.props.labelQuery.refetch()
+    })
+
     if (!this.props.paginatedDevicesQuery.loading) {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.id !== this.props.id) {
-      this.channel.on(`graphql:label_show:${this.props.id}:label_update`, (message) => {
-        this.props.labelQuery.refetch()
-      })
-    }
-  }
-
   componentWillUnmount() {
     this.channel.leave()
+    this.labelChannel.leave()
   }
 
   handleSelectOption = value => {
@@ -164,6 +163,12 @@ class LabelContent extends Component {
   handleUpdateLabelMultiBuy = multiBuyValue => {
     const labelId = this.props.id
     const attrs = { multi_buy: multiBuyValue }
+    this.props.updateLabel(labelId, attrs)
+  }
+
+  handleUpdateAdrSetting = adrValue => {
+    const labelId = this.props.id
+    const attrs = { adr_allowed: adrValue }
     this.props.updateLabel(labelId, attrs)
   }
 
@@ -316,7 +321,7 @@ class LabelContent extends Component {
             <AlertNodeSettings />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
-            <AdrNodeSettings from="label" />
+            <AdrNodeSettings from="label" checked={label.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
             Content of Tab Pane 5
