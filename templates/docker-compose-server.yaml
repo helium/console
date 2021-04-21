@@ -32,6 +32,7 @@ services:
     dns: 172.31.0.2
     ports:
       - 2154:2154
+      - 8080:8080 # gateway grpc
     volumes:
       - "./data/router:/var/data"
     depends_on:
