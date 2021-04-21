@@ -4,6 +4,7 @@ import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
+import { logout } from '../components/auth/Auth0Provider'
 import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
@@ -102,27 +103,20 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
     socket.connect()
 
     store.subscribe(async () => {
-      const newTokenClaims = await getAuthToken();
-      const newToken = newTokenClaims.__raw;
-      const newOrganization = store.getState().organization;
-
-      if (newToken !== token || currentOrganizationId !== newOrganization.currentOrganizationId) {
-        currentOrganizationId = newOrganizationId
-        token = newToken;
-        socket.disconnect();
-        socket = createSocket(token, currentOrganizationId)
-        socket.connect()
+      if (Math.ceil(Date.now() / 1000) > store.getState().apollo.tokenClaims.exp) {
+        logout()
       }
     })
 
-    return dispatch(createdApolloClient(apolloClient, socket));
+    return dispatch(createdApolloClient(apolloClient, socket, tokenClaims));
   }
 }
 
-export const createdApolloClient = (apolloClient, socket) => {
+export const createdApolloClient = (apolloClient, socket, tokenClaims) => {
   return {
     type: CREATED_APOLLO_CLIENT,
     apolloClient,
-    socket
+    socket,
+    tokenClaims
   };
 }
