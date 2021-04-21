@@ -3,7 +3,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import moment from 'moment'
 import { debugTextColor } from '../../util/colors'
 import { displayInfo } from '../../util/messages'
-import { Typography, Menu, Dropdown } from 'antd';
+import { Typography, Menu, Dropdown, Tag } from 'antd';
 import { EyeFilled, EyeInvisibleFilled, EllipsisOutlined } from '@ant-design/icons';
 import { Icon } from '@ant-design/compatible';
 const { Text } = Typography
@@ -99,6 +99,7 @@ class DebugEntry extends Component {
     const { event } = this.props
     const { showEventInfo, showDeviceInfo, showHotspotInfo, showIntegrationInfo, showMacInfo } = this.state
     const stringJSON = JSON.stringify(event, null, 2)
+    const hasDecodedPayload = !!(event.data.req && event.data.req.body && event.data.req.body.decoded);
 
     const menu = (
       <Menu>
@@ -125,6 +126,7 @@ class DebugEntry extends Component {
       <div key={event.id} style={{ paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 10,  marginLeft: 25, width: 600, backgroundColor: '#353535', borderRadius: 10 }}>
         <React.Fragment>
           {this.renderHeader(event.category, event.sub_category)}
+          {hasDecodedPayload && <Tag style={{ color: 'white', marginLeft: '15px', background: 'transparent', borderColor: 'white' }}>Decoded Payload</Tag>}
         </React.Fragment>
         <div style={{ marginBottom: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <span>
