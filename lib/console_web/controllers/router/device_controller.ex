@@ -148,6 +148,15 @@ defmodule ConsoleWeb.Router.DeviceController do
                 end
             end
 
+            event = case event["data"]["payload"] do
+              nil -> event
+              _ ->
+                case :unicode.characters_to_binary(event["data"]["payload"]) |> String.at(0) do
+                  <<0>> -> Kernel.put_in(event["data"]["payload"], "Unsupported unicode escape sequence in payload")
+                  _ -> event
+                end
+            end
+
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
