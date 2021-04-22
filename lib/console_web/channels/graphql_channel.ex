@@ -100,4 +100,12 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:resources_update", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:alerts_index_table", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:alert_show", _message, socket) do
+    {:ok, socket}
+  end
 end

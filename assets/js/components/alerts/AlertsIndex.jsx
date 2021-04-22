@@ -22,21 +22,22 @@ export default (props) => {
   const { loading, error, data, refetch } = useQuery(ALL_ALERTS);
   const alertsData = data ? data.allAlerts : [];
 
-  // const socket = useSelector(state => state.apollo.socket);
-  // const alertsChannel = socket.channel("graphql:alerts_update", {});
+  const socket = useSelector(state => state.apollo.socket);
+  const alertsChannel = socket.channel("graphql:alerts_index_table", {});
+  const currentOrganizationId = useSelector(state => state.organization.currentOrganizationId);
 
-  // useEffect(() => {
-  //   // executed when mounted
-  //   alertsChannel.join();
-  //   alertsChannel.on(`graphql:alerts_update:alerts_update`, (_message) => {
-  //     refetch();
-  //   })
+  useEffect(() => {
+    // executed when mounted
+    alertsChannel.join();
+    alertsChannel.on(`graphql:alerts_index_table:${currentOrganizationId}:alert_list_update`, (_message) => {
+      refetch();
+    })
 
-  //   // executed when unmounted
-  //   return () => {
-  //     alertsChannel.leave();
-  //   }
-  // }, []);
+    // executed when unmounted
+    return () => {
+      alertsChannel.leave();
+    }
+  }, []);
 
   const openDeleteAlertModal = (alert) => {
     setShowDeleteAlertModal(true);

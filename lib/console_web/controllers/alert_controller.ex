@@ -17,6 +17,8 @@ defmodule ConsoleWeb.AlertController do
       })
 
     with {:ok, %Alert{} = alert} <- Alerts.create_alert(alert_params) do
+      ConsoleWeb.Endpoint.broadcast("graphql:alerts_index_table", "graphql:alerts_index_table:#{current_organization.id}:alert_list_update", %{})
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "Alert #{alert.name} added successfully")
@@ -29,7 +31,7 @@ defmodule ConsoleWeb.AlertController do
     alert = Alerts.get_alert!(current_organization, id)
 
     with {:ok, %Alert{} = alert} <- Alerts.delete_alert(alert) do
-      # ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:alerts_index_table", "graphql:alerts_index_table:#{current_organization.id}:alert_list_update", %{})
 
       conn
       |> put_resp_header("message", "#{alert.name} deleted successfully")
