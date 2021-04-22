@@ -49,6 +49,7 @@ export default (props) => {
     setSelectedAlert(null);
   }
 
+  console.log("rendering")
   return (
     <DashboardLayout
       title="My Alerts"
@@ -121,7 +122,7 @@ export default (props) => {
         }
         {
           showPage === 'new' && alertType && (
-            <AlertNew alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage: 'allAlerts' }} />
+            <AlertNew alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage('allAlerts') }} />
           )
         }
         {

@@ -111,76 +111,42 @@ export default (props) => {
   }
 
   const renderButton = () => {
-    switch (props.alertType) {
-      case 'device/group':
-        return (
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            style={{ backgroundColor: '#2C79EE', borderRadius: 50, text: 'white' }}
-            onClick={() => {
-              dispatch(createAlert({
-                name: name,
-                config: {
-                  ...(emailConfig && { email: emailConfig }),
-                  ...(webhookConfig && { webhook: webhookConfig })
-                },
-                node_type: 'device/group'
-              })).then(_ => {
-                props.backToAll();
-              });
-            }}
-          >
-            Create Device/Group Alert
-          </Button>
-        );
-      case 'function':
-        return (
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            style={{ backgroundColor: '#9F59F7', borderRadius: 50, text: 'white' }}
-            onClick={() => {
-              dispatch(createAlert({
-                name: name,
-                config: {
-                  ...(emailConfig && { email: emailConfig }),
-                  ...(webhookConfig && { webhook: webhookConfig })
-                },
-                node_type: 'function'
-              })).then(_ => {
-                props.backToAll();
-              });
-            }}
-          >
-            Create Function Alert
-          </Button>
-        );
-      case 'integration':
-        return (
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            style={{ backgroundColor: '#12CB9E', borderRadius: 50, text: 'white' }}
-            onClick={() => {
-              dispatch(createAlert({
-                name: name,
-                config: {
-                  ...(emailConfig && { email: emailConfig }),
-                  ...(webhookConfig && { webhook: webhookConfig })
-                },
-                node_type: 'integration'
-              })).then(_ => {
-                props.backToAll();
-              });
-            }}
-          >
-            Create Integration Alert
-          </Button>
-        );
-      default:
-        return null;
+    const ALERT_TYPES = {
+      'device/group': {
+        name: 'Device/Group',
+        color: '#2C79EE'
+      },
+      'function': {
+        name: 'Function',
+        color: '#9F59F7'
+      },
+      'integration': {
+        name: 'Integration',
+        color: '#12CB9E'
+      }
     }
+
+    return (
+      <Button
+        icon={<PlusOutlined />}
+        type="primary"
+        style={{ backgroundColor: ALERT_TYPES[props.alertType].color, borderRadius: 50, text: 'white' }}
+        onClick={() => {
+          dispatch(createAlert({
+            name: name,
+            config: {
+              ...(emailConfig && { email: emailConfig }),
+              ...(webhookConfig && { webhook: webhookConfig })
+            },
+            node_type: props.alertType
+          })).then(_ => {
+            props.backToAll();
+          });
+        }}
+      >
+        Create {ALERT_TYPES[props.alertType].name} Alert
+      </Button>
+    );
   }
 
   return (

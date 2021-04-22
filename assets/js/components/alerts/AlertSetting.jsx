@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Switch, Typography, Dropdown, Menu } from 'antd';
-import { update } from 'lodash';
+import { Switch, Typography, Dropdown, Menu, Input } from 'antd';
+import { set, update } from 'lodash';
 const { Text } = Typography;
 import { determineTimeValueToShow } from './constants';
 
@@ -43,39 +43,61 @@ export default (props) => {
   );
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-      <span>
-        <Text style={{ fontSize: '16px' }}>Alert </Text>
-        {props.type === 'email' && <Dropdown overlay={recipientMenu()}>
-          <a 
-            className="ant-dropdown-link" 
-            onClick={e => e.preventDefault()} 
-            style={{ textTransform: 'capitalize', textDecoration: 'underline', fontSize: '16px' }}
-          >
-            {recipient}
-          </a>
-        </Dropdown>}
-        {props.type === 'email' ? <Text style={{ fontSize: '16px' }}> when </Text> : <Text style={{ fontSize: '16px' }}>when </Text>}
-        <Text style={{ fontSize: '16px' }} strong>{props.eventDescription}</Text>
-        {props.hasValue && 
-          <Dropdown overlay={timeMenu()}>
+    <React.Fragment>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+        <span>
+          <Text style={{ fontSize: '16px' }}>Alert </Text>
+          {props.type === 'email' && <Dropdown overlay={recipientMenu()}>
             <a 
               className="ant-dropdown-link" 
               onClick={e => e.preventDefault()} 
               style={{ textTransform: 'capitalize', textDecoration: 'underline', fontSize: '16px' }}
             >
-              {
-                determineTimeValueToShow(value)
-              }
+              {recipient}
             </a>
-          </Dropdown>
-        }
-      </span>
-      <Switch
-        style={{ marginLeft: 10 }}
-        checked={checked}
-        onChange={checked => { setChecked(checked) }}
-      />
-    </div>
+          </Dropdown>}
+          {props.type === 'email' ? <Text style={{ fontSize: '16px' }}> when </Text> : <Text style={{ fontSize: '16px' }}>when </Text>}
+          <Text style={{ fontSize: '16px' }} strong>{props.eventDescription}</Text>
+          {props.hasValue && 
+            <Dropdown overlay={timeMenu()}>
+              <a 
+                className="ant-dropdown-link" 
+                onClick={e => e.preventDefault()} 
+                style={{ textTransform: 'capitalize', textDecoration: 'underline', fontSize: '16px' }}
+              >
+                {
+                  determineTimeValueToShow(value)
+                }
+              </a>
+            </Dropdown>
+          }
+        </span>
+        <Switch
+          style={{ marginLeft: 10 }}
+          checked={checked}
+          onChange={checked => { setChecked(checked) }}
+        />
+      </div>
+      { props.type === 'webhook' && checked &&
+        <div style={{ paddingLeft: '30px' }}>
+          <Input
+            placeholder="Webhook URL"
+            name="url"
+            value={url}
+            onChange={e => { setUrl(e.target.value) }}
+            addonBefore="URL"
+            style={{ width: '445px', marginBottom: '10px' }}
+          />
+          <Input
+            placeholder="Notes"
+            name="notes"
+            value={notes}
+            onChange={e => { setNotes(e.target.value) }}
+            addonBefore="Notes"
+            style={{ width: '445px', marginBottom: '10px' }}
+          />
+        </div>
+      }
+    </React.Fragment>
   );
 }
