@@ -76,7 +76,7 @@ class ChannelContent extends Component {
     }
 
     return (
-      <React.Fragment>
+      <div style={{ padding: 40 }}>
         <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{channel.name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(channel.updated_at).local().format('l LT')}</Text>
         <div style={{ marginTop: 10 }}>
@@ -146,7 +146,7 @@ class ChannelContent extends Component {
             }
           </Card>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

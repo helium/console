@@ -5,13 +5,15 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import UserCan from '../../common/UserCan'
+import AlertNodeSettings from './AlertNodeSettings'
+import AdrNodeSettings from './AdrNodeSettings'
 import { redForTablesDeleteText } from '../../../util/colors'
 import { updateDevice, setDevicesActive } from '../../../actions/device'
 import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../../graphql/devices'
 import DeleteDeviceModal from '../../devices/DeleteDeviceModal';
 import UpdateLabelModal from '../../labels/UpdateLabelModal'
-import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip, Row } from 'antd';
+import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip, Row, Tabs } from 'antd';
 import { StatusIcon } from '../../common/StatusIcon'
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../../common/SkeletonLayout';
@@ -19,6 +21,7 @@ import RemoveDevicesFromLabelModal from '../../labels/RemoveDevicesFromLabelModa
 import { LABEL_SHOW } from '../../../graphql/labels';
 const { Text } = Typography
 const { Option } = Select
+const { TabPane } = Tabs
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 
@@ -47,22 +50,21 @@ class LabelContent extends Component {
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
 
+    this.labelChannel = socket.channel("graphql:label_show", {})
+    this.labelChannel.join()
+    this.labelChannel.on(`graphql:label_show:${this.props.id}:label_update`, (message) => {
+      this.props.labelQuery.refetch()
+    })
+
     if (!this.props.paginatedDevicesQuery.loading) {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.id !== this.props.id) {
-      this.channel.on(`graphql:label_show:${this.props.id}:label_update`, (message) => {
-        this.props.labelQuery.refetch()
-      })
-    }
-  }
-
   componentWillUnmount() {
     this.channel.leave()
+    this.labelChannel.leave()
   }
 
   handleSelectOption = value => {
@@ -168,6 +170,9 @@ class LabelContent extends Component {
     const labelId = this.props.id
     const attrs = { adr_allowed: adrValue }
     this.props.updateLabel(labelId, attrs)
+    .then(() => {
+      this.props.onAdrUpdate("label-" + labelId, adrValue)
+    })
   }
 
   handleUpdateLabelNotificationSettings = notifications => {
@@ -248,71 +253,91 @@ class LabelContent extends Component {
     const { selectedDevices } = this.state
 
     return (
-      <React.Fragment>
-        <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label.name}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(label.updated_at).local().format('l LT')}</Text>
-        <div style={{ marginTop: 10 }}>
-          <UserCan>
-            <Button
-              icon={<SettingOutlined />}
-              style={{ borderRadius: 4, marginRight: 10, marginBottom: 10 }}
-              onClick={this.openUpdateLabelModal}
-            >
-              Settings
-            </Button>
-          </UserCan>
-        </div>
-        <Card title="Grouped Devices">
-          <Select
-            value="Quick Action"
-            style={{ width: 295 }}
-            onSelect={this.handleSelectOption}
-          >
-            <Option value="addDevices">Add this Label to a Device</Option>
-            {
-              selectedDevices.find(r => r.active === false) && (
-                <Option value="setActive" disabled={selectedDevices.length === 0}>Resume Packet Transfer for Selected Devices</Option>
-              )
-            }
-
-            {
-              (selectedDevices.length === 0 || !selectedDevices.find(r => r.active === false)) && (
-                <Option value="setInactive" disabled={selectedDevices.length === 0}>Pause Packet Transfer for Selected Devices</Option>
-              )
-            }
-            <Option disabled={selectedDevices.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
-            <Option value="delete" disabled={selectedDevices.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
-          </Select>
-          <Table
-            onRow={(record, rowIndex) => ({
-              onClick: () => this.props.history.push(`/devices/${record.id}`)
-            })}
-            columns={columns}
-            dataSource={devices_by_label.entries}
-            rowKey={record => record.id}
-            pagination={false}
-            rowSelection={rowSelection}
-            onChange={this.handleSortChange}
-            style={{ maxHeight: 400, overflow: 'scroll' }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-            <Pagination
-              current={devices_by_label.pageNumber}
-              pageSize={devices_by_label.pageSize}
-              total={devices_by_label.totalEntries}
-              onChange={page => this.handleChangePage(page)}
-              style={{marginBottom: 20}}
-              showSizeChanger={false}
-            />
+      <div>
+        <div style={{ padding: '40px 40px 0px 40px' }}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label.name}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(label.updated_at).local().format('l LT')}</Text>
+          <div style={{ marginTop: 10 }}>
+            <UserCan>
+              <Button
+                icon={<SettingOutlined />}
+                style={{ borderRadius: 4, marginRight: 10, marginBottom: 10 }}
+                onClick={this.openUpdateLabelModal}
+              >
+                Settings
+              </Button>
+            </UserCan>
           </div>
-      </Card>
-      <RemoveDevicesFromLabelModal
-        label={label}
-        open={this.state.showRemoveDevicesFromLabelModal}
-        onClose={this.closeRemoveDevicesFromLabelModal}
-        devicesToRemove={this.state.selectedDevices}
-      />
-      <DeleteDeviceModal
+        </div>
+
+        <Tabs defaultActiveKey="1" centered>
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px ' }}>
+            <Card title="Grouped Devices">
+              <Select
+                value="Quick Action"
+                style={{ width: 295 }}
+                onSelect={this.handleSelectOption}
+              >
+                <Option value="addDevices">Add this Label to a Device</Option>
+                {
+                  selectedDevices.find(r => r.active === false) && (
+                    <Option value="setActive" disabled={selectedDevices.length === 0}>Resume Packet Transfer for Selected Devices</Option>
+                  )
+                }
+
+                {
+                  (selectedDevices.length === 0 || !selectedDevices.find(r => r.active === false)) && (
+                    <Option value="setInactive" disabled={selectedDevices.length === 0}>Pause Packet Transfer for Selected Devices</Option>
+                  )
+                }
+                <Option disabled={selectedDevices.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+                <Option value="delete" disabled={selectedDevices.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+              </Select>
+              <Table
+                onRow={(record, rowIndex) => ({
+                  onClick: () => this.props.history.push(`/devices/${record.id}`)
+                })}
+                columns={columns}
+                dataSource={devices_by_label.entries}
+                rowKey={record => record.id}
+                pagination={false}
+                rowSelection={rowSelection}
+                onChange={this.handleSortChange}
+                style={{ maxHeight: 400, overflow: 'scroll' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+                <Pagination
+                  current={devices_by_label.pageNumber}
+                  pageSize={devices_by_label.pageSize}
+                  total={devices_by_label.totalEntries}
+                  onChange={page => this.handleChangePage(page)}
+                  style={{marginBottom: 20}}
+                  showSizeChanger={false}
+                />
+              </div>
+            </Card>
+          </TabPane>
+          <TabPane tab="Debug" key="2">
+            Content of Tab Pane 2
+          </TabPane>
+          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+            <AlertNodeSettings />
+          </TabPane>
+          <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
+            <AdrNodeSettings from="label" checked={label.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
+          </TabPane>
+          <TabPane tab="Packets" key="5">
+            Content of Tab Pane 5
+          </TabPane>
+        </Tabs>
+
+        <RemoveDevicesFromLabelModal
+          label={label}
+          open={this.state.showRemoveDevicesFromLabelModal}
+          onClose={this.closeRemoveDevicesFromLabelModal}
+          devicesToRemove={this.state.selectedDevices}
+        />
+        <DeleteDeviceModal
           label={label}
           open={showDeleteDeviceModal}
           onClose={this.closeDeleteDeviceModal}
@@ -320,17 +345,16 @@ class LabelContent extends Component {
           devicesToDelete={selectedDevices}
           totalDevices={selectedDevices.length}
         />
-      <UpdateLabelModal
-        handleUpdateLabel={this.handleUpdateLabel}
-        handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-        handleUpdateAdrSetting={this.handleUpdateAdrSetting}
-        handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
-        handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
-        open={this.state.showUpdateLabelModal}
-        onClose={this.closeUpdateLabelModal}
-        label={label}
-      />
-      </React.Fragment>
+        <UpdateLabelModal
+          handleUpdateLabel={this.handleUpdateLabel}
+          handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
+          handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
+          handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
+          open={this.state.showUpdateLabelModal}
+          onClose={this.closeUpdateLabelModal}
+          label={label}
+        />
+      </div>
     )
   }
 }
@@ -347,7 +371,7 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(
-    withGql(LabelContent, 
+    withGql(LabelContent,
       PAGINATED_DEVICES_BY_LABEL, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10, labelId: props.id, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'paginatedDevicesQuery' })),
       LABEL_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.id }, name: 'labelQuery' })
   )

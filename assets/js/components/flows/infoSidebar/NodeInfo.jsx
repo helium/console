@@ -8,7 +8,7 @@ import ChannelContent from './ChannelContent';
 import DeviceContent from './DeviceContent';
 import LabelContent from './LabelContent';
 
-export default ({ id, type }) => {
+export default ({ id, type, onAdrUpdate }) => {
   const renderTopIcon = () => {
     switch (type) {
       case 'function':
@@ -29,11 +29,11 @@ export default ({ id, type }) => {
       case 'function':
         return (<FunctionContent id={id} type={type} />);
       case 'device':
-        return (<DeviceContent id={id} type={type} />);
+        return (<DeviceContent id={id} type={type} onAdrUpdate={onAdrUpdate} />);
       case 'utility':
         return null;
       case 'label':
-        return <LabelContent id={id} type={type} />;
+        return (<LabelContent id={id} type={type} onAdrUpdate={onAdrUpdate} />);
       case 'channel':
         return (<ChannelContent id={id} type={type} />);
     }
@@ -44,7 +44,7 @@ export default ({ id, type }) => {
       <div style={{ position: 'absolute', top: '30px', right: '35px' }}>
         {renderTopIcon()}
       </div>
-      <div style={{ padding: 40, marginTop: 20 }}>
+      <div style={{ marginTop: 20 }}>
         {renderMain()}
       </div>
     </React.Fragment>

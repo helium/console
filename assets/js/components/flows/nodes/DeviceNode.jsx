@@ -3,6 +3,7 @@ import { Handle } from 'react-flow-renderer';
 import { Typography } from 'antd';
 const { Text } = Typography;
 import DeviceIcon from '../../../../img/device-node-icon.svg';
+import AdrTag from '../../../../img/adr/adr-node-tag.svg';
 import SelectedNodeIcon from './SelectedNodeIcon';
 
 export default ({ data, fromSidebar, selected }) => {
@@ -17,10 +18,18 @@ export default ({ data, fromSidebar, selected }) => {
         minHeight: 50,
         position: 'relative'
       }}>
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-          <img draggable="false" src={DeviceIcon} style={{ height: 14, marginRight: 8 }} />
-          <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <img draggable="false" src={DeviceIcon} style={{ height: 14, marginRight: 8 }} />
+            <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
+          </div>
+          {
+            data.adrAllowed && (
+              <img draggable="false" src={AdrTag} style={{ height: 16, marginLeft: 20, position: 'relative', top: -2 }} />
+            )
+          }
         </div>
+
         {!fromSidebar && (
           <Handle
             type="source"

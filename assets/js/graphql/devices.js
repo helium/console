@@ -11,7 +11,8 @@ export const DEVICE_FRAGMENT = gql`
     inserted_at,
     total_packets,
     dc_usage,
-    active
+    active,
+    adr_allowed
   }
 `
 
