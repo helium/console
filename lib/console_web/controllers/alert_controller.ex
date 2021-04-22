@@ -5,7 +5,7 @@ defmodule ConsoleWeb.AlertController do
   alias Console.Alerts
   alias Console.Alerts.Alert
 
-  plug ConsoleWeb.Plug.AuthorizeAction
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept]
 
   action_fallback(ConsoleWeb.FallbackController)
 

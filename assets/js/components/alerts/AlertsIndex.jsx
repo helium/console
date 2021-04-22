@@ -49,7 +49,6 @@ export default (props) => {
     setSelectedAlert(null);
   }
 
-  console.log("rendering")
   return (
     <DashboardLayout
       title="My Alerts"

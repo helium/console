@@ -13,9 +13,7 @@ export const createAlert = (alert) => {
 export const deleteAlert = (id) => {
   return (dispatch) => {
 
-    return rest.post('/api/alerts/delete', {
-        id: id
-      })
+    return rest.destroy(`/api/alerts/${id}`)
       .then(response => {})
   }
 }
