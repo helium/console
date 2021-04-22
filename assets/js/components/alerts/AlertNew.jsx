@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Row, Col, Input } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import AddDeviceAlertIcon from '../../../img/alerts/device-group-alert-add-icon.svg';
@@ -6,10 +6,17 @@ import AddFunctionAlertIcon from '../../../img/alerts/function-alert-add-icon.sv
 import AddIntegrationAlertIcon from '../../../img/alerts/channel-alert-add-icon.svg';
 import Text from 'antd/lib/typography/Text';
 import { useDispatch } from "react-redux";
-import { createAlert } from '../../actions/alert'
+import { createAlert } from '../../actions/alert';
+import { Tabs } from 'antd';
+const { TabPane } = Tabs;
+import { DEFAULT_SETTINGS } from './constants';
+import AlertSetting from './AlertSetting';
 
 export default (props) => {
   const [name, setName] = useState('');
+  const [emailConfig, setEmailConfig] = useState({});
+  const [webhookConfig, setWebhookConfig] = useState({});
+  const [_tab, setTab] = useState('email');
   const dispatch = useDispatch();
 
   const renderIcon = () => {
@@ -39,16 +46,68 @@ export default (props) => {
   }
 
   const renderForm = () => {
-    switch (props.alertType) {
-      case 'device/group':
-        return (<div>[placeholder]</div>);
-      case 'function':
-        return (<div>[placeholder]</div>);
-      case 'integration':
-        return (<div>[placeholder]</div>);
-      default:
-        return null;
-    }
+    return (
+      <Tabs defaultActiveKey="email" size="large" centered onTabClick={tab => setTab(tab)}>
+        <TabPane tab="Email" key="email">
+          {DEFAULT_SETTINGS[props.alertType].map(s => (
+            <AlertSetting
+              key={`setting-${s.key}`}
+              eventKey={s.key}
+              eventDescription={s.description}
+              hasValue={s.hasValue}
+              type='email'
+              onChange={settings => {
+                if (settings.checked) {
+                  setEmailConfig({
+                    ...emailConfig,
+                    [settings.key]: {
+                      recipient: settings.recipient,
+                      ...('value' in settings && { value: settings.value })
+                    }
+                  });
+                } else {
+                  if (settings.key in emailConfig) {
+                    setEmailConfig({
+                      ...emailConfig,
+                      [settings.key]: undefined
+                    });
+                  }
+                }
+              }}
+            />
+          ))}
+        </TabPane>
+        <TabPane tab="Webhooks" key="webhooks">
+          {DEFAULT_SETTINGS[props.alertType].map(s => (
+            <AlertSetting
+              eventKey={s.key}
+              eventDescription={s.description}
+              hasValue={s.hasValue}
+              type='webhook'
+              onChange={settings => {
+                if (settings.checked) {
+                  setWebhookConfig({
+                    ...webhookConfig,
+                    [settings.key]: {
+                      url: settings.url,
+                      notes: settings.notes,
+                      ...('value' in settings && { value: settings.value })
+                    }
+                  });
+                } else {
+                  if (settings.key in webhookConfig) {
+                    setWebhookConfig({
+                      ...webhookConfig,
+                      [settings.key]: undefined
+                    });
+                  }
+                }
+              }}
+            />
+          ))}
+        </TabPane>
+      </Tabs>
+    );
   }
 
   const renderButton = () => {
@@ -59,15 +118,18 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#2C79EE', borderRadius: 50, text: 'white' }}
-            onClick={() => { dispatch(createAlert({
-              name: name,
-              config: {
-                email: {
-                  device_deleted: 'hello'
-                }
-              },
-              node_type: 'device/group'
-            })) }}
+            onClick={() => {
+              dispatch(createAlert({
+                name: name,
+                config: {
+                  ...(emailConfig && { email: emailConfig }),
+                  ...(webhookConfig && { webhook: webhookConfig })
+                },
+                node_type: 'device/group'
+              })).then(_ => {
+                props.backToAll();
+              });
+            }}
           >
             Create Device/Group Alert
           </Button>
@@ -78,7 +140,18 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#9F59F7', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("[placeholder]") }}
+            onClick={() => {
+              dispatch(createAlert({
+                name: name,
+                config: {
+                  ...(emailConfig && { email: emailConfig }),
+                  ...(webhookConfig && { webhook: webhookConfig })
+                },
+                node_type: 'function'
+              })).then(_ => {
+                props.backToAll();
+              });
+            }}
           >
             Create Function Alert
           </Button>
@@ -89,7 +162,18 @@ export default (props) => {
             icon={<PlusOutlined />}
             type="primary"
             style={{ backgroundColor: '#12CB9E', borderRadius: 50, text: 'white' }}
-            onClick={() => { console.log("[placeholder]") }}
+            onClick={() => {
+              dispatch(createAlert({
+                name: name,
+                config: {
+                  ...(emailConfig && { email: emailConfig }),
+                  ...(webhookConfig && { webhook: webhookConfig })
+                },
+                node_type: 'integration'
+              })).then(_ => {
+                props.backToAll();
+              });
+            }}
           >
             Create Integration Alert
           </Button>

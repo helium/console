@@ -107,7 +107,7 @@ export default (props) => {
         }
         {
           showPage === 'new' && alertType && (
-            <AlertNew alertType={alertType} back={() => { setAlertType(null) }} />
+            <AlertNew alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage: 'allAlerts' }} />
           )
         }
         {
