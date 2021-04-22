@@ -141,9 +141,11 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Ecto.Multi.run(:event, fn _repo, _ ->
             event = case event["data"]["req"]["body"] do
               nil -> event
-              _ -> 
-                {:ok, decoded_body} = Poison.decode(event["data"]["req"]["body"])
-                Kernel.put_in(event["data"]["req"]["body"], decoded_body)
+              _ ->
+                case Poison.decode(event["data"]["req"]["body"]) do
+                  {:ok, decoded_body} -> Kernel.put_in(event["data"]["req"]["body"], decoded_body)
+                  _ -> event
+                end
             end
 
             Events.create_event(Map.put(event, "organization_id", organization.id))
