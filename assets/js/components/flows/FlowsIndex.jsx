@@ -147,7 +147,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
       type: 'deviceNode',
       data: {
         label: device.name,
-        id: `device-${device.id}`
+        id: `device-${device.id}`,
+        adrAllowed: device.adr_allowed
       },
       position: [0,0]
     }
@@ -165,7 +166,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
       data: {
         label: label.name,
         id: `label-${label.id}`,
-        deviceCount: label.device_count
+        deviceCount: label.device_count,
+        adrAllowed: label.adr_allowed
       },
       position: [0,0]
     }

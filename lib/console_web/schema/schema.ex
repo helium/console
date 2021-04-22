@@ -20,6 +20,7 @@ defmodule ConsoleWeb.Schema do
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
+    field :adr_allowed, :boolean
   end
 
   object :device_stats do

@@ -98,7 +98,7 @@ class FunctionContent extends Component {
     );
 
     return (
-      <React.Fragment>
+      <div style={{ padding: 40 }}>
         <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{fxn.name}</Text>
         <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(fxn.updated_at).local().format('l LT')}</Text>
         <UserCan>
@@ -169,7 +169,7 @@ class FunctionContent extends Component {
           functionToDelete={fxn}
           redirect
         />
-      </React.Fragment>
+      </div>
     );
   }
 }

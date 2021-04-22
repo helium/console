@@ -7,6 +7,8 @@ import AdrIcon from '../../../img/adr/adr-logo-icon.svg'
 import { Typography, Row, Col } from 'antd';
 const { Text } = Typography
 
+export const adrText = 'ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity.'
+
 export default (props) => {
   return (
     <DashboardLayout
@@ -47,7 +49,7 @@ export default (props) => {
               <img src={AdrIcon} style={{ height: 50, display: 'block', marginBottom: 10 }} />
               <Text style={{ fontSize: 22, fontWeight: 600, display: 'block', marginBottom: 10 }}>Adaptive Data Rate</Text>
               <Text style={{ fontSize: 16, fontWeight: 400, display: 'block', marginBottom: 15 }}>Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect.</Text>
-              <Text style={{ fontSize: 16, fontWeight: 300, display: 'block', marginBottom: 15 }}>ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity.</Text>
+              <Text style={{ fontSize: 16, fontWeight: 300, display: 'block', marginBottom: 15 }}>{adrText1 + adrText2}</Text>
               <a style={{ fontSize: 16, fontWeight: 400, textDecoration: 'underline' }} target="_blank" href="https://docs.helium.com/use-the-network/console/adr/">Learn more about ADR</a>
             </div>
           </Col>

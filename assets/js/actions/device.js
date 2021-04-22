@@ -32,7 +32,7 @@ export const updateDevice = (id, params) => {
   return (dispatch) => {
     const deviceParams = sanitizeParams(params)
 
-    rest.put(`/api/devices/${id}`, {
+    return rest.put(`/api/devices/${id}`, {
       device: deviceParams
     })
     .then(response => {})

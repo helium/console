@@ -224,7 +224,6 @@ class DeviceIndexTable extends Component {
     })
 
     const { devices, onChangePageSize } = this.props;
-
     const rowSelection = {
       onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
       onSelectAll: () => this.setState({allSelected: !this.state.allSelected})

@@ -14,7 +14,6 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 1,
-    adrValue: this.props.label.adr_allowed,
     notificationSettings: this.props.label.label_notification_settings,
     notificationWebhooks: this.props.label.label_notification_webhooks,
     subtab: 'email'
@@ -34,7 +33,7 @@ class UpdateLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, subtab } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, subtab } = this.state;
 
     switch (tab) {
       case 'general':
@@ -57,11 +56,6 @@ class UpdateLabelModal extends Component {
         }
         this.props.onClose();
         break;
-      case 'adr':
-        this.props.handleUpdateAdrSetting(adrValue);
-        analyticsLogger.logEvent("ACTION_UPDATE_LABEL_ADR_SETTING", { id: this.props.label.id, label_adr_setting: adrValue });
-        this.props.onClose();
-        break;
     }
   }
 
@@ -71,7 +65,6 @@ class UpdateLabelModal extends Component {
         labelName: null,
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
-        adrValue: this.props.label.adr_allowed,
         notificationSettings: this.props.label.label_notification_settings,
         notificationWebhooks: this.props.label.label_notification_webhooks
       }), 200)
@@ -84,7 +77,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue } = this.state
+    const { multiBuyValue, notificationSettings, notificationWebhooks, tab } = this.state
 
     return (
       <Modal
@@ -150,9 +143,6 @@ class UpdateLabelModal extends Component {
                   <span style={{ fontWeight: 600 }}>Warning!</span> Increasing this value could dramatically affect your Data Credit spend.
                 </p>
               </div>
-              <div style={{ marginTop: 20, paddingLeft: 50, paddingRight: 50 }}>
-                <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with ADR allowed to apply this setting for devices.</Text>
-              </div>
             </div>
           </TabPane>
           <TabPane tab="Notifications" key="notifications">
@@ -176,26 +166,6 @@ class UpdateLabelModal extends Component {
                 />
               </TabPane>
             </Tabs>
-          </TabPane>
-          <TabPane tab="ADR (Beta)" key="adr">
-            <div style={{ padding: '30px 50px'}}>
-              <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Switch
-                  onChange={adrValue => this.setState({ adrValue })}
-                  checked={adrValue}
-                  style={{ marginRight: 8 }}
-                />
-                <Text strong style={{ fontSize: 16 }}>Allow ADR (recommended for stationary devices)</Text>
-              </div>
-
-              <div style={{ marginBottom: 20 }}>
-                <Text style={{ fontSize: 14 }}>{
-                  "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
-                }</Text>
-              </div>
-
-              <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with ADR allowed to apply this setting for devices.</Text>
-            </div>
           </TabPane>
         </Tabs>
       </Modal>

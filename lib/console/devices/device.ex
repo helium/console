@@ -24,6 +24,7 @@ defmodule Console.Devices.Device do
     field :dc_usage, :integer
     field :active, :boolean
     field :hotspot_address, :string
+    field :adr_allowed, :boolean
 
     belongs_to :organization, Organization
     has_many :events, Event, on_delete: :delete_all
@@ -67,7 +68,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)

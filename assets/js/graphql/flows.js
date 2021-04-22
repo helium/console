@@ -4,13 +4,15 @@ export const ALL_RESOURCES = gql`
   query AllResourcesQuery ($id: ID!) {
     allDevices {
       id,
-      name
+      name,
+      adr_allowed
     }
     allLabels {
       id,
       name,
       color,
-      device_count
+      device_count,
+      adr_allowed
     }
     allFunctions {
       id,

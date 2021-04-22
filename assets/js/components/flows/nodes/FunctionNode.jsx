@@ -23,9 +23,6 @@ export default ({ data, fromSidebar, selected }) => {
         minHeight: 50,
         position: 'relative'
       }}>
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-          <img draggable="false" src={FunctionIcon} style={{ height: 16 }} />
-        </div>
         {!fromSidebar && (
           <Handle
             type="target"
@@ -68,11 +65,12 @@ export default ({ data, fromSidebar, selected }) => {
             border: '3.5px solid #9E59F6'
           }} />
         )}
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-          <div>
+        <div style={{ height: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+            <img draggable="false" src={FunctionIcon} style={{ height: 16, marginRight: 6 }} />
             <Text style={{ display: 'block', fontSize: 16, color: '#ffffff', fontWeight: 500 }}>{data.label}</Text>
-            <Text style={{ fontSize: 10, color: '#ffffff', position: 'relative', top: -5 }}>{functionFormats[data.format]}</Text>
           </div>
+          <Text style={{ fontSize: 10, color: '#ffffff', position: 'relative', top: -5 }}>{functionFormats[data.format]}</Text>
         </div>
       </div>
     </Fragment>

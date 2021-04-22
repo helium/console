@@ -17,7 +17,7 @@ export const updateLabel = (id, params) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(params)
 
-    rest.put(`/api/labels/${id}`, {
+    return rest.put(`/api/labels/${id}`, {
       label: labelParams
     })
     .then(response => {})
