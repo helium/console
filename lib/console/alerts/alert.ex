@@ -20,7 +20,22 @@ defmodule Console.Alerts.Alert do
   def changeset(alert, attrs) do
     alert
     |> cast(attrs, [:name, :organization_id, :last_triggered_at, :config, :node_type])
-    |> validate_required([:name, :organization_id, :config, :node_type])
+    |> validate_required([:organization_id, :config, :node_type])
+    |> validate_required(:name, message: "Name cannot be blank")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
+    |> check_config_not_empty
+  end
+
+  defp check_config_not_empty(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
+        valid_config = config != %{"email" => %{}, "webhook" => %{}}
+
+        case valid_config do
+          false -> add_error(changeset, :message, "Alert must have at least one email or webhook setting turned on")
+          true -> changeset
+        end
+      _ -> changeset
+    end
   end
 end

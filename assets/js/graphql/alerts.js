@@ -28,7 +28,8 @@ export const ALL_ALERTS = gql`
       id,
       name,
       node_type,
-      last_triggered_at
+      last_triggered_at,
+      config
     }
   }
 `

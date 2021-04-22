@@ -29,8 +29,14 @@ export default (props) => {
     }
   }
 
-  const renderType = (type) => {
-    return '[placeholder]';
+  const renderType = (config) => {
+    const parsedConfig = JSON.parse(config);
+    const hasEmail = !!parsedConfig['email'];
+    const hasWebhook = !!parsedConfig['webhook'];
+
+    if (hasEmail && hasWebhook) return 'Email, Webhook';
+    if (hasEmail) return 'Email';
+    if (hasWebhook) return 'Webhook';
   }
 
   const columns = [
@@ -69,7 +75,7 @@ export default (props) => {
               size="small"
               onClick={e => {
                 e.stopPropagation()
-                console.log("DELETING")
+                props.openDeleteAlertModal(record);
               }}
             />
           </UserCan>

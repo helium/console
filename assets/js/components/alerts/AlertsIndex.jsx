@@ -12,10 +12,13 @@ import AlertTypeButton from './AlertTypeButton';
 import { ALL_ALERTS } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
 import { SkeletonLayout } from '../common/SkeletonLayout';
+import DeleteAlertModal from './DeleteAlertModal';
 
 export default (props) => {
   const [showPage, setShowPage] = useState('allAlerts');
   const [alertType, setAlertType] = useState(null);
+  const [showDeleteAlertModal, setShowDeleteAlertModal] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState(null);
   const { loading, error, data, refetch } = useQuery(ALL_ALERTS);
   const alertsData = data ? data.allAlerts : [];
 
@@ -34,6 +37,16 @@ export default (props) => {
   //     alertsChannel.leave();
   //   }
   // }, []);
+
+  const openDeleteAlertModal = (alert) => {
+    setShowDeleteAlertModal(true);
+    setSelectedAlert(alert);
+  }
+
+  const closeDeleteAlertModal = () => {
+    setShowDeleteAlertModal(false);
+    setSelectedAlert(null);
+  }
 
   return (
     <DashboardLayout
@@ -120,11 +133,16 @@ export default (props) => {
         }
         {
           showPage === 'allAlerts' && !loading && (
-            <AlertIndexTable data={alertsData} />
+            <AlertIndexTable data={alertsData} openDeleteAlertModal={openDeleteAlertModal} />
           )
         }
       </TableHeader>
       <AddResourceButton />
+      <DeleteAlertModal
+        open={showDeleteAlertModal}
+        alert={selectedAlert}
+        close={closeDeleteAlertModal}
+      />
     </DashboardLayout>
   )
 }

@@ -23,4 +23,17 @@ defmodule ConsoleWeb.AlertController do
       |> render("show.json", alert: alert)
     end
   end
+
+  def delete(conn, %{"id" => id}) do
+    current_organization = conn.assigns.current_organization
+    alert = Alerts.get_alert!(current_organization, id)
+
+    with {:ok, %Alert{} = alert} <- Alerts.delete_alert(alert) do
+      # ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
+
+      conn
+      |> put_resp_header("message", "#{alert.name} deleted successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
 end
