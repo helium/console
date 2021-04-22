@@ -1,21 +1,39 @@
-import React, { useState } from 'react'
-import DashboardLayout from '../common/DashboardLayout'
-import TableHeader from '../common/TableHeader'
-import PlusIcon from '../../../img/alerts/alert-index-plus-icon.svg'
-import AllIcon from '../../../img/alerts/alert-index-all-icon.svg'
-import AlertIcon from '../../../img/alerts/alert-index-add-icon.svg'
-import AddResourceButton from '../common/AddResourceButton'
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import DashboardLayout from '../common/DashboardLayout';
+import TableHeader from '../common/TableHeader';
+import PlusIcon from '../../../img/alerts/alert-index-plus-icon.svg';
+import AllIcon from '../../../img/alerts/alert-index-all-icon.svg';
+import AlertIcon from '../../../img/alerts/alert-index-add-icon.svg';
+import AddResourceButton from '../common/AddResourceButton';
 import AlertNew from '../alerts/AlertNew';
-import AlertIndexTable from './AlertIndexTable'
-import AlertTypeButton from './AlertTypeButton'
-import { ALL_ALERTS } from '../../graphql/alerts'
+import AlertIndexTable from './AlertIndexTable';
+import AlertTypeButton from './AlertTypeButton';
+import { ALL_ALERTS } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 
 export default (props) => {
   const [showPage, setShowPage] = useState('allAlerts');
   const [alertType, setAlertType] = useState(null);
   const { loading, error, data, refetch } = useQuery(ALL_ALERTS);
-  console.log(data)
+  const alertsData = data ? data.allAlerts : [];
+
+  // const socket = useSelector(state => state.apollo.socket);
+  // const alertsChannel = socket.channel("graphql:alerts_update", {});
+
+  // useEffect(() => {
+  //   // executed when mounted
+  //   alertsChannel.join();
+  //   alertsChannel.on(`graphql:alerts_update:alerts_update`, (_message) => {
+  //     refetch();
+  //   })
+
+  //   // executed when unmounted
+  //   return () => {
+  //     alertsChannel.leave();
+  //   }
+  // }, []);
 
   return (
     <DashboardLayout
@@ -93,8 +111,16 @@ export default (props) => {
           )
         }
         {
-          showPage === 'allAlerts' && (
-            <AlertIndexTable />
+          showPage === 'allAlerts' && error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          showPage === 'allAlerts' && loading && (
+            <div style={{ padding: 40 }}><SkeletonLayout /></div>
+          )
+        }
+        {
+          showPage === 'allAlerts' && !loading && (
+            <AlertIndexTable data={alertsData} />
           )
         }
       </TableHeader>

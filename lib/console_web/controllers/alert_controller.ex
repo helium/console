@@ -16,7 +16,7 @@ defmodule ConsoleWeb.AlertController do
         "organization_id" => current_organization.id
       })
 
-    with {:ok, %alert{} = alert} <- Alerts.create_alert(alert_params) do
+    with {:ok, %Alert{} = alert} <- Alerts.create_alert(alert_params) do
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "Alert #{alert.name} added successfully")
