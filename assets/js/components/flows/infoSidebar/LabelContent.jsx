@@ -170,6 +170,9 @@ class LabelContent extends Component {
     const labelId = this.props.id
     const attrs = { adr_allowed: adrValue }
     this.props.updateLabel(labelId, attrs)
+    .then(() => {
+      this.props.onAdrUpdate("label-" + labelId, adrValue)
+    })
   }
 
   handleUpdateLabelNotificationSettings = notifications => {

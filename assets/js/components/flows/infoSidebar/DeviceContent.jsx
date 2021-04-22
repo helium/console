@@ -111,6 +111,9 @@ class DeviceContent extends Component {
     const deviceId = this.props.id
     const attrs = { adr_allowed: adrValue }
     this.props.updateDevice(deviceId, attrs)
+    .then(() => {
+      this.props.onAdrUpdate("device-" + deviceId, adrValue)
+    })
   }
 
   handleToggleDownlink = () => {
