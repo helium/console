@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Typography, Dropdown, Menu, Input } from 'antd';
-import { set, update } from 'lodash';
 const { Text } = Typography;
 import { determineTimeValueToShow } from './constants';
 
@@ -10,6 +9,16 @@ export default (props) => {
   const [checked, setChecked] = useState(false);
   const [url, setUrl] = useState('');
   const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    if (props.value) {
+      if (props.value.recipient) setRecipient(props.value.recipient);
+      if (props.value.value) setValue(props.value.value);
+      if (props.value.url) setUrl(props.value.url);
+      if (props.value.notes) setNotes(props.value.notes);
+      setChecked(true);
+    }
+  }, [props.value])
 
   useEffect(() => {
     props.onChange({
@@ -31,7 +40,7 @@ export default (props) => {
     </Menu>
   );
 
-  const timeMenu = (key) => (
+  const timeMenu = () => (
     <Menu onClick={e => { setValue(e.key) }}>
       <Menu.Item key="15">15 mins</Menu.Item>
       <Menu.Item key="30">30 mins</Menu.Item>

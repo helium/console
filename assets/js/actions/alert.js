@@ -17,3 +17,13 @@ export const deleteAlert = (id) => {
       .then(response => {})
   }
 }
+
+export const updateAlert = (id, alert) => {
+  return (dispatch) => {
+
+    return rest.put(`/api/alerts/${id}`, {
+        alert: alert
+      })
+      .then(response => {})
+  }
+}

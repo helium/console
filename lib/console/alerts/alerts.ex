@@ -19,4 +19,10 @@ defmodule Console.Alerts do
   def delete_alert(%Alert{} = alert) do
     Repo.delete(alert)
   end
+
+  def update_alert(%Alert{} = alert, attrs) do
+    alert
+    |> Alert.changeset(attrs)
+    |> Repo.update()
+  end
 end
