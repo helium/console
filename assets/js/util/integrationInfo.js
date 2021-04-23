@@ -44,6 +44,13 @@ export const PREMADE_CHANNEL_TYPES = [
     docLink: "https://docs.helium.com/use-the-network/console/integrations/cargo"
   },
   {
+    name: "Google Sheets",
+    link: "/integrations/new/googlesheet",
+    img: `${Google}` ,
+    info: "This Integration streamlines sending data to a Google Sheet by using a Google Form.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"
+  },
+  {
     name: "myDevices Cayenne",
     link: "/integrations/new/mydevices",
     img: `${MyDevices}`,

@@ -14,6 +14,7 @@ import AdafruitForm from './forms/AdafruitForm.jsx';
 import UbidotsForm from './forms/UbidotsForm.jsx'
 import DatacakeForm from './forms/DatacakeForm.jsx'
 import TagoForm from './forms/TagoForm.jsx'
+import GoogleSheetForm from './forms/GoogleSheetForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
@@ -92,10 +93,9 @@ class ChannelNew extends Component {
       case 'cargo':
       case 'mydevices':
       case 'ubidots':
-        return 'http';
       case 'datacake':
-        return 'http';
       case 'tago':
+      case 'googlesheet':
         return 'http';
       case 'adafruit':
         return 'mqtt';
@@ -154,6 +154,8 @@ class ChannelNew extends Component {
         return <DatacakeForm onValidInput={this.handleStep2Input}/>
       case "tago":
         return <TagoForm onValidInput={this.handleStep2Input}/>
+      case "googlesheet":
+        return <GoogleSheetForm onValidInput={this.handleStep2Input}/>
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
