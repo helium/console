@@ -10,8 +10,6 @@ export default (props) => {
   const [url, setUrl] = useState('');
   const [notes, setNotes] = useState('');
 
-  // TODO subscription
-
   useEffect(() => {
     if (props.value) {
       if (props.value.recipient) setRecipient(props.value.recipient);
