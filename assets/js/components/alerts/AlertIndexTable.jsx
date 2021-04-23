@@ -67,8 +67,8 @@ export default (props) => {
       title: '',
       dataIndex: '',
       render: (text, record) => (
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
-          <UserCan>
+        <UserCan>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
             <Button
               type="danger"
               icon={<DeleteOutlined />}
@@ -79,8 +79,8 @@ export default (props) => {
                 props.openDeleteAlertModal(record);
               }}
             />
-          </UserCan>
-        </div>
+          </div>
+        </UserCan>
       )
     }
   ];
@@ -93,6 +93,7 @@ export default (props) => {
       <Table
         dataSource={props.data}
         columns={columns}
+        rowKey={record => record.id}
       />
     </Fragment>
   );

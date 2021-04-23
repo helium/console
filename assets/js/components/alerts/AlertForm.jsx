@@ -105,7 +105,7 @@ export default (props) => {
         <TabPane tab="Email" key="email">
           {alertType && DEFAULT_SETTINGS[alertType].map(s => (
             <AlertSetting
-              key={`setting-${s.key}`}
+              key={`setting-email-${s.key}`}
               eventKey={s.key}
               eventDescription={s.description}
               hasValue={s.hasValue}
@@ -135,6 +135,7 @@ export default (props) => {
         <TabPane tab="Webhooks" key="webhooks">
           {alertType && DEFAULT_SETTINGS[alertType].map(s => (
             <AlertSetting
+              key={`setting-webhook-${s.key}`}
               eventKey={s.key}
               eventDescription={s.description}
               hasValue={s.hasValue}
