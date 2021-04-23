@@ -7,7 +7,8 @@ import FunctionTriggerIcon from '../../../img/alerts/alert-trigger-function.svg'
 import IntegrationTriggerIcon from '../../../img/alerts/alert-trigger-integration.svg';
 import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
-import UserCan from '../common/UserCan'
+import UserCan from '../common/UserCan';
+import isEmpty from 'lodash/isEmpty';
 
 export default (props) => {
   const renderTrigger = (trigger) => {
@@ -31,8 +32,8 @@ export default (props) => {
 
   const renderType = (config) => {
     const parsedConfig = JSON.parse(config);
-    const hasEmail = !!parsedConfig['email'];
-    const hasWebhook = !!parsedConfig['webhook'];
+    const hasEmail = !isEmpty(parsedConfig['email']);
+    const hasWebhook = !isEmpty(parsedConfig['webhook']);
 
     if (hasEmail && hasWebhook) return 'Email, Webhook';
     if (hasEmail) return 'Email';
