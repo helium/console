@@ -4,8 +4,6 @@ export const ALERT_FRAGMENT = gql`
   fragment AlertFragment on Alert {
     id,
     name,
-    inserted_at,
-    updated_at,
     last_triggered_at,
     node_type,
     config,

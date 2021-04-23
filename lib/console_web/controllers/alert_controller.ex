@@ -38,4 +38,24 @@ defmodule ConsoleWeb.AlertController do
       |> send_resp(:no_content, "")
     end
   end
+
+  def update(conn, %{"id" => id, "alert" => alert_params}) do
+    current_organization = conn.assigns.current_organization
+    alert = Alerts.get_alert!(current_organization, id)
+    name = alert.name
+
+    with {:ok, %Alert{} = alert} <- Alerts.update_alert(alert, alert_params) do
+      ConsoleWeb.Endpoint.broadcast("graphql:alert_show", "graphql:alert_show:#{alert.id}:alert_update", %{})
+
+      msg =
+        cond do
+          alert.name == name -> "Alert #{alert.name} updated successfully"
+          true -> "The alert #{name} was successfully updated to #{alert.name}"
+        end
+
+      conn
+      |> put_resp_header("message", msg)
+      |> render("show.json", alert: alert)
+    end
+  end
 end

@@ -6,20 +6,22 @@ import PlusIcon from '../../../img/alerts/alert-index-plus-icon.svg';
 import AllIcon from '../../../img/alerts/alert-index-all-icon.svg';
 import AlertIcon from '../../../img/alerts/alert-index-add-icon.svg';
 import AddResourceButton from '../common/AddResourceButton';
-import AlertNew from '../alerts/AlertNew';
+import AlertForm from '../alerts/AlertForm';
 import AlertIndexTable from './AlertIndexTable';
 import AlertTypeButton from './AlertTypeButton';
 import { ALL_ALERTS } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import DeleteAlertModal from './DeleteAlertModal';
+import { useHistory } from 'react-router-dom'
 
 export default (props) => {
+  const history = useHistory();
   const [showPage, setShowPage] = useState('allAlerts');
   const [alertType, setAlertType] = useState(null);
   const [showDeleteAlertModal, setShowDeleteAlertModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState(null);
-  const { loading, error, data, refetch } = useQuery(ALL_ALERTS);
+  const { loading, error, data, refetch } = useQuery(ALL_ALERTS, { fetchPolicy: 'cache-and-network' });
   const alertsData = data ? data.allAlerts : [];
 
   const socket = useSelector(state => state.apollo.socket);
@@ -39,6 +41,12 @@ export default (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (props.match.params.id) {
+      setShowPage('showAlert');
+    }
+  })
+
   const openDeleteAlertModal = (alert) => {
     setShowDeleteAlertModal(true);
     setSelectedAlert(alert);
@@ -57,10 +65,12 @@ export default (props) => {
     >
       <TableHeader
         backgroundColor='#D3E0EE'
-        goHome={() => { setShowPage('home') }}
         otherColor='#ACC6DD'
         homeIcon={null}
-        goToAll={() => { setShowPage('allAlerts') }}
+        goToAll={() => {
+          setShowPage('allAlerts');
+          history.push('/alerts');
+        }}
         allIcon={AllIcon}
         textColor='#3C6B95'
         allText='All Alerts'
@@ -71,10 +81,18 @@ export default (props) => {
         goToNew={() => {
           setShowPage('new');
           setAlertType(null);
+          history.push('/alerts');
         }}
         noHome
         borderRadius='25px'
+        url={'/alerts'}
       >
+        { props.match.params.id && showPage === 'showAlert' &&
+          <AlertForm show id={props.match.params.id} back={() => {
+            // setShowPage('allAlerts');
+            history.push('/alerts');
+          }} />
+        }
         {
           showPage === "new" && alertType === null && (
             <div className="blankstateWrapper" style={{ height: '600px', paddingTop: '100px' }}>
@@ -121,7 +139,7 @@ export default (props) => {
         }
         {
           showPage === 'new' && alertType && (
-            <AlertNew alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage('allAlerts') }} />
+            <AlertForm alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage('allAlerts') }} />
           )
         }
         {

@@ -398,6 +398,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Functions.FunctionResolver.find/2
     end
 
+    @desc "Get a single alert"
+    field :alert, :alert do
+      arg :id, non_null(:id)
+      resolve &Console.Alerts.AlertResolver.find/2
+    end
+
     paginated field :dc_purchases, :paginated_dc_purchases do
       resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
     end

@@ -10,4 +10,12 @@ defmodule Console.Alerts.AlertResolver do
 
     {:ok, alerts}
   end
+
+  def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
+    alert = Alert
+      |> where([a], a.id == ^id and a.organization_id == ^current_organization.id)
+      |> Repo.one!()
+
+    {:ok, alert}
+  end
 end
