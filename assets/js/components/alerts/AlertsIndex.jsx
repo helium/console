@@ -85,7 +85,6 @@ export default (props) => {
         }}
         noHome
         borderRadius='25px'
-        url={'/alerts'}
       >
         { props.match.params.id && showPage === 'showAlert' &&
           <AlertForm show id={props.match.params.id} back={() => {
