@@ -3,6 +3,17 @@ defmodule ConsoleWeb.Schema do
   use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
+  scalar :json, description: "JSON field type in postgres" do
+    parse fn input ->
+      case Poison.decode(input.value) do
+        {:ok, result} -> {:ok, result}
+        _ -> :error
+      end
+    end
+
+    serialize &Poison.encode!/1
+  end
+
   paginated object :device do
     field :id, :id
     field :name, :string
@@ -59,6 +70,15 @@ defmodule ConsoleWeb.Schema do
     field :value, :string
     field :recipients, :string
     field :label_id, :id
+  end
+
+  object :alert do
+    field :id, :id
+    field :name, :string
+    field :last_triggered_at, :string
+    field :node_type, :string
+    field :config, :json
+    field :organization_id, :id
   end
 
   object :label_notification_webhook do
@@ -281,6 +301,10 @@ defmodule ConsoleWeb.Schema do
     field :label, :label do
       arg :id, non_null(:id)
       resolve &Console.Labels.LabelResolver.find/2
+    end
+
+    field :all_alerts, list_of(:alert) do
+      resolve &Console.Alerts.AlertResolver.all/2
     end
 
     field :all_labels, list_of(:label) do
