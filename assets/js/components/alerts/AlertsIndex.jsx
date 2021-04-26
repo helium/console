@@ -9,6 +9,7 @@ import AddResourceButton from '../common/AddResourceButton';
 import AlertForm from '../alerts/AlertForm';
 import AlertIndexTable from './AlertIndexTable';
 import AlertTypeButton from './AlertTypeButton';
+import AlertsBar from './AlertsBar';
 import { ALL_ALERTS } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
 import { SkeletonLayout } from '../common/SkeletonLayout';
@@ -85,11 +86,17 @@ export default (props) => {
         }}
         noHome
         borderRadius='25px'
+        extraContent={
+          <AlertsBar shownAlertId={props.match.params.id} alerts={alertsData} />
+        }
       >
         { props.match.params.id && showPage === 'showAlert' &&
-          <AlertForm show id={props.match.params.id} back={() => {
-            history.push('/alerts');
-          }} />
+          <AlertForm
+            key={props.match.params.id}
+            show
+            id={props.match.params.id}
+            back={() => { history.push('/alerts'); }}
+          />
         }
         {
           showPage === "new" && alertType === null && (

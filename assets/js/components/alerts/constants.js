@@ -68,3 +68,18 @@ export function determineTimeValueToShow (value) {
     return `${timeValue/60} ${timeValue === 60 ? 'hr' : 'hrs'}`;
   }
 }
+
+export const ALERT_TYPES = {
+  'device/group': {
+    name: 'Device/Group',
+    color: '#2C79EE'
+  },
+  'function': {
+    name: 'Function',
+    color: '#9F59F7'
+  },
+  'integration': {
+    name: 'Integration',
+    color: '#12CB9E'
+  }
+}
