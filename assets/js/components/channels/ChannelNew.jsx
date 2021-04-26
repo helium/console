@@ -52,11 +52,11 @@ const makeTemplate = (definition) => {
   )
 
   return `function Decoder(bytes, port) {
-// TODO: Transform bytes to decoded payload below
+  // TODO: Transform bytes to decoded payload below
   var decodedPayload = {
     ${payloads.join(",\n".padEnd(6))}
   };
-// END TODO
+  // END TODO
 
   return Serialize(decodedPayload)
 }
