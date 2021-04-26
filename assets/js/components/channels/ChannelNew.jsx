@@ -78,6 +78,7 @@ function Serialize(payload) {
   }
   return str.join("&");
 }
+// DO NOT REMOVE: Google Form Function
   `;
 }
 
@@ -221,7 +222,11 @@ class ChannelNew extends Component {
       case "tago":
         return <TagoForm onValidInput={this.handleStep2Input}/>
       case "googlesheet":
-        return <GoogleSheetForm onValidInput={this.handleStep2Input} updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate} />
+        return <GoogleSheetForm
+          onValidInput={this.handleStep2Input}
+          updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate}
+          from="ChannelNew"
+        />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }

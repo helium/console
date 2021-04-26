@@ -20,7 +20,6 @@ class GoogleSheetForm extends Component {
   getFormData = async () => {
     this.setState({ loading: true, failedToLoadFormData: false })
 
-    // 1FAIpQLSeA8B0QoGhFurLrtiCMp55QAtQFP502C_NDvOTLGV9kTZVZaQ
     post('/api/channels/google_sheets', {
       "formId": this.state.formId
     })
@@ -106,13 +105,15 @@ class GoogleSheetForm extends Component {
             <pre style={{ fontSize: 10, marginTop: 10 }}>
               {this.state.fieldsMapping}
             </pre>
-            <Button
-              type="primary"
-              onClick={this.validateInput}
-              style={{ marginTop: 20 }}
-            >
-              Generate Function Body with Fields Above
-            </Button>
+            {this.props.from === "ChannelNew" && (
+              <Button
+                type="primary"
+                onClick={this.validateInput}
+                style={{ marginTop: 20 }}
+              >
+                Generate Function Body with Fields Above
+              </Button>
+            )}
           </div>
         )}
       </div>
