@@ -12,15 +12,26 @@ defmodule Console.Functions.FunctionResolver do
 
     entries = functions.entries
       |> Enum.map(fn f ->
-        Map.put(f, :labels,
+        labels = Enum.map(f.labels, fn l ->
+          Map.put(l, :channels,
+            Enum.map(l.channels, fn c ->
+              Map.drop(c, [:downlink_token])
+            end)
+          )
+        end)
+
+        channels =
           Enum.map(f.labels, fn l ->
-            Map.put(l, :channels,
-              Enum.map(l.channels, fn c ->
-                Map.drop(c, [:downlink_token])
-              end)
-            )
+            l.channels
           end)
-        )
+          |> List.flatten()
+          |> Enum.uniq()
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+
+        Map.put(f, :channels, channels)
+        |> Map.put(:labels, labels)
       end)
 
     {:ok, Map.put(functions, :entries, entries)}

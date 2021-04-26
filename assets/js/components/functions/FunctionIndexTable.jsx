@@ -110,6 +110,31 @@ class FunctionIndexTable extends Component {
         }
       },
       {
+        title: 'Integrations',
+        dataIndex: 'channels',
+        render: (text, record) => {
+          return (<div>
+            {
+              record.channels && record.channels.map(c => (
+                <a
+                  key={c.id}
+                  style={{ marginRight: 8 }}
+                  href={`/integrations/${c.id}`}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.props.history.push(`/integrations/${c.id}`)
+                  }}
+                >
+                  {c.name}
+                </a>
+              ))
+            }
+            { record.channels && record.channels.length === 0 && <Text type="danger">None</Text>}
+          </div>);
+        }
+      },
+      {
         title: '',
         dataIndex: 'active',
         render: (text, record) => (

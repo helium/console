@@ -20,6 +20,10 @@ export const FUNCTION_FRAGMENT = gql`
         id,
         name
       }
+    },
+    channels {
+      name,
+      id
     }
   }
 `
