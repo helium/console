@@ -111,7 +111,7 @@ class GoogleSheetForm extends Component {
               onClick={this.validateInput}
               style={{ marginTop: 20 }}
             >
-              Continue with Fields Above
+              Generate Function Body with Fields Above
             </Button>
           </div>
         )}
