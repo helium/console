@@ -91,9 +91,12 @@ export default (props) => {
         }
       >
         { props.match.params.id && showPage === 'showAlert' &&
-          <AlertForm show id={props.match.params.id} back={() => {
-            history.push('/alerts');
-          }} />
+          <AlertForm
+            key={props.match.params.id}
+            show
+            id={props.match.params.id}
+            back={() => { history.push('/alerts'); }}
+          />
         }
         {
           showPage === "new" && alertType === null && (
