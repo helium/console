@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { createAlert, updateAlert } from '../../actions/alert';
 import { Tabs } from 'antd';
 const { TabPane } = Tabs;
-import { DEFAULT_SETTINGS } from './constants';
+import { DEFAULT_SETTINGS, ALERT_TYPES } from './constants';
 import AlertSetting from './AlertSetting';
 import { ALERT_SHOW } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
@@ -167,21 +167,6 @@ export default (props) => {
   }
 
   const renderButton = () => {
-    const ALERT_TYPES = {
-      'device/group': {
-        name: 'Device/Group',
-        color: '#2C79EE'
-      },
-      'function': {
-        name: 'Function',
-        color: '#9F59F7'
-      },
-      'integration': {
-        name: 'Integration',
-        color: '#12CB9E'
-      }
-    }
-
     const alertType = props.show ? alertData.node_type : props.alertType;
 
     return (
