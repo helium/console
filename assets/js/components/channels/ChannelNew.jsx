@@ -24,6 +24,7 @@ import LabelsAppliedNew from '../common/LabelsAppliedNew';
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS } from '../../graphql/labels'
+import kebabCase from 'lodash/kebabCase'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
 import DecoderForm from './DecoderForm';
@@ -32,6 +33,47 @@ const { Text } = Typography
 const { Option } = Select
 import _JSXStyle from "styled-jsx/style"
 import { adafruitTemplate } from '../../util/integrationTemplates'
+
+const slugify = text => kebabCase(text.replace(/&/g,'-and-'))
+const makeTemplate = (definition) => {
+  const fields = [];
+  const payloads = [];
+
+  Object.entries(definition).forEach(
+    ([fieldName, entry]) => {
+      const name = slugify(fieldName);
+      fields.push(`"${name}": "${entry}"`);
+      payloads.push(`"${name}": "FILL ME IN"`);
+    }
+  )
+
+  return `// Generated: do not touch
+var field_mapping = {
+  ${fields.join(",\n".padEnd(4))}
+};
+// End Generated
+
+function Decoder(bytes, port) {
+  // TODO: Transform bytes to decoded payload below
+  var decodedPayload = {
+    ${payloads.join(",\n".padEnd(6))}
+  };
+  return Serialize(decodedPayload)
+}
+
+function Serialize(payload) {
+  var str = [];
+  for (var key in payload) {
+    if (payload.hasOwnProperty(key)) {
+      var name = encodeURIComponent(field_mapping[key]);
+      var value = encodeURIComponent(payload[key]);
+      str.push(name + "=" + value);
+    }
+  }
+  return str.join("&");
+}
+  `;
+}
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
@@ -44,7 +86,8 @@ class ChannelNew extends Component {
     templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
     func: {
       format: 'cayenne'
-    }
+    },
+    googleFieldsMapping: null,
   }
 
   componentDidMount() {
@@ -106,7 +149,7 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody, func } = this.state
+    const { channelName, type, credentials, labels, templateBody, func, googleFieldsMapping } = this.state
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     let payload = {
       channel: {
@@ -118,6 +161,10 @@ class ChannelNew extends Component {
     };
     if (type === 'adafruit') {
       payload.func = func;
+    } else if (type === 'googlesheet') {
+      const functionBody = makeTemplate(JSON.parse(googleFieldsMapping))
+      payload.googleFunc = functionBody
+      payload.channel.payload_template = "{{{decoded.payload}}}"
     } else {
       payload.labels = labels;
     }
@@ -130,6 +177,10 @@ class ChannelNew extends Component {
 
   handleTemplateUpdate = (templateBody) => {
     this.setState({ templateBody });
+  }
+
+  handleGoogleFieldsMappingUpdate = googleFieldsMapping => {
+    this.setState({ googleFieldsMapping })
   }
 
   renderForm = () => {
@@ -155,7 +206,7 @@ class ChannelNew extends Component {
       case "tago":
         return <TagoForm onValidInput={this.handleStep2Input}/>
       case "googlesheet":
-        return <GoogleSheetForm onValidInput={this.handleStep2Input}/>
+        return <GoogleSheetForm onValidInput={this.handleStep2Input} updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate} />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
@@ -229,7 +280,21 @@ class ChannelNew extends Component {
             </div>
           </DecoderForm>
         )}
-        { showNextSteps && type !== 'adafruit' && (
+        { showNextSteps && type === 'googlesheet' && (
+          <Card title={"Step 4 - Update decoder"}>
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Add Integration
+              </Button>
+            </div>
+          </Card>
+        )}
+        { showNextSteps && type !== 'adafruit' && type !== 'googlesheet' && (
           <Card title={"Step 4 - Apply Integration to Label (Can be added later)"}>
             <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
             <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />

@@ -72,6 +72,8 @@ class GoogleSheetForm extends Component {
         endpoint: `https://docs.google.com/forms/d/e/${formId}/formResponse`,
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       })
+
+      this.props.updateGoogleFieldsMapping(fieldsMapping)
     }
   }
 
@@ -101,7 +103,7 @@ class GoogleSheetForm extends Component {
         {this.state.fieldsMapping && (
           <div style={{ marginTop: 12 }}>
             <Text style={{ display: 'block' }}>Obtained Google Form fields</Text>
-            <pre style={{ fontSize: 10 }}>
+            <pre style={{ fontSize: 10, marginTop: 10 }}>
               {this.state.fieldsMapping}
             </pre>
             <Button
@@ -109,7 +111,7 @@ class GoogleSheetForm extends Component {
               onClick={this.validateInput}
               style={{ marginTop: 20 }}
             >
-              Continue
+              Continue with Fields Above
             </Button>
           </div>
         )}

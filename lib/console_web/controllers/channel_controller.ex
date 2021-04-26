@@ -7,6 +7,7 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Labels.Label
   alias Console.Channels.Channel
   alias Console.Functions
+  alias Console.Functions.Function
   alias Console.LabelNotificationEvents
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -79,6 +80,56 @@ defmodule ConsoleWeb.ChannelController do
       case result do
         {:error, _, changeset, _} -> {:error, changeset}
         {:ok, %{ channel: channel, label: _label, label_attached: _label_attached, function: _function}} ->
+          broadcast_router_update_devices(channel)
+
+          conn
+          |> put_status(:created)
+          |> render("show.json", channel: channel)
+        _ -> result
+      end
+  end
+
+  def create(conn, %{"channel" => channel_params, "google_func" => function_body}) do
+    current_organization = conn.assigns.current_organization
+    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:channel, fn _repo, _ ->
+        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+          {:ok, channel}
+        end
+      end)
+      |> Ecto.Multi.run(:label, fn _repo, _ ->
+        with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
+          {:ok, label}
+        end
+      end)
+      |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
+        with {:ok, _length, _label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
+          {:ok, "label attached success"}
+        end
+      end)
+      |> Ecto.Multi.run(:function, fn _repo, _ ->
+        function_params = %{
+          "name" => channel_params["name"],
+          "organization_id" => current_organization.id,
+          "body" => function_body,
+          "type" => "decoder",
+          "format" => "custom"
+        }
+        with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
+          {:ok, function}
+        end
+      end)
+      |> Ecto.Multi.run(:function_attached, fn _repo, %{ label: label, function: function } ->
+        Labels.add_function_to_labels(function, [label.id], current_organization)
+      end)
+      |> Repo.transaction()
+
+      case result do
+        {:error, _, changeset, _} -> {:error, changeset}
+        {:ok, %{ channel: channel, label: _label, label_attached: _label_attached, function: _function, function_attached: _}} ->
           broadcast_router_update_devices(channel)
 
           conn
