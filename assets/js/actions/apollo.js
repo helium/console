@@ -128,6 +128,20 @@ const createApolloClient = (link) => (
               merge: false
             }
           }
+        },
+        Function: {
+          fields: {
+            labels: {
+              merge: false
+            }
+          }
+        },
+        Channel: {
+          fields: {
+            labels: {
+              merge: false
+            }
+          }
         }
       },
     }),

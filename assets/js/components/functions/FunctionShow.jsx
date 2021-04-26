@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withGql from '../../graphql/withGql'
+import GoogleSheetForm from '../channels/forms/GoogleSheetForm'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import LabelsAppliedExisting from '../common/LabelsAppliedExisting'
@@ -174,9 +175,7 @@ class FunctionShow extends Component {
           </UserCan>
         }
       >
-        <Card
-
- title="Function Details">
+        <Card title="Function Details">
           <Text>Update Function</Text>
           <div style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
             <Input
@@ -233,6 +232,15 @@ class FunctionShow extends Component {
             </Button>
           </UserCan>
         </Card>
+
+        {
+          fxn.format === 'custom' && fxn.body.indexOf("Google Form") !== -1 && (
+            <Card title="Google Form Fields">
+              <GoogleSheetForm />
+            </Card>
+          )
+        }
+
         {
           (format === 'custom' || (fxn.format === 'custom' && !format)) && (
             <FunctionValidator
