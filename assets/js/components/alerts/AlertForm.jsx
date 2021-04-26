@@ -173,7 +173,7 @@ export default (props) => {
       <Button
         icon={props.show ? <EditOutlined /> : <PlusOutlined />}
         type="primary"
-        style={{ backgroundColor: alertType && ALERT_TYPES[alertType].color, borderRadius: 50, text: 'white' }}
+        style={{ borderColor: alertType && ALERT_TYPES[alertType].color, backgroundColor: alertType && ALERT_TYPES[alertType].color, borderRadius: 50, text: 'white' }}
         onClick={() => {
           if (props.show) {
             dispatch(updateAlert(props.id, {
