@@ -80,7 +80,7 @@ class GoogleSheetForm extends Component {
     return(
       <div>
         <div>
-          <Text style={{ display: 'block' }}>Enter Google Form Id:</Text>
+          <Text style={{ display: 'block' }}>Enter Google Form ID:</Text>
         </div>
         <div>
           <Input
