@@ -160,6 +160,7 @@ defmodule ConsoleWeb.Schema do
     field :format, :string
     field :active, :boolean
     field :labels, list_of(:label)
+    field :channels, list_of(:channel)
   end
 
   object :event do
