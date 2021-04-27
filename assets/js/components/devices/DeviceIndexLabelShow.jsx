@@ -7,7 +7,7 @@ import DeleteDeviceModal from './DeleteDeviceModal';
 import RemoveDevicesFromLabelModal from '../labels/RemoveDevicesFromLabelModal'
 import LabelShowTable from '../labels/LabelShowTable'
 import UserCan from '../common/UserCan'
-import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
+import { updateLabel, addDevicesToLabels } from '../../actions/label'
 import { LABEL_SHOW } from '../../graphql/labels'
 import withGql from '../../graphql/withGql'
 import { Typography } from 'antd';
@@ -83,24 +83,10 @@ class DeviceIndexLabelShow extends Component {
     this.setState({selectedDevices});
   }
 
-  handleUpdateLabel = (name, color) => {
+  handleUpdateLabel = (name) => {
     const labelId = this.props.id
-    const attrs = name ? { name, color } : { color }
+    const attrs = { name }
     this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateLabelMultiBuy = multiBuyValue => {
-    const labelId = this.props.id
-    const attrs = { multi_buy: multiBuyValue }
-    this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateLabelNotificationSettings = notifications => {
-    this.props.updateLabelNotificationSettings(notifications);
-  }
-
-  handleUpdateLabelNotificationWebhooks = webhooks => {
-    this.props.updateLabelNotificationWebhooks(webhooks);
   }
 
   render() {
@@ -132,9 +118,6 @@ class DeviceIndexLabelShow extends Component {
 
         <UpdateLabelModal
           handleUpdateLabel={this.handleUpdateLabel}
-          handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-          handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
-          handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
           open={this.state.showUpdateLabelModal}
           onClose={this.closeUpdateLabelModal}
           label={label}
@@ -175,7 +158,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

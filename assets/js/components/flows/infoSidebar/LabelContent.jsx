@@ -9,7 +9,7 @@ import AlertNodeSettings from './AlertNodeSettings'
 import AdrNodeSettings from './AdrNodeSettings'
 import { redForTablesDeleteText } from '../../../util/colors'
 import { updateDevice, setDevicesActive } from '../../../actions/device'
-import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../../actions/label'
+import { updateLabel, addDevicesToLabels } from '../../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../../graphql/devices'
 import DeleteDeviceModal from '../../devices/DeleteDeviceModal';
 import UpdateLabelModal from '../../labels/UpdateLabelModal'
@@ -154,15 +154,9 @@ class LabelContent extends Component {
     this.setState({ showUpdateLabelModal: false })
   }
 
-  handleUpdateLabel = (name, color) => {
+  handleUpdateLabel = (name) => {
     const labelId = this.props.id
-    const attrs = name ? { name, color } : { color }
-    this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateLabelMultiBuy = multiBuyValue => {
-    const labelId = this.props.id
-    const attrs = { multi_buy: multiBuyValue }
+    const attrs = { name }
     this.props.updateLabel(labelId, attrs)
   }
 
@@ -173,14 +167,6 @@ class LabelContent extends Component {
     .then(() => {
       this.props.onAdrUpdate("label-" + labelId, adrValue)
     })
-  }
-
-  handleUpdateLabelNotificationSettings = notifications => {
-    this.props.updateLabelNotificationSettings(notifications);
-  }
-
-  handleUpdateLabelNotificationWebhooks = webhooks => {
-    this.props.updateLabelNotificationWebhooks(webhooks);
   }
 
   render() {
@@ -347,9 +333,6 @@ class LabelContent extends Component {
         />
         <UpdateLabelModal
           handleUpdateLabel={this.handleUpdateLabel}
-          handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-          handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
-          handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
           open={this.state.showUpdateLabelModal}
           onClose={this.closeUpdateLabelModal}
           label={label}
@@ -366,7 +349,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, setDevicesActive, addDevicesToLabels, updateLabel, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators({ updateDevice, setDevicesActive, addDevicesToLabels, updateLabel }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
