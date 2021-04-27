@@ -10,7 +10,8 @@ class HTTPForm extends Component {
     endpoint: "",
     headers: [{ header: '', value: '' }],
     url_params: [],
-    validEndpoint: true
+    validEndpoint: true,
+    validUrlParam: true,
   }
 
   componentDidMount() {
@@ -101,7 +102,17 @@ class HTTPForm extends Component {
     const newParamsArray = this.state.url_params
     newParamsArray[index] = updatedEntry
 
-    this.setState({ url_params: newParamsArray }, this.validateInput)
+    let validUrlParam = true
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.key, "{{", "}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.value, "{{", "}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.key, "{{{", "}}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.value, "{{{", "}}}")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.key, "{")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.value, "{")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.key, "}")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.value, "}")
+
+    this.setState({ url_params: newParamsArray, validUrlParam }, () => this.validateInput(validUrlParam))
   }
 
   validateInput = validInput => {
@@ -230,6 +241,11 @@ class HTTPForm extends Component {
               </Row>
             ))
           }
+          {!this.state.validUrlParam && (
+            <Text style={{ color: '#F5222D' }}>
+              {"Url Params must use {{ or {{{ and close them to be valid"}
+            </Text>
+          )}
           <Row>
             <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addUrlParamRow}>Add Param</Button>
           </Row>
@@ -237,6 +253,17 @@ class HTTPForm extends Component {
       </div>
     );
   }
+}
+
+const checkBracketClose = (validUrlParam, text, openBracket, closeBracket) => {
+  if (text.indexOf(openBracket) !== -1 && text.indexOf(closeBracket) < (text.indexOf(openBracket) + openBracket.length + 1)) return false
+  if (text.indexOf(openBracket) === -1 && text.indexOf(closeBracket) !== -1) return false
+  return validUrlParam
+}
+
+const checkNoSingleBracket = (validUrlParam, text, bracket) => {
+  if (text.indexOf(bracket) !== -1 && text.indexOf(bracket+bracket) === -1) return false
+  return validUrlParam
 }
 
 export default HTTPForm;
