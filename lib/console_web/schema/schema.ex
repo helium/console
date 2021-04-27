@@ -81,6 +81,12 @@ defmodule ConsoleWeb.Schema do
     field :organization_id, :id
   end
 
+  object :multi_buy do
+    field :id, :id
+    field :name, :string
+    field :value, :integer
+  end
+
   object :label_notification_webhook do
     field :key, :string
     field :url, :string
@@ -309,6 +315,10 @@ defmodule ConsoleWeb.Schema do
 
     field :all_alerts, list_of(:alert) do
       resolve &Console.Alerts.AlertResolver.all/2
+    end
+
+    field :all_multi_buys, list_of(:multi_buy) do
+      resolve &Console.MultiBuys.MultiBuyResolver.all/2
     end
 
     field :alerts_per_type, list_of(:alert) do

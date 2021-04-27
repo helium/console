@@ -45,7 +45,7 @@ export default ({ alerts, shownAlertId }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {alerts.map(a => (
-        <AlertButton id={a.id} name={a.name} nodeType={a.node_type} selected={a.id === shownAlertId} />
+        <AlertButton key={a.id} id={a.id} name={a.name} nodeType={a.node_type} selected={a.id === shownAlertId} />
       ))}
     </div>
   );

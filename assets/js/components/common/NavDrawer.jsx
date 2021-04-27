@@ -51,8 +51,8 @@ class NavDrawer extends Component {
           {history.location.pathname === '/adr' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div style={{ marginBottom: 30, position: 'relative' }}>
-          <NavLink draggable="false" to={"/multiple-packets"} activeClassName="is-active" className="menu-link">Multiple Packets</NavLink>
-          {history.location.pathname === '/multiple-packets' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
+          <NavLink draggable="false" to={"/multi_buy"} activeClassName="is-active" className="menu-link">Multiple Packets</NavLink>
+          {history.location.pathname === '/multi_buy' && <img draggable="false" src={Caret} style={{ right: -16, position: 'absolute', top: 8, height: 12 }} />}
         </div>
         <div><Text className="noselect" style={{ fontWeight: 500, fontSize: 12, color: '#9d9d9d' }}>ADMIN</Text></div>
         <div style={{ position: 'relative' }}>

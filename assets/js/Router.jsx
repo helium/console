@@ -29,7 +29,7 @@ import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
 import AlertsIndex from './components/alerts/AlertsIndex';
 import AdrIndex from './components/adr/AdrIndex';
-import MultiplePacketsIndex from './components/multiple-packets/MultiplePacketsIndex';
+import MultiBuyIndex from './components/multi_buy/MultiBuyIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt';
@@ -113,7 +113,7 @@ const Router = (props) => {
                         <Route exact path="/alerts" component={props => <AlertsIndex user={user} {...props}/>} />
                         <Route exact path="/alerts/:id" component={props => <AlertsIndex user={user} {...props}/>}/>
                         <Route exact path="/adr" component={props => <AdrIndex user={user} {...props}/>} />
-                        <Route exact path="/multiple-packets" component={props => <MultiplePacketsIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buy" component={props => <MultiBuyIndex user={user} {...props}/>} />
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>

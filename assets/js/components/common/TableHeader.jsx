@@ -7,7 +7,7 @@ export default (props) => {
   return (
     <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
       <div style={{ padding: 20, backgroundColor: props.backgroundColor, display: 'flex', flexDirection: 'row', overflowX: 'scroll' }}>
-        {!props.noHome && 
+        {!props.noHome &&
           <div
             style={{
               backgroundColor: props.otherColor,
@@ -30,7 +30,7 @@ export default (props) => {
             {props.onHomePage && <NavPointTriangle />}
           </div>
         }
-        <div 
+        <div
           style={{
             backgroundColor: props.otherColor,
             borderRadius: props.borderRadius ? props.borderRadius : 6,
