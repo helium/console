@@ -78,17 +78,8 @@ defmodule ConsoleWeb.Router.DeviceController do
             _ -> device
           end
 
-        multi_buy_value = device.labels |> Enum.map(fn l -> l.multi_buy end) |> Enum.max
-        case multi_buy_value do
-          0 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-          10 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, 9999) #9999 is the value for router to indicate all available packets
-          _ ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, multi_buy_value)
-        end
+        multi_buy_value = 0 # put multi buy value later
+        Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
       else
         Map.put(device, :channels, [])
       end

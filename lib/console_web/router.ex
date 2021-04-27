@@ -46,8 +46,6 @@ defmodule ConsoleWeb.Router do
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/delete", LabelController, :delete
     post "/labels/swap_label", LabelController, :swap_label
-    post "/labels/update_notification_settings", LabelNotificationSettingsController, :update
-    post "/labels/update_notification_webhooks", LabelNotificationWebhooksController, :update
     resources "/alerts", AlertController, only: [:create, :delete, :update]
     post "/alerts/add_to_node", AlertController, :add_alert_to_node
     post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
@@ -117,9 +115,6 @@ defmodule ConsoleWeb.Router do
     resources "/labels", LabelController, only: [:index, :show, :create, :delete]
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
-    post "/labels/:id/multi_buy", LabelController, :update_multi_buy
-    post "/labels/:id/notification_email", LabelNotificationSettingsController, :update
-    post "/labels/:id/notification_webhook", LabelNotificationWebhooksController, :update
     post "/devices/discover", DeviceController, :discover_device
   end
 

@@ -99,23 +99,6 @@ export const removeAllLabelsFromDevices = (devices) => {
     } else {
       rest.post(`/api/devices_labels/delete`).then(response => {})
     }
-
-  }
-}
-
-export const updateLabelNotificationSettings = (settings) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/update_notification_settings`, {
-      label_notification_settings: settings
-    })
-  }
-}
-
-export const updateLabelNotificationWebhooks = (webhooks) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/update_notification_webhooks`, {
-      label_notification_webhooks: webhooks
-    })
   }
 }
 

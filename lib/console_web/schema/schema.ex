@@ -97,7 +97,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
     field :device_count, :integer
-    field :multi_buy, :integer
     field :adr_allowed, :boolean
     field :label_notification_settings, list_of(:label_notification_setting)
     field :label_notification_webhooks, list_of(:label_notification_webhook)
