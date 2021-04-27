@@ -9,6 +9,7 @@ class HTTPForm extends Component {
     method: "post",
     endpoint: "",
     headers: [{ header: '', value: '' }],
+    url_params: [],
     validEndpoint: true
   }
 
@@ -19,10 +20,14 @@ class HTTPForm extends Component {
       const header_json = JSON.parse(channel.headers)
       const headers = Object.keys(header_json).map(key => ({ header: key, value: header_json[key] }))
 
+      const url_params_json = channel.url_params === 'null' ? [] : JSON.parse(channel.url_params)
+      const url_params = Object.keys(url_params_json).map(key => ({ key: key, value: url_params_json[key] }))
+
       this.setState({
         method: channel.method,
         endpoint: channel.endpoint,
-        headers: headers
+        headers,
+        url_params,
       })
     }
   }
@@ -51,6 +56,11 @@ class HTTPForm extends Component {
   addHeaderRow = () => {
     const newHeadersArray = [...this.state.headers, { header: "", value: "" }]
     this.setState({ headers: newHeadersArray })
+  }
+
+  addUrlParamRow = () => {
+    const newParamsArray = [...this.state.url_params, { key: "", value: "" }]
+    this.setState({ url_params: newParamsArray })
   }
 
   removeHeaderRow = (index) => {
@@ -83,11 +93,27 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
+  handleUrlParamUpdate = (e) => {
+    let index, input
+    [index, input] = e.target.name.split('-')
+
+    const updatedEntry = Object.assign({}, this.state.url_params[index], { [input]: e.target.value })
+    const newParamsArray = this.state.url_params
+    newParamsArray[index] = updatedEntry
+
+    this.setState({ url_params: newParamsArray }, this.validateInput)
+  }
+
   validateInput = validInput => {
-    const { method, endpoint, headers } = this.state
+    const { method, endpoint, headers, url_params } = this.state
     if (method.length > 0 && endpoint.length > 0) {
       const parsedHeaders = headers.reduce((a, h) => {
         if (h.header !== "" && h.value !== "") a[h.header] = h.value
+        return a
+      }, {})
+
+      const parsedUrlParams = url_params.reduce((a, h) => {
+        if (h.key !== "" && h.value !== "") a[h.key] = h.value
         return a
       }, {})
 
@@ -95,6 +121,7 @@ class HTTPForm extends Component {
         method,
         endpoint,
         headers: parsedHeaders,
+        url_params: parsedUrlParams
       }, validInput)
     }
   }
@@ -145,37 +172,69 @@ class HTTPForm extends Component {
           </Col>
          </Row>
         <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20 }}>
-          <Text strong>HTTP Headers (Optional)</Text>
-        <br/>
-        {
-          this.state.headers.map((obj, i) => (
-            <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
-              <Col sm={12}>
-                <Input
-                  placeholder="Key"
-                  name={`${i}-header`}
-                  value={obj.header}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: '100%'}}
-                />
-              </Col>
-              <Col sm={12}>
-                <Input
-                  placeholder="Value"
-                  name={`${i}-value`}
-                  value={obj.value}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: '100%'}}
-                />
-              </Col>
-            </Row>
-          ))
-        }
-        <Row>
-          <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addHeaderRow} >Add Header</Button>
-        </Row>
+            <Text strong>HTTP Headers (Optional)</Text>
+          <br/>
+          {
+            this.state.headers.map((obj, i) => (
+              <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-header`}
+                    value={obj.header}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+              </Row>
+            ))
+          }
+          <Row>
+            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addHeaderRow} >Add Header</Button>
+          </Row>
+        </div>
+
+        <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20, marginTop: 10 }}>
+            <Text strong>Url Params (Optional usage for payload interpolation)</Text>
+          <br/>
+          {
+            this.state.url_params.map((obj, i) => (
+              <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-key`}
+                    value={obj.key}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+              </Row>
+            ))
+          }
+          <Row>
+            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addUrlParamRow}>Add Param</Button>
+          </Row>
+        </div>
       </div>
-    </div>
     );
   }
 }
