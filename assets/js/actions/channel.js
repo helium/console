@@ -64,6 +64,11 @@ const sanitizeParams = (params) => {
     Object.keys(params.credentials.headers).forEach(k => headers[sanitizeHtml(k)] = sanitizeHtml(params.credentials.headers[k]) )
     params.credentials.headers = headers
   }
+  if (params.credentials && params.credentials.url_params) {
+    const url_params = {}
+    Object.keys(params.credentials.url_params).forEach(k => url_params[sanitizeHtml(k)] = sanitizeHtml(params.credentials.url_params[k]) )
+    params.credentials.url_params = url_params
+  }
   return params
 }
 
