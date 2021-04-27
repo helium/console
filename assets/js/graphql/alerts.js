@@ -31,3 +31,25 @@ export const ALL_ALERTS = gql`
     }
   }
 `
+
+export const ALERTS_PER_TYPE = gql`
+  query AlertsPerTypeQuery ($type: String!) {
+    alertsPerType(type: $type) {
+      id,
+      name,
+      node_type,
+      config
+    }
+  }
+`
+
+export const ALERTS_FOR_NODE = gql`
+  query AlertsForNodeQuery ($node_id: ID!, $node_type: String!) {
+    alertsForNode(node_id: $node_id, node_type: $node_type) {
+      id,
+      name,
+      node_type,
+      config
+    }
+  }
+`

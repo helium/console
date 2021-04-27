@@ -303,12 +303,28 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Labels.LabelResolver.find/2
     end
 
+    field :all_labels, list_of(:label) do
+      resolve &Console.Labels.LabelResolver.all/2
+    end
+
     field :all_alerts, list_of(:alert) do
       resolve &Console.Alerts.AlertResolver.all/2
     end
 
-    field :all_labels, list_of(:label) do
-      resolve &Console.Labels.LabelResolver.all/2
+    field :alerts_per_type, list_of(:alert) do
+      arg :type, non_null(:string)
+      resolve &Console.Alerts.AlertResolver.get_per_type/2
+    end
+
+    field :alerts_per_type, list_of(:alert) do
+      arg :type, non_null(:string)
+      resolve &Console.Alerts.AlertResolver.get_per_type/2
+    end
+
+    field :alerts_for_node, list_of(:alert) do
+      arg :node_id, non_null(:id)
+      arg :node_type, non_null(:string)
+      resolve &Console.Alerts.AlertResolver.get_alerts_for_node/2
     end
 
     @desc "Get paginated channels"
