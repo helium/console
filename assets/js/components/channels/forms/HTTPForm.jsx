@@ -215,7 +215,7 @@ class HTTPForm extends Component {
         </div>
 
         <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20, marginTop: 10 }}>
-            <Text strong>Url Params (Optional usage for payload interpolation)</Text>
+            <Text strong>URL Params (Optional usage for payload interpolation)</Text>
           <br/>
           {
             this.state.url_params.map((obj, i) => (
@@ -243,7 +243,7 @@ class HTTPForm extends Component {
           }
           {!this.state.validUrlParam && (
             <Text style={{ color: '#F5222D' }}>
-              {"Url Params must use {{ or {{{ and close them to be valid"}
+              {"For valid interpolation, URL params must use {{ or {{{ and have corresponding closing }} or }}}"}
             </Text>
           )}
           <Row>
