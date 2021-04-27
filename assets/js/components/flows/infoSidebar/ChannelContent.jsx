@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withGql from '../../../graphql/withGql'
-import { Button, Typography, Card, Divider, Input } from 'antd';
+import { Button, Typography, Card, Divider, Input, Tabs } from 'antd';
+const { TabPane } = Tabs;
 const { Text, Paragraph } = Typography;
 import moment from 'moment';
 import { CHANNEL_SHOW } from '../../../graphql/channels';
@@ -15,6 +16,7 @@ import MqttDetails from '../../channels/MqttDetails';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { EyeOutlined, EyeInvisibleOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import AlertNodeSettings from './AlertNodeSettings'
 
 class ChannelContent extends Component {
   state = {
@@ -88,63 +90,70 @@ class ChannelContent extends Component {
               Edit
             </Button>
           </Link>
-          <Card title="Integration Details">
-            <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
-            <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
-            <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-            {channel.type === "http" && (
-              <Card size="small" title="HTTP Details">
-                  <HttpDetails channel={channel} />
+          <Tabs defaultActiveKey="1" centered>
+            <TabPane tab="Overview" key="1">
+              <Card title="Integration Details">
+                <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
+                <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
+                <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
+                {channel.type === "http" && (
+                  <Card size="small" title="HTTP Details">
+                      <HttpDetails channel={channel} />
+                  </Card>
+                )}
+                {channel.type === "aws" && (
+                  <Card size="small" title="AWS Details">
+                      <AwsDetails channel={channel} />
+                  </Card>
+                )}
+                {
+                  channel.type === "mqtt" && (
+                    <Card size="small" title="MQTT Details">
+                      <MqttDetails channel={channel} />
+                    </Card>
+                )}
+                {
+                  channel.type === 'http' && (
+                    <UserCan>
+                      <Divider />
+                      <Text>Downlink URL</Text>
+                      <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
+                        <Input
+                          value={downlinkUrl}
+                          style={{ marginRight: 10 }}
+                          disabled
+                        />
+                        <CopyToClipboard text={downlinkUrl}>
+                          <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
+                        </CopyToClipboard>
+                      </div>
+                      <Text>Downlink Key</Text>
+                      <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <Input
+                          value={showDownlinkToken ? channel.downlink_token : "************************"}
+                          style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
+                          suffix={
+                            showDownlinkToken ? (
+                              <EyeOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                            ) : (
+                              <EyeInvisibleOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                            )
+                          }
+                          disabled
+                        />
+                        <CopyToClipboard text={channel.downlink_token}>
+                          <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
+                        </CopyToClipboard>
+                      </div>
+                    </UserCan>
+                  )
+                }
               </Card>
-            )}
-            {channel.type === "aws" && (
-              <Card size="small" title="AWS Details">
-                  <AwsDetails channel={channel} />
-              </Card>
-            )}
-            {
-              channel.type === "mqtt" && (
-                <Card size="small" title="MQTT Details">
-                  <MqttDetails channel={channel} />
-                </Card>
-            )}
-            {
-              channel.type === 'http' && (
-                <UserCan>
-                  <Divider />
-                  <Text>Downlink URL</Text>
-                  <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
-                    <Input
-                      value={downlinkUrl}
-                      style={{ marginRight: 10 }}
-                      disabled
-                    />
-                    <CopyToClipboard text={downlinkUrl}>
-                      <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
-                    </CopyToClipboard>
-                  </div>
-                  <Text>Downlink Key</Text>
-                  <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Input
-                      value={showDownlinkToken ? channel.downlink_token : "************************"}
-                      style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
-                      suffix={
-                        showDownlinkToken ? (
-                          <EyeOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
-                        ) : (
-                          <EyeInvisibleOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
-                        )
-                      }
-                      disabled
-                    />
-                    <CopyToClipboard text={channel.downlink_token}>
-                      <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
-                    </CopyToClipboard>
-                  </div>
-                </UserCan>
-              )
-            }
-          </Card>
+          </TabPane>
+          <TabPane tab="Alerts" key="2">
+            <AlertNodeSettings type="integration" nodeId={channel.id} />
+          </TabPane>
+          </Tabs>
         </div>
       </div>
     );

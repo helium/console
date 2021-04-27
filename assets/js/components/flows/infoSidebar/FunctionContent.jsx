@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withGql from '../../../graphql/withGql'
 import { PauseOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Typography } from 'antd';
+import { Button, Typography, Tabs } from 'antd';
 const { Text } = Typography;
 import UserCan from '../../common/UserCan'
 import FunctionDetailsCard from '../../functions/FunctionDetailsCard';
@@ -14,6 +14,8 @@ import FunctionValidator from '../../functions/FunctionValidator';
 import DeleteFunctionModal from '../../functions/DeleteFunctionModal';
 import moment from 'moment'
 import { Link } from 'react-router-dom';
+import AlertNodeSettings from './AlertNodeSettings'
+const { TabPane } = Tabs;
 
 class FunctionContent extends Component {
   state = {
@@ -138,31 +140,39 @@ class FunctionContent extends Component {
               Delete
             </Button>
           </div>
-          <FunctionDetailsCard
-            fxn={fxn}
-            name={name}
-            type={type}
-            format={format}
-            body={body}
-            handleSelectFunctionType={this.handleSelectFunctionType}
-            handleInputUpdate={this.handleInputUpdate}
-            handleSelectFormat={this.handleSelectFormat}
-            clearInputs={this.clearInputs}
-            handleSubmit={this.handleSubmit}
-          />
         </UserCan>
+        <Tabs defaultActiveKey="1" centered>
+          <TabPane tab="Overview" key="1">
+            <UserCan>
+              <FunctionDetailsCard
+                fxn={fxn}
+                name={name}
+                type={type}
+                format={format}
+                body={body}
+                handleSelectFunctionType={this.handleSelectFunctionType}
+                handleInputUpdate={this.handleInputUpdate}
+                handleSelectFormat={this.handleSelectFormat}
+                clearInputs={this.clearInputs}
+                handleSubmit={this.handleSubmit}
+              />
+            </UserCan>
 
-        {/* TODO fix the function validator being squished into the sidebar */}
-        {
-          (format === 'custom' || (fxn.format === 'custom' && !format)) && (
-            <FunctionValidator
-              handleFunctionUpdate={this.handleFunctionUpdate}
-              body={(body === "" && !codeUpdated) ? fxn.body : body}
-              title="Custom Script"
-            />
-          )
-        }
-
+            {/* TODO fix the function validator being squished into the sidebar */}
+            {
+              (format === 'custom' || (fxn.format === 'custom' && !format)) && (
+                <FunctionValidator
+                  handleFunctionUpdate={this.handleFunctionUpdate}
+                  body={(body === "" && !codeUpdated) ? fxn.body : body}
+                  title="Custom Script"
+                />
+              )
+            }
+          </TabPane>
+          <TabPane tab="Alerts" key="2">
+            <AlertNodeSettings type="function" nodeId={fxn.id} />
+          </TabPane>
+        </Tabs>
         <DeleteFunctionModal
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
