@@ -72,6 +72,22 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
+  def get_google_form_data(conn, %{"formId" => id }) do
+
+    response = HTTPoison.get("https://docs.google.com/forms/d/e/#{id}/viewform")
+    case response do
+      {:ok, %{ status_code: 200, body: body }} ->
+        conn
+        |> put_resp_header("message", "Received Google Form data successfully")
+        |> send_resp(:ok, body)
+      _ ->
+        errors = %{ "errors" => %{ "error" => "Failed to get Google Form data with provided ID" }}
+
+        conn
+        |> send_resp(502, Jason.encode!(errors))
+    end
+  end
+
   defp broadcast_router_update_devices(%Channel{} = channel) do
     assoc_labels = channel |> Channels.fetch_assoc([labels: :devices]) |> Map.get(:labels)
     assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)

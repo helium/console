@@ -8,7 +8,12 @@ defmodule Console.Channels.ChannelResolver do
       |> where([c], c.organization_id == ^current_organization.id)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    {:ok, channels}
+    updated_entries = channels.entries
+      |> Enum.map(fn c ->
+        Map.drop(c, [:downlink_token])
+      end)
+
+    {:ok, Map.put(channels, :entries, updated_entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
@@ -24,6 +29,7 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:method, channel.credentials["method"])
           |> Map.put(:inbound_token, channel.credentials["inbound_token"])
           |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
+          |> Map.put(:url_params, Jason.encode!(channel.credentials["url_params"]))
         "aws" ->
           channel
           |> Map.put(:aws_region, channel.credentials["aws_region"])
@@ -46,8 +52,11 @@ defmodule Console.Channels.ChannelResolver do
 
     channel =
       case current_membership.role do
-        "read" -> channel |> Map.put(:downlink_token, nil)
-        _ -> channel
+        "read" ->
+          channel
+          |> Map.drop([:downlink_token])
+        _ ->
+          channel
       end
 
     {:ok, channel}
@@ -68,6 +77,13 @@ defmodule Console.Channels.ChannelResolver do
           channel
       end
     end)
+
+    channels =
+      Ecto.assoc(current_organization, :channels)
+      |> Repo.all()
+      |> Enum.map(fn c ->
+        Map.drop(c, [:downlink_token])
+      end)
 
     {:ok, channels}
   end

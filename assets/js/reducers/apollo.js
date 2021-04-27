@@ -3,6 +3,7 @@ import { CREATED_APOLLO_CLIENT } from '../actions/apollo'
 const initialState = {
     apolloClient: null,
     socket: null,
+    tokenClaims: null,
 }
 
 const apollo = (state = initialState, action) => {
@@ -11,7 +12,8 @@ const apollo = (state = initialState, action) => {
         return {
             ...state,
             apolloClient: action.apolloClient,
-            socket: action.socket
+            socket: action.socket,
+            tokenClaims: action.tokenClaims
         };
       default:
         return state;

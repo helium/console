@@ -138,7 +138,7 @@ class DataCreditsIndex extends Component {
 
           <div className="explainer">
             <h2>What are Data Credits?</h2>
-            <p>Data Credits are used by devices to send data via the Helium Network. The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC). During the Beta, the cost to send packets is 0 DC.</p>
+            <p>Data Credits are used by devices to send data via the Helium Network. The cost per fragment is $0.00001 USD (fragments are 24 bytes) which is equivalent to 1 Data Credit (DC).</p>
             <p>More details can be found <a href="https://docs.helium.com/use-the-network/console/data-credits" target="_blank"> here.</a></p>
           </div>
         </div>

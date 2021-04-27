@@ -22,7 +22,6 @@ export const ORGANIZATION_SHOW_DC = gql`
       automatic_payment_method,
       dc_balance_nonce,
       received_free_dc,
-      webhook_key
     }
   }
 `
@@ -54,7 +53,6 @@ export const ALL_ORGANIZATIONS = gql`
       inactive_count,
       active_count,
       received_free_dc,
-      webhook_key
     }
   }
 `

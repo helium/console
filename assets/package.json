@@ -15,6 +15,7 @@
     "antd": "^4.10.0",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
+    "cheerio": "^1.0.0-rc.6",
     "connected-react-router": "^6.8.0",
     "crypto": "^1.0.1",
     "dagre": "^0.8.5",

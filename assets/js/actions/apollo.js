@@ -4,6 +4,7 @@ import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
+import { getIdTokenClaims, logout } from '../components/auth/Auth0Provider'
 import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
@@ -47,82 +48,108 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
     })
 
     const link = authErrorLink.concat(authLink.concat(httpLink))
-
-    const apolloClient = new ApolloClient({
-      link,
-      cache: new InMemoryCache({
-        typePolicies: {
-          Query: {
-            fields: {
-              allOrganizations: {
-                merge: false
-              },
-              allLabels:{
-                merge: false
-              },
-              apiKeys: {
-                merge: false
-              },
-              allChannels: {
-                merge: false
-              },
-              allFunctions: {
-                merge: false
-              },
-              device_imports: {
-                merge: false
-              },
-              allDevices: {
-                merge: false
-              },
-              organization: {
-                merge: false
-              }
-            },
-          },
-          Label: {
-            fields: {
-              devices: {
-                merge: false
-              }
-            }
-          },
-          Device: {
-            fields: {
-              labels: {
-                merge: false
-              }
-            }
-          }
-        },
-      }),
-    })
+    const apolloClient = createApolloClient(link)
 
     let socket = createSocket(token, currentOrganizationId)
     socket.connect()
 
     store.subscribe(async () => {
-      const newTokenClaims = await getAuthToken();
-      const newToken = newTokenClaims.__raw;
-      const newOrganization = store.getState().organization;
+      if (Math.ceil(Date.now() / 1000) > store.getState().apollo.tokenClaims.exp) {
+        logout()
+      }
 
-      if (newToken !== token || currentOrganizationId !== newOrganization.currentOrganizationId) {
-        currentOrganizationId = newOrganizationId
-        token = newToken;
-        socket.disconnect();
-        socket = createSocket(token, currentOrganizationId)
+      if (store.getState().apollo.tokenClaims.exp - Math.ceil(Date.now() / 1000) < 3600) {
+        const newTokenClaims = await getIdTokenClaims()
+        const newAuthLink = setContext((_, { headers }) => {
+          return {
+            headers: {
+              ...headers,
+              authorization:`Bearer ${newTokenClaims.__raw}`,
+              organization: currentOrganizationId
+            }
+          }
+        })
+        const newLink = authErrorLink.concat(newAuthLink.concat(httpLink))
+        const newApolloClient = createApolloClient(newLink)
+        socket.disconnect()
+        socket = createSocket(newTokenClaims.__raw, currentOrganizationId)
         socket.connect()
+        dispatch(createdApolloClient(newApolloClient, socket, newTokenClaims))
       }
     })
 
-    return dispatch(createdApolloClient(apolloClient, socket));
+    return dispatch(createdApolloClient(apolloClient, socket, tokenClaims));
   }
 }
 
-export const createdApolloClient = (apolloClient, socket) => {
+const createApolloClient = (link) => (
+  new ApolloClient({
+    link,
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            allOrganizations: {
+              merge: false
+            },
+            allLabels:{
+              merge: false
+            },
+            apiKeys: {
+              merge: false
+            },
+            allChannels: {
+              merge: false
+            },
+            allFunctions: {
+              merge: false
+            },
+            device_imports: {
+              merge: false
+            },
+            allDevices: {
+              merge: false
+            }
+          },
+        },
+        Label: {
+          fields: {
+            devices: {
+              merge: false
+            }
+          }
+        },
+        Device: {
+          fields: {
+            labels: {
+              merge: false
+            }
+          }
+        },
+        Function: {
+          fields: {
+            labels: {
+              merge: false
+            }
+          }
+        },
+        Channel: {
+          fields: {
+            labels: {
+              merge: false
+            }
+          }
+        }
+      },
+    }),
+  })
+)
+
+export const createdApolloClient = (apolloClient, socket, tokenClaims) => {
   return {
     type: CREATED_APOLLO_CLIENT,
     apolloClient,
-    socket
+    socket,
+    tokenClaims
   };
 }
