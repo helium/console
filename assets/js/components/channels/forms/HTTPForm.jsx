@@ -59,7 +59,11 @@ class HTTPForm extends Component {
   }
 
   handleInputUpdate = (e) => {
-    const validEndpoint = e.target.name == 'endpoint' && e.target.value.indexOf(' ') == -1
+    const validEndpoint =
+      e.target.name == 'endpoint'
+      && e.target.value.indexOf(' ') == -1
+      && e.target.value.indexOf('{') == -1
+      && e.target.value.indexOf('}') == -1
 
     this.setState({ [e.target.name]: e.target.value, validEndpoint }, () => this.validateInput(validEndpoint))
   }
@@ -135,7 +139,7 @@ class HTTPForm extends Component {
             />
             {!this.state.validEndpoint && (
               <Text style={{ color: '#F5222D', marginTop: 8 }}>
-                Endpoint URL should not have spaces
+                {"Endpoint URL should not have spaces or {} brackets"}
               </Text>
             )}
           </Col>
