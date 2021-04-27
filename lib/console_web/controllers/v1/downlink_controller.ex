@@ -41,7 +41,7 @@ defmodule ConsoleWeb.V1.DownlinkController do
               |> send_resp(:ok, "Downlink scheduled")
           end
         else
-          {:error, :bad_request, "Integration not found"}
+          {:error, :bad_request, "Downlink token invalid for integration"}
         end
     end
   end

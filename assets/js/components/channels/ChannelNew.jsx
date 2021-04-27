@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs/components/prism-core';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import DashboardLayout from '../common/DashboardLayout'
+import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import AzureForm from './forms/AzureForm.jsx'
 import AWSForm from './forms/AWSForm.jsx'
 import GoogleForm from './forms/GoogleForm.jsx'
@@ -14,12 +17,15 @@ import AdafruitForm from './forms/AdafruitForm.jsx';
 import UbidotsForm from './forms/UbidotsForm.jsx'
 import DatacakeForm from './forms/DatacakeForm.jsx'
 import TagoForm from './forms/TagoForm.jsx'
+import GoogleSheetForm from './forms/GoogleSheetForm.jsx'
 import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
 import ChannelPayloadTemplate from './ChannelPayloadTemplate'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
+import kebabCase from 'lodash/kebabCase'
+import range from 'lodash/range'
 import { Typography, Select, Card, Button } from 'antd';
 import { IntegrationTypeTileSimple } from './IntegrationTypeTileSimple';
 import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
@@ -28,6 +34,50 @@ const { Option } = Select
 import _JSXStyle from "styled-jsx/style"
 import { adafruitTemplate } from '../../util/integrationTemplates'
 
+const slugify = text => kebabCase(text.replace(/&/g,'-and-'))
+const makeTemplate = (definition) => {
+  const fields = [];
+  const payloads = [];
+
+  Object.entries(definition).forEach(
+    ([fieldName, entry]) => {
+      const name = slugify(fieldName);
+      fields.push(`"${name}": "${entry}"`);
+      payloads.push(`"${name}": "FILL ME IN"`);
+    }
+  )
+
+  return `function Decoder(bytes, port) {
+  // TODO: Transform bytes to decoded payload below
+  var decodedPayload = {
+    ${payloads.join(",\n".padEnd(6))}
+  };
+  // END TODO
+
+  return Serialize(decodedPayload)
+}
+
+// Generated: do not touch unless your Google Form fields have changed
+var field_mapping = {
+  ${fields.join(",\n".padEnd(4))}
+};
+// End Generated
+
+function Serialize(payload) {
+  var str = [];
+  for (var key in payload) {
+    if (payload.hasOwnProperty(key)) {
+      var name = encodeURIComponent(field_mapping[key]);
+      var value = encodeURIComponent(payload[key]);
+      str.push(name + "=" + value);
+    }
+  }
+  return str.join("&");
+}
+// DO NOT REMOVE: Google Form Function
+  `;
+}
+
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
   state = {
@@ -35,7 +85,12 @@ class ChannelNew extends Component {
     showNextSteps: false,
     credentials: {},
     channelName: "",
-    templateBody: "",
+    templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
+    func: {
+      format: 'cayenne'
+    },
+    googleFieldsMapping: null,
+    googleFunctionBody: ""
   }
 
   componentDidMount() {
@@ -55,10 +110,9 @@ class ChannelNew extends Component {
       case 'cargo':
       case 'mydevices':
       case 'ubidots':
-        return 'http';
       case 'datacake':
-        return 'http';
       case 'tago':
+      case 'googlesheet':
         return 'http';
       case 'adafruit':
         return 'mqtt';
@@ -69,7 +123,8 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, templateBody } = this.state
+    const { channelName, type, credentials, labels, templateBody, func, googleFieldsMapping, googleFunctionBody } = this.state
+
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     let payload = {
       channel: {
@@ -79,6 +134,7 @@ class ChannelNew extends Component {
         payload_template: type === "http" || type === "mqtt" || type === "adafruit" ? templateBody : undefined,
       }
     };
+
     this.props.createChannel(payload);
   }
 
@@ -86,12 +142,17 @@ class ChannelNew extends Component {
     this.setState({ templateBody });
   }
 
-  handleSelectType = type => {
-    this.setState({
-      type,
-      showNextSteps: false,
-      templateBody: type === 'adafruit' ? adafruitTemplate : ""
-    })
+  handleGoogleFieldsMappingUpdate = googleFieldsMapping => {
+    this.setState({ googleFieldsMapping, googleFunctionBody: makeTemplate(JSON.parse(googleFieldsMapping)) })
+  }
+
+  handleGoogleFunctionBodyUpdate = (googleFunctionBody) => {
+    this.setState({ googleFunctionBody });
+  }
+
+  onClickEditor = () => {
+    const editor = document.getElementsByClassName("npm__react-simple-code-editor__textarea")[0]
+    editor.focus()
   }
 
   renderForm = () => {
@@ -116,6 +177,12 @@ class ChannelNew extends Component {
         return <DatacakeForm onValidInput={this.handleStep2Input}/>
       case "tago":
         return <TagoForm onValidInput={this.handleStep2Input}/>
+      case "googlesheet":
+        return <GoogleSheetForm
+          onValidInput={this.handleStep2Input}
+          updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate}
+          from="ChannelNew"
+        />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
     }
@@ -152,12 +219,93 @@ class ChannelNew extends Component {
           </Card>
         )}
         { showNextSteps && (
-          <ChannelNameForm
-            channelName={this.state.channelName}
-            onInputUpdate={this.handleStep3Input}
-            validInput={this.state.validInput}
-            handleStep3Submit={this.handleStep3Submit}
-          />
+            <ChannelNameForm
+              channelName={this.state.channelName}
+              onInputUpdate={this.handleStep3Input}
+            />
+        )}
+        { showNextSteps && type === 'adafruit' && (
+          <DecoderForm onChange={this.handleDecoderSelection}>
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Add Integration
+              </Button>
+            </div>
+          </DecoderForm>
+        )}
+        { showNextSteps && type === 'googlesheet' && (
+          <Card
+            title={"Step 4 - Update Function Body"}
+            bodyStyle={{ padding: 0 }}
+            extra={
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Add Integration
+              </Button>
+            }
+          >
+            <div style={{ height: 303, overflowY: 'scroll' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
+                <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                  {
+                    range(301).map(i => (
+                      <p
+                        key={i}
+                        style={{
+                          textAlign: 'right',
+                          fontFamily: 'monospace',
+                          color: codeEditorLineColor,
+                          fontSize: 14,
+                          marginBottom: 0,
+                          paddingLeft: 10,
+                          paddingRight: 10,
+                          backgroundColor: codeEditorBgColor
+                        }}
+                      >
+                        {i}
+                      </p>
+                    ))
+                  }
+                </div>
+
+                <Editor
+                  value={this.state.googleFunctionBody}
+                  onValueChange={this.handleGoogleFunctionBodyUpdate}
+                  highlight={code => highlight(code, languages.js)}
+                  padding={10}
+                  style={{
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                  }}
+                />
+              </div>
+            </div>
+          </Card>
+        )}
+        { showNextSteps && type !== 'adafruit' && type !== 'googlesheet' && (
+          <Card title={"Step 4 - Apply Integration to Label (Can be added later)"}>
+            <Text style={{display:'block', marginBottom: 30}}>Labels are necessary to connect devices to integrations</Text>
+            <LabelsAppliedNew handleLabelsUpdate={this.handleLabelsUpdate} />
+            <div style={{ marginTop: 20 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={this.handleStep3Submit}
+                disabled={!this.state.validInput}
+              >
+                Add Integration
+              </Button>
+            </div>
+          </Card>
         )}
         { showNextSteps && (type === "http" || type === "mqtt") && (
           <ChannelPayloadTemplate

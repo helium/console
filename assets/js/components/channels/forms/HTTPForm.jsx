@@ -9,7 +9,9 @@ class HTTPForm extends Component {
     method: "post",
     endpoint: "",
     headers: [{ header: '', value: '' }],
-    validEndpoint: true
+    url_params: [],
+    validEndpoint: true,
+    validUrlParam: true,
   }
 
   componentDidMount() {
@@ -19,10 +21,14 @@ class HTTPForm extends Component {
       const header_json = JSON.parse(channel.headers)
       const headers = Object.keys(header_json).map(key => ({ header: key, value: header_json[key] }))
 
+      const url_params_json = channel.url_params === 'null' ? [] : JSON.parse(channel.url_params)
+      const url_params = Object.keys(url_params_json).map(key => ({ key: key, value: url_params_json[key] }))
+
       this.setState({
         method: channel.method,
         endpoint: channel.endpoint,
-        headers: headers
+        headers,
+        url_params,
       })
     }
   }
@@ -53,13 +59,22 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray })
   }
 
+  addUrlParamRow = () => {
+    const newParamsArray = [...this.state.url_params, { key: "", value: "" }]
+    this.setState({ url_params: newParamsArray })
+  }
+
   removeHeaderRow = (index) => {
     const newHeadersArray = this.state.headers.slice(0, index).concat(this.state.headers.slice(index + 1))
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
   handleInputUpdate = (e) => {
-    const validEndpoint = e.target.name == 'endpoint' && e.target.value.indexOf(' ') == -1
+    const validEndpoint =
+      e.target.name == 'endpoint'
+      && e.target.value.indexOf(' ') == -1
+      && e.target.value.indexOf('{') == -1
+      && e.target.value.indexOf('}') == -1
 
     this.setState({ [e.target.name]: e.target.value, validEndpoint }, () => this.validateInput(validEndpoint))
   }
@@ -79,11 +94,37 @@ class HTTPForm extends Component {
     this.setState({ headers: newHeadersArray }, this.validateInput)
   }
 
+  handleUrlParamUpdate = (e) => {
+    let index, input
+    [index, input] = e.target.name.split('-')
+
+    const updatedEntry = Object.assign({}, this.state.url_params[index], { [input]: e.target.value })
+    const newParamsArray = this.state.url_params
+    newParamsArray[index] = updatedEntry
+
+    let validUrlParam = true
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.key, "{{", "}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.value, "{{", "}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.key, "{{{", "}}}")
+    validUrlParam = checkBracketClose(validUrlParam, updatedEntry.value, "{{{", "}}}")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.key, "{")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.value, "{")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.key, "}")
+    validUrlParam = checkNoSingleBracket(validUrlParam, updatedEntry.value, "}")
+
+    this.setState({ url_params: newParamsArray, validUrlParam }, () => this.validateInput(validUrlParam))
+  }
+
   validateInput = validInput => {
-    const { method, endpoint, headers } = this.state
+    const { method, endpoint, headers, url_params } = this.state
     if (method.length > 0 && endpoint.length > 0) {
       const parsedHeaders = headers.reduce((a, h) => {
         if (h.header !== "" && h.value !== "") a[h.header] = h.value
+        return a
+      }, {})
+
+      const parsedUrlParams = url_params.reduce((a, h) => {
+        if (h.key !== "" && h.value !== "") a[h.key] = h.value
         return a
       }, {})
 
@@ -91,6 +132,7 @@ class HTTPForm extends Component {
         method,
         endpoint,
         headers: parsedHeaders,
+        url_params: parsedUrlParams
       }, validInput)
     }
   }
@@ -135,45 +177,93 @@ class HTTPForm extends Component {
             />
             {!this.state.validEndpoint && (
               <Text style={{ color: '#F5222D', marginTop: 8 }}>
-                Endpoint URL should not have spaces
+                {"Endpoint URL should not have spaces or {} brackets"}
               </Text>
             )}
           </Col>
          </Row>
         <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20 }}>
-          <Text strong>HTTP Headers (Optional)</Text>
-        <br/>
-        {
-          this.state.headers.map((obj, i) => (
-            <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
-              <Col sm={12}>
-                <Input
-                  placeholder="Key"
-                  name={`${i}-header`}
-                  value={obj.header}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: '100%'}}
-                />
-              </Col>
-              <Col sm={12}>
-                <Input
-                  placeholder="Value"
-                  name={`${i}-value`}
-                  value={obj.value}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: '100%'}}
-                />
-              </Col>
-            </Row>
-          ))
-        }
-        <Row>
-          <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addHeaderRow} >Add Header</Button>
-        </Row>
+            <Text strong>HTTP Headers (Optional)</Text>
+          <br/>
+          {
+            this.state.headers.map((obj, i) => (
+              <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-header`}
+                    value={obj.header}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+              </Row>
+            ))
+          }
+          <Row>
+            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addHeaderRow} >Add Header</Button>
+          </Row>
+        </div>
+
+        <div style={{ background: '#E6F7FF', borderRadius: "10px", padding: 20, marginTop: 10 }}>
+            <Text strong>URL Params (Optional usage for payload interpolation)</Text>
+          <br/>
+          {
+            this.state.url_params.map((obj, i) => (
+              <Row gutter={16} style={{marginBottom: 16}} key={`${i}-key`}>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-key`}
+                    value={obj.key}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+                <Col sm={12}>
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ width: '100%'}}
+                  />
+                </Col>
+              </Row>
+            ))
+          }
+          {!this.state.validUrlParam && (
+            <Text style={{ color: '#F5222D' }}>
+              {"For valid interpolation, URL params must use {{ or {{{ and have corresponding closing }} or }}}"}
+            </Text>
+          )}
+          <Row>
+            <Button style={{ borderColor: '#40A9FF', background: 'none', color: '#096DD9' }} icon={<PlusOutlined />} type="default" onClick={this.addUrlParamRow}>Add Param</Button>
+          </Row>
+        </div>
       </div>
-    </div>
     );
   }
+}
+
+const checkBracketClose = (validUrlParam, text, openBracket, closeBracket) => {
+  if (text.indexOf(openBracket) !== -1 && text.indexOf(closeBracket) < (text.indexOf(openBracket) + openBracket.length + 1)) return false
+  if (text.indexOf(openBracket) === -1 && text.indexOf(closeBracket) !== -1) return false
+  return validUrlParam
+}
+
+const checkNoSingleBracket = (validUrlParam, text, bracket) => {
+  if (text.indexOf(bracket) !== -1 && text.indexOf(bracket+bracket) === -1) return false
+  return validUrlParam
 }
 
 export default HTTPForm;

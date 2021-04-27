@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withGql from '../../graphql/withGql'
+import GoogleSheetForm from '../channels/forms/GoogleSheetForm'
 import DashboardLayout from '../common/DashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'

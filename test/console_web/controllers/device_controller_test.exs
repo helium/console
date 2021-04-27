@@ -153,22 +153,5 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert Devices.get_device(device_1["id"]) == nil
       assert Devices.get_device(device_2["id"]) == nil
     end
-
-    test "debug device works properly", %{conn: conn} do
-      not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
-
-      assert_error_sent 404, fn ->
-        post conn, device_path(conn, :debug), %{ "device" => not_my_device.id}
-      end
-
-      resp_conn = post conn, device_path(conn, :create), %{
-        "device" => %{ "name" => "n", "dev_eui" => "aaaaaaaaaaaaaaa1", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
-        "label" => nil
-      }
-      device = json_response(resp_conn, 201)
-      resp_conn = post conn, device_path(conn, :debug), %{ "device" => device["id"]}
-      assert response(resp_conn, 204)
-    end
   end
 end

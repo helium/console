@@ -15,7 +15,13 @@ defmodule Console.Devices.DeviceResolver do
       |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
-    {:ok, devices}
+    entries =
+      devices.entries
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+      end)
+
+    {:ok, Map.put(devices, :entries, entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
@@ -23,10 +29,21 @@ defmodule Console.Devices.DeviceResolver do
 
     device =
       case current_membership.role do
-        "read" -> device |> Map.put(:app_key, nil)
+        "read" ->
+          device
+          |> Map.drop([:app_key])
+          |> Map.put(:labels,
+            device.labels
+              |> Enum.map(fn l ->
+                Map.put(l, :channels,
+                  Enum.map(l.channels, fn c ->
+                    Map.drop(c, [:downlink_token])
+                  end)
+                )
+              end)
+          )
         _ -> device
       end
-
     {:ok, device}
   end
 
@@ -82,11 +99,21 @@ defmodule Console.Devices.DeviceResolver do
     }
   end
 
+
   def get_names(%{device_ids: device_ids}, %{context: %{current_organization: current_organization}}) do
     query = from d in Device,
       where: d.organization_id == ^current_organization.id and d.id in ^device_ids
 
     {:ok, query |> Repo.all()}
+  end
+
+  def all(_, %{context: %{current_organization: current_organization}}) do
+    devices = Device
+      |> where([d], d.organization_id == ^current_organization.id)
+      |> Repo.all()
+      |> Enum.map(fn d -> Map.drop(d, [:app_key]) end)
+
+    {:ok, devices}
   end
 
   def paginate_by_label(%{page: page, page_size: page_size, label_id: label_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
@@ -99,7 +126,14 @@ defmodule Console.Devices.DeviceResolver do
       preload: [:labels],
       order_by: ^order_by
 
-    {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
+    devices = query |> Repo.paginate(page: page, page_size: page_size)
+
+    entries = devices.entries
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+      end)
+
+    {:ok, Map.put(devices, :entries, entries)}
   end
 
   def events(%{device_id: id}, %{context: %{current_organization: current_organization}}) do

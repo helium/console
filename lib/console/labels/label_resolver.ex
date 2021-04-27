@@ -13,13 +13,28 @@ defmodule Console.Labels.LabelResolver do
       where: l.organization_id == ^current_organization.id and dl.device_id == ^device_id,
       order_by: ^order_by
 
-    {:ok, query |> Repo.paginate(page: page, page_size: page_size)}
+    labels = query |> Repo.paginate(page: page, page_size: page_size)
+    entries = labels.entries
+      |> Enum.map(fn l ->
+        channels = l.channels
+          |> Enum.map(fn c ->
+            Map.drop(c, [:downlink_token])
+          end)
+        Map.put(l, :channels, channels)
+      end)
+
+    {:ok, Map.put(labels, :entries, entries)}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     label = Ecto.assoc(current_organization, :labels) |> preload([:devices, :label_notification_settings, :label_notification_webhooks]) |> Repo.get!(id)
 
-    {:ok, label}
+    devices = label.devices
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+      end)
+
+    {:ok, label |> Map.put(:devices, devices)}
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do

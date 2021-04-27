@@ -54,6 +54,7 @@ defmodule ConsoleWeb.Router do
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
     post "/channels/ubidots", ChannelController, :get_ubidots_url
+    post "/channels/google_sheets", ChannelController, :get_google_form_data
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
