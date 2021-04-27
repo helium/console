@@ -113,7 +113,7 @@ defmodule ConsoleWeb.AlertControllerTest do
         "webhook" => %{}
       } })
       device_1 = insert(:device, %{ organization_id: organization_id })
-      alert_node = insert(:alert_node, %{ alert_id: alert_1.id, node_id: device_1.id, node_type: "device" })
+      insert(:alert_node, %{ alert_id: alert_1.id, node_id: device_1.id, node_type: "device" })
       
       resp_conn = post conn, alert_path(conn, :remove_alert_from_node, %{
         alert_id: alert_1.id,
@@ -128,7 +128,7 @@ defmodule ConsoleWeb.AlertControllerTest do
         "email" => %{"device_join_otaa_first_time" => %{"recipient" => "admin"}},
         "webhook" => %{}
       } })
-      not_my_alert_node = insert(:alert_node, %{ alert_id: not_my_alert.id, node_id: not_my_device.id, node_type: "device" })
+      insert(:alert_node, %{ alert_id: not_my_alert.id, node_id: not_my_device.id, node_type: "device" })
 
       assert_error_sent 404, fn ->
         post conn, alert_path(conn, :remove_alert_from_node, %{
