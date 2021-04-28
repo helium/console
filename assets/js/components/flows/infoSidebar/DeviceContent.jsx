@@ -374,7 +374,7 @@ class DeviceContent extends Component {
             <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiPacketNodeSettings />
+            <MultiPacketNodeSettings currentNode={device} />
           </TabPane>
         </Tabs>
 

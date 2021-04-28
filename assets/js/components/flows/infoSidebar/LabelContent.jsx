@@ -314,7 +314,7 @@ class LabelContent extends Component {
             <AdrNodeSettings from="label" checked={label.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiPacketNodeSettings />
+            <MultiPacketNodeSettings currentNode={label} />
           </TabPane>
         </Tabs>
 
