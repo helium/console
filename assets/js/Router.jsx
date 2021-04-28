@@ -114,6 +114,7 @@ const Router = (props) => {
                         <Route exact path="/alerts/:id" component={props => <AlertsIndex user={user} {...props}/>}/>
                         <Route exact path="/adr" component={props => <AdrIndex user={user} {...props}/>} />
                         <Route exact path="/multi_buy" component={props => <MultiBuyIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buy/:id" component={props => <MultiBuyIndex user={user} {...props}/>}/>
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>

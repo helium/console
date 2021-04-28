@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import DashboardLayout from '../common/DashboardLayout';
 import TableHeader from '../common/TableHeader';
 import MultiBuyForm from './MultiBuyForm';
+import MultiBuyBar from './MultiBuyBar';
 import MultiBuyIndexTable from './MultiBuyIndexTable';
 import DeleteMultiplePacketModal from './DeleteMultiplePacketModal';
 import PlusIcon from '../../../img/multi_buy/multi-buy-index-plus-icon.svg';
@@ -74,6 +75,9 @@ export default (props) => {
         }}
         noHome
         borderRadius='25px'
+        extraContent={
+          <MultiBuyBar shownMultiBuyId={props.match.params.id} multiBuys={multiBuyData} />
+        }
       >
         {
           showPage === 'allMultiBuy' && error && <Text>Data failed to load, please reload the page and try again</Text>
