@@ -85,7 +85,7 @@ class ChannelNew extends Component {
     showNextSteps: false,
     credentials: {},
     channelName: "",
-    templateBody: this.props.match.params.id === 'adafruit' ? adafruitTemplate : "",
+    templateBody: "",
     func: {
       format: 'cayenne'
     },
@@ -185,6 +185,16 @@ class ChannelNew extends Component {
         />
       default:
         return <CargoForm onValidInput={this.handleStep2Input}/>
+    }
+  }
+
+  handleSelectType = (type) => {
+    this.setState({ type });
+
+    if (type === "adafruit") {
+      this.setState({ templateBody: adafruitTemplate });
+    } else {
+      this.setState({ templateBody: "" });
     }
   }
 
