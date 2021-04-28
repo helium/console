@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from "react-redux";
 import { Button, Row, Col, Input, Typography, Slider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { createMultiBuy } from '../../actions/multiBuy';
 import MultiBuyIcon from '../../../img/multi_buy/multi-buy-index-add-icon.svg';
 const { Text } = Typography
 
-export default ({ fromPage }) => {
+export default ({ fromPage, setShowPage }) => {
   const [name, setName] = useState('');
-  const [multiBuyValue, setMultiBuyValue] = useState(0)
+  const [multiBuyValue, setMultiBuyValue] = useState(1)
+  const dispatch = useDispatch();
 
   return (
     <div style={{ padding: '30px 30px 20px 30px', display: 'flex', flexDirection: 'column' }}>
@@ -66,6 +69,8 @@ export default ({ fromPage }) => {
             type="primary"
             style={{ borderColor: '#2C79EE', backgroundColor: '#2C79EE', borderRadius: 50, text: 'white', marginTop: 40 }}
             onClick={() => {
+              dispatch(createMultiBuy({ name, value: multiBuyValue }))
+              .then(() => { setShowPage("allMultiBuy") })
             }}
           >
             Create Multiple Packet Config

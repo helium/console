@@ -57,7 +57,7 @@ export default (props) => {
           )
         }
         {
-          showPage === 'new' && <MultiBuyForm fromPage="new" />
+          showPage === 'new' && <MultiBuyForm fromPage="new" setShowPage={setShowPage} />
         }
       </TableHeader>
       <AddResourceButton />
