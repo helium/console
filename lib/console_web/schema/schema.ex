@@ -81,6 +81,12 @@ defmodule ConsoleWeb.Schema do
     field :organization_id, :id
   end
 
+  object :multi_buy do
+    field :id, :id
+    field :name, :string
+    field :value, :integer
+  end
+
   object :label_notification_webhook do
     field :key, :string
     field :url, :string
@@ -97,7 +103,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
     field :device_count, :integer
-    field :multi_buy, :integer
     field :adr_allowed, :boolean
     field :label_notification_settings, list_of(:label_notification_setting)
     field :label_notification_webhooks, list_of(:label_notification_webhook)
@@ -312,6 +317,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Alerts.AlertResolver.all/2
     end
 
+    field :all_multi_buys, list_of(:multi_buy) do
+      resolve &Console.MultiBuys.MultiBuyResolver.all/2
+    end
+
     field :alerts_per_type, list_of(:alert) do
       arg :type, non_null(:string)
       resolve &Console.Alerts.AlertResolver.get_per_type/2
@@ -414,6 +423,12 @@ defmodule ConsoleWeb.Schema do
     field :alert, :alert do
       arg :id, non_null(:id)
       resolve &Console.Alerts.AlertResolver.find/2
+    end
+
+    @desc "Get a single multi_buy"
+    field :multi_buy, :multi_buy do
+      arg :id, non_null(:id)
+      resolve &Console.MultiBuys.MultiBuyResolver.find/2
     end
 
     paginated field :dc_purchases, :paginated_dc_purchases do

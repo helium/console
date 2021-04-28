@@ -2,16 +2,14 @@ import React from 'react';
 import NavPointTriangle from '../common/NavPointTriangle';
 import { Typography } from 'antd';
 const { Text } = Typography;
-import { ALERT_TYPES } from './constants';
 import { Link } from 'react-router-dom';
 
-
-const AlertButton = ({ id, name, nodeType, selected }) => (
+const MultiBuyButton = ({ id, name, selected }) => (
   <React.Fragment>
-    <Link to={`/alerts/${id}`}>
+    <Link to={`/multi_buys/${id}`}>
       <div style={{
         position: 'relative',
-        background: ALERT_TYPES[nodeType].color,
+        background: '#2C79EE',
         marginRight: 10,
         marginRight: '10px',
         width: '140px',
@@ -32,7 +30,7 @@ const AlertButton = ({ id, name, nodeType, selected }) => (
         >
           <Text style={{ color: 'white', fontSize: 14, fontWeight: 500 }}>{name}</Text>
         </div>
-        <Text style={{ color: 'white', fontSize: 12 }}>{ALERT_TYPES[nodeType].name} Alert</Text>
+        <Text style={{ color: 'white', fontSize: 12 }}>Multiple Packet</Text>
         {
           selected && <NavPointTriangle />
         }
@@ -41,11 +39,11 @@ const AlertButton = ({ id, name, nodeType, selected }) => (
   </React.Fragment>
 );
 
-export default ({ alerts, shownAlertId }) => {
+export default ({ multiBuys, shownMultiBuyId }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      {alerts.map(a => (
-        <AlertButton key={a.id} id={a.id} name={a.name} nodeType={a.node_type} selected={a.id === shownAlertId} />
+      {multiBuys.map(m => (
+        <MultiBuyButton key={m.id} id={m.id} name={m.name} selected={m.id === shownMultiBuyId} />
       ))}
     </div>
   );

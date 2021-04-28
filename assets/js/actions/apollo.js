@@ -110,6 +110,9 @@ const createApolloClient = (link) => (
             allDevices: {
               merge: false
             },
+            allMultiBuys: {
+              merge: false
+            },
             alertsForNode: {
               merge: false
             }
