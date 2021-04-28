@@ -12,7 +12,7 @@ export default (props) => {
       title: 'Name',
       dataIndex: 'name',
       render: (data, record) => (
-        <Link to={`/multi_buy/${record.id}`}>{data}</Link>
+        <Link to={`/multi_buys/${record.id}`}>{data}</Link>
       )
     },
     {

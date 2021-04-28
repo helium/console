@@ -6,7 +6,7 @@ import { createMultiBuy } from '../../actions/multiBuy';
 import MultiBuyIcon from '../../../img/multi_buy/multi-buy-index-add-icon.svg';
 const { Text } = Typography
 
-export default ({ fromPage, setShowPage }) => {
+export default ({ show, setShowPage }) => {
   const [name, setName] = useState('');
   const [multiBuyValue, setMultiBuyValue] = useState(1)
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ export default ({ fromPage, setShowPage }) => {
   return (
     <div style={{ padding: '30px 30px 20px 30px', display: 'flex', flexDirection: 'column' }}>
       {
-        fromPage !== "new" && (
+        show && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Button size="middle" type="danger" style={{ borderRadius: 5, marginRight: 50 }} onClick={() => {}}>Delete</Button>
           </div>

@@ -50,6 +50,12 @@ export default (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (props.match.params.id) {
+      setShowPage('showMultiBuy');
+    }
+  })
+
   return (
     <DashboardLayout
       title="Multiple Packets"
@@ -93,8 +99,20 @@ export default (props) => {
           )
         }
         {
-          showPage === 'new' && <MultiBuyForm fromPage="new" setShowPage={setShowPage} />
+          showPage === 'new' && (
+            <MultiBuyForm
+              setShowPage={setShowPage}
+            />
+          )
         }
+        { props.match.params.id && showPage === 'showMultiBuy' && (
+          <MultiBuyForm
+            key={props.match.params.id}
+            id={props.match.params.id}
+            show
+            setShowPage={setShowPage}
+          />
+        )}
       </TableHeader>
       <AddResourceButton />
 
