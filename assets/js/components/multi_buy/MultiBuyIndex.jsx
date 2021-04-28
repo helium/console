@@ -56,6 +56,12 @@ export default (props) => {
     }
   })
 
+  useEffect(() => {
+    if (!props.match.params.id) {
+      refetch()
+    }
+  }, [props.match.params.id])
+
   return (
     <DashboardLayout
       title="Multiple Packets"
@@ -67,6 +73,7 @@ export default (props) => {
         otherColor='#ACC6DD'
         homeIcon={null}
         goToAll={() => {
+          history.push('/multi_buys');
           setShowPage('allMultiBuy');
         }}
         allIcon={AllIcon}
@@ -77,7 +84,8 @@ export default (props) => {
         onNewPage={showPage === 'new'}
         addIcon={PlusIcon}
         goToNew={() => {
-          setShowPage('new');
+          history.push('/multi_buys')
+          setShowPage('new')
         }}
         noHome
         borderRadius='25px'
@@ -110,6 +118,7 @@ export default (props) => {
             id={props.match.params.id}
             show
             setShowPage={setShowPage}
+            openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
           />
         )}
       </TableHeader>

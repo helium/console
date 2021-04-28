@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client';
 import { MULTI_BUY_SHOW } from '../../graphql/multiBuys';
 const { Text } = Typography
 
-export default ({ show, setShowPage, id }) => {
+export default ({ show, setShowPage, id, openDeleteMultiplePacketModal }) => {
   const [name, setName] = useState('');
   const [multiBuyValue, setMultiBuyValue] = useState(1)
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ export default ({ show, setShowPage, id }) => {
       {
         show && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Button size="middle" type="danger" style={{ borderRadius: 5, marginRight: 50 }} onClick={() => {}}>Delete</Button>
+            <Button size="middle" type="danger" style={{ borderRadius: 5, marginRight: 50 }} onClick={() => openDeleteMultiplePacketModal(data.multiBuy)}>Delete</Button>
           </div>
         )
       }
