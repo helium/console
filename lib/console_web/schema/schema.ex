@@ -425,6 +425,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Alerts.AlertResolver.find/2
     end
 
+    @desc "Get a single multi_buy"
+    field :multi_buy, :multi_buy do
+      arg :id, non_null(:id)
+      resolve &Console.MultiBuys.MultiBuyResolver.find/2
+    end
+
     paginated field :dc_purchases, :paginated_dc_purchases do
       resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
     end

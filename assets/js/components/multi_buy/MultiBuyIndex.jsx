@@ -107,7 +107,6 @@ export default (props) => {
         }
         { props.match.params.id && showPage === 'showMultiBuy' && (
           <MultiBuyForm
-            key={props.match.params.id}
             id={props.match.params.id}
             show
             setShowPage={setShowPage}

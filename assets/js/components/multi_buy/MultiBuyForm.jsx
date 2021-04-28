@@ -1,15 +1,48 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { Button, Row, Col, Input, Typography, Slider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { createMultiBuy } from '../../actions/multiBuy';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { createMultiBuy, updateMultiBuy } from '../../actions/multiBuy';
 import MultiBuyIcon from '../../../img/multi_buy/multi-buy-index-add-icon.svg';
+import { useQuery } from '@apollo/client';
+import { MULTI_BUY_SHOW } from '../../graphql/multiBuys';
 const { Text } = Typography
 
-export default ({ show, setShowPage }) => {
+export default ({ show, setShowPage, id }) => {
   const [name, setName] = useState('');
   const [multiBuyValue, setMultiBuyValue] = useState(1)
   const dispatch = useDispatch();
+
+  const { loading, error, data, refetch } = useQuery(MULTI_BUY_SHOW, {
+    variables: { id },
+    skip: !id
+  });
+
+  const socket = useSelector(state => state.apollo.socket);
+  useEffect(() => {
+    if (show) {
+      const multiBuyShowChannel = socket.channel("graphql:multi_buy_show", {});
+
+      // executed when mounted
+      multiBuyShowChannel.join();
+      multiBuyShowChannel.on(`graphql:multi_buy_show:${id}:multi_buy_update`, (_message) => {
+        refetch();
+      })
+
+      // executed when unmounted
+      return () => {
+        multiBuyShowChannel.leave();
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!loading && !error && data) {
+      setName(data.multiBuy.name)
+      setMultiBuyValue(data.multiBuy.value)
+    }
+  }, [data]);
 
   return (
     <div style={{ padding: '30px 30px 20px 30px', display: 'flex', flexDirection: 'column' }}>
@@ -65,15 +98,19 @@ export default ({ show, setShowPage }) => {
           </div>
 
           <Button
-            icon={<PlusOutlined />}
+            icon={show ? <EditOutlined /> : <PlusOutlined />}
             type="primary"
             style={{ borderColor: '#2C79EE', backgroundColor: '#2C79EE', borderRadius: 50, text: 'white', marginTop: 40 }}
             onClick={() => {
-              dispatch(createMultiBuy({ name, value: multiBuyValue }))
-              .then(() => { setShowPage("allMultiBuy") })
+              if (show) {
+                dispatch(updateMultiBuy(id, { name, value: multiBuyValue }))
+              } else {
+                dispatch(createMultiBuy({ name, value: multiBuyValue }))
+                .then(() => { setShowPage("allMultiBuy") })
+              }
             }}
           >
-            Create Multiple Packet Config
+            {show ? "Update" : "Create"} Multiple Packet Config
           </Button>
         </Col>
       </Row>

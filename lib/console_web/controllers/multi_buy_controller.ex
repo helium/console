@@ -38,23 +38,23 @@ defmodule ConsoleWeb.MultiBuyController do
     end
   end
   #
-  # def update(conn, %{"id" => id, "alert" => alert_params}) do
-  #   current_organization = conn.assigns.current_organization
-  #   alert = MultiBuys.get_alert!(current_organization, id)
-  #   name = alert.name
-  #
-  #   with {:ok, %MultiBuy{} = alert} <- MultiBuys.update_alert(alert, alert_params) do
-  #     ConsoleWeb.Endpoint.broadcast("graphql:alert_show", "graphql:alert_show:#{alert.id}:alert_update", %{})
-  #
-  #     msg =
-  #       cond do
-  #         alert.name == name -> "MultiBuy #{alert.name} updated successfully"
-  #         true -> "The alert #{name} was successfully updated to #{alert.name}"
-  #       end
-  #
-  #     conn
-  #     |> put_resp_header("message", msg)
-  #     |> render("show.json", alert: alert)
-  #   end
-  # end
+  def update(conn, %{"id" => id, "multi_buy" => multi_buy_params}) do
+    current_organization = conn.assigns.current_organization
+    multi_buy = MultiBuys.get_multi_buy!(current_organization, id)
+    name = multi_buy.name
+
+    with {:ok, %MultiBuy{} = multi_buy} <- MultiBuys.update_multi_buy(multi_buy, multi_buy_params) do
+      ConsoleWeb.Endpoint.broadcast("graphql:multi_buy_show", "graphql:multi_buy_show:#{multi_buy.id}:multi_buy_update", %{})
+
+      msg =
+        cond do
+          multi_buy.name == name -> "Multiple Packet purchase value updated successfully"
+          true -> "Multiple Packet #{name} was successfully updated to #{multi_buy.name}"
+        end
+
+      conn
+      |> put_resp_header("message", msg)
+      |> render("show.json", multi_buy: multi_buy)
+    end
+  end
 end
