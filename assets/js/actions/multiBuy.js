@@ -40,11 +40,10 @@ export const addMultiBuyToNode = (multiBuyId, nodeId, nodeType) => {
   }
 }
 
-export const removeMultiBuyFromNode = (multiBuyId, nodeId, nodeType) => {
+export const removeMultiBuyFromNode = (nodeId, nodeType) => {
   return (dispatch) => {
 
     return rest.post(`/api/multi_buys/remove_from_node`, {
-        multi_buy_id: multiBuyId, 
         node_id: nodeId,
         node_type: nodeType
       })

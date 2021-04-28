@@ -3,6 +3,10 @@ defmodule ConsoleWeb.MultiBuyController do
 
   alias Console.Repo
   alias Console.MultiBuys
+  alias Console.Labels
+  alias Console.Devices
+  alias Console.Labels.Label
+  alias Console.Devices.Device
   alias Console.MultiBuys.MultiBuy
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -37,7 +41,7 @@ defmodule ConsoleWeb.MultiBuyController do
       |> send_resp(:no_content, "")
     end
   end
-  #
+
   def update(conn, %{"id" => id, "multi_buy" => multi_buy_params}) do
     current_organization = conn.assigns.current_organization
     multi_buy = MultiBuys.get_multi_buy!(current_organization, id)
@@ -55,6 +59,53 @@ defmodule ConsoleWeb.MultiBuyController do
       conn
       |> put_resp_header("message", msg)
       |> render("show.json", multi_buy: multi_buy)
+    end
+  end
+
+  def add_multi_buy_to_node(conn, %{ "multi_buy_id" => multi_buy_id, "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+    multi_buy = MultiBuys.get_multi_buy!(current_organization, multi_buy_id)
+
+    case node_type do
+      "Device" ->
+        device = Devices.get_device!(current_organization, node_id)
+        with {:ok, %Device{} = device} <- Devices.update_device(device, %{ "multi_buy_id" => multi_buy_id }) do
+          conn
+            |> put_resp_header("message", "Multiple packet config successfully added to device")
+            |> send_resp(:no_content, "")
+        end
+      "Label" ->
+        label = Labels.get_label!(current_organization, node_id)
+        with {:ok, %Label{} = label} <- Labels.update_label(label, %{ "multi_buy_id" => multi_buy_id }) do
+          conn
+            |> put_resp_header("message", "Multiple packet config successfully added to label")
+            |> send_resp(:no_content, "")
+        end
+      _ ->
+        conn |> send_resp(:bad_request, "")
+    end
+  end
+
+  def remove_multi_buy_from_node(conn, %{ "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+
+    case node_type do
+      "Device" ->
+        device = Devices.get_device!(current_organization, node_id)
+        with {:ok, %Device{} = device} <- Devices.update_device(device, %{ "multi_buy_id" => nil }) do
+          conn
+            |> put_resp_header("message", "Multiple packet config successfully removed from device")
+            |> send_resp(:no_content, "")
+        end
+      "Label" ->
+        label = Labels.get_label!(current_organization, node_id)
+        with {:ok, %Label{} = label} <- Labels.update_label(label, %{ "multi_buy_id" => nil }) do
+          conn
+            |> put_resp_header("message", "Multiple packet config successfully removed from label")
+            |> send_resp(:no_content, "")
+        end
+      _ ->
+        conn |> send_resp(:bad_request, "")
     end
   end
 end

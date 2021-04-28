@@ -42,7 +42,7 @@ export default ({ currentNode }) => {
                       if (checked) {
                         dispatch(addMultiBuyToNode(record.id, currentNode.id, currentNode.__typename))
                       } else {
-                        dispatch(removeMultiBuyFromNode(record.id, currentNode.id, currentNode.__typename))
+                        dispatch(removeMultiBuyFromNode(currentNode.id, currentNode.__typename))
                       }
                     }}
                   />

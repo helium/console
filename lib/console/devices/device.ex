@@ -70,7 +70,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)
