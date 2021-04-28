@@ -317,11 +317,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Alerts.AlertResolver.get_per_type/2
     end
 
-    field :alerts_per_type, list_of(:alert) do
-      arg :type, non_null(:string)
-      resolve &Console.Alerts.AlertResolver.get_per_type/2
-    end
-
     field :alerts_for_node, list_of(:alert) do
       arg :node_id, non_null(:id)
       arg :node_type, non_null(:string)
