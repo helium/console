@@ -4,6 +4,7 @@ defmodule ConsoleWeb.AlertController do
   alias Console.Repo
   alias Console.Alerts
   alias Console.Alerts.Alert
+  alias Console.Alerts.AlertNodes
 
   plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept]
 
@@ -56,6 +57,45 @@ defmodule ConsoleWeb.AlertController do
       conn
       |> put_resp_header("message", msg)
       |> render("show.json", alert: alert)
+    end
+  end
+
+  def add_alert_to_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+    alert = Alerts.get_alert!(current_organization, alert_id)
+
+    with {:ok, %AlertNodes{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
+      ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
+      
+      msg =
+        case alert_node do
+          nil -> "Alert was already assigned to node"
+          %AlertNodes{} -> "Alert was successfully added to the #{node_type} node"
+        end
+
+      conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
+    end
+  end
+
+  def remove_alert_from_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+    Alerts.get_alert!(current_organization, alert_id)
+    alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
+
+    with {:ok, %AlertNodes{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
+      ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
+
+      msg =
+        case deleted_alert_node do
+          nil -> "Alert not attached to provided node"
+          %AlertNodes{} -> "Alert was successfully removed from the #{node_type} node"
+        end
+
+      conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
     end
   end
 end

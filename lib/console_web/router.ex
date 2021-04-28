@@ -49,6 +49,8 @@ defmodule ConsoleWeb.Router do
     post "/labels/update_notification_settings", LabelNotificationSettingsController, :update
     post "/labels/update_notification_webhooks", LabelNotificationWebhooksController, :update
     resources "/alerts", AlertController, only: [:create, :delete, :update]
+    post "/alerts/add_to_node", AlertController, :add_alert_to_node
+    post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
     post "/channels/ubidots", ChannelController, :get_ubidots_url

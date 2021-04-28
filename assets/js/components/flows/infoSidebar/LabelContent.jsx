@@ -255,7 +255,7 @@ class LabelContent extends Component {
     return (
       <div>
         <div style={{ padding: '40px 40px 0px 40px' }}>
-          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label.name}</Text>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label && label.name}</Text>
           <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(label.updated_at).local().format('l LT')}</Text>
           <div style={{ marginTop: 10 }}>
             <UserCan>
@@ -321,7 +321,7 @@ class LabelContent extends Component {
             Content of Tab Pane 2
           </TabPane>
           <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
-            <AlertNodeSettings />
+            <AlertNodeSettings type="group" nodeId={label.id} />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
             <AdrNodeSettings from="label" checked={label.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />

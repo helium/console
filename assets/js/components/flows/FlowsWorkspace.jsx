@@ -156,6 +156,8 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
               }
             }}
             selectNodesOnDrag={false}
+            multiSelectionKeyCode={null}
+            selectionKeyCode={null}
           />
           <FlowsSidebar
             labels={labels}
