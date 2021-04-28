@@ -18,7 +18,7 @@ defmodule Console.MultiBuys.MultiBuy do
     |> cast(attrs, [:name, :value])
     |> validate_required([:organization_id, :value])
     |> validate_required(:name, message: "Name cannot be blank")
-    |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
+    |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters")
     |> validate_number(:value, greater_than: 0, less_than: 11)
   end
 end

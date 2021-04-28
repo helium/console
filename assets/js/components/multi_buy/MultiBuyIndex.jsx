@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DashboardLayout from '../common/DashboardLayout';
 import TableHeader from '../common/TableHeader';
+import MultiBuyForm from './MultiBuyForm';
 import PlusIcon from '../../../img/multi_buy/multi-buy-index-plus-icon.svg';
 import AllIcon from '../../../img/multi_buy/multi-buy-index-all-icon.svg';
-import MultiBuyIcon from '../../../img/multi_buy/multi-buy-index-add-icon.svg';
 import AddResourceButton from '../common/AddResourceButton';
 import { ALL_MULTI_BUYS } from '../../graphql/multiBuys';
 import { useQuery } from '@apollo/client';
@@ -55,6 +55,9 @@ export default (props) => {
           showPage === 'allMultiBuy' && !loading && (
             <div />
           )
+        }
+        {
+          showPage === 'new' && <MultiBuyForm fromPage="new" />
         }
       </TableHeader>
       <AddResourceButton />
