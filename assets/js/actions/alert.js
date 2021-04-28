@@ -5,8 +5,7 @@ export const createAlert = (alert) => {
 
     return rest.post('/api/alerts', {
         alert: alert
-      })
-      .then(response => {})
+      });
   }
 }
 

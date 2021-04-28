@@ -9,6 +9,7 @@ import { SkeletonLayout } from '../../common/SkeletonLayout';
 import { Link } from 'react-router-dom';
 import { addAlertToNode, removeAlertFromNode } from '../../../actions/alert';
 import { useDispatch } from "react-redux";
+import NewAlertWithNode from './NewAlertWithNode';
 
 export default (props) => {
   const { loading, error, data, refetch } = useQuery(ALERTS_PER_TYPE, {
@@ -28,6 +29,7 @@ export default (props) => {
   const nodeAlertsChannels = socket.channel("graphql:alert_settings_table", {});
   const currentOrganizationId = useSelector(state => state.organization.currentOrganizationId);
   const dispatch = useDispatch();
+  const [showNew, setShowNew] = useState(false);
 
   useEffect(() => {
     // executed when mounted
@@ -58,12 +60,12 @@ export default (props) => {
   if (loading || alertsForNodeLoading) return(<div><SkeletonLayout /></div>);
   if (error || alertsForNodeError) return(<div><Text>Data failed to load, please reload the page and try again</Text></div>);
 
-  return (
+  const renderAllAlerts = () => (
     <div>
       <Button
         icon={<BellOutlined />}
         style={{ borderRadius: 4 }}
-        onClick={() => {}}
+        onClick={() => { setShowNew(true) }}
       >
         Create New Alert
       </Button>
@@ -101,5 +103,12 @@ export default (props) => {
         ]}
       />
     </div>
+  )
+  
+  return(
+    <React.Fragment>
+      { !showNew && renderAllAlerts() }
+      { showNew && <NewAlertWithNode nodeId={props.nodeId} nodeType={props.type} back={() => { setShowNew(false)}} /> }
+    </React.Fragment>
   );
 }

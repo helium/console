@@ -115,6 +115,9 @@ const createApolloClient = (link) => (
             },
             alertsForNode: {
               merge: false
+            },
+            allAlerts: {
+              merge: false
             }
           },
         },
