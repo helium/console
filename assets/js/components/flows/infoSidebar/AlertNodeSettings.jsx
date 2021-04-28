@@ -72,6 +72,7 @@ export default (props) => {
       <Table
         dataSource={alertsData}
         rowKey={record => record.id}
+        pagination={false}
         columns={[
           {
             title: '',
@@ -104,7 +105,7 @@ export default (props) => {
       />
     </div>
   )
-  
+
   return(
     <React.Fragment>
       { !showNew && renderAllAlerts() }

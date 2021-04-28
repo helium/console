@@ -367,10 +367,10 @@ class DeviceContent extends Component {
           <TabPane tab="Debug" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+          <TabPane tab="Alerts" key="3">
             <AlertNodeSettings type="device" nodeId={device.id} />
           </TabPane>
-          <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
+          <TabPane tab="ADR" key="4" style={{ padding: '0px 40px 0px 40px' }}>
             <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
