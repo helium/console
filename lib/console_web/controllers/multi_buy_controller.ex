@@ -70,6 +70,8 @@ defmodule ConsoleWeb.MultiBuyController do
       "Device" ->
         device = Devices.get_device!(current_organization, node_id)
         with {:ok, %Device{} = device} <- Devices.update_device(device, %{ "multi_buy_id" => multi_buy_id }) do
+          ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
+
           conn
             |> put_resp_header("message", "Multiple packet config successfully added to device")
             |> send_resp(:no_content, "")
@@ -77,6 +79,8 @@ defmodule ConsoleWeb.MultiBuyController do
       "Label" ->
         label = Labels.get_label!(current_organization, node_id)
         with {:ok, %Label{} = label} <- Labels.update_label(label, %{ "multi_buy_id" => multi_buy_id }) do
+          ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
+          
           conn
             |> put_resp_header("message", "Multiple packet config successfully added to label")
             |> send_resp(:no_content, "")
@@ -93,6 +97,8 @@ defmodule ConsoleWeb.MultiBuyController do
       "Device" ->
         device = Devices.get_device!(current_organization, node_id)
         with {:ok, %Device{} = device} <- Devices.update_device(device, %{ "multi_buy_id" => nil }) do
+          ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
+
           conn
             |> put_resp_header("message", "Multiple packet config successfully removed from device")
             |> send_resp(:no_content, "")
@@ -100,6 +106,8 @@ defmodule ConsoleWeb.MultiBuyController do
       "Label" ->
         label = Labels.get_label!(current_organization, node_id)
         with {:ok, %Label{} = label} <- Labels.update_label(label, %{ "multi_buy_id" => nil }) do
+          ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{label.id}:label_update", %{})
+
           conn
             |> put_resp_header("message", "Multiple packet config successfully removed from label")
             |> send_resp(:no_content, "")
