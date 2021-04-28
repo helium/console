@@ -7,6 +7,7 @@ defmodule Console.Devices.Device do
   alias Console.Channels.Channel
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
+  alias Console.MultiBuys.MultiBuy
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -27,6 +28,7 @@ defmodule Console.Devices.Device do
     field :adr_allowed, :boolean
 
     belongs_to :organization, Organization
+    belongs_to :multi_buy, MultiBuy
     has_many :events, Event, on_delete: :delete_all
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
 

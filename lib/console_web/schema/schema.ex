@@ -32,6 +32,7 @@ defmodule ConsoleWeb.Schema do
     field :dc_usage, :integer
     field :active, :boolean
     field :adr_allowed, :boolean
+    field :multi_buy_id, :id
   end
 
   object :device_stats do
@@ -106,6 +107,7 @@ defmodule ConsoleWeb.Schema do
     field :adr_allowed, :boolean
     field :label_notification_settings, list_of(:label_notification_setting)
     field :label_notification_webhooks, list_of(:label_notification_webhook)
+    field :multi_buy_id, :id
   end
 
   paginated object :channel do

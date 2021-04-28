@@ -8,6 +8,7 @@ export const LABEL_FRAGMENT = gql`
     inserted_at,
     creator,
     adr_allowed,
+    multi_buy_id,
     devices {
       name,
       id,

@@ -12,7 +12,8 @@ export const DEVICE_FRAGMENT = gql`
     total_packets,
     dc_usage,
     active,
-    adr_allowed
+    adr_allowed,
+    multi_buy_id
   }
 `
 
