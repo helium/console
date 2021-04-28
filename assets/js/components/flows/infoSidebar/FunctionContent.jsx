@@ -143,9 +143,9 @@ class FunctionContent extends Component {
             </div>
           </UserCan>
         </div>
-        
+
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1">
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
             <UserCan>
               <FunctionDetailsCard
                 fxn={fxn}

@@ -95,7 +95,7 @@ class ChannelContent extends Component {
         </div>
 
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1">
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
             <Card title="Integration Details">
               <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
               <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
