@@ -112,4 +112,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:alert_settings_table", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:multi_buys_index_table", _message, socket) do
+    {:ok, socket}
+  end
 end

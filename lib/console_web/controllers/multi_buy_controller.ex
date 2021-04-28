@@ -16,7 +16,7 @@ defmodule ConsoleWeb.MultiBuyController do
       })
 
     with {:ok, %MultiBuy{} = multi_buy} <- MultiBuys.create_multi_buy(multi_buy_params) do
-      # ConsoleWeb.Endpoint.broadcast("graphql:alerts_index_table", "graphql:alerts_index_table:#{current_organization.id}:alert_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:multi_buys_index_table", "graphql:multi_buys_index_table:#{current_organization.id}:multi_buy_list_update", %{})
 
       conn
       |> put_status(:created)
@@ -25,18 +25,18 @@ defmodule ConsoleWeb.MultiBuyController do
     end
   end
 
-  # def delete(conn, %{"id" => id}) do
-  #   current_organization = conn.assigns.current_organization
-  #   alert = MultiBuys.get_alert!(current_organization, id)
-  #
-  #   with {:ok, %MultiBuy{} = alert} <- MultiBuys.delete_alert(alert) do
-  #     ConsoleWeb.Endpoint.broadcast("graphql:alerts_index_table", "graphql:alerts_index_table:#{current_organization.id}:alert_list_update", %{})
-  #
-  #     conn
-  #     |> put_resp_header("message", "#{alert.name} deleted successfully")
-  #     |> send_resp(:no_content, "")
-  #   end
-  # end
+  def delete(conn, %{"id" => id}) do
+    current_organization = conn.assigns.current_organization
+    multi_buy = MultiBuys.get_multi_buy!(current_organization, id)
+
+    with {:ok, %MultiBuy{} = multi_buy} <- MultiBuys.delete_multi_buy(multi_buy) do
+      ConsoleWeb.Endpoint.broadcast("graphql:multi_buys_index_table", "graphql:multi_buys_index_table:#{current_organization.id}:multi_buy_list_update", %{})
+
+      conn
+      |> put_resp_header("message", "#{multi_buy.name} deleted successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
   #
   # def update(conn, %{"id" => id, "alert" => alert_params}) do
   #   current_organization = conn.assigns.current_organization
