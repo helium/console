@@ -611,3 +611,9 @@ a.version-link {
   height: 12px;
   width: 12px;
 }
+
+#node-quick-settings > li > div.ant-menu-submenu-title,
+#node-quick-settings > li > div.ant-menu-vertical {
+  padding: 0;
+  margin: 0;
+}
