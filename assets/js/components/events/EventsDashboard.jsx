@@ -324,7 +324,7 @@ class EventsDashboard extends Component {
             </Card>
           </TabPane>
         }
-        { record.mac && record.mac.length > 0 && 
+        { record.mac && record.mac.length > 0 &&
           <TabPane tab={`MAC Commands (${record.mac.length})`} key="mac">
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
               {record.mac.map((mac, index) => {
@@ -457,7 +457,7 @@ class EventsDashboard extends Component {
       const orderedRouterEvents = sortBy(routerEvents, ["reported_at"]);
 
       // grab the oldest one unless it's from the specified sub_categories which will not have fcnt
-      let firstEvent = orderedRouterEvents.find(e => 
+      let firstEvent = orderedRouterEvents.find(e =>
         !['uplink_integration_req', 'uplink_integration_res', 'misc_integration_error'].includes(e.sub_category)
       ) || orderedRouterEvents[0];
 
@@ -466,7 +466,7 @@ class EventsDashboard extends Component {
       if (this.isDataString(firstEvent.data)) {
         firstEventData = JSON.parse(firstEvent.data);
       }
-      
+
       return ({
         id: firstEvent.router_uuid,
         description: firstEvent.description,
@@ -550,13 +550,27 @@ class EventsDashboard extends Component {
 
     return(
       <div style={{ minWidth: 800 }}>
-        <div style={{padding: 20}}>
-          <div className="chart-legend-bulb red"></div>
-          <Text>
-            Live Data
-          </Text>
+        <div style={{padding: "20px 20px 0px 20px", display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+          <span>
+            <div className="chart-legend-bulb red"></div>
+            <Text>
+              Live Data
+            </Text>
+          </span>
+
+          <div style={{ display: 'flex', flexDirection: 'column'}}>
+            <Text style={{ fontSize: 12 }}>
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(33, 150, 243, 0.5)'}}></div>Integration Response Success
+            </Text>
+            <Text style={{ fontSize: 12 }}>
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 165, 0, 0.5)'}}></div>Integration Response Error
+            </Text>
+            <Text style={{ fontSize: 12 }}>
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 0, 0, 0.5)'}}></div>No Integration Response
+            </Text>
+          </div>
         </div>
-        <div style={{padding: 20, boxSizing: 'border-box'}}>
+        <div style={{padding: "0px 20px 20px 20px", boxSizing: 'border-box'}}>
         <PacketGraph events={aggregatedRows} />
         </div>
         <div style={{padding: 20, width: '100%', background: '#F6F8FA', borderBottom: '1px solid #e1e4e8', borderTop: '1px solid #e1e4e8', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
