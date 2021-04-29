@@ -560,13 +560,13 @@ class EventsDashboard extends Component {
 
           <div style={{ display: 'flex', flexDirection: 'column'}}>
             <Text style={{ fontSize: 12 }}>
-              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(33, 150, 243, 0.5)'}}></div>Integration Response Success
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(33, 150, 243, 0.5)'}}></div>Integration Success
             </Text>
             <Text style={{ fontSize: 12 }}>
-              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 165, 0, 0.5)'}}></div>Integration Response Error
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 165, 0, 0.5)'}}></div>Integration Error
             </Text>
             <Text style={{ fontSize: 12 }}>
-              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 0, 0, 0.5)'}}></div>No Integration Response
+              <div className="chart-legend-bulb" style={{ backgroundColor: 'rgba(255, 0, 0, 0.5)'}}></div>No Integration
             </Text>
           </div>
         </div>

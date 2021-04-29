@@ -100,38 +100,40 @@ class PacketGraph extends Component {
     const error = []
     const noIntegration = []
 
-    events.forEach(event => {
-      const currentTime = Date.now()
-      const eventTime =  parseInt(event.reported_at)
-      const timeDiff = currentTime - eventTime
-      const integrations = event.integrations
-      const hotspots = event.hotspots
+    events.forEach((event) => {
+      const currentTime = Date.now();
+      const eventTime = parseInt(event.reported_at);
+      const timeDiff = currentTime - eventTime;
+      const integrations = event.integrations;
+      const hotspots = event.hotspots;
 
       if (timeDiff < 300000) {
-        if (integrations[0] && integrations[0].status == 'success') {
-          success.push({
-            x: timeDiff,
-            y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
-            r: event.payload_size / 4 + 2,
-            h: hotspots[0] ? hotspots[0].name : "unknown"
-          })
-        } else if (integrations[0] && integrations[0].status == 'error') {
-          error.push({
-            x: timeDiff,
-            y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
-            r: event.payload_size / 4 + 2,
-            h: hotspots[0] ? hotspots[0].name : "unknown"
-          })
+        if (integrations.length > 0) {
+          if (integrations.findIndex((i) => i.status === "error") !== -1) {
+            error.push({
+              x: timeDiff,
+              y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
+              r: event.payload_size / 4 + 2,
+              h: hotspots[0] ? hotspots[0].name : "unknown",
+            });
+          } else {
+            success.push({
+              x: timeDiff,
+              y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
+              r: event.payload_size / 4 + 2,
+              h: hotspots[0] ? hotspots[0].name : "unknown",
+            });
+          }
         } else {
           noIntegration.push({
             x: timeDiff,
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
-            h: hotspots[0] ? hotspots[0].name : "unknown"
-          })
+            h: hotspots[0] ? hotspots[0].name : "unknown",
+          });
         }
       }
-    })
+    });
 
     this.setState({
       data: {
