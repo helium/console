@@ -26,14 +26,6 @@
   margin-right: 4px;
 }
 
-.chart-legend-bulb.blue{
-  background-color: #2196F3;
-}
-
-.chart-legend-bulb.green{
-  background-color: #69F0AE;
-}
-
 .chart-legend-bulb.red{
   background-color: red;
   box-shadow: 0 0 0 rgba(204,169,44, 0.4);
