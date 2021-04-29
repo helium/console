@@ -126,6 +126,12 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
     setElements(elsMap => Object.assign({}, elsMap, { [newNode.id]: newNode }))
   }
 
+  const onMultiBuyUpdate = (id, multi_buy_id) => {
+    const newNodeData = Object.assign({}, elementsMap[id].data, { multi_buy_id })
+    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData })
+    setElements(elsMap => Object.assign({}, elsMap, { [newNode.id]: newNode }))
+  }
+
   const handleToggleSidebar = () => {
     if (!showInfoSidebar) {
       analyticsLogger.logEvent("ACTION_OPEN_NODE_INFO_SIDEBAR", { "id": selectedNodeId })
@@ -180,6 +186,7 @@ export default ({ initialElementsMap, submitChanges, setChangesState, hasChanges
             id={selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split('_copy')[0]}
             type={selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace('-', '')}
             onAdrUpdate={onAdrUpdate}
+            onMultiBuyUpdate={onMultiBuyUpdate}
           />
         </InfoSidebar>
       </ReactFlowProvider>

@@ -4,6 +4,7 @@ import { Typography } from 'antd';
 const { Text } = Typography;
 import GroupsIcon from '../../../../img/label-node-icon.svg';
 import AdrTag from '../../../../img/adr/adr-node-tag.svg';
+import MultiBuyTag from '../../../../img/multi_buy/multi-buy-node-tag.svg';
 import SelectedNodeIcon from './SelectedNodeIcon';
 
 export default ({ data, fromSidebar, selected }) => {
@@ -26,11 +27,18 @@ export default ({ data, fromSidebar, selected }) => {
             </div>
             <Text style={{ display: 'block', fontSize: 12, color: '#ffffff' }}>{data.deviceCount || 0} Devices</Text>
           </span>
-          {
-            data.adrAllowed && (
-              <img draggable="false" src={AdrTag} style={{ height: 16, marginLeft: 20, position: 'relative', top: -2 }} />
-            )
-          }
+          <div>
+            {
+              data.adrAllowed && (
+                <img draggable="false" src={AdrTag} style={{ height: 20, marginLeft: 20, position: 'relative', top: -2 }} />
+              )
+            }
+            {
+              data.multi_buy_id && (
+                <img draggable="false" src={MultiBuyTag} style={{ height: 20, marginLeft: 4, position: 'relative', top: -2 }} />
+              )
+            }
+          </div>
         </div>
 
         {!fromSidebar && (

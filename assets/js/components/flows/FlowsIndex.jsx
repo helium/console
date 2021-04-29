@@ -148,7 +148,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
       data: {
         label: device.name,
         id: `device-${device.id}`,
-        adrAllowed: device.adr_allowed
+        adrAllowed: device.adr_allowed,
+        multi_buy_id: device.multi_buy_id,
       },
       position: [0,0]
     }
@@ -167,7 +168,8 @@ const generateInitialElementsMap = (data, flowPositions) => {
         label: label.name,
         id: `label-${label.id}`,
         deviceCount: label.device_count,
-        adrAllowed: label.adr_allowed
+        adrAllowed: label.adr_allowed,
+        multi_buy_id: label.multi_buy_id,
       },
       position: [0,0]
     }

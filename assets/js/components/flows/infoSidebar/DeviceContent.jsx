@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux'
 import UserCan from '../../common/UserCan'
 import AlertNodeSettings from './AlertNodeSettings'
 import AdrNodeSettings from './AdrNodeSettings'
+import MultiBuyNodeSettings from './MultiBuyNodeSettings'
 import DashboardLayout from '../../common/DashboardLayout'
 import DeviceCredentials from '../../devices/DeviceCredentials'
 import DeleteDeviceModal from '../../devices/DeleteDeviceModal';
@@ -373,7 +374,7 @@ class DeviceContent extends Component {
             <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            Content of Tab Pane 5
+            <MultiBuyNodeSettings currentNode={device} onMultiBuyUpdate={this.props.onMultiBuyUpdate} />
           </TabPane>
         </Tabs>
 

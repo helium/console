@@ -5,14 +5,16 @@ export const ALL_RESOURCES = gql`
     allDevices {
       id,
       name,
-      adr_allowed
+      adr_allowed,
+      multi_buy_id
     }
     allLabels {
       id,
       name,
       color,
       device_count,
-      adr_allowed
+      adr_allowed,
+      multi_buy_id
     }
     allFunctions {
       id,
