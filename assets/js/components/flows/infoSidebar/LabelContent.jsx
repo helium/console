@@ -244,11 +244,11 @@ class LabelContent extends Component {
         <div style={{ padding: '40px 40px 0px 40px' }}>
           <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{label && label.name}</Text>
           <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(label.updated_at).local().format('l LT')}</Text>
-          <div style={{ marginTop: 10 }}>
+          <div style={{ marginTop: 10, marginBottom: 20 }}>
             <UserCan>
               <Button
                 icon={<SettingOutlined />}
-                style={{ borderRadius: 4, marginRight: 10, marginBottom: 10 }}
+                style={{ borderRadius: 4, marginRight: 10 }}
                 onClick={this.openUpdateLabelModal}
               >
                 Settings
@@ -258,7 +258,7 @@ class LabelContent extends Component {
         </div>
 
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px ' }}>
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
             <Card title="Grouped Devices">
               <Select
                 value="Quick Action"
@@ -307,7 +307,7 @@ class LabelContent extends Component {
           <TabPane tab="Debug" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+          <TabPane tab="Alerts" key="3">
             <AlertNodeSettings type="group" nodeId={label.id} />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>

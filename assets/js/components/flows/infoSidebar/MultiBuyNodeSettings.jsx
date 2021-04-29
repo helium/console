@@ -17,7 +17,7 @@ export default ({ currentNode, onMultiBuyUpdate }) => {
   if (error) return (<div style={{ padding: '20px 40px 0px 40px' }}><Text>Data failed to load, please reload the page and try again</Text></div>);
 
   return (
-    <div style={{ padding: '0px 40px 0px 40px' }}>
+    <div>
       <Table
         dataSource={data.allMultiBuys}
         rowKey={record => record.id}

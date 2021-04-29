@@ -78,83 +78,86 @@ class ChannelContent extends Component {
     }
 
     return (
-      <div style={{ padding: 40 }}>
-        <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{channel.name}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(channel.updated_at).local().format('l LT')}</Text>
-        <div style={{ marginTop: 10 }}>
-          <Link to={`/integrations/${this.props.id}`}>
-            <Button
-              style={{ borderRadius: 4, marginRight: 5, marginBottom: 20 }}
-              icon={<EditOutlined />}
-            >
-              Edit
-            </Button>
-          </Link>
-          <Tabs defaultActiveKey="1" centered>
-            <TabPane tab="Overview" key="1">
-              <Card title="Integration Details">
-                <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
-                <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
-                <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
-                {channel.type === "http" && (
-                  <Card size="small" title="HTTP Details">
-                      <HttpDetails channel={channel} />
+      <div>
+        <div style={{ padding: '40px 40px 0px 40px' }}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{channel.name}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(channel.updated_at).local().format('l LT')}</Text>
+          <div style={{ marginTop: 10, marginBottom: 20 }}>
+            <Link to={`/integrations/${this.props.id}`}>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                icon={<EditOutlined />}
+              >
+                Edit
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <Tabs defaultActiveKey="1" centered>
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
+            <Card title="Integration Details">
+              <Paragraph><Text strong>Type: </Text><Text>{channel.type_name}</Text></Paragraph>
+              <Paragraph><Text strong>Active:</Text><Text> {channel.active ? "Yes" : "No"}</Text></Paragraph>
+              <Paragraph><Text strong> ID: </Text><Text code>{channel.id}</Text></Paragraph>
+              {channel.type === "http" && (
+                <Card size="small" title="HTTP Details">
+                    <HttpDetails channel={channel} />
+                </Card>
+              )}
+              {channel.type === "aws" && (
+                <Card size="small" title="AWS Details">
+                    <AwsDetails channel={channel} />
+                </Card>
+              )}
+              {
+                channel.type === "mqtt" && (
+                  <Card size="small" title="MQTT Details">
+                    <MqttDetails channel={channel} />
                   </Card>
-                )}
-                {channel.type === "aws" && (
-                  <Card size="small" title="AWS Details">
-                      <AwsDetails channel={channel} />
-                  </Card>
-                )}
-                {
-                  channel.type === "mqtt" && (
-                    <Card size="small" title="MQTT Details">
-                      <MqttDetails channel={channel} />
-                    </Card>
-                )}
-                {
-                  channel.type === 'http' && (
-                    <UserCan>
-                      <Divider />
-                      <Text>Downlink URL</Text>
-                      <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
-                        <Input
-                          value={downlinkUrl}
-                          style={{ marginRight: 10 }}
-                          disabled
-                        />
-                        <CopyToClipboard text={downlinkUrl}>
-                          <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
-                        </CopyToClipboard>
-                      </div>
-                      <Text>Downlink Key</Text>
-                      <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Input
-                          value={showDownlinkToken ? channel.downlink_token : "************************"}
-                          style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
-                          suffix={
-                            showDownlinkToken ? (
-                              <EyeOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
-                            ) : (
-                              <EyeInvisibleOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
-                            )
-                          }
-                          disabled
-                        />
-                        <CopyToClipboard text={channel.downlink_token}>
-                          <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
-                        </CopyToClipboard>
-                      </div>
-                    </UserCan>
-                  )
-                }
-              </Card>
+              )}
+              {
+                channel.type === 'http' && (
+                  <UserCan>
+                    <Divider />
+                    <Text>Downlink URL</Text>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 16 }}>
+                      <Input
+                        value={downlinkUrl}
+                        style={{ marginRight: 10 }}
+                        disabled
+                      />
+                      <CopyToClipboard text={downlinkUrl}>
+                        <Button onClick={() => {}} style={{ marginRight: 0 }} type="primary">Copy</Button>
+                      </CopyToClipboard>
+                    </div>
+                    <Text>Downlink Key</Text>
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Input
+                        value={showDownlinkToken ? channel.downlink_token : "************************"}
+                        style={{ marginRight: 10, color: '#38A2FF', fontFamily: 'monospace' }}
+                        suffix={
+                          showDownlinkToken ? (
+                            <EyeOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                          ) : (
+                            <EyeInvisibleOutlined onClick={() => this.setState({ showDownlinkToken: !showDownlinkToken })} />
+                          )
+                        }
+                        disabled
+                      />
+                      <CopyToClipboard text={channel.downlink_token}>
+                        <Button onClick={() => {}} style={{ marginRight: 10 }} type="primary">Copy</Button>
+                      </CopyToClipboard>
+                    </div>
+                  </UserCan>
+                )
+              }
+            </Card>
           </TabPane>
           <TabPane tab="Alerts" key="2">
             <AlertNodeSettings type="integration" nodeId={channel.id} />
           </TabPane>
-          </Tabs>
-        </div>
+        </Tabs>
       </div>
     );
   }
