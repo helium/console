@@ -13,8 +13,10 @@ import { ALERT_SHOW } from '../../graphql/alerts';
 import { useQuery } from '@apollo/client';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import DeleteAlertModal from './DeleteAlertModal';
+import { useHistory } from 'react-router-dom';
 
 export default (props) => {
+  const history = useHistory();
   const [showDeleteAlertModal, setShowDeleteAlertModal] = useState(false);
   const dispatch = useDispatch();
   const { loading, error, data, refetch } = useQuery(ALERT_SHOW, {
@@ -79,9 +81,9 @@ export default (props) => {
   return (
     <React.Fragment>
       <div style={{ padding: '30px 30px 20px 30px' }}>
-        <Button icon={<ArrowLeftOutlined />} style={{ border: 'none' }} onClick={props.back}>Back</Button>
+        {!props.show && <Button icon={<ArrowLeftOutlined />} style={{ border: 'none' }} onClick={props.back}>Back</Button>}
         {props.show && (
-          <div style={{ float: 'right', padding: '0px 100px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Button size="middle" type="danger" style={{ borderRadius: 5 }} onClick={openDeleteAlertModal}>Delete</Button>
           </div>
         )}
@@ -115,7 +117,7 @@ export default (props) => {
                     },
                     node_type: props.alertType
                   })).then(_ => {
-                    props.backToAll();
+                    history.push('/alerts');
                   });
                 }
               }}

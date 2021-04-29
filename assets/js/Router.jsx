@@ -111,9 +111,11 @@ const Router = (props) => {
                         <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
                         <Route exact path="/alerts" component={props => <AlertsIndex user={user} {...props}/>} />
+                        <Route exact path="/alerts/new" component={props => <AlertsIndex user={user} {...props}/>}/>
                         <Route exact path="/alerts/:id" component={props => <AlertsIndex user={user} {...props}/>}/>
                         <Route exact path="/adr" component={props => <AdrIndex user={user} {...props}/>} />
                         <Route exact path="/multi_buys" component={props => <MultiBuyIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buys/new" component={props => <MultiBuyIndex user={user} {...props}/>} />
                         <Route exact path="/multi_buys/:id" component={props => <MultiBuyIndex user={user} {...props}/>}/>
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>

@@ -53,6 +53,8 @@ export default (props) => {
   useEffect(() => {
     if (props.match.params.id) {
       setShowPage('showMultiBuy');
+    } else if (props.match.path === '/multi_buys/new') {
+      setShowPage('new');
     }
   })
 
@@ -84,7 +86,7 @@ export default (props) => {
         onNewPage={showPage === 'new'}
         addIcon={PlusIcon}
         goToNew={() => {
-          history.push('/multi_buys')
+          history.push('/multi_buys/new')
           setShowPage('new')
         }}
         noHome
@@ -108,16 +110,13 @@ export default (props) => {
         }
         {
           showPage === 'new' && (
-            <MultiBuyForm
-              setShowPage={setShowPage}
-            />
+            <MultiBuyForm />
           )
         }
         { props.match.params.id && showPage === 'showMultiBuy' && (
           <MultiBuyForm
             id={props.match.params.id}
             show
-            setShowPage={setShowPage}
             openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
           />
         )}

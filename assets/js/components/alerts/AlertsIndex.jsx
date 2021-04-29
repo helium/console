@@ -45,6 +45,8 @@ export default (props) => {
   useEffect(() => {
     if (props.match.params.id) {
       setShowPage('showAlert');
+    } else if (props.match.path === '/alerts/new') {
+      setShowPage('new');
     }
   })
 
@@ -82,7 +84,7 @@ export default (props) => {
         goToNew={() => {
           setShowPage('new');
           setAlertType(null);
-          history.push('/alerts');
+          history.push('/alerts/new');
         }}
         noHome
         borderRadius='25px'
@@ -144,7 +146,7 @@ export default (props) => {
         }
         {
           showPage === 'new' && alertType && (
-            <AlertForm alertType={alertType} back={() => { setAlertType(null) }} backToAll={() => { setShowPage('allAlerts') }} />
+            <AlertForm alertType={alertType} back={() => { setAlertType(null) }} />
           )
         }
         {

@@ -7,9 +7,11 @@ import { createMultiBuy, updateMultiBuy } from '../../actions/multiBuy';
 import MultiBuyIcon from '../../../img/multi_buy/multi-buy-index-add-icon.svg';
 import { useQuery } from '@apollo/client';
 import { MULTI_BUY_SHOW } from '../../graphql/multiBuys';
-const { Text } = Typography
+const { Text } = Typography;
+import { useHistory } from 'react-router-dom';
 
-export default ({ show, setShowPage, id, openDeleteMultiplePacketModal }) => {
+export default ({ show, id, openDeleteMultiplePacketModal }) => {
+  const history = useHistory();
   const [name, setName] = useState('');
   const [multiBuyValue, setMultiBuyValue] = useState(1)
   const dispatch = useDispatch();
@@ -45,7 +47,7 @@ export default ({ show, setShowPage, id, openDeleteMultiplePacketModal }) => {
   }, [data]);
 
   return (
-    <div style={{ padding: '30px 30px 20px 30px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ padding: '30px 30px 20px 30px' }}>
       {
         show && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -106,7 +108,7 @@ export default ({ show, setShowPage, id, openDeleteMultiplePacketModal }) => {
                 dispatch(updateMultiBuy(id, { name, value: multiBuyValue }))
               } else {
                 dispatch(createMultiBuy({ name, value: multiBuyValue }))
-                .then(() => { setShowPage("allMultiBuy") })
+                .then(() => { history.push('/multi_buys') });
               }
             }}
           >
