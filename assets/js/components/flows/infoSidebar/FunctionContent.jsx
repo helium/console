@@ -100,49 +100,52 @@ class FunctionContent extends Component {
     );
 
     return (
-      <div style={{ padding: 40 }}>
-        <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{fxn.name}</Text>
-        <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(fxn.updated_at).local().format('l LT')}</Text>
-        <UserCan>
-          <div style={{ marginTop: 20, marginBottom: 20 }}>
-            <Button
-              style={{ borderRadius: 4, marginRight: 5 }}
-              type="default"
-              icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
-              onClick={() => {
-                this.props.updateFunction(fxn.id, { active: !fxn.active })
-                analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
-              }}
-            >
-              {fxn.active ? "Pause" : "Start"}
-            </Button>
-            <Link to={`/functions/${this.props.id}`}>
+      <div>
+        <div style={{ padding: '40px 40px 0px 40px' }}>
+          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{fxn.name}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(fxn.updated_at).local().format('l LT')}</Text>
+          <UserCan>
+            <div style={{ marginTop: 10, marginBottom: 20 }}>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
-                icon={<EditOutlined />}
-                onClick={e => {
-                  // e.stopPropagation()
-                  // redirect to show page
+                type="default"
+                icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
+                onClick={() => {
+                  this.props.updateFunction(fxn.id, { active: !fxn.active })
+                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
                 }}
               >
-                Edit
+                {fxn.active ? "Pause" : "Start"}
               </Button>
-            </Link>
-            <Button
-              style={{ borderRadius: 4 }}
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={e => {
-                e.stopPropagation()
-                this.openDeleteFunctionModal()
-              }}
-            >
-              Delete
-            </Button>
-          </div>
-        </UserCan>
+              <Link to={`/functions/${this.props.id}`}>
+                <Button
+                  style={{ borderRadius: 4, marginRight: 5 }}
+                  icon={<EditOutlined />}
+                  onClick={e => {
+                    // e.stopPropagation()
+                    // redirect to show page
+                  }}
+                >
+                  Edit
+                </Button>
+              </Link>
+              <Button
+                style={{ borderRadius: 4 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={e => {
+                  e.stopPropagation()
+                  this.openDeleteFunctionModal()
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </UserCan>
+        </div>
+
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1">
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
             <UserCan>
               <FunctionDetailsCard
                 fxn={fxn}

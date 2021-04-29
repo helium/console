@@ -62,16 +62,10 @@ export default (props) => {
 
   const renderAllAlerts = () => (
     <div>
-      <Button
-        icon={<BellOutlined />}
-        style={{ borderRadius: 4 }}
-        onClick={() => { setShowNew(true) }}
-      >
-        Create New Alert
-      </Button>
       <Table
         dataSource={alertsData}
         rowKey={record => record.id}
+        pagination={false}
         columns={[
           {
             title: '',
@@ -102,9 +96,16 @@ export default (props) => {
           }
         ]}
       />
+      <Button
+        icon={<BellOutlined />}
+        style={{ borderRadius: 4, marginTop: 40, marginLeft: 40 }}
+        onClick={() => { setShowNew(true) }}
+      >
+        Create New Alert
+      </Button>
     </div>
   )
-  
+
   return(
     <React.Fragment>
       { !showNew && renderAllAlerts() }

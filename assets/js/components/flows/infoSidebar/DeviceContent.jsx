@@ -177,10 +177,10 @@ class DeviceContent extends Component {
         <div style={{ padding: '40px 40px 0px 40px' }}>
           <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{device.name}</Text>
           <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(device.updated_at).local().format('l LT')}</Text>
-          <div style={{ marginTop: 10 }}>
+          <div style={{ marginTop: 10, marginBottom: 20  }}>
             <Link to={`/devices/${this.props.id}`}>
               <Button
-                style={{ borderRadius: 4, marginRight: 5, marginBottom: 20 }}
+                style={{ borderRadius: 4, marginRight: 5 }}
                 icon={<EditOutlined />}
               >
                 Edit
@@ -201,7 +201,7 @@ class DeviceContent extends Component {
         </div>
 
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px ' }}>
+          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
             <Card title="Device Details">
               <Paragraph>
                 <Text strong>Name: </Text>
@@ -367,10 +367,10 @@ class DeviceContent extends Component {
           <TabPane tab="Debug" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Alerts" key="3" style={{ padding: '0px 40px 0px 40px' }}>
+          <TabPane tab="Alerts" key="3">
             <AlertNodeSettings type="device" nodeId={device.id} />
           </TabPane>
-          <TabPane tab="ADR" key="4" style={{ padding: '20px 40px 0px 40px' }}>
+          <TabPane tab="ADR" key="4" style={{ padding: '0px 40px 0px 40px' }}>
             <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
