@@ -7,7 +7,7 @@ import moment from 'moment'
 import UserCan from '../../common/UserCan'
 import AlertNodeSettings from './AlertNodeSettings'
 import AdrNodeSettings from './AdrNodeSettings'
-import MultiPacketNodeSettings from './MultiPacketNodeSettings'
+import MultiBuyNodeSettings from './MultiBuyNodeSettings'
 import { redForTablesDeleteText } from '../../../util/colors'
 import { updateDevice, setDevicesActive } from '../../../actions/device'
 import { updateLabel, addDevicesToLabels } from '../../../actions/label'
@@ -314,7 +314,7 @@ class LabelContent extends Component {
             <AdrNodeSettings from="label" checked={label.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiPacketNodeSettings currentNode={label} />
+            <MultiBuyNodeSettings currentNode={label} onMultiBuyUpdate={this.props.onMultiBuyUpdate} />
           </TabPane>
         </Tabs>
 

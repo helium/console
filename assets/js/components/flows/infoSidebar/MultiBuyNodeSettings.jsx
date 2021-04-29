@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import UserCan from '../../common/UserCan';
 const { Text } = Typography
 
-export default ({ currentNode }) => {
+export default ({ currentNode, onMultiBuyUpdate }) => {
   const dispatch = useDispatch();
 
   const { loading, error, data } = useQuery(ALL_MULTI_BUYS, { fetchPolicy: 'cache-first' });
@@ -41,8 +41,26 @@ export default ({ currentNode }) => {
                     onChange={checked => {
                       if (checked) {
                         dispatch(addMultiBuyToNode(record.id, currentNode.id, currentNode.__typename))
+                        .then(() => {
+                          let prefix = ""
+                          if (currentNode.__typename === "Label") {
+                            prefix = "label-"
+                          } else if (currentNode.__typename === "Device") {
+                            prefix = "device-"
+                          }
+                          onMultiBuyUpdate(prefix + currentNode.id, record.id)
+                        })
                       } else {
                         dispatch(removeMultiBuyFromNode(currentNode.id, currentNode.__typename))
+                        .then(() => {
+                          let prefix = ""
+                          if (currentNode.__typename === "Label") {
+                            prefix = "label-"
+                          } else if (currentNode.__typename === "Device") {
+                            prefix = "device-"
+                          }
+                          onMultiBuyUpdate(prefix + currentNode.id, null)
+                        })
                       }
                     }}
                   />

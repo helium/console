@@ -8,7 +8,7 @@ import ChannelContent from './ChannelContent';
 import DeviceContent from './DeviceContent';
 import LabelContent from './LabelContent';
 
-export default ({ id, type, onAdrUpdate }) => {
+export default ({ id, type, onAdrUpdate, onMultiBuyUpdate }) => {
   const renderTopIcon = () => {
     switch (type) {
       case 'function':
@@ -29,11 +29,11 @@ export default ({ id, type, onAdrUpdate }) => {
       case 'function':
         return (<FunctionContent id={id} type={type} />);
       case 'device':
-        return (<DeviceContent id={id} type={type} onAdrUpdate={onAdrUpdate} />);
+        return (<DeviceContent id={id} type={type} onAdrUpdate={onAdrUpdate} onMultiBuyUpdate={onMultiBuyUpdate} />);
       case 'utility':
         return null;
       case 'label':
-        return (<LabelContent id={id} type={type} onAdrUpdate={onAdrUpdate} />);
+        return (<LabelContent id={id} type={type} onAdrUpdate={onAdrUpdate} onMultiBuyUpdate={onMultiBuyUpdate} />);
       case 'channel':
         return (<ChannelContent id={id} type={type} />);
     }
