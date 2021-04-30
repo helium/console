@@ -8,8 +8,7 @@ import AlertSetting from './AlertSetting';
 
 export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data }) => {
   const [name, setName] = useState('');
-  const [emailConfig, setEmailConfig] = useState({});
-  const [webhookConfig, setWebhookConfig] = useState({});
+  const [config, setConfig] = useState({});
   const [alertData, setAlertData] = useState({});
 
   useEffect(() => {
@@ -20,8 +19,7 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
         config: parsedConfig,
         name: data.alert.name
       });
-      if (parsedConfig.email) setEmailConfig(parsedConfig.email);
-      if (parsedConfig.webhook) setWebhookConfig(parsedConfig.webhook);
+      setConfig(parsedConfig);
     }
   }, [data]);
 
@@ -29,65 +27,103 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
     return (
       <Tabs defaultActiveKey="email" size="large" centered>
         <TabPane tab="Email" key="email">
-          {alertType && DEFAULT_SETTINGS[alertType].map(s => (
-            <AlertSetting
-              key={`setting-email-${s.key}`}
-              eventKey={s.key}
-              eventDescription={s.description}
-              hasValue={s.hasValue}
-              type='email'
-              value={show && alertData && alertData.config && alertData.config.email[s.key]}
-              onChange={settings => {
-                if (settings.checked) {
-                  setEmailConfig({
-                    ...emailConfig,
-                    [settings.key]: {
-                      recipient: settings.recipient,
-                      ...('value' in settings && { value: settings.value })
-                    }
-                  });
-                } else {
-                  if (settings.key in emailConfig) {
-                    setEmailConfig({
-                      ...emailConfig,
-                      [settings.key]: undefined
-                    });
-                  }
+          {alertType &&
+            DEFAULT_SETTINGS[alertType].map((s) => (
+              <AlertSetting
+                key={`setting-email-${s.key}`}
+                eventKey={s.key}
+                eventDescription={s.description}
+                hasValue={s.hasValue}
+                type="email"
+                value={
+                  show &&
+                  alertData &&
+                  alertData.config &&
+                  alertData.config[s.key] &&
+                  alertData.config[s.key].email
                 }
-              }}
-            />
-          ))}
+                onChange={(settings) => {
+                  if (settings.checked) {
+                    setConfig({
+                      ...config,
+                      [settings.key]: {
+                        ...(config[settings.key] &&
+                          "webhook" in config[settings.key] && {
+                            webhook: config[settings.key].webhook,
+                          }),
+                        email: {
+                          recipient: settings.recipient,
+                          ...("value" in settings && { value: settings.value }),
+                        },
+                      },
+                    });
+                  } else {
+                    if (settings.key in config) {
+                      setConfig({
+                        ...config,
+                        [settings.key]: {
+                          ...(config[settings.key] &&
+                            "webhook" in config[settings.key] && {
+                              webhook: config[settings.key].webhook,
+                            }),
+                          email: undefined,
+                        },
+                      });
+                    }
+                  }
+                }}
+              />
+            ))}
         </TabPane>
         <TabPane tab="Webhooks" key="webhooks">
-          {alertType && DEFAULT_SETTINGS[alertType].map(s => (
-            <AlertSetting
-              key={`setting-webhook-${s.key}`}
-              eventKey={s.key}
-              eventDescription={s.description}
-              hasValue={s.hasValue}
-              type='webhook'
-              value={show && alertData && alertData.config && alertData.config.webhook[s.key]}
-              onChange={settings => {
-                if (settings.checked) {
-                  setWebhookConfig({
-                    ...webhookConfig,
-                    [settings.key]: {
-                      url: settings.url,
-                      notes: settings.notes,
-                      ...('value' in settings && { value: settings.value })
-                    }
-                  });
-                } else {
-                  if (settings.key in webhookConfig) {
-                    setWebhookConfig({
-                      ...webhookConfig,
-                      [settings.key]: undefined
-                    });
-                  }
+          {alertType &&
+            DEFAULT_SETTINGS[alertType].map((s) => (
+              <AlertSetting
+                key={`setting-webhook-${s.key}`}
+                eventKey={s.key}
+                eventDescription={s.description}
+                hasValue={s.hasValue}
+                type="webhook"
+                value={
+                  show &&
+                  alertData &&
+                  alertData.config &&
+                  alertData.config[s.key] &&
+                  alertData.config[s.key].webhook
                 }
-              }}
-            />
-          ))}
+                onChange={(settings) => {
+                  if (settings.checked) {
+                    setConfig({
+                      ...config,
+                      [settings.key]: {
+                        ...(config[settings.key] &&
+                          "email" in config[settings.key] && {
+                            email: config[settings.key].email,
+                          }),
+                        webhook: {
+                          url: settings.url,
+                          notes: settings.notes,
+                          ...("value" in settings && { value: settings.value }),
+                        },
+                      },
+                    });
+                  } else {
+                    if (settings.key in config) {
+                      setConfig({
+                        ...config,
+                        [settings.key]: {
+                          ...(config[settings.key] &&
+                            "email" in config[settings.key] && {
+                              email: config[settings.key].email,
+                            }),
+                          webhook: undefined,
+                        },
+                      });
+                    }
+                  }
+                }}
+              />
+            ))}
         </TabPane>
       </Tabs>
     );
@@ -100,7 +136,7 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
         type="primary"
         style={{ borderColor: alertType && ALERT_TYPES[alertType].color, backgroundColor: alertType && ALERT_TYPES[alertType].color, borderRadius: 50, text: 'white' }}
         onClick={() => {
-          save(name, emailConfig, webhookConfig);
+          save(name, config);
         }}
       >
         {`${saveText} ${alertType && ALERT_TYPES[alertType].name} Alert`}

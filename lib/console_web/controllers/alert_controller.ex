@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.AlertController do
   use ConsoleWeb, :controller
 
-  alias Console.Repo
   alias Console.Alerts
   alias Console.Alerts.Alert
   alias Console.Alerts.AlertNodes

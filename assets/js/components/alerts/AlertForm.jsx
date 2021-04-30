@@ -99,22 +99,16 @@ export default (props) => {
           <Col span={12} style={{ padding: '40px 20px'}}>
             <AlertSettings
               alertType={alertType}
-              save={(name, emailConfig, webhookConfig) => {
+              save={(name, config) => {
                 if (props.show) {
                   dispatch(updateAlert(props.id, {
                     ...name && { name },
-                    config: {
-                      ...(emailConfig && { email: emailConfig }),
-                      ...(webhookConfig && { webhook: webhookConfig })
-                    }
+                    config
                   }));
                 } else {
                   dispatch(createAlert({
                     name: name,
-                    config: {
-                      ...(emailConfig && { email: emailConfig }),
-                      ...(webhookConfig && { webhook: webhookConfig })
-                    },
+                    config,
                     node_type: props.alertType
                   })).then(_ => {
                     history.push('/alerts');

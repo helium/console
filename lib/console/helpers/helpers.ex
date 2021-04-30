@@ -35,4 +35,11 @@ defmodule Console.Helpers do
   def check_special_characters(string) do
     String.match?(string, ~r/^[A-Za-z0-9\(\)\[\]\-\_\+\|\!\?\:\s]+$/)
   end
+
+  def drop_keys_with_empty_map(map) do
+    Enum.filter(map, fn i ->
+      {key, value} = i
+      value != %{}
+    end)
+  end
 end
