@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import DashboardLayout from '../common/DashboardLayout'
+import FunctionDashboardLayout from './FunctionDashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
 import { createFunction } from '../../actions/function'
@@ -44,58 +44,60 @@ class FunctionNew extends Component {
   render() {
     const { name, type, format, body } = this.state
     return (
-      <div style={{ padding: '30px 30px 20px 30px' }}>
-        <Card title="Step 1 - Enter Function Details">
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Input
-              placeholder="e.g. My Decoder"
-              name="name"
-              value={name}
-              onChange={this.handleInputUpdate}
-              style={{ width: 220 }}
-            />
-            <Select
-              placeholder="Function Type"
-              onSelect={this.handleSelectFunctionType}
-              style={{ width: 220, marginLeft: 8 }}
-            >
-              <Option value="decoder">
-                Decoder
-              </Option>
-            </Select>
-            <Select
-              placeholder="Choose Format"
-              onSelect={this.handleSelectFormat}
-              style={{ width: 220, marginLeft: 8 }}
-              disabled={!type}
-            >
-              <Option value="browan_object_locator">
-                Browan Object Locator
-              </Option>
-              <Option value="cayenne">
-                Cayenne LPP
-              </Option>
-              <Option value="custom">
-                Custom Script
-              </Option>
-            </Select>
+      <FunctionDashboardLayout {...this.props}>
+        <div style={{ padding: '30px 30px 20px 30px' }}>
+          <Card title="Step 1 - Enter Function Details">
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <Input
+                placeholder="e.g. My Decoder"
+                name="name"
+                value={name}
+                onChange={this.handleInputUpdate}
+                style={{ width: 220 }}
+              />
+              <Select
+                placeholder="Function Type"
+                onSelect={this.handleSelectFunctionType}
+                style={{ width: 220, marginLeft: 8 }}
+              >
+                <Option value="decoder">
+                  Decoder
+                </Option>
+              </Select>
+              <Select
+                placeholder="Choose Format"
+                onSelect={this.handleSelectFormat}
+                style={{ width: 220, marginLeft: 8 }}
+                disabled={!type}
+              >
+                <Option value="browan_object_locator">
+                  Browan Object Locator
+                </Option>
+                <Option value="cayenne">
+                  Cayenne LPP
+                </Option>
+                <Option value="custom">
+                  Custom Script
+                </Option>
+              </Select>
+            </div>
+          </Card>
+          {
+            type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
+          }
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <UserCan>
+              <Button
+                icon={<SaveOutlined />}
+                onClick={this.handleSubmit}
+                disabled={!type || !format || name.length === 0}
+              >
+                Save Function
+              </Button>
+            </UserCan>
           </div>
-        </Card>
-        {
-          type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
-        }
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <UserCan>
-            <Button
-              icon={<SaveOutlined />}
-              onClick={this.handleSubmit}
-              disabled={!type || !format || name.length === 0}
-            >
-              Save Function
-            </Button>
-          </UserCan>
         </div>
-      </div>
+      </FunctionDashboardLayout>
     )
   }
 }

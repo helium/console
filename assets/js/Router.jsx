@@ -25,6 +25,8 @@ import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
 import FunctionIndex from './components/functions/FunctionIndex';
+import FunctionNew from './components/functions/FunctionNew';
+import FunctionHome from './components/functions/FunctionHome';
 import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
 import AlertsIndex from './components/alerts/AlertsIndex';
@@ -105,6 +107,8 @@ const Router = (props) => {
                         <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
+                        <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
+                        <Route exact path="/functions/home" component={props => <FunctionHome user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
