@@ -2,7 +2,7 @@ defmodule Console.Alerts do
   import Ecto.Query, warn: false
   alias Console.Repo
   alias Console.Alerts.Alert
-  alias Console.Alerts.AlertNodes
+  alias Console.Alerts.AlertNode
   alias Console.Organizations.Organization
   alias Console.Devices
   alias Console.Labels
@@ -17,7 +17,7 @@ defmodule Console.Alerts do
  end
 
   def get_alert_node!(alert_id, node_id, node_type) do
-    Repo.get_by!(AlertNodes, [alert_id: alert_id, node_id: node_id, node_type: node_type])
+    Repo.get_by!(AlertNode, [alert_id: alert_id, node_id: node_id, node_type: node_type])
   end
 
   def create_alert(attrs \\ %{}) do
@@ -48,12 +48,12 @@ defmodule Console.Alerts do
         Functions.get_function!(organization, node_id)
     end
 
-    alert_node = Repo.insert!(AlertNodes.changeset(%AlertNodes{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }))
+    alert_node = Repo.insert!(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }))
 
     {:ok, alert_node}
   end
 
-  def remove_alert_node(%Organization{} = organization, %AlertNodes{} = alert_node) do
+  def remove_alert_node(%Organization{} = organization, %AlertNode{} = alert_node) do
     case alert_node.node_type do
       "device" ->
         Devices.get_device!(organization, alert_node.node_id)
@@ -66,5 +66,24 @@ defmodule Console.Alerts do
     end
     
     Repo.delete(alert_node)
+  end
+
+  def get_alerts_by_node_and_event(node_id, node_type, event) do
+    query = from a in Alert,
+      join: an in AlertNode,
+      on: an.alert_id == a.id,
+      where: an.node_id == ^node_id
+      and an.node_type == ^node_type
+      and fragment("config ->> ? IS NOT NULL", ^event)
+
+    Repo.all(query)
+  end
+
+  def update_alert_last_triggered_at(%Alert{} = alert) do
+    attrs = %{ "last_triggered_at" => Timex.now }
+    
+    alert
+    |> Alert.changeset(attrs)
+    |> Repo.update()
   end
 end

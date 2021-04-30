@@ -11,6 +11,7 @@ defmodule Console.Jobs do
   alias Console.Organizations
   alias Console.Devices
   alias Console.Events
+  alias Console.Alerts.AlertEvents
 
   def send_notification_emails do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches

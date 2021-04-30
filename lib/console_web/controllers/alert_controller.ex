@@ -3,7 +3,7 @@ defmodule ConsoleWeb.AlertController do
 
   alias Console.Alerts
   alias Console.Alerts.Alert
-  alias Console.Alerts.AlertNodes
+  alias Console.Alerts.AlertNode
 
   plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept]
 
@@ -63,13 +63,13 @@ defmodule ConsoleWeb.AlertController do
     current_organization = conn.assigns.current_organization
     alert = Alerts.get_alert!(current_organization, alert_id)
 
-    with {:ok, %AlertNodes{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
+    with {:ok, %AlertNode{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
       ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
       
       msg =
         case alert_node do
           nil -> "Alert was already assigned to node"
-          %AlertNodes{} -> "Alert was successfully added to the #{node_type} node"
+          %AlertNode{} -> "Alert was successfully added to the #{node_type} node"
         end
 
       conn
@@ -83,13 +83,13 @@ defmodule ConsoleWeb.AlertController do
     Alerts.get_alert!(current_organization, alert_id)
     alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
 
-    with {:ok, %AlertNodes{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
+    with {:ok, %AlertNode{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
       ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
 
       msg =
         case deleted_alert_node do
           nil -> "Alert not attached to provided node"
-          %AlertNodes{} -> "Alert was successfully removed from the #{node_type} node"
+          %AlertNode{} -> "Alert was successfully removed from the #{node_type} node"
         end
 
       conn

@@ -12,7 +12,7 @@ defmodule Console.Factory do
   alias Console.Functions.Function
   alias Console.Organizations.Membership
   alias Console.Alerts.Alert
-  alias Console.Alerts.AlertNodes
+  alias Console.Alerts.AlertNode
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -94,6 +94,6 @@ defmodule Console.Factory do
   end
 
   def alert_node_factory do
-    %AlertNodes{}
+    %AlertNode{}
   end
 end

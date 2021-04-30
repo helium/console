@@ -1,7 +1,7 @@
 defmodule Console.Alerts.AlertResolver do
   alias Console.Repo
   alias Console.Alerts.Alert
-  alias Console.Alerts.AlertNodes
+  alias Console.Alerts.AlertNode
   import Ecto.Query
 
   def all(_, %{context: %{current_organization: current_organization}}) do
@@ -30,7 +30,7 @@ defmodule Console.Alerts.AlertResolver do
 
   def get_alerts_for_node(%{node_id: node_id, node_type: node_type}, %{context: %{current_organization: current_organization}}) do
     query = from a in Alert,
-      join: an in AlertNodes,
+      join: an in AlertNode,
       on: an.alert_id == a.id,
       where: a.organization_id == ^current_organization.id and an.node_id == ^node_id and an.node_type == ^node_type
     
