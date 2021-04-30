@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
 import FunctionNew from './FunctionNew'
+import FunctionBar from './FunctionBar'
 import FunctionIndexTable from './FunctionIndexTable'
 import DeleteFunctionModal from './DeleteFunctionModal'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -96,6 +97,7 @@ class FunctionIndex extends Component {
           addIcon={PlusIcon}
           goToNew={() => { this.setState({ showPage: 'new' })}}
           allButtonStyles={{ width: 120, minWidth: 120 }}
+          extraContent={functions && <FunctionBar shownFunctionId={this.props.match.params.id} functions={functions.entries || []} />}
         >
           {
             showPage === "home" && (
