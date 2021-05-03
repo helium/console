@@ -21,6 +21,7 @@ import DeviceShow from './components/devices/DeviceShow';
 import ChannelIndex from './components/channels/ChannelIndex';
 import ChannelShow from './components/channels/ChannelShow';
 import ChannelNew from './components/channels/ChannelNew';
+import ChannelHome from './components/channels/ChannelHome';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
@@ -104,6 +105,7 @@ const Router = (props) => {
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
                         <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
+                        <Route exact path="/integrations/home" component={props => <ChannelHome user={user} {...props}/>} />
                         <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
