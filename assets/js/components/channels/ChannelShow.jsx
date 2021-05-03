@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import find from 'lodash/find'
-import DashboardLayout from '../common/DashboardLayout'
+import ChannelDashboardLayout from './ChannelDashboardLayout'
 import UserCan from '../common/UserCan'
 import { primaryBlue } from '../../util/colors'
 import { displayError } from '../../util/messages'
@@ -24,7 +24,7 @@ import { Typography, Button, Input, Form, Tag, Checkbox, Card, Divider, Row, Col
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { isObject } from 'lodash';
 import MqttDetails from './MqttDetails';
-import { ChannelShowSkeleton } from './ChannelShowSkeleton';
+import { SkeletonLayout } from '../common/SkeletonLayout'
 const { Text, Paragraph } = Typography
 
 class ChannelShow extends Component {
@@ -47,18 +47,14 @@ class ChannelShow extends Component {
     this.channel.on(`graphql:channel_show:${channelId}:channel_update`, (message) => {
       this.props.channelShowQuery.refetch()
     })
-
-    if (this.props.channelShowQuery.channel) {
-      this.setState({ templateBody: this.props.channelShowQuery.channel.payload_template })
-    }
   }
 
   componentWillUnmount() {
     this.channel.leave()
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.channelShowQuery.channel != this.props.channelShowQuery.channel) {
+  componentDidUpdate(prevProps) {    
+    if (!prevProps.channelShowQuery.channel && this.props.channelShowQuery.channel) {
       this.setState({ templateBody: this.props.channelShowQuery.channel.payload_template })
     }
   }
@@ -130,9 +126,15 @@ class ChannelShow extends Component {
   render() {
     const { loading, error, channel } = this.props.channelShowQuery
 
-    if (loading) return <ChannelShowSkeleton user={this.props.user} />;
+    if (loading) return (
+      <ChannelDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><SkeletonLayout /></div>
+      </ChannelDashboardLayout>
+    )
     if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
+      <ChannelDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><Text>Data failed to load, please reload the page and try again</Text></div>
+      </ChannelDashboardLayout>
     )
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
 
@@ -148,16 +150,7 @@ class ChannelShow extends Component {
     const { showDownlinkToken } = this.state
 
     return(
-      <DashboardLayout
-        title={`${channel.name}`}
-        user={this.props.user}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/integrations"><Text style={{ color: "#8C8C8C" }}>Integrations&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;{channel.name}</Text>
-          </div>
-        }
-      >
+      <ChannelDashboardLayout {...this.props}>
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
         <Card title="Integration Details">
           <UserCan alternate={<Text strong>{channel.name}</Text>}>
@@ -262,7 +255,7 @@ class ChannelShow extends Component {
           />
         )}
         </div>
-      </DashboardLayout>
+      </ChannelDashboardLayout>
     )
   }
 }
