@@ -273,7 +273,7 @@ class LabelShow extends Component {
                     port,
                     confirm,
                     position,
-                    [],
+                    null,
                     label.channels
                   )
                 }}
