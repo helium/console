@@ -106,7 +106,7 @@ const Router = (props) => {
                         <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
                         <Route exact path="/integrations/home" component={props => <ChannelHome user={user} {...props}/>} />
-                        <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
+                        <Route exact path="/integrations/new" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
