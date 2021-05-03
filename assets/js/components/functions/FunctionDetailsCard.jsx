@@ -11,48 +11,49 @@ export default ({fxn, name, type, format, body, handleInputUpdate, handleSelectF
     <Card title="Function Details">
       <Text>Update Function</Text>
       <div style={{ marginTop: 5 }}>
-        <Input
-          placeholder={fxn.name}
-          name="name"
-          value={name}
-          onChange={handleInputUpdate}
-          style={horizontal ? { width: 220 } : { width: '100%', marginBottom: 11 }}
-        />
-        <Select
-          placeholder={functionTypes[fxn.type]}
-          onSelect={handleSelectFunctionType}
-          style={horizontal ? { width: 220, marginLeft: 8 } : { width: '100%', marginBottom: 7 }}
-          value={type}
-        >
-          <Option value="decoder">
-            Decoder
-          </Option>
-        </Select>
-        <Select
-          placeholder={functionFormats[fxn.format]}
-          onSelect={handleSelectFormat}
-          style={horizontal ? { width: 220, marginLeft: 8 } : { width: '100%', marginBottom:7 }}
-          value={format}
-        >
-          <Option value="browan_object_locator">
-            Browan Object Locator
-          </Option>
-          <Option value="cayenne">
-            Cayenne LPP
-          </Option>
-          <Option value="custom">
-            Custom Script
-          </Option>
-        </Select>
+        <div>
+          <Input
+            placeholder={fxn.name}
+            name="name"
+            value={name}
+            onChange={handleInputUpdate}
+            style={horizontal ? { width: 220 } : { width: '100%', marginBottom: 11 }}
+          />
+          <Select
+            placeholder={functionTypes[fxn.type]}
+            onSelect={handleSelectFunctionType}
+            style={horizontal ? { width: 220, marginLeft: 8 } : { width: '100%', marginBottom: 7 }}
+            value={type}
+          >
+            <Option value="decoder">
+              Decoder
+            </Option>
+          </Select>
+          <Select
+            placeholder={functionFormats[fxn.format]}
+            onSelect={handleSelectFormat}
+            style={horizontal ? { width: 220, marginLeft: 8 } : { width: '100%', marginBottom:7 }}
+            value={format}
+          >
+            <Option value="browan_object_locator">
+              Browan Object Locator
+            </Option>
+            <Option value="cayenne">
+              Cayenne LPP
+            </Option>
+            <Option value="custom">
+              Custom Script
+            </Option>
+          </Select>
+        </div>
         <Button
           icon={<DeleteOutlined />}
           onClick={clearInputs}
-          style={horizontal ? { marginLeft: 8 } : {}}
         >
           Clear
         </Button>
 
-        {horizontal ? 
+        {horizontal ?
           (<div>
             <UserCan>
               <Button

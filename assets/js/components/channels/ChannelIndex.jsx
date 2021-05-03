@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import ChannelIndexTable from './ChannelIndexTable'
 import ChannelNew from './ChannelNew'
+import ChannelBar from './ChannelBar'
 import DashboardLayout from '../common/DashboardLayout'
 import AddResourceButton from '../common/AddResourceButton'
 import DeleteChannelModal from './DeleteChannelModal'
@@ -78,7 +79,7 @@ class ChannelIndex extends Component {
     return (
       <DashboardLayout title="My Integrations" user={this.props.user} noAddButton>
         <TableHeader
-          backgroundColor='#0dc699'
+          backgroundColor='#0fa480'
           goHome={() => { this.setState({ showPage: 'home'})}}
           otherColor='#10b48c'
           homeIcon={HomeIcon}
@@ -93,6 +94,7 @@ class ChannelIndex extends Component {
           addIcon={PlusIcon}
           goToNew={() => { this.setState({ showPage: 'new' })}}
           allButtonStyles={{ width: 134, minWidth: 134 }}
+          extraContent={channels && <ChannelBar shownChannelId={this.props.match.params.id} channels={channels.entries || []} />}
         >
           {
             showPage === "home" && (
