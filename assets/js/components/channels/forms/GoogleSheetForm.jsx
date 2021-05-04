@@ -83,7 +83,7 @@ class GoogleSheetForm extends Component {
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ display: 'block' }}>Enter Google Form ID</Text>
           <Popover
-            content="Please make sure you are using the google form ID that is sent out to the public. The internal ID for editing the form will not work in this input."
+            content="Please make sure you are using the Google Form ID that is sent out to the public. The internal ID for editing the form will not work in this input."
             placement="top"
             overlayStyle={{ width: 220 }}
           >
