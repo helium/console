@@ -295,6 +295,8 @@ class DataCreditsIndex extends Component {
     const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal, showOrganizationTransferDCModal } = this.state
     const { organization, error } = this.props.orgShowDCQuery
 
+    const defaultPayment = find(this.state.paymentMethods, p => p.id === organization.default_payment_id)
+
     return (
       <DashboardLayout
         title="Data Credits"
@@ -316,14 +318,18 @@ class DataCreditsIndex extends Component {
                       </Button>
                     )
                   }
-                  <Button
-                    size="large"
-                    icon={<SyncOutlined />}
-                    onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
-                  >
-                    Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
-                  </Button>
+                  {
+                    defaultPayment && (
+                      <Button
+                        size="large"
+                        icon={<SyncOutlined />}
+                        onClick={() => this.openModal("showAutomaticRenewalModal")}
+                        style={{ borderRadius: 4, marginLeft: 20, display: !process.env.SELF_HOSTED ? "inline" : "none" }}
+                      >
+                        Automatic Renewals {organization.automatic_charge_amount ? "On" : "Off"}
+                      </Button>
+                    )
+                  }
                   <Button
                     size="large"
                     type="primary"
