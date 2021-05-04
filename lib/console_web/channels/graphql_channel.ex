@@ -45,6 +45,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:channel_index_bar", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:channel_show", _message, socket) do
     {:ok, socket}
   end
