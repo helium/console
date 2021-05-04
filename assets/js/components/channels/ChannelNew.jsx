@@ -207,11 +207,15 @@ class ChannelNew extends Component {
         <div style={{ padding: '30px 30px 20px 30px' }}>
           {!type && (
             <div style={{ display: 'block' }}>
-              <Card size="small" title="Add a Prebuilt Integration" className="integrationcard">
-                <ChannelPremadeRow selectType={this.handleSelectType} />
+              <Card size="small" title="Add a Prebuilt Integration" className="integrationcard" bodyStyle={{ padding: 1 }}>
+                <div style={{ padding: 10, height: '100%', width: '100%', overflowX: 'scroll' }}>
+                  <ChannelPremadeRow selectType={this.handleSelectType} />
+                </div>
               </Card>
-              <Card size="small" title="Add a Custom Integration" className="integrationcard">
-                <ChannelCreateRow selectType={this.handleSelectType} />
+              <Card size="small" title="Add a Custom Integration" className="integrationcard" bodyStyle={{ padding: 1 }}>
+                <div style={{ padding: 10, height: '100%', width: '100%', overflowX: 'scroll' }}>
+                  <ChannelCreateRow selectType={this.handleSelectType} />
+                </div>
               </Card>
             </div>
           )}
