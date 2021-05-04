@@ -17,6 +17,7 @@ import PublicRoute from './components/routes/PublicRoute.jsx';
 import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx';
 import Profile from './components/profile/Profile.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
+import DeviceHome from './components/devices/DeviceHome';
 import DeviceShow from './components/devices/DeviceShow';
 import ChannelIndex from './components/channels/ChannelIndex';
 import ChannelShow from './components/channels/ChannelShow';
@@ -103,6 +104,7 @@ const Router = (props) => {
                       <Switch>
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
+                        <Route exact path="/devices/home" component={props => <DeviceHome user={user} {...props}/>} />
                         <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
                         <Route exact path="/integrations/home" component={props => <ChannelHome user={user} {...props}/>} />
