@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withGql from '../../graphql/withGql'
-import GoogleSheetForm from '../channels/forms/GoogleSheetForm'
-import DashboardLayout from '../common/DashboardLayout'
+import FunctionDashboardLayout from './FunctionDashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
@@ -13,7 +12,7 @@ import { deleteFunction, updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Card, Button, Input, Select } from 'antd';
 import { PauseOutlined, DeleteOutlined, SaveOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { FunctionShowSkeleton } from './FunctionShowSkeleton';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select
 import FunctionDetailsCard from './FunctionDetailsCard';
@@ -95,51 +94,47 @@ class FunctionShow extends Component {
     const { loading, error } = this.props.functionShowQuery
     const fxn = this.props.functionShowQuery.function
 
-    if (loading) return <FunctionShowSkeleton user={this.props.user}/>
+    if (loading) return (
+      <FunctionDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><SkeletonLayout /></div>
+      </FunctionDashboardLayout>
+    )
     if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
+      <FunctionDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><Text>Data failed to load, please reload the page and try again</Text></div>
+      </FunctionDashboardLayout>
     )
 
     return (
-      <DashboardLayout
-        user={this.props.user}
-        title={`${fxn.name}`}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/functions"><Text style={{ color: "#8C8C8C" }}>Functions&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;{fxn.name}</Text>
-          </div>
-        }
-        extra={
-          <UserCan>
-            <Button
-              size="large"
-              style={{ borderRadius: 4 }}
-              type="default"
-              icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
-              onClick={() => {
-                this.props.updateFunction(fxn.id, { active: !fxn.active })
-                analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
-              }}
-            >
-              {fxn.active ? "Pause" : "Start"} Function
-            </Button>
-            <Button
-              size="large"
-              style={{ borderRadius: 4 }}
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={e => {
-                e.stopPropagation()
-                this.openDeleteFunctionModal()
-              }}
-            >
-              Delete Function
-            </Button>
-          </UserCan>
-        }
-      >
+      <FunctionDashboardLayout {...this.props}>
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 12 }}>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 12 }}
+                type="default"
+                icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
+                onClick={() => {
+                  this.props.updateFunction(fxn.id, { active: !fxn.active })
+                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": fxn.id, "active": !fxn.active })
+                }}
+              >
+                {fxn.active ? "Pause" : "Start"} Function
+              </Button>
+              <Button
+                style={{ borderRadius: 4 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={e => {
+                  e.stopPropagation()
+                  this.openDeleteFunctionModal()
+                }}
+              >
+                Delete Function
+              </Button>
+            </UserCan>
+          </div>
+
           <FunctionDetailsCard
             fxn={fxn}
             name={name}
@@ -170,7 +165,7 @@ class FunctionShow extends Component {
             redirect
           />
         </div>
-      </DashboardLayout>
+      </FunctionDashboardLayout>
     )
   }
 }

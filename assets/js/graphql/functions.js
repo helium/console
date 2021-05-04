@@ -27,6 +27,17 @@ export const PAGINATED_FUNCTIONS = gql`
   ${FUNCTION_FRAGMENT}
 `
 
+export const ALL_FUNCTIONS = gql`
+  query AllFunctionsQuery {
+    allFunctions {
+      id,
+      name,
+      format,
+      type
+    }
+  }
+`
+
 export const FUNCTION_SHOW = gql`
   query FunctionShowQuery ($id: ID!) {
     function(id: $id) {
