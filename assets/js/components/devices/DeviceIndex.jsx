@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
+import DeviceDashboardLayout from './DeviceDashboardLayout';
 import DeviceNew from './DeviceNew';
 import LabelNew from '../labels/LabelNew';
 import DeviceIndexLabelsBar from './DeviceIndexLabelsBar';
@@ -37,7 +38,6 @@ let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 class DeviceIndex extends Component {
   state = {
-    showPage: 'allDevices',
     showDeleteDeviceModal: false,
     showImportDevicesModal: false,
     showDevicesAddLabelModal: false,
@@ -90,14 +90,6 @@ class DeviceIndex extends Component {
         displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
       }
     })
-
-    if (this.props.history.location.search === '?show_new=true') {
-      this.setState({ showPage: "new" })
-    }
-
-    if (this.props.history.location.search === '?show_new_label=true') {
-      this.setState({ showPage: "newLabel" })
-    }
   }
 
   componentWillUnmount() {
@@ -182,10 +174,6 @@ class DeviceIndex extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order);
   }
 
-  handleChangeView = label => {
-    this.setState({ showPage: label })
-  }
-
   setImportType = importType => {
     this.setState({ importType, showImportDevicesModal: true })
   }
@@ -202,147 +190,39 @@ class DeviceIndex extends Component {
       deviceToRemoveLabel,
       importComplete,
       importType,
-      showPage
     } = this.state
 
     const { devices, loading, error } = this.props.devicesQuery;
     const { device_imports } = this.props.importsQuery;
 
-    const title = "My Devices";
     return(
-      <DashboardLayout
-        title={title}
-        user={this.props.user}
-        noAddButton
-      >
-        <TableHeader
-          backgroundColor='#D3E0EE'
-          goHome={() => { this.setState({ showPage: 'home'})}}
-          otherColor='#ACC6DD'
-          homeIcon={HomeIcon}
-          goToAll={() => { this.setState({ showPage: 'allDevices'})}}
-          allIcon={AllIcon}
-          textColor='#3C6B95'
-          allText='All Devices'
-          allSubtext={devices && devices.totalEntries + ' Devices'}
-          onHomePage={showPage === 'home'}
-          onAllPage={showPage === 'allDevices'}
-          onNewPage={showPage === 'new'}
-          addIcon={PlusDeviceIcon}
-          goToNew={() => { this.setState({ showPage: 'new'})}}
-          extraContent={
-            <React.Fragment>
-              <div style={{
-                backgroundColor: '#ACC6DD',
-                borderRadius: 6,
-                padding: 10,
-                cursor: 'pointer',
-                height: 50,
-                width: 50,
-                minWidth: 50,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: 12,
-                whiteSpace: 'nowrap',
-                position: 'relative'
-              }} onClick={() => this.setState({ showPage: 'newLabel' })}>
-                <img src={PlusIcon} style={{ height: 20 }} />
-                {showPage === 'newLabel' && <NavPointTriangle />}
-              </div>
-              <DeviceIndexLabelsBar selectLabel={this.handleChangeView} currentPage={showPage}/>
-            </React.Fragment>
-          }
-        >
-          {
-            showPage === "home" && (
-              <div className="blankstateWrapper">
-              <div className="message">
-                <h1>Devices</h1>
-                <div className="explainer">
-                  <p>Devices can be added to the Helium network.</p>
-                  <p>More details about adding devices can be found <a href="https://docs.helium.com/use-the-network/console/adding-devices" target="_blank"> here.</a></p>
-                </div>
-              </div>
-              <style jsx>{`
-                  .message {
-                    width: 100%;
-                    max-width: 500px;
-                    margin: 0 auto;
-                    text-align: center;
-                  }
-                  .explainer {
-                    padding: 20px 60px 1px 60px;
-                    border-radius: 20px;
-                    text-align: center;
-                    margin-top: 20px;
-                    box-sizing: border-box;
-                    border: none;
-                  }
-                  .explainer p {
-                    color: #565656;
-                    font-size: 15px;
-                  }
-                  .explainer p a {
-                    color: #096DD9;
-                  }
-                  h1, p  {
-                    color: #242425;
-                  }
-                  h1 {
-                    font-size: 46px;
-                    margin-bottom: 10px;
-                    font-weight: 600;
-                    margin-top: 10px;
-                  }
-                  p {
-                    font-size: 20px;
-                    font-weight: 300;
-                    margin-bottom: 10px;
-                  }
-                `}</style>
-              </div>
-            )
-          }
-          {
-            showPage === 'allDevices' && error && <Text>Data failed to load, please reload the page and try again</Text>
-          }
-          {
-            showPage === 'allDevices' && loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
-          }
-          {
-            showPage === 'allDevices' && !loading &&  (
-              <DeviceIndexTable
-                openDeleteDeviceModal={this.openDeleteDeviceModal}
-                openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-                openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
-                openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
-                onChangePageSize={this.handleChangePageSize}
-                handleChangePage={this.handleChangePage}
-                devices={devices}
-                history={this.props.history}
-                handleChangePage={this.handleChangePage}
-                handleSortChange={this.handleSortChange}
-                pageSize={this.state.pageSize}
-                column={this.state.column}
-                order={this.state.order}
-                userEmail={this.props.user.email}
-              />
-            )
-          }
-          {
-            showPage === 'new' && <DeviceNew deviceImports={device_imports} handleChangeView={this.handleChangeView} setImportType={this.setImportType}/>
-          }
-          {
-            showPage === 'newLabel' && <LabelNew handleChangeView={this.handleChangeView}/>
-          }
-          {
-            showPage.indexOf("Label+") !== -1 && (
-              <DeviceIndexLabelShow id={showPage.split("+")[1]}/>
-            )
-          }
-        </TableHeader>
+      <DeviceDashboardLayout {...this.props}>
+        {
+          error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+        }
+        {
+          !loading &&  (
+            <DeviceIndexTable
+              openDeleteDeviceModal={this.openDeleteDeviceModal}
+              openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+              openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+              openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+              onChangePageSize={this.handleChangePageSize}
+              handleChangePage={this.handleChangePage}
+              devices={devices}
+              history={this.props.history}
+              handleChangePage={this.handleChangePage}
+              handleSortChange={this.handleSortChange}
+              pageSize={this.state.pageSize}
+              column={this.state.column}
+              order={this.state.order}
+              userEmail={this.props.user.email}
+            />
+          )
+        }
 
         <ImportDevicesModal
           open={showImportDevicesModal}
@@ -381,9 +261,7 @@ class DeviceIndex extends Component {
           devicesToDelete={this.state.devicesSelected}
           totalDevices={devices && devices.totalEntries}
         />
-
-        <AddResourceButton deviceCallback={() => this.setState({ showPage: 'new' })} labelCallback={() => this.setState({ showPage: 'newLabel' })}/>
-      </DashboardLayout>
+      </DeviceDashboardLayout>
     )
   }
 }
