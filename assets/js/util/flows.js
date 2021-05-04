@@ -6,5 +6,6 @@ export const getIntegrationTypeForFlows = (endpoint, type) => {
   if (endpoint === "https://helium.middleware.tago.io/uplink") return "tago"
   if (endpoint.indexOf("io.adafruit.com") !== -1) return "adafruit"
   if (endpoint.indexOf("industrial.ubidots.com") !== -1) return "ubidots"
+  if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1) return "http"
   return type
 }

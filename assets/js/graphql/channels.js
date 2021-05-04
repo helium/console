@@ -62,6 +62,7 @@ export const ALL_CHANNELS = gql`
       type_name,
       id,
       active,
+      endpoint
     }
   }
 `

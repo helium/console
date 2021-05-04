@@ -13,6 +13,7 @@ import HttpIcon from '../../../../img/channels/http.png';
 import MqttIcon from '../../../../img/channels/mqtt.png';
 import TagoIcon from '../../../../img/channels/tago.png';
 import UbidotsIcon from '../../../../img/channels/ubidots.png';
+import GoogleSheetIcon from '../../../../img/google-channel.svg'
 import SelectedNodeIcon from './SelectedNodeIcon';
 
 const imgMap = {
@@ -25,7 +26,8 @@ const imgMap = {
   http: HttpIcon,
   mqtt: MqttIcon,
   tago: TagoIcon,
-  ubidots: UbidotsIcon
+  ubidots: UbidotsIcon,
+  googlesheets: GoogleSheetIcon
 }
 
 export default ({ data, fromSidebar, selected }) => {
