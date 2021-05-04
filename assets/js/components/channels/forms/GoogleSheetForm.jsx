@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Input, Button, Select } from 'antd';
+import { Typography, Input, Button, Select, Popover } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import cheerio from "cheerio";
 import { post } from '../../../util/rest'
 const { Text } = Typography
@@ -79,8 +80,15 @@ class GoogleSheetForm extends Component {
   render() {
     return(
       <div>
-        <div>
-          <Text style={{ display: 'block' }}>Enter Google Form ID:</Text>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ display: 'block' }}>Enter Google Form ID</Text>
+          <Popover
+            content="Please make sure you are using the Google Form ID that is sent out to the public. The internal ID for editing the form will not work in this input."
+            placement="top"
+            overlayStyle={{ width: 220 }}
+          >
+            <InfoCircleOutlined style={{ marginLeft: 8, fontSize: 14, cursor: 'pointer' }} />
+          </Popover>
         </div>
         <div>
           <Input
