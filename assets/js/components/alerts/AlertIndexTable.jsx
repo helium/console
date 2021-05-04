@@ -32,7 +32,7 @@ export default (props) => {
 
   const renderType = (config) => {
     const parsedConfig = JSON.parse(config);
-    const hasEmail = !isEmpty(parsedConfig['email']);
+    const hasEmail = !isEmpty(parsedConfig['email']); // TODO FIX
     const hasWebhook = !isEmpty(parsedConfig['webhook']);
 
     if (hasEmail && hasWebhook) return 'Email, Webhook';

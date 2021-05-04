@@ -79,6 +79,13 @@ defmodule Console.Alerts do
     Repo.all(query)
   end
 
+  def get_alerts_by_event(event) do
+    query = from a in Alert,
+      where: fragment("config ->> ? IS NOT NULL", ^event)
+
+    Repo.all(query)
+  end
+
   def update_alert_last_triggered_at(%Alert{} = alert) do
     attrs = %{ "last_triggered_at" => Timex.now }
     

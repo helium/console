@@ -63,17 +63,17 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
-    send_notification_emails: [
+    trigger_device_stops_transmitting: [
+      schedule: "*/15 * * * *", # every 15th min
+      task: {Console.Jobs, :trigger_device_stops_transmitting, []}
+    ],
+    send_alert: [
       schedule: "*/5 * * * *", # every 5th min
-      task: {Console.Jobs, :send_notification_emails, []}
+      task: {Console.Jobs, :send_alert, []}
     ],
     delete_sent_notifications: [
       schedule: "0 0 * * *", # every day @ 00:00
       task: {Console.Jobs, :delete_sent_notifications, []}
-    ],
-    trigger_device_stops_transmitting: [
-      schedule: "*/15 * * * *", # every 15th min
-      task: {Console.Jobs, :trigger_device_stops_transmitting, []}
     ]
   ]
 
