@@ -245,7 +245,7 @@
                             <!-- Spacing -->
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; "><%= @alert_name %> Alert</h1>
+                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Alert: <%= @alert_name %></h1>
                                     <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
                                       <%= if @num_channels == 1 do %>
                                         The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
