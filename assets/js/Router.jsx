@@ -20,6 +20,7 @@ import DeviceIndex from './components/devices/DeviceIndex';
 import DeviceHome from './components/devices/DeviceHome';
 import DeviceShow from './components/devices/DeviceShow';
 import LabelNew from './components/labels/LabelNew';
+import LabelShow from './components/labels/LabelShow';
 import DeviceNew from './components/devices/DeviceNew';
 import ChannelIndex from './components/channels/ChannelIndex';
 import ChannelShow from './components/channels/ChannelShow';
@@ -109,7 +110,8 @@ const Router = (props) => {
                         <Route exact path="/devices/home" component={props => <DeviceHome user={user} {...props}/>} />
                         <Route exact path="/devices/new" component={props => <DeviceNew user={user} {...props}/>} />
                         <Route exact path="/devices/new_label" component={props => <LabelNew user={user} {...props}/>} />
-                        <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
+                        <Route exact path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
+                        <Route exact path="/labels/:id" component={props => <LabelShow user={user} {...props}/>}/>
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
                         <Route exact path="/integrations/home" component={props => <ChannelHome user={user} {...props}/>} />
                         <Route exact path="/integrations/new" component={props => <ChannelNew user={user} {...props}/>} />

@@ -53,7 +53,7 @@ class DeviceDashboardLayout extends Component {
                   this.props.history.location.pathname === '/devices/new_label' && <NavPointTriangle />
                 }
               </div>
-              <DeviceIndexLabelsBar selectLabel={() => {}} />
+              <DeviceIndexLabelsBar push={this.props.history.push} pathname={this.props.history.location.pathname} />
             </React.Fragment>
           }
         >
