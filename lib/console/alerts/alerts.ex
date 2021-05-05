@@ -79,6 +79,17 @@ defmodule Console.Alerts do
     Repo.all(query)
   end
 
+  def get_alerts_by_group_node_and_event(label_ids, event) do
+    query = from a in Alert,
+      join: an in AlertNode,
+      on: an.alert_id == a.id,
+      where: an.node_id in ^label_ids
+      and an.node_type == "group"
+      and fragment("config ->> ? IS NOT NULL", ^event)
+    
+    Repo.all(query)
+  end
+
   def get_alerts_by_event(event) do
     query = from a in Alert,
       where: fragment("config ->> ? IS NOT NULL", ^event)

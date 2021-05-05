@@ -3,6 +3,8 @@ defmodule Console.AlertEvents do
   alias Console.Repo
   alias Console.Alerts.AlertEvent
   alias Console.Alerts
+  alias Console.Labels
+  alias Console.Devices
 
   def create_alert_event(attrs \\ %{}) do
     %AlertEvent{}
@@ -23,11 +25,38 @@ defmodule Console.AlertEvents do
   end
 
   def notify_alert_event(node_id, node_type, event, details, limit \\ nil) do
-    alerts =
-      case details["label_id"] do
-        nil -> Alerts.get_alerts_by_node_and_event(node_id, node_type, event)
-        _ -> Alerts.get_alerts_by_node_and_event(details["label_id"], "group", event)
-      end
+    alerts = Alerts.get_alerts_by_node_and_event(node_id, node_type, event)
+
+    if length(alerts) > 0 do
+      Enum.each(alerts, fn alert ->
+        # to prevent flapping due to some events that may be triggered too often,
+        # check for prev alert events in queue or already sent
+        restrict_to_prevent_flapping =
+          case limit do
+            %{ time_buffer: time_buffer } -> get_prev_node_alert_events(event, node_id, node_type, time_buffer, alert.id) > 0
+            nil -> false
+          end
+        
+        if not restrict_to_prevent_flapping do
+          attrs = %{
+            alert_id: alert.id,
+            node_id: node_id,
+            node_type: node_type,
+            sent: false,
+            event: event,
+            details: details,
+            reported_at: Timex.now
+          }
+          create_alert_event(attrs)
+          Alerts.update_alert_last_triggered_at(alert)
+        end
+      end)
+    end
+  end
+
+  def notify_alert_event(node_id, node_type, event, details, label_ids, limit) do
+    alerts = Alerts.get_alerts_by_node_and_event(node_id, "device", event)
+      ++ Alerts.get_alerts_by_group_node_and_event(label_ids, event)
 
     if length(alerts) > 0 do
       Enum.each(alerts, fn alert ->

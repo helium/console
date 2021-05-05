@@ -123,7 +123,6 @@ defmodule Console.Jobs do
 
     Enum.each(devices, fn device ->
       if device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
-        # since we are already iterating by label to begin with, don't include all device's labels to iterate sending notifications by
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
@@ -136,15 +135,14 @@ defmodule Console.Jobs do
           end
         }
 
-        details =
-          case node_type do
-            "group" -> Map.put(details, "label_id", node_id)
-            _ -> details
-          end
-
         limit = %{ time_buffer: Timex.shift(Timex.now, hours: -24) }
 
-        AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, limit)
+        case node_type do
+          "device" ->
+            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, limit)
+          "group" ->
+            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, [node_id], limit)
+        end
       end
     end)
   end
