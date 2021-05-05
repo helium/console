@@ -1,13 +1,22 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { Button, Input } from 'antd';
-import Text from 'antd/lib/typography/Text';
-import { Tabs } from 'antd';
+import React, { Fragment, useState, useEffect } from "react";
+import { Button, Input } from "antd";
+import Text from "antd/lib/typography/Text";
+import { Tabs } from "antd";
 const { TabPane } = Tabs;
-import { DEFAULT_SETTINGS, ALERT_TYPES } from './constants';
-import AlertSetting from './AlertSetting';
+import { DEFAULT_SETTINGS, ALERT_TYPES } from "./constants";
+import AlertSetting from "./AlertSetting";
 
-export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data }) => {
-  const [name, setName] = useState('');
+export default ({
+  alertType,
+  save,
+  saveText,
+  cancel,
+  back,
+  saveIcon,
+  show,
+  data,
+}) => {
+  const [name, setName] = useState("");
   const [config, setConfig] = useState({});
   const [alertData, setAlertData] = useState({});
 
@@ -17,7 +26,7 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
       setAlertData({
         node_type: data.alert.node_type,
         config: parsedConfig,
-        name: data.alert.name
+        name: data.alert.name,
       });
       setConfig(parsedConfig);
     }
@@ -53,7 +62,9 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
                           }),
                         email: {
                           recipient: settings.recipient,
-                          ...("value" in settings && { value: settings.value }),
+                          ...("value" in settings && {
+                            value: parseInt(settings.value),
+                          }),
                         },
                       },
                     });
@@ -103,7 +114,9 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
                         webhook: {
                           url: settings.url,
                           notes: settings.notes,
-                          ...("value" in settings && { value: settings.value }),
+                          ...("value" in settings && {
+                            value: parseInt(settings.value),
+                          }),
                         },
                       },
                     });
@@ -127,14 +140,19 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
         </TabPane>
       </Tabs>
     );
-  }
+  };
 
   const renderButton = () => {
     return (
       <Button
         icon={saveIcon}
         type="primary"
-        style={{ borderColor: alertType && ALERT_TYPES[alertType].color, backgroundColor: alertType && ALERT_TYPES[alertType].color, borderRadius: 50, text: 'white' }}
+        style={{
+          borderColor: alertType && ALERT_TYPES[alertType].color,
+          backgroundColor: alertType && ALERT_TYPES[alertType].color,
+          borderRadius: 50,
+          text: "white",
+        }}
         onClick={() => {
           save(name, config);
         }}
@@ -142,34 +160,36 @@ export default ({ alertType, save, saveText, cancel, back, saveIcon, show, data 
         {`${saveText} ${alertType && ALERT_TYPES[alertType].name} Alert`}
       </Button>
     );
-  }
+  };
 
-  return(
+  return (
     <Fragment>
-      <Text style={{ fontSize: '16px' }} strong>Alert Name</Text>
+      <Text style={{ fontSize: "16px" }} strong>
+        Alert Name
+      </Text>
       <Input
-        onChange={e => { setName(e.target.value) }}
+        onChange={(e) => {
+          setName(e.target.value);
+        }}
         value={name}
-        placeholder={show ? alertData.name : 'e.g. Master Alert'}
-        suffix={`${name.length}/25`} 
+        placeholder={show ? alertData.name : "e.g. Master Alert"}
+        suffix={`${name.length}/25`}
         maxLength={25}
       />
-      <div style={{ marginTop: 20 }}>
-        {renderForm()}
-      </div>
+      <div style={{ marginTop: 20 }}>{renderForm()}</div>
       <div style={{ marginTop: 20 }}>
         {renderButton()}
-        {
-          cancel && (
-            <Button
-              style={{ marginLeft: 10, borderRadius: 50}}
-              onClick={() => { back() }}
-            >
-              Cancel
-            </Button>
-          )
-        }
+        {cancel && (
+          <Button
+            style={{ marginLeft: 10, borderRadius: 50 }}
+            onClick={() => {
+              back();
+            }}
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </Fragment>
   );
-}
+};

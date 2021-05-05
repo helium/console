@@ -218,7 +218,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
             }
             device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-            AlertEvents.notify_alert_event(event_device.id, "device", "device_join_otaa_first_time", details, device_labels, nil)
+            AlertEvents.notify_alert_event(event_device.id, "device", "device_join_otaa_first_time", details, device_labels)
           end
 
           case event.category do
@@ -241,7 +241,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                     time: time
                   }
                   limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, limit)
+                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
                 end
               end
             "downlink" ->

@@ -12,6 +12,7 @@ defmodule Console.Alerts.AlertEvent do
     field :sent, :boolean
     field :event, :string
     field :reported_at, :naive_datetime
+    field :type, :string
 
     belongs_to :alert, Console.Alerts.Alert
 
@@ -20,9 +21,10 @@ defmodule Console.Alerts.AlertEvent do
 
   def changeset(devices_label, attrs) do
     devices_label
-    |> cast(attrs, [:alert_id, :node_id, :node_type, :details, :sent, :event, :reported_at])
-    |> validate_required([:alert_id, :node_id, :node_type, :details, :sent, :event, :reported_at])
+    |> cast(attrs, [:alert_id, :node_id, :node_type, :details, :sent, :event, :reported_at, :type])
+    |> validate_required([:alert_id, :node_id, :node_type, :details, :sent, :event, :reported_at, :type])
     |> check_valid_event_key
+    |> check_valid_type
   end
 
   defp check_valid_event_key(changeset) do
@@ -41,6 +43,22 @@ defmodule Console.Alerts.AlertEvent do
 
         case invalid_event do
           true -> add_error(changeset, :message, "Alert event must have a valid event key")
+          false -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_valid_type(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
+        invalid_type = Enum.member?([
+          "webhook",
+          "email"
+        ], type) != true
+
+        case invalid_type do
+          true -> add_error(changeset, :message, "Alert type must be 'webhook' or 'email'")
           false -> changeset
         end
       _ -> changeset

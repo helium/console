@@ -86,7 +86,7 @@ defmodule ConsoleWeb.DeviceController do
         time: time
       }
       # TODO remove alert events for this device
-      AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels, nil)
+      AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -120,7 +120,7 @@ defmodule ConsoleWeb.DeviceController do
           deleted_by: conn.assigns.current_user.email,
           time: time
         }
-        AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels, nil)
+        AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels)
       end)
 
       conn
@@ -149,7 +149,7 @@ defmodule ConsoleWeb.DeviceController do
         deleted_by: conn.assigns.current_user.email,
         time: time
       }
-      AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels, nil)
+      AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels)
     end)
 
     conn

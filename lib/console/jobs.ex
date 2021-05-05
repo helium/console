@@ -16,16 +16,20 @@ defmodule Console.Jobs do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
     now = Timex.now
     buffer = -5
-    alertable_events = AlertEvents.get_unsent_alert_events_since(Timex.shift(now, minutes: buffer))
+    alertable_email_events = AlertEvents.get_unsent_alert_events_since("email", Timex.shift(now, minutes: buffer))
+    alertable_webhook_events = AlertEvents.get_unsent_alert_events_since("webhook", Timex.shift(now, minutes: buffer))
 
     # send emails for this batch, grouped by event type and label
-    Enum.each(Enum.group_by(alertable_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} -> 
-      # TODO handle when webhook and email value is different 
+    Enum.each(Enum.group_by(alertable_email_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} -> 
       send_specific_event_email(identifiers, events) 
+    end)
+
+    Enum.each(Enum.group_by(alertable_webhook_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
       send_webhook(identifiers, events)
     end)
 
-    Enum.each(alertable_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
+    Enum.each(alertable_email_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
+    Enum.each(alertable_webhook_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
   end
 
   def send_specific_event_email(identifiers, events) do
@@ -101,18 +105,18 @@ defmodule Console.Jobs do
       Enum.each(alert_nodes, fn an ->
         if email_config_value != nil do
           buffer = email_config_value
-          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer))
+          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
         end
 
         if webhook_config_value != nil && webhook_config_value != email_config_value do
           buffer = webhook_config_value
-          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer))
+          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
         end
       end)
     end)
   end
 
-  defp check_device_stop_transmitting(node_id, node_type, starting_from) do
+  defp check_device_stop_transmitting(node_id, node_type, starting_from, buffer) do
     devices =
       case node_type do
         "device" ->
@@ -132,14 +136,15 @@ defmodule Console.Jobs do
           hotspot: case event.data["hotspot"] != nil do
             false -> nil
             true -> event.data["hotspot"]
-          end
+          end,
+          buffer: buffer
         }
 
         limit = %{ time_buffer: Timex.shift(Timex.now, hours: -24) }
 
         case node_type do
           "device" ->
-            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, limit)
+            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, nil, limit)
           "group" ->
             AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, [node_id], limit)
         end

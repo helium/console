@@ -60,7 +60,6 @@ defmodule Console.Alerts.Alert do
   defp check_webhook_config_url(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
-        IO.inspect config
         missing_url = Enum.any?(config, fn alert_event_config ->
           {_event_key, event_config} = alert_event_config
           if Map.has_key?(event_config, "webhook") do
