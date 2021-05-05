@@ -14,16 +14,8 @@ defmodule Console.Labels.LabelResolver do
       order_by: ^order_by
 
     labels = query |> Repo.paginate(page: page, page_size: page_size)
-    entries = labels.entries
-      |> Enum.map(fn l ->
-        channels = l.channels
-          |> Enum.map(fn c ->
-            Map.drop(c, [:downlink_token])
-          end)
-        Map.put(l, :channels, channels)
-      end)
 
-    {:ok, Map.put(labels, :entries, entries)}
+    {:ok, labels}
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
