@@ -33,7 +33,7 @@ export default (props) => {
 
   const renderType = (config) => {
     const parsedConfig = JSON.parse(config);
-    console.log(parsedConfig)
+    
     const hasEmail = findKey(parsedConfig, function (e) {
       return e.email;
     }) !== undefined;
