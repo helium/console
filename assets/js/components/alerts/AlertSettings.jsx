@@ -3,7 +3,7 @@ import { Button, Input } from "antd";
 import Text from "antd/lib/typography/Text";
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
-import { DEFAULT_SETTINGS, ALERT_TYPES } from "./constants";
+import { ALERT_EVENT_INFO, ALERT_TYPES } from "./constants";
 import AlertSetting from "./AlertSetting";
 
 export default ({
@@ -37,7 +37,7 @@ export default ({
       <Tabs defaultActiveKey="email" size="large" centered>
         <TabPane tab="Email" key="email">
           {alertType &&
-            DEFAULT_SETTINGS[alertType].map((s) => (
+            ALERT_EVENT_INFO[alertType].map((s) => (
               <AlertSetting
                 key={`setting-email-${s.key}`}
                 eventKey={s.key}
@@ -88,7 +88,7 @@ export default ({
         </TabPane>
         <TabPane tab="Webhooks" key="webhooks">
           {alertType &&
-            DEFAULT_SETTINGS[alertType].map((s) => (
+            ALERT_EVENT_INFO[alertType].map((s) => (
               <AlertSetting
                 key={`setting-webhook-${s.key}`}
                 eventKey={s.key}
