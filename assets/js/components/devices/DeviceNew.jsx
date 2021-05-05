@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ChooseImportType from './import/ChooseImportType';
 import { createDevice } from '../../actions/device'
-import { displayError } from '../../util/messages'
+import { displayInfo, displayError } from '../../util/messages'
 import withGql from '../../graphql/withGql'
+import { ALL_IMPORTS } from '../../graphql/devices';
 import { ALL_LABELS } from '../../graphql/labels'
 import UserCan from '../common/UserCan'
 import DeviceDashboardLayout from './DeviceDashboardLayout'
+import ImportDevicesModal from './import/ImportDevicesModal';
 import analyticsLogger from '../../util/analyticsLogger'
 import { Card, Button, Typography, Input, Row, Col } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined, SaveOutlined } from '@ant-design/icons';
@@ -25,12 +27,40 @@ class DeviceNew extends Component {
     appKey: randomString(32),
     labelName: null,
     showAppKey: false,
+    showImportDevicesModal: false,
+    importComplete: false,
+    importType: ''
   }
 
   componentDidMount() {
     if (this.nameInputRef.current) {
       this.nameInputRef.current.focus()
     }
+
+    const { socket, currentOrganizationId, user } = this.props
+    this.importChannel = socket.channel("graphql:device_import_update", {})
+    this.importChannel.join()
+    this.importChannel.on(`graphql:device_import_update:${currentOrganizationId}:import_list_updated`, (message) => {
+      const { page, pageSize } = this.state
+      this.props.importsQuery.refetch({ page, pageSize })
+      const user_id = user.sub.slice(6)
+
+      if (user_id === message.user_id && message.status === 'success') {
+        this.setState({ importComplete: true })
+
+        displayInfo(
+          `Imported ${message.successful_devices} device${(message.successful_devices !== 1 && "s") || ""} from ${
+          message.type === "ttn" ? "The Things Network" : "CSV"}. Refresh this page to see the changes.`
+        )
+      }
+      if (user_id === message.user_id && message.status === 'failed') {
+        displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this.importChannel.leave()
   }
 
   handleInputUpdate = (e) => {
@@ -53,8 +83,18 @@ class DeviceNew extends Component {
     }
   }
 
+  setImportType = importType => {
+    this.setState({ importType, showImportDevicesModal: true })
+  }
+
+  closeImportDevicesModal = () => {
+    this.setState({ showImportDevicesModal: false, importComplete: false });
+  }
+
   render() {
     const { allLabels, error } = this.props.allLabelsQuery
+    const { showImportDevicesModal, importComplete, importType } = this.state
+    const { device_imports } = this.props.importsQuery;
 
     return (
       <DeviceDashboardLayout {...this.props}>
@@ -149,11 +189,18 @@ class DeviceNew extends Component {
             </Col>
             <Col span={10}>
               <div style={{ display: 'flex', 'flexDirection': 'column', alignItems: 'center' }}>
-                <ChooseImportType onImportSelect={this.props.setImportType} deviceImports={this.props.deviceImports}/>
+                <ChooseImportType onImportSelect={this.setImportType} deviceImports={device_imports}/>
               </div>
             </Col>
           </Row>
         </div>
+
+        <ImportDevicesModal
+          open={showImportDevicesModal}
+          onClose={this.closeImportDevicesModal}
+          importComplete={importComplete}
+          importType={importType}
+        />
       </DeviceDashboardLayout>
     )
   }
@@ -166,10 +213,19 @@ const randomString = length => {
   return result;
 }
 
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createDevice }, dispatch)
 }
 
-export default connect(null, mapDispatchToProps)(
-  withGql(DeviceNew, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))
-)
+export default connect(mapStateToProps, mapDispatchToProps)(withGql(
+  withGql(DeviceNew, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' })),
+  ALL_IMPORTS,
+  props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'importsQuery' })
+))

@@ -67,7 +67,7 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
         <Text style={{width: '100%', textAlign: 'center', marginBottom: 20, color: 'deepskyblue', textDecoration: 'underline'}}>How do I format my .csv?</Text>
       </Popover>
       {
-        (deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing")) ? (
+        (deviceImports && (!deviceImports.entries.length || deviceImports.entries[0].status !== "importing")) && (
           <Fragment>
             <Button
               type="primary"
@@ -88,8 +88,6 @@ const ChooseImportType = ({onImportSelect, scanGenericDevices, genericImportScan
               </Text>
             </DragAndDrop>
           </Fragment>
-        ) : (
-          <Text strong>Please wait while your import completes...</Text>
         )
       }
     </Fragment>
