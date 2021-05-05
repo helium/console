@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button } from "antd";
 import Text from "antd/lib/typography/Text";
-import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-Label.svg";
+import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-label.svg";
 import FunctionTriggerIcon from "../../../img/alerts/alert-trigger-function.svg";
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
