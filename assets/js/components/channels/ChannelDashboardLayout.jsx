@@ -37,13 +37,13 @@ class ChannelDashboardLayout extends Component {
     return (
       <DashboardLayout title="My Integrations" user={this.props.user}>
         <TableHeader
-          backgroundColor='#0fa480'
+          backgroundColor='#AAE8D9'
           goHome={() => this.props.history.push('/integrations/home')}
-          otherColor='#10b48c'
+          otherColor='#7DD0BC'
           homeIcon={HomeIcon}
           goToAll={() => this.props.history.push('/integrations')}
           allIcon={AllIcon}
-          textColor='#00673a'
+          textColor='#0CA47F'
           allText='All Integrations'
           allSubtext={allChannels && allChannels.length + ' Integrations'}
           onHomePage={this.props.history.location.pathname === '/integrations/home'}
