@@ -46,6 +46,7 @@ defmodule Console.Channels.ChannelResolver do
               topic: channel.credentials["downlink"]["topic"]
             }
           })
+          |> Map.put(:endpoint, channel.credentials["endpoint"])
         _ ->
           channel
       end

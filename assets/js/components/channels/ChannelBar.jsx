@@ -6,7 +6,6 @@ import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';
 
-
 const ChannelButton = ({ id, name, type, selected }) => (
   <React.Fragment>
     <Link to={`/integrations/${id}`}>
@@ -23,15 +22,12 @@ const ChannelButton = ({ id, name, type, selected }) => (
           position: 'relative'
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
-              <img src={BarIcon} style={{ height: 12, marginRight: 4 }} />
-              <Text style={{ color: '#FFFFFF', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
-            </div>
-            <Text style={{ color: '#FFFFFF', fontSize: 10, whiteSpace: 'nowrap', paddingLeft: 10 }}>{type}</Text>
-          </span>
-          <img src={integrationImgMap[type]} draggable="false" style={{ height: 50, width: 50, marginLeft: 16, borderRadius: '0px 6px 6px 0px' }} />
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingLeft: 10, position: 'relative', top: 3 }}>
+            <img src={BarIcon} style={{ height: 14, display: 'block' }} />
+            <Text style={{ color: '#FFFFFF', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
+          </div>
+          <img src={integrationImgMap[type]} draggable="false" style={{ height: 50, width: 50, marginLeft: 8, borderRadius: '0px 6px 6px 0px' }} />
         </div>
         {
           selected && <NavPointTriangle />

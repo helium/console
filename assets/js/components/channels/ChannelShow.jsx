@@ -53,9 +53,14 @@ class ChannelShow extends Component {
     this.channel.leave()
   }
 
-  componentDidUpdate(prevProps) {    
+  componentDidUpdate(prevProps) {
     if (!prevProps.channelShowQuery.channel && this.props.channelShowQuery.channel) {
       this.setState({ templateBody: this.props.channelShowQuery.channel.payload_template })
+    }
+
+    if (!this.props.channelShowQuery.loading) {
+      const { refetch } = this.props.channelShowQuery
+      refetch()
     }
   }
 
