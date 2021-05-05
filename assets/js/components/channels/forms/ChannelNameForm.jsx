@@ -20,7 +20,7 @@ const ChannelNameForm = (props) => (
         <Button
           type="primary"
           htmlType="submit"
-          onClick={props.handleStep3Submit}
+          onClick={props.submit}
           disabled={!props.validInput}
         >
           Add Integration
