@@ -4,26 +4,26 @@ const { Text } = Typography
 import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { deleteLabels } from '../../actions/label'
+import { deleteLabel } from '../../actions/label'
 
 @connect(null, mapDispatchToProps)
 class DeleteLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteLabels, labelsToDelete, onClose } = this.props
+    const { deleteLabel, labelId, onClose } = this.props
 
-    analyticsLogger.logEvent("ACTION_DELETE_LABEL", { labels: labelsToDelete.map(d => d.id) })
-    deleteLabels(labelsToDelete)
+    analyticsLogger.logEvent("ACTION_DELETE_LABEL", { labels: [labelId] })
+    deleteLabel(labelId)
 
     onClose()
   }
 
   render() {
-    const { open, onClose, labelsToDelete } = this.props
+    const { open, onClose, labelId } = this.props
 
     return (
       <Modal
-        title={"Delete Labels"}
+        title={"Delete Label"}
         visible={open}
         onCancel={onClose}
         centered
@@ -32,43 +32,21 @@ class DeleteLabelModal extends Component {
           <Button key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={labelsToDelete && labelsToDelete.length === 0}>
+          <Button key="submit" type="primary" onClick={this.handleSubmit}>
             Submit
           </Button>,
         ]}
       >
-        {
-          labelsToDelete && labelsToDelete.length === 1 && (
-            <React.Fragment>
-              <div style={{ marginBottom: 20 }}>
-                <Text>Are you sure you want to proceed? All devices tagged with this label will remain.</Text>
-              </div>
-            </React.Fragment>
-          )
-        }
-        {
-          labelsToDelete && labelsToDelete.length > 1 && (
-            <React.Fragment>
-              <div style={{ marginBottom: 20 }}>
-                <Text>Are you sure you want to delete the following labels? All devices tagged with these labels will remain.</Text>
-              </div>
-              {
-                labelsToDelete.map(l => (
-                  <div key={l.id}>
-                    <Text>&ndash; {l.name}</Text>
-                  </div>
-                ))
-              }
-            </React.Fragment>
-          )
-        }
+        <div style={{ marginBottom: 20 }}>
+          <Text>Are you sure you want to proceed? All devices tagged with this label will remain.</Text>
+        </div>
       </Modal>
     )
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteLabels }, dispatch)
+  return bindActionCreators({ deleteLabel }, dispatch)
 }
 
 export default DeleteLabelModal

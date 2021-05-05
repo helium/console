@@ -101,9 +101,9 @@ class LabelShow extends Component {
       </DeviceDashboardLayout>
     )
     if (error) return (
-      <FunctionDashboardLayout {...this.props}>
+      <DeviceDashboardLayout {...this.props}>
         <div style={{ padding: 40 }}><Text>Data failed to load, please reload the page and try again</Text></div>
-      </FunctionDashboardLayout>
+      </DeviceDashboardLayout>
     )
 
     const normalizedDevices = label.devices.reduce((map, device) => {

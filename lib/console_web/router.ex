@@ -44,7 +44,6 @@ defmodule ConsoleWeb.Router do
     post "/ttn/devices/import", DeviceController, :import_ttn
     post "/generic/devices/import", DeviceController, :import_generic
     resources "/labels", LabelController, only: [:create, :update, :delete]
-    post "/labels/delete", LabelController, :delete
     post "/labels/swap_label", LabelController, :swap_label
     resources "/alerts", AlertController, only: [:create, :delete, :update]
     post "/alerts/add_to_node", AlertController, :add_alert_to_node

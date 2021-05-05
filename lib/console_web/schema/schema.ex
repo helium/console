@@ -41,6 +41,10 @@ defmodule ConsoleWeb.Schema do
     field :packets_last_30d, :integer
   end
 
+  object :device_count do
+    field :count, :integer
+  end
+
   object :device_dc_stats do
     field :dc_last_1d, :integer
     field :dc_last_7d, :integer
@@ -257,6 +261,10 @@ defmodule ConsoleWeb.Schema do
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    field :device_count, :device_count do
+      resolve &Console.Devices.DeviceResolver.get_device_count/2
     end
 
     field :device_stats, :device_stats do
