@@ -112,7 +112,7 @@ const ImportDevicesModal = (props) => {
               <Title style={{width: '100%', textAlign: 'center'}}>Import Status</Title>
               {importStarted && !importComplete && <Spin indicator={antLoaderGrey} style={{ marginBottom: 20 }}/>}
               {importStarted && !importComplete && <Text style={{ textAlign: 'center' }}>Please wait while your import is being completed.</Text>}
-              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please refresh the page to see your devices.</Text>}
+              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please return to the device index page to view your new devices.</Text>}
             </div>
           )
         )

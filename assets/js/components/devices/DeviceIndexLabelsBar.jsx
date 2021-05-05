@@ -7,7 +7,7 @@ import { Typography } from 'antd';
 const { Text } = Typography
 import GroupsIcon from '../../../img/label-node-icon.svg'
 
-const Node = ({ name, device_count, selectLabel, id, currentPage }) => (
+const Node = ({ name, device_count, push, pathname, id }) => (
   <div style={{
     background: '#2C79EE',
     padding: "4px 24px 4px 8px",
@@ -16,14 +16,14 @@ const Node = ({ name, device_count, selectLabel, id, currentPage }) => (
     marginRight: 12,
     cursor: "pointer",
     position: 'relative'
-  }} onClick={() => selectLabel("Label+" + id)}>
+  }} onClick={() => push('/labels/' + id)}>
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
       <img src={GroupsIcon} style={{ height: 11, marginRight: 4 }} />
       <Text style={{ display: 'block', fontSize: 14, color: '#ffffff', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
     </div>
     <Text style={{ display: 'block', fontSize: 12, color: '#ffffff', whiteSpace: 'nowrap' }}>{device_count || 0} Devices</Text>
     {
-      currentPage === "Label+" + id && <NavPointTriangle />
+      pathname === "/labels/" + id && <NavPointTriangle />
     }
   </div>
 )
@@ -54,7 +54,7 @@ class DeviceIndexLabelsBar extends Component {
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {allLabels.map(l => (
-          <Node key={l.id} name={l.name} device_count={l.device_count} id={l.id} selectLabel={this.props.selectLabel} currentPage={this.props.currentPage}/>
+          <Node key={l.id} name={l.name} device_count={l.device_count} id={l.id} push={this.props.push} pathname={this.props.pathname} />
         ))}
       </div>
     )
