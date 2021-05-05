@@ -1,4 +1,4 @@
-defmodule Console.Alerts.AlertNodes do
+defmodule Console.Alerts.AlertNode do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
@@ -14,7 +14,6 @@ defmodule Console.Alerts.AlertNodes do
     timestamps()
   end
 
-  @doc false
   def changeset(devices_label, attrs) do
     devices_label
     |> cast(attrs, [:alert_id, :node_id, :node_type])

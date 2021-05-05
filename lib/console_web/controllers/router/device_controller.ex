@@ -13,7 +13,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.DcPurchases.DcPurchase
   alias Console.Email
   alias Console.Mailer
-  alias Console.LabelNotificationEvents
+  alias Console.AlertEvents
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -218,20 +218,19 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
             }
             device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-            LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
+            AlertEvents.notify_alert_event(event_device.id, "device", "device_join_otaa_first_time", details, device_labels)
           end
 
           case event.category do
             "uplink" ->
               if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"]) |> Repo.preload([:labels])
-                labels = Enum.map(event_integration.labels, fn l -> l.id end)
 
                 if event_integration.time_first_uplink == nil do
                   Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
                   { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
                   details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
+                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
                 end
 
                 if event.data["integration"]["status"] != "success" do
@@ -241,16 +240,16 @@ defmodule ConsoleWeb.Router.DeviceController do
                     channel_id: event_integration.id,
                     time: time
                   }
-                  limit = %{ integration_id: event_integration.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+                  limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
                 end
               end
             "downlink" ->
               if event.sub_category == "downlink_dropped" do
                 details = %{ device_id: event_device.id, device_name: event_device.name }
                 device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-                limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
+                limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
               end
             _ -> nil
           end

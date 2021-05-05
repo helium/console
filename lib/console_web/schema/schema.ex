@@ -66,13 +66,6 @@ defmodule ConsoleWeb.Schema do
     field :downlink, :mqtt_topic
   end
 
-  object :label_notification_setting do
-    field :key, :string
-    field :value, :string
-    field :recipients, :string
-    field :label_id, :id
-  end
-
   object :alert do
     field :id, :id
     field :name, :string
@@ -88,14 +81,6 @@ defmodule ConsoleWeb.Schema do
     field :value, :integer
   end
 
-  object :label_notification_webhook do
-    field :key, :string
-    field :url, :string
-    field :notes, :string
-    field :label_id, :id
-    field :value, :string
-  end
-
   paginated object :label do
     field :id, :id
     field :name, :string
@@ -105,8 +90,6 @@ defmodule ConsoleWeb.Schema do
     field :devices, list_of(:device)
     field :device_count, :integer
     field :adr_allowed, :boolean
-    field :label_notification_settings, list_of(:label_notification_setting)
-    field :label_notification_webhooks, list_of(:label_notification_webhook)
     field :multi_buy_id, :id
   end
 

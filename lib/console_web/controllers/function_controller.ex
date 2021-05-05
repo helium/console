@@ -3,6 +3,7 @@ defmodule ConsoleWeb.FunctionController do
 
   alias Console.Functions
   alias Console.Functions.Function
+  alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -45,6 +46,7 @@ defmodule ConsoleWeb.FunctionController do
     with {:ok, _} <- Functions.delete_function(function) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_bar", "graphql:function_index_bar:#{current_organization.id}:function_list_update", %{})
+      Alerts.delete_alert_nodes(id, "function")
 
       conn
       |> put_resp_header("message", "#{function.name} deleted successfully")

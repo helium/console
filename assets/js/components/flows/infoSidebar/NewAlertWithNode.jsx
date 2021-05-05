@@ -14,13 +14,10 @@ export default (props) => {
       <Text style={{ display: 'block', fontSize: '20px', marginBottom: 5 }} strong>Create New Alert</Text>
       <AlertSettings
         alertType={alertType}
-        save={(name, emailConfig, webhookConfig) => {
+        save={(name, config) => {
           dispatch(createAlert({
             name: name,
-            config: {
-              ...(emailConfig && { email: emailConfig }),
-              ...(webhookConfig && { webhook: webhookConfig })
-            },
+            config,
             node_type: alertType
           })).then(data => {
             dispatch(addAlertToNode(data.data.id, props.nodeId, props.nodeType));
