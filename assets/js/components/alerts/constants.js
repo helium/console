@@ -10,7 +10,7 @@ const ALERT_EVENT_KEYS = {
 };
 
 export const ALERT_EVENT_INFO = {
-  "device/group": [
+  "device/label": [
     {
       key: ALERT_EVENT_KEYS.DOWNLINK_UNSUCCESSFUL,
       description: " a downlink is unsuccessful",
@@ -67,8 +67,8 @@ export function determineTimeValueToShow(value) {
 }
 
 export const ALERT_TYPES = {
-  "device/group": {
-    name: "Device/Group",
+  "device/label": {
+    name: "Device/Label",
     color: "#2C79EE",
   },
   function: {

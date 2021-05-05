@@ -120,7 +120,7 @@ defmodule Console.Jobs do
       case node_type do
         "device" ->
           [Devices.get_device(node_id)]
-        "group" ->
+        "label" ->
           Devices.get_devices_for_label(node_id)
       end
 
@@ -144,7 +144,7 @@ defmodule Console.Jobs do
         case node_type do
           "device" ->
             AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, nil, limit)
-          "group" ->
+          "label" ->
             AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, [node_id], limit)
         end
       end

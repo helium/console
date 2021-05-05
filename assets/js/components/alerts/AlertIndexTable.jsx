@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button } from "antd";
 import Text from "antd/lib/typography/Text";
-import DeviceGroupTriggerIcon from "../../../img/alerts/alert-trigger-device-group.svg";
+import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-Label.svg";
 import FunctionTriggerIcon from "../../../img/alerts/alert-trigger-function.svg";
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
@@ -13,14 +13,14 @@ import findKey from "lodash/findKey";
 export default (props) => {
   const renderTrigger = (trigger) => {
     switch (trigger) {
-      case "device/group":
+      case "device/label":
         return (
           <span>
             <img
-              src={DeviceGroupTriggerIcon}
+              src={DeviceLabelTriggerIcon}
               style={{ height: 20, marginRight: 5 }}
             />
-            Device/Group
+            Device/Label
           </span>
         );
       case "function":

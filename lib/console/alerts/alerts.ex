@@ -40,7 +40,7 @@ defmodule Console.Alerts do
     case node_type do
       "device" ->
         Devices.get_device!(organization, node_id)
-      "group" ->
+      "label" ->
         Labels.get_label!(organization, node_id)
       "integration" ->
         Channels.get_channel!(organization, node_id)
@@ -57,7 +57,7 @@ defmodule Console.Alerts do
     case alert_node.node_type do
       "device" ->
         Devices.get_device!(organization, alert_node.node_id)
-      "group" ->
+      "label" ->
         Labels.get_label!(organization, alert_node.node_id)
       "integration" ->
         Channels.get_channel!(organization, alert_node.node_id)
@@ -79,12 +79,12 @@ defmodule Console.Alerts do
     Repo.all(query)
   end
 
-  def get_alerts_by_group_node_and_event(label_ids, event) do
+  def get_alerts_by_label_node_and_event(label_ids, event) do
     query = from a in Alert,
       join: an in AlertNode,
       on: an.alert_id == a.id,
       where: an.node_id in ^label_ids
-      and an.node_type == "group"
+      and an.node_type == "label"
       and fragment("config ->> ? IS NOT NULL", ^event)
     
     Repo.all(query)
