@@ -1,35 +1,11 @@
 import React from 'react';
 import NavPointTriangle from '../common/NavPointTriangle';
 import BarIcon from '../../../img/channels/channel-bar-icon.svg'
-import { getIntegrationTypeForFlows } from '../../util/flows'
+import { getIntegrationTypeForFlows, integrationImgMap } from '../../util/flows'
 import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';
-import AdafruitIcon from '../../../img/channels/adafruit.png';
-import AwsIcon from '../../../img/channels/aws.png';
-import AzureIcon from '../../../img/channels/azure.png';
-import CargoIcon from '../../../img/channels/cargo.png';
-import CayenneIcon from '../../../img/channels/cayenne.png';
-import DatacakeIcon from '../../../img/channels/datacake.png';
-import HttpIcon from '../../../img/channels/http.png';
-import MqttIcon from '../../../img/channels/mqtt.png';
-import TagoIcon from '../../../img/channels/tago.png';
-import UbidotsIcon from '../../../img/channels/ubidots.png';
-import GoogleSheetIcon from '../../../img/google-channel.svg'
 
-const imgMap = {
-  adafruit: AdafruitIcon,
-  aws: AwsIcon,
-  azure: AzureIcon,
-  cargo: CargoIcon,
-  cayenne: CayenneIcon,
-  datacake: DatacakeIcon,
-  http: HttpIcon,
-  mqtt: MqttIcon,
-  tago: TagoIcon,
-  ubidots: UbidotsIcon,
-  googlesheets: GoogleSheetIcon
-}
 
 const ChannelButton = ({ id, name, type, selected }) => (
   <React.Fragment>
@@ -55,7 +31,7 @@ const ChannelButton = ({ id, name, type, selected }) => (
             </div>
             <Text style={{ color: '#FFFFFF', fontSize: 10, whiteSpace: 'nowrap', paddingLeft: 10 }}>{type}</Text>
           </span>
-          <img src={imgMap[type]} draggable="false" style={{ height: 50, width: 50, marginLeft: 16, borderRadius: '0px 6px 6px 0px' }} />
+          <img src={integrationImgMap[type]} draggable="false" style={{ height: 50, width: 50, marginLeft: 16, borderRadius: '0px 6px 6px 0px' }} />
         </div>
         {
           selected && <NavPointTriangle />
