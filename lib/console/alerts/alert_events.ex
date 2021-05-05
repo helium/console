@@ -106,4 +106,8 @@ defmodule Console.AlertEvents do
   def delete_sent_alert_events_since(datetime_since) do
     from(ae in AlertEvent, where: ae.reported_at >= ^datetime_since and ae.sent == true) |> Repo.delete_all()
   end
+
+  def delete_unsent_alert_events_for_device(device_id) do
+    from(ae in AlertEvent, where: ae.sent == false and ae.node_id == ^device_id and ae.node_type == "device") |> Repo.delete_all()
+  end
 end

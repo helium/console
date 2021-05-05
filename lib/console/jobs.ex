@@ -4,7 +4,6 @@ defmodule Console.Jobs do
 
   alias Console.Email
   alias Console.Mailer
-  alias Console.Labels
   alias Console.Organizations
   alias Console.Devices
   alias Console.Events

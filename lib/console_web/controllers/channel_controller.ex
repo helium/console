@@ -3,6 +3,7 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Channels
   alias Console.Channels.Channel
+  alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -43,6 +44,7 @@ defmodule ConsoleWeb.ChannelController do
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+      Alerts.delete_alert_nodes(id, "integration")
 
       conn
       |> put_resp_header("message", "The Integration #{channel.name} has been deleted")

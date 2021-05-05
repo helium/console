@@ -104,4 +104,8 @@ defmodule Console.Alerts do
     |> Alert.changeset(attrs)
     |> Repo.update()
   end
+
+  def delete_alert_nodes(node_id, node_type) do
+    from(an in AlertNode, where: an.node_id == ^node_id and an.node_type == ^node_type) |> Repo.delete_all()
+  end
 end

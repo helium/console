@@ -7,6 +7,7 @@ defmodule ConsoleWeb.DeviceController do
   alias Console.Devices.Device
   alias Console.Labels
   alias Console.AlertEvents
+  alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -85,8 +86,10 @@ defmodule ConsoleWeb.DeviceController do
         deleted_by: conn.assigns.current_user.email,
         time: time
       }
-      # TODO remove alert events for this device
+      
+      AlertEvents.delete_unsent_alert_events_for_device(deleted_device.device_id)
       AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
+      Alerts.delete_alert_nodes(deleted_device.device_id, "device")
 
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
@@ -120,7 +123,9 @@ defmodule ConsoleWeb.DeviceController do
           deleted_by: conn.assigns.current_user.email,
           time: time
         }
+        AlertEvents.delete_unsent_alert_events_for_device(d.device_id)
         AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels)
+        Alerts.delete_alert_nodes(d.device_id, "device")
       end)
 
       conn
@@ -149,7 +154,9 @@ defmodule ConsoleWeb.DeviceController do
         deleted_by: conn.assigns.current_user.email,
         time: time
       }
+      AlertEvents.delete_unsent_alert_events_for_device(d.device_id)
       AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels)
+      Alerts.delete_alert_nodes(d.device_id, "device")
     end)
 
     conn
