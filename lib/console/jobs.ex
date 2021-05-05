@@ -2,11 +2,8 @@ defmodule Console.Jobs do
   # This module defines the jobs to be ran by Quantum scheduler 
   # as defined in config/config.exs
 
-  alias Console.LabelNotificationEvents
   alias Console.Email
   alias Console.Mailer
-  alias Console.LabelNotificationSettings
-  alias Console.LabelNotificationWebhooks
   alias Console.Labels
   alias Console.Organizations
   alias Console.Devices

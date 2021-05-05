@@ -27,7 +27,7 @@ defmodule Console.Labels.LabelResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
-    label = Ecto.assoc(current_organization, :labels) |> preload([:devices, :label_notification_settings, :label_notification_webhooks]) |> Repo.get!(id)
+    label = Ecto.assoc(current_organization, :labels) |> preload([:devices]) |> Repo.get!(id)
 
     devices = label.devices
       |> Enum.map(fn d ->

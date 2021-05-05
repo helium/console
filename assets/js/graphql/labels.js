@@ -14,19 +14,6 @@ export const LABEL_FRAGMENT = gql`
       id,
       last_connected
     }
-    label_notification_settings {
-      key,
-      value,
-      recipients,
-      label_id
-    }
-    label_notification_webhooks {
-      key,
-      url,
-      notes,
-      label_id,
-      value
-    }
   }
 `
 

@@ -13,7 +13,6 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.DcPurchases.DcPurchase
   alias Console.Email
   alias Console.Mailer
-  alias Console.LabelNotificationEvents
   alias Console.AlertEvents
 
   @stripe_api_url "https://api.stripe.com"
