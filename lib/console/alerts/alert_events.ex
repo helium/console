@@ -26,13 +26,13 @@ defmodule Console.AlertEvents do
   end
 
   def notify_alert_event(node_id, node_type, event, details, label_ids \\ nil, limit \\ nil) do
-    # device node triggers should create an alert event for every applicable (device or group) alert
+    # device node triggers should create an alert event for every applicable (device or label) alert
     alerts =
       case label_ids do
         nil -> Alerts.get_alerts_by_node_and_event(node_id, node_type, event)
         _ ->
           Alerts.get_alerts_by_node_and_event(node_id, "device", event)
-            ++ Alerts.get_alerts_by_group_node_and_event(label_ids, event)
+            ++ Alerts.get_alerts_by_label_node_and_event(label_ids, event)
       end
   
     if length(alerts) > 0 do

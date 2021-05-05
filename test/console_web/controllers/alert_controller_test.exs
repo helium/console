@@ -7,27 +7,27 @@ defmodule ConsoleWeb.AlertControllerTest do
     setup [:authenticate_user]
 
     test "creates alerts properly", %{conn: conn} do
-      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "node_type" => "device/group", "config" => %{
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "node_type" => "device/label", "config" => %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}},
         "webhook" => %{}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
       
-      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/group", "config" => %{} }}
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{} }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert must have at least one email or webhook setting turned on"]}}
       
 
-      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/group", "config" => %{
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{
         "some_incorrect_event_key" => %{"email" => %{"recipient" => "admin"}}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert must have a valid event key"]}}
 
-      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/group", "config" => %{
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{
         "some_incorrect_event_key" => %{"webhook" => %{"url" => "", "notes" => ""}}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert webhook must have URL"]}}
 
-      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/group", "config" => %{
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } }}
       alert = json_response(resp_conn, 201)
@@ -40,12 +40,12 @@ defmodule ConsoleWeb.AlertControllerTest do
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
 
-      resp_conn = put conn, alert_path(conn, :update, alert_1.id), %{ "alert" => %{ "name" => "", "node_type" => "device/group", "config" => %{
+      resp_conn = put conn, alert_path(conn, :update, alert_1.id), %{ "alert" => %{ "name" => "", "node_type" => "device/label", "config" => %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
 
-      resp_conn = put conn, alert_path(conn, :update, alert_1.id), %{ "alert" => %{ "name" => "some other name", "node_type" => "device/group", "config" => %{
+      resp_conn = put conn, alert_path(conn, :update, alert_1.id), %{ "alert" => %{ "name" => "some other name", "node_type" => "device/label", "config" => %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } }}
       alert = json_response(resp_conn, 200)
