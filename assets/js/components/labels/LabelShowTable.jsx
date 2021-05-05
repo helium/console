@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
+import DeleteLabelModal from './DeleteLabelModal'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
@@ -25,7 +26,8 @@ class LabelShowTable extends Component {
     pageSize: 10,
     selectedRows: [],
     column: DEFAULT_COLUMN,
-    order: DEFAULT_ORDER
+    order: DEFAULT_ORDER,
+    showDeleteLabelModal: false,
   }
 
   componentDidMount() {
@@ -59,6 +61,8 @@ class LabelShowTable extends Component {
       this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false, this.props.labelId)
     } else if (value === 'delete') {
       this.props.openDeleteDeviceModal(this.state.selectedRows)
+    } else if (value === 'deleteLabel') {
+      this.setState({ showDeleteLabelModal: true })
     }
   }
 
@@ -215,6 +219,7 @@ class LabelShowTable extends Component {
                 }
                 <Option disabled={selectedRows.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
                 <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+                <Option value="deleteLabel" style={{ color: redForTablesDeleteText }}>Delete This Label</Option>
               </Select>
             </UserCan>
           </div>
@@ -241,6 +246,12 @@ class LabelShowTable extends Component {
             showSizeChanger={false}
           />
         </div>
+
+        <DeleteLabelModal
+          open={this.state.showDeleteLabelModal}
+          onClose={() => this.setState({ showDeleteLabelModal: false })}
+          labelId={this.props.labelId}
+        />
       </div>
     )
   }

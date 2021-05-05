@@ -24,12 +24,12 @@ export const updateLabel = (id, params) => {
   }
 }
 
-export const deleteLabels = (labels) => {
+export const deleteLabel = (id) => {
   return (dispatch) => {
-    rest.post(`/api/labels/delete`, {
-      labels: labels.map(l => l.id)
-    })
-    .then(response => {})
+    rest.destroy(`/api/labels/${id}`)
+      .then(response => {
+        dispatch(replace('/devices'))
+      })
   }
 }
 
