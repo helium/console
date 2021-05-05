@@ -33,6 +33,14 @@ export const DEVICE_SHOW = gql`
   ${DEVICE_FRAGMENT}
 `
 
+export const DEVICE_COUNT = gql`
+  query DeviceCountQuery {
+    device_count {
+      count
+    }
+  }
+`
+
 export const DEVICE_SHOW_STATS = gql`
   query DeviceShowStatsQuery ($id: ID!) {
     device_stats(id: $id) {

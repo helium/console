@@ -73,6 +73,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:devices_header_count", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:device_show", _message, socket) do
     {:ok, socket}
   end

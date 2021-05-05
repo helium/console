@@ -99,6 +99,12 @@ defmodule Console.Devices.DeviceResolver do
     }
   end
 
+  def get_device_count(_, %{context: %{current_organization: current_organization}}) do
+    query = from d in Device,
+      select: count(d.id)
+
+    {:ok, %{ count: Repo.one(query) }}
+  end
 
   def get_names(%{device_ids: device_ids}, %{context: %{current_organization: current_organization}}) do
     query = from d in Device,
