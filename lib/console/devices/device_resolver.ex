@@ -32,18 +32,9 @@ defmodule Console.Devices.DeviceResolver do
         "read" ->
           device
           |> Map.drop([:app_key])
-          |> Map.put(:labels,
-            device.labels
-              |> Enum.map(fn l ->
-                Map.put(l, :channels,
-                  Enum.map(l.channels, fn c ->
-                    Map.drop(c, [:downlink_token])
-                  end)
-                )
-              end)
-          )
         _ -> device
       end
+
     {:ok, device}
   end
 

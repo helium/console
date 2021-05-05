@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import EventsDashboard from '../events/EventsDashboard'
 import UserCan from '../common/UserCan'
-import DashboardLayout from '../common/DashboardLayout'
+import DeviceDashboardLayout from './DeviceDashboardLayout'
 import Debug from '../common/Debug'
 import Downlink from '../common/Downlink'
 import Sidebar from '../common/Sidebar'
@@ -28,8 +28,8 @@ import DownlinkImage from '../../../img/downlink.svg'
 import { debugSidebarBackgroundColor } from '../../util/colors'
 import withGql from '../../graphql/withGql'
 import { Typography, Button, Input, Select, Tag, Card, Row, Col, Tabs, Switch, Popover } from 'antd';
-import { EditOutlined, EyeOutlined, EyeInvisibleOutlined, BugOutlined, DeleteOutlined } from '@ant-design/icons';
-import { DeviceShowSkeleton } from './DeviceShowSkeleton';
+import { ArrowLeftOutlined, EditOutlined, EyeOutlined, EyeInvisibleOutlined, BugOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { TabPane } = Tabs
 const { Option } = Select
@@ -208,47 +208,54 @@ class DeviceShow extends Component {
     } = this.state
     const { loading, error, device } = this.props.deviceShowQuery;
 
-    if (loading) return <DeviceShowSkeleton user={this.props.user} />;
-    if (error) return <Text>Data failed to load, please reload the page and try again</Text>
+    if (loading) return (
+      <DeviceDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><SkeletonLayout /></div>
+      </DeviceDashboardLayout>
+    )
+    if (error) return (
+      <FunctionDashboardLayout {...this.props}>
+        <div style={{ padding: 40 }}><Text>Data failed to load, please reload the page and try again</Text></div>
+      </FunctionDashboardLayout>
+    )
     const smallerText = device.total_packets > 10000
 
     return(
-      <DashboardLayout
-        title={`${device.name}`}
-        user={this.props.user}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/devices"><Text style={{ color: "#8C8C8C" }}>Devices&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;{device.name}</Text>
-          </div>
-        }
-        extra={
-          <UserCan>
-            <Popover
-              content={`This device is currently ${device.active ? "active" : "inactive"}`}
-              placement="top"
-              overlayStyle={{ width: 140 }}
-            >
-              <Switch
-                checked={device.active}
-                onChange={this.toggleDeviceActive}
-              />
-              <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                shape="circle"
-                size="small"
-                style={{ marginLeft: 8 }}
-                onClick={e => {
-                  e.stopPropagation()
-                  this.openDeleteDeviceModal(device)
-                }}
-              />
-            </Popover>
-          </UserCan>
-        }
-      >
+      <DeviceDashboardLayout {...this.props}>
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              style={{ border: "none" }}
+              onClick={() => this.props.history.push("/devices")}
+            >
+              All Devices
+            </Button>
+            <UserCan>
+              <Popover
+                content={`This device is currently ${device.active ? "active" : "inactive"}`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch
+                  checked={device.active}
+                  onChange={this.toggleDeviceActive}
+                />
+                <Button
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  shape="circle"
+                  size="small"
+                  style={{ marginLeft: 8 }}
+                  onClick={e => {
+                    e.stopPropagation()
+                    this.openDeleteDeviceModal(device)
+                  }}
+                />
+              </Popover>
+            </UserCan>
+          </div>
+
           <Row gutter={20} type="flex" style={{ overflow: 'scroll' }}>
             <Col span={15}>
             <Card title="Device Details" >
@@ -527,7 +534,7 @@ class DeviceShow extends Component {
               </Sidebar>
             }
           </UserCan>
-      </DashboardLayout>
+      </DeviceDashboardLayout>
     )
   }
 }
