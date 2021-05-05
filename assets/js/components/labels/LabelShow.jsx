@@ -41,13 +41,13 @@ class LabelShow extends Component {
     this.channel.leave()
   }
 
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.match.params.id !== this.props.match.params.id) {
-  //     this.channel.on(`graphql:label_show:${this.props.match.params.id}:label_update`, (message) => {
-  //       this.props.labelShowQuery.refetch()
-  //     })
-  //   }
-  // }
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.channel.on(`graphql:label_show:${this.props.match.params.id}:label_update`, (message) => {
+        this.props.labelShowQuery.refetch()
+      })
+    }
+  }
 
   openUpdateLabelModal = () => {
     this.setState({ showUpdateLabelModal: true })
