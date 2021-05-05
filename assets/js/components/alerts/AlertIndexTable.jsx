@@ -9,6 +9,7 @@ import moment from 'moment';
 import { DeleteOutlined } from '@ant-design/icons';
 import UserCan from '../common/UserCan';
 import isEmpty from 'lodash/isEmpty';
+import findKey from "lodash/findKey";
 
 export default (props) => {
   const renderTrigger = (trigger) => {
@@ -32,14 +33,20 @@ export default (props) => {
 
   const renderType = (config) => {
     const parsedConfig = JSON.parse(config);
-    const hasEmail = !isEmpty(parsedConfig['email']); // TODO FIX
-    const hasWebhook = !isEmpty(parsedConfig['webhook']);
+    console.log(parsedConfig)
+    const hasEmail = findKey(parsedConfig, function (e) {
+      return e.email;
+    }) !== undefined;
+
+    const hasWebhook = findKey(parsedConfig, function (e) {
+      return e.webhook;
+    }) !== undefined;
 
     if (hasEmail && hasWebhook) return 'Email, Webhook';
     if (hasEmail) return 'Email';
     if (hasWebhook) return 'Webhook';
   }
-
+ 
   const columns = [
     {
       title: 'Alert Name',
