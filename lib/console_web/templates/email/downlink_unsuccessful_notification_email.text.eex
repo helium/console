@@ -1,4 +1,4 @@
-<%= @label_name %> Notification
+<%= @alert_name %> Alert
 
 <%= if @num_devices == 1 do %>
   The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> has experienced a downlink issue.

@@ -135,101 +135,101 @@ defmodule Console.Email do
     |> render(:data_credit_transfer)
   end
 
-  def device_deleted_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def device_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more device(s) have been deleted.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:device_deleted_notification_email)
   end
 
-  def integration_with_devices_deleted_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def integration_with_devices_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more integration(s) with device(s) have been deleted.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:integration_with_devices_deleted_notification_email)
   end
 
-  def integration_with_devices_updated_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def integration_with_devices_updated_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more integration(s) with device(s) have been updated.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:integration_with_devices_updated_notification_email)
   end
 
-  def device_join_otaa_first_time_notification_email(recipients, label_name, details, organization_name, label_id, has_hotspot_info) do
+  def device_join_otaa_first_time_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more device(s) have joined via OTAA for the first time.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> assign(:has_hotspot_info, has_hotspot_info)
     |> render(:device_join_otaa_first_time_notification_email)
   end
 
-  def integration_stops_working_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def integration_stops_working_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more integration(s) have stopped working.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:integration_stops_working_notification_email)
   end
 
-  def device_stops_transmitting_notification_email(recipients, label_name, details, organization_name, label_id, has_hotspot_info) do
+  def device_stops_transmitting_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more device(s) have stopped transmitting.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> assign(:has_hotspot_info, has_hotspot_info)
     |> render(:device_stops_transmitting_notification_email)
   end
 
-  def downlink_unsuccessful_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def downlink_unsuccessful_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more device(s) have experienced downlink issues.")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:downlink_unsuccessful_notification_email)
   end
 
-  def integration_receives_first_event_notification_email(recipients, label_name, details, organization_name, label_id) do
+  def integration_receives_first_event_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
     |> subject("Helium Console: One or more integration(s) received the first packet(s).")
-    |> assign(:label_name, label_name)
+    |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
     |> assign(:details, details)
-    |> assign(:label_id, label_id)
+    |> assign(:alert_id, alert_id)
     |> render(:integration_receives_first_event_notification_email)
   end
 end

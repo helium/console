@@ -28,16 +28,9 @@ defmodule Console.AlertEvents do
         nil -> Alerts.get_alerts_by_node_and_event(node_id, node_type, event)
         _ -> Alerts.get_alerts_by_node_and_event(details["label_id"], "group", event)
       end
-    
-    IO.puts "alerts: "
-    IO.inspect alerts
-    IO.puts "details: "
-    IO.inspect details
 
-    IO.puts "details[label_id]: #{details["label_id"]}"
     if length(alerts) > 0 do
       Enum.each(alerts, fn alert ->
-        IO.puts "alert.id: #{alert.id}"
         # to prevent flapping due to some events that may be triggered too often,
         # check for prev alert events in queue or already sent
         restrict_to_prevent_flapping =
@@ -45,7 +38,6 @@ defmodule Console.AlertEvents do
             %{ time_buffer: time_buffer } -> get_prev_node_alert_events(event, node_id, node_type, time_buffer, alert.id) > 0
             nil -> false
           end
-        IO.puts restrict_to_prevent_flapping
         
         if not restrict_to_prevent_flapping do
           attrs = %{
@@ -71,5 +63,9 @@ defmodule Console.AlertEvents do
 
   def mark_alert_event_sent(%AlertEvent{} = alert_event) do
     alert_event |> AlertEvent.changeset(%{ sent: true }) |> Repo.update()
+  end
+
+  def delete_sent_alert_events_since(datetime_since) do
+    from(ae in AlertEvent, where: ae.reported_at >= ^datetime_since and ae.sent == true) |> Repo.delete_all()
   end
 end

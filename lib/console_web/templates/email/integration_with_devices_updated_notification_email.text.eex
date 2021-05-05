@@ -1,4 +1,4 @@
-<%= @label_name %> Notification
+<%= @alert_name %> Alert
 
 <%= if @num_channels == 1 do %>
   The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> was updated by <%= List.first(@details)["updated_by"] %> at <%= List.first(@details)["time"] %>.

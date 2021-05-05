@@ -15,7 +15,7 @@ defmodule Console.Jobs do
   alias Console.AlertEvents
   alias Console.Repo
 
-  def send_alert do
+  def send_alerts do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
     now = Timex.now
     buffer = -5
@@ -23,30 +23,29 @@ defmodule Console.Jobs do
 
     # send emails for this batch, grouped by event type and label
     Enum.each(Enum.group_by(alertable_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} -> 
-      # send_specific_event_email(identifiers, events) 
-      # send_webhook(identifiers, events)
-      IO.puts "HERE!!!!!"
-      IO.inspect identifiers
-      IO.inspect events
+      # TODO handle when webhook and email value is different 
+      send_specific_event_email(identifiers, events) 
+      send_webhook(identifiers, events)
     end)
 
     Enum.each(alertable_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
   end
 
   def send_specific_event_email(identifiers, events) do
-    label_notification_settings = LabelNotificationSettings.get_label_notification_setting_by_label_and_key(identifiers.label_id, identifiers.key)
-    # continue w/ email if the setting for the specific label and key exist and are turned on ("1")
-    if label_notification_settings != nil and Integer.parse(label_notification_settings.value) do
+    alert = Alerts.get_alert(identifiers.alert_id)
+    alert_event_email_config = alert.config[identifiers.event]["email"]
+
+    # continue w/ email if the setting for the specific label
+    if alert_event_email_config != nil do
       # based on settings, prepare info needed for email
-      label = Labels.get_label(identifiers.label_id)
-      organization = Organizations.get_organization(label.organization_id)
-      roles = case label_notification_settings.recipients do
+      organization = Organizations.get_organization(alert.organization_id)
+      roles = case alert_event_email_config["recipient"] do
         "admin" -> ["admin"]
         "manager" -> ["manager"]
         "read" -> ["read"]
         "all" -> ["admin", "manager", "read"]
       end
-      recipients = Organizations.get_memberships_by_organization_and_role(label.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
+      recipients = Organizations.get_memberships_by_organization_and_role(alert.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
       details = Enum.map(events, fn (e) -> e.details end)
       has_hotspot_info = case Enum.find(details, fn d -> d["hotspot"] !== nil end) do
         nil -> false
@@ -54,25 +53,25 @@ defmodule Console.Jobs do
       end
 
       # send email specific to the type of event
-      case identifiers.key do
-        "device_deleted" -> Email.device_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, label.name, details, organization.name, label.id, has_hotspot_info) |> Mailer.deliver_later()
-        "integration_stops_working" -> Email.integration_stops_working_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, label.name, details, organization.name, label.id, has_hotspot_info) |> Mailer.deliver_later()
-        "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
-        "integration_receives_first_event" -> Email.integration_receives_first_event_notification_email(recipients, label.name, details, organization.name, label.id) |> Mailer.deliver_later()
+      case identifiers.event do
+        "device_deleted" -> Email.device_deleted_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
+        "integration_with_devices_deleted" -> Email.integration_with_devices_deleted_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
+        "integration_with_devices_updated" -> Email.integration_with_devices_updated_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
+        "device_join_otaa_first_time" -> Email.device_join_otaa_first_time_notification_email(recipients, alert.name, details, organization.name, alert.id, has_hotspot_info) |> Mailer.deliver_later()
+        "integration_stops_working" -> Email.integration_stops_working_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
+        "device_stops_transmitting" -> Email.device_stops_transmitting_notification_email(recipients, alert.name, details, organization.name, alert.id, has_hotspot_info) |> Mailer.deliver_later()
+        "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
+        "integration_receives_first_event" -> Email.integration_receives_first_event_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
       end
     end
   end
 
   def send_webhook(identifiers, events) do
-    label_notification_webhooks = LabelNotificationWebhooks.get_label_notification_webhook_by_label_and_key(identifiers.label_id, identifiers.key)
+    alert = Alerts.get_alert(identifiers.alert_id)
+    alert_event_webhook_config = alert.config[identifiers.event]["webhook"]
 
-    if label_notification_webhooks != nil and Integer.parse(label_notification_webhooks.value) do
-      label = Labels.get_label(identifiers.label_id)
-      organization = Organizations.get_organization(label.organization_id)
+    if alert_event_webhook_config != nil do
+      organization = Organizations.get_organization(alert.organization_id)
 
       # sanitize events by removing __meta__ field which causes JSON serializing differences on request end
       sanitized_events = Enum.map(events, fn e -> Map.delete(Map.from_struct(e), :__meta__) end)
@@ -82,14 +81,14 @@ defmodule Console.Jobs do
         {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
         {"Content-Type", "application/json"}
       ]
-      HTTPoison.post(label_notification_webhooks.url, payload, headers)
+      HTTPoison.post(alert_event_webhook_config["url"], payload, headers)
     end
   end
 
-  def delete_sent_notifications do 
+  def delete_sent_alerts do 
     # since events are kept as "sent" so we can check against flapping, delete them in 24-hr batches
     buffer = -24
-    LabelNotificationEvents.delete_sent_label_notification_events_since(Timex.shift(Timex.now, hours: buffer))
+    AlertEvents.delete_sent_alert_events_since(Timex.shift(Timex.now, hours: buffer))
   end
 
   def trigger_device_stops_transmitting do
