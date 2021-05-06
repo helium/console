@@ -38,6 +38,7 @@ defmodule Console.Alerts.Alert do
     |> check_config_not_empty
     |> check_webhook_config_url
     |> check_valid_event_key
+    |> check_valid_node_type
   end
 
   defp check_config_not_empty(changeset) do
@@ -97,6 +98,24 @@ defmodule Console.Alerts.Alert do
 
         case invalid_config do
           true -> add_error(changeset, :message, "Alert must have a valid event key")
+          false -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_valid_node_type(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{node_type: node_type}} ->
+        invalid_node_type = 
+          Enum.member?([
+            "device/label",
+            "function",
+            "integration"
+          ], node_type) != true
+
+        case invalid_node_type do
+          true -> add_error(changeset, :message, "Alert node type must have be: device/label, function, or integration")
           false -> changeset
         end
       _ -> changeset
