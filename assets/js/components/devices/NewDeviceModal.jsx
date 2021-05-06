@@ -19,9 +19,9 @@ class NewDeviceModal extends Component {
 
   state = {
     name: "",
-    devEUI: randomString(16),
-    appEUI: randomString(16),
-    appKey: randomString(32),
+    devEUI: "",
+    appEUI: "",
+    appKey: "",
     labelName: null,
     showAppKey: false,
   }
@@ -30,8 +30,8 @@ class NewDeviceModal extends Component {
     if (!prevProps.open && this.props.open) {
       this.setState({
         name: "",
-        devEUI: randomString(16),
-        appEUI: randomString(16),
+        devEUI: "6081F9" + randomString(10),
+        appEUI: "6081F9" + randomString(10),
         appKey: randomString(32),
         labelName: null,
       })
