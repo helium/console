@@ -120,7 +120,7 @@ defmodule Console.Devices.DeviceResolver do
       |> Repo.all()
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
-        |> Map.put(d, :alerts, Alerts.get_alerts_by_node(d.id, "device"))
+        |> Map.put(:alerts, Alerts.get_alerts_by_node(d.id, "device"))
       end)
 
     {:ok, devices}

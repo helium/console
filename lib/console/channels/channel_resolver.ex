@@ -79,11 +79,10 @@ defmodule Console.Channels.ChannelResolver do
           _ ->
             channel
         end
-
-        Map.put(channel, :alerts, Alerts.get_alerts_by_node(channel.id, "integration"))
       end)
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
+        |> Map.put(:alerts, Alerts.get_alerts_by_node(c.id, "integration"))
       end)
 
     {:ok, channels}
