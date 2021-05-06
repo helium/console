@@ -135,9 +135,10 @@ defmodule ConsoleWeb.Router.DeviceController do
             event = case event["data"]["payload"] do
               nil -> event
               _ ->
-                case :unicode.characters_to_binary(event["data"]["payload"]) |> String.at(0) do
-                  <<0>> -> Kernel.put_in(event["data"]["payload"], "Unsupported unicode escape sequence in payload")
-                  _ -> event
+                if String.contains?(event["data"]["payload"], <<0>>) or String.contains?(event["data"]["payload"], <<1>>) do
+                  Kernel.put_in(event["data"]["payload"], "Unsupported unicode escape sequence in payload")
+                else
+                  event
                 end
             end
 

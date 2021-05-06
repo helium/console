@@ -292,6 +292,8 @@ class DataCreditsIndex extends Component {
     const { showDefaultPaymentModal, showPurchaseCreditModal, showAutomaticRenewalModal, showOrganizationTransferDCModal } = this.state
     const { organization, error } = this.props.orgShowDCQuery
 
+    const defaultPayment = find(this.state.paymentMethods, p => p.id === organization.default_payment_id)
+
     return (
       <DashboardLayout
         title="Data Credits"

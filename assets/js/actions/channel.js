@@ -40,9 +40,7 @@ export const deleteChannel = (id) => {
 export const sendDownlinkMessage = (payload, port, confirmed, position, device, channels) => {
   return async (dispatch) => {
     if (device) {
-      for (let i = 0; i < channels.length; i++) {
-        await postToDownlinkController(payload, port, confirmed, position, device, channels[i])
-      }
+      await postToDownlinkController(payload, port, confirmed, position, device, channels[0])
     } else {
       for (let i = 0; i < channels.length; i++) {
         await postToDownlinkController(payload, port, confirmed, position, "", channels[i])

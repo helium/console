@@ -21,8 +21,6 @@ class LabelShow extends Component {
     showLabelAddDeviceModal: false,
     showDeleteDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
-    showDebugSidebar: false,
-    showDownlinkSidebar: false,
     selectedDevices: []
   }
 
