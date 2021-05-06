@@ -5,6 +5,7 @@ const { Text } = Typography;
 import LabelsIcon from "../../../../img/label-node-icon.svg";
 import AdrTag from "../../../../img/adr/adr-node-tag.svg";
 import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
+import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 
 export default ({ data, fromSidebar, selected }) => {
@@ -76,6 +77,18 @@ export default ({ data, fromSidebar, selected }) => {
               <img
                 draggable="false"
                 src={MultiBuyTag}
+                style={{
+                  height: 20,
+                  marginLeft: 4,
+                  position: "relative",
+                  top: -2,
+                }}
+              />
+            )}
+            {data.hasAlerts && (
+              <img
+                draggable="false"
+                src={AlertTag}
                 style={{
                   height: 20,
                   marginLeft: 4,

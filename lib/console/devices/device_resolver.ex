@@ -5,6 +5,7 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
     order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
@@ -108,7 +109,10 @@ defmodule Console.Devices.DeviceResolver do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
       |> Repo.all()
-      |> Enum.map(fn d -> Map.drop(d, [:app_key]) end)
+      |> Enum.map(fn d ->
+        Map.drop(d, [:app_key])
+        |> Map.put(:alerts, Alerts.get_alerts_by_node(d.id, "device"))
+      end)
 
     {:ok, devices}
   end

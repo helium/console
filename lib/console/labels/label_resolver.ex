@@ -3,6 +3,7 @@ defmodule Console.Labels.LabelResolver do
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate_by_device(%{page: page, page_size: page_size, device_id: device_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
     order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
@@ -49,7 +50,7 @@ defmodule Console.Labels.LabelResolver do
                 rec.label_id == label.id
               end)
 
-          label |> Map.put(:device_count, device_count)
+          label |> Map.put(:device_count, device_count) |> Map.put(:alerts, Alerts.get_alerts_by_node(label.id, "label"))
       end)
 
     {:ok, labels}

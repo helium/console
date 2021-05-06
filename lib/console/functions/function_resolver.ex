@@ -2,6 +2,7 @@ defmodule Console.Functions.FunctionResolver do
   alias Console.Repo
   alias Console.Functions.Function
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     functions = Function
@@ -21,7 +22,12 @@ defmodule Console.Functions.FunctionResolver do
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do
-    functions = Ecto.assoc(current_organization, :functions) |> Repo.all()
+    functions = Ecto.assoc(current_organization, :functions)
+      |> Repo.all()
+      |> Enum.map(fn f ->
+        Map.put(f, :alerts, Alerts.get_alerts_by_node(f.id, "function"))
+      end)
+
     {:ok, functions}
   end
 

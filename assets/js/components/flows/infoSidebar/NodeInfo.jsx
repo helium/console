@@ -8,7 +8,7 @@ import ChannelContent from "./ChannelContent";
 import DeviceContent from "./DeviceContent";
 import LabelContent from "./LabelContent";
 
-export default ({ id, type, onAdrUpdate, onMultiBuyUpdate }) => {
+export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
   const renderTopIcon = () => {
     switch (type) {
       case "function":
@@ -27,7 +27,9 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate }) => {
   const renderMain = (fxn) => {
     switch (type) {
       case "function":
-        return <FunctionContent id={id} type={type} />;
+        return (
+          <FunctionContent id={id} type={type} onAlertUpdate={onAlertUpdate} />
+        );
       case "device":
         return (
           <DeviceContent
@@ -35,6 +37,7 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate }) => {
             type={type}
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
+            onAlertUpdate={onAlertUpdate}
           />
         );
       case "utility":
@@ -46,10 +49,13 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate }) => {
             type={type}
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
+            onAlertUpdate={onAlertUpdate}
           />
         );
       case "channel":
-        return <ChannelContent id={id} type={type} />;
+        return (
+          <ChannelContent id={id} type={type} onAlertUpdate={onAlertUpdate} />
+        );
     }
   };
 

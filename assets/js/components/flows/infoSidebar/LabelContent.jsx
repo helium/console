@@ -380,7 +380,11 @@ class LabelContent extends Component {
             Content of Tab Pane 2
           </TabPane>
           <TabPane tab="Alerts" key="3">
-            <AlertNodeSettings type="label" nodeId={label.id} />
+            <AlertNodeSettings
+              type="label"
+              nodeId={label.id}
+              onAlertUpdate={this.props.onAlertUpdate}
+            />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: "20px 40px 0px 40px" }}>
             <AdrNodeSettings

@@ -1,69 +1,90 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const ALL_RESOURCES = gql`
-  query AllResourcesQuery ($id: ID!) {
+  query AllResourcesQuery($id: ID!) {
     allDevices {
-      id,
-      name,
-      adr_allowed,
+      id
+      name
+      adr_allowed
       multi_buy_id
+      alerts {
+        id
+        name
+      }
     }
     allLabels {
-      id,
-      name,
-      color,
-      device_count,
-      adr_allowed,
+      id
+      name
+      color
+      device_count
+      adr_allowed
       multi_buy_id
+      alerts {
+        id
+        name
+      }
     }
     allFunctions {
-      id,
-      name,
+      id
+      name
       format
+      alerts {
+        id
+        name
+      }
     }
     allChannels {
-      id,
-      name,
-      type_name,
-      type,
+      id
+      name
+      type_name
+      type
       endpoint
+      alerts {
+        id
+        name
+      }
     }
     organization(id: $id) {
       flow
     }
   }
-`
+`;
 
 export const FLOWS_BY_DEVICE = gql`
-  query FlowsByDevice ($deviceId: ID!) {
+  query FlowsByDevice($deviceId: ID!) {
     flowsByDevice(deviceId: $deviceId) {
-      id,
-      organization_id,
-      device_id,
-      label_id,
-      function_id,
+      id
+      organization_id
+      device_id
+      label_id
+      function_id
       channel_id
     }
   }
-`
+`;
 
 export const GET_RESOURCES_NAMES = gql`
-  query GetResourcesNames ($deviceIds: [ID]!, $channelIds: [ID]!, $functionIds: [ID]!, $labelIds: [ID]!) {
+  query GetResourcesNames(
+    $deviceIds: [ID]!
+    $channelIds: [ID]!
+    $functionIds: [ID]!
+    $labelIds: [ID]!
+  ) {
     deviceNames(deviceIds: $deviceIds) {
-      id,
+      id
       name
     }
     channelNames(channelIds: $channelIds) {
-      id,
+      id
       name
     }
     functionNames(functionIds: $functionIds) {
-      id,
+      id
       name
     }
     labelNames(labelIds: $labelIds) {
-      id,
+      id
       name
     }
   }
-`
+`;
