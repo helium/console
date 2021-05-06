@@ -31,7 +31,7 @@ class NewDeviceModal extends Component {
       this.setState({
         name: "",
         devEUI: "6081F9" + randomString(10),
-        appEUI: "6081F9" + randomString(10),
+        appEUI: this.props.currentOrganizationAppEui,
         appKey: randomString(32),
         labelName: null,
       })
@@ -170,10 +170,16 @@ const randomString = length => {
   return result;
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    currentOrganizationAppEui: state.organization.currentOrganizationAppEui,
+  }
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createDevice }, dispatch)
 }
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withGql(NewDeviceModal, ALL_LABELS, props => ({ fetchPolicy: 'cache-and-network', variables: {}, name: 'allLabelsQuery' }))
 )

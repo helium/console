@@ -20,7 +20,8 @@ defmodule ConsoleWeb.OrganizationView do
     %{
       id: organization.id,
       name: organization.name,
-      role: organization.role
+      role: organization.role,
+      app_eui: organization.app_eui
     }
   end
 

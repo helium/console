@@ -11,7 +11,7 @@ defmodule Console.Organizations do
 
   def list_organizations do
     query = from o in Organization,
-      select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at}
+      select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at, app_eui: o.default_app_eui}
     Repo.all(query)
   end
 
@@ -19,7 +19,7 @@ defmodule Console.Organizations do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,
       where: m.user_id == ^current_user.id,
-      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at}
+      select: %{id: o.id, name: o.name, role: m.role, dc_balance: o.dc_balance, inserted_at: o.inserted_at, app_eui: o.default_app_eui}
     Repo.all(query)
   end
 

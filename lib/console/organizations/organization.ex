@@ -17,6 +17,7 @@ defmodule Console.Organizations.Organization do
     field :active, :boolean
     field :received_free_dc, :boolean
     field :webhook_key, :string
+    field :default_app_eui, :string
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -44,6 +45,7 @@ defmodule Console.Organizations.Organization do
     |> check_against_discovery_name
     |> check_name
     |> put_webhook_key()
+    |> put_default_app_eui()
   end
 
   @doc false
@@ -63,15 +65,9 @@ defmodule Console.Organizations.Organization do
       :dc_balance_nonce,
       :pending_automatic_purchase,
       :active,
-      :received_free_dc
+      :received_free_dc,
+      :default_app_eui
     ])
-  end
-
-  @doc false
-  def user_join_changeset(organization, user, attrs) do
-    organization
-    |> changeset(attrs)
-    |> put_assoc(:users, [user])
   end
 
   defp check_against_discovery_name(changeset) do
@@ -103,6 +99,15 @@ defmodule Console.Organizations.Organization do
       %Ecto.Changeset{valid?: true} ->
         key = Helpers.generate_token(32)
         put_change(changeset, :webhook_key, key)
+      _ -> changeset
+    end
+  end
+
+  defp put_default_app_eui(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true} ->
+        app_eui = "6081F9" <> Helpers.generate_string(10, '0123456789ABCDEF')
+        put_change(changeset, :default_app_eui, app_eui)
       _ -> changeset
     end
   end
