@@ -33,6 +33,7 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :adr_allowed, :boolean
     field :multi_buy_id, :id
+    field :alerts, list_of(:alert)
   end
 
   object :device_stats do
@@ -95,6 +96,7 @@ defmodule ConsoleWeb.Schema do
     field :device_count, :integer
     field :adr_allowed, :boolean
     field :multi_buy_id, :id
+    field :alerts, list_of(:alert)
   end
 
   paginated object :channel do
@@ -116,6 +118,7 @@ defmodule ConsoleWeb.Schema do
     field :payload_template, :string
     field :time_first_uplink, :naive_datetime
     field :updated_at, :naive_datetime
+    field :alerts, list_of(:alert)
   end
 
   paginated object :membership do
@@ -181,6 +184,7 @@ defmodule ConsoleWeb.Schema do
     field :format, :string
     field :active, :boolean
     field :updated_at, :naive_datetime
+    field :alerts, list_of(:alert)
   end
 
   object :event do

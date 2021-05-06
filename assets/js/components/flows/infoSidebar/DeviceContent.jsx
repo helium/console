@@ -1,25 +1,40 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import OutsideClick from 'react-outside-click-handler';
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import UserCan from '../../common/UserCan'
-import AlertNodeSettings from './AlertNodeSettings'
-import AdrNodeSettings from './AdrNodeSettings'
-import MultiBuyNodeSettings from './MultiBuyNodeSettings'
-import DashboardLayout from '../../common/DashboardLayout'
-import DeviceCredentials from '../../devices/DeviceCredentials'
-import DeleteDeviceModal from '../../devices/DeleteDeviceModal';
-import { updateDevice } from '../../../actions/device'
-import { DEVICE_SHOW } from '../../../graphql/devices'
-import analyticsLogger from '../../../util/analyticsLogger'
-import { displayError } from '../../../util/messages'
-import withGql from '../../../graphql/withGql'
-import { Typography, Button, Input, Tag, Card, Row, Col, Switch, Popover, Tabs } from 'antd';
-import { EditOutlined, EyeOutlined, EyeInvisibleOutlined, DeleteOutlined } from '@ant-design/icons';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import OutsideClick from "react-outside-click-handler";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import UserCan from "../../common/UserCan";
+import AlertNodeSettings from "./AlertNodeSettings";
+import AdrNodeSettings from "./AdrNodeSettings";
+import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
+import DeviceCredentials from "../../devices/DeviceCredentials";
+import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
+import { updateDevice } from "../../../actions/device";
+import { DEVICE_SHOW } from "../../../graphql/devices";
+import analyticsLogger from "../../../util/analyticsLogger";
+import { displayError } from "../../../util/messages";
+import withGql from "../../../graphql/withGql";
+import {
+  Typography,
+  Button,
+  Input,
+  Tag,
+  Card,
+  Row,
+  Col,
+  Switch,
+  Popover,
+  Tabs,
+} from "antd";
+import {
+  EditOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 const { Text, Paragraph } = Typography;
-const { TabPane } = Tabs
-import moment from 'moment';
+const { TabPane } = Tabs;
+import moment from "moment";
 
 class DeviceContent extends Component {
   state = {
@@ -34,126 +49,146 @@ class DeviceContent extends Component {
     showDeleteDeviceModal: false,
     deviceToDelete: null,
     showAppKey: false,
-  }
+  };
 
   componentDidMount() {
-    const deviceId = this.props.id
-    analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", {"id": deviceId})
+    const deviceId = this.props.id;
+    analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", { id: deviceId });
 
-    const { socket } = this.props
+    const { socket } = this.props;
 
-    this.channel = socket.channel("graphql:device_show", {})
-    this.channel.join()
-    this.channel.on(`graphql:device_show:${deviceId}:device_update`, (message) => {
-      this.props.deviceShowQuery.refetch()
-    })
+    this.channel = socket.channel("graphql:device_show", {});
+    this.channel.join();
+    this.channel.on(
+      `graphql:device_show:${deviceId}:device_update`,
+      (message) => {
+        this.props.deviceShowQuery.refetch();
+      }
+    );
   }
 
   componentWillUnmount() {
-    this.channel.leave()
+    this.channel.leave();
   }
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value})
-  }
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   handleDeviceNameUpdate = (id, e) => {
-    const { newName } = this.state
+    const { newName } = this.state;
     if (newName !== "") {
-      this.props.updateDevice(id, { name: this.state.newName })
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "name": newName })
+      this.props.updateDevice(id, { name: this.state.newName });
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+        id: id,
+        name: newName,
+      });
     }
-    this.setState({ newName: "", showNameInput: false })
-  }
+    this.setState({ newName: "", showNameInput: false });
+  };
 
   handleDeviceEUIUpdate = (id) => {
-    const { newDevEUI } = this.state
+    const { newDevEUI } = this.state;
     if (newDevEUI.length === 16) {
-      this.props.updateDevice(id, { dev_eui: this.state.newDevEUI.toUpperCase() })
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "dev_eui": newDevEUI })
-      return this.setState({ newDevEUI: "", showDevEUIInput: false })
+      this.props.updateDevice(id, {
+        dev_eui: this.state.newDevEUI.toUpperCase(),
+      });
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+        id: id,
+        dev_eui: newDevEUI,
+      });
+      return this.setState({ newDevEUI: "", showDevEUIInput: false });
     }
     if (newDevEUI === "") {
-      this.setState({ newDevEUI: "", showDevEUIInput: false })
+      this.setState({ newDevEUI: "", showDevEUIInput: false });
     } else {
-      displayError(`Device EUI must be exactly 8 bytes long`)
+      displayError(`Device EUI must be exactly 8 bytes long`);
     }
-  }
+  };
 
   handleAppEUIUpdate = (id) => {
-    const { newAppEUI } = this.state
+    const { newAppEUI } = this.state;
     if (newAppEUI.length === 16) {
-      this.props.updateDevice(id, { app_eui: this.state.newAppEUI.toUpperCase() })
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "app_eui": newAppEUI })
-      return this.setState({ newAppEUI: "", showAppEUIInput: false })
+      this.props.updateDevice(id, {
+        app_eui: this.state.newAppEUI.toUpperCase(),
+      });
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+        id: id,
+        app_eui: newAppEUI,
+      });
+      return this.setState({ newAppEUI: "", showAppEUIInput: false });
     }
     if (newAppEUI === "") {
-      this.setState({ newAppEUI: "", showAppEUIInput: false })
+      this.setState({ newAppEUI: "", showAppEUIInput: false });
     } else {
-      displayError(`App EUI must be exactly 8 bytes long`)
+      displayError(`App EUI must be exactly 8 bytes long`);
     }
-  }
+  };
 
   handleAppKeyUpdate = (id) => {
-    const { newAppKey } = this.state
+    const { newAppKey } = this.state;
     if (newAppKey.length === 32) {
-      this.props.updateDevice(id, { app_key: this.state.newAppKey.toUpperCase() })
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {"id": id, "app_key": newAppKey })
-      return this.setState({ newAppKey: "", showAppKeyInput: false })
+      this.props.updateDevice(id, {
+        app_key: this.state.newAppKey.toUpperCase(),
+      });
+      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+        id: id,
+        app_key: newAppKey,
+      });
+      return this.setState({ newAppKey: "", showAppKeyInput: false });
     }
     if (newAppKey === "") {
-      this.setState({ newAppKey: "", showAppKeyInput: false })
+      this.setState({ newAppKey: "", showAppKeyInput: false });
     } else {
-      displayError(`App Key must be exactly 16 bytes long`)
+      displayError(`App Key must be exactly 16 bytes long`);
     }
-  }
+  };
 
-  handleUpdateAdrSetting = adrValue => {
-    const deviceId = this.props.id
-    const attrs = { adr_allowed: adrValue }
-    this.props.updateDevice(deviceId, attrs)
-    .then(() => {
-      this.props.onAdrUpdate("device-" + deviceId, adrValue)
-    })
-  }
+  handleUpdateAdrSetting = (adrValue) => {
+    const deviceId = this.props.id;
+    const attrs = { adr_allowed: adrValue };
+    this.props.updateDevice(deviceId, attrs).then(() => {
+      this.props.onAdrUpdate("device-" + deviceId, adrValue);
+    });
+  };
 
   handleToggleDownlink = () => {
     const { showDownlinkSidebar } = this.state;
 
     this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
-  }
+  };
 
   toggleNameInput = () => {
-    const { showNameInput } = this.state
-    this.setState({ showNameInput: !showNameInput })
-  }
+    const { showNameInput } = this.state;
+    this.setState({ showNameInput: !showNameInput });
+  };
 
   toggleDevEUIInput = () => {
-    const { showDevEUIInput } = this.state
-    this.setState({ showDevEUIInput: !showDevEUIInput })
-  }
+    const { showDevEUIInput } = this.state;
+    this.setState({ showDevEUIInput: !showDevEUIInput });
+  };
 
   toggleAppEUIInput = () => {
-    const { showAppEUIInput } = this.state
-    this.setState({ showAppEUIInput: !showAppEUIInput })
-  }
+    const { showAppEUIInput } = this.state;
+    this.setState({ showAppEUIInput: !showAppEUIInput });
+  };
 
   toggleAppKeyInput = () => {
-    const { showAppKeyInput } = this.state
-    this.setState({ showAppKeyInput: !showAppKeyInput })
-  }
+    const { showAppKeyInput } = this.state;
+    this.setState({ showAppKeyInput: !showAppKeyInput });
+  };
 
   openDeleteDeviceModal = (device) => {
-    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] })
-  }
+    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] });
+  };
 
   closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false })
-  }
+    this.setState({ showDeleteDeviceModal: false });
+  };
 
   toggleDeviceActive = (active) => {
-    this.props.updateDevice(this.props.match.params.id, { active })
-  }
+    this.props.updateDevice(this.props.match.params.id, { active });
+  };
 
   render() {
     const {
@@ -163,21 +198,25 @@ class DeviceContent extends Component {
       showAppEUIInput,
       showAppKeyInput,
       showDeleteDeviceModal,
-      showAppKey
-    } = this.state
+      showAppKey,
+    } = this.state;
     const { loading, error, device } = this.props.deviceShowQuery;
 
     if (loading) return null; // TODO add skeleton
-    if (error) return <Text>Data failed to load, please reload the page and try again</Text>
+    if (error)
+      return (
+        <Text>Data failed to load, please reload the page and try again</Text>
+      );
 
-    const smallerText = device.total_packets > 10000
-
-    return(
+    return (
       <div>
-        <div style={{ padding: '40px 40px 0px 40px' }}>
-          <Text style={{ fontSize: 30, fontWeight: 'bold', display: 'block' }}>{device.name}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Last Modified: </Text><Text>{moment.utc(device.updated_at).local().format('l LT')}</Text>
-          <div style={{ marginTop: 10, marginBottom: 20  }}>
+        <div style={{ padding: "40px 40px 0px 40px" }}>
+          <Text style={{ fontSize: 30, fontWeight: "bold", display: "block" }}>
+            {device.name}
+          </Text>
+          <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
+          <Text>{moment.utc(device.updated_at).local().format("l LT")}</Text>
+          <div style={{ marginTop: 10, marginBottom: 20 }}>
             <Link to={`/devices/${this.props.id}`}>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
@@ -187,28 +226,30 @@ class DeviceContent extends Component {
               </Button>
             </Link>
             <Button
-                style={{ borderRadius: 4 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={e => {
-                  e.stopPropagation()
-                  this.openDeleteDeviceModal(device)
-                }}
-              >
+              style={{ borderRadius: 4 }}
+              type="danger"
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                this.openDeleteDeviceModal(device);
+              }}
+            >
               Delete
             </Button>
           </div>
         </div>
 
         <Tabs defaultActiveKey="1" centered>
-          <TabPane tab="Overview" key="1" style={{ padding: '0px 40px 0px 40px' }}>
+          <TabPane
+            tab="Overview"
+            key="1"
+            style={{ padding: "0px 40px 0px 40px" }}
+          >
             <Card title="Device Details">
               <Paragraph>
                 <Text strong>Name: </Text>
                 {showNameInput ? (
-                  <OutsideClick
-                    onOutsideClick={this.toggleNameInput}
-                  >
+                  <OutsideClick onOutsideClick={this.toggleNameInput}>
                     <Input
                       name="newName"
                       placeholder={device.name}
@@ -226,7 +267,7 @@ class DeviceContent extends Component {
                   </OutsideClick>
                 ) : (
                   <React.Fragment>
-                    <Text  style={{ marginRight: 5 }}>{device.name} </Text>
+                    <Text style={{ marginRight: 5 }}>{device.name} </Text>
                     <UserCan>
                       <Button size="small" onClick={this.toggleNameInput}>
                         <EditOutlined />
@@ -235,13 +276,14 @@ class DeviceContent extends Component {
                   </React.Fragment>
                 )}
               </Paragraph>
-              <Paragraph><Text strong>ID: </Text><Text code>{device.id}</Text></Paragraph>
+              <Paragraph>
+                <Text strong>ID: </Text>
+                <Text code>{device.id}</Text>
+              </Paragraph>
               <Paragraph>
                 <Text strong>Device EUI: </Text>
                 {showDevEUIInput && (
-                  <OutsideClick
-                    onOutsideClick={this.toggleDevEUIInput}
-                  >
+                  <OutsideClick onOutsideClick={this.toggleDevEUIInput}>
                     <Input
                       name="newDevEUI"
                       placeholder={device.dev_eui}
@@ -261,13 +303,15 @@ class DeviceContent extends Component {
                 )}
                 {!showDevEUIInput && (
                   <React.Fragment>
-                    {
-                      device.dev_eui && device.dev_eui.length === 16 ? <DeviceCredentials data={device.dev_eui} /> : <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
-                    }
+                    {device.dev_eui && device.dev_eui.length === 16 ? (
+                      <DeviceCredentials data={device.dev_eui} />
+                    ) : (
+                      <Text style={{ marginRight: 5 }}>Add a Device EUI</Text>
+                    )}
                     <UserCan>
-                    <Button size="small" onClick={this.toggleDevEUIInput}>
-                      <EditOutlined />
-                    </Button>
+                      <Button size="small" onClick={this.toggleDevEUIInput}>
+                        <EditOutlined />
+                      </Button>
                     </UserCan>
                   </React.Fragment>
                 )}
@@ -275,9 +319,7 @@ class DeviceContent extends Component {
               <Paragraph>
                 <Text strong>App EUI: </Text>
                 {showAppEUIInput && (
-                  <OutsideClick
-                    onOutsideClick={this.toggleAppEUIInput}
-                  >
+                  <OutsideClick onOutsideClick={this.toggleAppEUIInput}>
                     <Input
                       name="newAppEUI"
                       placeholder={device.app_eui}
@@ -297,36 +339,34 @@ class DeviceContent extends Component {
                 )}
                 {!showAppEUIInput && (
                   <React.Fragment>
-                    {
-                      device.app_eui && device.app_eui.length === 16 ? <DeviceCredentials data={device.app_eui} /> : <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
-                    }
+                    {device.app_eui && device.app_eui.length === 16 ? (
+                      <DeviceCredentials data={device.app_eui} />
+                    ) : (
+                      <Text style={{ marginRight: 5 }}>Add a App EUI</Text>
+                    )}
                     <UserCan>
-                    <Button size="small" onClick={this.toggleAppEUIInput}>
-                      <EditOutlined />
-                    </Button>
+                      <Button size="small" onClick={this.toggleAppEUIInput}>
+                        <EditOutlined />
+                      </Button>
                     </UserCan>
                   </React.Fragment>
                 )}
               </Paragraph>
               <Paragraph>
                 <Text strong>App Key: </Text>
-                {
-                  showAppKey ? (
-                    <EyeOutlined
-                      onClick={() => this.setState({ showAppKey: !showAppKey })}
-                      style={{ marginLeft: 5 }}
-                    />
-                  ) : (
-                    <EyeInvisibleOutlined
-                      onClick={() => this.setState({ showAppKey: !showAppKey })}
-                      style={{ marginLeft: 5 }}
-                    />
-                  )
-                }
+                {showAppKey ? (
+                  <EyeOutlined
+                    onClick={() => this.setState({ showAppKey: !showAppKey })}
+                    style={{ marginLeft: 5 }}
+                  />
+                ) : (
+                  <EyeInvisibleOutlined
+                    onClick={() => this.setState({ showAppKey: !showAppKey })}
+                    style={{ marginLeft: 5 }}
+                  />
+                )}
                 {showAppKeyInput && (
-                  <OutsideClick
-                    onOutsideClick={this.toggleAppKeyInput}
-                  >
+                  <OutsideClick onOutsideClick={this.toggleAppKeyInput}>
                     <Input
                       name="newAppKey"
                       placeholder={device.app_key}
@@ -346,9 +386,11 @@ class DeviceContent extends Component {
                 )}
                 {!showAppKeyInput && showAppKey && (
                   <React.Fragment>
-                    {
-                      device.app_key && device.app_key.length === 32 ? <DeviceCredentials data={device.app_key} /> : <Text style={{ marginRight: 5 }}>Add a App Key</Text>
-                    }
+                    {device.app_key && device.app_key.length === 32 ? (
+                      <DeviceCredentials data={device.app_key} />
+                    ) : (
+                      <Text style={{ marginRight: 5 }}>Add a App Key</Text>
+                    )}
                     <Button size="small" onClick={this.toggleAppKeyInput}>
                       <EditOutlined />
                     </Button>
@@ -360,7 +402,9 @@ class DeviceContent extends Component {
               </Paragraph>
               <Paragraph>
                 <Text strong>Activation Method: </Text>
-                <Tag style={{fontWeight: 500, fontSize: 14}} color="#9254DE">OTAA</Tag>
+                <Tag style={{ fontWeight: 500, fontSize: 14 }} color="#9254DE">
+                  OTAA
+                </Tag>
               </Paragraph>
             </Card>
           </TabPane>
@@ -368,13 +412,24 @@ class DeviceContent extends Component {
             Content of Tab Pane 2
           </TabPane>
           <TabPane tab="Alerts" key="3">
-            <AlertNodeSettings type="device" nodeId={device.id} />
+            <AlertNodeSettings
+              type="device"
+              nodeId={device.id}
+              onAlertUpdate={this.props.onAlertUpdate}
+            />
           </TabPane>
-          <TabPane tab="ADR" key="4" style={{ padding: '0px 40px 0px 40px' }}>
-            <AdrNodeSettings from="device" checked={device.adr_allowed} updateAdr={this.handleUpdateAdrSetting} />
+          <TabPane tab="ADR" key="4" style={{ padding: "0px 40px 0px 40px" }}>
+            <AdrNodeSettings
+              from="device"
+              checked={device.adr_allowed}
+              updateAdr={this.handleUpdateAdrSetting}
+            />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiBuyNodeSettings currentNode={device} onMultiBuyUpdate={this.props.onMultiBuyUpdate} />
+            <MultiBuyNodeSettings
+              currentNode={device}
+              onMultiBuyUpdate={this.props.onMultiBuyUpdate}
+            />
           </TabPane>
         </Tabs>
 
@@ -387,20 +442,27 @@ class DeviceContent extends Component {
           from="deviceShow"
         />
       </div>
-    )
+    );
   }
 }
 
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice }, dispatch)
+  return bindActionCreators({ updateDevice }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(DeviceContent, DEVICE_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.id }, name: 'deviceShowQuery' }))
-)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  withGql(DeviceContent, DEVICE_SHOW, (props) => ({
+    fetchPolicy: "cache-first",
+    variables: { id: props.id },
+    name: "deviceShowQuery",
+  }))
+);

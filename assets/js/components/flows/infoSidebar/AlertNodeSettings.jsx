@@ -125,7 +125,18 @@ export default (props) => {
                       if (checked) {
                         dispatch(
                           addAlertToNode(record.id, props.nodeId, props.type)
-                        );
+                        ).then(() => {
+                          let prefix = `${
+                            props.type === "integration"
+                              ? "channel"
+                              : props.type
+                          }-`;
+                          props.onAlertUpdate(
+                            prefix + props.nodeId,
+                            props.type,
+                            nodeAlerts.length + 1 > 0
+                          );
+                        });
                       } else {
                         dispatch(
                           removeAlertFromNode(
@@ -133,7 +144,18 @@ export default (props) => {
                             props.nodeId,
                             props.type
                           )
-                        );
+                        ).then(() => {
+                          let prefix = `${
+                            props.type === "integration"
+                              ? "channel"
+                              : props.type
+                          }-`;
+                          props.onAlertUpdate(
+                            prefix + props.nodeId,
+                            props.type,
+                            nodeAlerts.length - 1 > 0
+                          );
+                        });
                       }
                     }}
                   />

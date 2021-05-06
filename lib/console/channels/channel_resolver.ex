@@ -2,6 +2,7 @@ defmodule Console.Channels.ChannelResolver do
   alias Console.Repo
   alias Console.Channels.Channel
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     channels = Channel
@@ -78,6 +79,8 @@ defmodule Console.Channels.ChannelResolver do
           _ ->
             channel
         end
+
+        Map.put(channel, :alerts, Alerts.get_alerts_by_node(channel.id, "integration"))
       end)
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])

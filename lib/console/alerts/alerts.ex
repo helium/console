@@ -97,6 +97,16 @@ defmodule Console.Alerts do
     Repo.all(query)
   end
 
+  def get_alerts_by_node(node_id, node_type) do
+    query = from a in Alert,
+      join: an in AlertNode,
+      on: an.alert_id == a.id,
+      where: an.node_id == ^node_id
+      and an.node_type == ^node_type
+
+    Repo.all(query)
+  end
+
   def update_alert_last_triggered_at(%Alert{} = alert) do
     attrs = %{ "last_triggered_at" => Timex.now }
     
