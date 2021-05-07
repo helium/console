@@ -15,7 +15,6 @@ export const ALL_RESOURCES = gql`
     allLabels {
       id
       name
-      color
       device_count
       adr_allowed
       multi_buy_id
