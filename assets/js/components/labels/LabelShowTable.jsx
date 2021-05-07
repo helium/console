@@ -122,7 +122,7 @@ class LabelShowTable extends Component {
           <span>
             {
               record.labels.map(l => (
-                <LabelTag key={l.name} text={l.name} color={l.color} />
+                <LabelTag key={l.name} text={l.name} />
               ))
             }
           </span>

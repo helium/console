@@ -26,7 +26,6 @@ export const DEVICE_SHOW = gql`
       labels {
         name,
         id,
-        color,
       }
     }
   }
@@ -83,7 +82,6 @@ export const PAGINATED_DEVICES = gql`
         labels {
           name,
           id,
-          color,
         }
       },
       totalEntries,
@@ -106,8 +104,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
         inserted_at,
         last_connected,
         labels {
-          name,
-          color,
+          name
         }
       },
       totalEntries,

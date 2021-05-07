@@ -132,14 +132,12 @@ class DeviceIndexTable extends Component {
                     <LabelTag
                       key={l.name}
                       text={l.name}
-                      color={l.color}
                     />
                   }
                 >
                   <LabelTag
                     key={l.name}
                     text={l.name}
-                    color={l.color}
                     closable
                     onClose={e => {
                       e.preventDefault()

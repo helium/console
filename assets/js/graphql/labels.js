@@ -4,7 +4,6 @@ export const LABEL_FRAGMENT = gql`
   fragment LabelFragment on Label {
     name,
     id,
-    color,
     inserted_at,
     creator,
     adr_allowed,
@@ -46,7 +45,6 @@ export const ALL_LABELS = gql`
     allLabels {
       id,
       name,
-      color,
       device_count
     }
   }
@@ -59,7 +57,6 @@ export const PAGINATED_LABELS_BY_DEVICE = gql`
       entries {
         name,
         id,
-        color,
         inserted_at
       },
       totalEntries,

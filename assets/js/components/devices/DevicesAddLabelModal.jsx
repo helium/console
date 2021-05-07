@@ -82,7 +82,7 @@ class DevicesAddLabelModal extends Component {
             {
               allLabels && allLabels.map(l => (
                 <Option value={l.id} key={l.id}>
-                  <LabelTag text={l.name} color={l.color} />
+                  <LabelTag text={l.name} />
                 </Option>
               ))
             }
