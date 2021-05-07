@@ -39,6 +39,7 @@ defmodule Console.Alerts.Alert do
     |> check_webhook_config_url
     |> check_valid_event_key
     |> check_valid_node_type
+    |> check_valid_config
   end
 
   defp check_config_not_empty(changeset) do
@@ -52,6 +53,25 @@ defmodule Console.Alerts.Alert do
 
         case empty_config do
           true -> add_error(changeset, :message, "Alert must have at least one email or webhook setting turned on")
+          false -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_valid_config(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
+        invalid_config = Enum.any?(config, fn alert_event_config ->
+          {_event_key, event_config} = alert_event_config
+
+          config_types = Map.keys(event_config)
+          Enum.any?(Enum.member?(["email", "webhook"], ) != true
+          
+        end)
+
+        case invalid_config do
+          true -> add_error(changeset, :message, "Alert config must have proper format")
           false -> changeset
         end
       _ -> changeset
