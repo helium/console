@@ -47,7 +47,7 @@ class FunctionNew extends Component {
       <FunctionDashboardLayout {...this.props}>
         <div style={{ padding: '30px 30px 20px 30px' }}>
           <Card title="Step 1 - Enter Function Details">
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
               <Input
                 placeholder="e.g. My Decoder"
                 name="name"
@@ -81,6 +81,9 @@ class FunctionNew extends Component {
                 </Option>
               </Select>
             </div>
+            {
+              format === 'custom' && <a href="https://github.com/helium/console-decoders" target="_blank">View list of Helium created functions</a>
+            }
           </Card>
           {
             type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
