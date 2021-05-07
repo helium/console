@@ -5,7 +5,7 @@ defmodule ConsoleWeb.OrganizationControllerTest do
 
   alias Console.Organizations
 
-  describe "invitations" do
+  describe "organizations" do
     setup [:authenticate_user]
 
     test "create organization properly", %{conn: conn} do

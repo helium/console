@@ -17,11 +17,21 @@ defmodule ConsoleWeb.OrganizationView do
   end
 
   def render("organization.json", %{organization: organization}) do
-    %{
-      id: organization.id,
-      name: organization.name,
-      role: organization.role
-    }
+    case Map.get(organization, :app_eui) do
+      nil ->
+        %{
+          id: organization.id,
+          name: organization.name,
+          role: organization.role,
+        }
+      _ ->
+        %{
+          id: organization.id,
+          name: organization.name,
+          role: organization.role,
+          app_eui: organization.app_eui
+        }
+    end
   end
 
   def append_organization(json, organization) do

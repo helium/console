@@ -33,7 +33,8 @@ defmodule Console.Factory do
   def organization_factory do
     %Organization{
       name: sequence(:name, &"Organization #{&1}"),
-      webhook_key: "some_valid_key"
+      webhook_key: "some_valid_key",
+      default_app_eui: "some_app_eui"
     }
   end
 
