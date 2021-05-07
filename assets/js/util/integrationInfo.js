@@ -1,6 +1,7 @@
 import Azure from '../../img/azure-channel.svg'
 import Aws from '../../img/aws-channel.svg'
 import Google from '../../img/google-channel.svg'
+import GoogleSheet from '../../img/google-sheet-channel.svg'
 import Mqtt from '../../img/mqtt-channel.svg'
 import Http from '../../img/http-channel.svg'
 import Cargo from '../../img/heliumcargo.svg'
@@ -44,13 +45,6 @@ export const PREMADE_CHANNEL_TYPES = [
     docLink: "https://docs.helium.com/use-the-network/console/integrations/cargo"
   },
   {
-    name: "Google Sheets",
-    link: "/integrations/new/googlesheet",
-    img: `${Google}` ,
-    info: "This Integration streamlines sending data to a Google Sheet by using a Google Form.",
-    docLink: "https://docs.helium.com/use-the-network/console/integrations/google-sheets"
-  },
-  {
     name: "myDevices Cayenne",
     link: "/integrations/new/mydevices",
     img: `${MyDevices}`,
@@ -84,5 +78,12 @@ export const PREMADE_CHANNEL_TYPES = [
     img: `${Tago}` ,
     info: "This Integration simplifies sending data to the TagoIO platform.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/tago"
+  },
+  {
+    name: "Google Sheets",
+    link: "/integrations/new/googlesheet",
+    img: `${GoogleSheet}` ,
+    info: "This Integration streamlines sending data to a Google Sheet by using a Google Form.",
+    docLink: "https://docs.helium.com/use-the-network/console/integrations/google-sheets"
   },
 ]
