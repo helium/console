@@ -22,8 +22,8 @@ class DeviceNew extends Component {
 
   state = {
     name: "",
-    devEUI: randomString(16),
-    appEUI: randomString(16),
+    devEUI: "6081F9" + randomString(10),
+    appEUI: this.props.currentOrganizationAppEui,
     appKey: randomString(32),
     labelName: null,
     showAppKey: false,
@@ -216,6 +216,7 @@ const randomString = length => {
 function mapStateToProps(state) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
+    currentOrganizationAppEui: state.organization.currentOrganizationAppEui,
     socket: state.apollo.socket,
   }
 }

@@ -8,7 +8,7 @@ import HttpIcon from '../../img/channels/http.png';
 import MqttIcon from '../../img/channels/mqtt.png';
 import TagoIcon from '../../img/channels/tago.png';
 import UbidotsIcon from '../../img/channels/ubidots.png';
-import GoogleSheetIcon from '../../img/google-channel.svg'
+import GoogleSheetIcon from '../../img/channels/google-sheet.svg'
 
 export const integrationImgMap = {
   adafruit: AdafruitIcon,
@@ -32,6 +32,6 @@ export const getIntegrationTypeForFlows = (endpoint, type) => {
   if (endpoint === "https://helium.middleware.tago.io/uplink") return "tago"
   if (endpoint.indexOf("io.adafruit.com") !== -1) return "adafruit"
   if (endpoint.indexOf("industrial.ubidots.com") !== -1) return "ubidots"
-  if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1) return "http"
+  if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1) return "googlesheets"
   return type
 }
