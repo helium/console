@@ -52,7 +52,7 @@ defmodule ConsoleWeb.V1.AlertController do
 
   def add_alert_to_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
     current_organization = conn.assigns.current_organization
-    alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
+    alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
 
     if alert_node == nil do
       case Alerts.get_alert(current_organization, alert_id) do
@@ -71,8 +71,8 @@ defmodule ConsoleWeb.V1.AlertController do
 
   def remove_alert_from_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
     current_organization = conn.assigns.current_organization
-    alert = Alerts.get_alert!(current_organization, alert_id)
-    alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
+    alert = Alerts.get_alert(current_organization, alert_id)
+    alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
 
     if alert != nil and alert_node != nil do
       with {:ok, %AlertNode{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
