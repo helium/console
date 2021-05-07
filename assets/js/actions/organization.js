@@ -111,7 +111,8 @@ export const fetchedOrganization = (organization) => {
     type: FETCHED_ORGANIZATION,
     currentOrganizationId: organization.id,
     currentOrganizationName: organization.name,
-    currentRole: organization.role
+    currentRole: organization.role,
+    currentOrganizationAppEui: organization.app_eui
   }
 }
 

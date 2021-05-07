@@ -81,6 +81,9 @@ class FunctionNew extends Component {
                 </Option>
               </Select>
             </div>
+            {
+              format === 'custom' && <a href="https://github.com/helium/console-decoders" target="_blank">View list of Helium created functions</a>
+            }
           </Card>
           {
             type && format === 'custom' && <FunctionValidator handleFunctionUpdate={this.handleFunctionUpdate} body={body} title="Step 2 - Enter Custom Script"/>
