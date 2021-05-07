@@ -47,7 +47,7 @@ class FunctionNew extends Component {
       <FunctionDashboardLayout {...this.props}>
         <div style={{ padding: '30px 30px 20px 30px' }}>
           <Card title="Step 1 - Enter Function Details">
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
               <Input
                 placeholder="e.g. My Decoder"
                 name="name"
