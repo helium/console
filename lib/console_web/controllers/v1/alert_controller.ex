@@ -4,6 +4,7 @@ defmodule ConsoleWeb.V1.AlertController do
   alias Console.Organizations
   alias Console.Alerts
   alias Console.Alerts.Alert
+  alias Console.Alerts.AlertNode
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -46,6 +47,45 @@ defmodule ConsoleWeb.V1.AlertController do
           conn
           |> send_resp(:ok, "Alert deleted")
         end
+    end
+  end
+
+  def add_alert_to_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+    alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
+
+    if alert_node == nil do
+      case Alerts.get_alert(current_organization, alert_id) do
+        nil ->
+          {:error, :not_found, "Alert not found"}
+        %Alert{} = alert ->
+          with {:ok, %AlertNode{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
+          conn
+            |> send_resp(:ok, "Alert was successfully added to the #{node_type} node")
+        end
+      end
+    else
+      {:error, :bad_request, "Alert already added to provided node"}
+    end
+  end
+
+  def remove_alert_from_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
+    current_organization = conn.assigns.current_organization
+    alert = Alerts.get_alert!(current_organization, alert_id)
+    alert_node = Alerts.get_alert_node!(alert_id, node_id, node_type)
+
+    if alert != nil and alert_node != nil do
+      with {:ok, %AlertNode{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
+        conn
+          |> send_resp(:ok, "Alert was successfully removed from the #{node_type} node")
+      end
+    else
+      msg =
+        case alert do
+          nil -> "Alert not found"
+          _ -> "Alert not attached to node"
+        end
+      {:error, :not_found, msg}
     end
   end
 end
