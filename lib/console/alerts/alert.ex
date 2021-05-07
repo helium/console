@@ -36,10 +36,10 @@ defmodule Console.Alerts.Alert do
     |> validate_required(:name, message: "Name cannot be blank")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_config_not_empty
+    |> check_valid_config
     |> check_webhook_config_url
     |> check_valid_event_key
     |> check_valid_node_type
-    |> check_valid_config
   end
 
   defp check_config_not_empty(changeset) do
@@ -64,10 +64,21 @@ defmodule Console.Alerts.Alert do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
         invalid_config = Enum.any?(config, fn alert_event_config ->
           {_event_key, event_config} = alert_event_config
-
-          config_types = Map.keys(event_config)
-          Enum.any?(Enum.member?(["email", "webhook"], ) != true
-          
+          Enum.any?(event_config, fn config ->
+            {type, type_config} = config
+            keys = Map.keys(type_config)
+            Enum.member?(["email", "webhook"], type) != true ||
+              case type do
+                "webhook" ->
+                  "url" not in keys || Enum.any?(keys, fn k ->
+                    Enum.member?(["url", "notes", "value"], k) != true
+                  end)
+                "email" ->
+                  "recipient" not in keys || Enum.any?(keys, fn k ->
+                    Enum.member?(["recipient", "value"], k) != true
+                  end) || type_config["recipient"] not in ["admin", "manager", "read", "all"]
+              end
+          end)
         end)
 
         case invalid_config do

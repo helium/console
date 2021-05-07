@@ -118,7 +118,7 @@ defmodule ConsoleWeb.Router do
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
     post "/devices/discover", DeviceController, :discover_device
-    resources "/alerts", AlertController, only: [:create]
+    resources "/alerts", AlertController, only: [:create, :update, :delete]
   end
 
   if Mix.env == :dev do
