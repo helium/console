@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Modal, Button, Typography, Input, Divider, Tabs, Switch } from "antd";
-import { labelColors } from "../common/LabelTag";
 import analyticsLogger from "../../util/analyticsLogger";
 import { grayForModalCaptions } from "../../util/colors";
 const { Text } = Typography;

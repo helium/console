@@ -42,7 +42,6 @@ class LabelAppliedNew extends Component {
             label: (
               <LabelTag
                 text={l.name}
-                color={l.color}
               />
             ),
             value: l.name

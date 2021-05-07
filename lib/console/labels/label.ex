@@ -15,7 +15,6 @@ defmodule Console.Labels.Label do
   @foreign_key_type :binary_id
   schema "labels" do
     field :name, :string
-    field :color, :string
     field :creator, :string
     field :adr_allowed, :boolean
 
@@ -26,10 +25,10 @@ defmodule Console.Labels.Label do
   end
 
   def changeset(label, attrs) do
-    attrs = Helpers.sanitize_attrs(attrs, ["name", "color", "creator"])
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "creator"])
 
     label
-    |> cast(attrs, [:name, :organization_id, :color, :creator, :adr_allowed, :multi_buy_id])
+    |> cast(attrs, [:name, :organization_id, :creator, :adr_allowed, :multi_buy_id])
     |> validate_required([:name, :organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "This label name has already been used in this organization")
