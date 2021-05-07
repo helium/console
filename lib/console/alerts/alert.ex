@@ -36,8 +36,10 @@ defmodule Console.Alerts.Alert do
     |> validate_required(:name, message: "Name cannot be blank")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_config_not_empty
+    |> check_valid_config
     |> check_webhook_config_url
     |> check_valid_event_key
+    |> check_valid_node_type
   end
 
   defp check_config_not_empty(changeset) do
@@ -51,6 +53,36 @@ defmodule Console.Alerts.Alert do
 
         case empty_config do
           true -> add_error(changeset, :message, "Alert must have at least one email or webhook setting turned on")
+          false -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_valid_config(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
+        invalid_config = Enum.any?(config, fn alert_event_config ->
+          {_event_key, event_config} = alert_event_config
+          Enum.any?(event_config, fn config ->
+            {type, type_config} = config
+            keys = Map.keys(type_config)
+            Enum.member?(["email", "webhook"], type) != true ||
+              case type do
+                "webhook" ->
+                  "url" not in keys || Enum.any?(keys, fn k ->
+                    Enum.member?(["url", "notes", "value"], k) != true
+                  end)
+                "email" ->
+                  "recipient" not in keys || Enum.any?(keys, fn k ->
+                    Enum.member?(["recipient", "value"], k) != true
+                  end) || type_config["recipient"] not in ["admin", "manager", "read", "all"]
+              end
+          end)
+        end)
+
+        case invalid_config do
+          true -> add_error(changeset, :message, "Alert config must have proper format")
           false -> changeset
         end
       _ -> changeset
@@ -97,6 +129,24 @@ defmodule Console.Alerts.Alert do
 
         case invalid_config do
           true -> add_error(changeset, :message, "Alert must have a valid event key")
+          false -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_valid_node_type(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{node_type: node_type}} ->
+        invalid_node_type = 
+          Enum.member?([
+            "device/label",
+            "function",
+            "integration"
+          ], node_type) != true
+
+        case invalid_node_type do
+          true -> add_error(changeset, :message, "Alert node type must have be: device/label, function, or integration")
           false -> changeset
         end
       _ -> changeset

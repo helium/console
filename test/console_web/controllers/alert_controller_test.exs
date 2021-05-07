@@ -12,6 +12,12 @@ defmodule ConsoleWeb.AlertControllerTest do
         "webhook" => %{}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
+
+      resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "some_other_node_type", "config" => %{
+        "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}},
+        "webhook" => %{}
+      } }}
+      assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert node type must have be: device/label, function, or integration"]}}
       
       resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{} }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert must have at least one email or webhook setting turned on"]}}
