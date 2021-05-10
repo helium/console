@@ -82,7 +82,9 @@ class ChannelContent extends Component {
     if (loading) return null; // TODO add skeleton
     if (error)
       return (
-        <Text>Data failed to load, please reload the page and try again</Text>
+        <div style={{ padding: 40 }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </div>
       );
 
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;

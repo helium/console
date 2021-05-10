@@ -261,13 +261,19 @@ class LabelContent extends Component {
       error,
       devices_by_label,
     } = this.props.paginatedDevicesQuery;
-    const { label } = this.props.labelQuery;
+    const {
+      label,
+      error: labelError,
+      loading: labelLoading,
+    } = this.props.labelQuery;
     const { showDeleteDeviceModal } = this.state;
 
-    if (loading) return null; // TODO add skeleton
-    if (error)
+    if (loading || labelLoading) return null; // TODO add skeleton
+    if (error || labelError)
       return (
-        <Text>Data failed to load, please reload the page and try again</Text>
+        <div style={{ padding: 40 }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </div>
       );
 
     const rowSelection = {
