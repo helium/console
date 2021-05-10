@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ export default (props) => {
     : props.nodeType;
 
   return (
-    <Fragment>
+    <div style={{ padding: "0px 40px 0px 40px" }}>
       <Text
         style={{ display: "block", fontSize: "20px", marginBottom: 5 }}
         strong
@@ -40,6 +40,6 @@ export default (props) => {
         saveIcon={<PlusOutlined />}
         cancel
       />
-    </Fragment>
+    </div>
   );
 };
