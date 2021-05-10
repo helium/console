@@ -23,15 +23,13 @@ import {
   Select,
   Popover,
   Switch,
-  Tooltip,
-  Row,
   Tabs,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
 import { DeleteOutlined, SettingOutlined } from "@ant-design/icons";
-import { SkeletonLayout } from "../../common/SkeletonLayout";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 const { Text } = Typography;
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -268,7 +266,12 @@ class LabelContent extends Component {
     } = this.props.labelQuery;
     const { showDeleteDeviceModal } = this.state;
 
-    if (loading || labelLoading) return null; // TODO add skeleton
+    if (loading || labelLoading)
+      return (
+        <div style={{ padding: 40 }}>
+          <SkeletonLayout />
+        </div>
+      );
     if (error || labelError)
       return (
         <div style={{ padding: 40 }}>

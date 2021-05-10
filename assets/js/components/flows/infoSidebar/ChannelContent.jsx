@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 
 class ChannelContent extends Component {
   state = {
@@ -79,7 +80,12 @@ class ChannelContent extends Component {
     const { loading, error, channel } = this.props.channelShowQuery;
     const { showDownlinkToken } = this.state;
 
-    if (loading) return null; // TODO add skeleton
+    if (loading)
+      return (
+        <div style={{ padding: 40 }}>
+          <SkeletonLayout />
+        </div>
+      );
     if (error)
       return (
         <div style={{ padding: 40 }}>

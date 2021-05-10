@@ -14,18 +14,7 @@ import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
 import { displayError } from "../../../util/messages";
 import withGql from "../../../graphql/withGql";
-import {
-  Typography,
-  Button,
-  Input,
-  Tag,
-  Card,
-  Row,
-  Col,
-  Switch,
-  Popover,
-  Tabs,
-} from "antd";
+import { Typography, Button, Input, Tag, Card, Tabs } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
@@ -35,6 +24,7 @@ import {
 const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 
 class DeviceContent extends Component {
   state = {
@@ -202,7 +192,12 @@ class DeviceContent extends Component {
     } = this.state;
     const { loading, error, device } = this.props.deviceShowQuery;
 
-    if (loading) return null; // TODO add skeleton
+    if (loading)
+      return (
+        <div style={{ padding: 40 }}>
+          <SkeletonLayout />
+        </div>
+      );
     if (error)
       return (
         <div style={{ padding: 40 }}>

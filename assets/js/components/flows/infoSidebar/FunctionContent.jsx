@@ -21,6 +21,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
 const { TabPane } = Tabs;
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 
 class FunctionContent extends Component {
   state = {
@@ -115,7 +116,12 @@ class FunctionContent extends Component {
     const { loading, error } = this.props.functionShowQuery;
     const fxn = this.props.functionShowQuery.function;
 
-    if (loading) return null; // TODO skeleton
+    if (loading)
+      return (
+        <div style={{ padding: 40 }}>
+          <SkeletonLayout />
+        </div>
+      );
     if (error)
       return (
         <div style={{ padding: 40 }}>
