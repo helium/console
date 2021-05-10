@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import analyticsLogger from '../../util/analyticsLogger'
 import UpdateLabelModal from './UpdateLabelModal'
 import LabelAddDeviceModal from './LabelAddDeviceModal'
 import DeleteDeviceModal from '../devices/DeleteDeviceModal';
@@ -9,7 +10,11 @@ import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 import LabelShowTable from './LabelShowTable'
 import UserCan from '../common/UserCan'
+import Downlink from '../common/Downlink'
+import Sidebar from '../common/Sidebar'
+import DownlinkImage from '../../../img/downlink.svg'
 import { updateLabel, addDevicesToLabels } from '../../actions/label'
+import { sendClearDownlinkQueue, fetchDownlinkQueue, sendDownlinkMessage } from '../../actions/downlink'
 import { LABEL_SHOW } from '../../graphql/labels'
 import withGql from '../../graphql/withGql'
 import { Typography } from 'antd';
@@ -21,7 +26,8 @@ class LabelShow extends Component {
     showLabelAddDeviceModal: false,
     showDeleteDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
-    selectedDevices: []
+    selectedDevices: [],
+    showDownlinkSidebar: false,
   }
 
   componentDidMount() {
@@ -89,6 +95,12 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleToggleDownlink = () => {
+    const { showDownlinkSidebar } = this.state;
+
+    this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
+  }
+
   render() {
     const { loading, error, label } = this.props.labelShowQuery
     const { showDeleteDeviceModal, selectedDevices } = this.state
@@ -154,6 +166,43 @@ class LabelShow extends Component {
             totalDevices={selectedDevices.length}
           />
         </div>
+
+        <UserCan>
+            {
+              <Sidebar
+                show={this.state.showDownlinkSidebar}
+                toggle={this.handleToggleDownlink}
+                sidebarIcon={<img src={DownlinkImage}/>}
+                iconBackground='#40A9FF'
+                iconPosition='middle'
+                message='Send a manual downlink using an HTTP integration'
+                disabledMessage='Please attach a label with an HTTP integration to use Downlink'
+              >
+                <Downlink
+                  src="LabelShow"
+                  id={label.id}
+                  devices={label.devices}
+                  socket={this.props.socket}
+                  onSend={(payload, confirm, port, position) => {
+                    analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "label": label.id });
+                    this.props.sendDownlinkMessage(
+                      payload,
+                      port,
+                      confirm,
+                      position,
+                      "label",
+                      label.id
+                    )
+                  }}
+                  onClear={() => {
+                    analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": label.devices.map(device => device.id) });
+                    this.props.sendClearDownlinkQueue({ label_id: label.id });
+                  }}
+                  fetchDownlinkQueue={() => this.props.fetchDownlinkQueue(label.id, "label")}
+                />
+              </Sidebar>
+            }
+          </UserCan>
       </DeviceDashboardLayout>
     )
   }
@@ -166,7 +215,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels }, dispatch)
+  return bindActionCreators({ updateLabel, addDevicesToLabels, sendClearDownlinkQueue, sendDownlinkMessage, fetchDownlinkQueue }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

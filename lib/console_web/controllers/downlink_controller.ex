@@ -14,7 +14,14 @@ defmodule ConsoleWeb.DownlinkController do
       "device" ->
         device = Devices.get_device!(current_organization, id)
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [id], "payload" => conn.body_params })
-        
+
+        conn
+        |> send_resp(:no_content, "")
+      "label" ->
+        label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
+        device_ids = label.devices |> Enum.map(fn d -> d.id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [device_ids], "payload" => conn.body_params })
+
         conn
         |> send_resp(:no_content, "")
     end
