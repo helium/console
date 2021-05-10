@@ -21,6 +21,12 @@ defmodule Console.Labels do
      |> Repo.all()
   end
 
+  def get_labels_and_attached_devices(ids) do
+    from(l in Label, where: l.id in ^ids)
+    |> preload([:devices])
+    |> Repo.all()
+  end
+
   def get_labels_of_device(device) do
      from(dl in DevicesLabels, where: dl.device_id == ^device.id)
      |> Repo.all()

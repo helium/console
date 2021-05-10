@@ -3,6 +3,8 @@ defmodule ConsoleWeb.V1.DownlinkController do
   alias Console.Repo
   alias Console.Devices
   alias Console.Channels
+  alias Console.Labels
+  alias Console.Flows
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -23,8 +25,17 @@ defmodule ConsoleWeb.V1.DownlinkController do
       nil -> {:error, :bad_request, "Integration not found"}
       _ ->
         if channel.type == "http" and token == Map.get(channel, :downlink_token) do
-          channel = channel |> Repo.preload([labels: [:devices]])
-          devices = channel.labels |> Enum.map(fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
+          flows = Flows.get_flows_with_channel_id(channel.organization_id, channel.id)
+          labels_attached = Enum.filter(flows, fn f -> f.label_id != nil end) |> Enum.map(fn f -> f.label_id end)
+          devices_attached = Enum.filter(flows, fn f -> f.device_id != nil end) |> Enum.map(fn f -> f.device_id end)
+
+          label_devices_attached =
+            Labels.get_labels_and_attached_devices(labels_attached)
+            |> Enum.map(fn l -> l.devices end)
+            |> List.flatten()
+            |> Enum.map(fn d -> d.id end)
+
+          devices = devices_attached ++ label_devices_attached |> Enum.uniq()
 
           cond do
             length(devices) == 0 ->
@@ -44,30 +55,5 @@ defmodule ConsoleWeb.V1.DownlinkController do
           {:error, :bad_request, "Downlink token invalid for integration"}
         end
     end
-  end
-
-  def clear_downlink_queue(conn, %{ "label_id" => label_id }) do
-    devices = Devices.get_devices_for_label(label_id)
-    if length(devices) > 0 do
-      clear_downlink_queue(Enum.map(devices, fn d -> d.id end))
-      conn
-      |> send_resp(:ok, "Downlink queue cleared")
-    else
-      {:error, :bad_request, "Label has no devices"}
-    end
-  end
-
-  def clear_downlink_queue(conn, %{ "device_id" => device_id }) do
-    if Devices.get_device(conn.assigns.current_organization, device_id) != nil do
-      clear_downlink_queue([device_id])
-      conn
-      |> send_resp(:ok, "Downlink queue cleared")
-    else
-      {:error, :bad_request, "Device ID does not exist"}
-    end
-  end
-
-  defp clear_downlink_queue(devices) do
-    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:clear_downlink_queue:devices", %{ "devices" => devices })
   end
 end

@@ -27,7 +27,7 @@ defmodule ConsoleWeb.DownlinkController do
     if length(devices) > 0 do
       clear_downlink_queue(Enum.map(devices, fn d -> d.id end))
       conn
-      |> put_resp_header("message", "Downlink queue cleared")
+      |> put_resp_header("message", "Downlink queue successfully cleared")
       |> send_resp(:no_content, "")
     else
       {:error, :bad_request, "Label has no devices"}

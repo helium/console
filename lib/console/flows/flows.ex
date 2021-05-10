@@ -9,6 +9,11 @@ defmodule Console.Flows do
      |> Repo.all()
   end
 
+  def get_flows_with_channel_id(organization_id, channel_id) do
+     from(f in Flow, where: f.organization_id == ^organization_id and f.channel_id == ^channel_id)
+     |> Repo.all()
+  end
+
   def create_flow(attrs \\ %{}) do
     %Flow{}
     |> Flow.changeset(attrs)
