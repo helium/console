@@ -175,8 +175,7 @@ class LabelShow extends Component {
                 sidebarIcon={<img src={DownlinkImage}/>}
                 iconBackground='#40A9FF'
                 iconPosition='middle'
-                message='Send a manual downlink using an HTTP integration'
-                disabledMessage='Please attach a label with an HTTP integration to use Downlink'
+                message='Send a manual downlink to all devices on this label'
               >
                 <Downlink
                   src="LabelShow"
