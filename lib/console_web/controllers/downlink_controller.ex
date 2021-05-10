@@ -7,6 +7,19 @@ defmodule ConsoleWeb.DownlinkController do
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
+  def send_downlink(conn, %{ "id" => id, "type" => type }) do
+    current_organization = conn.assigns.current_organization
+
+    case type do
+      "device" ->
+        device = Devices.get_device!(current_organization, id)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [id], "payload" => conn.body_params })
+        
+        conn
+        |> send_resp(:no_content, "")
+    end
+  end
+
   def fetch_downlink_queue(conn, %{ "id" => id, "type" => type }) do
     current_organization = conn.assigns.current_organization
     case type do

@@ -19,8 +19,7 @@ import DeviceShowStats from './DeviceShowStats'
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceFlows from './DeviceFlows';
 import { updateDevice } from '../../actions/device'
-import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
-import { sendDownlinkMessage } from '../../actions/channel'
+import { sendClearDownlinkQueue, fetchDownlinkQueue, sendDownlinkMessage } from '../../actions/downlink'
 import { DEVICE_SHOW } from '../../graphql/devices'
 import analyticsLogger from '../../util/analyticsLogger'
 import { displayError } from '../../util/messages'
@@ -515,14 +514,14 @@ class DeviceShow extends Component {
                   devices={[device]}
                   socket={this.props.socket}
                   onSend={(payload, confirm, port, position) => {
-                    analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": channels.map(c => c.id) });
+                    analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "device": device.id });
                     this.props.sendDownlinkMessage(
                       payload,
                       port,
                       confirm,
                       position,
-                      device.id,
-                      channels
+                      "device",
+                      device.id
                     )
                   }}
                   onClear={() => {

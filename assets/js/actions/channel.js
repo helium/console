@@ -37,18 +37,6 @@ export const deleteChannel = (id) => {
   }
 }
 
-export const sendDownlinkMessage = (payload, port, confirmed, position, device, channels) => {
-  return async (dispatch) => {
-    if (device) {
-      await postToDownlinkController(payload, port, confirmed, position, device, channels[0])
-    } else {
-      for (let i = 0; i < channels.length; i++) {
-        await postToDownlinkController(payload, port, confirmed, position, "", channels[i])
-      }
-    }
-  }
-}
-
 const sanitizeParams = (params) => {
   if (params.name) params.name = sanitizeHtml(params.name)
   if (params.credentials && params.credentials.endpoint) {
@@ -65,13 +53,4 @@ const sanitizeParams = (params) => {
     params.credentials.url_params = url_params
   }
   return params
-}
-
-const postToDownlinkController = (payload, port, confirmed, position, device, channel) => {
-  return rest.post(
-    `/api/v1/down/${channel.id}/${channel.downlink_token}/${device}`,
-    { payload_raw: payload, port, confirmed, position, from: 'console_downlink_queue' }
-  )
-  .then(() => {displayInfo(`Successfully queued downlink for integration ${channel.name}`)})
-  .catch(() => {displayError(`Failed to queue downlink for integration ${channel.name}`)})
 }

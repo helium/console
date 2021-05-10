@@ -80,6 +80,7 @@ defmodule ConsoleWeb.Router do
 
     post "/flows/update", FlowsController, :update_edges
 
+    post "/downlink", DownlinkController, :send_downlink
     post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
     get "/downlink_queue", DownlinkController, :fetch_downlink_queue
   end
