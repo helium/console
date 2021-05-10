@@ -224,6 +224,8 @@ export default ({
               ) {
                 setShowInfoSidebar(true);
                 setSelectedNodeId(elements[0].id);
+              } else if (!elements) {
+                setShowInfoSidebar(false);
               }
             }}
             selectNodesOnDrag={false}
