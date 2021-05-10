@@ -3,13 +3,12 @@ import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
 import { isEdge, isNode } from "react-flow-renderer";
 import { Prompt } from "react-router";
-import find from "lodash/find";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
 import { getIntegrationTypeForFlows } from "../../util/flows";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
-import { Typography } from "antd";
+import { Typography, Spin } from "antd";
 const { Text } = Typography;
 
 class FlowsIndex extends Component {
@@ -37,7 +36,20 @@ class FlowsIndex extends Component {
   render() {
     const { loading, error } = this.props.allResourcesQuery;
     if (loading)
-      return <DashboardLayout fullHeightWidth user={this.props.user} />;
+      return (
+        <DashboardLayout fullHeightWidth user={this.props.user}>
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              padding: 300,
+              textAlign: "center",
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        </DashboardLayout>
+      );
     if (error)
       return (
         <DashboardLayout fullHeightWidth user={this.props.user}>
