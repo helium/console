@@ -2,6 +2,7 @@ defmodule ConsoleWeb.ChannelController do
   use ConsoleWeb, :controller
 
   alias Console.Repo
+  alias Console.Organizations
   alias Console.Channels
   alias Console.Channels.Channel
   alias Console.Functions
@@ -32,13 +33,33 @@ defmodule ConsoleWeb.ChannelController do
             Functions.create_function(function_params, current_organization)
         end
       end)
+      |> Ecto.Multi.run(:flow, fn _repo, %{ channel: channel, function: function } ->
+        new_edge = %{
+          "source" => "function-" <> function.id,
+          "target" => "channel-" <> channel.id
+        }
+
+        edges =
+          case Map.get(current_organization.flow, "edges") do
+            nil -> [new_edge]
+            edges -> [new_edge | edges]
+          end
+
+        updated_flow =
+          current_organization.flow
+          |> Map.put("channel-" <> channel.id, %{ "position" => %{"x" => 300, "y" => 50} })
+          |> Map.put("function-" <> function.id, %{ "position" => %{"x" => 50, "y" => 50} })
+          |> Map.put("edges", edges)
+
+        Organizations.update_organization(current_organization, %{ "flow" => updated_flow })
+      end)
       |> Repo.transaction()
 
       case result do
         {:error, _, changeset, _} -> {:error, changeset}
         {:ok, %{ channel: channel, function: _function}} ->
           ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
-          
+
           conn
           |> put_status(:created)
           |> render("show.json", channel: channel)

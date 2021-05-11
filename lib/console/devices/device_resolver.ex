@@ -93,6 +93,7 @@ defmodule Console.Devices.DeviceResolver do
 
   def get_device_count(_, %{context: %{current_organization: current_organization}}) do
     query = from d in Device,
+      where: d.organization_id == ^current_organization.id,
       select: count(d.id)
 
     {:ok, %{ count: Repo.one(query) }}
