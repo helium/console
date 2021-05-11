@@ -16,16 +16,20 @@ const ChannelNameForm = (props) => (
           />
         </Form.Item>
       </Form>
-      <div style={{ marginTop: 20 }}>
-        <Button
-          type="primary"
-          htmlType="submit"
-          onClick={props.submit}
-          disabled={!props.validInput}
-        >
-          Add Integration
-        </Button>
-      </div>
+      {
+        !props.noName && (
+          <div style={{ marginTop: 20 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={props.submit}
+              disabled={!props.validInput}
+            >
+              Add Integration
+            </Button>
+          </div>
+        )
+      }
     </Card>
   </div>
 )
