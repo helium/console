@@ -53,7 +53,7 @@ defmodule ConsoleWeb.V1.DeviceController do
   def show(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) do
+    case Devices.get_device(current_organization, id) |> Devices.fetch_assoc([:labels]) do
       nil ->
         {:error, :not_found, "Device not found"}
       %Device{} = device ->
