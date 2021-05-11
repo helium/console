@@ -7,7 +7,6 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import AddDeviceAlertIcon from "../../../img/alerts/device-label-alert-add-icon.svg";
-import AddFunctionAlertIcon from "../../../img/alerts/function-alert-add-icon.svg";
 import AddIntegrationAlertIcon from "../../../img/alerts/channel-alert-add-icon.svg";
 import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
@@ -60,7 +59,6 @@ export default (props) => {
   const renderIcon = () => {
     const ICONS = {
       "device/label": AddDeviceAlertIcon,
-      function: AddFunctionAlertIcon,
       integration: AddIntegrationAlertIcon,
     };
     return ICONS[alertType];
@@ -79,12 +77,10 @@ export default (props) => {
     const TITLES = props.show
       ? {
           "device/label": "Device/Label Alert Settings",
-          function: "Function Alert Settings",
           integration: "Integration Alert Settings",
         }
       : {
           "device/Label": "New Device/Label Alert",
-          function: "New Function Alert",
           integration: "New Integration Alert",
         };
 
@@ -129,8 +125,8 @@ export default (props) => {
             </h1>
             <div>
               <p style={{ fontSize: "16px" }}>
-                Alerts can be created for Device/Label Nodes, Function Nodes or
-                Integration Nodes.
+                Alerts can be created for Device/Label Nodes or Integration
+                Nodes.
               </p>
               <p>
                 <a>Learn more about alerts</a>

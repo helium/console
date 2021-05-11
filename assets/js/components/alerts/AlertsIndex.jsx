@@ -124,11 +124,18 @@ export default (props) => {
                 style={{ padding: "10px 60px 1px 60px", margin: "10px 0px" }}
               >
                 <p style={{ fontSize: "16px", color: "#565656" }}>
-                  Alerts can be created for Device/Label Nodes, Function Nodes
-                  or Integration Nodes.
+                  Alerts can be created for
+                  <br />
+                  Device/Label Nodes or Integration Nodes.
                 </p>
               </div>
-              <div style={{ flexDirection: "row", display: "flex" }}>
+              <div
+                style={{
+                  flexDirection: "row",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
                 <AlertTypeButton
                   backgroundColor="#2C79EE"
                   onClick={() => {
@@ -136,14 +143,6 @@ export default (props) => {
                   }}
                 >
                   Device/Label Alert
-                </AlertTypeButton>
-                <AlertTypeButton
-                  backgroundColor="#9F59F7"
-                  onClick={() => {
-                    setAlertType("function");
-                  }}
-                >
-                  Function Alert
                 </AlertTypeButton>
                 <AlertTypeButton
                   backgroundColor="#12CB9E"

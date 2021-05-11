@@ -7,7 +7,6 @@ defmodule Console.Alerts do
   alias Console.Devices
   alias Console.Labels
   alias Console.Channels
-  alias Console.Functions
   
   def get_alert!(id), do: Repo.get!(Alert, id)
   def get_alert(id), do: Repo.get(Alert, id)
@@ -50,8 +49,6 @@ defmodule Console.Alerts do
         Labels.get_label!(organization, node_id)
       "integration" ->
         Channels.get_channel!(organization, node_id)
-      "function" ->
-        Functions.get_function!(organization, node_id)
     end
 
     alert_node = Repo.insert!(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }))
@@ -67,8 +64,6 @@ defmodule Console.Alerts do
         Labels.get_label!(organization, alert_node.node_id)
       "integration" ->
         Channels.get_channel!(organization, alert_node.node_id)
-      "function" ->
-        Functions.get_function!(organization, alert_node.node_id)
     end
     
     Repo.delete(alert_node)

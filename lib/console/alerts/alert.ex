@@ -141,7 +141,6 @@ defmodule Console.Alerts.Alert do
         invalid_node_type = 
           Enum.member?([
             "device/label",
-            "function",
             "integration"
           ], node_type) != true
 

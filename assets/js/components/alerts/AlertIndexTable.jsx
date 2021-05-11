@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Table, Button } from "antd";
 import Text from "antd/lib/typography/Text";
 import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-label.svg";
-import FunctionTriggerIcon from "../../../img/alerts/alert-trigger-function.svg";
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -21,16 +20,6 @@ export default (props) => {
               style={{ height: 20, marginRight: 5 }}
             />
             Device/Label
-          </span>
-        );
-      case "function":
-        return (
-          <span>
-            <img
-              src={FunctionTriggerIcon}
-              style={{ height: 20, marginRight: 5 }}
-            />
-            Function
           </span>
         );
       case "integration":
