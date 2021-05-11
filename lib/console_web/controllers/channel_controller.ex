@@ -1,13 +1,50 @@
 defmodule ConsoleWeb.ChannelController do
   use ConsoleWeb, :controller
 
+  alias Console.Repo
   alias Console.Channels
   alias Console.Channels.Channel
+  alias Console.Functions
+  alias Console.Functions.Function
   alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback ConsoleWeb.FallbackController
+
+  # For create adafruit channel
+  def create(conn, %{"channel" => channel_params, "func" => function_params }) do
+    current_organization = conn.assigns.current_organization
+    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:channel, fn _repo, _ ->
+        Channels.create_channel(current_organization, channel_params)
+      end)
+      |> Ecto.Multi.run(:function, fn _repo, %{ channel: channel } ->
+        case function_params["format"] do
+           "custom" ->
+            function = Functions.get_function!(current_organization, function_params["id"])
+            {:ok, function}
+          "cayenne" ->
+            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
+            Functions.create_function(function_params, current_organization)
+        end
+      end)
+      |> Repo.transaction()
+
+      case result do
+        {:error, _, changeset, _} -> {:error, changeset}
+        {:ok, %{ channel: channel, function: _function}} ->
+          ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+          
+          conn
+          |> put_status(:created)
+          |> render("show.json", channel: channel)
+        _ -> result
+      end
+  end
 
   def create(conn, %{"channel" => channel_params}) do
     current_organization = conn.assigns.current_organization

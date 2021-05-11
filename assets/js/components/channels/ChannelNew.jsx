@@ -125,7 +125,7 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody, googleFieldsMapping, googleFunctionBody } = this.state
+    const { channelName, type, credentials, labels, func, templateBody, googleFieldsMapping, googleFunctionBody } = this.state
 
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     let payload = {
@@ -137,7 +137,7 @@ class ChannelNew extends Component {
       }
     };
 
-    this.props.createChannel(payload);
+    this.props.createChannel(payload, type === "adafruit" ? func : undefined);
   }
 
   handleTemplateUpdate = (templateBody) => {
