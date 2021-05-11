@@ -15,6 +15,13 @@ defmodule ConsoleWeb.V1.LabelView do
       id: label.id,
       name: label.name,
       multi_buy: label.multi_buy,
+      adr_allowed: label.adr_allowed,
+      function_id: label.function_id,
     }
+  end
+
+  def append_labels(json, labels) do
+    labels_json = render_many(labels, LabelView, "label.json")
+    Map.put(json, :labels, labels_json)
   end
 end
