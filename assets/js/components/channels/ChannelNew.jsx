@@ -22,6 +22,7 @@ import ChannelNameForm from './forms/ChannelNameForm.jsx'
 import ChannelCreateRow from './ChannelCreateRow'
 import ChannelPremadeRow from './ChannelPremadeRow'
 import ChannelPayloadTemplate from './ChannelPayloadTemplate'
+import AdafruitFunctionForm from './AdafruitFunctionForm'
 import { createChannel } from '../../actions/channel'
 import analyticsLogger from '../../util/analyticsLogger'
 import kebabCase from 'lodash/kebabCase'
@@ -124,7 +125,7 @@ class ChannelNew extends Component {
 
   handleStep3Submit = (e) => {
     e.preventDefault()
-    const { channelName, type, credentials, labels, templateBody, func, googleFieldsMapping, googleFunctionBody } = this.state
+    const { channelName, type, credentials, labels, func, templateBody, googleFieldsMapping, googleFunctionBody } = this.state
 
     analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", { "name": channelName, "type": type })
     let payload = {
@@ -136,7 +137,7 @@ class ChannelNew extends Component {
       }
     };
 
-    this.props.createChannel(payload);
+    this.props.createChannel(payload, type === "adafruit" ? func : undefined);
   }
 
   handleTemplateUpdate = (templateBody) => {
@@ -149,6 +150,10 @@ class ChannelNew extends Component {
 
   handleGoogleFunctionBodyUpdate = (googleFunctionBody) => {
     this.setState({ googleFunctionBody });
+  }
+
+  handleAdafruitFunctionSelect = func => {
+    this.setState({ func, templateBody: func.format === 'cayenne' ? adafruitTemplate : "" });
   }
 
   onClickEditor = () => {
@@ -240,7 +245,22 @@ class ChannelNew extends Component {
               onInputUpdate={this.handleStep3Input}
               validInput={this.state.validInput}
               submit={this.handleStep3Submit}
+              noName={type === 'adafruit'}
             />
+          )}
+          { showNextSteps && type === 'adafruit' && (
+            <AdafruitFunctionForm handleFunctionUpdate={this.handleAdafruitFunctionSelect}>
+              <div style={{ marginTop: 20 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={this.handleStep3Submit}
+                  disabled={!this.state.validInput}
+                >
+                  Add Integration
+                </Button>
+              </div>
+            </AdafruitFunctionForm>
           )}
           { showNextSteps && (type === "http" || type === "mqtt") && (
             <ChannelPayloadTemplate

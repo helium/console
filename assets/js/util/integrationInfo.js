@@ -81,7 +81,7 @@ export const PREMADE_CHANNEL_TYPES = [
   },
   {
     name: "Google Sheets",
-    link: "/integrations/new/googlesheet",
+    type: "googlesheet",
     img: `${GoogleSheet}` ,
     info: "This Integration streamlines sending data to a Google Sheet by using a Google Form.",
     docLink: "https://docs.helium.com/use-the-network/console/integrations/google-sheets"

@@ -3,12 +3,13 @@ import * as rest from '../util/rest';
 import { displayInfo, displayError } from '../util/messages';
 import sanitizeHtml from 'sanitize-html';
 
-export const createChannel = (params) => {
+export const createChannel = (params, func) => {
   return (dispatch) => {
     const channelParams = sanitizeParams(params.channel)
 
     rest.post('/api/channels', {
-        channel: channelParams
+        channel: channelParams,
+        func
       })
       .then(response => {
         displayInfo(`Integration ${response.data.name} added successfully`)
