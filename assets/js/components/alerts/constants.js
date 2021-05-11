@@ -71,10 +71,6 @@ export const ALERT_TYPES = {
     name: "Device/Label",
     color: "#2C79EE",
   },
-  function: {
-    name: "Function",
-    color: "#9F59F7",
-  },
   integration: {
     name: "Integration",
     color: "#12CB9E",
