@@ -13,7 +13,7 @@ defmodule ConsoleWeb.ChannelController do
 
   action_fallback ConsoleWeb.FallbackController
 
-  # For create adafruit channel
+  # For create adafruit / google sheets channel
   def create(conn, %{"channel" => channel_params, "func" => function_params }) do
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
@@ -30,6 +30,9 @@ defmodule ConsoleWeb.ChannelController do
             {:ok, function}
           "cayenne" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
+            Functions.create_function(function_params, current_organization)
+          "googlesheet" ->
+            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id, "format" => "custom" })
             Functions.create_function(function_params, current_organization)
         end
       end)

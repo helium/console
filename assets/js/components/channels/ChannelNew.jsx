@@ -133,11 +133,22 @@ class ChannelNew extends Component {
         name: channelName,
         type: this.getRootType(type),
         credentials,
-        payload_template: type === "http" || type === "mqtt" || type === "adafruit" ? templateBody : undefined,
       }
     };
+    if (type === "http" || type === "mqtt" || type === "adafruit") {
+      payload.channel.payload_template = templateBody
+    }
+    if (type === 'googlesheet') {
+      payload.channel.payload_template = "{{{decoded.payload}}}"
+    }
 
-    this.props.createChannel(payload, type === "adafruit" ? func : undefined);
+    if (type === "adafruit") {
+      this.props.createChannel(payload, func)
+    } else if (type === "googlesheet") {
+      this.props.createChannel(payload, { format: "googlesheet", body: googleFunctionBody })
+    } else {
+      this.props.createChannel(payload)
+    }
   }
 
   handleTemplateUpdate = (templateBody) => {
@@ -245,7 +256,7 @@ class ChannelNew extends Component {
               onInputUpdate={this.handleStep3Input}
               validInput={this.state.validInput}
               submit={this.handleStep3Submit}
-              noName={type === 'adafruit'}
+              noName={type === 'adafruit' || type === 'googlesheet'}
             />
           )}
           { showNextSteps && type === 'adafruit' && (
@@ -261,6 +272,58 @@ class ChannelNew extends Component {
                 </Button>
               </div>
             </AdafruitFunctionForm>
+          )}
+          { showNextSteps && type === 'googlesheet' && (
+            <Card
+              title={"Step 4 - Update Function Body"}
+              bodyStyle={{ padding: 0 }}
+              extra={
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={this.handleStep3Submit}
+                >
+                  Add Integration
+                </Button>
+              }
+            >
+              <div style={{ height: 303, overflowY: 'scroll' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
+                  <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                    {
+                      range(301).map(i => (
+                        <p
+                          key={i}
+                          style={{
+                            textAlign: 'right',
+                            fontFamily: 'monospace',
+                            color: codeEditorLineColor,
+                            fontSize: 14,
+                            marginBottom: 0,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                            backgroundColor: codeEditorBgColor
+                          }}
+                        >
+                          {i}
+                        </p>
+                      ))
+                    }
+                  </div>
+
+                  <Editor
+                    value={this.state.googleFunctionBody}
+                    onValueChange={this.handleGoogleFunctionBodyUpdate}
+                    highlight={code => highlight(code, languages.js)}
+                    padding={10}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+              </div>
+            </Card>
           )}
           { showNextSteps && (type === "http" || type === "mqtt") && (
             <ChannelPayloadTemplate
