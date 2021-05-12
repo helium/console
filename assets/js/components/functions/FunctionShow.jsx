@@ -7,6 +7,7 @@ import FunctionDashboardLayout from './FunctionDashboardLayout'
 import UserCan from '../common/UserCan'
 import FunctionValidator from './FunctionValidator'
 import DeleteFunctionModal from './DeleteFunctionModal'
+import GoogleSheetForm from '../channels/forms/GoogleSheetForm'
 import { FUNCTION_SHOW } from '../../graphql/functions'
 import { deleteFunction, updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -148,6 +149,15 @@ class FunctionShow extends Component {
             handleSubmit={this.handleSubmit}
             horizontal={true}
           />
+
+          {
+            fxn.format === 'custom' && fxn.body.indexOf("Google Form") !== -1 && (
+              <Card title="Google Form Fields">
+                <GoogleSheetForm />
+              </Card>
+            )
+          }
+
           {
             (format === 'custom' || (fxn.format === 'custom' && !format)) && (
               <FunctionValidator
