@@ -210,7 +210,7 @@ class LabelShow extends Component {
           iconPosition="top"
           message="Access Debug mode to view device packet transfer"
         >
-          <Debug labelId={this.props.match.params.id} />
+          <Debug labelId={this.props.match.params.id} entryWidth={600} />
         </Sidebar>
 
         <UserCan>

@@ -254,11 +254,8 @@ class LabelContent extends Component {
       },
     ];
 
-    const {
-      loading,
-      error,
-      devices_by_label,
-    } = this.props.paginatedDevicesQuery;
+    const { loading, error, devices_by_label } =
+      this.props.paginatedDevicesQuery;
     const {
       label,
       error: labelError,
@@ -384,9 +381,6 @@ class LabelContent extends Component {
                 />
               </div>
             </Card>
-          </TabPane>
-          <TabPane tab="Debug" key="2">
-            Content of Tab Pane 2
           </TabPane>
           <TabPane tab="Alerts" key="3">
             <AlertNodeSettings

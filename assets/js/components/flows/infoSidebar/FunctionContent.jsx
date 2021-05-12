@@ -105,14 +105,8 @@ class FunctionContent extends Component {
   };
 
   render() {
-    const {
-      name,
-      type,
-      format,
-      body,
-      codeUpdated,
-      showDeleteFunctionModal,
-    } = this.state;
+    const { name, type, format, body, codeUpdated, showDeleteFunctionModal } =
+      this.state;
     const { loading, error } = this.props.functionShowQuery;
     const fxn = this.props.functionShowQuery.function;
 
@@ -205,13 +199,6 @@ class FunctionContent extends Component {
                 title="Custom Script"
               />
             )}
-          </TabPane>
-          <TabPane tab="Alerts" key="2">
-            <AlertNodeSettings
-              type="function"
-              nodeId={fxn.id}
-              onAlertUpdate={this.props.onAlertUpdate}
-            />
           </TabPane>
         </Tabs>
         <DeleteFunctionModal
