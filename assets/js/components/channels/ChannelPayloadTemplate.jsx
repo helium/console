@@ -38,33 +38,15 @@ class ChannelPayloadTemplate extends Component {
   }
 
   componentDidMount = () => {
-    const { functions, from, channel } = this.props
+    const { from, channel } = this.props
     const fromChannelNew = from === 'channelNew'
 
-    const firstFunc = functions[0]
-    if (firstFunc && firstFunc.format === 'browan_object_locator') {
-      this.setState({ typeSelected: 'browan' })
-    } else if (firstFunc && firstFunc.format === 'cayenne') {
-      this.setState({ typeSelected: 'cayenne' })
-    } else {
-      this.setState({ typeSelected: 'default' })
-    }
+    this.setState({ typeSelected: 'default' })
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    const fromChannelNew = this.props.from === 'channelNew'
-
-    if ((prevProps.functions[0] != this.props.functions[0]) || (!prevState.show && this.state.show)) {
-      const { functions } = this.props
-
-      const firstFunc = functions[0]
-      if (firstFunc && firstFunc.format === 'browan_object_locator') {
-        this.setState({ typeSelected: 'browan', output: null })
-      } else if (firstFunc && firstFunc.format === 'cayenne') {
-        this.setState({ typeSelected: 'cayenne', output: null })
-      } else {
-        this.setState({ typeSelected: 'default', output: null })
-      }
+    if (!prevState.show && this.state.show) {
+      this.setState({ typeSelected: 'default', output: null })
     }
   }
 
