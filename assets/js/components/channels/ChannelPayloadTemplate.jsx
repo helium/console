@@ -127,6 +127,32 @@ class ChannelPayloadTemplate extends Component {
     )
   }
 
+  renderJSONbuttons = () => (
+    <span>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'default', output: null })}
+        disabled={this.state.typeSelected === 'default'}
+      >
+        Default JSON
+      </Button>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'browan', output: null })}
+        disabled={this.state.typeSelected === 'browan'}
+      >
+        Browan JSON
+      </Button>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'cayenne', output: null })}
+        disabled={this.state.typeSelected === 'cayenne'}
+      >
+        Cayenne JSON
+      </Button>
+    </span>
+  )
+
   render() {
     if (this.state.show) {
       return (
@@ -162,6 +188,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
@@ -185,6 +212,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
@@ -208,6 +236,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
