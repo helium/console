@@ -405,9 +405,6 @@ class DeviceContent extends Component {
               </Paragraph>
             </Card>
           </TabPane>
-          <TabPane tab="Debug" key="2">
-            Content of Tab Pane 2
-          </TabPane>
           <TabPane tab="Alerts" key="3">
             <AlertNodeSettings
               type="device"

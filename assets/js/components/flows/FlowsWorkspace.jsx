@@ -246,8 +246,22 @@ export default ({
         </div>
         <InfoSidebar
           show={showInfoSidebar}
-          width={500}
+          width={550}
           toggle={handleToggleSidebar}
+          id={
+            selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split("_copy")[0]
+          }
+          type={
+            selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+          }
+          debug={
+            !!(
+              selectedNodeId &&
+              ["device", "label"].includes(
+                selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+              )
+            )
+          }
         >
           <NodeInfo
             id={
