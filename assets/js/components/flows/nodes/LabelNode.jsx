@@ -57,7 +57,9 @@ export default ({ data, fromSidebar, selected }) => {
               </Text>
             </div>
             <Text style={{ display: "block", fontSize: 12, color: "#ffffff" }}>
-              {data.deviceCount || 0} Devices
+              {`${data.deviceCount || 0} Device${
+                (data.deviceCount === 0 || data.deviceCount > 1) && "s"
+              }`}
             </Text>
           </span>
           <div>

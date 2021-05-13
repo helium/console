@@ -15,7 +15,7 @@ export default ({ data, fromSidebar, selected }) => {
       <div
         style={{
           background: "#A6B8CC",
-          padding: 15,
+          padding: "10px 15px 10px 15px",
           borderRadius: 5,
           minWidth: 200,
           minHeight: 50,
@@ -56,34 +56,32 @@ export default ({ data, fromSidebar, selected }) => {
                 {data.label}
               </Text>
             </div>
-            <div>
-              {data.adrAllowed && (
-                <img
-                  draggable="false"
-                  src={AdrTag}
-                  style={{
-                    height: 20,
-                    marginLeft: 20,
-                    position: "relative",
-                    top: -2,
-                  }}
-                />
-              )}
-              {data.multi_buy_id && (
-                <img
-                  draggable="false"
-                  src={MultiBuyTag}
-                  style={{
-                    height: 20,
-                    marginLeft: 4,
-                    position: "relative",
-                    top: -2,
-                  }}
-                />
-              )}
-            </div>
           </span>
           <div>
+            {data.adrAllowed && (
+              <img
+                draggable="false"
+                src={AdrTag}
+                style={{
+                  height: 20,
+                  marginLeft: 20,
+                  position: "relative",
+                  top: -2,
+                }}
+              />
+            )}
+            {data.multi_buy_id && (
+              <img
+                draggable="false"
+                src={MultiBuyTag}
+                style={{
+                  height: 20,
+                  marginLeft: 4,
+                  position: "relative",
+                  top: -2,
+                }}
+              />
+            )}
             {data.hasAlerts && (
               <img
                 draggable="false"
