@@ -167,7 +167,7 @@ export default (props) => {
       />
       <Button
         icon={<BellOutlined />}
-        style={{ borderRadius: 4, marginTop: 40, marginLeft: 40 }}
+        style={{ borderRadius: 4, margin: 40 }}
         onClick={() => {
           setShowNew(true);
         }}
