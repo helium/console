@@ -61,7 +61,13 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
 
   return (
     <React.Fragment>
-      <div style={{ position: "absolute", top: "30px", right: "35px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          paddingRight: 40,
+        }}
+      >
         {renderTopIcon()}
       </div>
       <div style={{ marginTop: 20 }}>{renderMain()}</div>
