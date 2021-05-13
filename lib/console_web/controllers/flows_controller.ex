@@ -5,6 +5,7 @@ defmodule ConsoleWeb.FlowsController do
   alias Console.Repo
   alias Console.Organizations
   alias Console.Flows.Flow
+  alias Console.Devices
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -49,7 +50,10 @@ defmodule ConsoleWeb.FlowsController do
 
     case result do
       {:ok, _} ->
+        all_device_ids = Devices.get_devices(current_organization.id)
         ConsoleWeb.Endpoint.broadcast("graphql:flows_update", "graphql:flows_update:#{current_organization.id}:organization_flows_update", %{})
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => all_device_ids })
+
         conn
         |> put_resp_header("message", "Updated all edges successfully")
         |> send_resp(:ok, "")
