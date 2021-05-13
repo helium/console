@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { BugOutlined, CloseOutlined, MenuOutlined } from "@ant-design/icons";
 import { Button, Tabs } from "antd";
 const { TabPane } = Tabs;
 import { useStoreActions } from "react-flow-renderer";
 import Debug from "../../common/Debug";
 import { debugSidebarBackgroundColor } from "../../../util/colors";
-import { Icon } from "@ant-design/compatible";
 
 export default ({ toggle, show, width, debug, children, id, type }) => {
   const setSelectedElements = useStoreActions(
@@ -32,7 +31,7 @@ export default ({ toggle, show, width, debug, children, id, type }) => {
       {show && (
         <React.Fragment>
           <Button
-            style={{ border: "none", top: "35px", left: "35px" }}
+            style={{ border: "none", top: "50px", left: "35px" }}
             onClick={handleToggle}
             icon={<CloseOutlined style={{ fontSize: 30, color: "#D2DDE8" }} />}
           />
@@ -87,6 +86,7 @@ export default ({ toggle, show, width, debug, children, id, type }) => {
                 {...(type === "device" && { deviceId: id })}
                 {...(type === "label" && { labelId: id })}
                 entryWidth={500}
+                handleToggle={handleToggle}
               />
             </div>
           </TabPane>

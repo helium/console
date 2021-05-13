@@ -1,9 +1,13 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import DebugEntry from "./DebugEntry";
 import { debugSidebarHeaderColor, debugTextColor } from "../../util/colors";
 import { Typography, Popover, Button, Checkbox } from "antd";
-import { InfoCircleOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  InfoCircleOutlined,
+  ReloadOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 const { Text } = Typography;
 import Loader from "../../../img/debug-loader.png";
 
@@ -99,23 +103,46 @@ class Debug extends Component {
 
     if (data.length === 0)
       return (
-        <div
-          style={{
-            height: "calc(100% - 55px)",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            style={{ height: 22, width: 22, marginBottom: 5 }}
-            className="rotate"
-            src={Loader}
-          />
-          <Text style={{ color: debugTextColor }}>Waiting for data...</Text>
-        </div>
+        <Fragment>
+          {this.props.handleToggle && (
+            <Button
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                marginRight: 10,
+                left: "35px",
+              }}
+              onClick={() => {
+                this.props.handleToggle();
+              }}
+              icon={
+                <CloseOutlined
+                  style={{
+                    fontSize: 30,
+                    color: debugTextColor,
+                  }}
+                />
+              }
+            />
+          )}
+          <div
+            style={{
+              height: "calc(100% - 55px)",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              style={{ height: 22, width: 22, marginBottom: 5 }}
+              className="rotate"
+              src={Loader}
+            />
+            <Text style={{ color: debugTextColor }}>Waiting for data...</Text>
+          </div>
+        </Fragment>
       );
     return (
       <div
@@ -139,6 +166,26 @@ class Debug extends Component {
             top: 0,
           }}
         >
+          {this.props.handleToggle && (
+            <Button
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                marginRight: 10,
+              }}
+              onClick={() => {
+                this.props.handleToggle();
+              }}
+              icon={
+                <CloseOutlined
+                  style={{
+                    fontSize: 30,
+                    color: "#D2DDE8",
+                  }}
+                />
+              }
+            />
+          )}
           <Text style={{ color: "white" }}>
             <span style={{ fontWeight: "500" }}>Displaying</span>{" "}
             <span style={{ fontWeight: "300" }}>{data.length} / 40 Events</span>
