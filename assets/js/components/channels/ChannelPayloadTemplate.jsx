@@ -38,33 +38,15 @@ class ChannelPayloadTemplate extends Component {
   }
 
   componentDidMount = () => {
-    const { functions, from, channel } = this.props
+    const { from, channel } = this.props
     const fromChannelNew = from === 'channelNew'
 
-    const firstFunc = functions[0]
-    if (firstFunc && firstFunc.format === 'browan_object_locator') {
-      this.setState({ typeSelected: 'browan' })
-    } else if (firstFunc && firstFunc.format === 'cayenne') {
-      this.setState({ typeSelected: 'cayenne' })
-    } else {
-      this.setState({ typeSelected: 'default' })
-    }
+    this.setState({ typeSelected: 'default' })
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    const fromChannelNew = this.props.from === 'channelNew'
-
-    if ((prevProps.functions[0] != this.props.functions[0]) || (!prevState.show && this.state.show)) {
-      const { functions } = this.props
-
-      const firstFunc = functions[0]
-      if (firstFunc && firstFunc.format === 'browan_object_locator') {
-        this.setState({ typeSelected: 'browan', output: null })
-      } else if (firstFunc && firstFunc.format === 'cayenne') {
-        this.setState({ typeSelected: 'cayenne', output: null })
-      } else {
-        this.setState({ typeSelected: 'default', output: null })
-      }
+    if (!prevState.show && this.state.show) {
+      this.setState({ typeSelected: 'default', output: null })
     }
   }
 
@@ -145,6 +127,32 @@ class ChannelPayloadTemplate extends Component {
     )
   }
 
+  renderJSONbuttons = () => (
+    <span>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'default', output: null })}
+        disabled={this.state.typeSelected === 'default'}
+      >
+        Default JSON
+      </Button>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'browan', output: null })}
+        disabled={this.state.typeSelected === 'browan'}
+      >
+        Browan JSON
+      </Button>
+      <Button
+        size="small"
+        onClick={() => this.setState({ typeSelected: 'cayenne', output: null })}
+        disabled={this.state.typeSelected === 'cayenne'}
+      >
+        Cayenne JSON
+      </Button>
+    </span>
+  )
+
   render() {
     if (this.state.show) {
       return (
@@ -180,6 +188,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
@@ -203,6 +212,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor
@@ -226,6 +236,7 @@ class ChannelPayloadTemplate extends Component {
                 title="JSON Message"
                 bodyStyle={{ padding: 0 }}
                 style={{ marginBottom: 16 }}
+                extra={this.renderJSONbuttons()}
               >
                 <div style={{ height: 303, overflowY: 'scroll' }}>
                   <Editor

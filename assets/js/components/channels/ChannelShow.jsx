@@ -256,7 +256,6 @@ class ChannelShow extends Component {
             handleTemplateUpdate={this.handleTemplateUpdate}
             updateChannelTemplate={this.updateChannelTemplate}
             channel={channel}
-            functions={[]}
           />
         )}
         </div>

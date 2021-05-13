@@ -329,7 +329,6 @@ class ChannelNew extends Component {
             <ChannelPayloadTemplate
               templateBody={this.state.templateBody}
               handleTemplateUpdate={this.handleTemplateUpdate}
-              functions={[]}
               from="channelNew"
             />
           )}
