@@ -208,11 +208,15 @@ h1 {
   background: #f6f8fa;
   font-weight: 600;
   text-transform: uppercase;
-  min-height: 32px;
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .ant-card-head-title {
   padding: 8px 0px;
+  margin-right: 5px;
 }
 
 .ant-card-bordered {
