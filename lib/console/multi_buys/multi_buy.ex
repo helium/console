@@ -3,6 +3,9 @@ defmodule Console.MultiBuys.MultiBuy do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
+  alias Console.Devices.Device
+  alias Console.Labels.Label
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "multi_buys" do
@@ -10,6 +13,8 @@ defmodule Console.MultiBuys.MultiBuy do
     field :value, :integer
 
     belongs_to :organization, Organization
+    has_many :devices, Device
+    has_many :labels, Label
     timestamps()
   end
 

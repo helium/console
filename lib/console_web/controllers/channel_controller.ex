@@ -3,11 +3,13 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Repo
   alias Console.Organizations
+  alias Console.Labels
   alias Console.Channels
   alias Console.Channels.Channel
   alias Console.Functions
   alias Console.Functions.Function
   alias Console.Alerts
+  alias Console.Flows
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -87,10 +89,15 @@ defmodule ConsoleWeb.ChannelController do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
+    affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
+    all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
+
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+
+      broadcast_router_update_devices(all_device_ids)
 
       conn
       |> put_resp_header("message", "Integration #{channel.name} updated successfully")
@@ -102,10 +109,15 @@ defmodule ConsoleWeb.ChannelController do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
+    affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
+    all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
+
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
       Alerts.delete_alert_nodes(id, "integration")
+
+      broadcast_router_update_devices(all_device_ids)
 
       conn
       |> put_resp_header("message", "The Integration #{channel.name} has been deleted")
@@ -154,18 +166,7 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  defp broadcast_router_update_devices(%Channel{} = channel) do
-    assoc_labels = channel |> Channels.fetch_assoc([labels: :devices]) |> Map.get(:labels)
-    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
-    if length(assoc_device_ids) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
-    end
-  end
-
-  defp broadcast_router_update_devices(assoc_labels) do
-    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
-    if length(assoc_device_ids) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
-    end
+  defp broadcast_router_update_devices(device_ids) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })
   end
 end
