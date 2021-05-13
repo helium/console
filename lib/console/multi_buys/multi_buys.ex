@@ -31,7 +31,6 @@ defmodule Console.MultiBuys do
   def get_all_multi_buy_associated_device_ids(id) do
     device_ids =
       get_associated_multi_buy_devices(id)
-      |> Enum.map(fn d -> d.id end)
 
     label_device_ids =
       get_associated_multi_buy_labels(id)
@@ -44,6 +43,7 @@ defmodule Console.MultiBuys do
 
   defp get_associated_multi_buy_devices(id) do
     from(d in Device, where: d.multi_buy_id == ^id)
+    |> select([d], d.id)
     |> Repo.all()
   end
 
