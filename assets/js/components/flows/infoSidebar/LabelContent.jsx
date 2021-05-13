@@ -14,6 +14,7 @@ import { updateLabel, addDevicesToLabels } from "../../../actions/label";
 import { PAGINATED_DEVICES_BY_LABEL } from "../../../graphql/devices";
 import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
 import UpdateLabelModal from "../../labels/UpdateLabelModal";
+import LabelAddDeviceModal from "../../labels/LabelAddDeviceModal";
 import {
   Card,
   Button,
@@ -283,6 +284,10 @@ class LabelContent extends Component {
     };
 
     const { selectedDevices } = this.state;
+    const normalizedDevices = label.devices.reduce((map, device) => {
+      map[device.id] = device;
+      return map;
+    }, {});
 
     return (
       <div>
@@ -423,6 +428,13 @@ class LabelContent extends Component {
           open={this.state.showUpdateLabelModal}
           onClose={this.closeUpdateLabelModal}
           label={label}
+        />
+        <LabelAddDeviceModal
+          label={label}
+          labelNormalizedDevices={normalizedDevices}
+          addDevicesToLabels={this.props.addDevicesToLabels}
+          open={this.state.showLabelAddDeviceModal}
+          onClose={this.closeLabelAddDeviceModal}
         />
       </div>
     );
