@@ -8,6 +8,7 @@ const { Text, Paragraph } = Typography;
 import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
+import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import analyticsLogger from "../../../util/analyticsLogger";
 import UserCan from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
@@ -18,6 +19,7 @@ import {
   EyeOutlined,
   EyeInvisibleOutlined,
   EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
@@ -27,6 +29,7 @@ class ChannelContent extends Component {
   state = {
     newName: "",
     showDownlinkToken: false,
+    showDeleteChannelModal: false,
   };
 
   componentDidMount() {
@@ -76,6 +79,14 @@ class ChannelContent extends Component {
     this.setState({ newName: "" });
   };
 
+  openDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: true });
+  };
+
+  closeDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: false });
+  };
+
   render() {
     const { loading, error, channel } = this.props.channelShowQuery;
     const { showDownlinkToken } = this.state;
@@ -120,6 +131,17 @@ class ChannelContent extends Component {
                 Edit
               </Button>
             </Link>
+            <Button
+              style={{ borderRadius: 4 }}
+              type="danger"
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.stopPropagation();
+                this.openDeleteChannelModal();
+              }}
+            >
+              Delete
+            </Button>
           </div>
         </div>
 
@@ -239,6 +261,11 @@ class ChannelContent extends Component {
             />
           </TabPane>
         </Tabs>
+        <DeleteChannelModal
+          open={this.state.showDeleteChannelModal}
+          onClose={this.closeDeleteChannelModal}
+          channel={channel}
+        />
       </div>
     );
   }
