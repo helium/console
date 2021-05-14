@@ -29,6 +29,7 @@ class ChannelContent extends Component {
   state = {
     newName: "",
     showDownlinkToken: false,
+    showDeleteChannelModal: false,
   };
 
   componentDidMount() {

@@ -311,7 +311,7 @@ class LabelContent extends Component {
             <UserCan>
               <Button
                 icon={<SettingOutlined />}
-                style={{ borderRadius: 4, marginRight: 10 }}
+                style={{ borderRadius: 4, marginRight: 5 }}
                 onClick={this.openUpdateLabelModal}
               >
                 Settings
