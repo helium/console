@@ -29,6 +29,7 @@ import {
 import { StatusIcon } from "../../common/StatusIcon";
 import { DeleteOutlined, SettingOutlined } from "@ant-design/icons";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
+import DeleteLabelModal from "../../labels/DeleteLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 const { Text } = Typography;
@@ -50,6 +51,7 @@ class LabelContent extends Component {
     showDeleteDeviceModal: false,
     showUpdateLabelModal: false,
     showLabelAddDeviceModal: false,
+    showDeleteLabelModal: false,
   };
 
   componentDidMount() {
@@ -180,6 +182,14 @@ class LabelContent extends Component {
     this.setState({ showUpdateLabelModal: false });
   };
 
+  openDeleteLabelModal = () => {
+    this.setState({ showDeleteLabelModal: true });
+  };
+
+  closeDeleteLabelModal = () => {
+    this.setState({ showDeleteLabelModal: false });
+  };
+
   handleUpdateLabel = (name) => {
     const labelId = this.props.id;
     const attrs = { name };
@@ -305,6 +315,17 @@ class LabelContent extends Component {
                 onClick={this.openUpdateLabelModal}
               >
                 Settings
+              </Button>
+              <Button
+                style={{ borderRadius: 4 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteLabelModal();
+                }}
+              >
+                Delete
               </Button>
             </UserCan>
           </div>
@@ -435,6 +456,11 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
+        />
+        <DeleteLabelModal
+          open={this.state.showDeleteLabelModal}
+          onClose={this.closeDeleteLabelModal}
+          labelId={label.id}
         />
       </div>
     );
