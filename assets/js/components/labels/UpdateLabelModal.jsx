@@ -7,7 +7,7 @@ const { TabPane } = Tabs;
 
 class UpdateLabelModal extends Component {
   state = {
-    labelName: null,
+    labelName: "",
   };
 
   handleInputUpdate = (e) => {
@@ -68,6 +68,10 @@ class UpdateLabelModal extends Component {
             value={this.state.labelName}
             onChange={this.handleInputUpdate}
             style={{ marginBottom: 20, marginTop: 4 }}
+            suffix={`${
+              this.state.labelName ? this.state.labelName.length : "0"
+            }/50`}
+            maxLength={50}
           />
         </div>
       </Modal>

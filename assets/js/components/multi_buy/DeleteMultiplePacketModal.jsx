@@ -1,24 +1,24 @@
-import React from 'react';
-import { Modal, Button, Typography } from 'antd';
+import React from "react";
+import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 import { useDispatch } from "react-redux";
-import { deleteMultiBuy } from '../../actions/multiBuy';
-import { useHistory } from 'react-router-dom'
+import { deleteMultiBuy } from "../../actions/multiBuy";
+import { useHistory } from "react-router-dom";
 
 export default ({ open, selected, close }) => {
   const dispatch = useDispatch();
-  const history = useHistory()
+  const history = useHistory();
 
   const handleSubmit = () => {
     dispatch(deleteMultiBuy(selected.id)).then(() => {
-      close()
-      history.push('/multi_buys')
+      close();
+      history.push("/multi_buys");
     });
-  }
+  };
 
   return (
     <Modal
-      title='Delete Multiple Packet'
+      title="Delete Multiple Packet"
       visible={open}
       onCancel={close}
       centered
@@ -32,11 +32,13 @@ export default ({ open, selected, close }) => {
         </Button>,
       ]}
     >
-      {selected &&
-        <div>
-          <Text>Are you sure you want to delete <b>{selected.name}</b>?</Text>
+      {selected && (
+        <div style={{ textAlign: "center" }}>
+          <Text>
+            Are you sure you want to delete <b>{selected.name}</b>?
+          </Text>
         </div>
-      }
+      )}
     </Modal>
   );
-}
+};

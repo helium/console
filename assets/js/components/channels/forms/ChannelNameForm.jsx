@@ -1,6 +1,6 @@
-import React from 'react';
-import { Typography, Input, Form, Button, Card } from 'antd';
-const { Text } = Typography
+import React from "react";
+import { Typography, Input, Form, Button, Card } from "antd";
+const { Text } = Typography;
 
 const ChannelNameForm = (props) => (
   <div>
@@ -12,26 +12,26 @@ const ChannelNameForm = (props) => (
             name="channelName"
             value={props.channelName}
             onChange={props.onInputUpdate}
-            style={{ width: 220 }}
+            style={{ width: 300 }}
+            suffix={`${props.channelName.length}/50`}
+            maxLength={50}
           />
         </Form.Item>
       </Form>
-      {
-        !props.noName && (
-          <div style={{ marginTop: 20 }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={props.submit}
-              disabled={!props.validInput}
-            >
-              Add Integration
-            </Button>
-          </div>
-        )
-      }
+      {!props.noName && (
+        <div style={{ marginTop: 20 }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={props.submit}
+            disabled={!props.validInput}
+          >
+            Add Integration
+          </Button>
+        </div>
+      )}
     </Card>
   </div>
-)
+);
 
 export default ChannelNameForm;
