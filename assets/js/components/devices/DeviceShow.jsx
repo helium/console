@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import OutsideClick from "react-outside-click-handler";
-import pick from "lodash/pick";
-import find from "lodash/find";
-import flatten from "lodash/flatten";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import EventsDashboard from "../events/EventsDashboard";
@@ -53,8 +49,6 @@ import {
 } from "@ant-design/icons";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
-const { TabPane } = Tabs;
-const { Option } = Select;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
 
 class DeviceShow extends Component {
@@ -347,7 +341,9 @@ class DeviceShow extends Component {
                               placeholder={device.name}
                               value={this.state.newName}
                               onChange={this.handleInputUpdate}
-                              style={{ width: 200, marginRight: 5 }}
+                              style={{ width: 300, marginRight: 5 }}
+                              suffix={`${this.state.newName.length}/50`}
+                              maxLength={50}
                             />
                             <Button
                               type="primary"
