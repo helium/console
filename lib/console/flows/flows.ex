@@ -10,6 +10,16 @@ defmodule Console.Flows do
      |> Repo.all()
   end
 
+  def get_flows_with_device_id(organization_id, device_id) do
+     from(f in Flow, where: f.organization_id == ^organization_id and f.device_id == ^device_id)
+     |> Repo.all()
+  end
+
+  def get_flows_with_label_id(organization_id, label_id) do
+     from(f in Flow, where: f.organization_id == ^organization_id and f.label_id == ^label_id)
+     |> Repo.all()
+  end
+
   def get_flows_with_channel_id(organization_id, channel_id) do
      from(f in Flow, where: f.organization_id == ^organization_id and f.channel_id == ^channel_id)
      |> Repo.all()
