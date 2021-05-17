@@ -55,7 +55,7 @@ export default ({ devices, labels, functions, channels }) => {
         backgroundColor: "#ffffff",
         borderRadius: 6,
         zIndex: 100,
-        width: 340,
+        width: 300,
         boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
       }}
     >
@@ -210,41 +210,45 @@ export default ({ devices, labels, functions, channels }) => {
               Functions
             </Text>
           </div>
-          <div
-            style={{
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginLeft: 5,
-              marginRight: 5,
-              paddingBottom: 10,
-              borderBottom:
-                tab === "utilities" ? "4px solid #F18F47" : "4px solid #ffffff",
-            }}
-            onClick={() => setTab("utilities")}
-            className="noselect"
-          >
-            {tab === "utilities" ? (
-              <img draggable="false" src={UtilityIcon} style={{ height: 20 }} />
-            ) : (
-              <img
-                draggable="false"
-                src={UtilityGreyIcon}
-                style={{ height: 20 }}
-              />
-            )}
-            <Text
-              style={{
-                display: "block",
-                color: tab === "utilities" ? "#F18F47" : "#D8E2EC",
-                fontWeight: 500,
-                marginTop: 4,
-              }}
-            >
-              Utilities
-            </Text>
-          </div>
+          {
+            false && (
+              <div
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginLeft: 5,
+                  marginRight: 5,
+                  paddingBottom: 10,
+                  borderBottom:
+                    tab === "utilities" ? "4px solid #F18F47" : "4px solid #ffffff",
+                }}
+                onClick={() => setTab("utilities")}
+                className="noselect"
+              >
+                {tab === "utilities" ? (
+                  <img draggable="false" src={UtilityIcon} style={{ height: 20 }} />
+                ) : (
+                  <img
+                    draggable="false"
+                    src={UtilityGreyIcon}
+                    style={{ height: 20 }}
+                  />
+                )}
+                <Text
+                  style={{
+                    display: "block",
+                    color: tab === "utilities" ? "#F18F47" : "#D8E2EC",
+                    fontWeight: 500,
+                    marginTop: 4,
+                  }}
+                >
+                  Utilities
+                </Text>
+              </div>
+            )
+          }
           <div
             style={{
               cursor: "pointer",
