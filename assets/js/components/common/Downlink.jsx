@@ -74,7 +74,7 @@ class Downlink extends Component {
               </Col>
               <Col span={12}>
                 <Text style={{ display: "block", marginBottom: 4 }}>FPort</Text>
-                <InputNumber style={{ width: '100%' }} defaultValue={1} min={1} max={222} onChange={port => this.setState({ port })}/>
+                <InputNumber style={{ width: '100%' }} defaultValue={1} min={1} max={223} onChange={port => this.setState({ port })}/>
               </Col>
             </Row>
 

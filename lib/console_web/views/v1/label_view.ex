@@ -16,4 +16,9 @@ defmodule ConsoleWeb.V1.LabelView do
       name: label.name,
     }
   end
+
+  def append_labels(json, labels) do
+    labels_json = render_many(labels, LabelView, "label.json")
+    Map.put(json, :labels, labels_json)
+  end
 end
