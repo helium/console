@@ -614,3 +614,9 @@ a.version-link {
   height: 12px;
   width: 12px;
 }
+
+.help-link {
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: underline;
+}

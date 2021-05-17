@@ -8,6 +8,8 @@ import {
 } from "@ant-design/icons";
 import AddDeviceAlertIcon from "../../../img/alerts/device-label-alert-add-icon.svg";
 import AddIntegrationAlertIcon from "../../../img/alerts/channel-alert-add-icon.svg";
+import DeviceAlertIcon from "../../../img/alerts/alert-show-devices.svg";
+import IntegrationAlertIcon from "../../../img/alerts/alert-show-integrations.svg";
 import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
 import { createAlert, updateAlert } from "../../actions/alert";
@@ -57,11 +59,19 @@ export default (props) => {
     );
 
   const renderIcon = () => {
-    const ICONS = {
-      "device/label": AddDeviceAlertIcon,
-      integration: AddIntegrationAlertIcon,
-    };
-    return ICONS[alertType];
+    if (props.show) {
+      const ICONS = {
+        "device/label": DeviceAlertIcon,
+        integration: IntegrationAlertIcon,
+      };
+      return ICONS[alertType];
+    } else {
+      const ICONS = {
+        "device/label": AddDeviceAlertIcon,
+        integration: AddIntegrationAlertIcon,
+      };
+      return ICONS[alertType];
+    }
   };
 
   const openDeleteAlertModal = () => {
@@ -129,7 +139,7 @@ export default (props) => {
                 Nodes.
               </p>
               <p>
-                <a>Learn more about alerts</a>
+                <a className="help-link">Learn more about alerts</a>
               </p>
             </div>
           </Col>
