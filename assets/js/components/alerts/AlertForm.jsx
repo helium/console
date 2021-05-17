@@ -80,7 +80,6 @@ export default (props) => {
 
   const closeDeleteAlertModal = () => {
     setShowDeleteAlertModal(false);
-    props.back();
   };
 
   const renderTitle = () => {
@@ -178,9 +177,6 @@ export default (props) => {
         open={showDeleteAlertModal}
         alert={{ id: props.id, ...(data && { ...data.alert }) }}
         close={closeDeleteAlertModal}
-        cancel={() => {
-          setShowDeleteAlertModal(false);
-        }}
       />
     </React.Fragment>
   );
