@@ -20,4 +20,9 @@ defmodule ConsoleWeb.Router.FunctionView do
       active: function.active,
     }
   end
+
+  def append_function(json, function) do
+    function_json = render_one(function, FunctionView, "show.json")
+    Map.put(json, :function, function_json)
+  end
 end
