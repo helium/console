@@ -244,7 +244,7 @@ class ChannelShow extends Component {
                 placeholder={channel.name}
                 value={this.state.newName}
                 onChange={this.handleInputUpdate}
-                style={{ width: 300, marginRight: 5 }}
+                style={{ width: 300, marginRight: 5, verticalAlign: "middle" }}
                 suffix={`${this.state.newName.length}/50`}
                 maxLength={50}
               />

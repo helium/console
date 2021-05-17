@@ -30,7 +30,9 @@ export default ({
             value={name}
             onChange={handleInputUpdate}
             style={
-              horizontal ? { width: 300 } : { width: "100%", marginBottom: 11 }
+              horizontal
+                ? { width: 300, verticalAlign: "middle" }
+                : { width: "100%", marginBottom: 11 }
             }
             suffix={`${name.length}/50`}
             maxLength={50}

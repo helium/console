@@ -252,7 +252,11 @@ class DeviceContent extends Component {
                       placeholder={device.name}
                       value={newName}
                       onChange={this.handleInputUpdate}
-                      style={{ width: 300, marginRight: 5 }}
+                      style={{
+                        width: 300,
+                        marginRight: 5,
+                        verticalAlign: "middle",
+                      }}
                       suffix={`${newName.length}/50`}
                       maxLength={50}
                     />
