@@ -5,6 +5,9 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Labels
   alias Console.Devices
   alias Console.Devices.Device
+  alias Console.Repo
+  alias Console.AlertEvents
+  alias Console.Alerts
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -64,12 +67,26 @@ defmodule ConsoleWeb.V1.DeviceController do
   def delete(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) do
+    case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
       nil ->
         {:error, :not_found, "Device not found"}
       %Device{} = device ->
+        # grab info for notifications before device(s) deletion
+        deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
+
         with {:ok, _} <- Devices.delete_device(device) do
           broadcast_router_update_devices(device)
+
+          { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+          details = %{
+            device_name: deleted_device.device_name,
+            deleted_by: "v1 API",
+            time: time
+          }
+
+          AlertEvents.delete_unsent_alert_events_for_device(deleted_device.device_id)
+          AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
+          Alerts.delete_alert_nodes(deleted_device.device_id, "device")
 
           conn
           |> send_resp(:ok, "Device deleted")
