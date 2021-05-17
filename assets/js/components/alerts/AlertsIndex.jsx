@@ -141,6 +141,7 @@ export default (props) => {
                   onClick={() => {
                     setAlertType("device/label");
                   }}
+                  margin={12}
                 >
                   Device/Label Alert
                 </AlertTypeButton>
