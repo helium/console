@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import DeviceDashboardLayout from './DeviceDashboardLayout'
-import _JSXStyle from "styled-jsx/style"
+import React, { Component } from "react";
+import DeviceDashboardLayout from "./DeviceDashboardLayout";
+import _JSXStyle from "styled-jsx/style";
 
 class DeviceHome extends Component {
   render() {
@@ -11,10 +11,19 @@ class DeviceHome extends Component {
             <h1>Devices</h1>
             <div className="explainer">
               <p>Devices can be added to the Helium network.</p>
-              <p>More details about adding devices can be found <a href="https://docs.helium.com/use-the-network/console/adding-devices" target="_blank"> here.</a></p>
+              <p>
+                <a
+                  className="help-link"
+                  href="https://docs.helium.com/use-the-network/console/adding-devices"
+                  target="_blank"
+                >
+                  Learn more about Devices
+                </a>
+              </p>
             </div>
           </div>
-          <style jsx>{`
+          <style jsx>
+            {`
               .message {
                 width: 100%;
                 max-width: 500px;
@@ -34,9 +43,10 @@ class DeviceHome extends Component {
                 font-size: 15px;
               }
               .explainer p a {
-                color: #096DD9;
+                color: #096dd9;
               }
-              h1, p  {
+              h1,
+              p {
                 color: #242425;
               }
               h1 {
@@ -54,8 +64,8 @@ class DeviceHome extends Component {
           </style>
         </div>
       </DeviceDashboardLayout>
-    )
+    );
   }
 }
 
-export default DeviceHome
+export default DeviceHome;

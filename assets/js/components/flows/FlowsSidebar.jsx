@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Button } from "antd";
+import { Typography } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import LabelNode from "./nodes/LabelNode";
 import FunctionNode from "./nodes/FunctionNode";
@@ -45,6 +45,81 @@ export default ({ devices, labels, functions, channels }) => {
 
     event.dataTransfer.effectAllowed = "move";
   };
+
+  const renderChannels = () =>
+    channels.length > 0 ? (
+      channels.map((node) => (
+        <div
+          style={{ marginBottom: 12 }}
+          key={node.id}
+          draggable
+          onDragStart={(event) => onDragStart(event, node)}
+        >
+          <ChannelNode data={node.data} fromSidebar={true} />
+        </div>
+      ))
+    ) : (
+      <p>No Integrations</p>
+    );
+
+  const renderFunctions = () =>
+    functions.length > 0 ? (
+      functions.map((node) => (
+        <div
+          style={{ marginBottom: 12 }}
+          key={node.id}
+          draggable
+          onDragStart={(event) => onDragStart(event, node)}
+        >
+          <FunctionNode data={node.data} fromSidebar={true} />
+        </div>
+      ))
+    ) : (
+      <p>No Functions</p>
+    );
+
+  const renderLabels = () =>
+    labels.length > 0 ? (
+      labels.map((node) => (
+        <div
+          style={{ marginBottom: 12 }}
+          key={node.id}
+          draggable
+          onDragStart={(event) => onDragStart(event, node)}
+        >
+          <LabelNode data={node.data} fromSidebar={true} />
+        </div>
+      ))
+    ) : (
+      <p>No Labels</p>
+    );
+
+  const renderDevices = () =>
+    devices.length > 0 ? (
+      devices.map((node) => (
+        <div
+          style={{ marginBottom: 12 }}
+          key={node.id}
+          draggable
+          onDragStart={(event) => onDragStart(event, node)}
+        >
+          <DeviceNode data={node.data} fromSidebar={true} />
+        </div>
+      ))
+    ) : (
+      <p>No Devices</p>
+    );
+
+  const renderUtilities = () =>
+    [{ id: "none" }].map((node) => (
+      <div
+        style={{ marginBottom: 12 }}
+        key={node.id}
+        onDragStart={(event) => onDragStart(event, node)}
+      >
+        <p>No Utilities</p>
+      </div>
+    ));
 
   return (
     <div
@@ -295,60 +370,11 @@ export default ({ devices, labels, functions, channels }) => {
             overflowY: "scroll",
           }}
         >
-          {tab === "labels" &&
-            labels.map((node) => (
-              <div
-                style={{ marginBottom: 12 }}
-                key={node.id}
-                draggable
-                onDragStart={(event) => onDragStart(event, node)}
-              >
-                <LabelNode data={node.data} fromSidebar={true} />
-              </div>
-            ))}
-          {tab === "devices" &&
-            devices.map((node) => (
-              <div
-                style={{ marginBottom: 12 }}
-                key={node.id}
-                draggable
-                onDragStart={(event) => onDragStart(event, node)}
-              >
-                <DeviceNode data={node.data} fromSidebar={true} />
-              </div>
-            ))}
-          {tab === "functions" &&
-            functions.map((node) => (
-              <div
-                style={{ marginBottom: 12 }}
-                key={node.id}
-                draggable
-                onDragStart={(event) => onDragStart(event, node)}
-              >
-                <FunctionNode data={node.data} fromSidebar={true} />
-              </div>
-            ))}
-          {tab === "utilities" &&
-            [{ id: "none" }].map((node) => (
-              <div
-                style={{ marginBottom: 12 }}
-                key={node.id}
-                onDragStart={(event) => onDragStart(event, node)}
-              >
-                <p>No Utilities</p>
-              </div>
-            ))}
-          {tab === "channels" &&
-            channels.map((node) => (
-              <div
-                style={{ marginBottom: 12 }}
-                key={node.id}
-                draggable
-                onDragStart={(event) => onDragStart(event, node)}
-              >
-                <ChannelNode data={node.data} fromSidebar={true} />
-              </div>
-            ))}
+          {tab === "labels" && renderLabels()}
+          {tab === "devices" && renderDevices()}
+          {tab === "functions" && renderFunctions()}
+          {tab === "utilities" && renderUtilities()}
+          {tab === "channels" && renderChannels()}
         </div>
       )}
     </div>
