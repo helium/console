@@ -63,7 +63,8 @@ class DashboardLayout extends Component {
                         { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},
                         { title: 'How-to Videos', url: 'https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo' },
                         { title: 'Community Discord', url: 'http://chat.helium.com' },
-                        { title: 'Engineering Blog', url: 'http://engineering.helium.com' }
+                        { title: 'Engineering Blog', url: 'http://engineering.helium.com' },
+                        { title: 'Terms & Conditions', url: '/terms' }
                       ].map(link =>
                         <a key={link.title} href={link.url} target="_blank" style={{ color: '#556B8C', marginRight: '20px' }}>{link.title}</a>
                       )}
