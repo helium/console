@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import OutsideClick from "react-outside-click-handler";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import UserCan from "../../common/UserCan";
+import UserCan, { userCan } from "../../common/UserCan";
 import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
@@ -213,26 +213,34 @@ class DeviceContent extends Component {
           </Text>
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(device.updated_at).local().format("l LT")}</Text>
-          <div style={{ marginTop: 10, marginBottom: 20 }}>
+          <div style={{ marginTop: 10, marginBottom: 10 }}>
             <Link to={`/devices/${this.props.id}`}>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
-                icon={<EditOutlined />}
+                icon={
+                  userCan({ role: this.props.currentRole }) ? (
+                    <EditOutlined />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
               >
-                Edit
+                {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <Button
-              style={{ borderRadius: 4 }}
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                this.openDeleteDeviceModal(device);
-              }}
-            >
-              Delete
-            </Button>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteDeviceModal(device);
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -449,6 +457,7 @@ class DeviceContent extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentRole: state.organization.currentRole,
   };
 }
 

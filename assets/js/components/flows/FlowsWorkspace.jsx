@@ -1,4 +1,5 @@
 import React, { useState, useRef, Fragment } from "react";
+import { useSelector } from "react-redux";
 import ReactFlow, {
   ReactFlowProvider,
   isNode,
@@ -15,6 +16,7 @@ import DeviceNode from "./nodes/DeviceNode";
 import InfoSidebar from "./infoSidebar/InfoSidebar";
 import NodeInfo from "./infoSidebar/NodeInfo";
 import analyticsLogger from "../../util/analyticsLogger";
+import UserCan, { userCan } from "../common/UserCan";
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -34,6 +36,7 @@ export default ({
   channels,
   devices,
 }) => {
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showInfoSidebar, setShowInfoSidebar] = useState(false);
@@ -231,18 +234,22 @@ export default ({
             selectNodesOnDrag={false}
             multiSelectionKeyCode={null}
             selectionKeyCode={null}
+            nodesDraggable={userCan({ role: currentRole })}
+            nodesConnectable={userCan({ role: currentRole })}
           />
-          <FlowsSidebar
-            labels={labels}
-            functions={functions}
-            channels={channels}
-            devices={devices}
-          />
-          <FlowsUpdateButtons
-            hasChanges={hasChanges}
-            resetElementsMap={resetElementsMap}
-            submitChanges={() => submitChanges(elementsMap)}
-          />
+          <UserCan>
+            <FlowsSidebar
+              labels={labels}
+              functions={functions}
+              channels={channels}
+              devices={devices}
+            />
+            <FlowsUpdateButtons
+              hasChanges={hasChanges}
+              resetElementsMap={resetElementsMap}
+              submitChanges={() => submitChanges(elementsMap)}
+            />
+          </UserCan>
         </div>
         <InfoSidebar
           show={showInfoSidebar}

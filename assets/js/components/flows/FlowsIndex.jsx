@@ -10,6 +10,7 @@ import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin } from "antd";
 const { Text } = Typography;
+import UserCan from "../common/UserCan";
 
 class FlowsIndex extends Component {
   state = {
@@ -71,10 +72,12 @@ class FlowsIndex extends Component {
 
     return (
       <DashboardLayout fullHeightWidth user={this.props.user} noFooter>
-        <Prompt
-          when={this.state.hasChanges}
-          message="You have unsaved changes, are you sure you want to leave this page?"
-        />
+        <UserCan>
+          <Prompt
+            when={this.state.hasChanges}
+            message="You have unsaved changes, are you sure you want to leave this page?"
+          />
+        </UserCan>
         <FlowsWorkspace
           initialElementsMap={initialElementsMap}
           submitChanges={this.submitChanges}

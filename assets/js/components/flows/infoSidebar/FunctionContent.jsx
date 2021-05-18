@@ -7,10 +7,11 @@ import {
   CaretRightOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { Button, Typography, Tabs } from "antd";
 const { Text } = Typography;
-import UserCan from "../../common/UserCan";
+import UserCan, { userCan } from "../../common/UserCan";
 import FunctionDetailsCard from "../../functions/FunctionDetailsCard";
 import { FUNCTION_SHOW } from "../../../graphql/functions";
 import { deleteFunction, updateFunction } from "../../../actions/function";
@@ -19,7 +20,6 @@ import FunctionValidator from "../../functions/FunctionValidator";
 import DeleteFunctionModal from "../../functions/DeleteFunctionModal";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import AlertNodeSettings from "./AlertNodeSettings";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 
@@ -131,8 +131,8 @@ class FunctionContent extends Component {
           </Text>
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(fxn.updated_at).local().format("l LT")}</Text>
-          <UserCan>
-            <div style={{ marginTop: 10, marginBottom: 20 }}>
+          <div style={{ marginTop: 10, marginBottom: 10 }}>
+            <UserCan>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
                 type="default"
@@ -147,14 +147,22 @@ class FunctionContent extends Component {
               >
                 {fxn.active ? "Pause" : "Start"}
               </Button>
-              <Link to={`/functions/${this.props.id}`}>
-                <Button
-                  style={{ borderRadius: 4, marginRight: 5 }}
-                  icon={<EditOutlined />}
-                >
-                  Edit
-                </Button>
-              </Link>
+            </UserCan>
+            <Link to={`/functions/${this.props.id}`}>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                icon={
+                  userCan({ role: this.props.currentRole }) ? (
+                    <EditOutlined />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
+              >
+                {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
+              </Button>
+            </Link>
+            <UserCan>
               <Button
                 style={{ borderRadius: 4 }}
                 type="danger"
@@ -166,8 +174,8 @@ class FunctionContent extends Component {
               >
                 Delete
               </Button>
-            </div>
-          </UserCan>
+            </UserCan>
+          </div>
         </div>
 
         <Tabs defaultActiveKey="1" centered>
@@ -176,20 +184,18 @@ class FunctionContent extends Component {
             key="1"
             style={{ padding: "0px 40px 0px 40px" }}
           >
-            <UserCan>
-              <FunctionDetailsCard
-                fxn={fxn}
-                name={name}
-                type={type}
-                format={format}
-                body={body}
-                handleSelectFunctionType={this.handleSelectFunctionType}
-                handleInputUpdate={this.handleInputUpdate}
-                handleSelectFormat={this.handleSelectFormat}
-                clearInputs={this.clearInputs}
-                handleSubmit={this.handleSubmit}
-              />
-            </UserCan>
+            <FunctionDetailsCard
+              fxn={fxn}
+              name={name}
+              type={type}
+              format={format}
+              body={body}
+              handleSelectFunctionType={this.handleSelectFunctionType}
+              handleInputUpdate={this.handleInputUpdate}
+              handleSelectFormat={this.handleSelectFormat}
+              clearInputs={this.clearInputs}
+              handleSubmit={this.handleSubmit}
+            />
 
             {/* TODO fix the function validator being squished into the sidebar */}
             {(format === "custom" || (fxn.format === "custom" && !format)) && (
@@ -215,6 +221,7 @@ class FunctionContent extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentRole: state.organization.currentRole,
   };
 }
 

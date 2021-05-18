@@ -307,7 +307,7 @@ class LabelContent extends Component {
           </Text>
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(label.updated_at).local().format("l LT")}</Text>
-          <div style={{ marginTop: 10, marginBottom: 20 }}>
+          <div style={{ marginTop: 10, marginBottom: 10 }}>
             <UserCan>
               <Button
                 icon={<SettingOutlined />}

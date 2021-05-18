@@ -19,6 +19,7 @@ import { useQuery } from "@apollo/client";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import DeleteAlertModal from "./DeleteAlertModal";
 import { useHistory } from "react-router-dom";
+import UserCan from "../common/UserCan";
 
 export default (props) => {
   const history = useHistory();
@@ -108,24 +109,26 @@ export default (props) => {
             Back
           </Button>
         )}
-        {props.show && (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Button
-              size="middle"
-              type="danger"
-              style={{ borderRadius: 5 }}
-              onClick={openDeleteAlertModal}
+        <UserCan>
+          {props.show && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-end",
+              }}
             >
-              Delete
-            </Button>
-          </div>
-        )}
+              <Button
+                size="middle"
+                type="danger"
+                style={{ borderRadius: 5 }}
+                onClick={openDeleteAlertModal}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
+        </UserCan>
         <Row style={{ marginTop: "10px" }}>
           <Col span={10} style={{ padding: "70px 80px" }}>
             <img src={renderIcon()} />
