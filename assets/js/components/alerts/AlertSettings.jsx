@@ -1,10 +1,12 @@
 import React, { Fragment, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Button, Input } from "antd";
 import Text from "antd/lib/typography/Text";
 import { Tabs } from "antd";
 const { TabPane } = Tabs;
 import { ALERT_EVENT_INFO, ALERT_TYPES } from "./constants";
 import AlertSetting from "./AlertSetting";
+import UserCan, { userCan } from "../common/UserCan";
 
 export default ({
   alertType,
@@ -19,6 +21,7 @@ export default ({
   const [name, setName] = useState("");
   const [config, setConfig] = useState({});
   const [alertData, setAlertData] = useState({});
+  const currentRole = useSelector((state) => state.organization.currentRole);
 
   useEffect(() => {
     if (show && data) {
@@ -44,6 +47,7 @@ export default ({
                 eventDescription={s.description}
                 hasValue={s.hasValue}
                 type="email"
+                disabled={!userCan({ role: currentRole })}
                 value={
                   show &&
                   alertData &&
@@ -95,6 +99,7 @@ export default ({
                 eventDescription={s.description}
                 hasValue={s.hasValue}
                 type="webhook"
+                disabled={!userCan({ role: currentRole })}
                 value={
                   show &&
                   alertData &&
@@ -144,21 +149,23 @@ export default ({
 
   const renderButton = () => {
     return (
-      <Button
-        icon={saveIcon}
-        type="primary"
-        style={{
-          borderColor: alertType && ALERT_TYPES[alertType].color,
-          backgroundColor: alertType && ALERT_TYPES[alertType].color,
-          borderRadius: 50,
-          text: "white",
-        }}
-        onClick={() => {
-          save(name, config);
-        }}
-      >
-        {`${saveText} ${alertType && ALERT_TYPES[alertType].name} Alert`}
-      </Button>
+      <UserCan>
+        <Button
+          icon={saveIcon}
+          type="primary"
+          style={{
+            borderColor: alertType && ALERT_TYPES[alertType].color,
+            backgroundColor: alertType && ALERT_TYPES[alertType].color,
+            borderRadius: 50,
+            text: "white",
+          }}
+          onClick={() => {
+            save(name, config);
+          }}
+        >
+          {`${saveText} ${alertType && ALERT_TYPES[alertType].name} Alert`}
+        </Button>
+      </UserCan>
     );
   };
 
@@ -175,6 +182,7 @@ export default ({
         placeholder={show ? alertData.name : "e.g. Master Alert"}
         suffix={`${name.length}/25`}
         maxLength={25}
+        disabled={!userCan({ role: currentRole })}
       />
       <div style={{ marginTop: 20 }}>{renderForm()}</div>
       <div style={{ marginTop: 20 }}>

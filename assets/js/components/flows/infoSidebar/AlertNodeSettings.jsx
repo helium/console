@@ -4,7 +4,7 @@ import { ALERTS_PER_TYPE, ALERTS_FOR_NODE } from "../../../graphql/alerts";
 import { useQuery } from "@apollo/client";
 import { Button, Switch, Table } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import UserCan from "../../common/UserCan";
+import UserCan, { userCan } from "../../common/UserCan";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Link } from "react-router-dom";
 import { addAlertToNode, removeAlertFromNode } from "../../../actions/alert";
@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import NewAlertWithNode from "./NewAlertWithNode";
 
 export default (props) => {
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const { loading, error, data, refetch } = useQuery(ALERTS_PER_TYPE, {
     variables: {
       type: ["device", "label"].includes(props.type)
@@ -105,75 +106,67 @@ export default (props) => {
             title: "",
             dataIndex: "",
             render: (text, record) => (
-              <UserCan>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                  }}
-                >
-                  <Switch
-                    checked={
-                      nodeAlerts &&
-                      nodeAlerts.findIndex(
-                        (alert) => alert.id === record.id
-                      ) !== -1
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                <Switch
+                  disabled={!userCan({ role: currentRole })}
+                  checked={
+                    nodeAlerts &&
+                    nodeAlerts.findIndex((alert) => alert.id === record.id) !==
+                      -1
+                  }
+                  onChange={(checked) => {
+                    if (checked) {
+                      dispatch(
+                        addAlertToNode(record.id, props.nodeId, props.type)
+                      ).then(() => {
+                        let prefix = `${
+                          props.type === "integration" ? "channel" : props.type
+                        }-`;
+                        props.onAlertUpdate(
+                          prefix + props.nodeId,
+                          props.type,
+                          nodeAlerts.length + 1 > 0
+                        );
+                      });
+                    } else {
+                      dispatch(
+                        removeAlertFromNode(record.id, props.nodeId, props.type)
+                      ).then(() => {
+                        let prefix = `${
+                          props.type === "integration" ? "channel" : props.type
+                        }-`;
+                        props.onAlertUpdate(
+                          prefix + props.nodeId,
+                          props.type,
+                          nodeAlerts.length - 1 > 0
+                        );
+                      });
                     }
-                    onChange={(checked) => {
-                      if (checked) {
-                        dispatch(
-                          addAlertToNode(record.id, props.nodeId, props.type)
-                        ).then(() => {
-                          let prefix = `${
-                            props.type === "integration"
-                              ? "channel"
-                              : props.type
-                          }-`;
-                          props.onAlertUpdate(
-                            prefix + props.nodeId,
-                            props.type,
-                            nodeAlerts.length + 1 > 0
-                          );
-                        });
-                      } else {
-                        dispatch(
-                          removeAlertFromNode(
-                            record.id,
-                            props.nodeId,
-                            props.type
-                          )
-                        ).then(() => {
-                          let prefix = `${
-                            props.type === "integration"
-                              ? "channel"
-                              : props.type
-                          }-`;
-                          props.onAlertUpdate(
-                            prefix + props.nodeId,
-                            props.type,
-                            nodeAlerts.length - 1 > 0
-                          );
-                        });
-                      }
-                    }}
-                  />
-                </div>
-              </UserCan>
+                  }}
+                />
+              </div>
             ),
           },
         ]}
       />
-      <Button
-        icon={<BellOutlined />}
-        style={{ borderRadius: 4, margin: 40 }}
-        onClick={() => {
-          setShowNew(true);
-        }}
-      >
-        Create New Alert
-      </Button>
+      <UserCan>
+        <Button
+          icon={<BellOutlined />}
+          style={{ borderRadius: 4, margin: 40 }}
+          onClick={() => {
+            setShowNew(true);
+          }}
+        >
+          Create New Alert
+        </Button>
+      </UserCan>
     </div>
   );
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Button, Row, Col, Input, Typography, Slider } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
@@ -9,9 +8,12 @@ import { useQuery } from "@apollo/client";
 import { MULTI_BUY_SHOW } from "../../graphql/multiBuys";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+import UserCan, { userCan } from "../common/UserCan";
 
 export default ({ show, id, openDeleteMultiplePacketModal }) => {
   const history = useHistory();
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const [name, setName] = useState("");
   const [multiBuyValue, setMultiBuyValue] = useState(1);
   const dispatch = useDispatch();
@@ -51,24 +53,26 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
 
   return (
     <div style={{ padding: "30px 30px 20px 30px" }}>
-      {show && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-          }}
-        >
-          <Button
-            size="middle"
-            type="danger"
-            style={{ borderRadius: 5, marginRight: 50 }}
-            onClick={() => openDeleteMultiplePacketModal(data.multiBuy)}
+      <UserCan>
+        {show && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+            }}
           >
-            Delete
-          </Button>
-        </div>
-      )}
+            <Button
+              size="middle"
+              type="danger"
+              style={{ borderRadius: 5, marginRight: 50 }}
+              onClick={() => openDeleteMultiplePacketModal(data.multiBuy)}
+            >
+              Delete
+            </Button>
+          </div>
+        )}
+      </UserCan>
       <Row style={{ marginTop: "10px" }}>
         <Col span={10} style={{ padding: "70px 80px" }}>
           <img src={MultiBuyIcon} />
@@ -97,6 +101,7 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
             placeholder={"e.g. All Available Packets"}
             suffix={`${name.length}/25`}
             maxLength={25}
+            disabled={!userCan({ role: currentRole })}
           />
 
           <div style={{ marginTop: 40, width: "80%" }}>
@@ -110,6 +115,7 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
                 max={10}
                 tooltipVisible={false}
                 onChange={(value) => setMultiBuyValue(value)}
+                disabled={!userCan({ role: currentRole })}
               />
             </div>
 
@@ -122,30 +128,32 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
             </p>
           </div>
 
-          <Button
-            icon={show ? <EditOutlined /> : <PlusOutlined />}
-            type="primary"
-            style={{
-              borderColor: "#2C79EE",
-              backgroundColor: "#2C79EE",
-              borderRadius: 50,
-              text: "white",
-              marginTop: 40,
-            }}
-            onClick={() => {
-              if (show) {
-                dispatch(updateMultiBuy(id, { name, value: multiBuyValue }));
-              } else {
-                dispatch(createMultiBuy({ name, value: multiBuyValue })).then(
-                  () => {
-                    history.push("/multi_buys");
-                  }
-                );
-              }
-            }}
-          >
-            {show ? "Update" : "Create"} Multiple Packet Config
-          </Button>
+          <UserCan>
+            <Button
+              icon={show ? <EditOutlined /> : <PlusOutlined />}
+              type="primary"
+              style={{
+                borderColor: "#2C79EE",
+                backgroundColor: "#2C79EE",
+                borderRadius: 50,
+                text: "white",
+                marginTop: 40,
+              }}
+              onClick={() => {
+                if (show) {
+                  dispatch(updateMultiBuy(id, { name, value: multiBuyValue }));
+                } else {
+                  dispatch(createMultiBuy({ name, value: multiBuyValue })).then(
+                    () => {
+                      history.push("/multi_buys");
+                    }
+                  );
+                }
+              }}
+            >
+              {show ? "Update" : "Create"} Multiple Packet Config
+            </Button>
+          </UserCan>
         </Col>
       </Row>
     </div>

@@ -1,5 +1,6 @@
 import React from "react";
-import UserCan from "../common/UserCan";
+import { useSelector } from "react-redux";
+import UserCan, { userCan } from "../common/UserCan";
 import { Typography, Card, Button, Input, Select } from "antd";
 import { DeleteOutlined, SaveOutlined } from "@ant-design/icons";
 const { Text } = Typography;
@@ -19,6 +20,7 @@ export default ({
   handleSubmit,
   horizontal,
 }) => {
+  const currentRole = useSelector((state) => state.organization.currentRole);
   return (
     <Card title="Function Details">
       <Text>Update Function</Text>
@@ -36,6 +38,7 @@ export default ({
             }
             suffix={`${name.length}/50`}
             maxLength={50}
+            disabled={!userCan({ role: currentRole })}
           />
           <Select
             placeholder={functionTypes[fxn.type]}
@@ -46,6 +49,7 @@ export default ({
                 : { width: "100%", marginBottom: 7 }
             }
             value={type}
+            disabled={!userCan({ role: currentRole })}
           >
             <Option value="decoder">Decoder</Option>
           </Select>
@@ -58,15 +62,18 @@ export default ({
                 : { width: "100%", marginBottom: 7 }
             }
             value={format}
+            disabled={!userCan({ role: currentRole })}
           >
             <Option value="browan_object_locator">Browan Object Locator</Option>
             <Option value="cayenne">Cayenne LPP</Option>
             <Option value="custom">Custom Script</Option>
           </Select>
         </div>
-        <Button icon={<DeleteOutlined />} onClick={clearInputs}>
-          Clear
-        </Button>
+        <UserCan>
+          <Button icon={<DeleteOutlined />} onClick={clearInputs}>
+            Clear
+          </Button>
+        </UserCan>
 
         {horizontal ? (
           <div>

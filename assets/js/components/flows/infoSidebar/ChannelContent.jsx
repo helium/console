@@ -10,7 +10,7 @@ import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
 import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import analyticsLogger from "../../../util/analyticsLogger";
-import UserCan from "../../common/UserCan";
+import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
 import AwsDetails from "../../channels/AwsDetails";
 import MqttDetails from "../../channels/MqttDetails";
@@ -122,26 +122,34 @@ class ChannelContent extends Component {
           </Text>
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(channel.updated_at).local().format("l LT")}</Text>
-          <div style={{ marginTop: 10, marginBottom: 20 }}>
+          <div style={{ marginTop: 10, marginBottom: 10 }}>
             <Link to={`/integrations/${this.props.id}`}>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
-                icon={<EditOutlined />}
+                icon={
+                  userCan({ role: this.props.currentRole }) ? (
+                    <EditOutlined />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
               >
-                Edit
+                {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <Button
-              style={{ borderRadius: 4 }}
-              type="danger"
-              icon={<DeleteOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                this.openDeleteChannelModal();
-              }}
-            >
-              Delete
-            </Button>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteChannelModal();
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -274,6 +282,7 @@ class ChannelContent extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentRole: state.organization.currentRole,
   };
 }
 

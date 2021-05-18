@@ -1,4 +1,5 @@
 import React, { useState, useRef, Fragment } from "react";
+import { useSelector } from "react-redux";
 import ReactFlow, {
   ReactFlowProvider,
   isNode,
@@ -15,6 +16,7 @@ import DeviceNode from "./nodes/DeviceNode";
 import InfoSidebar from "./infoSidebar/InfoSidebar";
 import NodeInfo from "./infoSidebar/NodeInfo";
 import analyticsLogger from "../../util/analyticsLogger";
+import UserCan, { userCan } from "../common/UserCan";
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -34,6 +36,7 @@ export default ({
   channels,
   devices,
 }) => {
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showInfoSidebar, setShowInfoSidebar] = useState(false);
@@ -54,34 +57,38 @@ export default ({
   };
 
   const onElementsRemove = (elementsToRemove) => {
-    if (!elementsToRemove[0]) return;
+    if (userCan({ role: currentRole })) {
+      if (!elementsToRemove[0]) return;
 
-    if (isEdge(elementsToRemove[0])) {
-      setElements((elsMap) => omit(elsMap, [elementsToRemove[0].id]));
-    }
-    if (isNode(elementsToRemove[0])) {
-      const edges = Object.values(elementsMap)
-        .filter(
-          (el) =>
-            isEdge(el) &&
-            (el.source === elementsToRemove[0].id ||
-              el.target === elementsToRemove[0].id)
-        )
-        .map((el) => el.id);
+      if (isEdge(elementsToRemove[0])) {
+        setElements((elsMap) => omit(elsMap, [elementsToRemove[0].id]));
+      }
+      if (isNode(elementsToRemove[0])) {
+        const edges = Object.values(elementsMap)
+          .filter(
+            (el) =>
+              isEdge(el) &&
+              (el.source === elementsToRemove[0].id ||
+                el.target === elementsToRemove[0].id)
+          )
+          .map((el) => el.id);
 
-      setElements((elsMap) =>
-        omit(elsMap, edges.concat(elementsToRemove[0].id))
-      );
+        setElements((elsMap) =>
+          omit(elsMap, edges.concat(elementsToRemove[0].id))
+        );
+      }
+      setChangesState(true);
     }
-    setChangesState(true);
   };
 
   const onElementsAdd = ({ source, target }) => {
-    const id = "edge-" + source + "-" + target;
-    const newEdge = { id, source, target };
+    if (userCan({ role: currentRole })) {
+      const id = "edge-" + source + "-" + target;
+      const newEdge = { id, source, target };
 
-    setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
-    setChangesState(true);
+      setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
+      setChangesState(true);
+    }
   };
 
   const resetElementsMap = () => {
@@ -231,18 +238,22 @@ export default ({
             selectNodesOnDrag={false}
             multiSelectionKeyCode={null}
             selectionKeyCode={null}
+            nodesDraggable={userCan({ role: currentRole })}
+            nodesConnectable={userCan({ role: currentRole })}
           />
-          <FlowsSidebar
-            labels={labels}
-            functions={functions}
-            channels={channels}
-            devices={devices}
-          />
-          <FlowsUpdateButtons
-            hasChanges={hasChanges}
-            resetElementsMap={resetElementsMap}
-            submitChanges={() => submitChanges(elementsMap)}
-          />
+          <UserCan>
+            <FlowsSidebar
+              labels={labels}
+              functions={functions}
+              channels={channels}
+              devices={devices}
+            />
+            <FlowsUpdateButtons
+              hasChanges={hasChanges}
+              resetElementsMap={resetElementsMap}
+              submitChanges={() => submitChanges(elementsMap)}
+            />
+          </UserCan>
         </div>
         <InfoSidebar
           show={showInfoSidebar}
