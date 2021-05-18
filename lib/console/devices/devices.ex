@@ -13,13 +13,12 @@ defmodule Console.Devices do
     Repo.all(Device)
   end
 
-  def get_organization_device_count(organization) do
-    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
-    length(devices)
-  end
-
+  def get_device(id), do: Repo.get(Device, id)
   def get_device!(id), do: Repo.get!(Device, id)
 
+  def get_device(organization, id) do
+     Repo.get_by(Device, [id: id, organization_id: organization.id])
+  end
   def get_device!(organization, id) do
      Repo.get_by!(Device, [id: id, organization_id: organization.id])
   end
@@ -49,7 +48,6 @@ defmodule Console.Devices do
 
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
      from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
-     |> preload([:labels])
      |> Repo.all()
   end
 
@@ -76,7 +74,7 @@ defmodule Console.Devices do
       |> Repo.one()
   end
 
-  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization, :channels]) do
+  def fetch_assoc(%Device{} = device, assoc \\ [:events, :organization]) do
     Repo.preload(device, assoc)
   end
 
@@ -148,7 +146,6 @@ defmodule Console.Devices do
   end
 
   def create_import(%Organization{} = organization, user_id, type) do
-
     %DeviceImports{}
     |> DeviceImports.create_changeset(%{
       organization_id: organization.id,
@@ -175,5 +172,10 @@ defmodule Console.Devices do
     from(e in Event, where: e.device_id == ^device_id, order_by: [desc: :reported_at])
     |> limit(1440)
     |> Repo.all()
+  end
+
+  defp get_organization_device_count(organization) do
+    devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
+    length(devices)
   end
 end

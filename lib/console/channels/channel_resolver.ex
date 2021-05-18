@@ -2,27 +2,16 @@ defmodule Console.Channels.ChannelResolver do
   alias Console.Repo
   alias Console.Channels.Channel
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_organization: current_organization}}) do
     channels = Channel
       |> where([c], c.organization_id == ^current_organization.id)
-      |> preload([{:labels, [:devices, :function]}])
       |> Repo.paginate(page: page, page_size: page_size)
 
     updated_entries = channels.entries
       |> Enum.map(fn c ->
-        device_count = Enum.map(c.labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> length()
-        Map.put(c, :device_count, device_count)
-      end)
-      |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
-      end)
-      |> Enum.map(fn c ->
-        Map.put(c, :labels,
-          Enum.map(c.labels, fn l ->
-            Map.drop(l, [:devices])
-          end)
-        )
       end)
 
     {:ok, Map.put(channels, :entries, updated_entries)}
@@ -31,14 +20,7 @@ defmodule Console.Channels.ChannelResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
     channel = Channel
       |> where([c], c.id == ^id and c.organization_id == ^current_organization.id)
-      |> preload([labels: :devices])
       |> Repo.one!()
-
-    devices =
-      case length(channel.labels) do
-        0 -> []
-        _ -> Enum.map(channel.labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> Map.drop(d, [:app_key]) end)
-      end
 
     channel =
       case channel.type do
@@ -65,6 +47,7 @@ defmodule Console.Channels.ChannelResolver do
               topic: channel.credentials["downlink"]["topic"]
             }
           })
+          |> Map.put(:endpoint, channel.credentials["endpoint"])
         _ ->
           channel
       end
@@ -74,28 +57,41 @@ defmodule Console.Channels.ChannelResolver do
         "read" ->
           channel
           |> Map.drop([:downlink_token])
-          |> Map.put(:labels,
-            Enum.map(channel.labels, fn l ->
-              Map.drop(l, [:devices])
-            end)
-          )
-          |> Map.put(:devices, devices)
         _ ->
           channel
-          |> Map.put(:devices, devices)
       end
 
     {:ok, channel}
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do
+    channels = Ecto.assoc(current_organization, :channels) |> Repo.all()
+
     channels =
-      Ecto.assoc(current_organization, :channels)
-      |> Repo.all()
+      Enum.map(channels, fn channel ->
+        case channel.type do
+          "http" ->
+            channel
+            |> Map.put(:endpoint, channel.credentials["endpoint"])
+          "mqtt" ->
+            channel
+            |> Map.put(:endpoint, channel.credentials["endpoint"])
+          _ ->
+            channel
+        end
+      end)
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
+        |> Map.put(:alerts, Alerts.get_alerts_by_node(c.id, "integration"))
       end)
 
     {:ok, channels}
+  end
+
+  def get_names(%{channel_ids: channel_ids}, %{context: %{current_organization: current_organization}}) do
+    query = from c in Channel,
+      where: c.organization_id == ^current_organization.id and c.id in ^channel_ids
+
+    {:ok, query |> Repo.all()}
   end
 end

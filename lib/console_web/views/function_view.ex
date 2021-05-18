@@ -18,11 +18,7 @@ defmodule ConsoleWeb.FunctionView do
       format: function.format,
       body: function.body,
       active: function.active,
+      updated_at: function.updated_at
     }
-  end
-
-  def append_function(json, function) do
-    function_json = render_one(function, FunctionView, "show.json")
-    Map.put(json, :function, function_json)
   end
 end

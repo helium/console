@@ -11,7 +11,9 @@ export const DEVICE_FRAGMENT = gql`
     inserted_at,
     total_packets,
     dc_usage,
-    active
+    active,
+    adr_allowed,
+    multi_buy_id
   }
 `
 
@@ -24,21 +26,18 @@ export const DEVICE_SHOW = gql`
       labels {
         name,
         id,
-        color,
-        channels {
-          name,
-          id,
-          type,
-          downlink_token
-        },
-        function {
-          id,
-          name
-        }
       }
     }
   }
   ${DEVICE_FRAGMENT}
+`
+
+export const DEVICE_COUNT = gql`
+  query DeviceCountQuery {
+    device_count {
+      count
+    }
+  }
 `
 
 export const DEVICE_SHOW_STATS = gql`
@@ -80,22 +79,9 @@ export const PAGINATED_DEVICES = gql`
     devices(page: $page, pageSize: $pageSize, column: $column, order: $order) {
       entries {
         ...DeviceFragment
-        channels {
-          name,
-          id
-        }
         labels {
           name,
           id,
-          color,
-          channels {
-            name,
-            id
-          }
-          function {
-            id,
-            name
-          }
         }
       },
       totalEntries,
@@ -118,16 +104,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
         inserted_at,
         last_connected,
         labels {
-          name,
-          color,
-          channels {
-            id,
-            name
-          }
-          function {
-            id,
-            name
-          }
+          name
         }
       },
       totalEntries,

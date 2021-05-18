@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 import get from 'lodash/get'
+import DeleteLabelModal from './DeleteLabelModal'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
@@ -12,7 +13,7 @@ import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
 import { StatusIcon } from '../common/StatusIcon'
-import { DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, SettingOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select
@@ -25,7 +26,8 @@ class LabelShowTable extends Component {
     pageSize: 10,
     selectedRows: [],
     column: DEFAULT_COLUMN,
-    order: DEFAULT_ORDER
+    order: DEFAULT_ORDER,
+    showDeleteLabelModal: false,
   }
 
   componentDidMount() {
@@ -37,6 +39,11 @@ class LabelShowTable extends Component {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     })
+
+    if (!this.props.paginatedDevicesQuery.loading) {
+      const { page, pageSize, column, order } = this.state
+      this.refetchPaginatedEntries(page, pageSize, column, order)
+    }
   }
 
   componentWillUnmount() {
@@ -46,12 +53,16 @@ class LabelShowTable extends Component {
   handleSelectOption = value => {
     if (value === 'remove') {
       this.props.openRemoveDevicesFromLabelModal(this.state.selectedRows)
+    } else if (value === 'addDevices') {
+      this.props.openLabelAddDeviceModal()
     } else if (value === 'setActive') {
       this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), true, this.props.labelId)
     } else if (value === 'setInactive') {
       this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false, this.props.labelId)
     } else if (value === 'delete') {
       this.props.openDeleteDeviceModal(this.state.selectedRows)
+    } else if (value === 'deleteLabel') {
+      this.setState({ showDeleteLabelModal: true })
     }
   }
 
@@ -95,7 +106,7 @@ class LabelShowTable extends Component {
         dataIndex: 'name',
         sorter: true,
         render: (text, record) => (
-          <Link to={"#"}>
+          <Link to={`/devices/${record.id}`}>
             {text}
             {
               moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
@@ -111,7 +122,7 @@ class LabelShowTable extends Component {
           <span>
             {
               record.labels.map(l => (
-                <LabelTag key={l.name} text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
+                <LabelTag key={l.name} text={l.name} />
               ))
             }
           </span>
@@ -160,9 +171,9 @@ class LabelShowTable extends Component {
     ]
 
     const { loading, error, devices_by_label } = this.props.paginatedDevicesQuery
-    const { devicesSelected } = this.props;
+    const { devicesSelected, label } = this.props;
 
-    if (loading) return <SkeletonLayout />;
+    if (loading) return <div style={{ padding: 40 }}><SkeletonLayout /></div>;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )
@@ -177,33 +188,42 @@ class LabelShowTable extends Component {
     const { selectedRows } = this.state
 
     return (
-      <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
-        title={`${devices_by_label.totalEntries} Devices`}
-        extra={
-          <UserCan>
-            <Select
-              value="Quick Action"
-              style={{ width: 300 }}
-              onSelect={this.handleSelectOption}
-            >
-              {
-                selectedRows.find(r => r.active === false) && (
-                  <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
-                )
-              }
+      <div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+          <Text style={{ fontSize: 22, fontWeight: 600 }}>{label.name}</Text>
+          <div>
+            <UserCan>
+              <Button
+                icon={<SettingOutlined />}
+                style={{ borderRadius: 4, marginRight: 10 }}
+                onClick={this.props.openUpdateLabelModal}
+              >
+                Label Settings
+              </Button>
+              <Select
+                value="Quick Action"
+                style={{ width: 300 }}
+                onSelect={this.handleSelectOption}
+              >
+                <Option value="addDevices">Add this Label to a Device</Option>
+                {
+                  selectedRows.find(r => r.active === false) && (
+                    <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
+                  )
+                }
 
-              {
-                (selectedRows.length === 0 || !selectedRows.find(r => r.active === false)) && (
-                  <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
-                )
-              }
-              <Option disabled={selectedRows.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
-              <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
-            </Select>
-          </UserCan>
-        }
-      >
+                {
+                  (selectedRows.length === 0 || !selectedRows.find(r => r.active === false)) && (
+                    <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
+                  )
+                }
+                <Option disabled={selectedRows.length === 0} value="remove" style={{ color: redForTablesDeleteText }}>Remove Selected Devices from Label</Option>
+                <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+                <Option value="deleteLabel" style={{ color: redForTablesDeleteText }}>Delete This Label</Option>
+              </Select>
+            </UserCan>
+          </div>
+        </div>
         <Table
           onRow={(record, rowIndex) => ({
             onClick: () => this.props.history.push(`/devices/${record.id}`)
@@ -226,7 +246,13 @@ class LabelShowTable extends Component {
             showSizeChanger={false}
           />
         </div>
-      </Card>
+
+        <DeleteLabelModal
+          open={this.state.showDeleteLabelModal}
+          onClose={() => this.setState({ showDeleteLabelModal: false })}
+          labelId={this.props.labelId}
+        />
+      </div>
     )
   }
 }

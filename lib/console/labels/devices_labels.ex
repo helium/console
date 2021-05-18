@@ -19,9 +19,4 @@ defmodule Console.Labels.DevicesLabels do
     |> validate_required([:device_id, :label_id])
     |> unique_constraint(:device_id, name: :devices_labels_device_id_label_id_index, message: "Device already added to Label")
   end
-
-  def join_changeset(devices_label, device, label) do
-    devices_label
-    |> changeset(%{device_id: device.id, label_id: label.id})
-  end
 end

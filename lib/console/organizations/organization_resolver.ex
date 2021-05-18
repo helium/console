@@ -29,7 +29,7 @@ defmodule Console.Organizations.OrganizationResolver do
 
   def find(%{id: id}, %{context: %{current_user: current_user}}) do
     organization = Organizations.get_organization!(current_user, id)
-    {:ok, Map.drop(organization, [:webhook_key])}
+    {:ok, Map.put(organization, :flow, Poison.encode!(organization.flow)) |> Map.drop([:webhook_key])}
   end
 
   def all(_, %{context: %{current_user: current_user}}) do
@@ -38,7 +38,7 @@ defmodule Console.Organizations.OrganizationResolver do
       |> Enum.map(fn o ->
         Map.drop(o, [:webhook_key])
       end)
-        
+
     {:ok, organizations}
   end
 end

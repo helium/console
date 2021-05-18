@@ -2,8 +2,10 @@ defmodule ConsoleWeb.Router.DeviceController do
   use ConsoleWeb, :controller
   alias Console.Repo
 
+  alias Console.Flows
   alias Console.Labels
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
   alias Console.Devices.Device
@@ -13,7 +15,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.DcPurchases.DcPurchase
   alias Console.Email
   alias Console.Mailer
-  alias Console.LabelNotificationEvents
+  alias Console.AlertEvents
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -29,78 +31,91 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
-    devices = Enum.map(devices, fn d ->
-      if length(d.labels) > 0 do
-        Map.put(d, :channels, Ecto.assoc(d.labels, :channels) |> Repo.all() |> Enum.uniq())
-      else
-        Map.put(d, :channels, [])
-      end
-    end)
 
     render(conn, "devices.json", devices: devices)
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id) |> Repo.preload([labels: [:channels, :function]])
-    device =
-      if length(device.labels) > 0 do
-        channels_with_functions_and_channels =
-          device.labels
-          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) > 0 end)
-          |> Enum.map(fn l ->
-            Enum.map(l.channels, fn c -> Map.put(c, :function, l.function) end)
-          end)
-          |> List.flatten()
-
-        channels_with_functions_no_channels =
-          device.labels
-          |> Enum.filter(fn l -> l.function != nil && l.function.active == true && length(l.channels) == 0 end)
-          |> Enum.map(fn l ->
-            %{
-              function: l.function,
-              id: "no_channel",
-              name: "Internal Integration",
-              type: "console",
-              credentials: %{},
-              active: false,
-              organization_id: "no_organization_id",
-              downlink_token: "no_downlink_token",
-              payload_template: nil,
-            }
-          end)
-          |> List.flatten()
-
-        channels_without_functions =
-          device.labels
-          |> Enum.filter(fn l -> l.function == nil || l.function.active == false end)
-          |> Enum.map(fn l -> l.channels end)
-          |> List.flatten()
-          |> Enum.uniq()
-          |> Enum.map(fn c -> Map.put(c, :function, nil) end)
-
-        adr_allowed = device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.find(fn s -> s == true end)
-        device =
-          case adr_allowed do
-            true -> Map.put(device, :adr_allowed, true)
-            _ -> device
+    case Devices.get_device(id) |> Repo.preload([:multi_buy, labels: [:multi_buy]]) do
+      %Device{} = device ->
+        adr_allowed =
+          case length(device.labels) do
+            0 -> device.adr_allowed
+            _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
           end
 
-        multi_buy_value = device.labels |> Enum.map(fn l -> l.multi_buy end) |> Enum.max
-        case multi_buy_value do
-          0 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-          10 ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, 9999) #9999 is the value for router to indicate all available packets
-          _ ->
-            Map.put(device, :channels, channels_with_functions_and_channels ++ channels_with_functions_no_channels ++ channels_without_functions)
-            |> Map.put(:multi_buy, multi_buy_value)
-        end
-      else
-        Map.put(device, :channels, [])
-      end
+        multi_buy_value =
+          case length(device.labels) do
+            0 ->
+              case device.multi_buy_id do
+                nil -> 1
+                _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+              end
+            _ ->
+              label_multi_buys =
+                device.labels
+                |> Enum.map(fn l -> l.multi_buy end)
+                |> Enum.filter(fn mb -> mb != nil end)
+                |> Enum.map(fn mb -> mb.value end)
 
-    render(conn, "show.json", device: device)
+              case length(label_multi_buys) do
+                0 -> 1
+                _ ->
+                  max_value = Enum.max(label_multi_buys)
+                  if max_value == 10, do: 9999, else: max_value
+              end
+          end
+
+        # get all flows connected to single device
+        device_flows = Flows.get_flows_with_device_id(device.organization_id, device.id)
+
+        # get all flows connected to associated labels
+        label_flows =
+          Enum.map(device.labels, fn label ->
+            Flows.get_flows_with_label_id(label.organization_id, label.id)
+          end)
+          |> List.flatten()
+
+        # deduplicate above flows, fetch associated function and channel, check for not active functions and remove
+        deduped_flows =
+          device_flows ++ label_flows
+          |> Enum.reduce([], fn flow, acc ->
+            case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
+              nil -> [flow | acc]
+              _ -> acc
+            end
+          end)
+          |> Repo.preload([:channel, :function])
+          |> Enum.reduce([], fn flow, acc ->
+            if flow.function_id != nil and not flow.function.active do
+              case Enum.find(acc, fn x -> x.function_id == nil and x.channel_id == flow.channel_id end) do
+                nil -> [ Map.merge(flow, %{ function: nil, function_id: nil }) | acc]
+                _ -> acc
+              end
+            else
+              case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
+                nil -> [flow | acc]
+                _ -> acc
+              end
+            end
+          end)
+
+        channels =
+          Enum.map(deduped_flows, fn flow ->
+            Map.put(flow.channel, :function, flow.function)
+          end)
+
+        final_device =
+          device
+          |> Map.put(:adr_allowed, adr_allowed)
+          |> Map.put(:multi_buy, multi_buy_value)
+          |> Map.put(:channels, channels)
+
+        render(conn, "show.json", device: final_device)
+      _ ->
+        conn
+        |> send_resp(404, "")
+    end
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
@@ -235,20 +250,19 @@ defmodule ConsoleWeb.Router.DeviceController do
               end
             }
             device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-            LabelNotificationEvents.notify_label_event(device_labels, "device_join_otaa_first_time", details)
+            AlertEvents.notify_alert_event(event_device.id, "device", "device_join_otaa_first_time", details, device_labels)
           end
 
           case event.category do
             "uplink" ->
               if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"]) |> Repo.preload([:labels])
-                labels = Enum.map(event_integration.labels, fn l -> l.id end)
 
                 if event_integration.time_first_uplink == nil do
                   Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
                   { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
                   details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_receives_first_event", details)
+                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
                 end
 
                 if event.data["integration"]["status"] != "success" do
@@ -258,16 +272,16 @@ defmodule ConsoleWeb.Router.DeviceController do
                     channel_id: event_integration.id,
                     time: time
                   }
-                  limit = %{ integration_id: event_integration.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  LabelNotificationEvents.notify_label_event(labels, "integration_stops_working", details, limit)
+                  limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
                 end
               end
             "downlink" ->
               if event.sub_category == "downlink_dropped" do
                 details = %{ device_id: event_device.id, device_name: event_device.name }
                 device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-                limit = %{ device_id: event_device.id, time_buffer: Timex.shift(Timex.now, hours: -1) }
-                LabelNotificationEvents.notify_label_event(device_labels, "downlink_unsuccessful", details, limit)
+                limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
               end
             _ -> nil
           end

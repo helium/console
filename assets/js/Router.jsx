@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
-
-import { persistor, history } from './store/configureStore';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { Spin } from 'antd';
 import { ApolloProvider } from '@apollo/client';
+import { persistor, history } from './store/configureStore';
+import { fetchOrganization } from './actions/organization';
+import { setupApolloClient } from './actions/apollo';
+import { useAuth0  } from './components/auth/Auth0Provider';
 
 // Routes
 import { connect } from 'react-redux';
@@ -15,24 +17,28 @@ import PublicRoute from './components/routes/PublicRoute.jsx';
 import JoinOrganizationPrompt from './components/auth/JoinOrganizationPrompt.jsx';
 import Profile from './components/profile/Profile.jsx';
 import DeviceIndex from './components/devices/DeviceIndex';
+import DeviceHome from './components/devices/DeviceHome';
 import DeviceShow from './components/devices/DeviceShow';
+import LabelNew from './components/labels/LabelNew';
+import LabelShow from './components/labels/LabelShow';
+import DeviceNew from './components/devices/DeviceNew';
 import ChannelIndex from './components/channels/ChannelIndex';
 import ChannelShow from './components/channels/ChannelShow';
 import ChannelNew from './components/channels/ChannelNew';
+import ChannelHome from './components/channels/ChannelHome';
 import UserIndex from './components/organizations/UserIndex';
 import OrganizationIndex from './components/organizations/OrganizationIndex';
-import LabelIndex from './components/labels/LabelIndex';
-import LabelShow from './components/labels/LabelShow';
 import DataCreditsIndex from './components/billing/DataCreditsIndex';
-import { useAuth0  } from './components/auth/Auth0Provider';
 import FunctionIndex from './components/functions/FunctionIndex';
 import FunctionNew from './components/functions/FunctionNew';
+import FunctionHome from './components/functions/FunctionHome';
 import FunctionShow from './components/functions/FunctionShow';
 import FlowsIndex from './components/flows/FlowsIndex';
+import AlertsIndex from './components/alerts/AlertsIndex';
+import AdrIndex from './components/adr/AdrIndex';
+import MultiBuyIndex from './components/multi_buy/MultiBuyIndex';
 import NoOrganization from './components/organizations/NoOrganization';
 import Welcome from './components/Welcome';
-import { fetchOrganization } from './actions/organization';
-import { setupApolloClient } from './actions/apollo';
 import ConfirmEmailPrompt from './components/auth/ConfirmEmailPrompt';
 
 const Router = (props) => {
@@ -77,7 +83,7 @@ const Router = (props) => {
   if (loading) {
     return <div style={{position: 'absolute', top: 'calc(50% - 20px)', left: 'calc(50% - 20px)'}}><Spin size="large" /></div>
   }
-  const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/devices' : '/welcome';
+  const redirectPath = localStorage.getItem('hideWelcomeScreen') === 'hidden' ? '/flows' : '/welcome';
   return (
     <PersistGate loading={null} persistor={persistor}>
       { /* ConnectedRouter will use the store from Provider automatically */ }
@@ -101,19 +107,30 @@ const Router = (props) => {
                       <Switch>
                         <Route exact path="/welcome" component={props => <Welcome user={user} {...props}/>} />
                         <Route exact path="/devices" component={props => <DeviceIndex user={user} {...props}/>} />
-                        <Route path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
+                        <Route exact path="/devices/home" component={props => <DeviceHome user={user} {...props}/>} />
+                        <Route exact path="/devices/new" component={props => <DeviceNew user={user} {...props}/>} />
+                        <Route exact path="/devices/new_label" component={props => <LabelNew user={user} {...props}/>} />
+                        <Route exact path="/devices/:id" component={props => <DeviceShow user={user} {...props}/>}/>
+                        <Route exact path="/labels/:id" component={props => <LabelShow user={user} {...props}/>}/>
                         <Route exact path="/integrations" component={props => <ChannelIndex user={user} {...props}/>} />
-                        <Route exact path="/integrations/new/:id?" component={props => <ChannelNew user={user} {...props}/>} />
+                        <Route exact path="/integrations/home" component={props => <ChannelHome user={user} {...props}/>} />
+                        <Route exact path="/integrations/new" component={props => <ChannelNew user={user} {...props}/>} />
                         <Route exact path="/integrations/:id" component={props => <ChannelShow user={user} {...props}/>} />
-                        <Route exact path="/labels" component={props => <LabelIndex user={user} {...props}/>} />
-                        <Route exact path="/labels/:id" component={props => <LabelShow user={user} {...props}/>} />
                         <Route exact path="/functions" component={props => <FunctionIndex user={user} {...props}/>} />
                         <Route exact path="/functions/new" component={props => <FunctionNew user={user} {...props}/>} />
+                        <Route exact path="/functions/home" component={props => <FunctionHome user={user} {...props}/>} />
                         <Route exact path="/functions/:id" component={props => <FunctionShow user={user} {...props}/>} />
                         <Route exact path="/organizations" component={props => <OrganizationIndex user={user} {...props}/>} />
                         <Route exact path="/users" component={props => <UserIndex user={user} {...props}/>}/>
                         <Route exact path="/datacredits" component={props => <DataCreditsIndex user={user} {...props}/>} />
                         <Route exact path="/flows" component={props => <FlowsIndex user={user} {...props}/>} />
+                        <Route exact path="/alerts" component={props => <AlertsIndex user={user} {...props}/>} />
+                        <Route exact path="/alerts/new" component={props => <AlertsIndex user={user} {...props}/>}/>
+                        <Route exact path="/alerts/:id" component={props => <AlertsIndex user={user} {...props}/>}/>
+                        <Route exact path="/adr" component={props => <AdrIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buys" component={props => <MultiBuyIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buys/new" component={props => <MultiBuyIndex user={user} {...props}/>} />
+                        <Route exact path="/multi_buys/:id" component={props => <MultiBuyIndex user={user} {...props}/>}/>
                         <Route path="/profile" component={props => <Profile user={user} {...props}/>}/>
                       </Switch>
                     </ApolloProvider>

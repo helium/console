@@ -1,23 +1,52 @@
 import React, { Component } from 'react'
-import DashboardLayout from '../common/DashboardLayout'
+import { connect } from 'react-redux';
+import withGql from '../../graphql/withGql'
+import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
+import FunctionDashboardLayout from './FunctionDashboardLayout'
 import FunctionIndexTable from './FunctionIndexTable'
 import DeleteFunctionModal from './DeleteFunctionModal'
-import RemoveFunctionLabelModal from './RemoveFunctionLabelModal'
-import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Card, Button } from 'antd';
-import { CodeOutlined } from '@ant-design/icons';
+import { SkeletonLayout } from '../common/SkeletonLayout';
+import { Typography } from 'antd';
+const { Text } = Typography
 
 class FunctionIndex extends Component {
   state = {
-    showDeleteFunctionModal: false,
-    showRemoveFunctionLabelModal: false,
     functionSelected: null,
-    labelToRemove: null,
+    page: 1,
+    pageSize: 10,
+    showDeleteFunctionModal: false,
   }
 
   componentDidMount() {
+    const { socket, currentOrganizationId } = this.props
     analyticsLogger.logEvent("ACTION_NAV_FUNCTIONS_INDEX")
+
+    this.channel = socket.channel("graphql:function_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:function_index_table:${currentOrganizationId}:function_list_update`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    })
+
+    if (!this.props.paginatedFunctionsQuery.loading) {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    }
+  }
+
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { refetch } = this.props.paginatedFunctionsQuery
+    refetch({ page, pageSize })
   }
 
   openDeleteFunctionModal = (functionSelected) => {
@@ -28,56 +57,45 @@ class FunctionIndex extends Component {
     this.setState({ showDeleteFunctionModal: false })
   }
 
-  openRemoveFunctionLabelModal = (functionSelected, labelToRemove) => {
-    this.setState({ showRemoveFunctionLabelModal: true, functionSelected, labelToRemove })
-  }
-
-  closeRemoveFunctionLabelModal = () => {
-    this.setState({ showRemoveFunctionLabelModal: false })
-  }
-
   render() {
-    const { showDeleteFunctionModal, showRemoveFunctionLabelModal } = this.state
+    const { functions, loading, error } = this.props.paginatedFunctionsQuery
+    const { showDeleteFunctionModal } = this.state
 
     return (
-      <DashboardLayout
-        title="Functions"
-        user={this.props.user}
-        extra={
-          <UserCan>
-            <Button
-              size="large"
-              icon={<CodeOutlined />}
-              style={{ borderRadius: 4 }}
-              type="primary"
-              onClick={() => this.props.history.push('/functions/new')}
-            >
-              Add Function
-            </Button>
-          </UserCan>
+      <FunctionDashboardLayout {...this.props}>
+        {
+          error && <Text>Data failed to load, please reload the page and try again</Text>
         }
-      >
-        <FunctionIndexTable
-          history={this.props.history}
-          openDeleteFunctionModal={this.openDeleteFunctionModal}
-          openRemoveFunctionLabelModal={this.openRemoveFunctionLabelModal}
-        />
-
+        {
+          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+        }
+        {
+          !loading && (
+            <FunctionIndexTable
+              history={this.props.history}
+              functions={functions}
+              openDeleteFunctionModal={this.openDeleteFunctionModal}
+              handleChangePage={this.handleChangePage}
+            />
+          )
+        }
         <DeleteFunctionModal
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={this.state.functionSelected}
         />
-
-        <RemoveFunctionLabelModal
-          open={showRemoveFunctionLabelModal}
-          onClose={this.closeRemoveFunctionLabelModal}
-          functionSelected={this.state.functionSelected}
-          labelToRemove={this.state.labelToRemove}
-        />
-      </DashboardLayout>
+      </FunctionDashboardLayout>
     )
   }
 }
 
-export default FunctionIndex
+function mapStateToProps(state, ownProps) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(FunctionIndex, PAGINATED_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedFunctionsQuery' }))
+)

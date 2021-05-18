@@ -19,14 +19,6 @@ const pages = [
     synonyms: ""
   },
   {
-    title: "Labels",
-    description: "View and manage labels",
-    url: "/labels",
-    id: "/labels",
-    category: "labels",
-    synonyms: ""
-  },
-  {
     title: "Functions",
     description: "View and manage functions",
     url: "/functions",

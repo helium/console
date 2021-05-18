@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { Typography, Icon, Tooltip } from 'antd';
+import { Typography, Tooltip, Button } from 'antd';
 const { Text } = Typography
 
 class Sidebar extends Component {
@@ -44,7 +44,7 @@ class Sidebar extends Component {
           right: 0,
           zIndex: show ? 10 : 1,
           padding: 0,
-          transition: 'all 0.5s ease',
+          transition: 'all 0.5s ease'
         }}
       >
         <Tooltip title={disabled ? disabledMessage : message} placement='left'>

@@ -3,6 +3,17 @@ defmodule ConsoleWeb.Schema do
   use ConsoleWeb.Schema.Paginated
   import_types Absinthe.Type.Custom
 
+  scalar :json, description: "JSON field type in postgres" do
+    parse fn input ->
+      case Poison.decode(input.value) do
+        {:ok, result} -> {:ok, result}
+        _ -> :error
+      end
+    end
+
+    serialize &Poison.encode!/1
+  end
+
   paginated object :device do
     field :id, :id
     field :name, :string
@@ -17,10 +28,12 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :last_connected, :naive_datetime
     field :labels, list_of(:label)
-    field :channels, list_of(:channel)
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
+    field :adr_allowed, :boolean
+    field :multi_buy_id, :id
+    field :alerts, list_of(:alert)
   end
 
   object :device_stats do
@@ -29,10 +42,23 @@ defmodule ConsoleWeb.Schema do
     field :packets_last_30d, :integer
   end
 
+  object :device_count do
+    field :count, :integer
+  end
+
   object :device_dc_stats do
     field :dc_last_1d, :integer
     field :dc_last_7d, :integer
     field :dc_last_30d, :integer
+  end
+
+  object :flow do
+    field :id, :id
+    field :organization_id, :id
+    field :device_id, :id
+    field :label_id, :id
+    field :function_id, :id
+    field :channel_id, :id
   end
 
   object :mqtt_topic do
@@ -45,35 +71,31 @@ defmodule ConsoleWeb.Schema do
     field :downlink, :mqtt_topic
   end
 
-  object :label_notification_setting do
-    field :key, :string
-    field :value, :string
-    field :recipients, :string
-    field :label_id, :id
+  object :alert do
+    field :id, :id
+    field :name, :string
+    field :last_triggered_at, :string
+    field :node_type, :string
+    field :config, :json
+    field :organization_id, :id
   end
 
-  object :label_notification_webhook do
-    field :key, :string
-    field :url, :string
-    field :notes, :string
-    field :label_id, :id
-    field :value, :string
+  object :multi_buy do
+    field :id, :id
+    field :name, :string
+    field :value, :integer
   end
 
   paginated object :label do
     field :id, :id
     field :name, :string
-    field :color, :string
     field :creator, :string
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
-    field :channels, list_of(:channel)
-    field :function, :function
     field :device_count, :integer
-    field :multi_buy, :integer
     field :adr_allowed, :boolean
-    field :label_notification_settings, list_of(:label_notification_setting)
-    field :label_notification_webhooks, list_of(:label_notification_webhook)
+    field :multi_buy_id, :id
+    field :alerts, list_of(:alert)
   end
 
   paginated object :channel do
@@ -90,13 +112,12 @@ defmodule ConsoleWeb.Schema do
     field :aws_access_key, :string
     field :topic, :string
     field :active, :boolean
-    field :labels, list_of(:label)
-    field :devices, list_of(:device)
-    field :device_count, :integer
     field :downlink_token, :string
     field :credentials, type: :credentials
     field :payload_template, :string
     field :time_first_uplink, :naive_datetime
+    field :updated_at, :naive_datetime
+    field :alerts, list_of(:alert)
   end
 
   paginated object :membership do
@@ -129,6 +150,7 @@ defmodule ConsoleWeb.Schema do
     field :active, :boolean
     field :received_free_dc, :boolean
     field :webhook_key, :string
+    field :flow, :string
   end
 
   object :api_key do
@@ -160,8 +182,8 @@ defmodule ConsoleWeb.Schema do
     field :type, :string
     field :format, :string
     field :active, :boolean
-    field :labels, list_of(:label)
-    field :channels, list_of(:channel)
+    field :updated_at, :naive_datetime
+    field :alerts, list_of(:alert)
   end
 
   object :event do
@@ -212,10 +234,40 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Devices.DeviceResolver.paginate_by_label/2)
     end
 
+    @desc "Get flows for specified device ID"
+    field :flows_by_device, list_of(:flow) do
+      arg :device_id, non_null(:id)
+      resolve(&Console.Flows.FlowResolver.get_by_device/2)
+    end
+
+    field :device_names, list_of(:device) do
+      arg :device_ids, non_null(list_of(:id))
+      resolve(&Console.Devices.DeviceResolver.get_names/2)
+    end
+
+    field :channel_names, list_of(:channel) do
+      arg :channel_ids, non_null(list_of(:id))
+      resolve(&Console.Channels.ChannelResolver.get_names/2)
+    end
+
+    field :function_names, list_of(:function) do
+      arg :function_ids, non_null(list_of(:id))
+      resolve(&Console.Functions.FunctionResolver.get_names/2)
+    end
+
+    field :label_names, list_of(:label) do
+      arg :label_ids, non_null(list_of(:id))
+      resolve(&Console.Labels.LabelResolver.get_names/2)
+    end
+
     @desc "Get a single device"
     field :device, :device do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.find/2
+    end
+
+    field :device_count, :device_count do
+      resolve &Console.Devices.DeviceResolver.get_device_count/2
     end
 
     field :device_stats, :device_stats do
@@ -239,17 +291,6 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.events/2
     end
 
-    field :all_devices, list_of(:device) do
-      resolve &Console.Devices.DeviceResolver.all/2
-    end
-
-    @desc "Get paginated labels"
-    paginated field :labels, :paginated_labels do
-      arg :column, non_null(:string)
-      arg :order, non_null(:string)
-      resolve(&Console.Labels.LabelResolver.paginate/2)
-    end
-
     @desc "Get paginated labels for specified device ID"
     paginated field :labels_by_device, :paginated_labels do
       arg :device_id, non_null(:id)
@@ -268,28 +309,34 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Labels.LabelResolver.all/2
     end
 
+    field :all_alerts, list_of(:alert) do
+      resolve &Console.Alerts.AlertResolver.all/2
+    end
+
+    field :all_multi_buys, list_of(:multi_buy) do
+      resolve &Console.MultiBuys.MultiBuyResolver.all/2
+    end
+
+    field :alerts_per_type, list_of(:alert) do
+      arg :type, non_null(:string)
+      resolve &Console.Alerts.AlertResolver.get_per_type/2
+    end
+
+    field :alerts_for_node, list_of(:alert) do
+      arg :node_id, non_null(:id)
+      arg :node_type, non_null(:string)
+      resolve &Console.Alerts.AlertResolver.get_alerts_for_node/2
+    end
+
     @desc "Get paginated channels"
     paginated field :channels, :paginated_channels do
       resolve(&Console.Channels.ChannelResolver.paginate/2)
-    end
-
-    @desc "Get all channels under current organization"
-    field :organization_channels, list_of(:channel) do
-      resolve &Console.Channels.ChannelResolver.all/2
     end
 
     @desc "Get a single channel"
     field :channel, :channel do
       arg :id, non_null(:id)
       resolve &Console.Channels.ChannelResolver.find/2
-    end
-
-    field :all_channels, list_of(:channel) do
-      resolve &Console.Channels.ChannelResolver.all/2
-    end
-
-    field :all_functions, list_of(:function) do
-      resolve &Console.Functions.FunctionResolver.all/2
     end
 
     @desc "Get paginated memberships"
@@ -315,6 +362,18 @@ defmodule ConsoleWeb.Schema do
 
     field :all_organizations, list_of(:organization) do
       resolve &Console.Organizations.OrganizationResolver.all/2
+    end
+
+    field :all_channels, list_of(:channel) do
+      resolve &Console.Channels.ChannelResolver.all/2
+    end
+
+    field :all_functions, list_of(:function) do
+      resolve &Console.Functions.FunctionResolver.all/2
+    end
+
+    field :all_devices, list_of(:device) do
+      resolve &Console.Devices.DeviceResolver.all/2
     end
 
     @desc "Search for devices and channels"
@@ -354,6 +413,18 @@ defmodule ConsoleWeb.Schema do
     field :function, :function do
       arg :id, non_null(:id)
       resolve &Console.Functions.FunctionResolver.find/2
+    end
+
+    @desc "Get a single alert"
+    field :alert, :alert do
+      arg :id, non_null(:id)
+      resolve &Console.Alerts.AlertResolver.find/2
+    end
+
+    @desc "Get a single multi_buy"
+    field :multi_buy, :multi_buy do
+      arg :id, non_null(:id)
+      resolve &Console.MultiBuys.MultiBuyResolver.find/2
     end
 
     paginated field :dc_purchases, :paginated_dc_purchases do

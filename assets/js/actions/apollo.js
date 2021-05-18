@@ -38,9 +38,6 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
           case "ChannelShowQuery":
             store.dispatch(replace("/integrations"))
             break
-          case "LabelShowQuery":
-            store.dispatch(replace("/labels"))
-            break
           case "FunctionShowQuery":
             store.dispatch(replace("/functions"))
             break
@@ -111,6 +108,15 @@ const createApolloClient = (link) => (
               merge: false
             },
             allDevices: {
+              merge: false
+            },
+            allMultiBuys: {
+              merge: false
+            },
+            alertsForNode: {
+              merge: false
+            },
+            allAlerts: {
               merge: false
             }
           },

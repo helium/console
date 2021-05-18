@@ -12,6 +12,7 @@ let style = {
 };
 let dragCounter = 0;
 
+// device import
 const DragAndDrop = ({children, fileSelected}) => {
   const dropRef = useRef();
   const fileInputRef = useRef();
@@ -29,7 +30,7 @@ const DragAndDrop = ({children, fileSelected}) => {
   }
   useEffect(() => {
     const div = dropRef.current;
-    
+
     const handleDragIn = (e) => {
       preventDefaultAndPropogation(e);
       dragCounter++;

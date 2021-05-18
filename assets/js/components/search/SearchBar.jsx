@@ -174,6 +174,7 @@ class SearchBar extends Component {
             value={query}
             onChange={this.handleUpdateQuery}
             placeholder="Search Console..."
+            className="noselect"
           />
         </div>
 

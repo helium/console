@@ -1,32 +1,31 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { Link } from 'react-router-dom';
-import UpdateLabelModal from './UpdateLabelModal'
-import LabelAddDeviceModal from './LabelAddDeviceModal'
-import DeleteDeviceModal from '../devices/DeleteDeviceModal';
-import RemoveDevicesFromLabelModal from './RemoveDevicesFromLabelModal'
-import LabelShowTable from './LabelShowTable'
-import LabelShowFunctionsAttached from './LabelShowFunctionsAttached'
-import LabelShowChannelsAttached from './LabelShowChannelsAttached'
-import DashboardLayout from '../common/DashboardLayout'
-import Sidebar from '../common/Sidebar'
-import Debug from '../common/Debug'
-import Downlink from '../common/Downlink'
-import LabelTag from '../common/LabelTag'
-import UserCan from '../common/UserCan'
-import DownlinkImage from '../../../img/downlink.svg'
-import { debugSidebarBackgroundColor } from '../../util/colors'
-import { updateLabel, addDevicesToLabels, updateLabelNotificationSettings, updateLabelNotificationWebhooks } from '../../actions/label'
-import { sendDownlinkMessage } from '../../actions/channel'
-import { sendClearDownlinkQueue, fetchDownlinkQueue } from '../../actions/downlink'
-import { LABEL_SHOW } from '../../graphql/labels'
-import analyticsLogger from '../../util/analyticsLogger'
-import withGql from '../../graphql/withGql'
-import { Button, Typography } from 'antd';
-import { BugOutlined, SettingOutlined, TagOutlined } from '@ant-design/icons';
-import { SkeletonLayout } from '../common/SkeletonLayout';
-const { Text } = Typography
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import analyticsLogger from "../../util/analyticsLogger";
+import UpdateLabelModal from "./UpdateLabelModal";
+import LabelAddDeviceModal from "./LabelAddDeviceModal";
+import DeleteDeviceModal from "../devices/DeleteDeviceModal";
+import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
+import RemoveDevicesFromLabelModal from "./RemoveDevicesFromLabelModal";
+import { SkeletonLayout } from "../common/SkeletonLayout";
+import LabelShowTable from "./LabelShowTable";
+import UserCan from "../common/UserCan";
+import Downlink from "../common/Downlink";
+import Debug from "../common/Debug";
+import { debugSidebarBackgroundColor } from "../../util/colors";
+import Sidebar from "../common/Sidebar";
+import DownlinkImage from "../../../img/downlink.svg";
+import { updateLabel, addDevicesToLabels } from "../../actions/label";
+import {
+  sendClearDownlinkQueue,
+  fetchDownlinkQueue,
+  sendDownlinkMessage,
+} from "../../actions/downlink";
+import { LABEL_SHOW } from "../../graphql/labels";
+import withGql from "../../graphql/withGql";
+import { Typography } from "antd";
+const { Text } = Typography;
+import { BugOutlined } from "@ant-design/icons";
 
 class LabelShow extends Component {
   state = {
@@ -34,273 +33,258 @@ class LabelShow extends Component {
     showLabelAddDeviceModal: false,
     showDeleteDeviceModal: false,
     showRemoveDevicesFromLabelModal: false,
-    showDebugSidebar: false,
+    selectedDevices: [],
     showDownlinkSidebar: false,
-    selectedDevices: []
-  }
+    showDebugSidebar: false,
+  };
 
   componentDidMount() {
-    const labelId = this.props.match.params.id
-    analyticsLogger.logEvent("ACTION_NAV_LABEL_SHOW")
+    const labelId = this.props.match.params.id;
+    const { socket } = this.props;
 
-    const { socket } = this.props
-
-    this.channel = socket.channel("graphql:label_show", {})
-    this.channel.join()
+    this.channel = socket.channel("graphql:label_show", {});
+    this.channel.join();
     this.channel.on(`graphql:label_show:${labelId}:label_update`, (message) => {
-      this.props.labelShowQuery.refetch()
-    })
+      this.props.labelShowQuery.refetch();
+    });
   }
 
   componentWillUnmount() {
-    this.channel.leave()
+    this.channel.leave();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.channel.on(`graphql:label_show:${this.props.match.params.id}:label_update`, (message) => {
-        this.props.labelShowQuery.refetch()
-      })
+      this.channel.on(
+        `graphql:label_show:${this.props.match.params.id}:label_update`,
+        (message) => {
+          this.props.labelShowQuery.refetch();
+        }
+      );
     }
   }
 
   openUpdateLabelModal = () => {
-    this.setState({ showUpdateLabelModal: true })
-  }
+    this.setState({ showUpdateLabelModal: true });
+  };
 
   closeUpdateLabelModal = () => {
-    this.setState({ showUpdateLabelModal: false })
-  }
+    this.setState({ showUpdateLabelModal: false });
+  };
 
   openLabelAddDeviceModal = () => {
-    this.setState({ showLabelAddDeviceModal: true })
-  }
+    this.setState({ showLabelAddDeviceModal: true });
+  };
 
   closeLabelAddDeviceModal = () => {
-    this.setState({ showLabelAddDeviceModal: false })
-  }
+    this.setState({ showLabelAddDeviceModal: false });
+  };
 
-  openRemoveDevicesFromLabelModal = selectedDevices => {
-    this.setState({ showRemoveDevicesFromLabelModal: true, selectedDevices })
-  }
+  openRemoveDevicesFromLabelModal = (selectedDevices) => {
+    this.setState({ showRemoveDevicesFromLabelModal: true, selectedDevices });
+  };
 
   closeRemoveDevicesFromLabelModal = () => {
-    this.setState({ showRemoveDevicesFromLabelModal: false })
-  }
+    this.setState({ showRemoveDevicesFromLabelModal: false });
+  };
 
-  openDeleteDeviceModal = selectedDevices => {
-    this.setState({ showDeleteDeviceModal: true, selectedDevices })
-  }
+  openDeleteDeviceModal = (selectedDevices) => {
+    this.setState({ showDeleteDeviceModal: true, selectedDevices });
+  };
 
   closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false })
-  }
+    this.setState({ showDeleteDeviceModal: false });
+  };
 
   setDevicesSelected = (selectedDevices) => {
-    this.setState({selectedDevices});
-  }
+    this.setState({ selectedDevices });
+  };
 
-  handleUpdateLabel = (name, color) => {
-    const labelId = this.props.match.params.id
-    const attrs = name ? { name, color } : { color }
-    this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateLabelMultiBuy = multiBuyValue => {
-    const labelId = this.props.match.params.id
-    const attrs = { multi_buy: multiBuyValue }
-    this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateAdrSetting = adrValue => {
-    const labelId = this.props.match.params.id
-    const attrs = { adr_allowed: adrValue }
-    this.props.updateLabel(labelId, attrs)
-  }
-
-  handleUpdateLabelNotificationSettings = notifications => {
-    this.props.updateLabelNotificationSettings(notifications);
-  }
-
-  handleUpdateLabelNotificationWebhooks = webhooks => {
-    this.props.updateLabelNotificationWebhooks(webhooks);
-  }
+  handleUpdateLabel = (name) => {
+    const labelId = this.props.match.params.id;
+    const attrs = { name };
+    this.props.updateLabel(labelId, attrs);
+  };
 
   handleToggleDownlink = () => {
     const { showDownlinkSidebar } = this.state;
 
     this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
-  }
+  };
 
   handleToggleDebug = () => {
-    const { showDebugSidebar } = this.state
+    const { showDebugSidebar } = this.state;
     if (!showDebugSidebar) {
-      analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", { "id": this.props.match.params.id })
+      analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", {
+        id: this.props.match.params.id,
+      });
     } else {
-      analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", { "id": this.props.match.params.id })
+      analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", {
+        id: this.props.match.params.id,
+      });
     }
-    this.setState({ showDebugSidebar: !showDebugSidebar })
-  }
+    this.setState({ showDebugSidebar: !showDebugSidebar });
+  };
 
   render() {
-    const { loading, error, label } = this.props.labelShowQuery
-    const { showDeleteDeviceModal, selectedDevices } = this.state
+    const { loading, error, label } = this.props.labelShowQuery;
+    const { showDeleteDeviceModal, selectedDevices } = this.state;
 
-    if (loading) return <DashboardLayout user={this.props.user}><SkeletonLayout/></DashboardLayout>
-    if (error) return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    )
+    if (loading)
+      return (
+        <DeviceDashboardLayout {...this.props}>
+          <div style={{ padding: 40 }}>
+            <SkeletonLayout />
+          </div>
+        </DeviceDashboardLayout>
+      );
+    if (error)
+      return (
+        <DeviceDashboardLayout {...this.props}>
+          <div style={{ padding: 40 }}>
+            <Text>
+              Data failed to load, please reload the page and try again
+            </Text>
+          </div>
+        </DeviceDashboardLayout>
+      );
 
     const normalizedDevices = label.devices.reduce((map, device) => {
-      map[device.id] = device
-      return map
-    }, {})
+      map[device.id] = device;
+      return map;
+    }, {});
 
     return (
-      <DashboardLayout
-        user={this.props.user}
-        breadCrumbs={
-          <div style={{ marginLeft: 4, paddingBottom: 0 }}>
-            <Link to="/labels"><Text style={{ color: "#8C8C8C" }}>Labels&nbsp;&nbsp;/</Text></Link>
-            <Text>&nbsp;&nbsp;{label.name}</Text>
-          </div>
-        }
-        title={`${label.name}`}
-        extra={
-          <UserCan>
-            <Button
-              size="large"
-              icon={<SettingOutlined />}
-              style={{ borderRadius: 4 }}
-              onClick={this.openUpdateLabelModal}
-            >
-              Label Settings
-            </Button>
-            <Button
-              size="large"
-              type="primary"
-              onClick={this.openLabelAddDeviceModal}
-              icon={<TagOutlined />}
-              style={{ marginLeft: 20, borderRadius: 4 }}
-            >
-              Add this Label to a Device
-            </Button>
-          </UserCan>
-        }
-      >
-        <LabelShowTable
-          labelId={this.props.match.params.id}
-          openRemoveDevicesFromLabelModal={this.openRemoveDevicesFromLabelModal}
-          history={this.props.history}
-          devicesSelected={this.setDevicesSelected}
-          openDeleteDeviceModal={this.openDeleteDeviceModal}
-        />
+      <DeviceDashboardLayout {...this.props}>
+        <div>
+          <LabelShowTable
+            labelId={this.props.match.params.id}
+            label={label}
+            openRemoveDevicesFromLabelModal={
+              this.openRemoveDevicesFromLabelModal
+            }
+            history={this.props.history}
+            devicesSelected={this.setDevicesSelected}
+            openDeleteDeviceModal={this.openDeleteDeviceModal}
+            openLabelAddDeviceModal={this.openLabelAddDeviceModal}
+            openUpdateLabelModal={this.openUpdateLabelModal}
+          />
 
-        <LabelShowChannelsAttached channels={label.channels} label={label}/>
+          <UpdateLabelModal
+            handleUpdateLabel={this.handleUpdateLabel}
+            open={this.state.showUpdateLabelModal}
+            onClose={this.closeUpdateLabelModal}
+            label={label}
+          />
 
-        <LabelShowFunctionsAttached label={label} func={label.function}/>
+          <LabelAddDeviceModal
+            label={label}
+            labelNormalizedDevices={normalizedDevices}
+            addDevicesToLabels={this.props.addDevicesToLabels}
+            open={this.state.showLabelAddDeviceModal}
+            onClose={this.closeLabelAddDeviceModal}
+          />
 
-        <UpdateLabelModal
-          handleUpdateLabel={this.handleUpdateLabel}
-          handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
-          handleUpdateAdrSetting={this.handleUpdateAdrSetting}
-          handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
-          handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
-          open={this.state.showUpdateLabelModal}
-          onClose={this.closeUpdateLabelModal}
-          label={label}
-        />
+          <RemoveDevicesFromLabelModal
+            label={label}
+            open={this.state.showRemoveDevicesFromLabelModal}
+            onClose={this.closeRemoveDevicesFromLabelModal}
+            devicesToRemove={selectedDevices}
+          />
 
-        <LabelAddDeviceModal
-          label={label}
-          labelNormalizedDevices={normalizedDevices}
-          addDevicesToLabels={this.props.addDevicesToLabels}
-          open={this.state.showLabelAddDeviceModal}
-          onClose={this.closeLabelAddDeviceModal}
-        />
-
-        <RemoveDevicesFromLabelModal
-          label={label}
-          open={this.state.showRemoveDevicesFromLabelModal}
-          onClose={this.closeRemoveDevicesFromLabelModal}
-          devicesToRemove={selectedDevices}
-        />
-
-        <DeleteDeviceModal
-          label={label}
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={false}
-          devicesToDelete={selectedDevices}
-          totalDevices={selectedDevices.length}
-        />
+          <DeleteDeviceModal
+            label={label}
+            open={showDeleteDeviceModal}
+            onClose={this.closeDeleteDeviceModal}
+            allDevicesSelected={false}
+            devicesToDelete={selectedDevices}
+            totalDevices={selectedDevices.length}
+          />
+        </div>
 
         <Sidebar
           show={this.state.showDebugSidebar}
           toggle={this.handleToggleDebug}
           sidebarIcon={<BugOutlined />}
           iconBackground={debugSidebarBackgroundColor}
-          iconPosition='top'
-          message='Access Debug mode to view device packet transfer'
+          iconPosition="top"
+          message="Access Debug mode to view device packet transfer"
         >
-          <Debug
-            labelId={this.props.match.params.id}
-          />
+          <Debug labelId={this.props.match.params.id} entryWidth={600} />
         </Sidebar>
 
         <UserCan>
           {
-            label &&
             <Sidebar
               show={this.state.showDownlinkSidebar}
               toggle={this.handleToggleDownlink}
-              sidebarIcon={<img src={DownlinkImage}/>}
-              iconBackground='#40A9FF'
-              disabled={label.channels.filter(c => c.type === 'http').length === 0}
-              disabledMessage='Please attach an HTTP integration to use Downlink'
-              iconPosition='middle'
-              message='Send a manual downlink using an HTTP integration'
+              sidebarIcon={<img src={DownlinkImage} />}
+              iconBackground="#40A9FF"
+              iconPosition="middle"
+              message="Send a manual downlink to all devices on this label"
             >
               <Downlink
                 src="LabelShow"
-                socket={this.props.socket}
                 id={label.id}
                 devices={label.devices}
+                socket={this.props.socket}
                 onSend={(payload, confirm, port, position) => {
-                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", { "channels": label.channels.map(c => c.id) });
+                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
+                    label: label.id,
+                  });
                   this.props.sendDownlinkMessage(
                     payload,
                     port,
                     confirm,
                     position,
-                    null,
-                    label.channels
-                  )
+                    "label",
+                    label.id
+                  );
                 }}
                 onClear={() => {
-                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", { "devices": label.devices.map(device => device.id) });
+                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", {
+                    devices: label.devices.map((device) => device.id),
+                  });
                   this.props.sendClearDownlinkQueue({ label_id: label.id });
                 }}
-                fetchDownlinkQueue={() => this.props.fetchDownlinkQueue(label.id, "label")}
+                fetchDownlinkQueue={() =>
+                  this.props.fetchDownlinkQueue(label.id, "label")
+                }
               />
             </Sidebar>
           }
         </UserCan>
-      </DashboardLayout>
-    )
+      </DeviceDashboardLayout>
+    );
   }
 }
 
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateLabel, addDevicesToLabels, sendDownlinkMessage, sendClearDownlinkQueue, fetchDownlinkQueue, updateLabelNotificationSettings, updateLabelNotificationWebhooks }, dispatch)
+  return bindActionCreators(
+    {
+      updateLabel,
+      addDevicesToLabels,
+      sendClearDownlinkQueue,
+      sendDownlinkMessage,
+      fetchDownlinkQueue,
+    },
+    dispatch
+  );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withGql(LabelShow, LABEL_SHOW, props => ({ fetchPolicy: 'cache-first', variables: { id: props.match.params.id }, name: 'labelShowQuery' }))
-)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  withGql(LabelShow, LABEL_SHOW, (props) => ({
+    fetchPolicy: "cache-first",
+    variables: { id: props.match.params.id },
+    name: "labelShowQuery",
+  }))
+);

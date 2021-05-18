@@ -2,16 +2,14 @@ import * as rest from '../util/rest'
 import { push, replace } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 
-export const createLabel = (label, redirect) => {
+export const createLabel = (label) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(label)
 
-    rest.post('/api/labels', {
+    return rest.post('/api/labels', {
         label: labelParams
       })
-      .then(response => {
-        if (redirect) dispatch(push(`/labels/${response.data.id}`))
-      })
+      .then(response => {})
   }
 }
 
@@ -19,7 +17,7 @@ export const updateLabel = (id, params) => {
   return (dispatch) => {
     const labelParams = sanitizeParams(params)
 
-    rest.put(`/api/labels/${id}`, {
+    return rest.put(`/api/labels/${id}`, {
       label: labelParams
     })
     .then(response => {})
@@ -30,20 +28,12 @@ export const deleteLabel = (id) => {
   return (dispatch) => {
     rest.destroy(`/api/labels/${id}`)
       .then(response => {
-        dispatch(replace('/labels'))
+        dispatch(replace('/devices'))
       })
   }
 }
 
-export const deleteLabels = (labels) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/delete`, {
-      labels: labels.map(l => l.id)
-    })
-    .then(response => {})
-  }
-}
-
+//label show page add devices modal
 export const addDevicesToLabels = (devices, labels, toLabel) => {
   return (dispatch) => {
     rest.post(`/api/devices_labels`, {
@@ -55,6 +45,7 @@ export const addDevicesToLabels = (devices, labels, toLabel) => {
   }
 }
 
+//device index dropdown modal
 export const addDevicesToLabel = (devices, toLabel) => {
   return (dispatch) => {
     let params = { to_label: toLabel };
@@ -66,6 +57,7 @@ export const addDevicesToLabel = (devices, toLabel) => {
   }
 }
 
+//device index dropdown modal
 export const addDevicesToNewLabel = (devices, labelName) => {
   return (dispatch) => {
     let params = { new_label: labelName };
@@ -107,93 +99,6 @@ export const removeAllLabelsFromDevices = (devices) => {
     } else {
       rest.post(`/api/devices_labels/delete`).then(response => {})
     }
-
-  }
-}
-
-export const removeAllDevicesFromLabels = (labels) => {
-  return (dispatch) => {
-    rest.post(`/api/devices_labels/delete`, {
-      labels: labels.map(l => l.id),
-    })
-    .then(response => {})
-  }
-}
-
-export const addLabelsToChannel = (labels, channel_id) => {
-  return (dispatch) => {
-    rest.post(`/api/channels_labels`, {
-      labels,
-      channel_id,
-    })
-    .then(response => {})
-  }
-}
-
-export const addChannelToLabel = (label_id, channel_id) => {
-  return (dispatch) => {
-    rest.post(`/api/channels_labels`, {
-      label_id,
-      channel_id,
-    })
-    .then(response => {})
-  }
-}
-
-
-export const removeLabelsFromChannel = (labels, channel_id) => {
-  return (dispatch) => {
-    rest.post(`/api/channels_labels/delete`, {
-      labels,
-      channel_id,
-    })
-    .then(response => {})
-  }
-}
-
-export const removeChannelFromLabel = (label_id, channel_id) => {
-  return (dispatch) => {
-    rest.post(`/api/channels_labels/delete`, {
-      label_id,
-      channel_id,
-    })
-    .then(response => {})
-  }
-}
-
-export const removeLabelFromFunction = (label_id, function_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/remove_function`, {
-      label: label_id,
-      function: function_id,
-    })
-    .then(response => {})
-  }
-}
-
-export const swapLabel = (label_id, destination_label_id) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/swap_label`, {
-      label_id,
-      destination_label_id,
-    })
-    .then(response => {})
-  }
-}
-
-export const updateLabelNotificationSettings = (settings) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/update_notification_settings`, {
-      label_notification_settings: settings
-    })
-  }
-}
-
-export const updateLabelNotificationWebhooks = (webhooks) => {
-  return (dispatch) => {
-    rest.post(`/api/labels/update_notification_webhooks`, {
-      label_notification_webhooks: webhooks
-    })
   }
 }
 

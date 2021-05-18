@@ -7,11 +7,12 @@ defmodule Console.Factory do
   alias Console.ApiKeys.ApiKey
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
-  alias Console.Labels.ChannelsLabels
   alias Console.Channels.Channel
   alias Console.Devices.Device
   alias Console.Functions.Function
   alias Console.Organizations.Membership
+  alias Console.Alerts.Alert
+  alias Console.Alerts.AlertNode
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -85,11 +86,15 @@ defmodule Console.Factory do
     %DevicesLabels{}
   end
 
-  def channels_labels_factory do
-    %ChannelsLabels{}
-  end
-
   def membership_factory do
     %Membership{}
+  end
+
+  def alert_factory do
+    %Alert{}
+  end
+
+  def alert_node_factory do
+    %AlertNode{}
   end
 end

@@ -44,11 +44,13 @@ defmodule ConsoleWeb.Router do
     post "/ttn/devices/import", DeviceController, :import_ttn
     post "/generic/devices/import", DeviceController, :import_generic
     resources "/labels", LabelController, only: [:create, :update, :delete]
-    post "/labels/delete", LabelController, :delete
-    post "/labels/remove_function", LabelController, :remove_function
     post "/labels/swap_label", LabelController, :swap_label
-    post "/labels/update_notification_settings", LabelNotificationSettingsController, :update
-    post "/labels/update_notification_webhooks", LabelNotificationWebhooksController, :update
+    resources "/alerts", AlertController, only: [:create, :delete, :update]
+    post "/alerts/add_to_node", AlertController, :add_alert_to_node
+    post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
+    resources "/multi_buys", MultiBuyController, only: [:create, :delete, :update]
+    post "/multi_buys/add_to_node", MultiBuyController, :add_multi_buy_to_node
+    post "/multi_buys/remove_from_node", MultiBuyController, :remove_multi_buy_from_node
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit]
     post "/channels/ubidots", ChannelController, :get_ubidots_url
@@ -56,8 +58,6 @@ defmodule ConsoleWeb.Router do
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
-    post "/channels_labels", LabelController, :add_labels_to_channel
-    post "/channels_labels/delete", LabelController, :delete_labels_from_channel
 
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]
@@ -80,6 +80,7 @@ defmodule ConsoleWeb.Router do
 
     post "/flows/update", FlowsController, :update_edges
 
+    post "/downlink", DownlinkController, :send_downlink
     post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
     get "/downlink_queue", DownlinkController, :fetch_downlink_queue
   end
@@ -117,10 +118,10 @@ defmodule ConsoleWeb.Router do
     resources "/labels", LabelController, only: [:index, :show, :create, :delete]
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
-    post "/labels/:id/multi_buy", LabelController, :update_multi_buy
-    post "/labels/:id/notification_email", LabelNotificationSettingsController, :update
-    post "/labels/:id/notification_webhook", LabelNotificationWebhooksController, :update
     post "/devices/discover", DeviceController, :discover_device
+    resources "/alerts", AlertController, only: [:create, :update, :delete]
+    post "/alerts/add_to_node", AlertController, :add_alert_to_node
+    post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
   end
 
   if Mix.env == :dev do

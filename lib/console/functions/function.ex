@@ -3,7 +3,6 @@ defmodule Console.Functions.Function do
   import Ecto.Changeset
 
   alias Console.Organizations.Organization
-  alias Console.Labels.Label
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -16,7 +15,7 @@ defmodule Console.Functions.Function do
     field :active, :boolean
 
     belongs_to :organization, Organization
-    has_many :labels, Label
+
     timestamps()
   end
 

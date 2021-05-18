@@ -1,4 +1,4 @@
-<%= @label_name %> Notification
+Alert: <%= @alert_name %>
 
 <%= if @num_channels == 1 do %>
   The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> was deleted by <%= List.first(@details)["deleted_by"] %> at <%= List.first(@details)["time"] %>.

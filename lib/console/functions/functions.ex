@@ -16,11 +16,6 @@ defmodule Console.Functions do
 
   def get_function_by_name(name), do: Repo.get_by(Function,  %{:name => name})
 
-  def get_organization_function_count(organization) do
-    functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
-    length(functions)
-  end
-
   def fetch_assoc(%Function{} = function, assoc \\ [:labels]) do
     Repo.preload(function, assoc)
   end
@@ -44,14 +39,11 @@ defmodule Console.Functions do
   end
 
   def delete_function(%Function{} = function) do
-    labels = fetch_assoc(function).labels
-    Repo.transaction(fn ->
-      Enum.each(labels, fn label ->
-        label
-        |> Label.changeset(%{ "function_id" => nil })
-        |> Repo.update!()
-      end)
-      Repo.delete!(function)
-    end)
+    Repo.delete(function)
+  end
+
+  defp get_organization_function_count(organization) do
+    functions = from(f in Function, where: f.organization_id == ^organization.id) |> Repo.all()
+    length(functions)
   end
 end

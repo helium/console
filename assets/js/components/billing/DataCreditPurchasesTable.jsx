@@ -8,7 +8,7 @@ import PaymentCard from './PaymentCard'
 import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination } from 'antd';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { IndexSkeleton } from '../common/IndexSkeleton';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 
 const styles = {
@@ -112,7 +112,7 @@ class DataCreditPurchasesTable extends Component {
     const { loading, error, dcPurchases } = this.props.dcPurchasesQuery
     const title = "Payment History";
 
-    if (loading) return <IndexSkeleton title={title} />;
+    if (loading) return <SkeletonLayout />;
     if (error) return (
       <Text>Data failed to load, please reload the page and try again</Text>
     )

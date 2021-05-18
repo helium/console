@@ -29,17 +29,17 @@ class DeviceCredentials extends Component {
 
     return(
       <span>
-        <Button color={display !== 'default' ? 'blue' : ''} size="small" style={{ marginRight: 10 }} onClick={this.toggleDefault}><ArrowsAltOutlined /></Button>
+        <Button color={display !== 'default' ? 'blue' : ''} size="small" style={{ marginRight: 5 }} onClick={this.toggleDefault}><ArrowsAltOutlined /></Button>
 
         { display !== 'default' && <Button size="small"  onClick={this.toggleType}><SwapOutlined /></Button> }
         { display !== 'default' && <p style={{display: 'inline-block',margin: 0, marginRight: 5 }}>{display}:</p> }
-        { display == 'default' && <Text code style={{ marginRight: 10 }}>{formattedData}</Text>}
+        { display == 'default' && <Text code style={{ marginRight: 5 }}>{formattedData}</Text>}
         { display == 'default' && <CopyToClipboard text={formattedData}><Button style={{marginRight: 4}} size="small"><CopyOutlined /></Button></CopyToClipboard>}
 
-        { display == 'msb' &&  <Text code style={{ marginRight: 10 }}>{msb}</Text> }
+        { display == 'msb' &&  <Text code style={{ marginRight: 5 }}>{msb}</Text> }
         { display == 'msb' &&  <CopyToClipboard text={msb}><Tag><CopyOutlined /></Tag></CopyToClipboard> }
 
-        { display == 'lsb' &&  <Text code style={{ marginRight: 10 }}>{lsb}</Text> }
+        { display == 'lsb' &&  <Text code style={{ marginRight: 5 }}>{lsb}</Text> }
         { display == 'lsb' &&  <CopyToClipboard text={lsb}><Tag><CopyOutlined /></Tag></CopyToClipboard> }
 
       </span>

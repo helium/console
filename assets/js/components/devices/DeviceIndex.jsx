@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
-import DashboardLayout from '../common/DashboardLayout';
-import NewDeviceModal from './NewDeviceModal';
-import ImportDevicesModal from './import/ImportDevicesModal';
+import DeviceDashboardLayout from './DeviceDashboardLayout';
+import DeviceNew from './DeviceNew';
+import LabelNew from '../labels/LabelNew';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
-import { PAGINATED_DEVICES, ALL_IMPORTS } from '../../graphql/devices';
+import { PAGINATED_DEVICES } from '../../graphql/devices';
 import withGql from '../../graphql/withGql'
-import get from 'lodash/get';
-import UserCan from '../common/UserCan';
-import { displayError, displayInfo } from '../../util/messages';
 import analyticsLogger from '../../util/analyticsLogger';
-import { Button, Typography } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { IndexSkeleton } from '../common/IndexSkeleton';
+import { Typography } from 'antd';
+import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
-
 const DEFAULT_COLUMN = "name"
 const DEFAULT_ORDER = "asc"
 const PAGE_SIZE_KEY = 'devicePageSize';
@@ -26,9 +21,7 @@ let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 class DeviceIndex extends Component {
   state = {
-    showCreateDeviceModal: false,
     showDeleteDeviceModal: false,
-    showImportDevicesModal: false,
     showDevicesAddLabelModal: false,
     showDevicesRemoveLabelModal: false,
     showDeviceRemoveAllLabelsModal: false,
@@ -40,7 +33,6 @@ class DeviceIndex extends Component {
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
     allDevicesSelected: false,
-    importComplete: false
   }
 
   componentDidMount() {
@@ -58,39 +50,10 @@ class DeviceIndex extends Component {
       const { page, pageSize, column, order } = this.state
       this.refetchPaginatedEntries(page, pageSize, column, order)
     }
-
-    this.importChannel = socket.channel("graphql:device_import_update", {})
-    this.importChannel.join()
-    this.importChannel.on(`graphql:device_import_update:${currentOrganizationId}:import_list_updated`, (message) => {
-      const { page, pageSize } = this.state
-      this.props.importsQuery.refetch({ page, pageSize })
-      const user_id = user.sub.slice(6)
-
-      if (user_id === message.user_id && message.status === 'success') {
-        this.setState({ importComplete: true })
-
-        displayInfo(
-          `Imported ${message.successful_devices} device${(message.successful_devices !== 1 && "s") || ""} from ${
-          message.type === "ttn" ? "The Things Network" : "CSV"}. Refresh this page to see the changes.`
-        )
-      }
-      if (user_id === message.user_id && message.status === 'failed') {
-        displayError(`Failed to import devices from ${message.type === "ttn" ? "The Things Network" : "CSV"}.`)
-      }
-    })
   }
 
   componentWillUnmount() {
     this.channel.leave()
-    this.importChannel.leave()
-  }
-
-  openCreateDeviceModal = () => {
-    this.setState({ showCreateDeviceModal: true })
-  }
-
-  closeCreateDeviceModal = () => {
-    this.setState({ showCreateDeviceModal: false })
   }
 
   openDevicesAddLabelModal = (devicesSelected) => {
@@ -136,14 +99,6 @@ class DeviceIndex extends Component {
     }
   }
 
-  openImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: true });
-  }
-
-  closeImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: false, importComplete: false });
-  }
-
   closeDeleteDeviceModal = () => {
     this.setState({ showDeleteDeviceModal: false })
   }
@@ -178,65 +133,31 @@ class DeviceIndex extends Component {
     const {
       showCreateDeviceModal,
       showDeleteDeviceModal,
-      showImportDevicesModal,
       showDevicesAddLabelModal,
       showDevicesRemoveLabelModal,
       showDeviceRemoveAllLabelsModal,
       labelsSelected,
       deviceToRemoveLabel,
-      importComplete
     } = this.state
 
     const { devices, loading, error } = this.props.devicesQuery;
-    const { device_imports } = this.props.importsQuery;
 
-    const hasDevices = devices && devices.entries.length > 0;
-
-    const createDeviceButton = () => (
-      <UserCan>
-        <Button
-          size="large"
-          icon={<PlusOutlined />}
-          onClick={this.openImportDevicesModal}
-          disabled={!(device_imports && (!device_imports.entries.length || device_imports.entries[0].status !== "importing"))}
-          style={{marginRight: hasDevices ? 0 : 10, borderRadius: 4 }}
-        >
-          Import Devices
-        </Button>
-        <Button
-          size="large"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={this.openCreateDeviceModal}
-          style={{ borderRadius: 4 }}
-        >
-          Add Device
-        </Button>
-      </UserCan>
-    );
-
-    const title = "Devices";
     return(
-      <DashboardLayout
-        title={title}
-        user={this.props.user}
-        extra={
-          hasDevices && createDeviceButton()
-        }
-      >
-        {hasDevices && <p className="page-description">
-          Devices can be added to the Helium network. <a href="https://docs.helium.com/use-the-network/console/adding-devices" target="_blank"> Tell me more about adding devices.</a>
-        </p>}
+      <DeviceDashboardLayout {...this.props}>
         {
-          (error && <Text>Data failed to load, please reload the page and try again</Text>) || (
-            loading ? <IndexSkeleton title={title} /> :
+          error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+        }
+        {
+          !loading &&  (
             <DeviceIndexTable
               openDeleteDeviceModal={this.openDeleteDeviceModal}
               openDevicesAddLabelModal={this.openDevicesAddLabelModal}
               openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
               openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
               onChangePageSize={this.handleChangePageSize}
-              noDevicesButton={createDeviceButton}
               handleChangePage={this.handleChangePage}
               devices={devices}
               history={this.props.history}
@@ -249,10 +170,6 @@ class DeviceIndex extends Component {
             />
           )
         }
-
-        <NewDeviceModal open={showCreateDeviceModal} onClose={this.closeCreateDeviceModal}/>
-
-        <ImportDevicesModal open={showImportDevicesModal} onClose={this.closeImportDevicesModal} importComplete={importComplete}/>
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}
@@ -284,7 +201,7 @@ class DeviceIndex extends Component {
           devicesToDelete={this.state.devicesSelected}
           totalDevices={devices && devices.totalEntries}
         />
-      </DashboardLayout>
+      </DeviceDashboardLayout>
     )
   }
 }
@@ -296,8 +213,6 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, null)(withGql(
-  withGql(DeviceIndex, PAGINATED_DEVICES, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: startPageSize, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'devicesQuery' })),
-  ALL_IMPORTS,
-  props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: startPageSize }, name: 'importsQuery' })
-))
+export default connect(mapStateToProps, null)(
+  withGql(DeviceIndex, PAGINATED_DEVICES, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: startPageSize, column: DEFAULT_COLUMN, order: DEFAULT_ORDER }, name: 'devicesQuery' }))
+)

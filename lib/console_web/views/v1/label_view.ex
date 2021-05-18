@@ -14,9 +14,7 @@ defmodule ConsoleWeb.V1.LabelView do
     %{
       id: label.id,
       name: label.name,
-      multi_buy: label.multi_buy,
       adr_allowed: label.adr_allowed,
-      function_id: label.function_id,
     }
   end
 

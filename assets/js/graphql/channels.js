@@ -15,7 +15,8 @@ export const CHANNEL_FRAGMENT = gql`
       uplink {
         topic
       }
-    }
+    },
+    updated_at
   }
 `
 
@@ -33,30 +34,6 @@ export const CHANNEL_SHOW = gql`
       aws_access_key
       topic
       payload_template
-      labels {
-        name,
-        id,
-        color,
-      }
-      devices {
-        name,
-        id
-      }
-    }
-    allLabels {
-      name,
-      id,
-      color,
-      device_count
-      channels {
-        name,
-        id
-      }
-      function {
-        id
-        name
-        format
-      }
     }
   }
   ${CHANNEL_FRAGMENT}
@@ -67,16 +44,6 @@ export const PAGINATED_CHANNELS = gql`
     channels(page: $page, pageSize: $pageSize) {
       entries {
         ...ChannelFragment
-        labels {
-          name,
-          id,
-          color,
-          function {
-            id,
-            name
-          }
-        },
-        device_count
       },
       totalEntries,
       totalPages,
@@ -90,21 +57,12 @@ export const PAGINATED_CHANNELS = gql`
 export const ALL_CHANNELS = gql`
   query AllChannelsQuery {
     allChannels {
-      id,
       name,
-    }
-  }
-`
-
-export const ALL_CHANNELS_FUNCTIONS = gql`
-  query AllChannelsFunctionsQuery {
-    allChannels {
+      type,
+      type_name,
       id,
-      name,
-    }
-    allFunctions {
-      id,
-      name,
+      active,
+      endpoint
     }
   }
 `

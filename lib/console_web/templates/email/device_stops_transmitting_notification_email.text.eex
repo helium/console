@@ -1,4 +1,4 @@
-<%= @label_name %> Notification
+Alert: <%= @alert_name %>
 
 <%= if @num_devices == 1 do %>
   The device <%= List.first(@details)["device_name"] %> that belongs to the Organization <%= @organization_name%> stopped transmitting on <%= List.first(@details)["time"] %>.

@@ -69,41 +69,34 @@ class UserIndex extends Component {
       <DashboardLayout
         title="Users"
         user={this.props.user}
-        extra={
-          <UserCan noManager>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="large"
-              style={{ borderRadius: 4 }}
-              onClick={() => {
-                analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
-                this.openNewUserModal()
-              }}
-            >
-              Add User
-            </Button>
-          </UserCan>
-        }
       >
-        <p className="page-description">
-          Console users can be added to organizations and have different roles which dictate their access. <a href="https://docs.helium.com/use-the-network/console/users" target="_blank"> Tell me more about users.</a>
-        </p>
-        <Card
-          title="Members"
-          bodyStyle={{padding:'0', paddingTop: 1, paddingBottom: 0, overflowX: 'scroll' }}
-        >
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Members</Text>
+            <UserCan noManager>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                style={{ borderRadius: 4 }}
+                onClick={() => {
+                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
+                  this.openNewUserModal()
+                }}
+              >
+                Add User
+              </Button>
+            </UserCan>
+          </div>
           <MembersTable
             openEditMembershipModal={this.openEditMembershipModal}
             openDeleteUserModal={this.openDeleteUserModal}
             user={user}
           />
-        </Card>
-
-        <Card title="Invites" bodyStyle={{padding:'0', paddingTop: 0, paddingBottom: 0, overflowX: 'scroll' }}>
-          <header style={{ ...styles.header, marginTop: 1 }} />
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Invitations</Text>
+          </div>
           <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} user={user} />
-        </Card>
+        </div>
 
         <NewUserModal
           open={this.state.newUserOpen}

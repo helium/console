@@ -1,30 +1,57 @@
 import React, { Component } from 'react'
-import ChannelsTable from './ChannelsTable'
-import DashboardLayout from '../common/DashboardLayout'
-import UserCan from '../common/UserCan'
-import ChannelCreateRow from './ChannelCreateRow'
-import ChannelPremadeRow from './ChannelPremadeRow'
+import { connect } from 'react-redux';
+import withGql from '../../graphql/withGql'
+import ChannelIndexTable from './ChannelIndexTable'
+import ChannelDashboardLayout from './ChannelDashboardLayout'
+import ChannelNew from './ChannelNew'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
-import classNames from 'classnames';
-import _JSXStyle from "styled-jsx/style"
-
+import { PAGINATED_CHANNELS } from '../../graphql/channels'
+import { SkeletonLayout } from '../common/SkeletonLayout';
 import { Typography } from 'antd';
-import { Card } from 'antd';
 const { Text } = Typography
 
 class ChannelIndex extends Component {
   state = {
+    channelSelected: null,
+    page: 1,
+    pageSize: 10,
     showDeleteChannelModal: false,
-    channel: null,
   }
 
   componentDidMount() {
+    const { socket, currentOrganizationId } = this.props
     analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX")
+
+    this.channel = socket.channel("graphql:channels_index_table", {})
+    this.channel.join()
+    this.channel.on(`graphql:channels_index_table:${currentOrganizationId}:channel_list_update`, (message) => {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    })
+
+    if (!this.props.paginatedChannelsQuery.loading) {
+      this.refetchPaginatedEntries(this.state.page, this.state.pageSize)
+    }
   }
 
-  openDeleteChannelModal = (channel) => {
-    this.setState({ showDeleteChannelModal: true, channel })
+  componentWillUnmount() {
+    this.channel.leave()
+  }
+
+  refetchPaginatedEntries = (page, pageSize) => {
+    const { refetch } = this.props.paginatedChannelsQuery
+    refetch({ page, pageSize })
+  }
+
+  handleChangePage = (page) => {
+    this.setState({ page })
+
+    const { pageSize } = this.state
+    this.refetchPaginatedEntries(page, pageSize)
+  }
+
+  openDeleteChannelModal = (channelSelected) => {
+    this.setState({ showDeleteChannelModal: true, channelSelected })
   }
 
   closeDeleteChannelModal = () => {
@@ -32,52 +59,41 @@ class ChannelIndex extends Component {
   }
 
   render() {
-    const { showDeleteChannelModal, channel } = this.state
+    const { channels, loading, error } = this.props.paginatedChannelsQuery
+    const { showDeleteChannelModal, channelSelected } = this.state
+
     return (
-      <DashboardLayout title="Integrations" user={this.props.user}>
-        <p style={{fontSize: 16, marginBottom: 20, maxWidth: 600, marginTop: '-30px', paddingLeft: 4, fontWeight: 300}}>
-          Integrations enable devices to connect to pre-configured, cloud-based applications or send data directly over HTTP or MQTT.
-          <a href="https://docs.helium.com/use-the-network/console/integrations/" target="_blank"> Tell me more about Console Integrations.</a>
-        </p>
-        <Card title="My Integrations" bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}>
-          <ChannelsTable openDeleteChannelModal={this.openDeleteChannelModal} history={this.props.history}/>
-        </Card>
-        <div style={{ display: 'block' }}>
-          <UserCan>
-            <Card title="Add a Prebuilt Integration" className="integrationcard" bodyStyle={{ overflowX: 'scroll' }}>
-              <ChannelPremadeRow />
-            </Card>
-          </UserCan>
+      <ChannelDashboardLayout {...this.props}>
+        {
+          error && <Text>Data failed to load, please reload the page and try again</Text>
+        }
+        {
+          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+        }
+        {
+          !loading && (
+            <ChannelIndexTable
+              history={this.props.history}
+              channels={channels}
+              openDeleteChannelModal={this.openDeleteChannelModal}
+              handleChangePage={this.handleChangePage}
+            />
+          )
+        }
 
-          <UserCan>
-            <Card title="Add a Custom Integration" className="integrationcard">
-              <ChannelCreateRow />
-            </Card>
-          </UserCan>
-        </div>
-
-        <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channel}/>
-
-        <style jsx>{`
-          .flexwrapper {
-            display: flex;
-            flex-wrap: wrap;
-
-          }
-
-          .integrationcard {
-            flex-grow: 1;
-          }
-
-          .integrationcard:first-of-type {
-            margin-right: 20px;
-          }
-
-
-          `}</style>
-      </DashboardLayout>
+        <DeleteChannelModal open={showDeleteChannelModal} onClose={this.closeDeleteChannelModal} channel={channelSelected}/>
+      </ ChannelDashboardLayout>
     )
   }
 }
 
-export default ChannelIndex
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  }
+}
+
+export default connect(mapStateToProps, null)(
+  withGql(ChannelIndex, PAGINATED_CHANNELS, props => ({ fetchPolicy: 'cache-first', variables: { page: 1, pageSize: 10 }, name: 'paginatedChannelsQuery' }))
+)

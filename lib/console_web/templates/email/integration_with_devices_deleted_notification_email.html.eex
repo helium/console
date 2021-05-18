@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Label Notification</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>Alert</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -245,7 +245,7 @@
                             <!-- Spacing -->
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; "><%= @label_name %> Notification</h1>
+                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Alert: <%= @alert_name %></h1>
                                     <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
                                       <%= if @num_channels == 1 do %>
                                         The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
@@ -270,7 +270,7 @@
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
                                             <td class="button-td button-td-primary" style="border: none;">
-                                              <a class="button-a button-a-primary" href="<%= @url <> "/labels/" <> @label_id %>" style="background: #B173F3; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">See Label in Console</a>
+                                              <a class="button-a button-a-primary" href="<%= @url <> "/alerts/" <> @alert_id %>" style="background: #B173F3; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">See Alert in Console</a>
                                           </td>
                                         </tr>
                                     </table>

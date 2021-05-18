@@ -3,92 +3,69 @@ defmodule ConsoleWeb.FlowsController do
   import Ecto.Query
 
   alias Console.Repo
-  alias Console.Functions
-  alias Console.Labels
-  alias Console.Labels.Label
-  alias Console.Channels
+  alias Console.Organizations
+  alias Console.Flows.Flow
+  alias Console.Devices
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
-  def update_edges(conn, %{"removeEdges" => remove_edges, "addEdges" => add_edges}) do
+  def update_edges(conn, %{"completeFlows" => complete_flows, "elementPositions" => flow_positions}) do
     current_organization = conn.assigns.current_organization
 
-    functions_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "function" end)
-    channels_to_remove = Enum.filter(remove_edges, fn edge -> Map.get(edge, "type") == "channel" end)
-    functions_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "function" end)
-    channels_to_add = Enum.filter(add_edges, fn edge -> Map.get(edge, "type") == "channel" end)
-
     result =
-    Ecto.Multi.new()
-    |> Ecto.Multi.run(:removed_functions, fn _repo, _ ->
-      label_ids = Enum.map(functions_to_remove, fn edge -> Map.get(edge, "source") end)
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:deleted_flows, fn _repo, _ ->
+        { count, nil } = from(f in Flow, where: f.organization_id == ^current_organization.id) |> Repo.delete_all()
 
-      {count, _} =
-        from(l in Label,
-          where: l.organization_id == ^current_organization.id and l.id in ^label_ids,
-          select: l.id
-        )
-        |> Repo.update_all(set: [function_id: nil])
+        {:ok, count}
+      end)
+      |> Ecto.Multi.run(:added_flows, fn _repo, _ ->
+        parsed_flows =
+          complete_flows
+          |> Enum.map(fn flow ->
+            Enum.reduce(flow, %{}, fn node, acc ->
+              case node["type"] do
+                "deviceNode" -> Map.put(acc, :device_id, node["id"] |> String.trim_leading("device-"))
+                "labelNode" -> Map.put(acc, :label_id, node["id"] |> String.trim_leading("label-"))
+                "channelNode" -> Map.put(acc, :channel_id, node["id"] |> String.trim_leading("channel-"))
+                "functionNode" -> Map.put(acc, :function_id, node["id"] |> String.trim_leading("function-"))
+              end
+            end)
+            |> Map.put(:organization_id, current_organization.id)
+            |> put_timestamps()
+          end)
 
-      if count == Enum.count(functions_to_remove) do
-        {:ok, "success"}
-      else
-        {:error, "failed to remove functions from labels"}
-      end
-    end)
-    |> Ecto.Multi.run(:removed_channels, fn _repo, _ ->
-      count =
-        Enum.map(channels_to_remove, fn edge ->
-          {1, _} = Labels.delete_labels_from_channel([Map.get(edge, "source")], Map.get(edge, "target"), current_organization)
-          1
-        end)
-        |> Enum.sum()
+        { count, _ } = Repo.insert_all(Flow, parsed_flows, on_conflict: :nothing)
+        if count == length(parsed_flows) do
+          {:ok, "success"}
+        else
+          {:error, "fail"}
+        end
+      end)
+      |> Ecto.Multi.run(:updated_organization, fn _repo, _ ->
+        Organizations.update_organization(current_organization, %{ flow: flow_positions })
+      end)
+      |> Repo.transaction()
 
-      if count == Enum.count(channels_to_remove) do
-        {:ok, "success"}
-      else
-        {:error, "failed to remove integrations from labels"}
-      end
-    end)
-    |> Ecto.Multi.run(:added_functions, fn _repo, _ ->
-      count =
-        Enum.map(functions_to_add, fn edge ->
-          function = Functions.get_function!(current_organization, Map.get(edge, "target"))
+    case result do
+      {:ok, _} ->
+        all_device_ids = Devices.get_devices(current_organization.id)
+        ConsoleWeb.Endpoint.broadcast("graphql:flows_update", "graphql:flows_update:#{current_organization.id}:organization_flows_update", %{})
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => all_device_ids })
 
-          {:ok, _} = Labels.add_function_to_labels(function, [Map.get(edge, "source")], current_organization)
-          1
-        end)
-        |> Enum.sum()
-
-      if count == Enum.count(functions_to_add) do
-        {:ok, "success"}
-      else
-        {:error, "failed to add functions to labels"}
-      end
-    end)
-    |> Ecto.Multi.run(:added_channels, fn _repo, _ ->
-      count =
-        Enum.map(channels_to_add, fn edge ->
-          channel = Channels.get_channel!(current_organization, Map.get(edge, "target"))
-
-          {:ok, 1, _} = Labels.add_labels_to_channel([Map.get(edge, "source")], channel, current_organization)
-          1
-        end)
-        |> Enum.sum()
-
-      if count == Enum.count(channels_to_add) do
-        {:ok, "success"}
-      else
-        {:error, "failed to add integrations to labels"}
-      end
-    end)
-    |> Repo.transaction()
-
-    with {:ok, _} <- result do
-      conn
-      |> put_resp_header("message", "Updated all edges successfully")
-      |> send_resp(:ok, "")
+        conn
+        |> put_resp_header("message", "Updated all edges successfully")
+        |> send_resp(:ok, "")
+      {:error, :added_flows, "fail", _} ->
+        {:error, :bad_request, "Failed to connect all flows. Please make sure you are not duplicating flows with the same nodes."}
+      _ -> result
     end
+  end
+
+  defp put_timestamps(struct) do
+    struct
+    |> Map.put(:inserted_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
+    |> Map.put(:updated_at, NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second))
   end
 end

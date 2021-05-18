@@ -2,40 +2,82 @@ defmodule ConsoleWeb.ChannelController do
   use ConsoleWeb, :controller
 
   alias Console.Repo
-  alias Console.Channels
+  alias Console.Organizations
   alias Console.Labels
-  alias Console.Labels.Label
+  alias Console.Channels
   alias Console.Channels.Channel
   alias Console.Functions
   alias Console.Functions.Function
-  alias Console.LabelNotificationEvents
+  alias Console.Alerts
+  alias Console.Flows
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback ConsoleWeb.FallbackController
 
-  def create(conn, %{"channel" => channel_params, "labels" => labels}) do
+  # For create adafruit / google sheets channel
+  def create(conn, %{"channel" => channel_params, "func" => function_params }) do
     current_organization = conn.assigns.current_organization
-    user = conn.assigns.current_user
+    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
+
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:channel, fn _repo, _ ->
+        Channels.create_channel(current_organization, channel_params)
+      end)
+      |> Ecto.Multi.run(:function, fn _repo, %{ channel: channel } ->
+        case function_params["format"] do
+           "custom" ->
+            function = Functions.get_function!(current_organization, function_params["id"])
+            {:ok, function}
+          "cayenne" ->
+            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
+            Functions.create_function(function_params, current_organization)
+          "googlesheet" ->
+            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id, "format" => "custom" })
+            Functions.create_function(function_params, current_organization)
+        end
+      end)
+      |> Ecto.Multi.run(:flow, fn _repo, %{ channel: channel, function: function } ->
+        new_edge = %{
+          "source" => "function-" <> function.id,
+          "target" => "channel-" <> channel.id
+        }
+
+        edges =
+          case Map.get(current_organization.flow, "edges") do
+            nil -> [new_edge]
+            edges -> [new_edge | edges]
+          end
+
+        updated_flow =
+          current_organization.flow
+          |> Map.put("channel-" <> channel.id, %{ "position" => %{"x" => 300, "y" => 50} })
+          |> Map.put("function-" <> function.id, %{ "position" => %{"x" => 50, "y" => 50} })
+          |> Map.put("edges", edges)
+
+        Organizations.update_organization(current_organization, %{ "flow" => updated_flow })
+      end)
+      |> Repo.transaction()
+
+      case result do
+        {:error, _, changeset, _} -> {:error, changeset}
+        {:ok, %{ channel: channel, function: _function}} ->
+          ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+
+          conn
+          |> put_status(:created)
+          |> render("show.json", channel: channel)
+        _ -> result
+      end
+  end
+
+  def create(conn, %{"channel" => channel_params}) do
+    current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      case labels["labelsApplied"] do
-        nil -> nil
-        applied_labels ->
-          label_ids = applied_labels
-            |> Enum.map(fn label ->
-              label["id"]
-            end)
-          Labels.add_labels_to_channel(label_ids, channel, current_organization)
-      end
-
-      case labels["newLabels"] do
-        nil -> nil
-        new_labels ->
-          Labels.create_labels_add_channel(channel, new_labels, current_organization, user)
-      end
-      broadcast_router_update_devices(channel)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
 
       conn
       |> put_status(:created)
@@ -43,127 +85,19 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  def create(conn, %{"channel" => channel_params, "func" => function_params}) do
-    current_organization = conn.assigns.current_organization
-    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.run(:channel, fn _repo, _ ->
-        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          {:ok, channel}
-        end
-      end)
-      |> Ecto.Multi.run(:label, fn _repo, _ ->
-        with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
-          {:ok, label}
-        end
-      end)
-      |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
-        with {:ok, _length, _label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
-          {:ok, "label attached success"}
-        end
-      end)
-      |> Ecto.Multi.run(:function, fn _repo, %{ label: label } ->
-        cond do
-          function_params["format"] === "custom" ->
-            Labels.add_function_to_labels(%{ id: function_params["id"] }, [label.id], current_organization)
-          function_params["format"] === "cayenne" ->
-            function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
-            with {:ok, new_function} <- Functions.create_function(function_params, current_organization) do
-              Labels.add_function_to_labels(%{ id: new_function.id }, [label.id], current_organization)
-            end
-        end
-      end)
-      |> Repo.transaction()
-
-      case result do
-        {:error, _, changeset, _} -> {:error, changeset}
-        {:ok, %{ channel: channel, label: _label, label_attached: _label_attached, function: _function}} ->
-          broadcast_router_update_devices(channel)
-
-          conn
-          |> put_status(:created)
-          |> render("show.json", channel: channel)
-        _ -> result
-      end
-  end
-
-  def create(conn, %{"channel" => channel_params, "google_func" => function_body}) do
-    current_organization = conn.assigns.current_organization
-    channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
-
-    result =
-      Ecto.Multi.new()
-      |> Ecto.Multi.run(:channel, fn _repo, _ ->
-        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          {:ok, channel}
-        end
-      end)
-      |> Ecto.Multi.run(:label, fn _repo, _ ->
-        with {:ok, %Label{} = label} <- Labels.create_label(current_organization, %{ "name" => channel_params["name"], "organization_id" => current_organization.id }) do
-          {:ok, label}
-        end
-      end)
-      |> Ecto.Multi.run(:label_attached, fn _repo, %{ label: label, channel: channel } ->
-        with {:ok, _length, _label} <- Labels.add_labels_to_channel([label.id], channel, current_organization) do
-          {:ok, "label attached success"}
-        end
-      end)
-      |> Ecto.Multi.run(:function, fn _repo, _ ->
-        function_params = %{
-          "name" => channel_params["name"],
-          "organization_id" => current_organization.id,
-          "body" => function_body,
-          "type" => "decoder",
-          "format" => "custom"
-        }
-        with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
-          {:ok, function}
-        end
-      end)
-      |> Ecto.Multi.run(:function_attached, fn _repo, %{ label: label, function: function } ->
-        Labels.add_function_to_labels(function, [label.id], current_organization)
-      end)
-      |> Repo.transaction()
-
-      case result do
-        {:error, _, changeset, _} -> {:error, changeset}
-        {:ok, %{ channel: channel, label: _label, label_attached: _label_attached, function: _function, function_attached: _}} ->
-          broadcast_router_update_devices(channel)
-
-          conn
-          |> put_status(:created)
-          |> render("show.json", channel: channel)
-        _ -> result
-      end
-  end
-
   def update(conn, %{"id" => id, "channel" => channel_params}) do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
-    # check if there are devices associated w/ this channel
-    devices_labels = Channels.get_channel_devices_per_label(id)
-    # get channel info before updating
-    updated_channel = case length(devices_labels) do
-      0 -> nil
-      _ -> %{ channel_id: id, labels: Enum.map(devices_labels, fn l -> l.label_id end), channel_name: channel.name }
-    end
+    affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
+    all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
-      broadcast_router_update_devices(channel)
+      ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
 
-      if updated_channel != nil do
-        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-        details = %{
-          channel_name: updated_channel.channel_name,
-          updated_by: conn.assigns.current_user.email,
-          time: time
-        }
-        LabelNotificationEvents.notify_label_event(updated_channel.labels, "integration_with_devices_updated", details)
-      end
+      broadcast_router_update_devices(all_device_ids)
 
       conn
       |> put_resp_header("message", "Integration #{channel.name} updated successfully")
@@ -173,41 +107,20 @@ defmodule ConsoleWeb.ChannelController do
 
   def delete(conn, %{"id" => id}) do
     current_organization = conn.assigns.current_organization
-    channel = Channels.get_channel!(current_organization, id) |> Channels.fetch_assoc([labels: :devices])
+    channel = Channels.get_channel!(current_organization, id)
 
-    # check if there are devices associated w/ this channel
-    devices_labels = Channels.get_channel_devices_per_label(id)
-    # get channel info before deleting
-    deleted_channel = case length(devices_labels) do
-      0 -> nil
-      _ -> %{ channel_id: id, labels: Enum.map(devices_labels, fn l -> l.label_id end), channel_name: Channels.get_channel!(id).name }
-    end
+    affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
+    all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
-      broadcast_router_update_devices(channel.labels)
+      ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+      Alerts.delete_alert_nodes(id, "integration")
 
-      if (deleted_channel != nil) do
-        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-        details = %{
-          channel_name: deleted_channel.channel_name,
-          deleted_by: conn.assigns.current_user.email,
-          time: time
-        }
-        LabelNotificationEvents.delete_unsent_label_events_for_integration(deleted_channel.channel_id)
-        LabelNotificationEvents.notify_label_event(deleted_channel.labels, "integration_with_devices_deleted", details)
-      end
-
-      msg =
-        case length(channel.labels) do
-          0 -> "The Integration #{channel.name} has been deleted"
-          _ ->
-            labels = Enum.reduce(channel.labels, "", fn (l, acc) -> acc <> l.name <> ", " end)
-            "The devices with label #{labels}are no longer connected to Integration #{channel.name}"
-        end
+      broadcast_router_update_devices(all_device_ids)
 
       conn
-      |> put_resp_header("message", msg)
+      |> put_resp_header("message", "The Integration #{channel.name} has been deleted")
       |> render("show.json", channel: channel)
     end
   end
@@ -253,18 +166,7 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  defp broadcast_router_update_devices(%Channel{} = channel) do
-    assoc_labels = channel |> Channels.fetch_assoc([labels: :devices]) |> Map.get(:labels)
-    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
-    if length(assoc_device_ids) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
-    end
-  end
-
-  defp broadcast_router_update_devices(assoc_labels) do
-    assoc_device_ids = Enum.map(assoc_labels, fn l -> l.devices end) |> List.flatten() |> Enum.uniq() |> Enum.map(fn d -> d.id end)
-    if length(assoc_device_ids) > 0 do
-      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
-    end
+  defp broadcast_router_update_devices(device_ids) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })
   end
 end

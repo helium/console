@@ -7,6 +7,26 @@ defmodule ConsoleWeb.DownlinkController do
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
+  def send_downlink(conn, %{ "id" => id, "type" => type }) do
+    current_organization = conn.assigns.current_organization
+
+    case type do
+      "device" ->
+        device = Devices.get_device!(current_organization, id)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [id], "payload" => conn.body_params })
+
+        conn
+        |> send_resp(:no_content, "")
+      "label" ->
+        label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
+        device_ids = label.devices |> Enum.map(fn d -> d.id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [device_ids], "payload" => conn.body_params })
+
+        conn
+        |> send_resp(:no_content, "")
+    end
+  end
+
   def fetch_downlink_queue(conn, %{ "id" => id, "type" => type }) do
     current_organization = conn.assigns.current_organization
     case type do
@@ -27,7 +47,7 @@ defmodule ConsoleWeb.DownlinkController do
     if length(devices) > 0 do
       clear_downlink_queue(Enum.map(devices, fn d -> d.id end))
       conn
-      |> put_resp_header("message", "Downlink queue cleared")
+      |> put_resp_header("message", "Downlink queue successfully cleared")
       |> send_resp(:no_content, "")
     else
       {:error, :bad_request, "Label has no devices"}

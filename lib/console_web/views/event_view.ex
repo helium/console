@@ -25,5 +25,4 @@ defmodule ConsoleWeb.EventView do
       device_id: event.device_id
     }
   end
-
 end

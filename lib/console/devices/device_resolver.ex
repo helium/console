@@ -5,43 +5,19 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
   import Ecto.Query
+  alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
     order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
 
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
-      |> preload([labels: [:channels, :devices, :function]])
+      |> preload([:labels])
       |> order_by(^order_by)
       |> Repo.paginate(page: page, page_size: page_size)
 
     entries =
-      Enum.map(devices.entries, fn d ->
-        channels =
-          Enum.map(d.labels, fn l ->
-            l.channels
-          end)
-          |> List.flatten()
-          |> Enum.uniq()
-          |> Enum.map(fn c ->
-            Map.drop(c, [:downlink_token])
-          end)
-
-        labels =
-          Enum.map(d.labels, fn l ->
-            Map.drop(l, [:devices])
-          end)
-          |> Enum.map(fn l ->
-            Map.put(l, :channels,
-              Enum.map(l.channels, fn c ->
-                Map.drop(c, [:downlink_token])
-              end)
-            )
-          end)
-
-        Map.put(d, :channels, channels)
-        |> Map.put(:labels, labels)
-      end)
+      devices.entries
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
       end)
@@ -50,25 +26,16 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([labels: [:channels, :function]])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([:labels])
 
     device =
       case current_membership.role do
         "read" ->
           device
           |> Map.drop([:app_key])
-          |> Map.put(:labels,
-            device.labels
-              |> Enum.map(fn l ->
-                Map.put(l, :channels,
-                  Enum.map(l.channels, fn c ->
-                    Map.drop(c, [:downlink_token])
-                  end)
-                )
-              end)
-          )
         _ -> device
       end
+
     {:ok, device}
   end
 
@@ -124,12 +91,28 @@ defmodule Console.Devices.DeviceResolver do
     }
   end
 
+  def get_device_count(_, %{context: %{current_organization: current_organization}}) do
+    query = from d in Device,
+      where: d.organization_id == ^current_organization.id,
+      select: count(d.id)
+
+    {:ok, %{ count: Repo.one(query) }}
+  end
+
+  def get_names(%{device_ids: device_ids}, %{context: %{current_organization: current_organization}}) do
+    query = from d in Device,
+      where: d.organization_id == ^current_organization.id and d.id in ^device_ids
+
+    {:ok, query |> Repo.all()}
+  end
+
   def all(_, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
       |> Repo.all()
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
+        |> Map.put(:alerts, Alerts.get_alerts_by_node(d.id, "device"))
       end)
 
     {:ok, devices}
@@ -142,7 +125,7 @@ defmodule Console.Devices.DeviceResolver do
       join: dl in DevicesLabels,
       on: dl.device_id == d.id,
       where: d.organization_id == ^current_organization.id and dl.label_id == ^label_id,
-      preload: [labels: [:channels, :function]],
+      preload: [:labels],
       order_by: ^order_by
 
     devices = query |> Repo.paginate(page: page, page_size: page_size)
@@ -150,15 +133,6 @@ defmodule Console.Devices.DeviceResolver do
     entries = devices.entries
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
-        |> Map.put(:labels,
-          Enum.map(d.labels, fn l ->
-            Map.put(l, :channels,
-              Enum.map(l.channels, fn c ->
-                Map.drop(c, [:downlink_token])
-              end)
-            )
-          end)
-        )
       end)
 
     {:ok, Map.put(devices, :entries, entries)}
@@ -196,5 +170,10 @@ defmodule Console.Devices.DeviceResolver do
       |> Repo.paginate(page: page, page_size: page_size)
 
     {:ok, device_imports}
+  end
+
+  def all(_, %{context: %{current_organization: current_organization}}) do
+    devices = Ecto.assoc(current_organization, :devices) |> Repo.all()
+    {:ok, devices}
   end
 end

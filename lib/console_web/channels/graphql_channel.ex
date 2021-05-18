@@ -33,6 +33,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:function_index_bar", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:function_show", _message, socket) do
     {:ok, socket}
   end
@@ -41,11 +45,15 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:channel_index_bar", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:channel_show", _message, socket) do
     {:ok, socket}
   end
 
-  def join("graphql:labels_index_table", _message, socket) do
+  def join("graphql:device_index_labels_bar", _message, socket) do
     {:ok, socket}
   end
 
@@ -65,6 +73,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:devices_header_count", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:device_show", _message, socket) do
     {:ok, socket}
   end
@@ -81,10 +93,6 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
-  def join("graphql:nav_labels", _message, socket) do
-    {:ok, socket}
-  end
-
   def join("graphql:device_import_update", _message, socket) do
     {:ok, socket}
   end
@@ -94,6 +102,34 @@ defmodule ConsoleWeb.GraphqlChannel do
   end
 
   def join("graphql:label_show_downlink", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:flows_update", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:resources_update", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:alerts_index_table", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:alert_show", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:alert_settings_table", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:multi_buys_index_table", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:multi_buy_show", _message, socket) do
     {:ok, socket}
   end
 end

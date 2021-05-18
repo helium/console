@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import TTNLoading from '../../../../img/ttn-waiting-cloud.svg';
 import ListApplications from './ttn/ListApplications';
 import { fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDeviceImport } from '../../../actions/device';
-import ChooseImportType from './ChooseImportType';
 import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
 import { Modal, Spin, Typography } from 'antd';
@@ -24,9 +23,9 @@ const ImportDevicesModal = (props) => {
     ttnAuthorizationCode,
     importGenericDevices,
     resetGenericDeviceImport,
-    importComplete
+    importComplete,
+    importType
   } = props;
-  const [ importType, setImportType ] = useState('');
   const {
     fetchingTtnApplications,
     fetchedTtnApplications,
@@ -46,10 +45,12 @@ const ImportDevicesModal = (props) => {
     <Modal
       visible={open}
       centered
-      onCancel={() => {onClose(); setTimeout(() => {
-        resetGenericDeviceImport();
-        setImportType('');
-      }, 500)}}
+      onCancel={() => {
+        onClose();
+        setTimeout(() => {
+          resetGenericDeviceImport();
+        }, 500)
+      }}
       footer={null}
       header={null}
       width={450}
@@ -64,10 +65,6 @@ const ImportDevicesModal = (props) => {
       }}
     >
       {
-        (
-          !importType &&
-          <ChooseImportType onImportSelect={(type) => setImportType(type)}/>
-        ) ||
         (
           importType === 'ttn' && (
           (
@@ -115,7 +112,7 @@ const ImportDevicesModal = (props) => {
               <Title style={{width: '100%', textAlign: 'center'}}>Import Status</Title>
               {importStarted && !importComplete && <Spin indicator={antLoaderGrey} style={{ marginBottom: 20 }}/>}
               {importStarted && !importComplete && <Text style={{ textAlign: 'center' }}>Please wait while your import is being completed.</Text>}
-              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please refresh the page to see your devices.</Text>}
+              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please return to the device index page to view your new devices.</Text>}
             </div>
           )
         )

@@ -7,6 +7,4 @@ defmodule ConsoleWeb.RouterApiPipeline do
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "router"}
   plug Guardian.Plug.EnsureAuthenticated
   plug ConsoleWeb.Plug.VerifyRouterSecretVersion
-  # plug ConsoleWeb.Plug.VerifyRouterIpAddress
-  # plug ConsoleWeb.Plug.ConnInterceptor # good for debugging
 end
