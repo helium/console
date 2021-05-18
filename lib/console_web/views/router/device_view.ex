@@ -25,6 +25,8 @@ defmodule ConsoleWeb.Router.DeviceView do
       oui: device.oui,
       organization_id: device.organization_id,
       active: device.active,
+      adr_allowed: device.adr_allowed,
+      multi_buy: device.multi_buy,
     }
     |> ChannelView.append_channels(device.channels)
   end

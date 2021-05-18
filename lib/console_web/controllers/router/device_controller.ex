@@ -5,6 +5,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Flows
   alias Console.Labels
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
   alias Console.Devices.Device
@@ -35,82 +36,86 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    device = Devices.get_device!(id) |> Repo.preload([:multi_buy, labels: [:multi_buy]])
-
-    adr_allowed =
-      case length(device.labels) do
-        0 -> device.adr_allowed
-        _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
-      end
-
-    multi_buy_value =
-      case length(device.labels) do
-        0 ->
-          case device.multi_buy_id do
-            nil -> 1
-            _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+    case Devices.get_device(id) |> Repo.preload([:multi_buy, labels: [:multi_buy]]) do
+      %Device{} = device ->
+        adr_allowed =
+          case length(device.labels) do
+            0 -> device.adr_allowed
+            _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
           end
-        _ ->
-          label_multi_buys =
-            device.labels
-            |> Enum.map(fn l -> l.multi_buy end)
-            |> Enum.filter(fn mb -> mb != nil end)
-            |> Enum.map(fn mb -> mb.value end)
 
-          case length(label_multi_buys) do
-            0 -> 1
+        multi_buy_value =
+          case length(device.labels) do
+            0 ->
+              case device.multi_buy_id do
+                nil -> 1
+                _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+              end
             _ ->
-              max_value = Enum.max(label_multi_buys)
-              if max_value == 10, do: 9999, else: max_value
+              label_multi_buys =
+                device.labels
+                |> Enum.map(fn l -> l.multi_buy end)
+                |> Enum.filter(fn mb -> mb != nil end)
+                |> Enum.map(fn mb -> mb.value end)
+
+              case length(label_multi_buys) do
+                0 -> 1
+                _ ->
+                  max_value = Enum.max(label_multi_buys)
+                  if max_value == 10, do: 9999, else: max_value
+              end
           end
-      end
 
-    # get all flows connected to single device
-    device_flows = Flows.get_flows_with_device_id(device.organization_id, device.id)
+        # get all flows connected to single device
+        device_flows = Flows.get_flows_with_device_id(device.organization_id, device.id)
 
-    # get all flows connected to associated labels
-    label_flows =
-      Enum.map(device.labels, fn label ->
-        Flows.get_flows_with_label_id(label.organization_id, label.id)
-      end)
-      |> List.flatten()
+        # get all flows connected to associated labels
+        label_flows =
+          Enum.map(device.labels, fn label ->
+            Flows.get_flows_with_label_id(label.organization_id, label.id)
+          end)
+          |> List.flatten()
 
-    # deduplicate above flows, fetch associated function and channel, check for not active functions and remove
-    deduped_flows =
-      device_flows ++ label_flows
-      |> Enum.reduce([], fn flow, acc ->
-        case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
-          nil -> [flow | acc]
-          _ -> acc
-        end
-      end)
-      |> Repo.preload([:channel, :function])
-      |> Enum.reduce([], fn flow, acc ->
-        if flow.function_id != nil and not flow.function.active do
-          case Enum.find(acc, fn x -> x.function_id == nil and x.channel_id == flow.channel_id end) do
-            nil -> [ Map.merge(flow, %{ function: nil, function_id: nil }) | acc]
-            _ -> acc
-          end
-        else
-          case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
-            nil -> [flow | acc]
-            _ -> acc
-          end
-        end
-      end)
+        # deduplicate above flows, fetch associated function and channel, check for not active functions and remove
+        deduped_flows =
+          device_flows ++ label_flows
+          |> Enum.reduce([], fn flow, acc ->
+            case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
+              nil -> [flow | acc]
+              _ -> acc
+            end
+          end)
+          |> Repo.preload([:channel, :function])
+          |> Enum.reduce([], fn flow, acc ->
+            if flow.function_id != nil and not flow.function.active do
+              case Enum.find(acc, fn x -> x.function_id == nil and x.channel_id == flow.channel_id end) do
+                nil -> [ Map.merge(flow, %{ function: nil, function_id: nil }) | acc]
+                _ -> acc
+              end
+            else
+              case Enum.find(acc, fn x -> x.function_id == flow.function_id and x.channel_id == flow.channel_id end) do
+                nil -> [flow | acc]
+                _ -> acc
+              end
+            end
+          end)
 
-    channels =
-      Enum.map(deduped_flows, fn flow ->
-        Map.put(flow.channel, :function, flow.function)
-      end)
+        channels =
+          Enum.map(deduped_flows, fn flow ->
+            Map.put(flow.channel, :function, flow.function)
+          end)
 
-    final_device =
-      device
-      |> Map.put(:adr_allowed, adr_allowed)
-      |> Map.put(:multi_buy, multi_buy_value)
-      |> Map.put(:channels, channels)
+        final_device =
+          device
+          |> Map.put(:adr_allowed, adr_allowed)
+          |> Map.put(:multi_buy, multi_buy_value)
+          |> Map.put(:channels, channels)
 
-    render(conn, "show.json", device: final_device)
+        render(conn, "show.json", device: final_device)
+      _ ->
+        conn
+        |> send_resp(404, "")
+    end
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
