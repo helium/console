@@ -57,34 +57,38 @@ export default ({
   };
 
   const onElementsRemove = (elementsToRemove) => {
-    if (!elementsToRemove[0]) return;
+    if (userCan({ role: currentRole })) {
+      if (!elementsToRemove[0]) return;
 
-    if (isEdge(elementsToRemove[0])) {
-      setElements((elsMap) => omit(elsMap, [elementsToRemove[0].id]));
-    }
-    if (isNode(elementsToRemove[0])) {
-      const edges = Object.values(elementsMap)
-        .filter(
-          (el) =>
-            isEdge(el) &&
-            (el.source === elementsToRemove[0].id ||
-              el.target === elementsToRemove[0].id)
-        )
-        .map((el) => el.id);
+      if (isEdge(elementsToRemove[0])) {
+        setElements((elsMap) => omit(elsMap, [elementsToRemove[0].id]));
+      }
+      if (isNode(elementsToRemove[0])) {
+        const edges = Object.values(elementsMap)
+          .filter(
+            (el) =>
+              isEdge(el) &&
+              (el.source === elementsToRemove[0].id ||
+                el.target === elementsToRemove[0].id)
+          )
+          .map((el) => el.id);
 
-      setElements((elsMap) =>
-        omit(elsMap, edges.concat(elementsToRemove[0].id))
-      );
+        setElements((elsMap) =>
+          omit(elsMap, edges.concat(elementsToRemove[0].id))
+        );
+      }
+      setChangesState(true);
     }
-    setChangesState(true);
   };
 
   const onElementsAdd = ({ source, target }) => {
-    const id = "edge-" + source + "-" + target;
-    const newEdge = { id, source, target };
+    if (userCan({ role: currentRole })) {
+      const id = "edge-" + source + "-" + target;
+      const newEdge = { id, source, target };
 
-    setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
-    setChangesState(true);
+      setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
+      setChangesState(true);
+    }
   };
 
   const resetElementsMap = () => {
