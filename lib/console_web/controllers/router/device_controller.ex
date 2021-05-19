@@ -256,7 +256,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           case event.category do
             "uplink" ->
               if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
-                event_integration = Channels.get_channel(event.data["integration"]["id"]) |> Repo.preload([:labels])
+                event_integration = Channels.get_channel(event.data["integration"]["id"])
 
                 if event_integration.time_first_uplink == nil do
                   Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })

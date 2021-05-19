@@ -9,6 +9,7 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Functions
   alias Console.Functions.Function
   alias Console.Alerts
+  alias Console.AlertEvents
   alias Console.Flows
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -92,12 +93,28 @@ defmodule ConsoleWeb.ChannelController do
     affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
     all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 
+    # get channel info before updating
+    updated_channel = case length(all_device_ids) do
+      0 -> nil
+      _ -> %{ channel_id: id, channel_name: channel.name }
+    end
+
     with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
 
       broadcast_router_update_devices(all_device_ids)
+
+      if updated_channel != nil do
+        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+        details = %{
+          channel_name: updated_channel.channel_name,
+          updated_by: conn.assigns.current_user.email,
+          time: time
+        }
+        AlertEvents.notify_alert_event(channel.id, "integration", "integration_with_devices_updated", details)
+      end
 
       conn
       |> put_resp_header("message", "Integration #{channel.name} updated successfully")
@@ -112,10 +129,27 @@ defmodule ConsoleWeb.ChannelController do
     affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
     all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 
+    # get channel info before deleting
+    deleted_channel = case length(all_device_ids) do
+      0 -> nil
+      _ -> %{ channel_id: id, channel_name: Channels.get_channel!(id).name }
+    end
+
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
-      Alerts.delete_alert_nodes(id, "integration")
+
+      if (deleted_channel != nil) do
+        { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+        details = %{
+          channel_name: deleted_channel.channel_name,
+          deleted_by: conn.assigns.current_user.email,
+          time: time
+        }
+        AlertEvents.delete_unsent_alert_events_for_integration(id)
+        AlertEvents.notify_alert_event(deleted_channel.channel_id, "integration", "integration_with_devices_deleted", details)
+        Alerts.delete_alert_nodes(id, "integration")
+      end
 
       broadcast_router_update_devices(all_device_ids)
 
