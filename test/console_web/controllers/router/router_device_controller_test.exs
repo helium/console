@@ -23,36 +23,6 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> length() == 1
       assert devices_json |> List.first() |> Map.get("id") == device_0.id
-      assert devices_json |> List.first() |> Map.get("channels") == [] # get a device back with no channels
-
-      device_1 = insert(:device, %{ organization_id: organization.id })
-      label_1 = insert(:label, %{ organization_id: organization.id })
-      label_2 = insert(:label, %{ organization_id: organization.id })
-      channel_1 = insert(:channel, %{ organization_id: organization.id })
-      insert(:devices_labels, %{ device_id: device_1.id, label_id: label_1.id })
-      insert(:devices_labels, %{ device_id: device_1.id, label_id: label_2.id })
-      insert(:channels_labels, %{ channel_id: channel_1.id, label_id: label_1.id })
-      insert(:channels_labels, %{ channel_id: channel_1.id, label_id: label_2.id })
-
-      resp_conn = build_conn()
-        |> put_req_header("authorization", "Bearer " <> jwt)
-        |> get("/api/router/devices/yolo?app_eui=#{device_1.app_eui}&dev_eui=#{device_1.dev_eui}")
-      devices_json = json_response(resp_conn, 200)
-      assert devices_json |> List.first() |> Map.get("channels") |> length() == 1
-
-      device_2 = insert(:device, %{ organization_id: organization.id })
-      channel_2 = insert(:channel, %{ organization_id: organization.id })
-      channel_3 = insert(:channel, %{ organization_id: organization.id })
-      label_3 = insert(:label, %{ organization_id: organization.id })
-      insert(:devices_labels, %{ device_id: device_2.id, label_id: label_3.id })
-      insert(:channels_labels, %{ channel_id: channel_2.id, label_id: label_3.id })
-      insert(:channels_labels, %{ channel_id: channel_3.id, label_id: label_3.id })
-
-      resp_conn = build_conn()
-        |> put_req_header("authorization", "Bearer " <> jwt)
-        |> get("/api/router/devices/yolo?app_eui=#{device_2.app_eui}&dev_eui=#{device_2.dev_eui}")
-      devices_json = json_response(resp_conn, 200)
-      assert devices_json |> List.first() |> Map.get("channels") |> length() == 2
     end
 
     test "router can get single device by id", %{conn: _conn} do

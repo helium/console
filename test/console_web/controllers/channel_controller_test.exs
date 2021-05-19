@@ -5,6 +5,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
   alias Console.Channels
   alias Console.Functions
+  alias Console.Organizations
 
   describe "channels" do
     setup [:authenticate_user]
@@ -33,12 +34,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
         "labels" => %{"labelsApplied" => [], "newLabels" => []}
       }
       assert json_response(resp_conn, 422) # type not valid
-
-      assert_error_sent 400, fn ->
-        post conn, channel_path(conn, :create), %{
-          "channel" => %{ "credentials" => %{}, "name" => "http", "type" => "http" }
-        }
-      end # does not have labels attr in payload
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel", "type" => "aws" },
@@ -105,6 +100,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
     end
 
     test "creates adafruit channels properly", %{conn: conn} do
+      organization_id = conn |> get_req_header("organization") |> List.first()
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
@@ -112,26 +108,27 @@ defmodule ConsoleWeb.ChannelControllerTest do
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "adafruit"
 
-      resp_conn = post conn, channel_path(conn, :create), %{
+      post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
-      channel = json_response(resp_conn, 201)
-      channel = Channels.get_channel!(channel["id"])
-      channel = channel |> Channels.fetch_assoc([:labels])
-      [head] = channel.labels
-      assert head.name == "adafruit2" # has label with same name as channel
+      function = Functions.get_function_by_name("adafruit2")
+      assert function != nil # corresponding function is created
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit3", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
       channel = json_response(resp_conn, 201)
-      function = Functions.get_function_by_name(channel["name"])
-      assert function.body == "Default Cayenne Function" # has cayenne function with same name as channel
-      function = function |> Functions.fetch_assoc([:labels])
-      [head] = function.labels
-      assert head.name == "adafruit3" # function has label with same name as channel
+      channel = Channels.get_channel!(channel["id"])
+      function = Functions.get_function_by_name("adafruit3")
+      organization = Organizations.get_organization(organization_id)
+      # corresponding (incomplete) flow is created in organization
+      assert organization.flow["channel-#{channel.id}"] != nil
+      assert organization.flow["function-#{function.id}"] != nil
+      assert Enum.find(organization.flow["edges"], fn e ->
+        e["source"] == "function-#{function.id}" and e["target"] == "channel-#{channel.id}"
+      end) != nil
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_name}}/json" }, "downlink" => %{ topic: "user" } }, "name" => "adafruit4", "type" => "mqtt" },
@@ -139,46 +136,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
       }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "adafruit4" # can create channel with {{device_name}} in uplink topic instead
-    end
-
-    test "create channels with labels linked properly", %{conn: conn} do
-      # channel is still created even if labels do not parse by design
-      assert_error_sent 500, fn ->
-        post conn, channel_path(conn, :create), %{
-          "channel" => %{ "credentials" => %{}, "name" => "channel2", "type" => "google" },
-          "labels" => []
-        }
-      end # labels attr invalid type
-
-      assert_error_sent 400, fn ->
-        post conn, channel_path(conn, :create), %{
-          "channel" => %{ "credentials" => %{}, "name" => "channel3", "type" => "google" },
-          "labels" => %{"labelsApplied" => [%{"id" => 1}]}
-        }
-      end # labels attr content invalid type
-
-      assert_error_sent 400, fn ->
-        post conn, channel_path(conn, :create), %{
-          "channel" => %{ "credentials" => %{}, "name" => "channel4", "type" => "google" },
-          "labels" => %{"labelsApplied" => [%{"id" => 'gjkahksf'}]}
-        }
-      end # labels attr content invalid type
-
-      organization_id = conn |> get_req_header("organization") |> List.first()
-      label_1 = insert(:label, %{ organization_id: organization_id })
-      label_2 = insert(:label, %{ organization_id: organization_id })
-      label_3 = insert(:label) # not inserted into same organization
-      resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "credentials" => %{}, "name" => "channel5", "type" => "google" },
-        "labels" => %{"labelsApplied" => [%{"id" => label_1.id}, %{"id" => label_2.id}]}
-      }
-      channel = json_response(resp_conn, 201)
-      channel = Channels.get_channel!(channel["id"])
-      channel = channel |> Channels.fetch_assoc([:labels])
-
-      assert Enum.find(channel.labels, fn l -> l.id == label_1.id end)
-      assert Enum.find(channel.labels, fn l -> l.id == label_2.id end)
-      assert Enum.find(channel.labels, fn l -> l.id == label_3.id end) == nil
     end
 
     test "updates channels properly", %{conn: conn} do
