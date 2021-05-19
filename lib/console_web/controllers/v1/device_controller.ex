@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.V1.DeviceController do
   use ConsoleWeb, :controller
 
+  alias Console.Repo
   alias Console.Organizations
   alias Console.Labels
   alias Console.Devices

@@ -139,7 +139,7 @@ defmodule ConsoleWeb.V1AlertControllerTest do
       alert_1 = insert(:alert, %{ organization_id: organization.id, name: "alert name", node_type: "integration", config: %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
-      device = insert(:device, %{ organization_id: organization.id })
+      device = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn =
         build_conn()
@@ -174,7 +174,7 @@ defmodule ConsoleWeb.V1AlertControllerTest do
       alert_1 = insert(:alert, %{ organization_id: organization.id, name: "alert name", node_type: "integration", config: %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
-      device = insert(:device, %{ organization_id: organization.id })
+      device = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
       insert(:alert_node, %{ alert_id: alert_1.id, node_id: device.id, node_type: "device" })
 
       resp_conn =

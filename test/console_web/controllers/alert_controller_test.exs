@@ -18,10 +18,10 @@ defmodule ConsoleWeb.AlertControllerTest do
         "webhook" => %{}
       } }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert node type must have be: device/label, function, or integration"]}}
-      
+
       resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{} }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Alert must have at least one email or webhook setting turned on"]}}
-      
+
 
       resp_conn = post conn, alert_path(conn, :create), %{ "alert" => %{ "name" => "some name", "node_type" => "device/label", "config" => %{
         "some_incorrect_event_key" => %{"email" => %{"recipient" => "admin"}}
@@ -82,7 +82,7 @@ defmodule ConsoleWeb.AlertControllerTest do
       alert_1 = insert(:alert, %{ organization_id: organization_id, name: "alert name", node_type: "integration", config: %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
-      device_1 = insert(:device, %{ organization_id: organization_id })
+      device_1 = insert(:device, %{ organization_id: organization_id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn = post conn, alert_path(conn, :add_alert_to_node, %{
         node_id: device_1.id,
@@ -92,7 +92,7 @@ defmodule ConsoleWeb.AlertControllerTest do
       assert response(resp_conn, 204)
 
       not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
+      not_my_device = insert(:device, %{ organization_id: not_my_org.id, dev_eui: "1111111111111112", app_eui: "1111111111111112", app_key: "11111111111121111111111111111111" })
 
       assert_error_sent 404, fn ->
         post conn, alert_path(conn, :add_alert_to_node, %{
@@ -120,9 +120,9 @@ defmodule ConsoleWeb.AlertControllerTest do
       alert_1 = insert(:alert, %{ organization_id: organization_id, name: "alert name", node_type: "integration", config: %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
-      device_1 = insert(:device, %{ organization_id: organization_id })
+      device_1 = insert(:device, %{ organization_id: organization_id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
       insert(:alert_node, %{ alert_id: alert_1.id, node_id: device_1.id, node_type: "device" })
-      
+
       resp_conn = post conn, alert_path(conn, :remove_alert_from_node, %{
         alert_id: alert_1.id,
         node_id: device_1.id,
@@ -131,7 +131,7 @@ defmodule ConsoleWeb.AlertControllerTest do
       assert response(resp_conn, 204)
 
       not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
+      not_my_device = insert(:device, %{ organization_id: not_my_org.id, dev_eui: "1121111111111111", app_eui: "1112111111111111", app_key: "11111211111111111111111111111111" })
       not_my_alert = insert(:alert, %{ organization_id: not_my_org.id, name: "some other alert name", node_type: "integration", config: %{
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })

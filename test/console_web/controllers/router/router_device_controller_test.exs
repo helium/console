@@ -12,7 +12,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn = build_conn() |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       assert response(resp_conn, 401) # unauthenticated
@@ -34,7 +34,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
@@ -51,7 +51,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
       insert(:channel, %{ organization_id: organization.id })
       timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00], :millisecond)
 
