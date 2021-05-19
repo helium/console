@@ -53,8 +53,8 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
 
   return (
     <div style={{ padding: "30px 30px 20px 30px" }}>
-      <UserCan>
-        {show && (
+      {show && (
+        <UserCan>
           <div
             style={{
               display: "flex",
@@ -71,8 +71,8 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
               Delete
             </Button>
           </div>
-        )}
-      </UserCan>
+        </UserCan>
+      )}
       <Row style={{ marginTop: "10px" }}>
         <Col span={10} style={{ padding: "70px 80px" }}>
           <img src={MultiBuyIcon} />
