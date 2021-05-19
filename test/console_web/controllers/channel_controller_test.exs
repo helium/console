@@ -5,7 +5,6 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
   alias Console.Channels
   alias Console.Functions
-  alias Console.Flows
   alias Console.Organizations
 
   describe "channels" do
@@ -109,12 +108,10 @@ defmodule ConsoleWeb.ChannelControllerTest do
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "adafruit"
 
-      resp_conn = post conn, channel_path(conn, :create), %{
+      post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{ "endpoint" => "mqtt://adafruit:adafruit@io.adafruit:9933", "uplink" => %{ "topic" => "user/groups/{{device_id}}/json" }, "downlink" => %{ topic: "helium/{{device_id}}/tx" } }, "name" => "adafruit2", "type" => "mqtt" },
         "func" => %{"format" => "cayenne"}
       }
-      channel = json_response(resp_conn, 201)
-      channel = Channels.get_channel!(channel["id"])
       function = Functions.get_function_by_name("adafruit2")
       assert function != nil # corresponding function is created
 
