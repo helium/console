@@ -109,8 +109,8 @@ export default (props) => {
             Back
           </Button>
         )}
-        <UserCan>
-          {props.show && (
+        {props.show && (
+          <UserCan>
             <div
               style={{
                 display: "flex",
@@ -127,8 +127,8 @@ export default (props) => {
                 Delete
               </Button>
             </div>
-          )}
-        </UserCan>
+          </UserCan>
+        )}
         <Row style={{ marginTop: "10px" }}>
           <Col span={10} style={{ padding: "70px 80px" }}>
             <img src={renderIcon()} />
