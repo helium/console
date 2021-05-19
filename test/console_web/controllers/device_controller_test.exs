@@ -80,7 +80,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "updates devices properly", %{conn: conn} do
       not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
+      not_my_device = insert(:device, %{ organization_id: not_my_org.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
       assert_error_sent 404, fn ->
         put conn, device_path(conn, :update, not_my_device.id), %{ "device" => %{ "name" => "device not mine" }}
       end # does not update device not in own org
@@ -107,7 +107,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "delete devices properly with single id route", %{conn: conn} do
       not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
+      not_my_device = insert(:device, %{ organization_id: not_my_org.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
       assert_error_sent 404, fn ->
         delete conn, device_path(conn, :delete, not_my_device.id)
       end # does not delete device not in own org
@@ -128,7 +128,7 @@ defmodule ConsoleWeb.DeviceControllerTest do
 
     test "delete multiple devices properly", %{conn: conn} do
       not_my_org = insert(:organization)
-      not_my_device = insert(:device, %{ organization_id: not_my_org.id })
+      not_my_device = insert(:device, %{ organization_id: not_my_org.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
 
       resp_conn = post conn, device_path(conn, :delete), %{ "devices" => [not_my_device.id], "label_id" => "none" }
       assert response(resp_conn, 204)

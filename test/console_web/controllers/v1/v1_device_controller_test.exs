@@ -62,7 +62,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       device = json_response(resp_conn, 201) # device created
 
       organization_2 = insert(:organization)
-      device_2 = insert(:device, %{ organization_id: organization_2.id })
+      device_2 = insert(:device, %{ organization_id: organization_2.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
 
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/devices")
       assert json_response(resp_conn, 200) |> length() == 1
@@ -116,7 +116,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
         "transaction_id" => "transaction_id",
         "signature" => "signature"
       })
-      assert response(resp_conn, 200) 
+      assert response(resp_conn, 200)
 
       created_device = List.first(Devices.get_devices_for_label(label.id))
       assert created_device != nil

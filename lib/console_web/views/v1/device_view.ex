@@ -12,7 +12,7 @@ defmodule ConsoleWeb.V1.DeviceView do
   end
 
   def render("device.json", %{device: device}) do
-    %{
+    device_attrs = %{
       id: device.id,
       name: device.name,
       dev_eui: device.dev_eui,
@@ -21,6 +21,11 @@ defmodule ConsoleWeb.V1.DeviceView do
       oui: device.oui,
       organization_id: device.organization_id,
     }
-    |> LabelView.append_labels(device.labels)
+
+    if Ecto.assoc_loaded?(device.labels) do
+      device_attrs |> LabelView.append_labels(device.labels)
+    else
+      device_attrs
+    end
   end
 end
