@@ -8,8 +8,6 @@ defmodule Console.Channels do
 
   alias Console.Channels.Channel
   alias Console.Organizations.Organization
-  alias Console.Labels.ChannelsLabels
-  alias Console.Labels.DevicesLabels
 
   def get_channel!(id), do: Repo.get!(Channel, id)
 

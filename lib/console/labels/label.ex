@@ -5,10 +5,7 @@ defmodule Console.Labels.Label do
   alias Console.Organizations.Organization
   alias Console.Devices.Device
   alias Console.Labels.DevicesLabels
-  alias Console.Channels.Channel
-  alias Console.Labels.ChannelsLabels
   alias Console.MultiBuys.MultiBuy
-  alias Console.Functions.Function
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}

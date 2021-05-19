@@ -5,9 +5,6 @@ defmodule Console.Channels.Channel do
 
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
-  alias Console.Labels.Label
-  alias Console.Labels.ChannelsLabels
-  alias Console.Devices.Device
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

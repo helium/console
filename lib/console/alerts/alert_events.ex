@@ -3,8 +3,6 @@ defmodule Console.AlertEvents do
   alias Console.Repo
   alias Console.Alerts.AlertEvent
   alias Console.Alerts
-  alias Console.Labels
-  alias Console.Devices
 
   def create_alert_event(attrs \\ %{}) do
     %AlertEvent{}

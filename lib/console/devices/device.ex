@@ -4,7 +4,6 @@ defmodule Console.Devices.Device do
 
   alias Console.Organizations.Organization
   alias Console.Events.Event
-  alias Console.Channels.Channel
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
   alias Console.MultiBuys.MultiBuy

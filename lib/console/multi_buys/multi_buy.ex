@@ -5,6 +5,7 @@ defmodule Console.MultiBuys.MultiBuy do
 
   alias Console.Devices.Device
   alias Console.Labels.Label
+  alias Console.Organizations.Organization
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

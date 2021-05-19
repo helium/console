@@ -6,7 +6,6 @@ defmodule Console.Auth do
   import Ecto.Query, warn: false
   alias Console.Repo
   alias Console.Auth.User
-  alias Console.Organizations
 
   def get_user_by_id(id) do
     Repo.get(User, id)

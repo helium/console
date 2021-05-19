@@ -12,7 +12,7 @@ defmodule ConsoleWeb.DownlinkController do
 
     case type do
       "device" ->
-        device = Devices.get_device!(current_organization, id)
+        Devices.get_device!(current_organization, id)
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => "none", "devices" => [id], "payload" => conn.body_params })
 
         conn

@@ -226,7 +226,7 @@ defmodule ConsoleWeb.LabelController do
           end)
           |> Repo.transaction()
 
-        with {:ok, %{devices_labels: {_, count}, label: label }} <- result do
+        with {:ok, %{devices_labels: {_, count}, label: _label }} <- result do
           ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
