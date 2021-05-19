@@ -13,6 +13,7 @@ defmodule Console.Factory do
   alias Console.Organizations.Membership
   alias Console.Alerts.Alert
   alias Console.Alerts.AlertNode
+  alias Console.Flows.Flow
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -46,6 +47,10 @@ defmodule Console.Factory do
       key: "key",
       user_id: "me"
     }
+  end
+
+  def flow_factory do
+    %Flow{}
   end
 
   def label_factory do

@@ -42,33 +42,6 @@ defmodule ConsoleWeb.FunctionControllerTest do
       assert function["body"] == "random code" # custom body for custom format will be used
     end
 
-    test "create functions with labels linked properly", %{conn: conn} do
-      organization_id = conn |> get_req_header("organization") |> List.first()
-      label_1 = insert(:label, %{ organization_id: organization_id })
-      label_2 = insert(:label, %{ organization_id: organization_id })
-      label_3 = insert(:label) # not inserted into same organization
-
-      resp_conn = post conn, function_path(conn, :create), %{
-        "function" => %{
-          "name" => "function",
-          "type" => "decoder",
-          "format" => "cayenne",
-          "body" => "none",
-          "labels" => %{
-            "labelsApplied" => [label_1.id, label_2.id],
-            "newLabels" => ["test_label1", "test_label2"]
-          }
-        }
-      }
-      function = json_response(resp_conn, 201)
-      function = Functions.get_function!(function["id"]) |> Functions.fetch_assoc([:labels])
-      assert Enum.find(function.labels, fn l -> l.id == label_1.id end)
-      assert Enum.find(function.labels, fn l -> l.id == label_2.id end)
-      assert Enum.find(function.labels, fn l -> l.name == "test_label1" end)
-      assert Enum.find(function.labels, fn l -> l.name == "test_label2" end)
-      assert Enum.find(function.labels, fn l -> l.id == label_3.id end) == nil
-    end
-
     test "updates functions properly", %{conn: conn} do
       not_my_org = insert(:organization)
       not_my_function = insert(:function, %{ organization_id: not_my_org.id })
