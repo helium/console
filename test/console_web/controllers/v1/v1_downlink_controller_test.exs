@@ -18,9 +18,9 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
 
       organization = insert(:organization)
       label = insert(:label)
-      device_1 = insert(:device, %{ organization_id: organization.id })
-      device_2 = insert(:device, %{ organization_id: organization.id })
-      device_3 = insert(:device, %{ organization_id: organization.id })
+      device_1 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
+      device_2 = insert(:device, %{ organization_id: organization.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
+      device_3 = insert(:device, %{ organization_id: organization.id, dev_eui: "3333333333333333", app_eui: "3333333333333333", app_key: "33333333333333333333333333333333" })
       insert(:devices_labels, %{ label_id: label.id, device_id: device_1.id })
       insert(:devices_labels, %{ label_id: label.id, device_id: device_2.id })
       insert(:channels_labels, %{ label_id: label.id, channel_id: channel.id })

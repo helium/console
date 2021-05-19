@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.V1.DeviceController do
   use ConsoleWeb, :controller
 
+  alias Console.Repo
   alias Console.Organizations
   alias Console.Labels
   alias Console.Devices
@@ -53,7 +54,7 @@ defmodule ConsoleWeb.V1.DeviceController do
   def show(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) |> Devices.fetch_assoc([:labels]) do
+    case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
       nil ->
         {:error, :not_found, "Device not found"}
       %Device{} = device ->

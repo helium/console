@@ -12,7 +12,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn = build_conn() |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       assert response(resp_conn, 401) # unauthenticated
@@ -25,7 +25,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       assert devices_json |> List.first() |> Map.get("id") == device_0.id
       assert devices_json |> List.first() |> Map.get("channels") == [] # get a device back with no channels
 
-      device_1 = insert(:device, %{ organization_id: organization.id })
+      device_1 = insert(:device, %{ organization_id: organization.id, dev_eui: "2222222222222222", app_eui: "2222222222222222", app_key: "22222222222222222222222222222222" })
       label_1 = insert(:label, %{ organization_id: organization.id })
       label_2 = insert(:label, %{ organization_id: organization.id })
       channel_1 = insert(:channel, %{ organization_id: organization.id })
@@ -40,7 +40,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> List.first() |> Map.get("channels") |> length() == 1
 
-      device_2 = insert(:device, %{ organization_id: organization.id })
+      device_2 = insert(:device, %{ organization_id: organization.id, dev_eui: "3333333333333333", app_eui: "3333333333333333", app_key: "33333333333333333333333333333333" })
       channel_2 = insert(:channel, %{ organization_id: organization.id })
       channel_3 = insert(:channel, %{ organization_id: organization.id })
       label_3 = insert(:label, %{ organization_id: organization.id })
@@ -64,7 +64,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
@@ -81,7 +81,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       jwt = token["jwt"] # get session token
 
       organization = insert(:organization)
-      device_0 = insert(:device, %{ organization_id: organization.id })
+      device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
       insert(:channel, %{ organization_id: organization.id })
       timestamp = NaiveDateTime.utc_now() |> NaiveDateTime.diff(~N[1970-01-01 00:00:00], :millisecond)
 
