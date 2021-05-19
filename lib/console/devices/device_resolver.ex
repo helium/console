@@ -171,9 +171,4 @@ defmodule Console.Devices.DeviceResolver do
 
     {:ok, device_imports}
   end
-
-  def all(_, %{context: %{current_organization: current_organization}}) do
-    devices = Ecto.assoc(current_organization, :devices) |> Repo.all()
-    {:ok, devices}
-  end
 end

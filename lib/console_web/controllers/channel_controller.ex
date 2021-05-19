@@ -3,11 +3,9 @@ defmodule ConsoleWeb.ChannelController do
 
   alias Console.Repo
   alias Console.Organizations
-  alias Console.Labels
   alias Console.Channels
   alias Console.Channels.Channel
   alias Console.Functions
-  alias Console.Functions.Function
   alias Console.Alerts
   alias Console.AlertEvents
   alias Console.Flows
@@ -26,7 +24,7 @@ defmodule ConsoleWeb.ChannelController do
       |> Ecto.Multi.run(:channel, fn _repo, _ ->
         Channels.create_channel(current_organization, channel_params)
       end)
-      |> Ecto.Multi.run(:function, fn _repo, %{ channel: channel } ->
+      |> Ecto.Multi.run(:function, fn _repo, %{ channel: _channel } ->
         case function_params["format"] do
            "custom" ->
             function = Functions.get_function!(current_organization, function_params["id"])

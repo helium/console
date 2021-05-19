@@ -4,10 +4,8 @@ defmodule Console.Labels do
 
   alias Console.Labels.Label
   alias Console.Labels.DevicesLabels
-  alias Console.Labels.ChannelsLabels
   alias Console.Devices.Device
   alias Console.Devices
-  alias Console.Channels
   alias Console.Organizations.Organization
 
   def get_label!(id), do: Repo.get!(Label, id)

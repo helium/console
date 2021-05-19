@@ -38,7 +38,7 @@ defmodule Console.Helpers do
 
   def drop_keys_with_empty_map(map) do
     Enum.filter(map, fn i ->
-      {key, value} = i
+      {_key, value} = i
       value != %{}
     end)
   end

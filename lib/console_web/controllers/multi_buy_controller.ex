@@ -1,7 +1,6 @@
 defmodule ConsoleWeb.MultiBuyController do
   use ConsoleWeb, :controller
 
-  alias Console.Repo
   alias Console.MultiBuys
   alias Console.Labels
   alias Console.Devices
@@ -70,7 +69,7 @@ defmodule ConsoleWeb.MultiBuyController do
 
   def add_multi_buy_to_node(conn, %{ "multi_buy_id" => multi_buy_id, "node_id" => node_id, "node_type" => node_type }) do
     current_organization = conn.assigns.current_organization
-    multi_buy = MultiBuys.get_multi_buy!(current_organization, multi_buy_id)
+    MultiBuys.get_multi_buy!(current_organization, multi_buy_id)
 
     case node_type do
       "Device" ->
