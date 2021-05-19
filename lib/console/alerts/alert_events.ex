@@ -110,4 +110,8 @@ defmodule Console.AlertEvents do
   def delete_unsent_alert_events_for_device(device_id) do
     from(ae in AlertEvent, where: ae.sent == false and ae.node_id == ^device_id and ae.node_type == "device") |> Repo.delete_all()
   end
+  
+  def delete_unsent_alert_events_for_integration(integration_id) do
+    from(ae in AlertEvent, where: ae.sent == false and ae.node_id == ^integration_id and ae.node_type == "integration") |> Repo.delete_all()
+  end
 end
