@@ -1,61 +1,65 @@
-import React, { Component } from 'react'
-import { Bubble } from 'react-chartjs-2'
+import React, { Component } from "react";
+import { Bubble } from "react-chartjs-2";
 
 class PacketGraph extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    this.chartUpdateInterval = null
+    this.chartUpdateInterval = null;
     this.chartOptions = {
       animation: false,
       responsive: true,
       maintainAspectRatio: false,
       layout: {
-          padding: {
-              left: 0,
-              right: 10,
-              top: 30,
-              bottom: 0
-          }
+        padding: {
+          left: 0,
+          right: 10,
+          top: 30,
+          bottom: 0,
+        },
       },
       scales: {
-        yAxes: [{
-          id: 'RSSI-axis',
-          type: 'linear',
-          position: 'left',
-          offset: true,
-          ticks: {
-            beginAtZero: true,
-            min: -120,
-            max: 0
+        yAxes: [
+          {
+            id: "RSSI-axis",
+            type: "linear",
+            position: "left",
+            offset: true,
+            ticks: {
+              beginAtZero: true,
+              min: -120,
+              max: 0,
+            },
+            scaleLabel: {
+              display: true,
+              labelString: "RSSI",
+            },
           },
-          scaleLabel: {
-            display: true,
-            labelString: 'RSSI'
-          }
-        }],
-        xAxes: [{
-          id: 'Time-axis',
-          type: 'linear',
-          position: 'bottom',
-          gridLines: {
-            display: false
+        ],
+        xAxes: [
+          {
+            id: "Time-axis",
+            type: "linear",
+            position: "bottom",
+            gridLines: {
+              display: false,
+            },
+            ticks: {
+              beginAtZero: true,
+              min: 0,
+              max: 300000,
+              stepSize: 30000,
+              callback: (value) => {
+                if (value !== 0) return "-" + parseInt(value) / 1000 + "s";
+                else return value + "s";
+              },
+            },
+            scaleLabel: {
+              display: true,
+              labelString: "Time Past in Seconds",
+            },
           },
-          ticks: {
-            beginAtZero: true,
-            min: 0,
-            max: 300000,
-            stepSize: 30000,
-            callback: (value) => {
-              if (value !== 0) return '-' + (parseInt(value)/1000) + 's';
-              else return value + 's'
-            }
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Time Past in Seconds'
-          }
-        }]
+        ],
       },
       legend: {
         display: false,
@@ -64,41 +68,44 @@ class PacketGraph extends Component {
         displayColors: false,
         callbacks: {
           label: (tooltip, data) => {
-            return (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4
-              + 'byte packet received by '
-              + data.datasets[tooltip.datasetIndex].data[tooltip.index].h
-          }
-        }
-      }
-    }
+            return (
+              (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) *
+                4 +
+              "byte packet received by " +
+              data.datasets[tooltip.datasetIndex].data[tooltip.index].h
+            );
+          },
+        },
+      },
+    };
 
     this.state = {
       data: {
-        datasets: []
-      }
-    }
+        datasets: [],
+      },
+    };
   }
 
   componentDidUpdate(prevProps) {
-    const { events } = this.props
+    const { events } = this.props;
 
     if (prevProps.events.length !== events.length) {
-      clearInterval(this.chartUpdateInterval)
-      this.updateChart(events)
+      clearInterval(this.chartUpdateInterval);
+      this.updateChart(events);
       this.chartUpdateInterval = setInterval(() => {
-        this.updateChart(events)
-      }, 5000)
+        this.updateChart(events);
+      }, 5000);
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.chartUpdateInterval)
+    clearInterval(this.chartUpdateInterval);
   }
 
   updateChart = (events) => {
-    const success = []
-    const error = []
-    const noIntegration = []
+    const success = [];
+    const error = [];
+    const noIntegration = [];
 
     events.forEach((event) => {
       const currentTime = Date.now();
@@ -108,7 +115,7 @@ class PacketGraph extends Component {
       const hotspots = event.hotspots;
 
       if (timeDiff < 300000) {
-        if (integrations.length > 0) {
+        if (integrations.length > 0 && integrations[0].id !== "no_channel") {
           if (integrations.findIndex((i) => i.status === "error") !== -1) {
             error.push({
               x: timeDiff,
@@ -139,28 +146,28 @@ class PacketGraph extends Component {
       data: {
         datasets: [
           {
-            label: 'Success',
+            label: "Success",
             data: success,
-            backgroundColor: 'rgba(33, 150, 243, 0.5)'
+            backgroundColor: "rgba(33, 150, 243, 0.5)",
           },
           {
-            label: 'Error',
+            label: "Error",
             data: error,
-            backgroundColor: 'rgba(255, 165, 0, 0.5)'
+            backgroundColor: "rgba(255, 165, 0, 0.5)",
           },
           {
-            label: 'No Channel',
+            label: "No Channel",
             data: noIntegration,
-            backgroundColor: 'rgba(255, 0, 0, 0.5)'
+            backgroundColor: "rgba(255, 0, 0, 0.5)",
           },
-        ]
-      }
-    })
-  }
+        ],
+      },
+    });
+  };
 
   render() {
-    return <Bubble data={this.state.data} options={this.chartOptions}/>
+    return <Bubble data={this.state.data} options={this.chartOptions} />;
   }
 }
 
-export default PacketGraph
+export default PacketGraph;
