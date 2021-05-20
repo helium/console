@@ -25,6 +25,10 @@ defmodule Console.Alerts do
     Repo.get_by(AlertNode, [alert_id: alert_id, node_id: node_id, node_type: node_type])
   end
 
+  def get_alert_by_name(organization_id, name) do
+    Repo.get_by(Alert, [organization_id: organization_id, name: name])
+  end
+
   def create_alert(attrs \\ %{}) do
     %Alert{}
     |> Alert.changeset(attrs)
