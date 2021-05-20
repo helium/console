@@ -26,8 +26,8 @@ class DeviceNew extends Component {
 
   state = {
     name: "",
-    devEUI: "6081F9" + randomString(10),
-    appEUI: this.props.currentOrganizationAppEui,
+    devEUI: process.env.SELF_HOSTED ? randomString(16) : "6081F9" + randomString(10),
+    appEUI: process.env.SELF_HOSTED ? randomString(16) : this.props.currentOrganizationAppEui,
     appKey: randomString(32),
     labelName: null,
     showAppKey: false,
