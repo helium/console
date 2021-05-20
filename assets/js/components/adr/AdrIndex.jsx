@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import NavPointTriangle from "../common/NavPointTriangle";
 import AddResourceButton from "../common/AddResourceButton";
