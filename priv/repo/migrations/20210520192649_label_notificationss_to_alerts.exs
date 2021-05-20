@@ -1,5 +1,5 @@
-defmodule Mix.Tasks.MigrateLabelNotificationsToAlerts do
-  use Mix.Task
+defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
+  use Ecto.Migration
   alias Console.Alerts
   alias Console.Repo
   alias Console.Organizations
@@ -18,8 +18,7 @@ defmodule Mix.Tasks.MigrateLabelNotificationsToAlerts do
     end
   end
 
-  def run(_) do
-    Mix.Task.run("app.start")
+  def up do
     results = Ecto.Adapters.SQL.query!(
       Console.Repo, "SELECT s.key AS key, s.value AS value, s.label_id AS label_id, s.recipients AS recipients, l.organization_id AS organization_id FROM label_notification_settings s LEFT JOIN labels l ON l.id = s.label_id"
     ).rows
@@ -56,6 +55,10 @@ defmodule Mix.Tasks.MigrateLabelNotificationsToAlerts do
             Alerts.add_alert_node(org, alert, label_id, "label")
           end)
           |> Repo.transaction()
-        end)
+    end)
+  end
+
+  def down do
+    Ecto.Adapters.SQL.query!(Console.Repo, "DELETE FROM alerts")
   end
 end
