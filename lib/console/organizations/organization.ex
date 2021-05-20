@@ -65,8 +65,7 @@ defmodule Console.Organizations.Organization do
       :dc_balance_nonce,
       :pending_automatic_purchase,
       :active,
-      :received_free_dc,
-      :default_app_eui
+      :received_free_dc
     ])
   end
 
@@ -106,7 +105,13 @@ defmodule Console.Organizations.Organization do
   defp put_default_app_eui(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
-        app_eui = "6081F9" <> Helpers.generate_string(10, '0123456789ABCDEF')
+        app_eui =
+          if Application.get_env(:console, :self_hosted) == nil do
+            "6081F9" <> Helpers.generate_string(10, '0123456789ABCDEF')
+          else
+            Helpers.generate_string(16, '0123456789ABCDEF')
+          end
+
         put_change(changeset, :default_app_eui, app_eui)
       _ -> changeset
     end
