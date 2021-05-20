@@ -76,7 +76,37 @@ defmodule Console.Search do
             WHERE organization_id = $3 AND (name ~* $2)
           )
         ) d ORDER BY id, score DESC)
-      ) e
+        UNION
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name AS title, node_type || ' alert' AS description, 1.0::float AS score, 'alerts' AS category
+            FROM alerts
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name AS title, node_type || ' alert' AS description, 0.5::float AS score, 'alerts' AS category
+            FROM alerts
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) e ORDER BY id, score DESC)
+        UNION
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name AS title, value::VARCHAR || ' packets' AS description, 1.0::float AS score, 'alerts' AS category
+            FROM multi_buys
+            WHERE organization_id = $3 AND (name ILIKE $1)
+          )
+          UNION
+          (
+            SELECT id, name AS title, value::VARCHAR || ' packets' AS description, 0.5::float AS score, 'alerts' AS category
+            FROM multi_buys
+            WHERE organization_id = $3 AND (name ~* $2)
+          )
+        ) f ORDER BY id, score DESC)
+      ) g
       ORDER BY score DESC
       LIMIT 5
     """
@@ -150,6 +180,28 @@ defmodule Console.Search do
       FROM (
         SELECT *, SIMILARITY(name || ' ', $1) AS score
         FROM functions
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS b
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, node_type || ' alert' AS description, score, 'alerts' AS category
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM alerts
+        WHERE organization_id = $2
+        ORDER BY score DESC
+      ) AS b
+      WHERE score > $3
+    )
+    UNION
+    (
+      SELECT id, name AS title, value::VARCHAR || ' packets' AS description, score, 'multi_buys' AS category
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS score
+        FROM multi_buys
         WHERE organization_id = $2
         ORDER BY score DESC
       ) AS b
