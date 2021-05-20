@@ -15,6 +15,7 @@ import { useQuery } from "@apollo/client";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import DeleteAlertModal from "./DeleteAlertModal";
 import { useHistory } from "react-router-dom";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default (props) => {
   const history = useHistory();
@@ -42,6 +43,7 @@ export default (props) => {
         refetch();
       }
     );
+    analyticsLogger.logEvent("ACTION_NAV_ALERTS_INDEX");
 
     // executed when unmounted
     return () => {

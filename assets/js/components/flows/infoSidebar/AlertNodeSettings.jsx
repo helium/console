@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { addAlertToNode, removeAlertFromNode } from "../../../actions/alert";
 import { useDispatch } from "react-redux";
 import NewAlertWithNode from "./NewAlertWithNode";
+import analyticsLogger from "../../../util/analyticsLogger";
 
 export default (props) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
@@ -123,6 +124,11 @@ export default (props) => {
                   }
                   onChange={(checked) => {
                     if (checked) {
+                      analyticsLogger.logEvent("ACTION_ADD_ALERT_TO_NODE", {
+                        alertId: record.id,
+                        nodeId: props.nodeId,
+                        nodeType: props.type,
+                      });
                       dispatch(
                         addAlertToNode(record.id, props.nodeId, props.type)
                       ).then(() => {
@@ -136,6 +142,14 @@ export default (props) => {
                         );
                       });
                     } else {
+                      analyticsLogger.logEvent(
+                        "ACTION_REMOVE_ALERT_FROM_NODE",
+                        {
+                          alertId: record.id,
+                          nodeId: props.nodeId,
+                          nodeType: props.type,
+                        }
+                      );
                       dispatch(
                         removeAlertFromNode(record.id, props.nodeId, props.type)
                       ).then(() => {

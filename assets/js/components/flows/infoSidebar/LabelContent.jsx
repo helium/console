@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import UserCan from "../../common/UserCan";
+import analyticsLogger from "../../../util/analyticsLogger";
 import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
@@ -56,6 +57,9 @@ class LabelContent extends Component {
 
   componentDidMount() {
     const { socket, id } = this.props;
+    analyticsLogger.logEvent("ACTION_OPEN_LABEL_NODE_SIDE_PANEL", {
+      id,
+    });
 
     this.channel = socket.channel("graphql:label_show_table", {});
     this.channel.join();

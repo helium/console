@@ -10,6 +10,7 @@ const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserCan, { userCan } from "../common/UserCan";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default ({ show, id, openDeleteMultiplePacketModal }) => {
   const history = useHistory();
@@ -141,8 +142,16 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
               }}
               onClick={() => {
                 if (show) {
+                  analyticsLogger.logEvent("ACTION_UPDATE_MULTIBUY", {
+                    id,
+                    value: multiBuyValue,
+                  });
                   dispatch(updateMultiBuy(id, { name, value: multiBuyValue }));
                 } else {
+                  analyticsLogger.logEvent("ACTION_CREATE_MULTIBUY", {
+                    id,
+                    value: multiBuyValue,
+                  });
                   dispatch(createMultiBuy({ name, value: multiBuyValue })).then(
                     () => {
                       history.push("/multi_buys");

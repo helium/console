@@ -3,11 +3,15 @@ import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 import { useDispatch } from "react-redux";
 import { deleteAlert } from "../../actions/alert";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default ({ open, alert, close }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
+    analyticsLogger.logEvent("ACTION_DELETE_ALERT", {
+      id: alert.id,
+    });
     dispatch(deleteAlert(alert.id)).then((_) => {
       close();
     });

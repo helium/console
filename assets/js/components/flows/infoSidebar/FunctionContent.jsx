@@ -35,7 +35,7 @@ class FunctionContent extends Component {
 
   componentDidMount() {
     const functionId = this.props.id;
-    analyticsLogger.logEvent("ACTION_FUNCTION_INFO_SIDEBAR", {
+    analyticsLogger.logEvent("ACTION_OPEN_FUNCTION_NODE_SIDE_PANEL", {
       id: functionId,
     });
 

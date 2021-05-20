@@ -43,7 +43,9 @@ class DeviceContent extends Component {
 
   componentDidMount() {
     const deviceId = this.props.id;
-    analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", { id: deviceId });
+    analyticsLogger.logEvent("ACTION_OPEN_DEVICE_NODE_SIDE_PANEL", {
+      id: deviceId,
+    });
 
     const { socket } = this.props;
 
@@ -138,14 +140,12 @@ class DeviceContent extends Component {
     const deviceId = this.props.id;
     const attrs = { adr_allowed: adrValue };
     this.props.updateDevice(deviceId, attrs).then(() => {
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_ADR", {
+        id: deviceId,
+        adr: adrValue,
+      });
       this.props.onAdrUpdate("device-" + deviceId, adrValue);
     });
-  };
-
-  handleToggleDownlink = () => {
-    const { showDownlinkSidebar } = this.state;
-
-    this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
   };
 
   toggleNameInput = () => {
