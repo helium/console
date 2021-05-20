@@ -50,13 +50,13 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, creator AS description, 1.0::float AS score, 'labels' AS category
+            SELECT id, name AS title, 'created by ' || creator AS description, 1.0::float AS score, 'labels' AS category
             FROM labels
             WHERE organization_id = $3 AND (name ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, creator AS description, 0.5::float AS score, 'labels' AS category
+            SELECT id, name AS title, 'created by ' || creator AS description, 0.5::float AS score, 'labels' AS category
             FROM labels
             WHERE organization_id = $3 AND (name ~* $2)
           )
@@ -165,7 +165,7 @@ defmodule Console.Search do
     )
     UNION
     (
-      SELECT id, name AS title, creator AS description, score, 'labels' AS category
+      SELECT id, name AS title, 'created by ' || creator AS description, score, 'labels' AS category
       FROM (
         SELECT *, SIMILARITY(name || ' ', $1) AS score
         FROM labels
