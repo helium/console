@@ -20,6 +20,7 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 import DeleteAlertModal from "./DeleteAlertModal";
 import { useHistory } from "react-router-dom";
 import UserCan from "../common/UserCan";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default (props) => {
   const history = useHistory();
@@ -150,6 +151,10 @@ export default (props) => {
               alertType={alertType}
               save={(name, config) => {
                 if (props.show) {
+                  analyticsLogger.logEvent("ACTION_UPDATE_ALERT", {
+                    id: props.id,
+                    config,
+                  });
                   dispatch(
                     updateAlert(props.id, {
                       ...(name && { name }),
@@ -157,6 +162,10 @@ export default (props) => {
                     })
                   );
                 } else {
+                  analyticsLogger.logEvent("ACTION_CREATE_ALERT", {
+                    node_type: props.alertType,
+                    config,
+                  });
                   dispatch(
                     createAlert({
                       name: name,

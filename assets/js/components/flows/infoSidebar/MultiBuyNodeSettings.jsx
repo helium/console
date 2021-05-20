@@ -10,6 +10,7 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Switch, Typography, Table } from "antd";
 import { Link } from "react-router-dom";
 import { userCan } from "../../common/UserCan";
+import analyticsLogger from "../../../util/analyticsLogger";
 const { Text } = Typography;
 
 export default ({ currentNode, onMultiBuyUpdate }) => {
@@ -63,6 +64,11 @@ export default ({ currentNode, onMultiBuyUpdate }) => {
                   checked={currentNode.multi_buy_id === record.id}
                   onChange={(checked) => {
                     if (checked) {
+                      analyticsLogger.logEvent("ACTION_ADD_MULTIBUY_TO_NODE", {
+                        id: record.id,
+                        nodeId: currentNode.id,
+                        nodeType: currentNode.__typename,
+                      });
                       dispatch(
                         addMultiBuyToNode(
                           record.id,
@@ -79,6 +85,14 @@ export default ({ currentNode, onMultiBuyUpdate }) => {
                         onMultiBuyUpdate(prefix + currentNode.id, record.id);
                       });
                     } else {
+                      analyticsLogger.logEvent(
+                        "ACTION_REMOVE_MULTIBUY_FROM_NODE",
+                        {
+                          id: record.id,
+                          nodeId: currentNode.id,
+                          nodeType: currentNode.__typename,
+                        }
+                      );
                       dispatch(
                         removeMultiBuyFromNode(
                           currentNode.id,

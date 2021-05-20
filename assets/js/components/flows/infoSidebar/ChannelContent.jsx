@@ -34,7 +34,9 @@ class ChannelContent extends Component {
 
   componentDidMount() {
     const channelId = this.props.id;
-    analyticsLogger.logEvent("ACTION_CHANNEL_INFO_SIDEBAR", { id: channelId });
+    analyticsLogger.logEvent("ACTION_OPEN_CHANNEL_NODE_SIDE_PANEL", {
+      id: channelId,
+    });
 
     const { socket } = this.props;
 

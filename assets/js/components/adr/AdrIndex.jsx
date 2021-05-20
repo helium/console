@@ -5,12 +5,16 @@ import AddResourceButton from "../common/AddResourceButton";
 import HomeIcon from "../../../img/adr/adr-all-icon.svg";
 import AdrIcon from "../../../img/adr/adr-logo-icon.svg";
 import { Typography, Row, Col } from "antd";
+import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
 
 export const adrText =
   "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity.";
 
 export default (props) => {
+  useEffect(() => {
+    analyticsLogger.logEvent("ACTION_NAV_ADR_INDEX");
+  }, []);
   return (
     <DashboardLayout title="Adaptive Data Rates" user={props.user}>
       <div

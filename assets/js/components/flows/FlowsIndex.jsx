@@ -11,6 +11,7 @@ import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin } from "antd";
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
+import analyticsLogger from "../../util/analyticsLogger";
 
 class FlowsIndex extends Component {
   state = {
@@ -26,6 +27,7 @@ class FlowsIndex extends Component {
 
     updateFlows(completePaths, elementPositions)
       .then((status) => {
+        analyticsLogger.logEvent("ACTION_UPDATE_FLOWS");
         if (status == 200) {
           this.props.allResourcesQuery.refetch();
           this.setState({ hasChanges: false });
@@ -33,6 +35,10 @@ class FlowsIndex extends Component {
       })
       .catch((err) => {});
   };
+
+  componentDidMount() {
+    analyticsLogger.logEvent("ACTION_NAV_FLOWS_PAGE");
+  }
 
   render() {
     const { loading, error } = this.props.allResourcesQuery;

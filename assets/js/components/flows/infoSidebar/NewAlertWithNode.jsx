@@ -4,6 +4,7 @@ import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
 import { createAlert, addAlertToNode } from "../../../actions/alert";
 import AlertSettings from "../../alerts/AlertSettings";
+import analyticsLogger from "../../../util/analyticsLogger";
 
 export default (props) => {
   const dispatch = useDispatch();
@@ -22,6 +23,10 @@ export default (props) => {
       <AlertSettings
         alertType={alertType}
         save={(name, config) => {
+          analyticsLogger.logEvent("ACTION_CREATE_ALERT", {
+            node_type: alertType,
+            config,
+          });
           dispatch(
             createAlert({
               name: name,
@@ -29,6 +34,11 @@ export default (props) => {
               node_type: alertType,
             })
           ).then((data) => {
+            analyticsLogger.logEvent("ACTION_ADD_ALERT_TO_NODE", {
+              alertId: data.data.id,
+              nodeId: props.nodeId,
+              nodeType: props.nodeType,
+            });
             dispatch(
               addAlertToNode(data.data.id, props.nodeId, props.nodeType)
             );
