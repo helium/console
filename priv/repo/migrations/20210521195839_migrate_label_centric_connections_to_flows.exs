@@ -3,6 +3,7 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
 
   import Ecto.Query, warn: false
   alias Console.Repo
+  alias Console.Organizations
   alias Console.Labels
   alias Console.Labels.Label
   alias Console.Flows.Flow
@@ -99,6 +100,102 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
             })
             |> Repo.update!()
         end
+      end)
+
+      {:ok, "Success"}
+    end)
+    |> Ecto.Multi.run(:org_flows, fn _repo, %{ multi_buys: _ } ->
+      all_orgs = Organizations.list_organizations()
+
+      label_sql = """
+        SELECT id, function_id FROM labels where id = $1
+      """
+
+      channels_labels_sql = """
+        SELECT label_id, channel_id FROM channels_labels where label_id = $1
+      """
+
+      Enum.each(all_orgs, fn org ->
+        org_labels =
+          from(l in Label, where: l.organization_id == ^org.id)
+          |> Repo.all()
+
+        flow =
+          org_labels
+          |> Enum.with_index(1)
+          |> Enum.reduce(%{ "edges" => [], "copies" => []}, fn {label, index}, acc ->
+            {:ok, label_uuid} = Ecto.UUID.dump(label.id)
+            label_sql_result = Ecto.Adapters.SQL.query!(Console.Repo, label_sql, [label_uuid]).rows |> Enum.at(0)
+
+            case Enum.at(label_sql_result, 1) do
+              nil ->
+                channels_labels_sql_result = Ecto.Adapters.SQL.query!(Console.Repo, channels_labels_sql, [label_uuid]).rows
+
+                channel_ids =
+                  channels_labels_sql_result
+                  |> Enum.map(fn cl ->
+                    {:ok, channel_id} = Ecto.UUID.load(Enum.at(cl, 1))
+                    channel_id
+                  end)
+
+                edges =
+                  channel_ids
+                  |> Enum.map(fn channel_id ->
+                    %{
+                      "source" => "label-" <> label.id,
+                      "target" => "channel-" <> channel_id
+                    }
+                  end)
+
+                channels_map =
+                  channel_ids
+                  |> Enum.reduce(%{}, fn channel_id, acc ->
+                    Map.put(acc, "channel-" <> channel_id, %{ "position" => %{ "x" => 600, "y" => index * 80 }})
+                  end)
+                  |> Map.put("edges", acc["edges"] ++ edges)
+
+                acc
+                |> Map.put("label-" <> label.id, %{ "position" => %{ "x" => 10, "y" => index * 80 }})
+                |> Map.merge(channels_map)
+              function_uuid ->
+                {:ok, function_id} = Ecto.UUID.load(function_uuid)
+                channels_labels_sql_result = Ecto.Adapters.SQL.query!(Console.Repo, channels_labels_sql, [label_uuid]).rows
+
+                channel_ids =
+                  channels_labels_sql_result
+                  |> Enum.map(fn cl ->
+                    {:ok, channel_id} = Ecto.UUID.load(Enum.at(cl, 1))
+                    channel_id
+                  end)
+
+                edges =
+                  channel_ids
+                  |> Enum.map(fn channel_id ->
+                    %{
+                      "source" => "function-" <> function_id <> "_copy" <> to_string(index),
+                      "target" => "channel-" <> channel_id
+                    }
+                  end)
+                all_edges = edges ++ [%{ "source" => "label-" <> label.id, "target" => "function-" <> function_id <> "_copy" <> to_string(index)}| acc["edges"]]
+
+                channels_map =
+                  channel_ids
+                  |> Enum.reduce(%{}, fn channel_id, acc ->
+                    Map.put(acc, "channel-" <> channel_id, %{ "position" => %{ "x" => 600 + Enum.random(1..120), "y" => index * 80 + Enum.random(1..120) }})
+                  end)
+
+                acc
+                |> Map.put("label-" <> label.id, %{ "position" => %{ "x" => 10, "y" => index * 80 }})
+                |> Map.put("function-" <> function_id, %{ "position" => %{ "x" => 300, "y" => 0 }})
+                |> Map.put("function-" <> function_id <> "_copy" <> to_string(index), %{ "position" => %{ "x" => 300, "y" => index * 80 }})
+                |> Map.put("copies", [%{ "id" => "function-" <> function_id <> "_copy" <> to_string(index), "position" => %{ "x" => 300, "y" => index * 80 }} | acc["copies"]])
+                |> Map.put("edges", all_edges)
+                |> Map.merge(channels_map)
+            end
+          end)
+
+        Organizations.get_organization!(org.id)
+        |> Organizations.update_organization!(%{ flow: flow })
       end)
 
       {:ok, "Success"}

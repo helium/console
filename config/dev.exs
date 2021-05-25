@@ -53,7 +53,7 @@ config :console, Console.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "console_dev_2.0",
+  database: "console_dev",
   hostname: "localhost",
   pool_size: 10
 
