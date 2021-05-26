@@ -42,11 +42,12 @@ defmodule Console.Devices.Device do
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
+      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
   def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
     alphabet = '0123456789ABCDEF'
-    device_params = 
+    device_params =
       Map.merge(device_params, %{
         "dev_eui" => Helpers.generate_string(16, alphabet),
         "app_eui" => Helpers.generate_string(16, alphabet),
@@ -59,6 +60,7 @@ defmodule Console.Devices.Device do
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for dev_eui, app_eui, and app_key must be unique, please try again")
+      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
   def update_changeset(device, attrs) do
@@ -71,6 +73,7 @@ defmodule Console.Devices.Device do
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique dev_eui, app_eui, and app_key")
+      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
   def router_update_changeset(device, attrs) do
