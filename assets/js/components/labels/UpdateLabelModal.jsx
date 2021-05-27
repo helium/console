@@ -184,7 +184,7 @@ class UpdateLabelModal extends Component {
                 />
               </TabPane>
               <TabPane tab="Webhooks" key="webhook" style={{ maxHeight: '375px', overflowY: 'scroll' }}>
-                <WebhookSettings 
+                <WebhookSettings
                   label_id={this.props.label.id}
                   notificationSettings={notificationWebhooks.reduce(
                     (obj, item) => (obj[item.key] = { key: item.key, value: item.value, url: item.url, notes: item.notes, label_id: this.props.label.id }, obj), {}
@@ -206,8 +206,14 @@ class UpdateLabelModal extends Component {
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <Text style={{ fontSize: 14 }}>{
-                  "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity."
+                <Text style={{ display: 'block', fontSize: 14 }}>{
+                  "Adaptive Data Rate (ADR) needs to be requested by a device for this setting to have an effect. ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions."
+                }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "When ADR is disabled the channel mask is still transmitted via ADR command, but power output and data rates are not impacted."
+                }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "Recommended: only use ADR for fixed or non-mobile devices to ensure reliable connectivity."
                 }</Text>
               </div>
 
