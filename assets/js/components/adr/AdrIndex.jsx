@@ -8,8 +8,10 @@ import { Typography, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
 
-export const adrText =
-  "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. However, it is recommended to only use this setting for fixed or non-mobile devices to ensure reliable connectivity.";
+export const adrText1 =
+  "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. When ADR is disabled the channel mask is still transmitted via ADR command, but power output and data rates are not impacted. ";
+export const adrText2 =
+  "Recommended: only use ADR for fixed or non-mobile devices to ensure reliable connectivity."
 
 export default (props) => {
   useEffect(() => {
@@ -130,10 +132,20 @@ export default (props) => {
                   fontSize: 16,
                   fontWeight: 300,
                   display: "block",
+                  marginBottom: 4,
+                }}
+              >
+                {adrText1}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  display: "block",
                   marginBottom: 15,
                 }}
               >
-                {adrText}
+                {adrText2}
               </Text>
               <a
                 className="help-link"

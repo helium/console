@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Switch, Typography } from "antd";
 const { Text } = Typography;
-import { adrText } from "../../adr/AdrIndex";
+import { adrText1, adrText2 } from "../../adr/AdrIndex";
 import { userCan } from "../../common/UserCan";
 
 export default ({ checked, from, updateAdr }) => {
@@ -29,7 +29,8 @@ export default ({ checked, from, updateAdr }) => {
       </div>
 
       <div style={{ marginBottom: 20 }}>
-        <Text style={{ fontSize: 14 }}>{adrText}</Text>
+        <Text style={{ fontSize: 14, display: 'block', marginBottom: 4 }}>{adrText1}</Text>
+        <Text style={{ fontSize: 14, display: 'block' }}>{adrText2}</Text>
       </div>
 
       {from === "device" && (
