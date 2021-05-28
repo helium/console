@@ -242,7 +242,7 @@ class Downlink extends Component {
               key={"downlink" + index}
             >
               <Row gutter={[16, 16]}>
-                <Col span={16}>
+                <Col span={12}>
                   <div style={{ marginBottom: 4 }}>
                     <Text strong>
                       Device:{" "}
@@ -251,23 +251,26 @@ class Downlink extends Component {
                         : q.device_id}
                     </Text>
                   </div>
-                  <Text>Payload</Text>
+                  <Text>Payload (Base64)</Text>
                   <Input
                     style={{ width: "100%" }}
                     defaultValue={q.payload}
                     disabled
                   />
                 </Col>
-                <Col span={8}>
-                  <div style={{ marginBottom: 4 }}>
+                <Col span={12}>
+                  <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text strong>
                       Status: {q.confirmed ? "Confirmed" : "Unconfirmed"}
                     </Text>
+                    <Text strong>
+                      FPort: {q.port}
+                    </Text>
                   </div>
-                  <Text>FPort</Text>
+                  <Text>Payload (Text)</Text>
                   <Input
                     style={{ width: "100%" }}
-                    defaultValue={q.port}
+                    defaultValue={b64DecodeUnicode(q.payload)}
                     disabled
                   />
                 </Col>
@@ -301,6 +304,12 @@ class Downlink extends Component {
       </div>
     );
   }
+}
+
+const b64DecodeUnicode = (str) => {
+  return decodeURIComponent(atob(str).split('').map(function(c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 }
 
 export default Downlink;
