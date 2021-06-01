@@ -86,7 +86,17 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
               end)
               |> Ecto.Multi.run(:alert_node, fn _repo, %{ alert: alert } ->
                 org = Organizations.get_organization(org_id)
-                Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
+                case type do
+                  "label" -> Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
+                  "integration" ->
+                    {:ok, uuid} = Ecto.UUID.dump(label_id)
+                    Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [uuid]).rows
+                    |> Enum.each(fn i ->
+                      {:ok, integration_id} = Ecto.UUID.load(List.first(i))
+                      Alerts.add_alert_node_if_nonexistent(org, alert, integration_id, "integration")
+                    end)
+                    {:ok, nil}
+                end
               end)
               |> Repo.transaction()
             _ ->
@@ -112,6 +122,19 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
                 end
                 config = Map.put(config, setting.key, trigger_config)
                 Alerts.update_alert(alert, %{ "config" => config })
+
+                org = Organizations.get_organization(org_id)
+                case type do
+                  "label" -> Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
+                  "integration" ->
+                    {:ok, uuid} = Ecto.UUID.dump(label_id)
+                    Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [uuid]).rows
+                    |> Enum.each(fn i ->
+                      {:ok, integration_id} = Ecto.UUID.load(List.first(i))
+                      Alerts.add_alert_node_if_nonexistent(org, alert, integration_id, "integration")
+                    end)
+                    {:ok, nil}
+                end
               end)
           end
     end)
@@ -201,8 +224,8 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
               end
               config = Map.put(config, setting.key, trigger_config)
               Alerts.update_alert(alert, %{ "config" => config })
+              
               org = Organizations.get_organization(org_id)
-
               case type do
                 "label" -> Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
                 "integration" ->
