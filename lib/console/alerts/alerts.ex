@@ -25,6 +25,10 @@ defmodule Console.Alerts do
     Repo.get_by(AlertNode, [alert_id: alert_id, node_id: node_id, node_type: node_type])
   end
 
+  def get_alert_by_name(organization_id, name) do
+    Repo.get_by(Alert, [organization_id: organization_id, name: name])
+  end
+
   def create_alert(attrs \\ %{}) do
     %Alert{}
     |> Alert.changeset(attrs)
@@ -54,6 +58,19 @@ defmodule Console.Alerts do
     alert_node = Repo.insert!(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }))
 
     {:ok, alert_node}
+  end
+
+  def add_alert_node_if_nonexistent(%Organization{} = organization, %Alert{} = alert, node_id, node_type) do
+    case node_type do
+      "device" ->
+        Devices.get_device!(organization, node_id)
+      "label" ->
+        Labels.get_label!(organization, node_id)
+      "integration" ->
+        Channels.get_channel!(organization, node_id)
+    end
+
+    Repo.insert(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }), on_conflict: :nothing)
   end
 
   def remove_alert_node(%Organization{} = organization, %AlertNode{} = alert_node) do
