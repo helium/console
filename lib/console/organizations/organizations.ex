@@ -154,7 +154,7 @@ defmodule Console.Organizations do
   def create_organization(%{} = user, attrs \\ %{}) do
     count = get_organizations(user) |> Enum.count()
 
-    if count > 24 do
+    if count > 499 do
       {:error, :forbidden, "Maximum number of organizations reached"}
     else
       organization_changeset =
