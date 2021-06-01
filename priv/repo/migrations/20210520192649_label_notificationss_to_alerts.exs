@@ -56,7 +56,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
 
           alert_name = case node_type do
             "device/label" -> "Alert for label #{label.name}"
-            "integration" -> "Alert for label #{label.name}"
+            "integration" -> "Alert for integrations prev. in label #{label.name}"
           end
           alert = Alerts.get_alert_by_name(org_id, alert_name)
           case alert do
@@ -86,7 +86,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
               end)
               |> Ecto.Multi.run(:alert_node, fn _repo, %{ alert: alert } ->
                 org = Organizations.get_organization(org_id)
-                Alerts.add_alert_node(org, alert, label_id, "label")
+                Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
               end)
               |> Repo.transaction()
             _ ->
@@ -122,6 +122,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
           WHERE w.key = ANY($1)
     """
     results = Ecto.Adapters.SQL.query!(Console.Repo, webhook_sql, [events]).rows
+    IO.inspect results
     Enum.each(
       Enum.group_by(
         results |> Enum.map(&cast_webhook/1), &Map.take(&1, [:label_id, :organization_id])
@@ -131,7 +132,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
         label = Labels.get_label(label_id)
         alert_name = case node_type do
           "device/label" -> "Alert for label #{label.name}"
-          "integration" -> "Alert for label #{label.name}"
+          "integration" -> "Alert for integrations prev. in label #{label.name}"
         end
         alert = Alerts.get_alert_by_name(org_id, alert_name)
 
@@ -140,7 +141,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
             Ecto.Multi.new()
             |> Ecto.Multi.run(:alert, fn _repo, _ ->
               Alerts.create_alert(%{
-                "name" => "Alert for label #{label.name}", # TODO figure out naming
+                "name" => alert_name, # TODO figure out naming
                 "organization_id" => org_id,
                 "node_type" => node_type,
                 "config" => Enum.into(Enum.map(y, fn setting ->
@@ -164,13 +165,13 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
             |> Ecto.Multi.run(:alert_node, fn _repo, %{ alert: alert } ->
               org = Organizations.get_organization(org_id)
               case type do
-                "label" -> Alerts.add_alert_node(org, alert, label_id, "label")
+                "label" -> Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
                 "integration" ->
                   {:ok, uuid} = Ecto.UUID.dump(label_id)
                   Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [uuid]).rows
                   |> Enum.each(fn i ->
                     {:ok, integration_id} = Ecto.UUID.load(List.first(i))
-                    Alerts.add_alert_node(org, alert, integration_id, "integration")
+                    Alerts.add_alert_node_if_nonexistent(org, alert, integration_id, "integration")
                   end)
                   {:ok, nil}
               end
@@ -191,15 +192,28 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
               end
 
               trigger_config = case config[setting.key] do
-                  nil ->
-                    %{
-                      "webhook" => setting_map
-                    }
-                  _ ->
-                    config[setting.key] |> Map.put("webhook", setting_map)
-                end
-                config = Map.put(config, setting.key, trigger_config)
-                Alerts.update_alert(alert, %{ "config" => config })
+                nil ->
+                  %{
+                    "webhook" => setting_map
+                  }
+                _ ->
+                  config[setting.key] |> Map.put("webhook", setting_map)
+              end
+              config = Map.put(config, setting.key, trigger_config)
+              Alerts.update_alert(alert, %{ "config" => config })
+              org = Organizations.get_organization(org_id)
+
+              case type do
+                "label" -> Alerts.add_alert_node_if_nonexistent(org, alert, label_id, "label")
+                "integration" ->
+                  {:ok, uuid} = Ecto.UUID.dump(label_id)
+                  Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [uuid]).rows
+                  |> Enum.each(fn i ->
+                    {:ok, integration_id} = Ecto.UUID.load(List.first(i))
+                    Alerts.add_alert_node_if_nonexistent(org, alert, integration_id, "integration")
+                  end)
+                  {:ok, nil}
+              end
             end)
         end
     end)

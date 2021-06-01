@@ -60,6 +60,21 @@ defmodule Console.Alerts do
     {:ok, alert_node}
   end
 
+  def add_alert_node_if_nonexistent(%Organization{} = organization, %Alert{} = alert, node_id, node_type) do
+    case node_type do
+      "device" ->
+        Devices.get_device!(organization, node_id)
+      "label" ->
+        Labels.get_label!(organization, node_id)
+      "integration" ->
+        Channels.get_channel!(organization, node_id)
+    end
+
+    alert_node = Repo.insert(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }), on_conflict: :nothing)
+
+    {:ok, alert_node}
+  end
+
   def remove_alert_node(%Organization{} = organization, %AlertNode{} = alert_node) do
     case alert_node.node_type do
       "device" ->

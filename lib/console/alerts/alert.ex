@@ -34,7 +34,7 @@ defmodule Console.Alerts.Alert do
     |> cast(attrs, [:name, :organization_id, :last_triggered_at, :config, :node_type])
     |> validate_required([:organization_id, :config, :node_type])
     |> validate_required(:name, message: "Name cannot be blank")
-    |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters")
+    |> validate_length(:name, max: 88, message: "Name cannot be longer than 88 characters") # TODO reduce to 25 after 2.0 data migration
     |> check_config_not_empty
     |> check_valid_config
     |> check_webhook_config_url
