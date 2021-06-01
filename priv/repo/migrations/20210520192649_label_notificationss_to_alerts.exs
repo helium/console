@@ -56,16 +56,43 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
 
           alert_name = case node_type do
             "device/label" -> "Alert for label #{label.name}"
-            "integration" -> "Alert for integrations previously attached to label #{label.name}"
+            "integration" -> "Alert for label #{label.name}"
           end
+          alert = Alerts.get_alert_by_name(org_id, alert_name)
+          case alert do
+            nil ->
+              Ecto.Multi.new()
+              |> Ecto.Multi.run(:alert, fn _repo, _ ->
+                alert = Alerts.create_alert(%{
+                  "name" => alert_name,
+                  "organization_id" => org_id,
+                  "node_type" => node_type,
+                  "config" => Enum.into(Enum.map(y, fn setting ->
+                    setting_map = %{
+                      "recipient" => setting.recipient
+                    }
 
-          Ecto.Multi.new()
-          |> Ecto.Multi.run(:alert, fn _repo, _ ->
-            Alerts.create_alert(%{
-              "name" => alert_name,
-              "organization_id" => org_id,
-              "node_type" => node_type,
-              "config" => Enum.into(Enum.map(y, fn setting ->
+                    setting_map = cond do
+                      Map.has_key?(setting, :value) -> Map.put(setting_map, "value", setting.value)
+                      true -> setting_map
+                    end
+
+                    {
+                      "#{setting.key}",
+                      %{"email" => setting_map}
+                    }
+                  end), %{})
+                })
+              end)
+              |> Ecto.Multi.run(:alert_node, fn _repo, %{ alert: alert } ->
+                org = Organizations.get_organization(org_id)
+                Alerts.add_alert_node(org, alert, label_id, "label")
+              end)
+              |> Repo.transaction()
+            _ ->
+              config = alert.config
+
+              Enum.each(y, fn setting ->
                 setting_map = %{
                   "recipient" => setting.recipient
                 }
@@ -75,18 +102,18 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
                   true -> setting_map
                 end
 
-                {
-                  "#{setting.key}",
-                  %{"email" => setting_map}
-                }
-              end), %{})
-            })
-          end)
-          |> Ecto.Multi.run(:alert_node, fn _repo, %{ alert: alert } ->
-            org = Organizations.get_organization(org_id)
-            Alerts.add_alert_node(org, alert, label_id, "label")
-          end)
-          |> Repo.transaction()
+                trigger_config = case config[setting.key] do
+                  nil ->
+                    %{
+                      "email" => setting_map
+                    }
+                  _ ->
+                    config[setting.key] |> Map.put("email", setting_map)
+                end
+                config = Map.put(config, setting.key, trigger_config)
+                Alerts.update_alert(alert, %{ "config" => config })
+              end)
+          end
     end)
 
     webhook_sql = """
@@ -104,7 +131,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
         label = Labels.get_label(label_id)
         alert_name = case node_type do
           "device/label" -> "Alert for label #{label.name}"
-          "integration" -> "Alert for integrations previously attached to label #{label.name}"
+          "integration" -> "Alert for label #{label.name}"
         end
         alert = Alerts.get_alert_by_name(org_id, alert_name)
 
@@ -113,7 +140,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
             Ecto.Multi.new()
             |> Ecto.Multi.run(:alert, fn _repo, _ ->
               Alerts.create_alert(%{
-                "name" => "Alert", # TODO figure out naming
+                "name" => "Alert for label #{label.name}", # TODO figure out naming
                 "organization_id" => org_id,
                 "node_type" => node_type,
                 "config" => Enum.into(Enum.map(y, fn setting ->
@@ -139,10 +166,13 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
               case type do
                 "label" -> Alerts.add_alert_node(org, alert, label_id, "label")
                 "integration" ->
-                  Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [label_id]).rows
+                  {:ok, uuid} = Ecto.UUID.dump(label_id)
+                  Ecto.Adapters.SQL.query!(Console.Repo, "SELECT channel_id FROM channels_labels WHERE label_id = $1", [uuid]).rows
                   |> Enum.each(fn i ->
-                    Alerts.add_alert_node(org, alert, i, "integration")
+                    {:ok, integration_id} = Ecto.UUID.load(List.first(i))
+                    Alerts.add_alert_node(org, alert, integration_id, "integration")
                   end)
+                  {:ok, nil}
               end
             end)
             |> Repo.transaction()
@@ -160,9 +190,16 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
                 true -> setting_map
               end
 
-              trigger_config = config[setting.key] |> Map.put("webhook", setting_map)
-              config = Map.put(config, setting.key, trigger_config)
-              Alerts.update_alert(alert, %{ "config" => config })
+              trigger_config = case config[setting.key] do
+                  nil ->
+                    %{
+                      "webhook" => setting_map
+                    }
+                  _ ->
+                    config[setting.key] |> Map.put("webhook", setting_map)
+                end
+                config = Map.put(config, setting.key, trigger_config)
+                Alerts.update_alert(alert, %{ "config" => config })
             end)
         end
     end)
@@ -175,12 +212,12 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
       "device_deleted",
       "downlink_unsuccessful"
     ])
-
+    
     run_migration("integration", [
-      "integration_stops_working",
       "integration_receives_first_event",
-      "integration_with_devices_deleted",
-      "integration_with_devices_updated"
+      "integration_with_devices_updated",
+      "integration_stops_working",
+      "integration_with_devices_deleted"
     ])
   end
 
