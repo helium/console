@@ -11,6 +11,6 @@ defmodule Console.Repo.Migrations.AddMultibuyTable do
       timestamps()
     end
 
-    create unique_index(:multi_buys, [:name])
+    create unique_index(:multi_buys, [:name, :organization_id])
   end
 end
