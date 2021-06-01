@@ -63,7 +63,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
             nil ->
               Ecto.Multi.new()
               |> Ecto.Multi.run(:alert, fn _repo, _ ->
-                alert = Alerts.create_alert(%{
+                Alerts.create_alert(%{
                   "name" => alert_name,
                   "organization_id" => org_id,
                   "node_type" => node_type,
