@@ -145,7 +145,6 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
           WHERE w.key = ANY($1)
     """
     results = Ecto.Adapters.SQL.query!(Console.Repo, webhook_sql, [events]).rows
-    IO.inspect results
     Enum.each(
       Enum.group_by(
         results |> Enum.map(&cast_webhook/1), &Map.take(&1, [:label_id, :organization_id])

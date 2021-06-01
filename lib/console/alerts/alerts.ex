@@ -70,9 +70,7 @@ defmodule Console.Alerts do
         Channels.get_channel!(organization, node_id)
     end
 
-    alert_node = Repo.insert(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }), on_conflict: :nothing)
-
-    {:ok, alert_node}
+    Repo.insert(AlertNode.changeset(%AlertNode{}, %{ "alert_id" => alert.id, "node_id" => node_id, "node_type" => node_type }), on_conflict: :nothing)
   end
 
   def remove_alert_node(%Organization{} = organization, %AlertNode{} = alert_node) do
