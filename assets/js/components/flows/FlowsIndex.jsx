@@ -9,6 +9,7 @@ import { getIntegrationTypeForFlows } from "../../util/flows";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin } from "antd";
+import find from 'lodash/find'
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -261,18 +262,18 @@ const generateInitialElementsMap = (data, flowPositions) => {
   // currently only function nodes can be duplicated
   flowPositions.copies &&
     flowPositions.copies.map((copiedNode) => {
-      const originalId = copiedNode.id.slice(0, copiedNode.id.indexOf("_copy"));
-      const func = initialElementsMap[originalId];
+      const originalId = copiedNode.id.slice(0, copiedNode.id.indexOf("_copy")).slice(9)
+      const func = find(allFunctions, { id: originalId });
 
       if (func) {
         const node = {
           id: copiedNode.id,
           type: "functionNode",
           data: {
-            label: func.data.label,
-            id: `function-${func.data.id}`,
-            format: func.data.format,
-            hasAlerts: func.data.hasAlerts,
+            label: func.name,
+            id: `function-${func.id}`,
+            format: func.format,
+            hasAlerts: func.alerts.length > 0,
           },
           position: [0, 0],
         };
