@@ -50,7 +50,7 @@ defmodule ConsoleWeb.FlowsController do
 
     case result do
       {:ok, _} ->
-        all_device_ids = Devices.get_devices(current_organization.id)
+        all_device_ids = Devices.get_devices(current_organization.id) |> Enum.map(fn d -> d.id end)
         ConsoleWeb.Endpoint.broadcast("graphql:flows_update", "graphql:flows_update:#{current_organization.id}:organization_flows_update", %{})
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => all_device_ids })
 
