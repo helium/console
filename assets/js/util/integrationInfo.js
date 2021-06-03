@@ -101,7 +101,6 @@ export const PREMADE_CHANNEL_TYPES = [
   {
     name: "Microshare",
     type: "microshare",
-    link: "/integrations/new/microshare",
     img: `${Microshare}`,
     info: "This Integration simplifies sending data to the Microshare IoT Platform",
     docLink:
