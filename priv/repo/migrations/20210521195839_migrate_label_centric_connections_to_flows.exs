@@ -186,7 +186,6 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
 
                 acc
                 |> Map.put("label-" <> label.id, %{ "position" => %{ "x" => 10, "y" => index * 80 }})
-                |> Map.put("function-" <> function_id, %{ "position" => %{ "x" => 300, "y" => 0 }})
                 |> Map.put("function-" <> function_id <> "_copy" <> to_string(index), %{ "position" => %{ "x" => 300, "y" => index * 80 }})
                 |> Map.put("copies", [%{ "id" => "function-" <> function_id <> "_copy" <> to_string(index), "position" => %{ "x" => 300, "y" => index * 80 }} | acc["copies"]])
                 |> Map.put("edges", all_edges)
