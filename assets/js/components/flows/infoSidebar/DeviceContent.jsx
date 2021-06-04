@@ -8,7 +8,6 @@ import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
-import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
 import { updateDevice } from "../../../actions/device";
 import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
@@ -36,8 +35,6 @@ class DeviceContent extends Component {
     showDevEUIInput: false,
     showAppEUIInput: false,
     showAppKeyInput: false,
-    showDeleteDeviceModal: false,
-    deviceToDelete: null,
     showAppKey: false,
   };
 
@@ -168,14 +165,6 @@ class DeviceContent extends Component {
     this.setState({ showAppKeyInput: !showAppKeyInput });
   };
 
-  openDeleteDeviceModal = (device) => {
-    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] });
-  };
-
-  closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false });
-  };
-
   toggleDeviceActive = (active) => {
     this.props.updateDevice(this.props.match.params.id, { active });
   };
@@ -187,7 +176,6 @@ class DeviceContent extends Component {
       showDevEUIInput,
       showAppEUIInput,
       showAppKeyInput,
-      showDeleteDeviceModal,
       showAppKey,
     } = this.state;
     const { loading, error, device } = this.props.deviceShowQuery;
@@ -235,10 +223,10 @@ class DeviceContent extends Component {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  this.openDeleteDeviceModal(device);
+                  this.props.onNodeDelete();
                 }}
               >
-                Delete
+                Delete Node
               </Button>
             </UserCan>
           </div>
@@ -440,15 +428,6 @@ class DeviceContent extends Component {
             />
           </TabPane>
         </Tabs>
-
-        <DeleteDeviceModal
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={false}
-          devicesToDelete={this.state.deviceToDelete}
-          totalDevices={1}
-          from="deviceShow"
-        />
       </div>
     );
   }
