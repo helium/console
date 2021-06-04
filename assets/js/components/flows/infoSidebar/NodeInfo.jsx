@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FilledFunctionIcon from "../../../../img/filled-function-node-icon.svg";
 import FilledChannelNodeIcon from "../../../../img/filled-channel-node-icon.svg";
 import FilledLabelNodeIcon from "../../../../img/filled-label-node-icon.svg";
@@ -7,8 +7,22 @@ import FunctionContent from "./FunctionContent";
 import ChannelContent from "./ChannelContent";
 import DeviceContent from "./DeviceContent";
 import LabelContent from "./LabelContent";
+import DeleteNodeModal from "./DeleteNodeModal";
 
-export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
+export default ({
+  id,
+  type,
+  onAdrUpdate,
+  onMultiBuyUpdate,
+  onAlertUpdate,
+  deleteNode,
+}) => {
+  const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
+
+  const onNodeDelete = () => {
+    setOpenNodeDeleteModal(true);
+  };
+
   const renderTopIcon = () => {
     switch (type) {
       case "function":
@@ -28,7 +42,12 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
     switch (type) {
       case "function":
         return (
-          <FunctionContent id={id} type={type} onAlertUpdate={onAlertUpdate} />
+          <FunctionContent
+            id={id}
+            type={type}
+            onAlertUpdate={onAlertUpdate}
+            onNodeDelete={onNodeDelete}
+          />
         );
       case "device":
         return (
@@ -38,6 +57,7 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
+            onNodeDelete={onNodeDelete}
           />
         );
       case "utility":
@@ -50,11 +70,17 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
+            onNodeDelete={onNodeDelete}
           />
         );
       case "channel":
         return (
-          <ChannelContent id={id} type={type} onAlertUpdate={onAlertUpdate} />
+          <ChannelContent
+            id={id}
+            type={type}
+            onAlertUpdate={onAlertUpdate}
+            onNodeDelete={onNodeDelete}
+          />
         );
     }
   };
@@ -71,6 +97,14 @@ export default ({ id, type, onAdrUpdate, onMultiBuyUpdate, onAlertUpdate }) => {
         {renderTopIcon()}
       </div>
       <div style={{ marginTop: 20 }}>{renderMain()}</div>
+      <DeleteNodeModal
+        type={type}
+        open={openNodeDeleteModal}
+        deleteNode={deleteNode}
+        onClose={() => {
+          setOpenNodeDeleteModal(false);
+        }}
+      />
     </React.Fragment>
   );
 };

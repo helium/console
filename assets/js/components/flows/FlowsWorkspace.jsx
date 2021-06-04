@@ -57,6 +57,7 @@ export default ({
   };
 
   const onElementsRemove = (elementsToRemove) => {
+    console.log(elementsToRemove);
     if (userCan({ role: currentRole })) {
       if (!elementsToRemove[0]) return;
 
@@ -286,6 +287,23 @@ export default ({
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
+            deleteNode={() => {
+              const edges = Object.values(elementsMap)
+                .filter(
+                  (el) =>
+                    isEdge(el) &&
+                    (el.source === selectedNodeId ||
+                      el.target === selectedNodeId)
+                )
+                .map((el) => el.id);
+
+              setElements((elsMap) =>
+                omit(elsMap, edges.concat(selectedNodeId))
+              );
+
+              setChangesState(true);
+              setShowInfoSidebar(false);
+            }}
           />
         </InfoSidebar>
       </ReactFlowProvider>

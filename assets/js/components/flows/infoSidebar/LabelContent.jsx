@@ -49,10 +49,8 @@ class LabelContent extends Component {
     showRemoveDevicesFromLabelModal: false,
     selectedDevices: [],
     showRemoveDevicesFromLabelModal: false,
-    showDeleteDeviceModal: false,
     showUpdateLabelModal: false,
     showLabelAddDeviceModal: false,
-    showDeleteLabelModal: false,
   };
 
   componentDidMount() {
@@ -108,8 +106,6 @@ class LabelContent extends Component {
         false,
         this.props.labelId
       );
-    } else if (value === "delete") {
-      this.openDeleteDeviceModal(this.state.selectedDevices);
     }
   };
 
@@ -162,14 +158,6 @@ class LabelContent extends Component {
     this.setState({ showRemoveDevicesFromLabelModal: true, selectedDevices });
   };
 
-  openDeleteDeviceModal = (selectedDevices) => {
-    this.setState({ showDeleteDeviceModal: true, selectedDevices });
-  };
-
-  closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false });
-  };
-
   openLabelAddDeviceModal = () => {
     this.setState({ showLabelAddDeviceModal: true });
   };
@@ -184,14 +172,6 @@ class LabelContent extends Component {
 
   closeUpdateLabelModal = () => {
     this.setState({ showUpdateLabelModal: false });
-  };
-
-  openDeleteLabelModal = () => {
-    this.setState({ showDeleteLabelModal: true });
-  };
-
-  closeDeleteLabelModal = () => {
-    this.setState({ showDeleteLabelModal: false });
   };
 
   handleUpdateLabel = (name) => {
@@ -276,7 +256,6 @@ class LabelContent extends Component {
       error: labelError,
       loading: labelLoading,
     } = this.props.labelQuery;
-    const { showDeleteDeviceModal } = this.state;
 
     if (loading || labelLoading)
       return (
@@ -326,10 +305,10 @@ class LabelContent extends Component {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  this.openDeleteLabelModal();
+                  this.props.onNodeDelete();
                 }}
               >
-                Delete
+                Delete Node
               </Button>
             </UserCan>
           </div>
@@ -372,13 +351,6 @@ class LabelContent extends Component {
                   style={{ color: redForTablesDeleteText }}
                 >
                   Remove Selected Devices from Label
-                </Option>
-                <Option
-                  value="delete"
-                  disabled={selectedDevices.length === 0}
-                  style={{ color: redForTablesDeleteText }}
-                >
-                  Delete Selected Devices
                 </Option>
               </Select>
               <Table
@@ -439,14 +411,6 @@ class LabelContent extends Component {
           open={this.state.showRemoveDevicesFromLabelModal}
           onClose={this.closeRemoveDevicesFromLabelModal}
           devicesToRemove={this.state.selectedDevices}
-        />
-        <DeleteDeviceModal
-          label={label}
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={false}
-          devicesToDelete={selectedDevices}
-          totalDevices={selectedDevices.length}
         />
         <UpdateLabelModal
           handleUpdateLabel={this.handleUpdateLabel}

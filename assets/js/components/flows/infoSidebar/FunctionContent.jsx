@@ -14,10 +14,9 @@ const { Text } = Typography;
 import UserCan, { userCan } from "../../common/UserCan";
 import FunctionDetailsCard from "../../functions/FunctionDetailsCard";
 import { FUNCTION_SHOW } from "../../../graphql/functions";
-import { deleteFunction, updateFunction } from "../../../actions/function";
+import { updateFunction } from "../../../actions/function";
 import analyticsLogger from "../../../util/analyticsLogger";
 import FunctionValidator from "../../functions/FunctionValidator";
-import DeleteFunctionModal from "../../functions/DeleteFunctionModal";
 import moment from "moment";
 import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
@@ -30,7 +29,6 @@ class FunctionContent extends Component {
     format: undefined,
     body: "",
     codeUpdated: false,
-    showDeleteFunctionModal: false,
   };
 
   componentDidMount() {
@@ -96,17 +94,8 @@ class FunctionContent extends Component {
     });
   };
 
-  openDeleteFunctionModal = () => {
-    this.setState({ showDeleteFunctionModal: true });
-  };
-
-  closeDeleteFunctionModal = () => {
-    this.setState({ showDeleteFunctionModal: false });
-  };
-
   render() {
-    const { name, type, format, body, codeUpdated, showDeleteFunctionModal } =
-      this.state;
+    const { name, type, format, body, codeUpdated } = this.state;
     const { loading, error } = this.props.functionShowQuery;
     const fxn = this.props.functionShowQuery.function;
 
@@ -169,10 +158,10 @@ class FunctionContent extends Component {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  this.openDeleteFunctionModal();
+                  this.props.onNodeDelete();
                 }}
               >
-                Delete
+                Delete Node
               </Button>
             </UserCan>
           </div>
@@ -207,12 +196,6 @@ class FunctionContent extends Component {
             )}
           </TabPane>
         </Tabs>
-        <DeleteFunctionModal
-          open={showDeleteFunctionModal}
-          onClose={this.closeDeleteFunctionModal}
-          functionToDelete={fxn}
-          redirect
-        />
       </div>
     );
   }
@@ -226,7 +209,7 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deleteFunction, updateFunction }, dispatch);
+  return bindActionCreators({ updateFunction }, dispatch);
 }
 
 export default connect(

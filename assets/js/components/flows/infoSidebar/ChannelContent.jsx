@@ -8,7 +8,6 @@ const { Text, Paragraph } = Typography;
 import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
-import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import analyticsLogger from "../../../util/analyticsLogger";
 import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
@@ -29,7 +28,6 @@ class ChannelContent extends Component {
   state = {
     newName: "",
     showDownlinkToken: false,
-    showDeleteChannelModal: false,
   };
 
   componentDidMount() {
@@ -79,14 +77,6 @@ class ChannelContent extends Component {
     });
     this.props.updateChannel(channel.id, { name: this.state.newName });
     this.setState({ newName: "" });
-  };
-
-  openDeleteChannelModal = () => {
-    this.setState({ showDeleteChannelModal: true });
-  };
-
-  closeDeleteChannelModal = () => {
-    this.setState({ showDeleteChannelModal: false });
   };
 
   render() {
@@ -146,10 +136,10 @@ class ChannelContent extends Component {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  this.openDeleteChannelModal();
+                  this.props.onNodeDelete();
                 }}
               >
-                Delete
+                Delete Node
               </Button>
             </UserCan>
           </div>
@@ -271,17 +261,12 @@ class ChannelContent extends Component {
             />
           </TabPane>
         </Tabs>
-        <DeleteChannelModal
-          open={this.state.showDeleteChannelModal}
-          onClose={this.closeDeleteChannelModal}
-          channel={channel}
-        />
       </div>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state, _ownProps) {
   return {
     socket: state.apollo.socket,
     currentRole: state.organization.currentRole,
