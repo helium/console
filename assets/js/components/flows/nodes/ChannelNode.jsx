@@ -55,19 +55,13 @@ export default ({ data, fromSidebar, selected }) => {
             }}
           />
         )}
-        <div style={{ margin: "0 5px 0 10px" }}>
-          {data.hasAlerts && (
-            <img
-              draggable="false"
-              src={AlertTag}
-              style={{
-                height: 20,
-                marginLeft: 4,
-                position: "relative",
-                top: -2,
-              }}
-            />
-          )}
+        <div
+          style={{
+            marginRight: "auto",
+            marginLeft: "15px",
+          }}
+        >
+          {data.hasAlerts && <img draggable="false" src={AlertTag} />}
         </div>
         <div
           style={{
