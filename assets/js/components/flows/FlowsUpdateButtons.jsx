@@ -7,19 +7,20 @@ export default ({ hasChanges, resetElementsMap, submitChanges }) => {
     return (
       <div style={{
         position: 'absolute',
-        bottom: 150,
-        right: 20,
+        bottom: 20,
+        left: 20,
         zIndex: 150,
         padding: 10,
-        maxHeight: 'calc(100vh - 55px)',
-        overflowY: 'scroll'
+        backgroundColor: "#ffffff",
+        borderRadius: 6,
+        boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
       }}>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Button
             onClick={resetElementsMap}
             size="small"
           >
-            Undo
+            Undo Changes
           </Button>
           <Button
             onClick={submitChanges}
@@ -27,7 +28,7 @@ export default ({ hasChanges, resetElementsMap, submitChanges }) => {
             type="primary"
             style={{ marginLeft: 12 }}
           >
-            Save
+            Save Changes
           </Button>
         </div>
       </div>

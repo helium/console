@@ -6,7 +6,7 @@ import ReactFlow, {
   isEdge,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
-import FlowsSidebar from "./FlowsSidebar";
+import FlowsNodesMenu from "./FlowsNodesMenu";
 import FlowsUpdateButtons from "./FlowsUpdateButtons";
 import LabelNode from "./nodes/LabelNode";
 import FunctionNode from "./nodes/FunctionNode";
@@ -242,7 +242,7 @@ export default ({
             nodesConnectable={userCan({ role: currentRole })}
           />
           <UserCan>
-            <FlowsSidebar
+            <FlowsNodesMenu
               labels={labels}
               functions={functions}
               channels={channels}
