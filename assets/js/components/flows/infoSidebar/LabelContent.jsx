@@ -13,7 +13,6 @@ import { redForTablesDeleteText } from "../../../util/colors";
 import { updateDevice, setDevicesActive } from "../../../actions/device";
 import { updateLabel, addDevicesToLabels } from "../../../actions/label";
 import { PAGINATED_DEVICES_BY_LABEL } from "../../../graphql/devices";
-import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
 import UpdateLabelModal from "../../labels/UpdateLabelModal";
 import LabelAddDeviceModal from "../../labels/LabelAddDeviceModal";
 import {
@@ -30,7 +29,6 @@ import {
 import { StatusIcon } from "../../common/StatusIcon";
 import { DeleteOutlined, SettingOutlined } from "@ant-design/icons";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
-import DeleteLabelModal from "../../labels/DeleteLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 const { Text } = Typography;
@@ -424,11 +422,6 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
-        />
-        <DeleteLabelModal
-          open={this.state.showDeleteLabelModal}
-          onClose={this.closeDeleteLabelModal}
-          labelId={label.id}
         />
       </div>
     );
