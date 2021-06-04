@@ -57,7 +57,6 @@ export default ({
   };
 
   const onElementsRemove = (elementsToRemove) => {
-    console.log(elementsToRemove);
     if (userCan({ role: currentRole })) {
       if (!elementsToRemove[0]) return;
 
