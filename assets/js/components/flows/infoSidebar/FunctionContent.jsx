@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../../graphql/withGql";
@@ -9,27 +9,21 @@ import {
   EditOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { Button, Typography, Tabs } from "antd";
-const { Text } = Typography;
+import { Button, Typography, Tabs, Card } from "antd";
+const { Text, Paragraph } = Typography;
 import UserCan, { userCan } from "../../common/UserCan";
-import FunctionDetailsCard from "../../functions/FunctionDetailsCard";
 import { FUNCTION_SHOW } from "../../../graphql/functions";
 import { deleteFunction, updateFunction } from "../../../actions/function";
 import analyticsLogger from "../../../util/analyticsLogger";
-import FunctionValidator from "../../functions/FunctionValidator";
 import DeleteFunctionModal from "../../functions/DeleteFunctionModal";
 import moment from "moment";
 import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
+import { functionTypes, functionFormats } from "../../functions/constants";
 
 class FunctionContent extends Component {
   state = {
-    name: "",
-    type: undefined,
-    format: undefined,
-    body: "",
-    codeUpdated: false,
     showDeleteFunctionModal: false,
   };
 
@@ -55,47 +49,6 @@ class FunctionContent extends Component {
     this.channel.leave();
   }
 
-  handleInputUpdate = (e) => this.setState({ name: e.target.value });
-
-  handleSelectFunctionType = () => this.setState({ type: "decoder" });
-
-  handleSelectFormat = (format) => {
-    if (format === "custom") this.setState({ format, codeUpdated: true });
-    else this.setState({ format });
-  };
-
-  handleFunctionUpdate = (body) => this.setState({ body, codeUpdated: true });
-
-  handleSubmit = () => {
-    const { name, type, format, body } = this.state;
-    const functionId = this.props.id;
-    const fxn = this.props.functionShowQuery.function;
-
-    const newAttrs = {};
-
-    if (name.length > 0) newAttrs.name = name;
-    if (type) newAttrs.type = type;
-    if (format) newAttrs.format = format;
-    if (format === "custom" || (fxn.format === "custom" && !format))
-      newAttrs.body = body;
-    this.props.updateFunction(functionId, newAttrs);
-
-    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_DETAILS", {
-      id: functionId,
-      attrs: newAttrs,
-    });
-  };
-
-  clearInputs = () => {
-    this.setState({
-      name: "",
-      type: undefined,
-      format: undefined,
-      body: "",
-      codeUpdated: false,
-    });
-  };
-
   openDeleteFunctionModal = () => {
     this.setState({ showDeleteFunctionModal: true });
   };
@@ -105,8 +58,7 @@ class FunctionContent extends Component {
   };
 
   render() {
-    const { name, type, format, body, codeUpdated, showDeleteFunctionModal } =
-      this.state;
+    const { showDeleteFunctionModal } = this.state;
     const { loading, error } = this.props.functionShowQuery;
     const fxn = this.props.functionShowQuery.function;
 
@@ -184,27 +136,22 @@ class FunctionContent extends Component {
             key="1"
             style={{ padding: "0px 40px 0px 40px" }}
           >
-            <FunctionDetailsCard
-              fxn={fxn}
-              name={name}
-              type={type}
-              format={format}
-              body={body}
-              handleSelectFunctionType={this.handleSelectFunctionType}
-              handleInputUpdate={this.handleInputUpdate}
-              handleSelectFormat={this.handleSelectFormat}
-              clearInputs={this.clearInputs}
-              handleSubmit={this.handleSubmit}
-            />
-
-            {/* TODO fix the function validator being squished into the sidebar */}
-            {(format === "custom" || (fxn.format === "custom" && !format)) && (
-              <FunctionValidator
-                handleFunctionUpdate={this.handleFunctionUpdate}
-                body={body === "" && !codeUpdated ? fxn.body : body}
-                title="Custom Script"
-              />
-            )}
+            <Card title="Function Details">
+              <Fragment>
+                <Paragraph>
+                  <Text strong>Name: </Text>
+                  <Text>{fxn.name}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Type: </Text>
+                  <Text>{functionTypes[fxn.type]}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Format: </Text>
+                  <Text>{functionFormats[fxn.format]}</Text>
+                </Paragraph>
+              </Fragment>
+            </Card>
           </TabPane>
         </Tabs>
         <DeleteFunctionModal
