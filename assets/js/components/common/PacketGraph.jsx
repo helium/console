@@ -1,6 +1,31 @@
 import React, { Component } from "react";
 import { Bubble } from "react-chartjs-2";
 
+const categoryTag = (category, subCategories) => {
+  switch (category) {
+    case "uplink_dropped":
+      return "Uplink Dropped"
+    case "uplink":
+      return "Uplink"
+    case "downlink_dropped":
+      return "Downlink Dropped"
+    case "downlink":
+      if (subCategories.includes("downlink_queued")) {
+        return "Downlink Queued"
+      } else if (subCategories.includes("downlink_ack")) {
+        return "Acknowledge"
+      } else {
+        return "Downlink"
+      }
+    case "join_request":
+      return "Join Request"
+    case "join_accept":
+      return "Join Accept"
+    case "misc":
+      return "Misc. Integration Error"
+  }
+};
+
 class PacketGraph extends Component {
   constructor(props) {
     super(props);
@@ -69,9 +94,10 @@ class PacketGraph extends Component {
         callbacks: {
           label: (tooltip, data) => {
             return (
-              (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) *
-                4 +
-              "byte packet received by " +
+              data.datasets[tooltip.datasetIndex].data[tooltip.index].tag +
+              " (" +
+              (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4 +
+              " bytes) by " +
               data.datasets[tooltip.datasetIndex].data[tooltip.index].h
             );
           },
@@ -113,6 +139,7 @@ class PacketGraph extends Component {
       const timeDiff = currentTime - eventTime;
       const integrations = event.integrations;
       const hotspots = event.hotspots;
+      const tag = categoryTag(event.category, event.sub_categories)
 
       if (timeDiff < 300000) {
         if (integrations.length > 0 && integrations[0].id !== "no_channel") {
@@ -122,6 +149,7 @@ class PacketGraph extends Component {
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
+              tag
             });
           } else {
             success.push({
@@ -129,6 +157,7 @@ class PacketGraph extends Component {
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
+              tag
             });
           }
         } else {
@@ -137,6 +166,7 @@ class PacketGraph extends Component {
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: hotspots[0] ? hotspots[0].name : "unknown",
+            tag
           });
         }
       }
