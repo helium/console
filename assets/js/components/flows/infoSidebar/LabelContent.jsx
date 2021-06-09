@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import UserCan from "../../common/UserCan";
+import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
 import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
@@ -13,7 +13,6 @@ import { redForTablesDeleteText } from "../../../util/colors";
 import { updateDevice, setDevicesActive } from "../../../actions/device";
 import { updateLabel, addDevicesToLabels } from "../../../actions/label";
 import { PAGINATED_DEVICES_BY_LABEL } from "../../../graphql/devices";
-import UpdateLabelModal from "../../labels/UpdateLabelModal";
 import LabelAddDeviceModal from "../../labels/LabelAddDeviceModal";
 import {
   Card,
@@ -27,7 +26,11 @@ import {
   Tabs,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
-import { DeleteOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
@@ -47,7 +50,6 @@ class LabelContent extends Component {
     showRemoveDevicesFromLabelModal: false,
     selectedDevices: [],
     showRemoveDevicesFromLabelModal: false,
-    showUpdateLabelModal: false,
     showLabelAddDeviceModal: false,
   };
 
@@ -164,20 +166,6 @@ class LabelContent extends Component {
     this.setState({ showLabelAddDeviceModal: false });
   };
 
-  openUpdateLabelModal = () => {
-    this.setState({ showUpdateLabelModal: true });
-  };
-
-  closeUpdateLabelModal = () => {
-    this.setState({ showUpdateLabelModal: false });
-  };
-
-  handleUpdateLabel = (name) => {
-    const labelId = this.props.id;
-    const attrs = { name };
-    this.props.updateLabel(labelId, attrs);
-  };
-
   handleUpdateAdrSetting = (adrValue) => {
     const labelId = this.props.id;
     const attrs = { adr_allowed: adrValue };
@@ -289,14 +277,21 @@ class LabelContent extends Component {
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(label.updated_at).local().format("l LT")}</Text>
           <div style={{ marginTop: 10, marginBottom: 10 }}>
-            <UserCan>
+            <Link to={`/labels/${this.props.id}`}>
               <Button
-                icon={<SettingOutlined />}
                 style={{ borderRadius: 4, marginRight: 5 }}
-                onClick={this.openUpdateLabelModal}
+                icon={
+                  userCan({ role: this.props.currentRole }) ? (
+                    <EditOutlined />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
               >
-                Settings
+                {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
+            </Link>
+            <UserCan>
               <Button
                 style={{ borderRadius: 4 }}
                 type="danger"
@@ -409,12 +404,6 @@ class LabelContent extends Component {
           open={this.state.showRemoveDevicesFromLabelModal}
           onClose={this.closeRemoveDevicesFromLabelModal}
           devicesToRemove={this.state.selectedDevices}
-        />
-        <UpdateLabelModal
-          handleUpdateLabel={this.handleUpdateLabel}
-          open={this.state.showUpdateLabelModal}
-          onClose={this.closeUpdateLabelModal}
-          label={label}
         />
         <LabelAddDeviceModal
           label={label}
