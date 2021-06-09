@@ -119,6 +119,7 @@ export default (props) => {
         dataSource={props.data}
         columns={columns}
         rowKey={(record) => record.id}
+        pagination={false}
       />
     </Fragment>
   );

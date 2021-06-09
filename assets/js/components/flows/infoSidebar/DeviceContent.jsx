@@ -27,11 +27,9 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 
 class DeviceContent extends Component {
   state = {
-    newName: "",
     newDevEUI: "",
     newAppEUI: "",
     newAppKey: "",
-    showNameInput: false,
     showDevEUIInput: false,
     showAppEUIInput: false,
     showAppKeyInput: false,
@@ -62,18 +60,6 @@ class DeviceContent extends Component {
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  };
-
-  handleDeviceNameUpdate = (id, e) => {
-    const { newName } = this.state;
-    if (newName !== "") {
-      this.props.updateDevice(id, { name: this.state.newName });
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
-        id: id,
-        name: newName,
-      });
-    }
-    this.setState({ newName: "", showNameInput: false });
   };
 
   handleDeviceEUIUpdate = (id) => {
@@ -145,11 +131,6 @@ class DeviceContent extends Component {
     });
   };
 
-  toggleNameInput = () => {
-    const { showNameInput } = this.state;
-    this.setState({ showNameInput: !showNameInput });
-  };
-
   toggleDevEUIInput = () => {
     const { showDevEUIInput } = this.state;
     this.setState({ showDevEUIInput: !showDevEUIInput });
@@ -171,8 +152,6 @@ class DeviceContent extends Component {
 
   render() {
     const {
-      newName,
-      showNameInput,
       showDevEUIInput,
       showAppEUIInput,
       showAppKeyInput,
@@ -240,40 +219,8 @@ class DeviceContent extends Component {
           >
             <Card title="Device Details">
               <Paragraph>
-                <Text strong>Name: </Text>
-                {showNameInput ? (
-                  <OutsideClick onOutsideClick={this.toggleNameInput}>
-                    <Input
-                      name="newName"
-                      placeholder={device.name}
-                      value={newName}
-                      onChange={this.handleInputUpdate}
-                      style={{
-                        width: 300,
-                        marginRight: 5,
-                        verticalAlign: "middle",
-                      }}
-                      suffix={`${newName.length}/50`}
-                      maxLength={50}
-                    />
-                    <Button
-                      type="primary"
-                      name="newName"
-                      onClick={() => this.handleDeviceNameUpdate(device.id)}
-                    >
-                      Update
-                    </Button>
-                  </OutsideClick>
-                ) : (
-                  <React.Fragment>
-                    <Text style={{ marginRight: 5 }}>{device.name} </Text>
-                    <UserCan>
-                      <Button size="small" onClick={this.toggleNameInput}>
-                        <EditOutlined />
-                      </Button>
-                    </UserCan>
-                  </React.Fragment>
-                )}
+                <Text style={{ marginRight: 5 }} strong>Name:</Text>
+                <Text>{device.name}</Text>
               </Paragraph>
               <Paragraph>
                 <Text strong>ID: </Text>
