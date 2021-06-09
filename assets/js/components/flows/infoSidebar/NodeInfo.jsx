@@ -16,11 +16,13 @@ export default ({
   onMultiBuyUpdate,
   onAlertUpdate,
   deleteNode,
+  hasConnectedEdges,
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
   const onNodeDelete = () => {
-    setOpenNodeDeleteModal(true);
+    if (hasConnectedEdges) setOpenNodeDeleteModal(true);
+    else deleteNode()
   };
 
   const renderTopIcon = () => {

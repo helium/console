@@ -5,7 +5,7 @@ const { Text } = Typography;
 export default ({ open, type, deleteNode, onClose }) => {
   return (
     <Modal
-      title={"Delete Node"}
+      title={"Remove Node from Workspace"}
       visible={open}
       onCancel={onClose}
       centered
@@ -31,8 +31,8 @@ export default ({ open, type, deleteNode, onClose }) => {
     >
       <div style={{ marginBottom: 20 }}>
         <Text>
-          Are you sure you want to delete this{" "}
-          {type === "channel" ? "integration" : type} node from the workspace?
+          Are you sure you want to remove this{" "}
+          {type === "channel" ? "integration" : type} node from the workspace? Edges connected to this node will be removed as well.
         </Text>
       </div>
     </Modal>

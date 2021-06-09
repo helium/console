@@ -73,6 +73,18 @@ class FunctionContent extends Component {
             <UserCan>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
+                danger
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.props.onNodeDelete();
+                }}
+              >
+                Remove Node
+              </Button>
+            </UserCan>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
                 type="default"
                 icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
                 onClick={() => {
@@ -100,23 +112,10 @@ class FunctionContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <UserCan>
-              <Button
-                style={{ borderRadius: 4 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.props.onNodeDelete();
-                }}
-              >
-                Delete Node
-              </Button>
-            </UserCan>
           </div>
         </div>
 
-        <Tabs defaultActiveKey="1" centered>
+        <Tabs defaultActiveKey="1" tabBarStyle={{ paddingLeft: 40 }}>
           <TabPane
             tab="Overview"
             key="1"

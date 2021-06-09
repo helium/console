@@ -286,6 +286,14 @@ export default ({
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
+            hasConnectedEdges={
+              Object.values(elementsMap)
+              .filter(el =>
+                isEdge(el) &&
+                (el.source === selectedNodeId ||
+                  el.target === selectedNodeId)
+              ).length > 0
+            }
             deleteNode={() => {
               const edges = Object.values(elementsMap)
                 .filter(

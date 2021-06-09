@@ -115,6 +115,18 @@ class ChannelContent extends Component {
           <Text style={{ fontWeight: "bold" }}>Last Modified: </Text>
           <Text>{moment.utc(channel.updated_at).local().format("l LT")}</Text>
           <div style={{ marginTop: 10, marginBottom: 10 }}>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                danger
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.props.onNodeDelete();
+                }}
+              >
+                Remove Node
+              </Button>
+            </UserCan>
             <Link to={`/integrations/${this.props.id}`}>
               <Button
                 style={{ borderRadius: 4, marginRight: 5 }}
@@ -129,23 +141,10 @@ class ChannelContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <UserCan>
-              <Button
-                style={{ borderRadius: 4 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.props.onNodeDelete();
-                }}
-              >
-                Delete Node
-              </Button>
-            </UserCan>
           </div>
         </div>
 
-        <Tabs defaultActiveKey="1" centered>
+        <Tabs defaultActiveKey="1" tabBarStyle={{ paddingLeft: 40 }}>
           <TabPane
             tab="Overview"
             key="1"
