@@ -8,6 +8,7 @@ const { Text, Paragraph } = Typography;
 import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
+import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import analyticsLogger from "../../../util/analyticsLogger";
 import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
@@ -28,6 +29,7 @@ class ChannelContent extends Component {
   state = {
     newName: "",
     showDownlinkToken: false,
+    showDeleteChannelModal: false,
   };
 
   componentDidMount() {
@@ -77,6 +79,14 @@ class ChannelContent extends Component {
     });
     this.props.updateChannel(channel.id, { name: this.state.newName });
     this.setState({ newName: "" });
+  };
+
+  openDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: true });
+  };
+
+  closeDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: false });
   };
 
   render() {
@@ -141,6 +151,19 @@ class ChannelContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteChannelModal();
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -260,6 +283,12 @@ class ChannelContent extends Component {
             />
           </TabPane>
         </Tabs>
+
+        <DeleteChannelModal
+          open={this.state.showDeleteChannelModal}
+          onClose={this.closeDeleteChannelModal}
+          channel={channel}
+        />
       </div>
     );
   }

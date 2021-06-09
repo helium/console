@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
+import DeleteLabelModal from "../../labels/DeleteLabelModal";
 import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
@@ -51,6 +52,7 @@ class LabelContent extends Component {
     selectedDevices: [],
     showRemoveDevicesFromLabelModal: false,
     showLabelAddDeviceModal: false,
+    showDeleteLabelModal: false,
   };
 
   componentDidMount() {
@@ -172,6 +174,14 @@ class LabelContent extends Component {
     this.props.updateLabel(labelId, attrs).then(() => {
       this.props.onAdrUpdate("label-" + labelId, adrValue);
     });
+  };
+
+  openDeleteLabelModal = () => {
+    this.setState({ showDeleteLabelModal: true });
+  };
+
+  closeDeleteLabelModal = () => {
+    this.setState({ showDeleteLabelModal: false });
   };
 
   render() {
@@ -303,6 +313,19 @@ class LabelContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteLabelModal();
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -410,6 +433,11 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
+        />
+        <DeleteLabelModal
+          open={this.state.showDeleteLabelModal}
+          onClose={this.closeDeleteLabelModal}
+          labelId={label.id}
         />
       </div>
     );

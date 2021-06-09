@@ -8,6 +8,7 @@ import AlertNodeSettings from "./AlertNodeSettings";
 import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
+import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
 import { updateDevice } from "../../../actions/device";
 import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
@@ -34,6 +35,8 @@ class DeviceContent extends Component {
     showAppEUIInput: false,
     showAppKeyInput: false,
     showAppKey: false,
+    showDeleteDeviceModal: false,
+    deviceToDelete: null,
   };
 
   componentDidMount() {
@@ -150,12 +153,21 @@ class DeviceContent extends Component {
     this.props.updateDevice(this.props.match.params.id, { active });
   };
 
+  openDeleteDeviceModal = (device) => {
+    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] });
+  };
+
+  closeDeleteDeviceModal = () => {
+    this.setState({ showDeleteDeviceModal: false });
+  };
+
   render() {
     const {
       showDevEUIInput,
       showAppEUIInput,
       showAppKeyInput,
       showAppKey,
+      showDeleteDeviceModal,
     } = this.state;
     const { loading, error, device } = this.props.deviceShowQuery;
 
@@ -207,6 +219,19 @@ class DeviceContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteDeviceModal(device);
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -374,6 +399,15 @@ class DeviceContent extends Component {
             />
           </TabPane>
         </Tabs>
+
+        <DeleteDeviceModal
+          open={showDeleteDeviceModal}
+          onClose={this.closeDeleteDeviceModal}
+          allDevicesSelected={false}
+          devicesToDelete={this.state.deviceToDelete}
+          totalDevices={1}
+          from="deviceShow"
+        />
       </div>
     );
   }

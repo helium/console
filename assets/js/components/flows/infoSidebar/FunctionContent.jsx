@@ -14,6 +14,7 @@ const { Text, Paragraph } = Typography;
 import UserCan, { userCan } from "../../common/UserCan";
 import { FUNCTION_SHOW } from "../../../graphql/functions";
 import { updateFunction } from "../../../actions/function";
+import DeleteFunctionModal from "../../functions/DeleteFunctionModal";
 import analyticsLogger from "../../../util/analyticsLogger";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -22,6 +23,10 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { functionTypes, functionFormats } from "../../functions/constants";
 
 class FunctionContent extends Component {
+  state = {
+    showDeleteFunctionModal: false,
+  };
+
   componentDidMount() {
     const functionId = this.props.id;
     analyticsLogger.logEvent("ACTION_OPEN_FUNCTION_NODE_SIDE_PANEL", {
@@ -44,7 +49,16 @@ class FunctionContent extends Component {
     this.channel.leave();
   }
 
+  openDeleteFunctionModal = () => {
+    this.setState({ showDeleteFunctionModal: true });
+  };
+
+  closeDeleteFunctionModal = () => {
+    this.setState({ showDeleteFunctionModal: false });
+  };
+
   render() {
+    const { showDeleteFunctionModal } = this.state;
     const { loading, error } = this.props.functionShowQuery;
     const fxn = this.props.functionShowQuery.function;
 
@@ -112,6 +126,19 @@ class FunctionContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
+            <UserCan>
+              <Button
+                style={{ borderRadius: 4, marginRight: 5 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.openDeleteFunctionModal();
+                }}
+              >
+                Delete
+              </Button>
+            </UserCan>
           </div>
         </div>
 
@@ -139,6 +166,13 @@ class FunctionContent extends Component {
             </Card>
           </TabPane>
         </Tabs>
+
+        <DeleteFunctionModal
+          open={showDeleteFunctionModal}
+          onClose={this.closeDeleteFunctionModal}
+          functionToDelete={fxn}
+          redirect
+        />
       </div>
     );
   }
