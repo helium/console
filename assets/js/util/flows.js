@@ -9,7 +9,7 @@ import MqttIcon from "../../img/channels/mqtt.png";
 import TagoIcon from "../../img/channels/tago.png";
 import UbidotsIcon from "../../img/channels/ubidots.png";
 import GoogleSheetIcon from "../../img/channels/google-sheet.svg";
-import Microshare from "../../img/microshare.png";
+import Microshare from "../../img/channels/microshare.png";
 
 export const integrationImgMap = {
   adafruit: AdafruitIcon,
