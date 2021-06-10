@@ -8,6 +8,7 @@ import ChannelContent from "./ChannelContent";
 import DeviceContent from "./DeviceContent";
 import LabelContent from "./LabelContent";
 import DeleteNodeModal from "./DeleteNodeModal";
+import EdgeContent from "./EdgeContent";
 
 export default ({
   id,
@@ -17,6 +18,7 @@ export default ({
   onAlertUpdate,
   deleteNode,
   hasConnectedEdges,
+  elementsMap
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
@@ -84,6 +86,14 @@ export default ({
             onNodeDelete={onNodeDelete}
           />
         );
+      case "edge":
+        return (
+          <EdgeContent
+            elementsMap={elementsMap}
+            id={id}
+            onNodeDelete={onNodeDelete}
+          />
+        )
     }
   };
 

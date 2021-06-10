@@ -226,8 +226,7 @@ export default ({
             onSelectionChange={(elements) => {
               if (
                 elements &&
-                elements.length === 1 &&
-                elements[0].type !== "default"
+                elements.length === 1
               ) {
                 setShowInfoSidebar(true);
                 setSelectedNodeId(elements[0].id);
@@ -276,13 +275,14 @@ export default ({
         >
           <NodeInfo
             id={
-              selectedNodeId &&
-              selectedNodeId.split(/-(.+)/)[1].split("_copy")[0]
+              (selectedNodeId && selectedNodeId.slice(0, 4) === "edge" && selectedNodeId) ||
+              (selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split("_copy")[0])
             }
             type={
-              selectedNodeId &&
-              selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+              (selectedNodeId && selectedNodeId.slice(0, 4) === "edge" && "edge") ||
+              (selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
             }
+            elementsMap={elementsMap}
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
@@ -295,14 +295,18 @@ export default ({
               ).length > 0
             }
             deleteNode={() => {
-              const edges = Object.values(elementsMap)
-                .filter(
-                  (el) =>
-                    isEdge(el) &&
-                    (el.source === selectedNodeId ||
-                      el.target === selectedNodeId)
-                )
-                .map((el) => el.id);
+              let edges = []
+
+              if (selectedNodeId.slice(0, 4) === "edge") {
+                edges = Object.values(elementsMap)
+                  .filter(
+                    (el) =>
+                      isEdge(el) &&
+                      (el.source === selectedNodeId ||
+                        el.target === selectedNodeId)
+                  )
+                  .map((el) => el.id);
+              }
 
               setElements((elsMap) =>
                 omit(elsMap, edges.concat(selectedNodeId))
