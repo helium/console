@@ -1,5 +1,5 @@
 defmodule Console.Jobs do
-  # This module defines the jobs to be ran by Quantum scheduler 
+  # This module defines the jobs to be ran by Quantum scheduler
   # as defined in config/config.exs
 
   alias Console.Email
@@ -19,8 +19,8 @@ defmodule Console.Jobs do
     alertable_webhook_events = AlertEvents.get_unsent_alert_events_since("webhook", Timex.shift(now, minutes: buffer))
 
     # send emails for this batch, grouped by event type and label
-    Enum.each(Enum.group_by(alertable_email_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} -> 
-      send_specific_event_email(identifiers, events) 
+    Enum.each(Enum.group_by(alertable_email_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
+      send_specific_event_email(identifiers, events)
     end)
 
     Enum.each(Enum.group_by(alertable_webhook_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
@@ -75,7 +75,7 @@ defmodule Console.Jobs do
 
       # sanitize events by removing __meta__ field which causes JSON serializing differences on request end
       sanitized_events = Enum.map(events, fn e -> Map.delete(Map.from_struct(e), :__meta__) end)
-      
+
       payload = Poison.encode!(sanitized_events)
       headers = [
         {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
@@ -85,7 +85,7 @@ defmodule Console.Jobs do
     end
   end
 
-  def delete_sent_alerts do 
+  def delete_sent_alerts do
     # since events are kept as "sent" so we can check against flapping, delete them in 24-hr batches
     buffer = -24
     AlertEvents.delete_sent_alert_events_since(Timex.shift(Timex.now, hours: buffer))
@@ -93,7 +93,7 @@ defmodule Console.Jobs do
 
   def trigger_device_stops_transmitting do
     alerts = Alerts.get_alerts_by_event("device_stops_transmitting") |> Repo.preload([:alert_nodes])
-    
+
     Enum.each(alerts, fn alert ->
       alert_nodes = alert.alert_nodes
 
@@ -104,12 +104,16 @@ defmodule Console.Jobs do
       Enum.each(alert_nodes, fn an ->
         if email_config_value != nil do
           buffer = email_config_value
-          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
+          Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+            check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
+          end)
         end
 
         if webhook_config_value != nil && webhook_config_value != email_config_value do
           buffer = webhook_config_value
-          check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
+          Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+            check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
+          end)
         end
       end)
     end)
@@ -129,10 +133,10 @@ defmodule Console.Jobs do
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
-          device_name: device.name, 
+          device_name: device.name,
           device_id: device.id,
           time: last_connected_time,
-          hotspot: case event.data["hotspot"] != nil do
+          hotspot: case event != nil and event.data["hotspot"] != nil do
             false -> nil
             true -> event.data["hotspot"]
           end,
