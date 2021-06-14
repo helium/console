@@ -1,5 +1,5 @@
 defmodule Console.Jobs do
-  # This module defines the jobs to be ran by Quantum scheduler 
+  # This module defines the jobs to be ran by Quantum scheduler
   # as defined in config/config.exs
 
   alias Console.LabelNotificationEvents
@@ -19,8 +19,8 @@ defmodule Console.Jobs do
     notifiable_events = LabelNotificationEvents.get_unsent_label_notification_events_since(Timex.shift(now, minutes: buffer))
 
     # send emails for this batch, grouped by event type and label
-    Enum.each(Enum.group_by(notifiable_events, &Map.take(&1, [:label_id, :key])), fn {identifiers, events} -> 
-      send_specific_event_email(identifiers, events) 
+    Enum.each(Enum.group_by(notifiable_events, &Map.take(&1, [:label_id, :key])), fn {identifiers, events} ->
+      send_specific_event_email(identifiers, events)
       send_webhook(identifiers, events)
     end)
 
@@ -71,7 +71,7 @@ defmodule Console.Jobs do
 
       # sanitize events by removing __meta__ field which causes JSON serializing differences on request end
       sanitized_events = Enum.map(events, fn e -> Map.delete(Map.from_struct(e), :__meta__) end)
-      
+
       payload = Poison.encode!(sanitized_events)
       headers = [
         {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
@@ -81,7 +81,7 @@ defmodule Console.Jobs do
     end
   end
 
-  def delete_sent_notifications do 
+  def delete_sent_notifications do
     # since events are kept as "sent" so we can check against flapping, delete them in 24-hr batches
     buffer = -24
     LabelNotificationEvents.delete_sent_label_notification_events_since(Timex.shift(Timex.now, hours: buffer))
@@ -89,10 +89,12 @@ defmodule Console.Jobs do
 
   def trigger_device_stops_transmitting do
     settings_device_stops_working = LabelNotificationSettings.get_label_notification_settings_by_key("device_stops_transmitting")
-    Enum.each(settings_device_stops_working, fn setting -> 
+    Enum.each(settings_device_stops_working, fn setting ->
       # value in the setting determines period of time to check if device stopped connecting
       buffer = String.to_integer(setting.value)
-      check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: -buffer))
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        check_device_stop_transmitting(setting.label_id, Timex.shift(Timex.now, minutes: -buffer))
+      end)
     end)
   end
 
@@ -104,16 +106,16 @@ defmodule Console.Jobs do
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
-          device_name: device.name, 
+          device_name: device.name,
           device_id: device.id,
           time: last_connected_time,
-          hotspot: case event.data["hotspot"] != nil do
+          hotspot: case event != nil and event.data["hotspot"] != nil do
             false -> nil
             true -> event.data["hotspot"]
           end
         }
         limit = %{ device_id: device.id, time_buffer: Timex.shift(Timex.now, hours: -24) }
-        LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details, limit) 
+        LabelNotificationEvents.notify_label_event([label_id], "device_stops_transmitting", details, limit)
       end
     end)
   end
