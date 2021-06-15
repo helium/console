@@ -4,12 +4,16 @@ import { logout } from '../components/auth/Auth0Provider';
 import analyticsLogger from '../util/analyticsLogger';
 
 export const LOGGED_OUT = 'LOGGED_OUT';
-export const FETCHED_MFA_ENROLLMENT = "FETCHED_MFA_ENROLLMENT";
 
 export const getMfaStatus = () => {
-  return  async (dispatch) => {
-    var response = await rest.get('/api/mfa_enrollments');
-    dispatch(fetchedMfaStatus(response.data.enrollment_status));
+  return (dispatch) => {
+    return rest.get('/api/mfa_enrollments');
+  }
+}
+
+export const enrollInMfa = () => {
+  return (dispatch) => {
+    return rest.post('/api/mfa_enrollments');
   }
 }
 
@@ -25,13 +29,6 @@ export const subscribeNewUser = (email) => {
   return (dispatch) => {
     rest.post(`/api/subscribe_new_user`, { email })
     .then(() => {})
-  }
-}
-
-export const fetchedMfaStatus = (status) => {
-  return {
-    type: FETCHED_MFA_ENROLLMENT,
-    mfaEnrollmentStatus: status
   }
 }
 

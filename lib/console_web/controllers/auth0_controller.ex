@@ -38,6 +38,37 @@ defmodule ConsoleWeb.Auth0Controller do
     end
   end
 
+  def enroll_in_mfa(conn, _params) do
+    base_url = Application.get_env(:console, :auth0_baseurl)
+    auth0_id = conn.assigns.auth0_id
+    case Application.get_env(:console, :auth0_expiration) do
+      nil ->
+        # Get new Auth0 Management Token
+        fetch_new_auth0_token()
+      expiration ->
+        if expiration <= DateTime.utc_now() do
+          fetch_new_auth0_token()
+        end
+    end
+
+    {:ok, body} = Poison.encode(%{
+      user_id: auth0_id,
+      email: conn.assigns.email,
+      send_mail: true,
+    })
+
+    response =
+      "#{base_url}/api/v2/guardian/enrollments/ticket"
+        |> HTTPoison.post!(
+          body,
+          [{"content-type", "application/json"}, {"Authorization", "Bearer #{Application.get_env(:console, :auth0_token)}"}]
+        )
+
+    with 200 <- response.status_code do
+      conn |> send_resp(:ok, "")
+    end
+  end
+
   def subscribe_new_user(conn, %{ "email" => email }) do
     ConsoleWeb.Mailerlite.subscribe(email)
 

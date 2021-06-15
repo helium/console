@@ -3,15 +3,15 @@ import withGql from '../../graphql/withGql'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { logOut } from '../../actions/auth';
+import { logOut, getMfaStatus, enrollInMfa } from '../../actions/auth';
 import { generateKey, deleteKey } from '../../actions/apiKeys';
 import DashboardLayout from '../common/DashboardLayout';
 import UserCan from '../common/UserCan';
 import ProfileNewKeyModal from './ProfileNewKeyModal';
 import RoleName from '../common/RoleName';
 import analyticsLogger from '../../util/analyticsLogger';
+import { displayInfo } from '../../util/messages';
 import { ALL_API_KEYS } from '../../graphql/apiKeys';
-import { getMfaStatus } from '../../actions/auth';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { loginWithRedirect } from '../auth/Auth0Provider';
@@ -24,6 +24,7 @@ class Profile extends Component {
     name: "",
     role: null,
     newKey: null,
+    showEnrollButton: null,
   }
 
   componentDidMount() {
@@ -33,6 +34,11 @@ class Profile extends Component {
     this.channel.join()
     this.channel.on(`graphql:api_keys:${currentOrganizationId}:api_key_list_update`, (message) => {
       this.props.apiKeysQuery.refetch()
+    })
+
+    this.props.getMfaStatus()
+    .then(({ data }) => {
+      this.setState({ showEnrollButton: !data.enrollment_status })
     })
   }
 
@@ -61,16 +67,16 @@ class Profile extends Component {
     this.setState({ newKey: null })
   }
 
-  handleEnrollInMfa = async () => {
-    await loginWithRedirect({
-      mode: 'enroll_mfa',
-      redirect_uri: window.location.href
-    });
+  handleEnrollInMfa = () => {
+    this.props.enrollInMfa()
+    .then(response => {
+      if (response.status === 200) displayInfo("Please check your email for a Two-Factor sign up link")
+    })
   }
 
   render() {
     const { email } = this.props.user;
-    const { role, mfaEnrollmentStatus } = this.props;
+    const { role } = this.props;
     const { logOut } = this.props
     const { apiKeys } = this.props.apiKeysQuery
     const { newKey } = this.state
@@ -127,16 +133,30 @@ class Profile extends Component {
             </Descriptions>
 
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
-              <UserCan noManager>
-                <Button
-                  type="primary"
-                  onClick={this.handleEnrollInMfa}
-                  style={{ marginRight: 10 }}
-                  disabled={mfaEnrollmentStatus}
-                >
-                  { (!mfaEnrollmentStatus && "Enroll In 2FA") || "Enrolled In 2FA" }
-                </Button>
-              </UserCan>
+              {
+                this.state.showEnrollButton && (
+                  <UserCan noManager>
+                    <Button
+                      type="primary"
+                      onClick={this.handleEnrollInMfa}
+                      style={{ marginRight: 10 }}
+                    >
+                      Enroll In 2FA
+                    </Button>
+                  </UserCan>
+                )
+              }
+              {
+                this.state.showEnrollButton === false && (
+                  <Button
+                    type="primary"
+                    style={{ marginRight: 10 }}
+                    disabled
+                  >
+                    Enrolled In 2FA
+                  </Button>
+                )
+              }
               <Button
                 type="danger"
                 onClick={() => {
@@ -202,14 +222,13 @@ class Profile extends Component {
 function mapStateToProps(state) {
   return {
     role: state.organization.currentRole,
-    mfaEnrollmentStatus: state.auth.mfaEnrollmentStatus,
     socket: state.apollo.socket,
     currentOrganizationId: state.organization.currentOrganizationId
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, generateKey, deleteKey, getMfaStatus }, dispatch)
+  return bindActionCreators({ logOut, generateKey, deleteKey, getMfaStatus, enrollInMfa }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
