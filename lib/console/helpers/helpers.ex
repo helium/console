@@ -70,4 +70,11 @@ defmodule Console.Helpers do
   def check_special_characters(string) do
     String.match?(string, ~r/^[A-Za-z0-9\(\)\[\]\-\_\+\|\!\?\:\s]+$/)
   end
+
+  def order_with_nulls(order) do
+    case order do
+      "asc" -> "asc_nulls_first"
+      "desc" -> "desc_nulls_last"
+    end
+  end
 end
