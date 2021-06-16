@@ -87,6 +87,13 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   * Build with `docker-compose build`
   * Run with `docker-compose up`
 
+## Upgrading your open source Console+Router
+
+  * Pull down the latest master branch with git
+  * Build with `docker-compose build`, you do not have to bring down your server until this completes
+  * Bring down your server with `docker-compose down`, then run your new build with `docker-compose up`
+  * If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
+
 ## Questions
 
 If you run into any issues or you have any questions about how to get started contributing, feel free to reach out on the `#console` channel in [the official Helium Community Discord server](http://discord.gg/helium)!
