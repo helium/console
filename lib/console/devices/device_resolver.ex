@@ -1,6 +1,7 @@
 defmodule Console.Devices.DeviceResolver do
   alias Console.Repo
   alias Console.Devices.Device
+  alias Console.Helpers
   alias Console.Devices.DeviceImports
   alias Console.Events.Event
   alias Console.Labels.DevicesLabels
@@ -8,7 +9,7 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Alerts
 
   def paginate(%{page: page, page_size: page_size, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
-    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+    order_by = {String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}
 
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
@@ -119,7 +120,7 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def paginate_by_label(%{page: page, page_size: page_size, label_id: label_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
-    order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
+    order_by = {String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}
 
     query = from d in Device,
       join: dl in DevicesLabels,

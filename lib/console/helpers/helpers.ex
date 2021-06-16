@@ -42,4 +42,11 @@ defmodule Console.Helpers do
       value != %{}
     end)
   end
+
+  def order_with_nulls(order) do
+    case order do
+      "asc" -> "asc_nulls_first"
+      "desc" -> "desc_nulls_last"
+    end
+  end
 end
