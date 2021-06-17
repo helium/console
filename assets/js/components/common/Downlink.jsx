@@ -307,9 +307,13 @@ class Downlink extends Component {
 }
 
 const b64DecodeUnicode = (str) => {
-  return decodeURIComponent(atob(str).split('').map(function(c) {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  try {
+    return decodeURIComponent(atob(str).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  } catch(err) {
+    return "Cannot decode to Unicode"
+  }
 }
 
 export default Downlink;
