@@ -113,13 +113,14 @@ class PacketGraph extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { events } = this.props;
-
-    if (prevProps.events.length !== events.length) {
+    if (
+      prevProps.events.length !== this.props.events.length ||
+      (prevProps.events[0] && this.props.events[0] && prevProps.events[0].integrations.length !== this.props.events[0].integrations.length)
+    ) {
       clearInterval(this.chartUpdateInterval);
-      this.updateChart(events);
+      this.updateChart();
       this.chartUpdateInterval = setInterval(() => {
-        this.updateChart(events);
+        this.updateChart();
       }, 5000);
     }
   }
@@ -128,12 +129,12 @@ class PacketGraph extends Component {
     clearInterval(this.chartUpdateInterval);
   }
 
-  updateChart = (events) => {
+  updateChart = () => {
     const success = [];
     const error = [];
     const noIntegration = [];
 
-    events.forEach((event) => {
+    this.props.events.forEach((event) => {
       const currentTime = Date.now();
       const eventTime = parseInt(event.reported_at);
       const timeDiff = currentTime - eventTime;
