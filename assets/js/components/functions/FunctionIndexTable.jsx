@@ -69,7 +69,7 @@ class FunctionIndexTable extends Component {
       {
         title: 'Type',
         dataIndex: 'format',
-        render: text => <span>{functionFormats[text]}</span>
+        render: text => functionFormats[text]
       },
       {
         title: 'Applied To',
@@ -254,6 +254,13 @@ class FunctionIndexTable extends Component {
                 rowKey={record => record.id}
                 pagination={false}
                 style={{ minWidth: 800 }}
+                onRow={(record, rowIndex) => ({
+                  onClick: e => {
+                    if (e.target.tagName === 'TD') {
+                      this.props.history.push(`/functions/${record.id}`)
+                    }
+                  }
+                })}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination

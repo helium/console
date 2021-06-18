@@ -158,6 +158,13 @@ class ChannelsTable extends Component {
               rowKey={record => record.id}
               pagination={false}
               style={{ minWidth: 800 }}
+              onRow={(record, rowIndex) => ({
+                onClick: e => {
+                  if (e.target.tagName === 'TD') {
+                    this.props.history.push(`/integrations/${record.id}`)
+                  }
+                }
+              })}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination

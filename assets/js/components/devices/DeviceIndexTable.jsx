@@ -405,6 +405,13 @@ class DeviceIndexTable extends Component {
                 rowSelection={rowSelection}
                 onChange={this.handleSort}
                 style={{ minWidth: 800 }}
+                onRow={(record, rowIndex) => ({
+                  onClick: e => {
+                    if (e.target.tagName === 'TD') {
+                      this.props.history.push(`/devices/${record.id}`)
+                    }
+                  }
+                })}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination

@@ -125,7 +125,7 @@ class LabelIndexTable extends Component {
       {
         title: 'No. of Devices',
         dataIndex: 'devices',
-        render: (text, record) => <Text>{record.devices.length}</Text>
+        render: (text, record) => record.devices.length
       },
       {
         title: 'Creator',
@@ -274,6 +274,13 @@ class LabelIndexTable extends Component {
               rowSelection={rowSelection}
               onChange={this.handleSort}
               style={{ minWidth: 800 }}
+              onRow={(record, rowIndex) => ({
+                onClick: e => {
+                  if (e.target.tagName === 'TD') {
+                    this.props.history.push(`/labels/${record.id}`)
+                  }
+                }
+              })}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination
