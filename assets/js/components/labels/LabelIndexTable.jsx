@@ -95,7 +95,7 @@ class LabelIndexTable extends Component {
         sorter: true,
         render: (text, record) => (
           <React.Fragment>
-            <Link to={`/labels/${record.id}`}>{text} </Link><LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/>
+            <Link to={`/labels/${record.id}`}>{text} <LabelTag text={text} color={record.color} style={{ marginLeft: 10 }} hasIntegrations={record.channels.length > 0} hasFunction={record.function}/></Link>
             {
               record.devices.find(d => moment().utc().local().subtract(1, 'days').isBefore(moment.utc(d.last_connected).local())) &&
                 <StatusIcon tooltipTitle='One or more attached devices last connected within the last 24h' style={{ marginLeft: "2px" }} {...this.props} />
@@ -110,18 +110,13 @@ class LabelIndexTable extends Component {
           <div>
             {
               record.channels.map(c => (
-                <a
+                <Link
                   key={c.id}
                   style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
+                  to={`/integrations/${c.id}`}
                 >
                   {c.name}
-                </a>
+                </Link>
               ))
             }
           </div>
@@ -130,7 +125,7 @@ class LabelIndexTable extends Component {
       {
         title: 'No. of Devices',
         dataIndex: 'devices',
-        render: (text, record) => <Text>{record.devices.length}</Text>
+        render: (text, record) => record.devices.length
       },
       {
         title: 'Creator',
@@ -272,17 +267,20 @@ class LabelIndexTable extends Component {
       >
           <React.Fragment>
             <Table
-              onRow={(record, rowIndex) => ({
-                onClick: () => this.props.history.push(`/labels/${record.id}`)
-              })}
               columns={columns}
               dataSource={labels.entries}
               rowKey={record => record.id}
               pagination={false}
               rowSelection={rowSelection}
-              rowClassName="clickable-row"
               onChange={this.handleSort}
               style={{ minWidth: 800 }}
+              onRow={(record, rowIndex) => ({
+                onClick: e => {
+                  if (e.target.tagName === 'TD') {
+                    this.props.history.push(`/labels/${record.id}`)
+                  }
+                }
+              })}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination

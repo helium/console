@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom';
 import withGql from '../../graphql/withGql'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -74,16 +75,11 @@ class LabelShowFunctionsAttached extends Component {
               {
                 func && (
                   <span>
-                    <a
-                      href={`/functions/${func.id}`}
-                      onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.props.push(`/functions/${func.id}`)
-                      }}
+                    <Link
+                      to={`/functions/${func.id}`}
                     >
                       {func.name}
-                    </a>
+                    </Link>
                     <Button
                       size="small"
                       type="danger"

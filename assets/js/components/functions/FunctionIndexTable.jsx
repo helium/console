@@ -69,7 +69,7 @@ class FunctionIndexTable extends Component {
       {
         title: 'Type',
         dataIndex: 'format',
-        render: text => <span>{functionFormats[text]}</span>
+        render: text => functionFormats[text]
       },
       {
         title: 'Applied To',
@@ -81,28 +81,32 @@ class FunctionIndexTable extends Component {
                 <UserCan
                   key={l.id}
                   alternate={
+                    <Link to={`/labels/${l.id}`}>
+                      <LabelTag
+                        key={l.name}
+                        text={l.name}
+                        color={l.color}
+                        hasIntegrations={l.channels && l.channels.length > 0}
+                        hasFunction
+                      />
+                    </Link>
+                  }
+                >
+                  <Link to={`/labels/${l.id}`}>
                     <LabelTag
                       key={l.name}
                       text={l.name}
                       color={l.color}
+                      closable
                       hasIntegrations={l.channels && l.channels.length > 0}
                       hasFunction
+                      onClose={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        this.props.openRemoveFunctionLabelModal(record, l)
+                      }}
                     />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    color={l.color}
-                    closable
-                    hasIntegrations={l.channels && l.channels.length > 0}
-                    hasFunction
-                    onClose={e => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      this.props.openRemoveFunctionLabelModal(record, l)
-                    }}
-                  />
+                  </Link>
                 </UserCan>
               ))
             }
@@ -116,18 +120,13 @@ class FunctionIndexTable extends Component {
           return (<div>
             {
               record.channels && record.channels.map(c => (
-                <a
+                <Link
                   key={c.id}
                   style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
+                  to={`/integrations/${c.id}`}
                 >
                   {c.name}
-                </a>
+                </Link>
               ))
             }
             { record.channels && record.channels.length === 0 && <Text type="danger">None</Text>}
@@ -250,15 +249,18 @@ class FunctionIndexTable extends Component {
             >
             <React.Fragment>
               <Table
-                onRow={(record, rowIndex) => ({
-                  onClick: () => this.props.history.push(`/functions/${record.id}`)
-                })}
                 columns={columns}
                 dataSource={functions.entries}
                 rowKey={record => record.id}
                 pagination={false}
-                rowClassName="clickable-row"
                 style={{ minWidth: 800 }}
+                onRow={(record, rowIndex) => ({
+                  onClick: e => {
+                    if (e.target.tagName === 'TD') {
+                      this.props.history.push(`/functions/${record.id}`)
+                    }
+                  }
+                })}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
                 <Pagination

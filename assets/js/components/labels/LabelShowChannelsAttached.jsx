@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux'
 import find from 'lodash/find'
 import sortBy from 'lodash/sortBy'
@@ -71,16 +72,11 @@ class LabelShowChannelsAttached extends Component {
               {
                 channels && channels.map(c => (
                   <span key={c.id}>
-                    <a
-                      href={`/integrations/${c.id}`}
-                      onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        this.props.push(`/integrations/${c.id}`)
-                      }}
+                    <Link
+                      to={`/integrations/${c.id}`}
                     >
                       {c.name}
-                    </a>
+                    </Link>
                     <Button
                       size="small"
                       type="danger"

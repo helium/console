@@ -95,7 +95,7 @@ class LabelShowTable extends Component {
         dataIndex: 'name',
         sorter: true,
         render: (text, record) => (
-          <Link to={"#"}>
+          <Link to={`/devices/${record.id}`}>
             {text}
             {
               moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
@@ -110,9 +110,15 @@ class LabelShowTable extends Component {
         render: (text, record) => (
           <span>
             {
-              record.labels.map(l => (
-                <LabelTag key={l.name} text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
-              ))
+              record.labels.map(l => {
+                if (this.props.labelId === l.id) {
+                  return <LabelTag key={l.id} text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
+                } else {
+                  return <Link key={l.id} to={`/labels/${l.id}`}>
+                    <LabelTag text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
+                  </Link>
+                }
+              })
             }
           </span>
         )
@@ -205,9 +211,6 @@ class LabelShowTable extends Component {
         }
       >
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/devices/${record.id}`)
-          })}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={record => record.id}
@@ -215,6 +218,13 @@ class LabelShowTable extends Component {
           rowSelection={rowSelection}
           onChange={this.handleSortChange}
           style={{ minWidth: 800 }}
+          onRow={(record, rowIndex) => ({
+            onClick: e => {
+              if (e.target.tagName === 'TD') {
+                this.props.history.push(`/devices/${record.id}`)
+              }
+            }
+          })}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

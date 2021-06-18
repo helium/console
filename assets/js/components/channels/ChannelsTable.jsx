@@ -70,17 +70,14 @@ class ChannelsTable extends Component {
           return <React.Fragment>
             {
               labels.map(l => (
+                <Link to={`/labels/${l.id}`} key={l.id}>
                   <LabelTag
-                    key={l.name}
                     text={l.name}
                     color={l.color}
                     hasIntegrations
                     hasFunction={l.function}
-                    onClick={e => {
-                      e.stopPropagation();
-                      this.props.history.push(`/labels/${l.id}`)}
-                    }
                   />
+                </Link>
               ))
             }
           </React.Fragment>
@@ -156,15 +153,18 @@ class ChannelsTable extends Component {
         { channels.entries.length > 0 && (
           <React.Fragment>
             <Table
-              onRow={(record, rowIndex) => ({
-                onClick: () => this.props.history.push(`/integrations/${record.id}`)
-              })}
               columns={columns}
               dataSource={channels.entries}
               rowKey={record => record.id}
               pagination={false}
-              rowClassName="clickable-row"
               style={{ minWidth: 800 }}
+              onRow={(record, rowIndex) => ({
+                onClick: e => {
+                  if (e.target.tagName === 'TD') {
+                    this.props.history.push(`/integrations/${record.id}`)
+                  }
+                }
+              })}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
               <Pagination
