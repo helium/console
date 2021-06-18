@@ -110,18 +110,13 @@ class LabelIndexTable extends Component {
           <div>
             {
               record.channels.map(c => (
-                <a
+                <Link
                   key={c.id}
                   style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
+                  to={`/integrations/${c.id}`}
                 >
                   {c.name}
-                </a>
+                </Link>
               ))
             }
           </div>
@@ -272,15 +267,11 @@ class LabelIndexTable extends Component {
       >
           <React.Fragment>
             <Table
-              onRow={(record, rowIndex) => ({
-                onClick: () => this.props.history.push(`/labels/${record.id}`)
-              })}
               columns={columns}
               dataSource={labels.entries}
               rowKey={record => record.id}
               pagination={false}
               rowSelection={rowSelection}
-              rowClassName="clickable-row"
               onChange={this.handleSort}
               style={{ minWidth: 800 }}
             />

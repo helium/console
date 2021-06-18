@@ -95,7 +95,7 @@ class LabelShowTable extends Component {
         dataIndex: 'name',
         sorter: true,
         render: (text, record) => (
-          <Link to={"#"}>
+          <Link to={`/devices/${record.id}`}>
             {text}
             {
               moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
@@ -205,9 +205,6 @@ class LabelShowTable extends Component {
         }
       >
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/devices/${record.id}`)
-          })}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={record => record.id}

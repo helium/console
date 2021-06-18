@@ -116,18 +116,13 @@ class FunctionIndexTable extends Component {
           return (<div>
             {
               record.channels && record.channels.map(c => (
-                <a
+                <Link
                   key={c.id}
                   style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
+                  to={`/integrations/${c.id}`}
                 >
                   {c.name}
-                </a>
+                </Link>
               ))
             }
             { record.channels && record.channels.length === 0 && <Text type="danger">None</Text>}
@@ -250,14 +245,10 @@ class FunctionIndexTable extends Component {
             >
             <React.Fragment>
               <Table
-                onRow={(record, rowIndex) => ({
-                  onClick: () => this.props.history.push(`/functions/${record.id}`)
-                })}
                 columns={columns}
                 dataSource={functions.entries}
                 rowKey={record => record.id}
                 pagination={false}
-                rowClassName="clickable-row"
                 style={{ minWidth: 800 }}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>

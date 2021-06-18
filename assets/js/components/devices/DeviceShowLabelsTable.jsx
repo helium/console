@@ -69,18 +69,7 @@ class DeviceShowLabelsTable extends Component {
           <div>
             {
               record.channels.length > 0 ? record.channels.map(c => (
-                <a
-                  key={c.id}
-                  style={{ marginRight: 8 }}
-                  href={`/integrations/${c.id}`}
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.props.history.push(`/integrations/${c.id}`)
-                  }}
-                >
-                  {c.name}
-                </a>
+                <Link key={c.id} style={{ marginRight: 8 }} to={`/integrations/${c.id}`}>{c.name} </Link>
               )) : <Text type="danger">None</Text>
             }
           </div>
@@ -140,9 +129,6 @@ class DeviceShowLabelsTable extends Component {
         }
       >
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/labels/${record.id}`)
-          })}
           columns={columns}
           dataSource={labels_by_device.entries}
           rowKey={record => record.id}

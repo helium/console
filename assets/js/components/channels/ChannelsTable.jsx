@@ -156,14 +156,10 @@ class ChannelsTable extends Component {
         { channels.entries.length > 0 && (
           <React.Fragment>
             <Table
-              onRow={(record, rowIndex) => ({
-                onClick: () => this.props.history.push(`/integrations/${record.id}`)
-              })}
               columns={columns}
               dataSource={channels.entries}
               rowKey={record => record.id}
               pagination={false}
-              rowClassName="clickable-row"
               style={{ minWidth: 800 }}
             />
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
