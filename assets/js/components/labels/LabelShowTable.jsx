@@ -110,9 +110,15 @@ class LabelShowTable extends Component {
         render: (text, record) => (
           <span>
             {
-              record.labels.map(l => (
-                <LabelTag key={l.name} text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
-              ))
+              record.labels.map(l => {
+                if (this.props.labelId === l.id) {
+                  return <LabelTag key={l.id} text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
+                } else {
+                  return <Link key={l.id} to={`/labels/${l.id}`}>
+                    <LabelTag text={l.name} color={l.color} hasFunction={l.function} hasIntegrations={l.channels.length > 0}/>
+                  </Link>
+                }
+              })
             }
           </span>
         )

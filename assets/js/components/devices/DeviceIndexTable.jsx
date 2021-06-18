@@ -133,35 +133,32 @@ class DeviceIndexTable extends Component {
                 <UserCan
                   key={l.id}
                   alternate={
+                    <Link to={`/labels/${l.id}`}>
+                      <LabelTag
+                        key={l.name}
+                        text={l.name}
+                        color={l.color}
+                        hasIntegrations={l.channels.length > 0}
+                        hasFunction={l.function}
+                      />
+                    </Link>
+                  }
+                >
+                  <Link to={`/labels/${l.id}`}>
                     <LabelTag
                       key={l.name}
                       text={l.name}
                       color={l.color}
+                      closable
                       hasIntegrations={l.channels.length > 0}
                       hasFunction={l.function}
-                      onClick={e => {
-                        e.stopPropagation();
-                        history.push(`/labels/${l.id}`)}
-                      }
+                      onClose={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        this.props.openDevicesRemoveLabelModal([l], record)
+                      }}
                     />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    color={l.color}
-                    closable
-                    hasIntegrations={l.channels.length > 0}
-                    hasFunction={l.function}
-                    onClose={e => {
-                      e.preventDefault()
-                      this.props.openDevicesRemoveLabelModal([l], record)
-                    }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      history.push(`/labels/${l.id}`)}
-                    }
-                  />
+                  </Link>
                 </UserCan>
               )) : <Text type="danger">None</Text>
             }

@@ -70,17 +70,14 @@ class ChannelsTable extends Component {
           return <React.Fragment>
             {
               labels.map(l => (
+                <Link to={`/labels/${l.id}`} key={l.id}>
                   <LabelTag
-                    key={l.name}
                     text={l.name}
                     color={l.color}
                     hasIntegrations
                     hasFunction={l.function}
-                    onClick={e => {
-                      e.stopPropagation();
-                      this.props.history.push(`/labels/${l.id}`)}
-                    }
                   />
+                </Link>
               ))
             }
           </React.Fragment>

@@ -81,28 +81,32 @@ class FunctionIndexTable extends Component {
                 <UserCan
                   key={l.id}
                   alternate={
+                    <Link to={`/labels/${l.id}`}>
+                      <LabelTag
+                        key={l.name}
+                        text={l.name}
+                        color={l.color}
+                        hasIntegrations={l.channels && l.channels.length > 0}
+                        hasFunction
+                      />
+                    </Link>
+                  }
+                >
+                  <Link to={`/labels/${l.id}`}>
                     <LabelTag
                       key={l.name}
                       text={l.name}
                       color={l.color}
+                      closable
                       hasIntegrations={l.channels && l.channels.length > 0}
                       hasFunction
+                      onClose={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        this.props.openRemoveFunctionLabelModal(record, l)
+                      }}
                     />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    color={l.color}
-                    closable
-                    hasIntegrations={l.channels && l.channels.length > 0}
-                    hasFunction
-                    onClose={e => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      this.props.openRemoveFunctionLabelModal(record, l)
-                    }}
-                  />
+                  </Link>
                 </UserCan>
               ))
             }
