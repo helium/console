@@ -26,7 +26,7 @@ class FunctionIndexTable extends Component {
       {
         title: 'Type',
         dataIndex: 'format',
-        render: text => <span>{functionFormats[text]}</span>
+        render: text => functionFormats[text]
       },
       {
         title: '',
@@ -67,15 +67,18 @@ class FunctionIndexTable extends Component {
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Functions</Text>
         </div>
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/functions/${record.id}`)
-          })}
           columns={columns}
           dataSource={functions.entries}
           rowKey={record => record.id}
           pagination={false}
-          rowClassName="clickable-row"
           style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+          onRow={(record, rowIndex) => ({
+            onClick: e => {
+              if (e.target.tagName === 'TD') {
+                this.props.history.push(`/functions/${record.id}`)
+              }
+            }
+          })}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination

@@ -120,6 +120,14 @@ export default (props) => {
         columns={columns}
         rowKey={(record) => record.id}
         pagination={false}
+        style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+        onRow={(record, rowIndex) => ({
+          onClick: e => {
+            if (e.target.tagName === 'TD') {
+              props.history.push(`/alerts/${record.id}`)
+            }
+          }
+        })}
       />
     </Fragment>
   );

@@ -58,10 +58,7 @@ class DeviceShowLabelsTable extends Component {
         title: "Labels",
         dataIndex: "name",
         render: (text, record) => (
-          <React.Fragment>
-            <Link to="#">{text} </Link>
-            <LabelTag text={text} style={{ marginLeft: 10 }} />
-          </React.Fragment>
+          <Link to={`/labels/${record.id}`}>{text} <LabelTag text={text} style={{ marginLeft: 10 }} /></Link>
         ),
       },
       {
@@ -126,6 +123,13 @@ class DeviceShowLabelsTable extends Component {
           rowKey={(record) => record.id}
           pagination={false}
           style={{ minWidth: 800 }}
+          onRow={(record, rowIndex) => ({
+            onClick: e => {
+              if (e.target.tagName === 'TD') {
+                this.props.history.push(`/labels/${record.id}`)
+              }
+            }
+          })}
         />
         <div
           style={{

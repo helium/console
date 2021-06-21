@@ -116,6 +116,7 @@ export default (props) => {
           <MultiBuyIndexTable
             data={multiBuyData}
             openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
+            history={history}
           />
         )}
         {showPage === "new" && <MultiBuyForm />}

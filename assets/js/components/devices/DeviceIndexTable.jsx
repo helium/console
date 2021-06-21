@@ -129,21 +129,26 @@ class DeviceIndexTable extends Component {
                 <UserCan
                   key={l.id}
                   alternate={
+                    <Link to={`/labels/${l.id}`}>
+                      <LabelTag
+                        key={l.name}
+                        text={l.name}
+                      />
+                    </Link>
+                  }
+                >
+                  <Link to={`/labels/${l.id}`}>
                     <LabelTag
                       key={l.name}
                       text={l.name}
+                      closable
+                      onClose={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        this.props.openDevicesRemoveLabelModal([l], record)
+                      }}
                     />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    closable
-                    onClose={e => {
-                      e.preventDefault()
-                      this.props.openDevicesRemoveLabelModal([l], record)
-                    }}
-                  />
+                  </Link>
                 </UserCan>
               )) : <Text type="danger">None</Text>
             }
@@ -289,13 +294,14 @@ class DeviceIndexTable extends Component {
             pagination={false}
             rowSelection={rowSelection}
             onChange={this.handleSort}
+            style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
             onRow={(record, rowIndex) => ({
               onClick: e => {
-                this.props.history.push(`/devices/${record.id}`)
+                if (e.target.tagName === 'TD') {
+                  this.props.history.push(`/devices/${record.id}`)
+                }
               }
             })}
-            rowClassName="clickable-row"
-            style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
           />
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>
             <Select

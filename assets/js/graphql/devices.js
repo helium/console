@@ -104,6 +104,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
         inserted_at,
         last_connected,
         labels {
+          id
           name
         }
       },
