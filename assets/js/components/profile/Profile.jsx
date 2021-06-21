@@ -14,7 +14,6 @@ import { displayInfo } from '../../util/messages';
 import { ALL_API_KEYS } from '../../graphql/apiKeys';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
-import { loginWithRedirect } from '../auth/Auth0Provider';
 import * as rest from '../../util/rest';
 const { Text } = Typography
 const { Option } = Select

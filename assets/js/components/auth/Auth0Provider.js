@@ -11,6 +11,7 @@ export const Auth0Context = React.createContext();
 export const useAuth0 = () => useContext(Auth0Context);
 
 let _initOptions;
+let auth0Client;
 
 const getAuth0Client = () => {
   return new Promise(async (resolve, reject) => {
@@ -23,21 +24,14 @@ const getAuth0Client = () => {
   })
 }
 
-export const getIdTokenClaims = async (...p) => {
-  const client = await getAuth0Client();
-  return await client.getIdTokenClaims(...p);
-}
-
-export const loginWithRedirect = async (...p) => {
-  const client = await getAuth0Client();
-  return await client.loginWithRedirect(...p);
+export const getIdTokenClaims = async () => {
+  return await auth0Client.getIdTokenClaims();
 }
 
 export const logout = async (...p) => {
   window.Intercom('shutdown')
 
-  const client = await getAuth0Client();
-  return await client.logout(...p);
+  return await auth0Client.logout(...p);
 }
 
 export const Auth0Provider = ({
@@ -47,29 +41,27 @@ export const Auth0Provider = ({
 }) => {
     const [isAuthenticated, setIsAuthenticated] = useState();
     const [user, setUser] = useState();
-    const [auth0Client, setAuth0] = useState();
     const [loading, setLoading] = useState(true);
     const [popupOpen, setPopupOpen] = useState(false);
 
     useEffect(() => {
       const initAuth0 = async () => {
         _initOptions = initOptions;
-        const auth0FromHook = await getAuth0Client();
-        setAuth0(auth0FromHook);
+        auth0Client = await getAuth0Client();
 
         if (
           window.location.search.includes("code=") &&
           window.location.search.includes("state=")
         ) {
-          const { appState } = await auth0FromHook.handleRedirectCallback();
+          const { appState } = await auth0Client.handleRedirectCallback();
           onRedirectCallback(appState);
         }
 
-        const isAuthenticated = await auth0FromHook.isAuthenticated();
+        const isAuthenticated = await auth0Client.isAuthenticated();
         setIsAuthenticated(isAuthenticated);
 
         if (isAuthenticated) {
-          const user = await auth0FromHook.getUser();
+          const user = await auth0Client.getUser();
 
           if (!process.env.SELF_HOSTED) {
             const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
