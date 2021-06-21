@@ -190,6 +190,7 @@ export default (props) => {
           <AlertIndexTable
             data={alertsData}
             openDeleteAlertModal={openDeleteAlertModal}
+            history={history}
           />
         )}
       </TableHeader>

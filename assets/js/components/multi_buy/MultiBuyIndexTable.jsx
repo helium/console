@@ -19,7 +19,7 @@ export default (props) => {
       title: 'Multiple Packet Value',
       dataIndex: 'value',
       render: data => (
-        <span>{data === 10 ? "All Available" : "Up to " + data}</span>
+        data === 10 ? "All Available" : "Up to " + data
       )
     },
     {
@@ -54,6 +54,14 @@ export default (props) => {
         columns={columns}
         rowKey={record => record.id}
         pagination={false}
+        style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+        onRow={(record, rowIndex) => ({
+          onClick: e => {
+            if (e.target.tagName === 'TD') {
+              props.history.push(`/multi_buys/${record.id}`)
+            }
+          }
+        })}
       />
     </Fragment>
   );
