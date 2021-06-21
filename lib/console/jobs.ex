@@ -129,7 +129,7 @@ defmodule Console.Jobs do
       end
 
     Enum.each(devices, fn device ->
-      if device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
+      if device.active and device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
         event = Events.get_device_last_event(device.id)
         { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
         details = %{
