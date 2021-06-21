@@ -58,10 +58,7 @@ class DeviceShowLabelsTable extends Component {
         title: "Labels",
         dataIndex: "name",
         render: (text, record) => (
-          <React.Fragment>
-            <Link to="#">{text} </Link>
-            <LabelTag text={text} style={{ marginLeft: 10 }} />
-          </React.Fragment>
+          <Link to={`/labels/${record.id}`}>{text} <LabelTag text={text} style={{ marginLeft: 10 }} /></Link>
         ),
       },
       {

@@ -289,12 +289,6 @@ class DeviceIndexTable extends Component {
             pagination={false}
             rowSelection={rowSelection}
             onChange={this.handleSort}
-            onRow={(record, rowIndex) => ({
-              onClick: e => {
-                this.props.history.push(`/devices/${record.id}`)
-              }
-            })}
-            rowClassName="clickable-row"
             style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
           />
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>

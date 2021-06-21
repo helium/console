@@ -67,14 +67,10 @@ class FunctionIndexTable extends Component {
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Functions</Text>
         </div>
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/functions/${record.id}`)
-          })}
           columns={columns}
           dataSource={functions.entries}
           rowKey={record => record.id}
           pagination={false}
-          rowClassName="clickable-row"
           style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>

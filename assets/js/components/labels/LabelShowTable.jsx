@@ -225,9 +225,6 @@ class LabelShowTable extends Component {
           </div>
         </div>
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/devices/${record.id}`)
-          })}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={record => record.id}

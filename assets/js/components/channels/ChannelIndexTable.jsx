@@ -49,14 +49,10 @@ class ChannelIndexTable extends Component {
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Integrations</Text>
         </div>
         <Table
-          onRow={(record, rowIndex) => ({
-            onClick: () => this.props.history.push(`/integrations/${record.id}`)
-          })}
           columns={columns}
           dataSource={channels.entries}
           rowKey={record => record.id}
           pagination={false}
-          rowClassName="clickable-row"
           style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
