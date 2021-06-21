@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
-import { isEdge, isNode } from "react-flow-renderer";
+import { isEdge, isNode, ReactFlowProvider } from "react-flow-renderer";
 import { Prompt } from "react-router";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
@@ -9,7 +9,7 @@ import { getIntegrationTypeForFlows } from "../../util/flows";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin } from "antd";
-import find from 'lodash/find'
+import find from "lodash/find";
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -85,16 +85,18 @@ class FlowsIndex extends Component {
             message="You have unsaved changes, are you sure you want to leave this page?"
           />
         </UserCan>
-        <FlowsWorkspace
-          initialElementsMap={initialElementsMap}
-          submitChanges={this.submitChanges}
-          setChangesState={this.setChangesState}
-          hasChanges={this.state.hasChanges}
-          labels={nodesByType.labels}
-          channels={nodesByType.channels}
-          functions={nodesByType.functions}
-          devices={nodesByType.devices}
-        />
+        <ReactFlowProvider>
+          <FlowsWorkspace
+            initialElementsMap={initialElementsMap}
+            submitChanges={this.submitChanges}
+            setChangesState={this.setChangesState}
+            hasChanges={this.state.hasChanges}
+            labels={nodesByType.labels}
+            channels={nodesByType.channels}
+            functions={nodesByType.functions}
+            devices={nodesByType.devices}
+          />
+        </ReactFlowProvider>
         {false && this.state.selectedNode && (
           <div
             style={{
@@ -262,7 +264,9 @@ const generateInitialElementsMap = (data, flowPositions) => {
   // currently only function nodes can be duplicated
   flowPositions.copies &&
     flowPositions.copies.map((copiedNode) => {
-      const originalId = copiedNode.id.slice(0, copiedNode.id.indexOf("_copy")).slice(9)
+      const originalId = copiedNode.id
+        .slice(0, copiedNode.id.indexOf("_copy"))
+        .slice(9);
       const func = find(allFunctions, { id: originalId });
 
       if (func) {
