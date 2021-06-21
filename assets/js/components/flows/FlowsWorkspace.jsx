@@ -1,9 +1,9 @@
 import React, { useState, useRef, Fragment } from "react";
 import { useSelector } from "react-redux";
 import ReactFlow, {
-  ReactFlowProvider,
   isNode,
   isEdge,
+  useStoreActions,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
 import FlowsNodesMenu from "./FlowsNodesMenu";
@@ -36,6 +36,9 @@ export default ({
   channels,
   devices,
 }) => {
+  const setSelectedElements = useStoreActions(
+    (actions) => actions.setSelectedElements
+  );
   const currentRole = useSelector((state) => state.organization.currentRole);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -209,115 +212,114 @@ export default ({
 
   return (
     <Fragment>
-      <ReactFlowProvider>
-        <div
-          ref={reactFlowWrapper}
-          style={{ position: "relative", height: "100%", width: "100%" }}
-        >
-          <ReactFlow
-            elements={Object.values(elementsMap)}
-            nodeTypes={nodeTypes}
-            onLoad={onLoad}
-            onElementsRemove={onElementsRemove}
-            onConnect={onElementsAdd}
-            onNodeDragStop={onElementDragStop}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onSelectionChange={(elements) => {
-              if (
-                elements &&
-                elements.length === 1
-              ) {
-                setShowInfoSidebar(true);
-                setSelectedNodeId(elements[0].id);
-              } else if (!elements) {
-                setShowInfoSidebar(false);
-              }
-            }}
-            selectNodesOnDrag={false}
-            multiSelectionKeyCode={null}
-            selectionKeyCode={null}
-            nodesDraggable={userCan({ role: currentRole })}
-            nodesConnectable={userCan({ role: currentRole })}
+      <div
+        ref={reactFlowWrapper}
+        style={{ position: "relative", height: "100%", width: "100%" }}
+      >
+        <ReactFlow
+          elements={Object.values(elementsMap)}
+          nodeTypes={nodeTypes}
+          onLoad={onLoad}
+          onElementsRemove={onElementsRemove}
+          onConnect={onElementsAdd}
+          onNodeDragStop={onElementDragStop}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onSelectionChange={(elements) => {
+            if (elements && elements.length === 1) {
+              setShowInfoSidebar(true);
+              setSelectedNodeId(elements[0].id);
+            } else if (!elements) {
+              setShowInfoSidebar(false);
+            }
+          }}
+          selectNodesOnDrag={false}
+          multiSelectionKeyCode={null}
+          selectionKeyCode={null}
+          nodesDraggable={userCan({ role: currentRole })}
+          nodesConnectable={userCan({ role: currentRole })}
+        />
+        <UserCan>
+          <FlowsNodesMenu
+            labels={labels}
+            functions={functions}
+            channels={channels}
+            devices={devices}
           />
-          <UserCan>
-            <FlowsNodesMenu
-              labels={labels}
-              functions={functions}
-              channels={channels}
-              devices={devices}
-            />
-            <FlowsUpdateButtons
-              hasChanges={hasChanges}
-              resetElementsMap={resetElementsMap}
-              submitChanges={() => submitChanges(elementsMap)}
-            />
-          </UserCan>
-        </div>
-        <InfoSidebar
-          show={showInfoSidebar}
-          width={550}
-          toggle={handleToggleSidebar}
+          <FlowsUpdateButtons
+            hasChanges={hasChanges}
+            resetElementsMap={resetElementsMap}
+            submitChanges={() => submitChanges(elementsMap)}
+          />
+        </UserCan>
+      </div>
+      <InfoSidebar
+        show={showInfoSidebar}
+        width={550}
+        toggle={handleToggleSidebar}
+        id={
+          selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split("_copy")[0]
+        }
+        type={
+          selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+        }
+        debug={
+          !!(
+            selectedNodeId &&
+            ["device", "label"].includes(
+              selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+            )
+          )
+        }
+      >
+        <NodeInfo
           id={
-            selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split("_copy")[0]
+            (selectedNodeId &&
+              selectedNodeId.slice(0, 4) === "edge" &&
+              selectedNodeId) ||
+            (selectedNodeId &&
+              selectedNodeId.split(/-(.+)/)[1].split("_copy")[0])
           }
           type={
-            selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace("-", "")
+            (selectedNodeId &&
+              selectedNodeId.slice(0, 4) === "edge" &&
+              "edge") ||
+            (selectedNodeId &&
+              selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
           }
-          debug={
-            !!(
-              selectedNodeId &&
-              ["device", "label"].includes(
-                selectedNodeId.split(/-(.+)/)[0].replace("-", "")
-              )
-            )
-          }
-        >
-          <NodeInfo
-            id={
-              (selectedNodeId && selectedNodeId.slice(0, 4) === "edge" && selectedNodeId) ||
-              (selectedNodeId && selectedNodeId.split(/-(.+)/)[1].split("_copy")[0])
-            }
-            type={
-              (selectedNodeId && selectedNodeId.slice(0, 4) === "edge" && "edge") ||
-              (selectedNodeId && selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
-            }
-            elementsMap={elementsMap}
-            onAdrUpdate={onAdrUpdate}
-            onMultiBuyUpdate={onMultiBuyUpdate}
-            onAlertUpdate={onAlertUpdate}
-            hasConnectedEdges={
-              Object.values(elementsMap)
-              .filter(el =>
+          elementsMap={elementsMap}
+          onAdrUpdate={onAdrUpdate}
+          onMultiBuyUpdate={onMultiBuyUpdate}
+          onAlertUpdate={onAlertUpdate}
+          hasConnectedEdges={
+            Object.values(elementsMap).filter(
+              (el) =>
                 isEdge(el) &&
-                (el.source === selectedNodeId ||
-                  el.target === selectedNodeId)
-              ).length > 0
+                (el.source === selectedNodeId || el.target === selectedNodeId)
+            ).length > 0
+          }
+          deleteNode={() => {
+            let edges = [];
+
+            if (selectedNodeId.slice(0, 4) === "edge") {
+              edges = Object.values(elementsMap)
+                .filter(
+                  (el) =>
+                    isEdge(el) &&
+                    (el.source === selectedNodeId ||
+                      el.target === selectedNodeId)
+                )
+                .map((el) => el.id);
             }
-            deleteNode={() => {
-              let edges = []
 
-              if (selectedNodeId.slice(0, 4) === "edge") {
-                edges = Object.values(elementsMap)
-                  .filter(
-                    (el) =>
-                      isEdge(el) &&
-                      (el.source === selectedNodeId ||
-                        el.target === selectedNodeId)
-                  )
-                  .map((el) => el.id);
-              }
+            setElements((elsMap) => omit(elsMap, edges.concat(selectedNodeId)));
 
-              setElements((elsMap) =>
-                omit(elsMap, edges.concat(selectedNodeId))
-              );
-
-              setChangesState(true);
-              setShowInfoSidebar(false);
-            }}
-          />
-        </InfoSidebar>
-      </ReactFlowProvider>
+            setChangesState(true);
+            setShowInfoSidebar(false);
+            setSelectedElements([]);
+          }}
+        />
+      </InfoSidebar>
     </Fragment>
   );
 };
