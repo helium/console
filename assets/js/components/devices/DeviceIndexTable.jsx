@@ -129,21 +129,26 @@ class DeviceIndexTable extends Component {
                 <UserCan
                   key={l.id}
                   alternate={
+                    <Link to={`/labels/${l.id}`}>
+                      <LabelTag
+                        key={l.name}
+                        text={l.name}
+                      />
+                    </Link>
+                  }
+                >
+                  <Link to={`/labels/${l.id}`}>
                     <LabelTag
                       key={l.name}
                       text={l.name}
+                      closable
+                      onClose={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        this.props.openDevicesRemoveLabelModal([l], record)
+                      }}
                     />
-                  }
-                >
-                  <LabelTag
-                    key={l.name}
-                    text={l.name}
-                    closable
-                    onClose={e => {
-                      e.preventDefault()
-                      this.props.openDevicesRemoveLabelModal([l], record)
-                    }}
-                  />
+                  </Link>
                 </UserCan>
               )) : <Text type="danger">None</Text>
             }
