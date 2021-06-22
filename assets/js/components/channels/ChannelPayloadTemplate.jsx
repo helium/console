@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Mustache from 'mustache'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
+import { minWidth } from '../../util/constants'
 import { displayError } from '../../util/messages'
 import { defaultPayload, browanPayload, cayennePayload, defaultTemplate, browanTemplate, cayenneTemplate, adafruitTemplate } from '../../util/integrationTemplates'
 import { Typography, Card, Popover, Select, Row, Col, Button, Input } from 'antd';
@@ -181,129 +182,22 @@ class ChannelPayloadTemplate extends Component {
               Hide Details
             </Button>
           }
+          bodyStyle={{ padding: 0 }}
         >
-          {
-            (this.state.typeSelected === 'default' || this.state.typeSelected === 'custom') && (
-              <Card
-                title="JSON Message"
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 16 }}
-                extra={this.renderJSONbuttons()}
-              >
-                <div style={{ height: 303, overflowY: 'scroll' }}>
-                  <Editor
-                    value={JSON.stringify(defaultPayload, null, 2)}
-                    onValueChange={() => {}}
-                    highlight={code => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              </Card>
-            )
-          }
-
-          {
-            this.state.typeSelected === 'browan' && (
-              <Card
-                title="JSON Message"
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 16 }}
-                extra={this.renderJSONbuttons()}
-              >
-                <div style={{ height: 303, overflowY: 'scroll' }}>
-                  <Editor
-                    value={JSON.stringify(browanPayload, null, 2)}
-                    onValueChange={() => {}}
-                    highlight={code => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              </Card>
-            )
-          }
-
-          {
-            this.state.typeSelected === 'cayenne' && (
-              <Card
-                title="JSON Message"
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 16 }}
-                extra={this.renderJSONbuttons()}
-              >
-                <div style={{ height: 303, overflowY: 'scroll' }}>
-                  <Editor
-                    value={JSON.stringify(cayennePayload, null, 2)}
-                    onValueChange={() => {}}
-                    highlight={code => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              </Card>
-            )
-          }
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Card
-                title={
-                  <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ fontWeight: 600 }}>Template Body</Text>
-                    <Popover
-                      content={
-                        <Text>
-                          If no template changes are made then the default JSON message is sent.
-                        </Text>
-                      }
-                      placement="top"
-                      overlayStyle={{ width: 250 }}
-                    >
-                      <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
-                    </Popover>
-                  </span>
-                }
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 0 }}
-                extra={this.renderTemplateButtons()}
-              >
-                <div style={{ height: 503, overflowY: 'scroll' }}>
-                  <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
-                    <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
-                      {
-                        range(201).map(i => (
-                          <p
-                            key={i}
-                            style={{
-                              textAlign: 'right',
-                              fontFamily: 'monospace',
-                              color: codeEditorLineColor,
-                              fontSize: 14,
-                              marginBottom: 0,
-                              paddingLeft: 10,
-                              paddingRight: 10,
-                              backgroundColor: codeEditorBgColor
-                            }}
-                          >
-                            {i}
-                          </p>
-                        ))
-                      }
-                    </div>
-
+          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div style={{ padding: 24, minWidth }}>
+            {
+              (this.state.typeSelected === 'default' || this.state.typeSelected === 'custom') && (
+                <Card
+                  title="JSON Message"
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: 16 }}
+                  extra={this.renderJSONbuttons()}
+                >
+                  <div style={{ height: 303, overflowY: 'scroll' }}>
                     <Editor
-                      value={this.props.templateBody}
-                      onValueChange={this.props.handleTemplateUpdate}
+                      value={JSON.stringify(defaultPayload, null, 2)}
+                      onValueChange={() => {}}
                       highlight={code => highlight(code, languages.js)}
                       padding={10}
                       style={{
@@ -312,35 +206,147 @@ class ChannelPayloadTemplate extends Component {
                       }}
                     />
                   </div>
-                </div>
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card
-                title="Output"
-                bodyStyle={{ padding: 0 }}
-                style={{ marginBottom: 0 }}
-                extra={
-                  this.state.typeSelected && (
-                    <PlayCircleFilled style={{ color: '#38A2FF', fontSize: 22, marginRight: 0 }} onClick={this.generateOutput} />
-                  )
-                }
-              >
-                <div style={{ height: 503, overflowY: 'scroll' }}>
-                  <Editor
-                    value={this.state.output || ""}
-                    onValueChange={() => {}}
-                    highlight={code => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    }}
-                  />
-                </div>
-              </Card>
-            </Col>
-          </Row>
+                </Card>
+              )
+            }
+
+            {
+              this.state.typeSelected === 'browan' && (
+                <Card
+                  title="JSON Message"
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: 16 }}
+                  extra={this.renderJSONbuttons()}
+                >
+                  <div style={{ height: 303, overflowY: 'scroll' }}>
+                    <Editor
+                      value={JSON.stringify(browanPayload, null, 2)}
+                      onValueChange={() => {}}
+                      highlight={code => highlight(code, languages.js)}
+                      padding={10}
+                      style={{
+                        fontFamily: 'monospace',
+                        fontSize: 14,
+                      }}
+                    />
+                  </div>
+                </Card>
+              )
+            }
+
+            {
+              this.state.typeSelected === 'cayenne' && (
+                <Card
+                  title="JSON Message"
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: 16 }}
+                  extra={this.renderJSONbuttons()}
+                >
+                  <div style={{ height: 303, overflowY: 'scroll' }}>
+                    <Editor
+                      value={JSON.stringify(cayennePayload, null, 2)}
+                      onValueChange={() => {}}
+                      highlight={code => highlight(code, languages.js)}
+                      padding={10}
+                      style={{
+                        fontFamily: 'monospace',
+                        fontSize: 14,
+                      }}
+                    />
+                  </div>
+                </Card>
+              )
+            }
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Card
+                  title={
+                    <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{ fontWeight: 600 }}>Template Body</Text>
+                      <Popover
+                        content={
+                          <Text>
+                            If no template changes are made then the default JSON message is sent.
+                          </Text>
+                        }
+                        placement="top"
+                        overlayStyle={{ width: 250 }}
+                      >
+                        <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 8 }}/>
+                      </Popover>
+                    </span>
+                  }
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: 0 }}
+                  extra={this.renderTemplateButtons()}
+                >
+                  <div style={{ height: 503, overflowY: 'scroll' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', cursor: 'text' }} onClick={this.onClickEditor}>
+                      <div style={{ backgroundColor: codeEditorBgColor, paddingTop: 9, marginTop: 1, paddingBottom: 9 }}>
+                        {
+                          range(201).map(i => (
+                            <p
+                              key={i}
+                              style={{
+                                textAlign: 'right',
+                                fontFamily: 'monospace',
+                                color: codeEditorLineColor,
+                                fontSize: 14,
+                                marginBottom: 0,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                backgroundColor: codeEditorBgColor
+                              }}
+                            >
+                              {i}
+                            </p>
+                          ))
+                        }
+                      </div>
+
+                      <Editor
+                        value={this.props.templateBody}
+                        onValueChange={this.props.handleTemplateUpdate}
+                        highlight={code => highlight(code, languages.js)}
+                        padding={10}
+                        style={{
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card
+                  title="Output"
+                  bodyStyle={{ padding: 0 }}
+                  style={{ marginBottom: 0 }}
+                  extra={
+                    this.state.typeSelected && (
+                      <PlayCircleFilled style={{ color: '#38A2FF', fontSize: 22, marginRight: 0 }} onClick={this.generateOutput} />
+                    )
+                  }
+                >
+                  <div style={{ height: 503, overflowY: 'scroll' }}>
+                    <Editor
+                      value={this.state.output || ""}
+                      onValueChange={() => {}}
+                      highlight={code => highlight(code, languages.js)}
+                      padding={10}
+                      style={{
+                        fontFamily: 'monospace',
+                        fontSize: 14,
+                      }}
+                    />
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+          </div>
         </Card>
       )
     } else {

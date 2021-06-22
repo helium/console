@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import UserCan from '../common/UserCan'
 import { updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
+import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination, Switch, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 const { Text} = Typography
@@ -62,8 +63,8 @@ class FunctionIndexTable extends Component {
     const { functions } = this.props
 
     return (
-      <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div style={{minWidth, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Functions</Text>
         </div>
         <Table
@@ -71,7 +72,7 @@ class FunctionIndexTable extends Component {
           dataSource={functions.entries}
           rowKey={record => record.id}
           pagination={false}
-          style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+          style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
           onRow={(record, rowIndex) => ({
             onClick: e => {
               if (e.target.tagName === 'TD') {
@@ -80,7 +81,7 @@ class FunctionIndexTable extends Component {
             }
           })}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+        <div style={{ minWidth, display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={functions.pageNumber}
             pageSize={functions.pageSize}

@@ -7,6 +7,7 @@ import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import UserCan from "../common/UserCan";
 import { primaryBlue } from "../../util/colors";
 import { displayError } from "../../util/messages";
+import { minWidth } from '../../util/constants'
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
@@ -237,141 +238,149 @@ class ChannelShow extends Component {
             boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
           }}
         >
-          <Card title="Integration Details">
-            <UserCan alternate={<Text strong>{channel.name}</Text>}>
-              <Input
-                name="newName"
-                placeholder={channel.name}
-                value={this.state.newName}
-                onChange={this.handleInputUpdate}
-                style={{ width: 300, marginRight: 5, verticalAlign: "middle" }}
-                suffix={`${this.state.newName.length}/50`}
-                maxLength={50}
-              />
-              <Button type="primary" onClick={this.handleNameChange}>
-                Update
-              </Button>
-            </UserCan>
-            <Divider />
-            <Row>
-              <Col span={12}>
-                <Paragraph>
-                  <Text strong>Type: </Text>
-                  <Text>{channel.type_name}</Text>
-                </Paragraph>
-                <Paragraph>
-                  <Text strong>Active:</Text>
-                  <Text> {channel.active ? "Yes" : "No"}</Text>
-                </Paragraph>
-                <Paragraph>
-                  <Text strong> ID: </Text>
-                  <Text code>{channel.id}</Text>
-                </Paragraph>
-              </Col>
-              <Col span={12}>
-                {channel.type === "http" && (
-                  <Card size="small" title="HTTP Details">
-                    <HttpDetails channel={channel} />
-                  </Card>
-                )}
-                {channel.type === "aws" && (
-                  <Card size="small" title="AWS Details">
-                    <AwsDetails channel={channel} />
-                  </Card>
-                )}
-                {channel.type === "mqtt" && (
-                  <Card size="small" title="MQTT Details">
-                    <MqttDetails channel={channel} />
-                  </Card>
-                )}
-              </Col>
-            </Row>
-            {channel.type === "http" && (
-              <UserCan>
-                <Divider />
-                <Text>Downlink URL</Text>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    marginBottom: 16,
-                  }}
-                >
-                  <Input value={downlinkUrl} style={{ marginRight: 10 }} />
-                  <CopyToClipboard text={downlinkUrl}>
-                    <Button
-                      onClick={() => {}}
-                      style={{ marginRight: 0 }}
-                      type="primary"
-                    >
-                      Copy
-                    </Button>
-                  </CopyToClipboard>
-                </div>
-                <Text>Downlink Key</Text>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <Input
-                    value={
-                      showDownlinkToken
-                        ? channel.downlink_token
-                        : "************************"
-                    }
-                    style={{
-                      marginRight: 10,
-                      color: "#38A2FF",
-                      fontFamily: "monospace",
-                    }}
-                    suffix={
-                      showDownlinkToken ? (
-                        <EyeOutlined
-                          onClick={() =>
-                            this.setState({
-                              showDownlinkToken: !showDownlinkToken,
-                            })
-                          }
-                        />
-                      ) : (
-                        <EyeInvisibleOutlined
-                          onClick={() =>
-                            this.setState({
-                              showDownlinkToken: !showDownlinkToken,
-                            })
-                          }
-                        />
-                      )
-                    }
-                  />
-                  <CopyToClipboard text={channel.downlink_token}>
-                    <Button
-                      onClick={() => {}}
-                      style={{ marginRight: 10 }}
-                      type="primary"
-                    >
-                      Copy
-                    </Button>
-                  </CopyToClipboard>
-                  <Button
-                    onClick={this.handleChangeDownlinkToken}
-                    style={{ marginRight: 0 }}
-                  >
-                    Generate New Key
-                  </Button>
-                </div>
+          <Card title="Integration Details" bodyStyle={{ padding: 0 }}>
+            <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <div style={{ padding: 24, minWidth }}>
+              <UserCan alternate={<Text strong>{channel.name}</Text>}>
+                <Input
+                  name="newName"
+                  placeholder={channel.name}
+                  value={this.state.newName}
+                  onChange={this.handleInputUpdate}
+                  style={{ width: 300, marginRight: 5, verticalAlign: "middle" }}
+                  suffix={`${this.state.newName.length}/50`}
+                  maxLength={50}
+                />
+                <Button type="primary" onClick={this.handleNameChange}>
+                  Update
+                </Button>
               </UserCan>
-            )}
+              <Divider />
+              <Row>
+                <Col span={12}>
+                  <Paragraph>
+                    <Text strong>Type: </Text>
+                    <Text>{channel.type_name}</Text>
+                  </Paragraph>
+                  <Paragraph>
+                    <Text strong>Active:</Text>
+                    <Text> {channel.active ? "Yes" : "No"}</Text>
+                  </Paragraph>
+                  <Paragraph>
+                    <Text strong> ID: </Text>
+                    <Text code>{channel.id}</Text>
+                  </Paragraph>
+                </Col>
+                <Col span={12}>
+                  {channel.type === "http" && (
+                    <Card size="small" title="HTTP Details">
+                      <HttpDetails channel={channel} />
+                    </Card>
+                  )}
+                  {channel.type === "aws" && (
+                    <Card size="small" title="AWS Details">
+                      <AwsDetails channel={channel} />
+                    </Card>
+                  )}
+                  {channel.type === "mqtt" && (
+                    <Card size="small" title="MQTT Details">
+                      <MqttDetails channel={channel} />
+                    </Card>
+                  )}
+                </Col>
+              </Row>
+              {channel.type === "http" && (
+                <UserCan>
+                  <Divider />
+                  <Text>Downlink URL</Text>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <Input value={downlinkUrl} style={{ marginRight: 10 }} />
+                    <CopyToClipboard text={downlinkUrl}>
+                      <Button
+                        onClick={() => {}}
+                        style={{ marginRight: 0 }}
+                        type="primary"
+                      >
+                        Copy
+                      </Button>
+                    </CopyToClipboard>
+                  </div>
+                  <Text>Downlink Key</Text>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <Input
+                      value={
+                        showDownlinkToken
+                          ? channel.downlink_token
+                          : "************************"
+                      }
+                      style={{
+                        marginRight: 10,
+                        color: "#38A2FF",
+                        fontFamily: "monospace",
+                      }}
+                      suffix={
+                        showDownlinkToken ? (
+                          <EyeOutlined
+                            onClick={() =>
+                              this.setState({
+                                showDownlinkToken: !showDownlinkToken,
+                              })
+                            }
+                          />
+                        ) : (
+                          <EyeInvisibleOutlined
+                            onClick={() =>
+                              this.setState({
+                                showDownlinkToken: !showDownlinkToken,
+                              })
+                            }
+                          />
+                        )
+                      }
+                    />
+                    <CopyToClipboard text={channel.downlink_token}>
+                      <Button
+                        onClick={() => {}}
+                        style={{ marginRight: 10 }}
+                        type="primary"
+                      >
+                        Copy
+                      </Button>
+                    </CopyToClipboard>
+                    <Button
+                      onClick={this.handleChangeDownlinkToken}
+                      style={{ marginRight: 0 }}
+                    >
+                      Generate New Key
+                    </Button>
+                  </div>
+                </UserCan>
+              )}
+            </div>
+            </div>
           </Card>
 
           <UserCan>
-            <Card title="Update your Connection Details">
-              {this.renderForm()}
-              <Divider />
-              <Button
-                type="primary"
-                onClick={this.handleUpdateDetailsChange}
-                disabled={!this.state.validInput}
-              >
-                Update Details
-              </Button>
+            <Card title="Update your Connection Details" bodyStyle={{ padding: 0 }}>
+              <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+                <div style={{ padding: 24, minWidth }}>
+                  {this.renderForm()}
+                  <Divider />
+                  <Button
+                    type="primary"
+                    onClick={this.handleUpdateDetailsChange}
+                    disabled={!this.state.validInput}
+                  >
+                    Update Details
+                  </Button>
+                </div>
+              </div>
             </Card>
           </UserCan>
 

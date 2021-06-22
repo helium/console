@@ -11,6 +11,7 @@ import GoogleSheetForm from "../channels/forms/GoogleSheetForm";
 import { FUNCTION_SHOW } from "../../graphql/functions";
 import { deleteFunction, updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
+import { minWidth } from '../../util/constants'
 import { Typography, Card, Button, Input, Select } from "antd";
 import {
   PauseOutlined,
@@ -129,90 +130,93 @@ class FunctionShow extends Component {
 
     return (
       <FunctionDashboardLayout {...this.props}>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
+        <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
           <div
             style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              marginBottom: 12,
+              padding: "30px 30px 10px 30px",
+              height: "100%",
+              width: "100%",
+              backgroundColor: "#ffffff",
+              borderRadius: 6,
+              overflow: "hidden",
+              boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+              minWidth
             }}
           >
-            <UserCan>
-              <Button
-                style={{ borderRadius: 4, marginRight: 12 }}
-                type="default"
-                icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
-                onClick={() => {
-                  this.props.updateFunction(fxn.id, { active: !fxn.active });
-                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
-                    id: fxn.id,
-                    active: !fxn.active,
-                  });
-                }}
-              >
-                {fxn.active ? "Pause" : "Start"} Function
-              </Button>
-              <Button
-                style={{ borderRadius: 4 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openDeleteFunctionModal();
-                }}
-              >
-                Delete Function
-              </Button>
-            </UserCan>
-          </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                marginBottom: 12,
+              }}
+            >
+              <UserCan>
+                <Button
+                  style={{ borderRadius: 4, marginRight: 12 }}
+                  type="default"
+                  icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
+                  onClick={() => {
+                    this.props.updateFunction(fxn.id, { active: !fxn.active });
+                    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
+                      id: fxn.id,
+                      active: !fxn.active,
+                    });
+                  }}
+                >
+                  {fxn.active ? "Pause" : "Start"} Function
+                </Button>
+                <Button
+                  style={{ borderRadius: 4 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteFunctionModal();
+                  }}
+                >
+                  Delete Function
+                </Button>
+              </UserCan>
+            </div>
 
-          <FunctionDetailsCard
-            fxn={fxn}
-            name={name}
-            type={type}
-            format={format}
-            body={body}
-            handleSelectFunctionType={this.handleSelectFunctionType}
-            handleInputUpdate={this.handleInputUpdate}
-            handleSelectFormat={this.handleSelectFormat}
-            clearInputs={this.clearInputs}
-            handleSubmit={this.handleSubmit}
-            horizontal={true}
-          />
-
-          <UserCan>
-            {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
-              <Card title="Google Form Fields">
-                <GoogleSheetForm />
-              </Card>
-            )}
-          </UserCan>
-
-          {(format === "custom" || (fxn.format === "custom" && !format)) && (
-            <FunctionValidator
-              handleFunctionUpdate={this.handleFunctionUpdate}
-              body={body === "" && !codeUpdated ? fxn.body : body}
-              title="Custom Script"
+            <FunctionDetailsCard
+              fxn={fxn}
+              name={name}
+              type={type}
+              format={format}
+              body={body}
+              handleSelectFunctionType={this.handleSelectFunctionType}
+              handleInputUpdate={this.handleInputUpdate}
+              handleSelectFormat={this.handleSelectFormat}
+              clearInputs={this.clearInputs}
+              handleSubmit={this.handleSubmit}
+              horizontal={true}
             />
-          )}
 
-          <DeleteFunctionModal
-            open={showDeleteFunctionModal}
-            onClose={this.closeDeleteFunctionModal}
-            functionToDelete={fxn}
-            redirect
-          />
+            <UserCan>
+              {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
+                <Card title="Google Form Fields">
+                  <GoogleSheetForm />
+                </Card>
+              )}
+            </UserCan>
+
+            {(format === "custom" || (fxn.format === "custom" && !format)) && (
+              <FunctionValidator
+                handleFunctionUpdate={this.handleFunctionUpdate}
+                body={body === "" && !codeUpdated ? fxn.body : body}
+                title="Custom Script"
+              />
+            )}
+
+            <DeleteFunctionModal
+              open={showDeleteFunctionModal}
+              onClose={this.closeDeleteFunctionModal}
+              functionToDelete={fxn}
+              redirect
+            />
+          </div>
         </div>
       </FunctionDashboardLayout>
     );
