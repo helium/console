@@ -126,85 +126,93 @@ class Profile extends Component {
     return(
       <DashboardLayout title="Profile" user={this.props.user}>
         <div style={{ padding: "30px 30px 10px 30px", height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <Card title="Profile Details">
-            <Descriptions bordered column={4}>
-              <Descriptions.Item span={4} label="Your Email is">{email}</Descriptions.Item>
-            </Descriptions>
+          <Card title="Profile Details" bodyStyle={{ padding: 0 }}>
+            <div style={{ overflowX: 'scroll' }} className="no-scroll-bar">
+              <div style={{ padding: 24, minWidth: 400 }}>
+                <Descriptions bordered column={4}>
+                  <Descriptions.Item span={4} label="Your Email is">{email}</Descriptions.Item>
+                </Descriptions>
 
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
-              {
-                this.state.showEnrollButton && (
-                  <UserCan noManager>
-                    <Button
-                      type="primary"
-                      onClick={this.handleEnrollInMfa}
-                      style={{ marginRight: 10 }}
-                    >
-                      Enroll In 2FA
-                    </Button>
-                  </UserCan>
-                )
-              }
-              {
-                this.state.showEnrollButton === false && (
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10 }}>
+                  {
+                    this.state.showEnrollButton && (
+                      <UserCan noManager>
+                        <Button
+                          type="primary"
+                          onClick={this.handleEnrollInMfa}
+                          style={{ marginRight: 10 }}
+                        >
+                          Enroll In 2FA
+                        </Button>
+                      </UserCan>
+                    )
+                  }
+                  {
+                    this.state.showEnrollButton === false && (
+                      <Button
+                        type="primary"
+                        style={{ marginRight: 10 }}
+                        disabled
+                      >
+                        Enrolled In 2FA
+                      </Button>
+                    )
+                  }
                   <Button
-                    type="primary"
-                    style={{ marginRight: 10 }}
-                    disabled
+                    type="danger"
+                    onClick={() => {
+                      analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
+                      logOut()
+                    }}
+                    style={{ marginRight: 0 }}
                   >
-                    Enrolled In 2FA
+                    Log Out
                   </Button>
-                )
-              }
-              <Button
-                type="danger"
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_LOGOUT", { "email": email})
-                  logOut()
-                }}
-                style={{ marginRight: 0 }}
-              >
-                Log Out
-              </Button>
+                </div>
+              </div>
             </div>
           </Card>
 
           <UserCan noManager>
-            <Card title="Your API Keys">
-              <Input
-                placeholder="Enter key name"
-                onChange={this.handleInputUpdate}
-                style={{ width: 180 }}
-              />
-              <Select
-                placeholder="Select key role"
-                style={{ width: 180, marginLeft: 10 }}
-                onChange={this.handleSelectOption}
-              >
-                <Option value={role}><RoleName role={role} /></Option>
-              </Select>
-              <Button
-                type="primary"
-                onClick={this.handleSubmit}
-                style={{ marginLeft: 10 }}
-              >
-                Generate Key
-              </Button>
+            <Card title="Your API Keys" bodyStyle={{ padding: 0 }}>
+              <div style={{ overflowX: 'scroll' }} className="no-scroll-bar">
+                <div style={{ padding: 24, minWidth: 600 }}>
+                  <Input
+                    placeholder="Enter key name"
+                    onChange={this.handleInputUpdate}
+                    style={{ width: 180 }}
+                  />
+                  <Select
+                    placeholder="Select key role"
+                    style={{ width: 180, marginLeft: 10 }}
+                    onChange={this.handleSelectOption}
+                  >
+                    <Option value={role}><RoleName role={role} /></Option>
+                  </Select>
+                  <Button
+                    type="primary"
+                    onClick={this.handleSubmit}
+                    style={{ marginLeft: 10 }}
+                  >
+                    Generate Key
+                  </Button>
 
-              {
-                apiKeys && (
-                  <div style={{ marginTop: 20, overflowX: 'scroll' }}>
-                    <Table
-                      columns={columns}
-                      dataSource={apiKeys}
-                      rowKey={record => record.id}
-                      pagination={false}
-                      bordered
-                      style={{ minWidth: 800 }}
-                    />
-                  </div>
-                )
-              }
+                  {
+                    apiKeys && (
+                      <div style={{ marginTop: 20, overflowX: 'scroll' }}>
+                        <Table
+                          columns={columns}
+                          dataSource={apiKeys}
+                          rowKey={record => record.id}
+                          pagination={false}
+                          style={{ minWidth: 600 }}
+                          className="no-scroll-bar"
+                        />
+                      </div>
+                    )
+                  }
+                </div>
+              </div>
             </Card>
           </UserCan>
         </div>

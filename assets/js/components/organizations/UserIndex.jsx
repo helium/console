@@ -71,7 +71,7 @@ class UserIndex extends Component {
         user={this.props.user}
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth: 320 }}>
             <Text style={{ fontSize: 22, fontWeight: 600 }}>All Members</Text>
             <UserCan noManager>
               <Button
