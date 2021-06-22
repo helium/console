@@ -9,6 +9,7 @@ import DeleteLabelModal from './DeleteLabelModal'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { redForTablesDeleteText } from '../../util/colors'
+import { minWidth } from '../../util/constants'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
@@ -194,8 +195,8 @@ class LabelShowTable extends Component {
     const { selectedRows } = this.state
 
     return (
-      <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>{label.name}</Text>
           <div>
             <UserCan>
@@ -237,7 +238,7 @@ class LabelShowTable extends Component {
           pagination={false}
           rowSelection={rowSelection}
           onChange={this.handleSortChange}
-          style={{ minWidth: 800 }}
+          style={{ minWidth }}
           onRow={(record, rowIndex) => ({
             onClick: e => {
               if (e.target.tagName === 'TD') {
@@ -246,7 +247,7 @@ class LabelShowTable extends Component {
             }
           })}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0, minWidth }}>
           <Pagination
             current={devices_by_label.pageNumber}
             pageSize={devices_by_label.pageSize}

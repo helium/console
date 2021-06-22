@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { createLabel } from "../../actions/label";
 import { grayForModalCaptions } from "../../util/colors";
 import analyticsLogger from "../../util/analyticsLogger";
+import { minWidth } from '../../util/constants'
 import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
 import UserCan from "../common/UserCan";
 import { Card, Button, Typography, Input } from "antd";
@@ -32,7 +33,8 @@ class LabelNew extends Component {
   render() {
     return (
       <DeviceDashboardLayout {...this.props}>
-        <div style={{ padding: "30px 30px 20px 30px" }}>
+        <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div style={{ padding: "30px 30px 20px 30px", minWidth: 700}}>
           <Card title="Enter Label Details">
             <Input
               placeholder="Enter Label Name"
@@ -73,6 +75,7 @@ class LabelNew extends Component {
               </Button>
             </UserCan>
           </div>
+        </div>
         </div>
       </DeviceDashboardLayout>
     );

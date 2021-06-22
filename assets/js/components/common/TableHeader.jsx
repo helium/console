@@ -24,6 +24,7 @@ export default (props) => {
           flexDirection: "row",
           overflowX: "scroll",
         }}
+        className="no-scroll-bar"
       >
         {!props.noHome && (
           <div
