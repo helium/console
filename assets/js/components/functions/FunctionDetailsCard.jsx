@@ -25,7 +25,12 @@ export default ({
     <Card title="Function Details">
       <Text>Update Function</Text>
       <div style={{ marginTop: 5 }}>
-        <div>
+        <div style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          marginBottom: 8,
+        }}>
           <Input
             placeholder={fxn.name}
             name="name"

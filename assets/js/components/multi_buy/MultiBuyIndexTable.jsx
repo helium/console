@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table, Button } from 'antd';
 import Text from 'antd/lib/typography/Text';
 import moment from 'moment';
+import { minWidth } from '../../util/constants'
 import { DeleteOutlined } from '@ant-design/icons';
 import UserCan from '../common/UserCan';
 
@@ -45,8 +46,8 @@ export default (props) => {
   ];
 
   return (
-    <Fragment>
-      <div style={{ padding: '30px 20px 20px 30px' }}>
+    <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+      <div style={{ padding: '30px 20px 20px 30px', minWidth }}>
         <Text style={{ fontSize: 22, fontWeight: 600 }}>All Multiple Packet Configs</Text>
       </div>
       <Table
@@ -54,7 +55,7 @@ export default (props) => {
         columns={columns}
         rowKey={record => record.id}
         pagination={false}
-        style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+        style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
         onRow={(record, rowIndex) => ({
           onClick: e => {
             if (e.target.tagName === 'TD') {
@@ -63,6 +64,6 @@ export default (props) => {
           }
         })}
       />
-    </Fragment>
+    </div>
   );
 }

@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import FunctionDashboardLayout from "./FunctionDashboardLayout";
+import { minWidth } from '../../util/constants'
 import _JSXStyle from "styled-jsx/style";
 
 class FunctionHome extends Component {
   render() {
     return (
       <FunctionDashboardLayout {...this.props}>
-        <div className="blankstateWrapper">
-          <div className="message">
+        <div className="blankstateWrapper no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="message" style={{ minWidth }}>
             <h1>Functions</h1>
 
             <div className="explainer">

@@ -14,6 +14,7 @@ import { useQuery } from "@apollo/client";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { useHistory } from "react-router-dom";
 import analyticsLogger from "../../util/analyticsLogger";
+import { minWidth } from '../../util/constants'
 
 export default (props) => {
   const history = useHistory();
@@ -105,7 +106,9 @@ export default (props) => {
         }
       >
         {showPage === "allMultiBuy" && error && (
-          <Text>Data failed to load, please reload the page and try again</Text>
+          <div style={{ padding: 40 }}>
+            <Text>Data failed to load, please reload the page and try again</Text>
+          </div>
         )}
         {showPage === "allMultiBuy" && loading && (
           <div style={{ padding: 40 }}>
@@ -119,13 +122,23 @@ export default (props) => {
             history={history}
           />
         )}
-        {showPage === "new" && <MultiBuyForm />}
+        {showPage === "new" && (
+          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <div style={{ minWidth }}>
+              <MultiBuyForm />
+            </div>
+          </div>
+        )}
         {props.match.params.id && showPage === "showMultiBuy" && (
-          <MultiBuyForm
-            id={props.match.params.id}
-            show
-            openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
-          />
+          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <div style={{ minWidth }}>
+              <MultiBuyForm
+                id={props.match.params.id}
+                show
+                openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
+              />
+            </div>
+          </div>
         )}
       </TableHeader>
       <AddResourceButton />

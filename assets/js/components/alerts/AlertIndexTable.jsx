@@ -5,6 +5,7 @@ import Text from "antd/lib/typography/Text";
 import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-label.svg";
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
+import { minWidth } from '../../util/constants'
 import { DeleteOutlined } from "@ant-design/icons";
 import UserCan from "../common/UserCan";
 import findKey from "lodash/findKey";
@@ -111,8 +112,8 @@ export default (props) => {
   ];
 
   return (
-    <Fragment>
-      <div style={{ padding: "30px 20px 20px 30px" }}>
+    <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+      <div style={{ padding: "30px 20px 20px 30px", minWidth }}>
         <Text style={{ fontSize: 22, fontWeight: 600 }}>All Alerts</Text>
       </div>
       <Table
@@ -120,7 +121,7 @@ export default (props) => {
         columns={columns}
         rowKey={(record) => record.id}
         pagination={false}
-        style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+        style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
         onRow={(record, rowIndex) => ({
           onClick: e => {
             if (e.target.tagName === 'TD') {
@@ -129,6 +130,6 @@ export default (props) => {
           }
         })}
       />
-    </Fragment>
+    </div>
   );
 };

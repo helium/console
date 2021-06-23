@@ -56,8 +56,8 @@ class DashboardLayout extends Component {
                 )
               }
               {
-                !noFooter && (<Footer style={{ flexShrink: '0', padding: '10px 10px', marginBottom: '-150px', overflow: 'hidden' }}>
-                  <div style={{ flexDirection: 'row', display: 'flex' }}>
+                !noFooter && (<Footer className="no-scroll-bar" style={{ flexShrink: '0', padding: '10px 10px', marginBottom: '-150px', overflowX: 'scroll' }}>
+                  <div style={{ flexDirection: 'row', display: 'flex', minWidth: 700 }}>
                   <a href='http://console.helium.com' style={{ color: '#556B8C', marginRight: '25px', fontWeight: 'bold' }}>console.helium.com</a>
                     {[
                         { title: 'Documentation & Tutorials', url: 'https://docs.helium.com/use-the-network/console'},

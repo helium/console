@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
+import { minWidth } from '../../util/constants'
 import _JSXStyle from "styled-jsx/style";
 
 class DeviceHome extends Component {
   render() {
     return (
       <DeviceDashboardLayout {...this.props}>
-        <div className="blankstateWrapper">
-          <div className="message">
+        <div className="blankstateWrapper no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="message" style={{ minWidth }}>
             <h1>Devices</h1>
             <div className="explainer">
               <p>Devices can be added to the Helium network.</p>

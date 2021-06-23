@@ -7,6 +7,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import withGql from '../../graphql/withGql'
+import { minWidth } from '../../util/constants'
 import { Table, Button, Empty, Pagination, Tag } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
@@ -88,15 +89,15 @@ class InvitationsTable extends Component {
     )
 
     return (
-      <div>
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
         <Table
           columns={columns}
           dataSource={invitations.entries}
           rowKey={record => record.id}
           pagination={false}
-          style={{ minWidth: 800 }}
+          style={{ minWidth }}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', minWidth}}>
           <Pagination
             current={invitations.pageNumber}
             pageSize={invitations.pageSize}

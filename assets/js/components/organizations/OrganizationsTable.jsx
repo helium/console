@@ -8,6 +8,7 @@ import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization, updateOrganization } from '../../actions/organization'
 import { PAGINATED_ORGANIZATIONS } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
+import { minWidth } from '../../util/constants'
 import UserCan from '../common/UserCan'
 import withGql from '../../graphql/withGql'
 import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
@@ -153,10 +154,10 @@ class OrganizationsTable extends Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth: 800 }}/>
+        <Table columns={columns} className="no-scroll-bar" dataSource={organizations.entries} pagination={false} rowKey={row => row.id} style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}/>
         {
           organizations.totalPages && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0, minWidth }}>
               <Pagination
                 current={organizations.pageNumber}
                 pageSize={organizations.pageSize}

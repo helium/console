@@ -8,6 +8,7 @@ import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
+import { minWidth } from '../../util/constants'
 import classNames from 'classnames';
 import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -235,8 +236,8 @@ class DeviceIndexTable extends Component {
     const { selectedRows } = this.state
 
     return (
-      <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div style={{ minWidth, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Devices</Text>
           <div>
             <Popover
@@ -294,7 +295,8 @@ class DeviceIndexTable extends Component {
             pagination={false}
             rowSelection={rowSelection}
             onChange={this.handleSort}
-            style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+            style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
+            className="no-scroll-bar"
             onRow={(record, rowIndex) => ({
               onClick: e => {
                 if (e.target.tagName === 'TD') {
@@ -303,7 +305,7 @@ class DeviceIndexTable extends Component {
               }
             })}
           />
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>
+          <div style={{ minWidth, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>
             <Select
               value={`${devices.pageSize} results`}
               onSelect={onChangePageSize}

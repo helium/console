@@ -99,65 +99,67 @@ export default (props) => {
           </div>
         </div>
 
-        <Row gutter={30} style={{ padding: 30 }}>
-          <Col span={12}>
-            <div style={{ padding: 20 }}>
-              <img
-                src={AdrIcon}
-                style={{ height: 50, display: "block", marginBottom: 10 }}
-              />
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 600,
-                  display: "block",
-                  marginBottom: 10,
-                }}
-              >
-                Adaptive Data Rate
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  display: "block",
-                  marginBottom: 15,
-                }}
-              >
-                Adaptive Data Rate (ADR) needs to be requested by a device for
-                this setting to have an effect.
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 300,
-                  display: "block",
-                  marginBottom: 4,
-                }}
-              >
-                {adrText1}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  display: "block",
-                  marginBottom: 15,
-                }}
-              >
-                {adrText2}
-              </Text>
-              <a
-                className="help-link"
-                target="_blank"
-                href="https://docs.helium.com/use-the-network/console/adr/"
-              >
-                Learn more about ADR
-              </a>
-            </div>
-          </Col>
-          <Col span={12}></Col>
-        </Row>
+        <div style={{ overflowX: 'scroll' }} className="no-scroll-bar">
+          <Row gutter={30} style={{ padding: 30, minWidth: 700 }}>
+            <Col span={12}>
+              <div style={{ padding: 20 }}>
+                <img
+                  src={AdrIcon}
+                  style={{ height: 50, display: "block", marginBottom: 10 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: 10,
+                  }}
+                >
+                  Adaptive Data Rate
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 400,
+                    display: "block",
+                    marginBottom: 15,
+                  }}
+                >
+                  Adaptive Data Rate (ADR) needs to be requested by a device for
+                  this setting to have an effect.
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 300,
+                    display: "block",
+                    marginBottom: 4,
+                  }}
+                >
+                  {adrText1}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 400,
+                    display: "block",
+                    marginBottom: 15,
+                  }}
+                >
+                  {adrText2}
+                </Text>
+                <a
+                  className="help-link"
+                  target="_blank"
+                  href="https://docs.helium.com/use-the-network/console/adr/"
+                >
+                  Learn more about ADR
+                </a>
+              </div>
+            </Col>
+            <Col span={12}></Col>
+          </Row>
+        </div>
       </div>
 
       <AddResourceButton />

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import UserCan from '../common/UserCan'
+import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
@@ -44,8 +45,8 @@ class ChannelIndexTable extends Component {
     const { channels } = this.props
 
     return (
-      <div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div style={{ minWidth, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Integrations</Text>
         </div>
         <Table
@@ -53,7 +54,7 @@ class ChannelIndexTable extends Component {
           dataSource={channels.entries}
           rowKey={record => record.id}
           pagination={false}
-          style={{ minWidth: 800, overflowX: 'scroll', overflowY: 'hidden' }}
+          style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
           onRow={(record, rowIndex) => ({
             onClick: e => {
               if (e.target.tagName === 'TD') {
@@ -62,7 +63,7 @@ class ChannelIndexTable extends Component {
             }
           })}
         />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
+        <div style={{ minWidth, display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
           <Pagination
             current={channels.pageNumber}
             pageSize={channels.pageSize}

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import LabelTag from "../common/LabelTag";
 import UserCan from "../common/UserCan";
+import { minWidth } from '../../util/constants'
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
 import { Card, Button, Typography, Table, Pagination } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -101,7 +102,7 @@ class DeviceShowLabelsTable extends Component {
 
     return (
       <Card
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: "scroll" }}
+        bodyStyle={{ padding: 0, paddingTop: 1 }}
         title={`${numOfEntries} Label${
           numOfEntries > 1 || numOfEntries === 0 ? "s" : ""
         } Attached`}
@@ -117,35 +118,38 @@ class DeviceShowLabelsTable extends Component {
           </UserCan>
         }
       >
-        <Table
-          columns={columns}
-          dataSource={labels_by_device.entries}
-          rowKey={(record) => record.id}
-          pagination={false}
-          style={{ minWidth: 800 }}
-          onRow={(record, rowIndex) => ({
-            onClick: e => {
-              if (e.target.tagName === 'TD') {
-                this.props.history.push(`/labels/${record.id}`)
+        <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+          <Table
+            columns={columns}
+            dataSource={labels_by_device.entries}
+            rowKey={(record) => record.id}
+            pagination={false}
+            style={{ minWidth }}
+            onRow={(record, rowIndex) => ({
+              onClick: e => {
+                if (e.target.tagName === 'TD') {
+                  this.props.history.push(`/labels/${record.id}`)
+                }
               }
-            }
-          })}
-        />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            paddingBottom: 0,
-          }}
-        >
-          <Pagination
-            current={labels_by_device.pageNumber}
-            pageSize={labels_by_device.pageSize}
-            total={labels_by_device.totalEntries}
-            onChange={(page) => this.handleChangePage(page)}
-            style={{ marginBottom: 20 }}
-            showSizeChanger={false}
+            })}
           />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              paddingBottom: 0,
+              minWidth
+            }}
+          >
+            <Pagination
+              current={labels_by_device.pageNumber}
+              pageSize={labels_by_device.pageSize}
+              total={labels_by_device.totalEntries}
+              onChange={(page) => this.handleChangePage(page)}
+              style={{ marginBottom: 20 }}
+              showSizeChanger={false}
+            />
+          </div>
         </div>
       </Card>
     );

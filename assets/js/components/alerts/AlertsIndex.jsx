@@ -6,6 +6,7 @@ import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
 import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
 import AlertIcon from "../../../img/alerts/alert-index-add-icon.svg";
 import AddResourceButton from "../common/AddResourceButton";
+import { minWidth } from '../../util/constants'
 import AlertForm from "../alerts/AlertForm";
 import AlertIndexTable from "./AlertIndexTable";
 import AlertTypeButton from "./AlertTypeButton";
@@ -98,24 +99,29 @@ export default (props) => {
         }
       >
         {props.match.params.id && showPage === "showAlert" && (
-          <AlertForm
-            key={props.match.params.id}
-            show
-            id={props.match.params.id}
-            back={() => {
-              history.push("/alerts");
-            }}
-          />
+          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <div style={{ minWidth }}>
+              <AlertForm
+                key={props.match.params.id}
+                show
+                id={props.match.params.id}
+                back={() => {
+                  history.push("/alerts");
+                }}
+              />
+            </div>
+          </div>
         )}
         {showPage === "new" && alertType === null && (
           <div
-            className="blankstateWrapper"
-            style={{ height: "600px", paddingTop: "100px" }}
+            className="blankstateWrapper no-scroll-bar"
+            style={{ height: "600px", paddingTop: "100px", overflowX: 'scroll' }}
           >
             <div
               style={{
                 width: "100%",
-                maxWidth: "500px",
+                maxWidth: 500,
+                minWidth: 500,
                 margin: "0 auto",
                 textAlign: "center",
               }}
@@ -171,12 +177,16 @@ export default (props) => {
           </div>
         )}
         {showPage === "new" && alertType && (
-          <AlertForm
-            alertType={alertType}
-            back={() => {
-              setAlertType(null);
-            }}
-          />
+          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <div style={{ minWidth }}>
+              <AlertForm
+                alertType={alertType}
+                back={() => {
+                  setAlertType(null);
+                }}
+              />
+            </div>
+          </div>
         )}
         {showPage === "allAlerts" && error && (
           <Text>Data failed to load, please reload the page and try again</Text>
