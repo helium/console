@@ -1,9 +1,27 @@
 import React, { Component } from 'react'
 import { Typography } from 'antd';
+import { functionFormats } from '../functions/constants'
 import { EnterOutlined, AppstoreOutlined, ApiOutlined, UserOutlined, DashboardOutlined, ProfileOutlined, WalletOutlined, CaretRightOutlined } from '@ant-design/icons';
 const { Text } = Typography
 
 class SearchResult extends Component {
+  renderDescriptionText = () => {
+    const { result } = this.props
+    if (result.category === "functions") {
+      return functionFormats[result.description]
+    }
+    if (result.description === "device/label alert") {
+      return "Device/Label alert"
+    }
+    if (result.description === "integration alert") {
+      return "Integration alert"
+    }
+    if (result.category === "multi_buys") {
+      return result.description === "10" ? "All available packets" : `Up to ${result.description} packets`
+    }
+    return result.description
+  }
+
   render() {
     const { selected, result, gotoResult } = this.props
     return (
@@ -24,7 +42,7 @@ class SearchResult extends Component {
         { false && <SearchResultIcon category={result.category} /> }
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Text strong>{result.title}</Text>
-          <Text type="secondary">{result.description}</Text>
+          <Text type="secondary">{this.renderDescriptionText()}</Text>
         </div>
         <div style={{ flexGrow: 1 }} />
         <JumpTo show={selected} />

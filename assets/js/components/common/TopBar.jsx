@@ -111,7 +111,11 @@ class TopBar extends Component {
             </Link>
           </MediaQuery>
           {
-            currentOrganizationName && <SearchBar />
+            currentOrganizationName && (
+              <MediaQuery minWidth={400}>
+                <SearchBar />
+              </MediaQuery>
+            )
           }
           {
             organization && (
