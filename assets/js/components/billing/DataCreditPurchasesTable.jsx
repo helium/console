@@ -5,6 +5,7 @@ import moment from 'moment'
 import numeral from 'numeral'
 import get from 'lodash/get'
 import PaymentCard from './PaymentCard'
+import { minWidth } from '../../util/constants'
 import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination } from 'antd';
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -120,24 +121,27 @@ class DataCreditPurchasesTable extends Component {
     return (
       <Card
         title={title}
-        bodyStyle={{ padding: 0, paddingTop: 1, overflowX: 'scroll' }}
+        bodyStyle={{ padding: 0, paddingTop: 1 }}
       >
-        <Table
-          columns={columns}
-          dataSource={dcPurchases.entries}
-          rowKey={record => record.id}
-          pagination={false}
-          style={{ minWidth: 800 }}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0}}>
-          <Pagination
-            current={dcPurchases.pageNumber}
-            pageSize={dcPurchases.pageSize}
-            total={dcPurchases.totalEntries}
-            onChange={page => this.handleChangePage(page)}
-            style={{marginBottom: 20}}
-            showSizeChanger={false}
+        <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <Table
+            columns={columns}
+            dataSource={dcPurchases.entries}
+            rowKey={record => record.id}
+            pagination={false}
+            style={{ minWidth, overflowX: 'scroll' }}
+            className="no-scroll-bar"
           />
+          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0, minWidth }}>
+            <Pagination
+              current={dcPurchases.pageNumber}
+              pageSize={dcPurchases.pageSize}
+              total={dcPurchases.totalEntries}
+              onChange={page => this.handleChangePage(page)}
+              style={{marginBottom: 20}}
+              showSizeChanger={false}
+            />
+          </div>
         </div>
       </Card>
     )

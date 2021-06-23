@@ -6,6 +6,7 @@ import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
 import analyticsLogger from "../../util/analyticsLogger";
+import { minWidth } from '../../util/constants'
 import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
 import AutomaticRenewalModal from "./AutomaticRenewalModal";
@@ -41,14 +42,6 @@ const styles = {
   numberCount: {
     fontSize: 40,
     marginTop: -8,
-  },
-  cardBody: {
-    height: 90,
-    overflowY: "hidden",
-    overflowX: "scroll",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
   },
 };
 
@@ -245,15 +238,16 @@ class DataCreditsIndex extends Component {
           <Col span={8}>
             <Card
               title="Remaining Data Credits"
-              bodyStyle={{ ...styles.cardBody, minWidth: 300 }}
-              style={{ overflow: "hidden" }}
+              bodyStyle={{ height: 90, padding: 0 }}
             >
-              <Row type="flex" style={{ alignItems: "center" }}>
+              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
+              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
                 <img style={styles.image} src={DCIMg} />
                 <Text style={{ ...styles.numberCount, color: primaryBlue }}>
                   {numeral(dc_balance).format("0,0")}
                 </Text>
               </Row>
+              </div>
             </Card>
           </Col>
           <Col span={8}>
@@ -270,16 +264,16 @@ class DataCreditsIndex extends Component {
                   </Link>
                 </Popover>
               }
-              style={{ overflow: "hidden" }}
-              bodyStyle={{ ...styles.cardBody, minWidth: 300 }}
+              bodyStyle={{ height: 90, padding: 0 }}
             >
-              <img style={styles.image} src={BytesIMg} />
-              <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                {numeral(dc_balance * 24).format("0,0")}
-              </Text>
-              {false && (
-                <Text>Approx {Math.floor((dc_balance * 24) / 1000)} MB</Text>
-              )}
+              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
+              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
+                <img style={styles.image} src={BytesIMg} />
+                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
+                  {numeral(dc_balance * 24).format("0,0")}
+                </Text>
+              </Row>
+              </div>
             </Card>
           </Col>
           {!process.env.SELF_HOSTED && (
@@ -299,14 +293,11 @@ class DataCreditsIndex extends Component {
                       </Link>
                     )
                   }
-                  bodyStyle={{ ...styles.cardBody, minWidth: 230 }}
-                  style={{ overflow: "hidden" }}
+                  bodyStyle={{ height: 90, padding: 0 }}
                 >
+                  <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
                   {this.state.paymentMethods.length > 0 && defaultPayment && (
-                    <Row
-                      type="flex"
-                      style={{ alignItems: "center", width: "100%" }}
-                    >
+                    <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
                       <Col span={16}>
                         <PaymentCard
                           key={defaultPayment.id}
@@ -344,6 +335,7 @@ class DataCreditsIndex extends Component {
                       <Text style={styles.numberCount}>N/A</Text>
                     </Row>
                   )}
+                  </div>
                 </Card>
               </UserCan>
             </Col>
@@ -387,9 +379,11 @@ class DataCreditsIndex extends Component {
             style={{
               display: "flex",
               flexDirection: "row",
-              justifyContent: "flex-end",
-              padding: "0px 0px 20px 30px",
+              justifyContent: "flex-start",
+              padding: "0px 0px 20px 0px",
+              overflowX: 'scroll'
             }}
+            className="no-scroll-bar"
           >
             <UserCan noManager>
               {organization && organization.dc_balance_nonce != 0 ? (
@@ -397,7 +391,7 @@ class DataCreditsIndex extends Component {
                   {(!organization.received_free_dc ||
                     organization.dc_balance > 10000) && (
                     <Button
-                      style={{ borderRadius: 4 }}
+                      style={{ borderRadius: 4, marginRight: 20 }}
                       icon={<RightCircleOutlined />}
                       onClick={() =>
                         this.openModal("showOrganizationTransferDCModal")
@@ -411,7 +405,7 @@ class DataCreditsIndex extends Component {
                     onClick={() => this.openModal("showAutomaticRenewalModal")}
                     style={{
                       borderRadius: 4,
-                      marginLeft: 20,
+                      marginRight: 20,
                       display: !process.env.SELF_HOSTED ? "inline" : "none",
                     }}
                   >
@@ -422,7 +416,7 @@ class DataCreditsIndex extends Component {
                     type="primary"
                     icon={<WalletOutlined />}
                     onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ marginLeft: 20, borderRadius: 4 }}
+                    style={{ borderRadius: 4 }}
                   >
                     Purchase Data Credits
                   </Button>

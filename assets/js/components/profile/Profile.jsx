@@ -176,7 +176,7 @@ class Profile extends Component {
           <UserCan noManager>
             <Card title="Your API Keys" bodyStyle={{ padding: 0 }}>
               <div style={{ overflowX: 'scroll' }} className="no-scroll-bar">
-                <div style={{ padding: 24, minWidth: 600 }}>
+                <div style={{ padding: 24, minWidth: 580 }}>
                   <Input
                     placeholder="Enter key name"
                     onChange={this.handleInputUpdate}
@@ -205,7 +205,7 @@ class Profile extends Component {
                           dataSource={apiKeys}
                           rowKey={record => record.id}
                           pagination={false}
-                          style={{ minWidth: 600 }}
+                          style={{ minWidth: 580 }}
                           className="no-scroll-bar"
                         />
                       </div>
