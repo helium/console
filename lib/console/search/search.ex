@@ -65,13 +65,13 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, type AS description, 1.0::float AS score, 'functions' AS category
+            SELECT id, name AS title, format AS description, 1.0::float AS score, 'functions' AS category
             FROM functions
             WHERE organization_id = $3 AND (name ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, type AS description, 0.5::float AS score, 'functions' AS category
+            SELECT id, name AS title, format AS description, 0.5::float AS score, 'functions' AS category
             FROM functions
             WHERE organization_id = $3 AND (name ~* $2)
           )
@@ -95,13 +95,13 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, value::VARCHAR || ' packets' AS description, 1.0::float AS score, 'alerts' AS category
+            SELECT id, name AS title, value::VARCHAR AS description, 1.0::float AS score, 'multi_buys' AS category
             FROM multi_buys
             WHERE organization_id = $3 AND (name ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, value::VARCHAR || ' packets' AS description, 0.5::float AS score, 'alerts' AS category
+            SELECT id, name AS title, value::VARCHAR AS description, 0.5::float AS score, 'multi_buys' AS category
             FROM multi_buys
             WHERE organization_id = $3 AND (name ~* $2)
           )
@@ -176,7 +176,7 @@ defmodule Console.Search do
     )
     UNION
     (
-      SELECT id, name AS title, type AS description, score, 'functions' AS category
+      SELECT id, name AS title, format AS description, score, 'functions' AS category
       FROM (
         SELECT *, SIMILARITY(name || ' ', $1) AS score
         FROM functions
@@ -198,7 +198,7 @@ defmodule Console.Search do
     )
     UNION
     (
-      SELECT id, name AS title, value::VARCHAR || ' packets' AS description, score, 'multi_buys' AS category
+      SELECT id, name AS title, value::VARCHAR AS description, score, 'multi_buys' AS category
       FROM (
         SELECT *, SIMILARITY(name || ' ', $1) AS score
         FROM multi_buys
