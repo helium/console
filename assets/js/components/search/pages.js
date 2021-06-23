@@ -58,6 +58,38 @@ const pages = [
     category: "profile",
     synonyms: "account"
   },
+  {
+    title: "Alerts",
+    description: "Configure your alerts",
+    url: "/alerts",
+    id: "/alerts",
+    category: "alerts",
+    synonyms: "notifications"
+  },
+  {
+    title: "ADR",
+    description: "Configure your ADR settings",
+    url: "/adr",
+    id: "/adr",
+    category: "adr",
+    synonyms: ""
+  },
+  {
+    title: "Multiple Packets",
+    description: "Configure your packet purchase settings",
+    url: "/multi_buys",
+    id: "/multi_buys",
+    category: "multibuys",
+    synonyms: "packets"
+  },
+  {
+    title: "Flows",
+    description: "Configure your data flows",
+    url: "/flows",
+    id: "/flows",
+    category: "flows",
+    synonyms: ""
+  },
 ]
 
 const fuseOpts = {
