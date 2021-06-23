@@ -26,6 +26,10 @@ body {
   white-space: nowrap;
 }
 
+#RoleTable > div > div > table > tbody > tr > td.ant-table-cell {
+  white-space: normal;
+}
+
 .ant-input,
 .ant-select {
   font-size: 16px;
