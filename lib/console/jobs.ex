@@ -20,15 +20,16 @@ defmodule Console.Jobs do
 
     # send emails for this batch, grouped by event type and label
     Enum.each(Enum.group_by(alertable_email_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
-      send_specific_event_email(identifiers, events)
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        send_specific_event_email(identifiers, events)
+      end)
     end)
 
     Enum.each(Enum.group_by(alertable_webhook_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
-      send_webhook(identifiers, events)
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        send_webhook(identifiers, events)
+      end)
     end)
-
-    Enum.each(alertable_email_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
-    Enum.each(alertable_webhook_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
   end
 
   def send_specific_event_email(identifiers, events) do
@@ -63,6 +64,8 @@ defmodule Console.Jobs do
         "downlink_unsuccessful" -> Email.downlink_unsuccessful_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
         "integration_receives_first_event" -> Email.integration_receives_first_event_notification_email(recipients, alert.name, details, organization.name, alert.id) |> Mailer.deliver_later()
       end
+
+      Enum.each(events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
     end
   end
 
@@ -82,6 +85,7 @@ defmodule Console.Jobs do
         {"Content-Type", "application/json"}
       ]
       HTTPoison.post(alert_event_webhook_config["url"], payload, headers)
+      Enum.each(events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
     end
   end
 
