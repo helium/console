@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { debugSidebarBackgroundColor } from '../../util/colors'
-import { Typography, Tooltip, Button } from 'antd';
+import { Typography, Tooltip } from 'antd';
 const { Text } = Typography
 
 class Sidebar extends Component {

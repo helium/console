@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import { Typography, Input } from 'antd';
+import React from 'react'
+import { Typography} from 'antd';
 const { Text, Paragraph } = Typography
 
 const AwsDetails = (props) => {
   const { channel } = props
-  const { aws_region, topic, aws_access_key } = channel
+  const { aws_region } = channel
 
   if (aws_region === undefined) return <div />
 

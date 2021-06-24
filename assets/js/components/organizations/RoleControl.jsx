@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Radio, Table, Text } from 'antd';
+import React from 'react'
+import { Radio, Table } from 'antd';
 
 const roles = [
   {

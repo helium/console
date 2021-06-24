@@ -5,7 +5,6 @@ import LabelNode from "./nodes/LabelNode";
 import FunctionNode from "./nodes/FunctionNode";
 import ChannelNode from "./nodes/ChannelNode";
 import DeviceNode from "./nodes/DeviceNode";
-import DebugNode from "./nodes/DebugNode";
 import LabelsIcon from "../../../img/flows-sidebar-labels-icon.svg";
 import LabelsGreyIcon from "../../../img/flows-sidebar-labels-icon-grey.svg";
 import DevicesIcon from "../../../img/flows-sidebar-devices-icon.svg";

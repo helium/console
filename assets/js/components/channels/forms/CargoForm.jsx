@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Input, Button } from 'antd';
+import { Typography, Button } from 'antd';
 const { Text } = Typography
 
 class CargoForm extends Component {

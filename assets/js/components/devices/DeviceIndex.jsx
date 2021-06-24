@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DeviceIndexTable from './DeviceIndexTable';
 import DeviceDashboardLayout from './DeviceDashboardLayout';
-import DeviceNew from './DeviceNew';
-import LabelNew from '../labels/LabelNew';
 import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';

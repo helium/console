@@ -1,7 +1,6 @@
-import { push, replace } from 'connected-react-router';
+import { replace } from 'connected-react-router';
 import * as rest from '../util/rest';
 import sanitizeHtml from 'sanitize-html'
-import { displayInfo, displayError } from '../util/messages';
 
 export const FETCHING_APPLICATIONS = "FETCHING_APPLICATIONS";
 export const FETCHED_APPLICATIONS = "FETCHED_APPLICATIONS";

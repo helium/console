@@ -1,9 +1,8 @@
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Link } from 'react-router-dom';
 import { Button, Typography, Popover } from 'antd';
-import { blueForDeviceStatsLarge, dragAndDropBackgroundColor } from '../../../util/colors';
+import { blueForDeviceStatsLarge } from '../../../util/colors';
 import { scanGenericDevices } from '../../../actions/device';
 import Warning from '../../../../img/warning.svg';
 import ImportIcon from '../../../../img/device-import-icon.svg';

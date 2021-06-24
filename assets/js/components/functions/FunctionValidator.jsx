@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import DashboardLayout from '../common/DashboardLayout'
-import { primaryBlue, codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
-import { Typography, Card, Input, InputNumber, Row, Col, Popover } from 'antd';
+import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
+import { Typography, Card, Input, InputNumber, Row, Col } from 'antd';
 import { PlayCircleFilled } from '@ant-design/icons';
 const { Text } = Typography
 import range from 'lodash/range'

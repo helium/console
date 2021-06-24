@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import analyticsLogger from '../../util/analyticsLogger'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import find from 'lodash/find'
 import { transferDC } from '../../actions/dataCredits'
 import withGql from '../../graphql/withGql'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
-import { Modal, Button, Typography, Input, Select, Row, Col } from 'antd';
+import { Modal, Button, Typography, Input, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 

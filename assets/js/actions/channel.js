@@ -1,6 +1,6 @@
-import { push, replace } from 'connected-react-router';
+import { replace } from 'connected-react-router';
 import * as rest from '../util/rest';
-import { displayInfo, displayError } from '../util/messages';
+import { displayInfo} from '../util/messages';
 import sanitizeHtml from 'sanitize-html';
 
 export const createChannel = (params, func) => {

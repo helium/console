@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import analyticsLogger from '../../util/analyticsLogger'
 import stripe from '../../config/stripe'
 import { connect } from 'react-redux'
 import { displayError } from '../../util/messages'
@@ -7,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod } from '../../actions/dataCredits'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
-import { Modal, Button, Divider, Typography } from 'antd';
+import { Modal, Button, Typography } from 'antd';
 const { Text } = Typography
 
 @connect(null, mapDispatchToProps)

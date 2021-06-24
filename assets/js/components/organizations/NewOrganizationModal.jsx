@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { createOrganization } from '../../actions/organization'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button, Typography, Input } from 'antd';
-const { Text } = Typography
+import { Modal, Button, Input } from 'antd';
 
 @connect(null, mapDispatchToProps)
 class NewOrganizationModal extends Component {

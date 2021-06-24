@@ -30,12 +30,10 @@ import {
   Typography,
   Button,
   Input,
-  Select,
   Tag,
   Card,
   Row,
   Col,
-  Tabs,
   Switch,
   Popover,
 } from "antd";

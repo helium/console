@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom';
 import moment from 'moment'
-import get from 'lodash/get'
 import DeleteLabelModal from './DeleteLabelModal'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
@@ -12,7 +11,7 @@ import { redForTablesDeleteText } from '../../util/colors'
 import { minWidth } from '../../util/constants'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
-import { Card, Button, Typography, Table, Pagination, Select, Popover, Switch, Tooltip } from 'antd';
+import { Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
 import { StatusIcon } from '../common/StatusIcon'
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';

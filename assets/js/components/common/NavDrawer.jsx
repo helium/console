@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { withRouter, Link, NavLink } from 'react-router-dom'
+import { withRouter, NavLink } from 'react-router-dom'
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Menu, Typography } from 'antd'
+import { Typography } from 'antd'
 import Caret from '../../../img/menu-caret.svg'
 import CaretD from '../../../img/menu-caret-device.svg'
 import CaretF from '../../../img/menu-caret-function.svg'

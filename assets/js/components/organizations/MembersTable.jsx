@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import get from 'lodash/get'
 import moment from 'moment'
 import { PAGINATED_MEMBERSHIPS } from '../../graphql/memberships'
 import analyticsLogger from '../../util/analyticsLogger'
@@ -8,7 +7,7 @@ import UserCan from '../common/UserCan'
 import RoleName from '../common/RoleName'
 import withGql from '../../graphql/withGql'
 import { minWidth } from '../../util/constants'
-import { Table, Button, Empty, Pagination, Tag, Typography } from 'antd';
+import { Table, Button, Pagination, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography

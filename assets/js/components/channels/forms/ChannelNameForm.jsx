@@ -1,6 +1,5 @@
 import React from "react";
-import { Typography, Input, Form, Button, Card } from "antd";
-const { Text } = Typography;
+import { Input, Form, Button, Card } from "antd";
 
 const ChannelNameForm = (props) => (
   <div>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Button, Input, Form } from 'antd';
+import { Typography } from 'antd';
 const { Text } = Typography
 
 class TermsRaw extends Component {

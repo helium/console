@@ -3,15 +3,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import numeral from 'numeral'
-import get from 'lodash/get'
-import filter from 'lodash/filter'
 import { switchOrganization, deleteOrganization, updateOrganization } from '../../actions/organization'
 import { PAGINATED_ORGANIZATIONS } from '../../graphql/organizations'
 import analyticsLogger from '../../util/analyticsLogger'
 import { minWidth } from '../../util/constants'
 import UserCan from '../common/UserCan'
 import withGql from '../../graphql/withGql'
-import { Table, Typography, Button, Empty, Pagination, Switch } from 'antd';
+import { Table, Typography, Button, Pagination, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons'
 const { Text } = Typography
 import { SkeletonLayout } from '../common/SkeletonLayout';

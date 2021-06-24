@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Input } from 'antd';
-const { Text, Title } = Typography
+const { Text } = Typography
 
 class AWSForm extends Component {
   state = {

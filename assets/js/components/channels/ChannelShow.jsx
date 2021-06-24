@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import find from "lodash/find";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import UserCan from "../common/UserCan";
-import { primaryBlue } from "../../util/colors";
 import { displayError } from "../../util/messages";
 import { minWidth } from '../../util/constants'
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -25,16 +22,12 @@ import {
   Typography,
   Button,
   Input,
-  Form,
-  Tag,
-  Checkbox,
   Card,
   Divider,
   Row,
   Col,
 } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { isObject } from "lodash";
 import MqttDetails from "./MqttDetails";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text, Paragraph } = Typography;

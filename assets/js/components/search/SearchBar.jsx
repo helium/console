@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import findIndex from 'lodash/findIndex'
-import flatten from 'lodash/flatten'
 import last from 'lodash/last'
 import SearchResults from './SearchResults'
 import searchPages from './pages'

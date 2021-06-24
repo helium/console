@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import withGql from '../../graphql/withGql'
-import debounce from 'lodash/debounce'
 import omit from 'lodash/omit'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ALL_LABELS_DEVICES } from '../../graphql/labels'
-import { Modal, Button, Checkbox, Input, Card, Icon, AutoComplete, Typography, Tabs } from 'antd';
+import { Modal, Button, Typography, Tabs } from 'antd';
 import LabelAddDeviceSelect from './LabelAddDeviceSelect'
 import LabelAddLabelSelect from './LabelAddLabelSelect'
 const { Text } = Typography

@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import DashboardLayout from './common/DashboardLayout'
-import UserCan from './common/UserCan'
 import analyticsLogger from '../util/analyticsLogger'
-import { Button, Typography, Checkbox } from 'antd';
+import { Checkbox } from 'antd';
 import { RocketFilled, CalendarFilled, CaretRightOutlined } from '@ant-design/icons';
-const { Text } = Typography
 import WelcomeImg from '../../img/welcome-image.png'
-import BulbImg from '../../img/bulb.svg'
 import PlusCircle from '../../img/pluscircle.svg'
-import classNames from 'classnames';
 import _JSXStyle from "styled-jsx/style"
 
 class Welcome extends Component {

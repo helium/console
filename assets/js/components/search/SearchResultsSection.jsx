@@ -3,14 +3,6 @@ import SearchResult from './SearchResult'
 import { Typography } from 'antd';
 const { Text } = Typography
 
-const styles = {
-  subheader: {
-    lineHeight: "32px",
-    fontSize: "0.72rem",
-    letterSpacing: "0.03rem",
-  }
-}
-
 class SearchResultsSection extends Component {
   render() {
     const { title, results, selectedResult, gotoResult } = this.props

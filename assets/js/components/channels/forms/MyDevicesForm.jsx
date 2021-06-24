@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Input, Button } from 'antd';
+import { Typography } from 'antd';
 const { Text } = Typography
 
 class MyDevicesForm extends Component {

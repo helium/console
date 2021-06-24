@@ -8,7 +8,7 @@ import analyticsLogger from '../../util/analyticsLogger'
 import withGql from '../../graphql/withGql'
 import { ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import numeral from 'numeral'
-import { Modal, Button, Typography, Select, Row, Col, Input } from 'antd';
+import { Modal, Button, Typography, Select, Input } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 

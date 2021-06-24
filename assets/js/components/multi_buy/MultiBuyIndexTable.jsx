@@ -1,8 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'antd';
 import Text from 'antd/lib/typography/Text';
-import moment from 'moment';
 import { minWidth } from '../../util/constants'
 import { DeleteOutlined } from '@ant-design/icons';
 import UserCan from '../common/UserCan';

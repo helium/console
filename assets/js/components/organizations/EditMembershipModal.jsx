@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import RoleControl from './RoleControl'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button, Typography, Input } from 'antd';
+import { Modal, Button, Typography } from 'antd';
 const { Text } = Typography
 
 class EditMembershipModal extends Component {

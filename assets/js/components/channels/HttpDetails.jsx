@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Typography, Input } from 'antd';
+import React from 'react'
+import { Typography } from 'antd';
 const { Text, Paragraph } = Typography
 
 const HttpDetails = (props) => {

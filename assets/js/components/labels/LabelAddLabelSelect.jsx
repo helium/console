@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
-import { Checkbox, Input, Card, AutoComplete } from 'antd';
+import { Checkbox, Input, Card } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import withGql from '../../graphql/withGql'
 import { SEARCH_LABELS } from '../../graphql/search'

@@ -11,17 +11,9 @@ import EditMembershipModal from './EditMembershipModal'
 import DeleteUserModal from './DeleteUserModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
-import { Typography, Button, Card } from 'antd';
+import { Typography, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 const { Text } = Typography
-
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center'
-  },
-}
 
 @connect(null, mapDispatchToProps)
 class UserIndex extends Component {

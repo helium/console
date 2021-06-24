@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import moment from 'moment'
-import get from 'lodash/get'
 import LabelTag from '../common/LabelTag'
 import UserCan from '../common/UserCan'
 import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import { minWidth } from '../../util/constants'
-import classNames from 'classnames';
-import { Table, Button, Empty, Pagination, Typography, Select, Card, Popover, Switch, Checkbox, Tooltip } from 'antd';
+import { Table, Button, Pagination, Typography, Select, Popover, Switch, Checkbox } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { StatusIcon } from '../common/StatusIcon'
 const { Text } = Typography

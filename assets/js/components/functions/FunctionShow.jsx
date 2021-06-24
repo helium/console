@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../graphql/withGql";
@@ -12,16 +11,14 @@ import { FUNCTION_SHOW } from "../../graphql/functions";
 import { deleteFunction, updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from '../../util/constants'
-import { Typography, Card, Button, Input, Select } from "antd";
+import { Typography, Card, Button } from "antd";
 import {
   PauseOutlined,
   DeleteOutlined,
-  SaveOutlined,
   CaretRightOutlined,
 } from "@ant-design/icons";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
-const { Option } = Select;
 import FunctionDetailsCard from "./FunctionDetailsCard";
 
 class FunctionShow extends Component {

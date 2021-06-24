@@ -28,12 +28,8 @@ import { createChannel } from "../../actions/channel";
 import analyticsLogger from "../../util/analyticsLogger";
 import kebabCase from "lodash/kebabCase";
 import range from "lodash/range";
-import { Typography, Select, Card, Button } from "antd";
+import { Card, Button } from "antd";
 import { IntegrationTypeTileSimple } from "./IntegrationTypeTileSimple";
-import {
-  NEW_CHANNEL_TYPES,
-  PREMADE_CHANNEL_TYPES,
-} from "../../util/integrationInfo";
 import _JSXStyle from "styled-jsx/style";
 import { adafruitTemplate } from "../../util/integrationTemplates";
 

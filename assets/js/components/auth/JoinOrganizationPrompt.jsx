@@ -4,11 +4,10 @@ import { connect } from 'react-redux'
 import { parse } from 'query-string'
 import { joinOrganization } from '../../actions/organization'
 import { getInvitation } from '../../actions/invitation.js'
-import { primaryBlue } from '../../util/colors'
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
-import { Typography, Button, Form, Card, Row, Col } from 'antd'
-const { Text, Title } = Typography
+import { Typography, Button, Card, Row, Col } from 'antd'
+const { Title } = Typography
 
 @connect(mapStateToProps, mapDispatchToProps)
 class JoinOrganizationPrompt extends Component {
