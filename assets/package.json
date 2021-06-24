@@ -17,6 +17,7 @@
     "chart.js": "^2.9.4",
     "cheerio": "^1.0.0-rc.6",
     "connected-react-router": "^6.8.0",
+    "crypto": "^1.0.1",
     "dagre": "^0.8.5",
     "dotenv": "^8.2.0",
     "fuse.js": "^3.4.3",
