@@ -1,21 +1,12 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "targets": {
-          "node": "14"
-        }
-      }
-    ],
-    "babel-preset-react"
-  ],
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
-    "transform-es2015-destructuring",
-    "transform-es2015-parameters",
-    "transform-object-rest-spread",
-    "transform-decorators-legacy",
-    "transform-class-properties",
-    "styled-jsx/babel"
+    "@babel/plugin-transform-destructuring",
+    "@babel/transform-parameters",
+    "@babel/plugin-proposal-object-rest-spread",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    "@babel/proposal-class-properties",
+    "styled-jsx/babel",
+    "@babel/plugin-syntax-dynamic-import"
   ]
 }
