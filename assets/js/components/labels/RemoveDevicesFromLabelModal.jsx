@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Button, Typography, Input } from 'antd';
+import { Modal, Button, Typography } from 'antd';
 const { Text } = Typography
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'

@@ -1,4 +1,3 @@
-import { push } from 'connected-react-router';
 import * as rest from '../util/rest';
 import { logout } from '../components/auth/Auth0Provider';
 import analyticsLogger from '../util/analyticsLogger';

@@ -4,9 +4,6 @@ import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import { ALL_FUNCTIONS } from '../../graphql/functions'
 import FunctionBar from './FunctionBar'
-import analyticsLogger from '../../util/analyticsLogger'
-import { SkeletonLayout } from '../common/SkeletonLayout';
-import NavPointTriangle from '../common/NavPointTriangle';
 import HomeIcon from '../../../img/functions/function-index-home-icon.svg'
 import PlusIcon from '../../../img/functions/function-index-plus-icon.svg'
 import AllIcon from '../../../img/functions/function-index-all-icon.svg'

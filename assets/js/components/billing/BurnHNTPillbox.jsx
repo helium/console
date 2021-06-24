@@ -8,7 +8,7 @@ const BurnHNTPillbox = ({ nextTimeStamp, hntToBurn, onComplete }) => (
   <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10, width: '100%' }}>
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#4091F7', padding: 10, borderRadius: 40 }}>
       <Popover
-        content="The HNT equivalent price  is based on Helium Oracle Data which updates every 30-60 mins."
+        content="The HNT equivalent price is based on Helium OracleData which updates every 30-60 mins."
         placement="bottom"
         overlayStyle={{ width: 220 }}
       >

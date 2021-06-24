@@ -1,6 +1,5 @@
 import Azure from "../../img/azure-channel.svg";
 import Aws from "../../img/aws-channel.svg";
-import Google from "../../img/google-channel.svg";
 import GoogleSheet from "../../img/google-sheet-channel.svg";
 import Mqtt from "../../img/mqtt-channel.svg";
 import Http from "../../img/http-channel.svg";

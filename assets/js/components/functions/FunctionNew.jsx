@@ -7,9 +7,8 @@ import FunctionValidator from "./FunctionValidator";
 import { createFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from '../../util/constants'
-import { Typography, Button, Input, Select, Card } from "antd";
+import { Button, Input, Select, Card } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
-const { Text } = Typography;
 const { Option } = Select;
 
 @connect(null, mapDispatchToProps)

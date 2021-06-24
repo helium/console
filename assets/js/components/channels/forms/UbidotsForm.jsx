@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Typography, Input, Button, Select } from 'antd';
+import { Typography, Input, Button } from 'antd';
 import { post } from '../../../util/rest'
 const { Text } = Typography
-const { Option } = Select
 
 class UbidotsForm extends Component {
   state = {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Redirect, withRouter } from 'react-router'
+import { Route, withRouter } from 'react-router'
 import { connect } from 'react-redux';
 import NoOrganization from '../organizations/NoOrganization'
 

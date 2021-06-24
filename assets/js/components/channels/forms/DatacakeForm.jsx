@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Typography, Input, Button, Select } from 'antd';
-import { post } from '../../../util/rest'
+import { Typography, Input } from 'antd';
 const { Text } = Typography
-const { Option } = Select
 
 class DatacakeForm extends Component {
   state = {

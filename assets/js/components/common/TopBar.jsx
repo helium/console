@@ -12,8 +12,8 @@ import { logOut } from '../../actions/auth'
 import SearchBar from '../search/SearchBar'
 import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizations'
-import { primaryBlue, redForTablesDeleteText } from '../../util/colors'
-import { Menu, Dropdown, Typography, Tooltip, Button } from 'antd';
+import { redForTablesDeleteText } from '../../util/colors'
+import { Menu, Dropdown, Typography, Tooltip } from 'antd';
 import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'

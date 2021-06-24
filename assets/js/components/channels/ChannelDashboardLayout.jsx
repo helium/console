@@ -7,7 +7,6 @@ import { ALL_CHANNELS } from '../../graphql/channels'
 import HomeIcon from '../../../img/channels/channel-index-home-icon.svg'
 import PlusIcon from '../../../img/channels/channel-index-plus-icon.svg'
 import AllIcon from '../../../img/channels/channel-index-all-icon.svg'
-import { Card } from 'antd';
 import TableHeader from '../common/TableHeader';
 
 class ChannelDashboardLayout extends Component {

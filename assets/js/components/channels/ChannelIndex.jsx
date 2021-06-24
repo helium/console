@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
 import ChannelIndexTable from './ChannelIndexTable'
 import ChannelDashboardLayout from './ChannelDashboardLayout'
-import ChannelNew from './ChannelNew'
 import DeleteChannelModal from './DeleteChannelModal'
 import analyticsLogger from '../../util/analyticsLogger'
 import { PAGINATED_CHANNELS } from '../../graphql/channels'

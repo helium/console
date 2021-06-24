@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Tag } from 'antd';
-import { ApiOutlined } from '@ant-design/icons';
 
 const LabelTag = ({ text, style, closable, onClose, isNew, onClick }) => {
   let labelColor = "geekblue"

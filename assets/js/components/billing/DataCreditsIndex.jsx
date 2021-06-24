@@ -6,7 +6,6 @@ import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
 import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
 import AutomaticRenewalModal from "./AutomaticRenewalModal";
@@ -24,8 +23,7 @@ import {
 } from "@ant-design/icons";
 import DCIMg from "../../../img/datacredits.svg";
 import BytesIMg from "../../../img/datacredits-bytes-logo.svg";
-import classNames from "classnames";
-const { Text, Title } = Typography;
+const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import UserCan from "../common/UserCan";
 import _JSXStyle from "styled-jsx/style";

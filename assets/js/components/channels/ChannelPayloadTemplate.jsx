@@ -4,10 +4,8 @@ import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import { minWidth } from '../../util/constants'
 import { displayError } from '../../util/messages'
 import { defaultPayload, browanPayload, cayennePayload, defaultTemplate, browanTemplate, cayenneTemplate, adafruitTemplate } from '../../util/integrationTemplates'
-import { Typography, Card, Popover, Select, Row, Col, Button, Input } from 'antd';
+import { Typography, Card, Popover, Row, Col, Button } from 'antd';
 import { QuestionCircleFilled, PlayCircleFilled } from '@ant-design/icons';
-const { TextArea } = Input;
-const { Option } = Select;
 const { Text } = Typography
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';

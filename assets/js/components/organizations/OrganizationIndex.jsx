@@ -6,7 +6,7 @@ import DeleteOrganizationModal from '../organizations/DeleteOrganizationModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { minWidth } from '../../util/constants'
-import { Card, Button, Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 const { Text } = Typography
 

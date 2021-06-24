@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Typography, Input, Row, Col } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';

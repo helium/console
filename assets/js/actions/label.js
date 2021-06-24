@@ -1,5 +1,5 @@
 import * as rest from '../util/rest'
-import { push, replace } from 'connected-react-router';
+import { replace } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 
 export const createLabel = (label) => {

@@ -1,5 +1,4 @@
-import React, { Component } from 'react'
-import analyticsLogger from '../../util/analyticsLogger'
+import React from 'react'
 import { Typography, Input, Row, Col } from 'antd';
 const { Text } = Typography
 

@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import { Modal, Button, Typography, Input, Divider, Tabs, Switch } from "antd";
+import { Modal, Button, Typography, Input } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
-import { grayForModalCaptions } from "../../util/colors";
 const { Text } = Typography;
-const { TabPane } = Tabs;
 
 class UpdateLabelModal extends Component {
   state = {

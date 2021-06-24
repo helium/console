@@ -7,16 +7,14 @@ import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom';
 import QRCode from 'react-qr-code'
-import numeral from 'numeral'
 import find from 'lodash/find'
 import { bindActionCreators } from 'redux'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import BurnHNTPillbox from './BurnHNTPillbox'
 import BurnManualEntry from './BurnManualEntry'
-import { convertToTextShort } from './AmountEntryCalculator'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo, getRouterAddress } from '../../actions/dataCredits'
-import { Modal, Button, Typography, Radio, Checkbox, Input, Popover } from 'antd';
+import { Modal, Button, Typography, Input, Popover } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 const { Text } = Typography
 

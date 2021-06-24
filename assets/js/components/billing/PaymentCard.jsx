@@ -1,6 +1,4 @@
 import React from 'react'
-import { Typography } from 'antd';
-const { Text } = Typography
 import Visa from '../../../img/payment-visa-icon.svg'
 import Mastercard from '../../../img/payment-mastercard-icon.svg'
 import Amex from '../../../img/payment-amex-icon.svg'

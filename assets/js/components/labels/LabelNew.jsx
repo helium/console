@@ -4,7 +4,6 @@ import { bindActionCreators } from "redux";
 import { createLabel } from "../../actions/label";
 import { grayForModalCaptions } from "../../util/colors";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
 import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
 import UserCan from "../common/UserCan";
 import { Card, Button, Typography, Input } from "antd";

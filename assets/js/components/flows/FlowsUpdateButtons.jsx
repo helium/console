@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Typography, Button } from 'antd';
-const { Text } = Typography
+import React from 'react';
+import { Button } from 'antd';
 
 export default ({ hasChanges, resetElementsMap, submitChanges }) => {
   if (hasChanges) {
