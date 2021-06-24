@@ -6,6 +6,7 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Organizations.Invitation
   alias Console.Email
   alias Console.Mailer
+  alias Console.Repo
 
   plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :redirect_to_register, :get_by_token]
 
@@ -53,16 +54,25 @@ defmodule ConsoleWeb.InvitationController do
     if conn.assigns.current_user.id != invitation.inviter_id do
       with {true, invitation} <- Organizations.valid_invitation_token_and_lock?(invitation_token) do
         organization = Organizations.get_organization!(invitation.organization_id)
-        Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
-        {:ok, _invitation} = Organizations.mark_invitation_used(invitation)
-        ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{organization.id}:invitation_list_update", %{})
 
-        membership = Organizations.get_membership!(conn.assigns.current_user, organization)
-        ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{organization.id}:member_list_update", %{})
+        join_result =
+          Ecto.Multi.new()
+          |> Ecto.Multi.run(:membership, fn _repo, _ ->
+            Organizations.join_organization(conn.assigns.current_user, organization, invitation.role)
+          end)
+          |> Ecto.Multi.run(:used_invitation, fn _repo, _ ->
+            Organizations.mark_invitation_used(invitation)
+          end)
+          |> Repo.transaction()
 
-        conn
-        |> put_status(:ok)
-        |> render("accept.json", %{organization: organization, membership: membership})
+        with {:ok, %{ membership: membership, used_invitation: _ }} <- join_result do
+          ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{organization.id}:invitation_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{organization.id}:member_list_update", %{})
+
+          conn
+          |> put_status(:ok)
+          |> render("accept.json", %{organization: organization, membership: membership})
+        end
       end
     end
   end
