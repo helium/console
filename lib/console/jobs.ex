@@ -20,11 +20,15 @@ defmodule Console.Jobs do
 
     # send emails for this batch, grouped by event type and label
     Enum.each(Enum.group_by(alertable_email_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
-      send_specific_event_email(identifiers, events)
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        send_specific_event_email(identifiers, events)
+      end)
     end)
 
     Enum.each(Enum.group_by(alertable_webhook_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
-      send_webhook(identifiers, events)
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        send_webhook(identifiers, events)
+      end)
     end)
 
     Enum.each(alertable_email_events, fn e -> AlertEvents.mark_alert_event_sent(e) end)
