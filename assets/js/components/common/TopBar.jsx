@@ -32,7 +32,7 @@ class TopBar extends Component {
 
   componentDidMount() {
     const { socket, user } = this.props
-    const user_id = user.sub.slice(6)
+    const user_id = user.sub;
 
     this.channel = socket.channel("graphql:topbar_orgs", {})
     this.channel.join()
