@@ -47,7 +47,7 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
   def init(default), do: default
 
   def call(conn, _default) do
-    case get_req_header("authorization") do
+    case conn |> get_req_header("authorization") do
       nil ->
         conn
           |> send_resp(
