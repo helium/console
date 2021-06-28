@@ -16,6 +16,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
       case conn.host do
         "helium-console-dev.herokuapp.com" -> conn
         "helium-console-vip.herokuapp.com" -> conn
+        "console-vip.helium.com" -> conn
         "console.helium.com" -> conn
         "www.example.com" -> conn
         "localhost" -> conn
