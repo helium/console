@@ -159,6 +159,9 @@ defmodule ConsoleWeb.LabelController do
       conn
       |> put_resp_header("message", "Label(s) successfully removed from device")
       |> send_resp(:no_content, "")
+    else { :error } ->
+      conn
+      |> send_resp(404, "")
     end
   end
 
