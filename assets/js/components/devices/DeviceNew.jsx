@@ -50,7 +50,7 @@ class DeviceNew extends Component {
       (message) => {
         const { page, pageSize } = this.state;
         this.props.importsQuery.refetch({ page, pageSize });
-        const user_id = user.sub.slice(6);
+        const user_id = user.sub;
 
         if (user_id === message.user_id && message.status === "success") {
           this.setState({ importComplete: true });
