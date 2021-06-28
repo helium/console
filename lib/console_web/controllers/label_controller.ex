@@ -210,7 +210,7 @@ defmodule ConsoleWeb.LabelController do
     current_organization = conn.assigns.current_organization
     cond do
       length(devices) == 0 -> {:error, :bad_request, "Please select a device"}
-      Labels.get_label_by_name(String.upcase(label_name), organization.id) != nil -> {:error, :bad_request, "That label already exists"}
+      Labels.get_label_by_name(label_name, organization.id) != nil -> {:error, :bad_request, "That label already exists"}
       true ->
         label_changeset =
           %Label{}
