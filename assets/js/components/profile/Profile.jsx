@@ -9,6 +9,7 @@ import DashboardLayout from '../common/DashboardLayout';
 import UserCan from '../common/UserCan';
 import ProfileNewKeyModal from './ProfileNewKeyModal';
 import RoleName from '../common/RoleName';
+import { loginWithRedirect } from '../auth/Auth0Provider';
 import analyticsLogger from '../../util/analyticsLogger';
 import { ALL_API_KEYS } from '../../graphql/apiKeys';
 import { getMfaStatus } from '../../actions/auth';

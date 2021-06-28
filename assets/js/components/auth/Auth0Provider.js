@@ -28,6 +28,10 @@ export const getIdTokenClaims = async () => {
   return await auth0Client.getIdTokenClaims();
 }
 
+export const loginWithRedirect = async () => {
+  return await auth0Client.loginWithRedirect();
+}
+
 export const logout = async (...p) => {
   window.Intercom('shutdown')
 
