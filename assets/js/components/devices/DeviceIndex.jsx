@@ -64,7 +64,7 @@ class DeviceIndex extends Component {
     this.importChannel.on(`graphql:device_import_update:${currentOrganizationId}:import_list_updated`, (message) => {
       const { page, pageSize } = this.state
       this.props.importsQuery.refetch({ page, pageSize })
-      const user_id = user.sub;
+      const user_id = user.sub.startsWith("auth0") ? user.sub.slice(6) : user.sub;
 
       if (user_id === message.user_id && message.status === 'success') {
         this.setState({ importComplete: true })

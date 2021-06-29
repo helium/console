@@ -23,7 +23,7 @@ class NavDrawer extends Component {
 
   componentDidMount() {
     const { socket, user } = this.props
-    const user_id = user.sub;
+    const user_id = user.sub.startsWith("auth0") ? user.sub.slice(6) : user.sub;
 
     this.channel = socket.channel("graphql:nav_labels", {})
     this.channel.join()
