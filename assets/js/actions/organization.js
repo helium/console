@@ -1,6 +1,7 @@
 import { push } from 'connected-react-router';
 import sanitizeHtml from 'sanitize-html'
 import * as rest from '../util/rest';
+import { displayError } from "../util/messages";
 
 export const FETCHED_ORGANIZATION = 'FETCHED_ORGANIZATIONS'
 export const FETCHING_ORGANIZATION = 'FETCHING_ORGANIZATION'
@@ -81,17 +82,20 @@ export const switchOrganization = (organization) => {
 }
 
 export const joinOrganization = (token) => {
-  let params = { invitation: { token } }
-  return async dispatch => {
-    rest.post('/api/users', params)
-      .then(response => {
+  let params = { invitation: { token } };
+  if (token) {
+    return async (dispatch) => {
+      rest.post("/api/users", params).then((response) => {
         dispatch(fetchedOrganization(response.data[0]));
-        localStorage.setItem('organization', JSON.stringify(response.data[0]));
-        dispatch(push('/'));
+        localStorage.setItem("organization", JSON.stringify(response.data[0]));
+        dispatch(push("/"));
         window.location.replace("/organizations");
-      })
+      });
+    };
+  } else {
+    displayError("Unable to find and accept invitation");
   }
-}
+};
 
 export const deleteOrganization = (id, destinationOrgId = 'no-transfer') => {
   return (dispatch) => {
