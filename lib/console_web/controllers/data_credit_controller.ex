@@ -326,7 +326,7 @@ defmodule ConsoleWeb.DataCreditController do
           end
 
         conn |> send_resp(:ok, Poison.encode!(%{ price: current_price["data"]["price"], next_price_timestamp: next_price_timestamp }))
-    end
+      end
   end
 
   def broadcast_router_refill_dc_balance(%Organization{} = organization) do
