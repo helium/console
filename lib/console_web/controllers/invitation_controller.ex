@@ -84,6 +84,10 @@ defmodule ConsoleWeb.InvitationController do
       organization_name = organization.name
 
       render(conn, "invitation.json", invitation: inv, organization_name: organization_name)
+    else
+      {false, _} ->
+        conn
+        |> send_resp(404, "Invalid invitation")
     end
   end
 

@@ -127,5 +127,11 @@ defmodule ConsoleWeb.InvitationControllerTest do
       resp_conn = delete conn, invitation_path(conn, :delete, invitation.id)
       assert response(resp_conn, 403)
     end
+
+    test "handles invalid invitation gracefully", %{conn: _conn} do
+      resp_conn = build_conn()
+        |> get("/api/invitations/some_invalid_invitation_ID")
+      assert response(resp_conn, 404) # does not crash with internal server error 
+    end
   end
 end

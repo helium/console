@@ -142,7 +142,7 @@ defmodule Console.Devices.DeviceResolver do
   def events(%{device_id: id}, %{context: %{current_organization: current_organization}}) do
     device = Device
       |> where([d], d.organization_id == ^current_organization.id and d.id == ^id)
-      |> Repo.one()
+      |> Repo.one!()
 
     events = Event
       |> where([e], e.device_id == ^device.id)

@@ -41,7 +41,7 @@ defmodule Console.Organizations.Organization do
     organization
     |> cast(attrs, [:name, :webhook_key, :flow])
     |> validate_required(:name, message: "Organization Name is required")
-    |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 letters")
+    |> validate_length(:name, min: 3, message: "Organization Name must be at least 3 characters")
     |> validate_length(:name, max: 50, message: "Organization Name cannot be longer than 50 characters")
     |> check_against_discovery_name
     |> check_name
