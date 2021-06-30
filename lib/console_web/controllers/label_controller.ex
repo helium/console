@@ -161,7 +161,7 @@ defmodule ConsoleWeb.LabelController do
       |> send_resp(:no_content, "")
     else { :error } ->
       conn
-      |> send_resp(404, "")
+      |> send_resp(400, "")
     end
   end
 

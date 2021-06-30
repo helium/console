@@ -328,7 +328,7 @@ defmodule ConsoleWeb.DataCreditController do
         conn |> send_resp(:ok, Poison.encode!(%{ price: current_price["data"]["price"], next_price_timestamp: next_price_timestamp }))
     else {:error, _} ->
       conn
-      |> send_resp(404, "")
+      |> send_resp(502, "")
     end 
   end
 
