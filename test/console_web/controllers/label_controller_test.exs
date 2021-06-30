@@ -49,7 +49,7 @@ defmodule ConsoleWeb.LabelControllerTest do
         "device_id" => not_my_device.id,
         "labels" => [label.id]
       }
-      assert response(resp_conn, 404)
+      assert response(resp_conn, 400)
     end
   end
 end
