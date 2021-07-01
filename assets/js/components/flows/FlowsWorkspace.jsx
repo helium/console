@@ -238,6 +238,7 @@ export default ({
           selectionKeyCode={null}
           nodesDraggable={userCan({ role: currentRole })}
           nodesConnectable={userCan({ role: currentRole })}
+          deleteKeyCode={"keyboard delete not allowed"}
         />
         <UserCan>
           <FlowsNodesMenu
