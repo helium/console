@@ -158,6 +158,7 @@ defmodule ConsoleWeb.ChannelController do
       if updated_channel != nil do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
+          channel_id: channel.id,
           channel_name: updated_channel.channel_name,
           updated_by: conn.assigns.current_user.email,
           time: time
@@ -190,6 +191,7 @@ defmodule ConsoleWeb.ChannelController do
       if (deleted_channel != nil) do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
         details = %{
+          channel_id: id,
           channel_name: deleted_channel.channel_name,
           deleted_by: conn.assigns.current_user.email,
           time: time
