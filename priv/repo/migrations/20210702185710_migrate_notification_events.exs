@@ -42,8 +42,6 @@ defmodule Console.Repo.Migrations.MigrateNotificationEvents do
         SELECT id FROM label_notification_settings WHERE key = $1 AND label_id = $2
       """, [old_row.key, old_row.label_id]).rows
 
-      IO.inspect email_settings_results
-
       if Enum.count(email_settings_results) > 0 do 
         Ecto.Adapters.SQL.query!(
           Console.Repo, """
