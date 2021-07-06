@@ -135,6 +135,18 @@ class DeviceContent extends Component {
     });
   };
 
+  handleUpdateCfListSetting = (cfListValue) => {
+    const deviceId = this.props.id;
+    const attrs = { cf_list_enabled: cfListValue };
+    this.props.updateDevice(deviceId, attrs).then(() => {
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_CF_LIST_ENABLED", {
+        id: deviceId,
+        cf_list_enabled: cfListValue,
+      });
+      this.props.onAdrUpdate("device-" + deviceId, cfListValue);
+    });
+  };
+
   toggleDevEUIInput = () => {
     const { showDevEUIInput } = this.state;
     this.setState({ showDevEUIInput: !showDevEUIInput });
@@ -406,7 +418,11 @@ class DeviceContent extends Component {
             key="6"
             style={{ padding: "0px 40px 0px 40px" }}
           >
-            <CFListNodeSettings from="device" />
+            <CFListNodeSettings
+              from="device"
+              checked={device.cf_list_enabled}
+              updateCFList={this.handleUpdateCfListSetting}
+            />
           </TabPane>
         </Tabs>
 

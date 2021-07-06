@@ -43,6 +43,12 @@ defmodule ConsoleWeb.Router.DeviceController do
             0 -> device.adr_allowed
             _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
           end
+        
+        cf_list_enabled =
+          case length(device.labels) do
+            0 -> device.cf_list_enabled
+            _ -> device.labels |> Enum.map(fn l -> l.cf_list_enabled end) |> Enum.any?(fn s -> s == true end)
+          end
 
         multi_buy_value =
           case length(device.labels) do
@@ -108,6 +114,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         final_device =
           device
           |> Map.put(:adr_allowed, adr_allowed)
+          |> Map.put(:cf_list_enabled, cf_list_enabled)
           |> Map.put(:multi_buy, multi_buy_value)
           |> Map.put(:channels, channels)
 

@@ -17,7 +17,8 @@ export default ({ checked, from, updateCFList }) => {
         }}
       >
         <Switch
-          checked={false}
+          onChange={(cfListValue) => updateCFList(cfListValue)}
+          checked={checked}
           style={{ marginRight: 8 }}
           disabled={!userCan({ role: currentRole })}
         />

@@ -15,6 +15,7 @@ defmodule ConsoleWeb.V1.LabelView do
       id: label.id,
       name: label.name,
       adr_allowed: label.adr_allowed,
+      cf_list_enabled: label.cf_list_enabled
     }
   end
 

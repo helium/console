@@ -189,6 +189,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         adrAllowed: device.adr_allowed,
         multi_buy_id: device.multi_buy_id,
         hasAlerts: device.alerts.length > 0,
+        cfListEnabled: device.cf_list_enabled,
       },
       position: [0, 0],
     };
@@ -210,6 +211,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         adrAllowed: label.adr_allowed,
         multi_buy_id: label.multi_buy_id,
         hasAlerts: label.alerts.length > 0,
+        cfListEnabled: label.cf_list_enabled,
       },
       position: [0, 0],
     };

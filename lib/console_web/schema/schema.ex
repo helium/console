@@ -34,6 +34,7 @@ defmodule ConsoleWeb.Schema do
     field :adr_allowed, :boolean
     field :multi_buy_id, :id
     field :alerts, list_of(:alert)
+    field :cf_list_enabled, :boolean
   end
 
   object :device_stats do
@@ -96,6 +97,7 @@ defmodule ConsoleWeb.Schema do
     field :adr_allowed, :boolean
     field :multi_buy_id, :id
     field :alerts, list_of(:alert)
+    field :cf_list_enabled, :boolean
   end
 
   paginated object :channel do

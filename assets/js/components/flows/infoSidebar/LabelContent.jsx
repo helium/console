@@ -27,11 +27,7 @@ import {
   Tabs,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
-import {
-  EditOutlined,
-  EyeOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
@@ -40,6 +36,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
+import CFListNodeSettings from "./CFListNodeSettings";
 
 class LabelContent extends Component {
   state = {
@@ -173,6 +170,14 @@ class LabelContent extends Component {
     const attrs = { adr_allowed: adrValue };
     this.props.updateLabel(labelId, attrs).then(() => {
       this.props.onAdrUpdate("label-" + labelId, adrValue);
+    });
+  };
+
+  handleUpdateCFListSetting = (cfListValue) => {
+    const labelId = this.props.id;
+    const attrs = { cf_list_enabled: cfListValue };
+    this.props.updateLabel(labelId, attrs).then(() => {
+      this.props.onCFListUpdate("label-" + labelId, cfListValue);
     });
   };
 
@@ -417,6 +422,17 @@ class LabelContent extends Component {
             <MultiBuyNodeSettings
               currentNode={label}
               onMultiBuyUpdate={this.props.onMultiBuyUpdate}
+            />
+          </TabPane>
+          <TabPane
+            tab="CF List"
+            key="6"
+            style={{ padding: "0px 40px 0px 40px" }}
+          >
+            <CFListNodeSettings
+              from="label"
+              checked={label.cf_list_enabled}
+              updateCFList={this.handleUpdateCFListSetting}
             />
           </TabPane>
         </Tabs>

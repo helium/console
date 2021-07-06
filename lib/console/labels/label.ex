@@ -14,6 +14,7 @@ defmodule Console.Labels.Label do
     field :name, :string
     field :creator, :string
     field :adr_allowed, :boolean
+    field :cf_list_enabled, :boolean
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
@@ -25,7 +26,7 @@ defmodule Console.Labels.Label do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "creator"])
 
     label
-    |> cast(attrs, [:name, :organization_id, :creator, :adr_allowed, :multi_buy_id])
+    |> cast(attrs, [:name, :organization_id, :creator, :adr_allowed, :multi_buy_id, :cf_list_enabled])
     |> validate_required([:name, :organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "This label name has already been used in this organization")
