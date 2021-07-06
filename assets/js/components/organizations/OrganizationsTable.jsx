@@ -80,14 +80,13 @@ class OrganizationsTable extends Component {
         title: "Devices",
         dataIndex: "devices",
         render: (data, record) => {
-          console.log(record);
           return (
             <span>
               <UserCan noManager>
                 <Popover
-                  content={`This organization has ${
+                  content={`This organization is ${
                     record.active ? "active" : "inactive"
-                  } devices`}
+                  }`}
                   placement="top"
                   overlayStyle={{ width: 220 }}
                 >
