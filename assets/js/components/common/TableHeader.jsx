@@ -1,6 +1,6 @@
 import React from "react";
 import NavPointTriangle from "./NavPointTriangle";
-import { Typography } from "antd";
+import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
 
@@ -99,28 +99,30 @@ export default (props) => {
           {props.onAllPage && <NavPointTriangle />}
         </div>
         <UserCan>
-          <div
-            style={{
-              backgroundColor: props.otherColor,
-              borderRadius: props.borderRadius ? props.borderRadius : 6,
-              padding: 10,
-              cursor: "pointer",
-              height: 50,
-              width: 50,
-              minWidth: 50,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 12,
-              whiteSpace: "nowrap",
-              position: "relative",
-            }}
-            onClick={props.goToNew}
-          >
-            <img src={props.addIcon} style={{ height: 20 }} />
-            {props.onNewPage && <NavPointTriangle />}
-          </div>
+          <Tooltip title={props.newText}>
+            <div
+              style={{
+                backgroundColor: props.otherColor,
+                borderRadius: props.borderRadius ? props.borderRadius : 6,
+                padding: 10,
+                cursor: "pointer",
+                height: 50,
+                width: 50,
+                minWidth: 50,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                marginRight: 12,
+                whiteSpace: "nowrap",
+                position: "relative",
+              }}
+              onClick={props.goToNew}
+            >
+              <img src={props.addIcon} style={{ height: 20 }} />
+              {props.onNewPage && <NavPointTriangle />}
+            </div>
+          </Tooltip>
         </UserCan>
         {props.extraContent}
       </div>

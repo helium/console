@@ -6,7 +6,7 @@ import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
 import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
 import AlertIcon from "../../../img/alerts/alert-index-add-icon.svg";
 import AddResourceButton from "../common/AddResourceButton";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import AlertForm from "../alerts/AlertForm";
 import AlertIndexTable from "./AlertIndexTable";
 import AlertTypeButton from "./AlertTypeButton";
@@ -97,9 +97,10 @@ export default (props) => {
         extraContent={
           <AlertsBar shownAlertId={props.match.params.id} alerts={alertsData} />
         }
+        newText="Add New Alert"
       >
         {props.match.params.id && showPage === "showAlert" && (
-          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
             <div style={{ minWidth }}>
               <AlertForm
                 key={props.match.params.id}
@@ -115,7 +116,11 @@ export default (props) => {
         {showPage === "new" && alertType === null && (
           <div
             className="blankstateWrapper no-scroll-bar"
-            style={{ height: "600px", paddingTop: "100px", overflowX: 'scroll' }}
+            style={{
+              height: "600px",
+              paddingTop: "100px",
+              overflowX: "scroll",
+            }}
           >
             <div
               style={{
@@ -177,7 +182,7 @@ export default (props) => {
           </div>
         )}
         {showPage === "new" && alertType && (
-          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
             <div style={{ minWidth }}>
               <AlertForm
                 alertType={alertType}

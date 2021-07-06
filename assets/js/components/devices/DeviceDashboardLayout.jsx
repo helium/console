@@ -11,6 +11,7 @@ import AllIcon from "../../../img/devices/device-index-all-icon.svg";
 import PlusIcon from "../../../img/devices/device-index-plus-icon.svg";
 import PlusDeviceIcon from "../../../img/devices/device-index-plus-device-icon.svg";
 import UserCan from "../common/UserCan";
+import { Tooltip } from "antd";
 
 class DeviceDashboardLayout extends Component {
   componentDidMount() {
@@ -57,29 +58,33 @@ class DeviceDashboardLayout extends Component {
           extraContent={
             <React.Fragment>
               <UserCan>
-                <div
-                  style={{
-                    backgroundColor: "#ACC6DD",
-                    borderRadius: 6,
-                    padding: 10,
-                    cursor: "pointer",
-                    height: 50,
-                    width: 50,
-                    minWidth: 50,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginRight: 12,
-                    whiteSpace: "nowrap",
-                    position: "relative",
-                  }}
-                  onClick={() => this.props.history.push("/devices/new_label")}
-                >
-                  <img src={PlusIcon} style={{ height: 20 }} />
-                  {this.props.history.location.pathname ===
-                    "/devices/new_label" && <NavPointTriangle />}
-                </div>
+                <Tooltip title="Add New Label">
+                  <div
+                    style={{
+                      backgroundColor: "#ACC6DD",
+                      borderRadius: 6,
+                      padding: 10,
+                      cursor: "pointer",
+                      height: 50,
+                      width: 50,
+                      minWidth: 50,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginRight: 12,
+                      whiteSpace: "nowrap",
+                      position: "relative",
+                    }}
+                    onClick={() =>
+                      this.props.history.push("/devices/new_label")
+                    }
+                  >
+                    <img src={PlusIcon} style={{ height: 20 }} />
+                    {this.props.history.location.pathname ===
+                      "/devices/new_label" && <NavPointTriangle />}
+                  </div>
+                </Tooltip>
               </UserCan>
               <DeviceIndexLabelsBar
                 push={this.props.history.push}
@@ -87,6 +92,7 @@ class DeviceDashboardLayout extends Component {
               />
             </React.Fragment>
           }
+          newText="Add New Device"
         >
           {this.props.children}
         </TableHeader>
