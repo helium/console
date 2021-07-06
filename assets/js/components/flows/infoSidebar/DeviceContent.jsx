@@ -25,6 +25,7 @@ const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
+import CFListNodeSettings from "./CFListNodeSettings";
 
 class DeviceContent extends Component {
   state = {
@@ -243,7 +244,9 @@ class DeviceContent extends Component {
           >
             <Card title="Device Details">
               <Paragraph>
-                <Text style={{ marginRight: 5 }} strong>Name:</Text>
+                <Text style={{ marginRight: 5 }} strong>
+                  Name:
+                </Text>
                 <Text>{device.name}</Text>
               </Paragraph>
               <Paragraph>
@@ -397,6 +400,13 @@ class DeviceContent extends Component {
               currentNode={device}
               onMultiBuyUpdate={this.props.onMultiBuyUpdate}
             />
+          </TabPane>
+          <TabPane
+            tab="CF List"
+            key="6"
+            style={{ padding: "0px 40px 0px 40px" }}
+          >
+            <CFListNodeSettings from="device" />
           </TabPane>
         </Tabs>
 
