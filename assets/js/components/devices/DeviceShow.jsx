@@ -288,20 +288,14 @@ class DeviceShow extends Component {
               marginBottom: 20,
             }}
           >
-            <Button
-              icon={<ArrowLeftOutlined />}
-              style={{ border: "none" }}
-              onClick={() => this.props.history.push("/devices")}
-            >
-              All Devices
-            </Button>
+            <Text style={{ fontSize: 24, fontWeight: 600 }}>{device.name}</Text>
             <UserCan>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "flex-end",
-                  marginBottom: 12,
+                  alignItems: "center",
                 }}
               >
                 <Popover
