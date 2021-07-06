@@ -14,7 +14,7 @@ import { useQuery } from "@apollo/client";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { useHistory } from "react-router-dom";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 
 export default (props) => {
   const history = useHistory();
@@ -104,10 +104,13 @@ export default (props) => {
             multiBuys={multiBuyData}
           />
         }
+        newText="Add New Multiple Packet Config"
       >
         {showPage === "allMultiBuy" && error && (
           <div style={{ padding: 40 }}>
-            <Text>Data failed to load, please reload the page and try again</Text>
+            <Text>
+              Data failed to load, please reload the page and try again
+            </Text>
           </div>
         )}
         {showPage === "allMultiBuy" && loading && (
@@ -123,14 +126,14 @@ export default (props) => {
           />
         )}
         {showPage === "new" && (
-          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
             <div style={{ minWidth }}>
               <MultiBuyForm />
             </div>
           </div>
         )}
         {props.match.params.id && showPage === "showMultiBuy" && (
-          <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
             <div style={{ minWidth }}>
               <MultiBuyForm
                 id={props.match.params.id}

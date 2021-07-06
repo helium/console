@@ -6,7 +6,7 @@ import UserCan from '../common/UserCan'
 import { updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { minWidth } from '../../util/constants'
-import { Table, Button, Pagination, Switch, Typography } from 'antd';
+import { Table, Button, Pagination, Switch, Typography, Popover } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 const { Text} = Typography
 
@@ -20,45 +20,67 @@ class FunctionIndexTable extends Component {
   render() {
     const columns = [
       {
-        title: 'Name',
-        dataIndex: 'name',
-        render: (text, record) => <Link to={`/functions/${record.id}`}>{text}</Link>
-      },
-      {
-        title: 'Type',
-        dataIndex: 'format',
-        render: text => functionFormats[text]
-      },
-      {
-        title: '',
-        dataIndex: 'active',
+        title: "Name",
+        dataIndex: "name",
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+          <Link to={`/functions/${record.id}`}>{text}</Link>
+        ),
+      },
+      {
+        title: "Type",
+        dataIndex: "format",
+        render: (text) => functionFormats[text],
+      },
+      {
+        title: "",
+        dataIndex: "active",
+        render: (text, record) => (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
             <UserCan>
-              <Switch
-                checked={record.active}
-                onChange={(value, e) => {
-                  e.stopPropagation()
-                  this.props.updateFunction(record.id, { active: !record.active })
-                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", { "id": record.id, "active": !record.active })
-                }}
-              />
+              <Popover
+                content={`This function is currently ${
+                  record.active ? "active" : "inactive"
+                }`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch
+                  checked={record.active}
+                  onChange={(value, e) => {
+                    e.stopPropagation();
+                    this.props.updateFunction(record.id, {
+                      active: !record.active,
+                    });
+                    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
+                      id: record.id,
+                      active: !record.active,
+                    });
+                  }}
+                />
+              </Popover>
               <Button
                 type="danger"
                 icon={<DeleteOutlined />}
                 shape="circle"
                 size="small"
                 style={{ marginLeft: 10 }}
-                onClick={e => {
-                  e.stopPropagation()
-                  this.props.openDeleteFunctionModal(record)
+                onClick={(e) => {
+                  e.stopPropagation();
+                  this.props.openDeleteFunctionModal(record);
                 }}
               />
             </UserCan>
           </div>
-        )
-      }
-    ]
+        ),
+      },
+    ];
 
     const { functions } = this.props
 

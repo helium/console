@@ -288,25 +288,28 @@ class DeviceShow extends Component {
               marginBottom: 20,
             }}
           >
-            <Button
-              icon={<ArrowLeftOutlined />}
-              style={{ border: "none" }}
-              onClick={() => this.props.history.push("/devices")}
-            >
-              All Devices
-            </Button>
+            <Text style={{ fontSize: 24, fontWeight: 600 }}>{device.name}</Text>
             <UserCan>
-              <Popover
-                content={`This device is currently ${
-                  device.active ? "active" : "inactive"
-                }`}
-                placement="top"
-                overlayStyle={{ width: 140 }}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
               >
-                <Switch
-                  checked={device.active}
-                  onChange={this.toggleDeviceActive}
-                />
+                <Popover
+                  content={`This device is currently ${
+                    device.active ? "active" : "inactive"
+                  }`}
+                  placement="top"
+                  overlayStyle={{ width: 140 }}
+                >
+                  <Switch
+                    checked={device.active}
+                    onChange={this.toggleDeviceActive}
+                  />
+                </Popover>
                 <Button
                   type="danger"
                   icon={<DeleteOutlined />}
@@ -318,14 +321,24 @@ class DeviceShow extends Component {
                     this.openDeleteDeviceModal(device);
                   }}
                 />
-              </Popover>
+              </div>
             </UserCan>
           </div>
 
           <Row gutter={20} type="flex">
             <Col span={15}>
-              <Card title="Device Details" bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 272 }}>
-                <div style={{ overflowX: 'scroll', paddingRight: 24, paddingLeft: 24 }} className="no-scroll-bar">
+              <Card
+                title="Device Details"
+                bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 272 }}
+              >
+                <div
+                  style={{
+                    overflowX: "scroll",
+                    paddingRight: 24,
+                    paddingLeft: 24,
+                  }}
+                  className="no-scroll-bar"
+                >
                   <table style={{ minWidth: 450 }}>
                     <tbody>
                       <tr style={{ height: "30px" }}>
@@ -380,7 +393,9 @@ class DeviceShow extends Component {
                           <Text strong>ID</Text>
                         </td>
                         <td>
-                          <Text code style={{ whiteSpace: 'nowrap'}}>{device.id}</Text>
+                          <Text code style={{ whiteSpace: "nowrap" }}>
+                            {device.id}
+                          </Text>
                         </td>
                       </tr>
                       <tr style={{ height: "20px" }} />
@@ -390,7 +405,9 @@ class DeviceShow extends Component {
                         </td>
                         <td>
                           {showDevEUIInput && (
-                            <OutsideClick onOutsideClick={this.toggleDevEUIInput}>
+                            <OutsideClick
+                              onOutsideClick={this.toggleDevEUIInput}
+                            >
                               <Input
                                 name="newDevEUI"
                                 placeholder={device.dev_eui}
@@ -412,7 +429,8 @@ class DeviceShow extends Component {
                           )}
                           {!showDevEUIInput && (
                             <React.Fragment>
-                              {device.dev_eui && device.dev_eui.length === 16 ? (
+                              {device.dev_eui &&
+                              device.dev_eui.length === 16 ? (
                                 <DeviceCredentials data={device.dev_eui} />
                               ) : (
                                 <Text style={{ marginRight: 5 }}>
@@ -437,7 +455,9 @@ class DeviceShow extends Component {
                         </td>
                         <td>
                           {showAppEUIInput && (
-                            <OutsideClick onOutsideClick={this.toggleAppEUIInput}>
+                            <OutsideClick
+                              onOutsideClick={this.toggleAppEUIInput}
+                            >
                               <Input
                                 name="newAppEUI"
                                 placeholder={device.app_eui}
@@ -449,7 +469,9 @@ class DeviceShow extends Component {
                               <Button
                                 type="primary"
                                 name="newAppEUI"
-                                onClick={() => this.handleAppEUIUpdate(device.id)}
+                                onClick={() =>
+                                  this.handleAppEUIUpdate(device.id)
+                                }
                               >
                                 Update
                               </Button>
@@ -457,7 +479,8 @@ class DeviceShow extends Component {
                           )}
                           {!showAppEUIInput && (
                             <React.Fragment>
-                              {device.app_eui && device.app_eui.length === 16 ? (
+                              {device.app_eui &&
+                              device.app_eui.length === 16 ? (
                                 <DeviceCredentials data={device.app_eui} />
                               ) : (
                                 <Text style={{ marginRight: 5 }}>
@@ -584,11 +607,8 @@ class DeviceShow extends Component {
 
           <DeviceFlows deviceId={this.props.match.params.id} />
 
-          <Card
-            title="Real Time Packets"
-            bodyStyle={{ padding: 0 }}
-          >
-            <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+          <Card title="Real Time Packets" bodyStyle={{ padding: 0 }}>
+            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
               <EventsDashboard device_id={device.id} />
             </div>
           </Card>
