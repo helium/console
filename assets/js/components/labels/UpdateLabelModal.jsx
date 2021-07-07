@@ -248,6 +248,9 @@ class UpdateLabelModal extends Component {
                 <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
                   "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command."
                 }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "Enabling the CF List can cause instability/issues with devices that have not implemented the LoRaWAN spec correctly."
+                }</Text>
               </div>
 
               <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with Join-Accept CF List disabled to apply this setting for devices.</Text>
