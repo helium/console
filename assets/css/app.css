@@ -1,6 +1,6 @@
 @import "~mapbox-gl/dist/mapbox-gl.css";
 @import "./chartjs.css";
-@import "~antd/dist/antd.css";
+@import "~antd/dist/antd.min.css";
 @import url("https://use.typekit.net/qfu3tzp.css");
 
 /* This file is for your main application css. */
