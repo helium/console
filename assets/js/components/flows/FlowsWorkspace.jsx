@@ -161,6 +161,7 @@ export default ({
   };
 
   const onCFListUpdate = (id, cfListEnabled) => {
+    console.log(cfListEnabled);
     const newNodeData = Object.assign({}, elementsMap[id].data, {
       cfListEnabled,
     });

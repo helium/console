@@ -7,8 +7,10 @@ import AdrTag from "../../../../img/adr/adr-node-tag.svg";
 import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
+import { SettingOutlined } from "@ant-design/icons";
 
 export default ({ data, fromSidebar, selected }) => {
+  console.log(data);
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
@@ -62,6 +64,18 @@ export default ({ data, fromSidebar, selected }) => {
               <img
                 draggable="false"
                 src={AdrTag}
+                style={{
+                  height: 20,
+                  marginLeft: 20,
+                  position: "relative",
+                  top: -2,
+                }}
+              />
+            )}
+            {!data.cfListEnabled && (
+              <img
+                draggable="false"
+                src={AdrTag} // TODO Change to new icon
                 style={{
                   height: 20,
                   marginLeft: 20,

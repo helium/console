@@ -143,7 +143,7 @@ class DeviceContent extends Component {
         id: deviceId,
         cf_list_enabled: cfListValue,
       });
-      this.props.onAdrUpdate("device-" + deviceId, cfListValue);
+      this.props.onCFListUpdate("device-" + deviceId, cfListValue);
     });
   };
 
