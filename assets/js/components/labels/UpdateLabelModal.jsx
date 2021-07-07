@@ -240,10 +240,13 @@ class UpdateLabelModal extends Component {
 
               <div style={{ marginBottom: 20 }}>
                 <Text style={{ display: 'block', fontSize: 14 }}>{
-                  "The Join-Accept CF List configures channels according to the LoRaWAN spec. If enabled the server will alternate between sending the CF List with joins or not sending if not supported by the device."
+                  "The Join-Accept CF List configures channels according to the LoRaWAN spec to use sub-band 2."
                 }</Text>
                 <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
-                  "If disabled the server will not send the CF List during the Join-Accept device process."
+                  "- Enabled, the server will send a CF List with every other join."
+                }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command."
                 }</Text>
               </div>
 
