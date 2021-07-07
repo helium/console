@@ -240,16 +240,13 @@ class UpdateLabelModal extends Component {
 
               <div style={{ marginBottom: 20 }}>
                 <Text style={{ display: 'block', fontSize: 14 }}>{
-                  "The Join-Accept CF List configures channels according to the LoRaWAN spec to use sub-band 2."
+                  "The Join-Accept CF List configures channels according to the LoRaWAN spec to use sub-band 2. Devices that have not correctly implemented the LoRaWAN spec may experience transfer issues when this setting is enabled."
                 }</Text>
                 <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
                   "- Enabled, the server will send a CF List with every other join."
                 }</Text>
                 <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
                   "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command."
-                }</Text>
-                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
-                  "Enabling the CF List can cause instability/issues with devices that have not implemented the LoRaWAN spec correctly."
                 }</Text>
               </div>
 
