@@ -3,6 +3,11 @@ import { useSelector } from "react-redux";
 import { Switch, Typography } from "antd";
 const { Text } = Typography;
 import { userCan } from "../../common/UserCan";
+import {
+  cfListText1,
+  cfListText2,
+  cfListText3,
+} from "../../cf_list/CFListIndex";
 
 export default ({ checked, from, updateCFList }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
@@ -23,8 +28,16 @@ export default ({ checked, from, updateCFList }) => {
           disabled={!userCan({ role: currentRole })}
         />
         <Text strong style={{ fontSize: 16 }}>
-          Allow CF List (applicable to US915 devices only)
+          Enable Join-Accept CF List (applicable to US915 devices only)
         </Text>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <Text style={{ fontSize: 14, display: "block", marginBottom: 4 }}>
+          {cfListText1}
+        </Text>
+        <Text style={{ fontSize: 14, display: "block" }}>{cfListText2}</Text>
+        <Text style={{ fontSize: 14, display: "block" }}>{cfListText3}</Text>
       </div>
 
       {from === "device" && (
