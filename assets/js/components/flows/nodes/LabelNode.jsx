@@ -75,6 +75,18 @@ export default ({ data, fromSidebar, selected }) => {
                 }}
               />
             )}
+            {!data.cfListEnabled && (
+              <img
+                draggable="false"
+                src={AdrTag} // TODO Change to new icon
+                style={{
+                  height: 20,
+                  marginLeft: 4,
+                  position: "relative",
+                  top: -2,
+                }}
+              />
+            )}
             {data.multi_buy_id && (
               <img
                 draggable="false"

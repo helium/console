@@ -78,7 +78,7 @@ export default ({ data, fromSidebar, selected }) => {
                 src={AdrTag} // TODO Change to new icon
                 style={{
                   height: 20,
-                  marginLeft: 20,
+                  marginLeft: 4,
                   position: "relative",
                   top: -2,
                 }}
