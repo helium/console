@@ -42,13 +42,13 @@ export default ({ checked, from, updateCFList }) => {
 
       {from === "device" && (
         <Text strong style={{ fontSize: 16 }}>
-          Note: If this device belongs to a label that has CF List enabled, CF
+          Note: If this device belongs to a label that has CF List disabled, CF
           List will be activated on this device.
         </Text>
       )}
       {from === "label" && (
         <Text strong style={{ fontSize: 16 }}>
-          Note: If this label has CF List enabled, all CF List settings of the
+          Note: If this label has CF List disabled, all CF List settings of the
           devices in this label will be ignored.
         </Text>
       )}
