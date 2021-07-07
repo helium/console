@@ -85,6 +85,13 @@ defmodule ConsoleWeb.Router.DeviceController do
             _ -> device
           end
 
+        cf_list_disabled = device.labels |> Enum.map(fn l -> l.cf_list_enabled end) |> Enum.find_value(fn s -> s == false end)
+        device =
+          case cf_list_disabled do
+            true -> Map.put(device, :cf_list_enabled, false)
+            _ -> Map.put(device, :cf_list_enabled, true)
+          end
+
         multi_buy_value = device.labels |> Enum.map(fn l -> l.multi_buy end) |> Enum.max
         case multi_buy_value do
           0 ->

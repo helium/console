@@ -118,6 +118,12 @@ class LabelShow extends Component {
     this.props.updateLabel(labelId, attrs)
   }
 
+  handleUpdateCfListSetting = cfListValue => {
+    const labelId = this.props.match.params.id
+    const attrs = { cf_list_enabled: cfListValue }
+    this.props.updateLabel(labelId, attrs)
+  }
+
   handleUpdateLabelNotificationSettings = notifications => {
     this.props.updateLabelNotificationSettings(notifications);
   }
@@ -204,6 +210,7 @@ class LabelShow extends Component {
           handleUpdateLabel={this.handleUpdateLabel}
           handleUpdateLabelMultiBuy={this.handleUpdateLabelMultiBuy}
           handleUpdateAdrSetting={this.handleUpdateAdrSetting}
+          handleUpdateCfListSetting={this.handleUpdateCfListSetting}
           handleUpdateLabelNotificationSettings={this.handleUpdateLabelNotificationSettings}
           handleUpdateLabelNotificationWebhooks={this.handleUpdateLabelNotificationWebhooks}
           open={this.state.showUpdateLabelModal}

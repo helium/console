@@ -16,6 +16,7 @@ class UpdateLabelModal extends Component {
     labelName: null,
     color: this.props.label.color || labelColors[0],
     multiBuyValue: this.props.label.multi_buy || 1,
+    cfListValue: this.props.label.cf_list_enabled,
     adrValue: this.props.label.adr_allowed,
     notificationSettings: this.props.label.label_notification_settings,
     notificationWebhooks: this.props.label.label_notification_webhooks,
@@ -40,7 +41,7 @@ class UpdateLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, subtab } = this.state;
+    const { labelName, color, multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, subtab, cfListValue } = this.state;
 
     switch (tab) {
       case 'general':
@@ -68,6 +69,11 @@ class UpdateLabelModal extends Component {
         analyticsLogger.logEvent("ACTION_UPDATE_LABEL_ADR_SETTING", { id: this.props.label.id, label_adr_setting: adrValue });
         this.props.onClose();
         break;
+      case 'cflist':
+        this.props.handleUpdateCfListSetting(cfListValue);
+        analyticsLogger.logEvent("ACTION_UPDATE_CF_LIST_SETTING", { id: this.props.label.id, label_cf_list_setting: cfListValue });
+        this.props.onClose();
+        break;
     }
   }
 
@@ -78,6 +84,7 @@ class UpdateLabelModal extends Component {
         color: this.props.label.color || labelColors[0],
         multiBuyValue: this.props.label.multi_buy,
         adrValue: this.props.label.adr_allowed,
+        cfListValue: this.props.label.cf_list_enabled,
         notificationSettings: this.props.label.label_notification_settings,
         notificationWebhooks: this.props.label.label_notification_webhooks
       }), 200)
@@ -90,7 +97,7 @@ class UpdateLabelModal extends Component {
 
   render() {
     const { open, onClose, label } = this.props
-    const { multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue } = this.state
+    const { multiBuyValue, notificationSettings, notificationWebhooks, tab, adrValue, cfListValue } = this.state
 
     return (
       <Modal
@@ -218,6 +225,32 @@ class UpdateLabelModal extends Component {
               </div>
 
               <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with ADR allowed to apply this setting for devices.</Text>
+            </div>
+          </TabPane>
+          <TabPane tab="CF List" key="cflist">
+            <div style={{ padding: '30px 50px'}}>
+              <div style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Switch
+                  onChange={cfListValue => this.setState({ cfListValue })}
+                  checked={cfListValue}
+                  style={{ marginRight: 8 }}
+                />
+                <Text strong style={{ fontSize: 16 }}>Join-Accept CF List Enabled (US915 Devices Only)</Text>
+              </div>
+
+              <div style={{ marginBottom: 20 }}>
+                <Text style={{ display: 'block', fontSize: 14 }}>{
+                  "The Join-Accept CF List configures channels according to the LoRaWAN spec to use sub-band 2. Devices that have not correctly implemented the LoRaWAN spec may experience transfer issues when this setting is enabled."
+                }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "- Enabled, the server will send a CF List with every other join."
+                }</Text>
+                <Text style={{ marginTop: 4, display: 'block', fontSize: 14 }}>{
+                  "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command."
+                }</Text>
+              </div>
+
+              <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with Join-Accept CF List disabled to apply this setting for devices.</Text>
             </div>
           </TabPane>
         </Tabs>

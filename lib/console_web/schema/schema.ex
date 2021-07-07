@@ -72,6 +72,7 @@ defmodule ConsoleWeb.Schema do
     field :device_count, :integer
     field :multi_buy, :integer
     field :adr_allowed, :boolean
+    field :cf_list_enabled, :boolean
     field :label_notification_settings, list_of(:label_notification_setting)
     field :label_notification_webhooks, list_of(:label_notification_webhook)
   end

@@ -35,6 +35,13 @@ defmodule ConsoleWeb.Router.DeviceView do
         device_attrs
       end
 
+    device_attrs =
+      if Map.has_key?(device, :cf_list_enabled) do
+        Map.put(device_attrs, :cf_list_enabled, device.cf_list_enabled)
+      else
+        device_attrs
+      end
+
     if Map.has_key?(device, :multi_buy) do
       Map.put(device_attrs, :multi_buy, device.multi_buy)
       |> ChannelView.append_channels(device.channels)
