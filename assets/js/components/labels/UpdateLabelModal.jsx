@@ -235,7 +235,7 @@ class UpdateLabelModal extends Component {
                   checked={cfListValue}
                   style={{ marginRight: 8 }}
                 />
-                <Text strong style={{ fontSize: 16 }}>Join-Accept CF List Enabled</Text>
+                <Text strong style={{ fontSize: 16 }}>Join-Accept CF List Enabled (US915 Devices Only)</Text>
               </div>
 
               <div style={{ marginBottom: 20 }}>
