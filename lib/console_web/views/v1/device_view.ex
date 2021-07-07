@@ -20,6 +20,8 @@ defmodule ConsoleWeb.V1.DeviceView do
       app_key: device.app_key,
       oui: device.oui,
       organization_id: device.organization_id,
+      adr_allowed: device.adr_allowed,
+      cf_list_enabled: device.cf_list_enabled
     }
 
     if Ecto.assoc_loaded?(device.labels) do
