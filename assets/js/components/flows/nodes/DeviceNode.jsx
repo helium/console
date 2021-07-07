@@ -10,7 +10,6 @@ import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import { SettingOutlined } from "@ant-design/icons";
 
 export default ({ data, fromSidebar, selected }) => {
-  console.log(data);
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
@@ -72,7 +71,7 @@ export default ({ data, fromSidebar, selected }) => {
                 }}
               />
             )}
-            {!data.cfListEnabled && (
+            {data.cfListEnabled === false && (
               <img
                 draggable="false"
                 src={AdrTag} // TODO Change to new icon
