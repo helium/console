@@ -21,6 +21,7 @@ defmodule Console.Labels.Label do
     field :creator, :string
     field :multi_buy, :integer
     field :adr_allowed, :boolean
+    field :cf_list_enabled, :boolean
 
     belongs_to :organization, Organization
     belongs_to :function, Function
@@ -36,7 +37,7 @@ defmodule Console.Labels.Label do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "color", "creator"])
 
     label
-    |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id, :multi_buy, :adr_allowed])
+    |> cast(attrs, [:name, :organization_id, :color, :creator, :function_id, :multi_buy, :adr_allowed, :cf_list_enabled])
     |> validate_required([:name, :organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> validate_number(:multi_buy, greater_than: 0, less_than: 11)
