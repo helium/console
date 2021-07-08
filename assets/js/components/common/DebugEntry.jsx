@@ -9,7 +9,6 @@ import {
   EyeInvisibleFilled,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import { Icon } from "@ant-design/compatible";
 const { Text } = Typography;
 
 class DebugEntry extends Component {
@@ -90,7 +89,7 @@ class DebugEntry extends Component {
       <Text style={{ color: "#1890ff", fontSize: "18px", fontWeight: "bold" }}>
         {category[0].toUpperCase() + category.substring(1).replace("_", " ")}
         {subCategory !== "undefined" &&
-          `: 
+          `:
           ${
             subCategoryMap[subCategory]
               ? subCategoryMap[subCategory]
@@ -323,17 +322,19 @@ class DebugEntry extends Component {
         <div style={{ marginBottom: 20 }}>
           {event.data.req && (
             <span style={{ marginLeft: 25 }}>
-              <Icon
-                type={this.state.showReq ? "eye" : "eye-invisible"}
-                theme="filled"
-                style={{
-                  color: this.state.showReq ? "#FFFFFF" : "#8C8C8C",
-                  marginRight: 10,
-                }}
-                onClick={() => {
-                  this.setState({ showReq: !this.state.showReq });
-                }}
-              />
+              {
+                this.state.showReq ? (
+                  <EyeFilled
+                    style={{ color: "#FFFFFF", marginRight: 10 }}
+                    onClick={() => this.setState({ showReq: !this.state.showReq })}
+                  />
+                ) : (
+                  <EyeInvisibleFilled
+                    style={{ color: "#8C8C8C", marginRight: 10 }}
+                    onClick={() => this.setState({ showReq: !this.state.showReq })}
+                  />
+                )
+              }
               <Text
                 style={{ color: this.state.showReq ? "#FFFFFF" : "#8C8C8C" }}
               >
@@ -343,17 +344,19 @@ class DebugEntry extends Component {
           )}
           {event.data.res && (
             <span style={{ marginLeft: 15 }}>
-              <Icon
-                type={this.state.showRes ? "eye" : "eye-invisible"}
-                theme="filled"
-                style={{
-                  color: this.state.showRes ? "#FFFFFF" : "#8C8C8C",
-                  marginRight: 10,
-                }}
-                onClick={() => {
-                  this.setState({ showRes: !this.state.showRes });
-                }}
-              />
+              {
+                this.state.showRes ? (
+                  <EyeFilled
+                    style={{ color: "#FFFFFF", marginRight: 10 }}
+                    onClick={() => this.setState({ showRes: !this.state.showRes })}
+                  />
+                ) : (
+                  <EyeInvisibleFilled
+                    style={{ color: "#8C8C8C", marginRight: 10 }}
+                    onClick={() => this.setState({ showRes: !this.state.showRes })}
+                  />
+                )
+              }
               <Text
                 style={{ color: this.state.showRes ? "#FFFFFF" : "#8C8C8C" }}
               >

@@ -7,7 +7,6 @@
     "watch": "webpack --mode development --watch-stdin"
   },
   "dependencies": {
-    "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.3.0",
     "@apollo/client": "^3.3.8",
     "@auth0/auth0-spa-js": "^1.13.5",
