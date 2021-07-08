@@ -18,13 +18,14 @@ export default ({
   onAlertUpdate,
   deleteNode,
   hasConnectedEdges,
-  elementsMap
+  elementsMap,
+  onCFListUpdate,
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
   const onNodeDelete = () => {
     if (hasConnectedEdges) setOpenNodeDeleteModal(true);
-    else deleteNode()
+    else deleteNode();
   };
 
   const renderTopIcon = () => {
@@ -62,6 +63,7 @@ export default ({
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
+            onCFListUpdate={onCFListUpdate}
           />
         );
       case "utility":
@@ -75,6 +77,7 @@ export default ({
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
+            onCFListUpdate={onCFListUpdate}
           />
         );
       case "channel":
@@ -93,7 +96,7 @@ export default ({
             id={id}
             onNodeDelete={onNodeDelete}
           />
-        )
+        );
     }
   };
 

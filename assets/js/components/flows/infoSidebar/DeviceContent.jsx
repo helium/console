@@ -25,6 +25,7 @@ const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
+import CFListNodeSettings from "./CFListNodeSettings";
 
 class DeviceContent extends Component {
   state = {
@@ -131,6 +132,18 @@ class DeviceContent extends Component {
         adr: adrValue,
       });
       this.props.onAdrUpdate("device-" + deviceId, adrValue);
+    });
+  };
+
+  handleUpdateCfListSetting = (cfListValue) => {
+    const deviceId = this.props.id;
+    const attrs = { cf_list_enabled: cfListValue };
+    this.props.updateDevice(deviceId, attrs).then(() => {
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_CF_LIST_ENABLED", {
+        id: deviceId,
+        cf_list_enabled: cfListValue,
+      });
+      this.props.onCFListUpdate("device-" + deviceId, cfListValue);
     });
   };
 
@@ -243,7 +256,9 @@ class DeviceContent extends Component {
           >
             <Card title="Device Details">
               <Paragraph>
-                <Text style={{ marginRight: 5 }} strong>Name:</Text>
+                <Text style={{ marginRight: 5 }} strong>
+                  Name:
+                </Text>
                 <Text>{device.name}</Text>
               </Paragraph>
               <Paragraph>
@@ -396,6 +411,17 @@ class DeviceContent extends Component {
             <MultiBuyNodeSettings
               currentNode={device}
               onMultiBuyUpdate={this.props.onMultiBuyUpdate}
+            />
+          </TabPane>
+          <TabPane
+            tab="CF List"
+            key="6"
+            style={{ padding: "0px 40px 0px 40px" }}
+          >
+            <CFListNodeSettings
+              from="device"
+              checked={device.cf_list_enabled}
+              updateCFList={this.handleUpdateCfListSetting}
             />
           </TabPane>
         </Tabs>

@@ -160,6 +160,16 @@ export default ({
     );
   };
 
+  const onCFListUpdate = (id, cfListEnabled) => {
+    const newNodeData = Object.assign({}, elementsMap[id].data, {
+      cfListEnabled,
+    });
+    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
+    setElements((elsMap) =>
+      Object.assign({}, elsMap, { [newNode.id]: newNode })
+    );
+  };
+
   const onMultiBuyUpdate = (id, multi_buy_id) => {
     const newNodeData = Object.assign({}, elementsMap[id].data, {
       multi_buy_id,
@@ -290,6 +300,7 @@ export default ({
           }
           elementsMap={elementsMap}
           onAdrUpdate={onAdrUpdate}
+          onCFListUpdate={onCFListUpdate}
           onMultiBuyUpdate={onMultiBuyUpdate}
           onAlertUpdate={onAlertUpdate}
           hasConnectedEdges={
