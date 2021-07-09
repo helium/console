@@ -32,4 +32,9 @@ npm-debug.log
 
 .elixir_ls
 
-data/ 
+data/
+
+# Files needed for self-hosting on Docker
+.env
+.env-router
+docker-compose.yaml 
