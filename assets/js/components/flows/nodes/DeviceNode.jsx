@@ -67,7 +67,6 @@ export default ({ data, fromSidebar, selected }) => {
                   height: 20,
                   marginLeft: 20,
                   position: "relative",
-                  top: -2,
                 }}
               />
             )}
@@ -79,7 +78,6 @@ export default ({ data, fromSidebar, selected }) => {
                   height: 20,
                   marginLeft: 4,
                   position: "relative",
-                  top: -2,
                 }}
               />
             )}
@@ -91,7 +89,6 @@ export default ({ data, fromSidebar, selected }) => {
                   height: 20,
                   marginLeft: 4,
                   position: "relative",
-                  top: -2,
                 }}
               />
             )}
@@ -103,7 +100,6 @@ export default ({ data, fromSidebar, selected }) => {
                   height: 20,
                   marginLeft: 4,
                   position: "relative",
-                  top: -2,
                 }}
               />
             )}
