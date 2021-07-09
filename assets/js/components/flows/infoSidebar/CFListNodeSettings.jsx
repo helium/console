@@ -12,7 +12,7 @@ import {
 export default ({ checked, from, updateCFList }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
   return (
-    <div>
+    <div style={{ marginBottom: 20 }}>
       <div
         style={{
           marginBottom: 20,
@@ -49,7 +49,7 @@ export default ({ checked, from, updateCFList }) => {
       {from === "label" && (
         <Text strong style={{ fontSize: 16 }}>
           Note: If this label has CF List enabled, all devices in this label
-          will have CF List active as well. 
+          will have CF List active as well.
         </Text>
       )}
     </div>
