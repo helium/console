@@ -43,13 +43,13 @@ defmodule ConsoleWeb.Router.DeviceController do
             0 -> device.adr_allowed
             _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
           end
-        
+
         cf_list_enabled =
           case length(device.labels) do
             0 -> device.cf_list_enabled
             _ ->
-              label_has_cf_disabled = device.labels |> Enum.map(fn l -> l.cf_list_enabled end) |> Enum.any?(fn s -> s == false end)
-              if device.cf_list_enabled == false or label_has_cf_disabled do false else true end
+              label_has_cf_enabled = device.labels |> Enum.map(fn l -> l.cf_list_enabled end) |> Enum.any?(fn s -> s == true end)
+              if device.cf_list_enabled == true or label_has_cf_enabled do true else false end
           end
 
         multi_buy_value =

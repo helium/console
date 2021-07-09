@@ -76,7 +76,7 @@ export default ({ data, fromSidebar, selected }) => {
                 }}
               />
             )}
-            {data.cfListEnabled === false && (
+            {data.cfListEnabled && (
               <img
                 draggable="false"
                 src={CFListTag}
