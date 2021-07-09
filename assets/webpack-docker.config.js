@@ -47,7 +47,8 @@ module.exports = function(env) {
     plugins: [
       new webpack.DefinePlugin({
         'process.env.SELF_HOSTED': true
-      })
+      }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ],
   };
 };
