@@ -75,7 +75,7 @@ export default ({ data, fromSidebar, selected }) => {
                 }}
               />
             )}
-            {!data.cfListEnabled && (
+            {data.cfListEnabled && (
               <img
                 draggable="false"
                 src={AdrTag} // TODO Change to new icon
