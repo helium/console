@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table, Button } from 'antd';
 import Text from 'antd/lib/typography/Text';
 import { minWidth } from '../../util/constants'
-import { DeleteOutlined } from '@ant-design/icons';
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 import UserCan from '../common/UserCan';
 
 export default (props) => {

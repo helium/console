@@ -3,11 +3,9 @@ import { connect } from "react-redux";
 import DebugEntry from "./DebugEntry";
 import { debugSidebarHeaderColor, debugTextColor } from "../../util/colors";
 import { Typography, Popover, Button, Checkbox } from "antd";
-import {
-  InfoCircleOutlined,
-  ReloadOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
+import ReloadOutlined from "@ant-design/icons/ReloadOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
 const { Text } = Typography;
 import Loader from "../../../img/debug-loader.png";
 

@@ -12,7 +12,8 @@ import {
   Button as RegularButton,
 } from "antd";
 import DownlinkImage from "../../../img/downlink.svg";
-import { ClearOutlined, ReloadOutlined } from "@ant-design/icons";
+import ClearOutlined from "@ant-design/icons/ClearOutlined";
+import ReloadOutlined from "@ant-design/icons/ReloadOutlined";
 import find from "lodash/find";
 import remove from "lodash/remove";
 

@@ -14,7 +14,7 @@ import { minWidth } from "../../util/constants";
 import UserCan from "../common/UserCan";
 import withGql from "../../graphql/withGql";
 import { Table, Typography, Button, Pagination, Switch, Popover } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";

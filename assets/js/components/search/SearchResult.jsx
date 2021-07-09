@@ -1,7 +1,14 @@
 import React, { Component } from 'react'
 import { Typography } from 'antd';
 import { functionFormats } from '../functions/constants'
-import { EnterOutlined, AppstoreOutlined, ApiOutlined, UserOutlined, DashboardOutlined, ProfileOutlined, WalletOutlined, CaretRightOutlined } from '@ant-design/icons';
+import EnterOutlined from '@ant-design/icons/EnterOutlined';
+import AppstoreOutlined from '@ant-design/icons/AppstoreOutlined';
+import ApiOutlined from '@ant-design/icons/ApiOutlined';
+import UserOutlined from '@ant-design/icons/UserOutlined';
+import DashboardOutlined from '@ant-design/icons/DashboardOutlined';
+import ProfileOutlined from '@ant-design/icons/ProfileOutlined';
+import WalletOutlined from '@ant-design/icons/WalletOutlined';
+import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
 const { Text } = Typography
 
 class SearchResult extends Component {

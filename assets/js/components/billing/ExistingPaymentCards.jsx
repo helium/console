@@ -1,6 +1,6 @@
 import React from 'react'
 import { Radio, Typography, Button } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 const { Text } = Typography
 import PaymentCard from './PaymentCard'
 

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import DashboardLayout from './common/DashboardLayout'
 import analyticsLogger from '../util/analyticsLogger'
 import { Checkbox } from 'antd';
-import { RocketFilled, CalendarFilled, CaretRightOutlined } from '@ant-design/icons';
+import RocketFilled from '@ant-design/icons/RocketFilled';
+import CalendarFilled from '@ant-design/icons/CalendarFilled';
+import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
 import WelcomeImg from '../../img/welcome-image.png'
 import PlusCircle from '../../img/pluscircle.svg'
 import _JSXStyle from "styled-jsx/style"

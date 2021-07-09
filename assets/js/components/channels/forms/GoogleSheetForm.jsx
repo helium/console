@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Input, Button, Popover } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 import cheerio from "cheerio";
 import { post } from '../../../util/rest'
 const { Text } = Typography

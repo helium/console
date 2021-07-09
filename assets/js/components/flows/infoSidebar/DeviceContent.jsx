@@ -15,12 +15,10 @@ import analyticsLogger from "../../../util/analyticsLogger";
 import { displayError } from "../../../util/messages";
 import withGql from "../../../graphql/withGql";
 import { Typography, Button, Input, Tag, Card, Tabs } from "antd";
-import {
-  EditOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";

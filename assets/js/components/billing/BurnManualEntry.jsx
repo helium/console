@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography, Input, Row, Col } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
+import CopyOutlined from '@ant-design/icons/CopyOutlined';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 const { Text } = Typography
 

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Button, Row, Col } from "antd";
-import {
-  ArrowLeftOutlined,
-  PlusOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import PlusOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 import AddDeviceAlertIcon from "../../../img/alerts/device-label-alert-add-icon.svg";
 import AddIntegrationAlertIcon from "../../../img/alerts/channel-alert-add-icon.svg";
 import DeviceAlertIcon from "../../../img/alerts/alert-show-devices.svg";

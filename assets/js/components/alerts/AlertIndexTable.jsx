@@ -6,7 +6,7 @@ import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-lab
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
 import { minWidth } from '../../util/constants'
-import { DeleteOutlined } from "@ant-design/icons";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import UserCan from "../common/UserCan";
 import findKey from "lodash/findKey";
 

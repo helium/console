@@ -14,7 +14,10 @@ import analyticsLogger from '../../util/analyticsLogger'
 import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizations'
 import { redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Typography, Tooltip } from 'antd';
-import { HomeOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import HomeOutlined from '@ant-design/icons/HomeOutlined';
+import DownOutlined from '@ant-design/icons/DownOutlined';
+import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
+import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import ProfileActive from '../../../img/topbar-pf-active.png'

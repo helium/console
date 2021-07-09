@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Button, Tag, Typography } from 'antd';
-import { ArrowsAltOutlined, CopyOutlined, SwapOutlined } from '@ant-design/icons';
+import ArrowsAltOutlined from '@ant-design/icons/ArrowsAltOutlined';
+import CopyOutlined from '@ant-design/icons/CopyOutlined';
+import SwapOutlined from '@ant-design/icons/SwapOutlined';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 const { Text } = Typography
 

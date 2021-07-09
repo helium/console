@@ -13,11 +13,9 @@ import ImportDevicesModal from "./import/ImportDevicesModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from '../../util/constants'
 import { Card, Button, Typography, Input, Row, Col } from "antd";
-import {
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  SaveOutlined,
-} from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
+import SaveOutlined from "@ant-design/icons/SaveOutlined";
 import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";

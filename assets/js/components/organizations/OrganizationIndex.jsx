@@ -7,7 +7,7 @@ import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { minWidth } from '../../util/constants'
 import { Button, Typography } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
+import PlusOutlined from '@ant-design/icons/PlusOutlined'
 const { Text } = Typography
 
 class OrganizationIndex extends Component {

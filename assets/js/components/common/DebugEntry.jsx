@@ -4,11 +4,9 @@ import moment from "moment";
 import { debugTextColor } from "../../util/colors";
 import { displayInfo } from "../../util/messages";
 import { Typography, Menu, Dropdown, Tag } from "antd";
-import {
-  EyeFilled,
-  EyeInvisibleFilled,
-  EllipsisOutlined,
-} from "@ant-design/icons";
+import EyeFilled from "@ant-design/icons/EyeFilled";
+import EyeInvisibleFilled from "@ant-design/icons/EyeInvisibleFilled";
+import EllipsisOutlined from "@ant-design/icons/EllipsisOutlined";
 const { Text } = Typography;
 
 class DebugEntry extends Component {

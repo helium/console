@@ -27,7 +27,9 @@ import {
   Tabs,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
-import { EditOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";

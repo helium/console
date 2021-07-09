@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import UserCan from '../common/UserCan'
 import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination, Typography } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 const { Text } = Typography
 
 class ChannelIndexTable extends Component {

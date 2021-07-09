@@ -13,7 +13,7 @@ import analyticsLogger from '../../util/analyticsLogger';
 import { displayInfo } from '../../util/messages';
 import { ALL_API_KEYS } from '../../graphql/apiKeys';
 import { Typography, Button, Card, Descriptions, Input, Select, Table } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 const { Text } = Typography
 const { Option } = Select
 

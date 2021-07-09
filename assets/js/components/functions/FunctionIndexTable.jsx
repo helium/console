@@ -7,7 +7,7 @@ import { updateFunction } from '../../actions/function'
 import analyticsLogger from '../../util/analyticsLogger'
 import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination, Switch, Typography, Popover } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 const { Text} = Typography
 
 const functionFormats = {

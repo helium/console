@@ -1,7 +1,7 @@
 import React from "react";
 import { Popover } from "antd";
 import { NavLink } from "react-router-dom";
-import { PlusCircleFilled } from "@ant-design/icons";
+import PlusCircleFilled from "@ant-design/icons/PlusCircleFilled";
 import UserCan from "../common/UserCan";
 
 export default ({

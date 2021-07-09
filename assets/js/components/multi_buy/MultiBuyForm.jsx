@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Row, Col, Input, Typography, Slider } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 import { createMultiBuy, updateMultiBuy } from "../../actions/multiBuy";
 import MultiBuyIcon from "../../../img/multi_buy/multi-buy-index-add-icon.svg";
 import { useQuery } from "@apollo/client";

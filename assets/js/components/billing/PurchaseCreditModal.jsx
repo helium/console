@@ -15,7 +15,7 @@ import BurnManualEntry from './BurnManualEntry'
 import StripeCardElement from './StripeCardElement'
 import { setDefaultPaymentMethod, createCustomerIdAndCharge, createCharge, createDCPurchase, setAutomaticPayments, generateMemo, getRouterAddress } from '../../actions/dataCredits'
 import { Modal, Button, Typography, Input, Popover } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 const { Text } = Typography
 
 const styles = {

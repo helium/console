@@ -15,12 +15,10 @@ import HttpDetails from "../../channels/HttpDetails";
 import AwsDetails from "../../channels/AwsDetails";
 import MqttDetails from "../../channels/MqttDetails";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import {
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
 import { SkeletonLayout } from "../../common/SkeletonLayout";

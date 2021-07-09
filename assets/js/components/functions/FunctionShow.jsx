@@ -12,11 +12,9 @@ import { deleteFunction, updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from '../../util/constants'
 import { Typography, Card, Button } from "antd";
-import {
-  PauseOutlined,
-  DeleteOutlined,
-  CaretRightOutlined,
-} from "@ant-design/icons";
+import PauseOutlined from "@ant-design/icons/PauseOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import FunctionDetailsCard from "./FunctionDetailsCard";

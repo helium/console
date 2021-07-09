@@ -8,7 +8,8 @@ import UserCan from "../common/UserCan";
 import { minWidth } from '../../util/constants'
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
 import { Card, Button, Typography, Table, Pagination } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 const DEFAULT_COLUMN = "name";

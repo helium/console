@@ -9,7 +9,7 @@ import { updateDevice, setDevicesActive } from '../../actions/device'
 import { redForTablesDeleteText } from '../../util/colors'
 import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination, Typography, Select, Popover, Switch, Checkbox } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 import { StatusIcon } from '../common/StatusIcon'
 const { Text } = Typography
 const { Option } = Select
