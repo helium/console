@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Typography, Input, Tooltip } from 'antd';
-import { QuestionCircleFilled } from '@ant-design/icons';
+import QuestionCircleFilled from '@ant-design/icons/QuestionCircleFilled';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 

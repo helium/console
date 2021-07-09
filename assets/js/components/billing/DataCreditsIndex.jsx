@@ -16,11 +16,9 @@ import { ORGANIZATION_SHOW_DC } from "../../graphql/organizations";
 import { getPaymentMethods } from "../../actions/dataCredits";
 import { Link } from "react-router-dom";
 import { Typography, Card, Row, Col, Popover, Button } from "antd";
-import {
-  WalletOutlined,
-  SyncOutlined,
-  RightCircleOutlined,
-} from "@ant-design/icons";
+import WalletOutlined from "@ant-design/icons/WalletOutlined";
+import SyncOutlined from "@ant-design/icons/SyncOutlined";
+import RightCircleOutlined from "@ant-design/icons/RightCircleOutlined";
 import DCIMg from "../../../img/datacredits.svg";
 import BytesIMg from "../../../img/datacredits-bytes-logo.svg";
 const { Text } = Typography;

@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
-import { BugOutlined, CloseOutlined, MenuOutlined } from "@ant-design/icons";
+import BugOutlined from "@ant-design/icons/BugOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import MenuOutlined from "@ant-design/icons/MenuOutlined";
 import { Button, Tabs } from "antd";
 const { TabPane } = Tabs;
 import { useStoreActions } from "react-flow-renderer";

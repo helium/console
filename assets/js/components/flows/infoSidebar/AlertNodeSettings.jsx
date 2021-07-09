@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { ALERTS_PER_TYPE, ALERTS_FOR_NODE } from "../../../graphql/alerts";
 import { useQuery } from "@apollo/client";
 import { Button, Switch, Table } from "antd";
-import { BellOutlined } from "@ant-design/icons";
+import BellOutlined from "@ant-design/icons/BellOutlined";
 import UserCan, { userCan } from "../../common/UserCan";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Link } from "react-router-dom";

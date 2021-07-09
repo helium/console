@@ -7,7 +7,7 @@ import analyticsLogger from "../../util/analyticsLogger";
 import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
 import UserCan from "../common/UserCan";
 import { Card, Button, Typography, Input } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
+import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Text } = Typography;
 
 class LabelNew extends Component {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Typography, Button, Input, Radio, Tooltip } from 'antd';
-import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
+import PlusOutlined from '@ant-design/icons/PlusOutlined';
 const { Text } = Typography
 import { Row, Col } from 'antd';
 

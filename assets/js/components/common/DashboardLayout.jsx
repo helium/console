@@ -4,7 +4,7 @@ import NavDrawer from './NavDrawer'
 import ContentLayout from './ContentLayout'
 import AddResourceButton from './AddResourceButton'
 import { Layout, Popover, Button } from 'antd';
-import { ToolOutlined } from '@ant-design/icons';
+import ToolOutlined from '@ant-design/icons/ToolOutlined';
 const { Header, Footer, Sider, Content } = Layout;
 
 class DashboardLayout extends Component {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Popover, Typography } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons';
+import ClockCircleOutlined from '@ant-design/icons/ClockCircleOutlined';
 import Countdown from "react-countdown"
 const { Text } = Typography
 

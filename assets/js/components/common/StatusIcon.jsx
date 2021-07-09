@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '@ant-design/icons';
+import Icon from '@ant-design/icons/lib/components/Icon';
 import { Tooltip } from 'antd';
 
 const StatusSvg = () => (

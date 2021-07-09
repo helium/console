@@ -7,7 +7,8 @@ import PaymentCard from './PaymentCard'
 import { minWidth } from '../../util/constants'
 import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
 import { Card, Typography, Table, Pagination } from 'antd';
-import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
+import CaretLeftOutlined from '@ant-design/icons/CaretLeftOutlined';
+import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 

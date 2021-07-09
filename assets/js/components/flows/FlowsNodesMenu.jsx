@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Typography } from "antd";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import MinusOutlined from "@ant-design/icons/MinusOutlined";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import LabelNode from "./nodes/LabelNode";
 import FunctionNode from "./nodes/FunctionNode";
 import ChannelNode from "./nodes/ChannelNode";

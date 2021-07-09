@@ -2,13 +2,11 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../../graphql/withGql";
-import {
-  PauseOutlined,
-  CaretRightOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+import PauseOutlined from "@ant-design/icons/PauseOutlined";
+import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import { Button, Typography, Tabs, Card } from "antd";
 const { Text, Paragraph } = Typography;
 import UserCan, { userCan } from "../../common/UserCan";

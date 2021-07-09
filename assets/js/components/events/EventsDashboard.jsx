@@ -21,15 +21,13 @@ import {
   Tabs,
 } from "antd";
 const { TabPane } = Tabs;
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-  CheckOutlined,
-  InfoOutlined,
-  CloseOutlined,
-  ShrinkOutlined,
-  SettingFilled,
-} from "@ant-design/icons";
+import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
+import CaretUpOutlined from "@ant-design/icons/CaretUpOutlined";
+import CheckOutlined from "@ant-design/icons/CheckOutlined";
+import InfoOutlined from "@ant-design/icons/InfoOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
+import ShrinkOutlined from "@ant-design/icons/ShrinkOutlined";
+import SettingFilled from "@ant-design/icons/SettingFilled";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { bindActionCreators } from "redux";

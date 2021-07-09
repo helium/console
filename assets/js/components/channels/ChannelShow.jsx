@@ -27,7 +27,8 @@ import {
   Row,
   Col,
 } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import MqttDetails from "./MqttDetails";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text, Paragraph } = Typography;

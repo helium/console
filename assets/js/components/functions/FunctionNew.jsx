@@ -8,7 +8,7 @@ import { createFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from '../../util/constants'
 import { Button, Input, Select, Card } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
+import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Option } = Select;
 
 @connect(null, mapDispatchToProps)

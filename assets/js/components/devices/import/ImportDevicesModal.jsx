@@ -7,7 +7,7 @@ import { fetchTtnDevices, importTtnDevices, importGenericDevices, resetGenericDe
 import ShowDeviceData from './generic/ShowDeviceData';
 import GetApplications from './ttn/GetApplications';
 import { Modal, Spin, Typography } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import analyticsLogger from '../../../util/analyticsLogger';
 const { Text, Title } = Typography
 

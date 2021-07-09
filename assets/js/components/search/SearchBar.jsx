@@ -6,7 +6,7 @@ import SearchResults from './SearchResults'
 import searchPages from './pages'
 import analyticsLogger from '../../util/analyticsLogger'
 import { GENERAL_SEARCH } from '../../graphql/search'
-import { SearchOutlined } from '@ant-design/icons';
+import SearchOutlined from '@ant-design/icons/SearchOutlined';
 import withGql from '../../graphql/withGql'
 import _JSXStyle from "styled-jsx/style"
 

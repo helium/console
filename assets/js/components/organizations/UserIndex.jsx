@@ -12,7 +12,7 @@ import DeleteUserModal from './DeleteUserModal'
 import UserCan from '../common/UserCan'
 import analyticsLogger from '../../util/analyticsLogger'
 import { Typography, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
+import PlusOutlined from '@ant-design/icons/PlusOutlined'
 const { Text } = Typography
 
 @connect(null, mapDispatchToProps)

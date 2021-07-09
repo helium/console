@@ -25,7 +25,7 @@ import { LABEL_SHOW } from "../../graphql/labels";
 import withGql from "../../graphql/withGql";
 import { Typography } from "antd";
 const { Text } = Typography;
-import { BugOutlined } from "@ant-design/icons";
+import BugOutlined from "@ant-design/icons/BugOutlined";
 
 class LabelShow extends Component {
   state = {

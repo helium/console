@@ -1,5 +1,5 @@
 import React from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
 import { createAlert, addAlertToNode } from "../../../actions/alert";

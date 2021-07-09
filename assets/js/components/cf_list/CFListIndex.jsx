@@ -9,8 +9,8 @@ import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
 
 export const cfListText1 = `
-  The Join-Accept CF List configures channels according to 
-  the LoRaWAN spec to use sub-band 2. Devices that have not correctly implemented the 
+  The Join-Accept CF List configures channels according to
+  the LoRaWAN spec to use sub-band 2. Devices that have not correctly implemented the
   LoRaWAN spec may experience transfer issues when this setting is enabled.
 `;
 

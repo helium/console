@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { blueForDeviceStatsLarge } from '../../util/colors'
 import { DEVICE_SHOW_STATS, DEVICE_SHOW_DC_STATS } from '../../graphql/devices'
 import { Typography, Card, Col, Spin, Row } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import withGql from '../../graphql/withGql'
 const { Text } = Typography
 const antLoader = <LoadingOutlined style={{ fontSize: 50, color: '#38A2FF' }} spin />;

@@ -13,7 +13,8 @@ import { updateDevice, setDevicesActive } from '../../actions/device'
 import { PAGINATED_DEVICES_BY_LABEL } from '../../graphql/devices'
 import { Button, Typography, Table, Pagination, Select, Popover, Switch } from 'antd';
 import { StatusIcon } from '../common/StatusIcon'
-import { DeleteOutlined, SettingOutlined } from '@ant-design/icons'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
+import SettingOutlined from '@ant-design/icons/SettingOutlined'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const { Option } = Select

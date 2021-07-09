@@ -37,14 +37,12 @@ import {
   Switch,
   Popover,
 } from "antd";
-import {
-  ArrowLeftOutlined,
-  EditOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  BugOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
+import BugOutlined from "@ant-design/icons/BugOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";

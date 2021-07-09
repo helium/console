@@ -8,7 +8,7 @@ import RoleName from '../common/RoleName'
 import withGql from '../../graphql/withGql'
 import { minWidth } from '../../util/constants'
 import { Table, Button, Pagination } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons'
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 
 class InvitationsTable extends Component {

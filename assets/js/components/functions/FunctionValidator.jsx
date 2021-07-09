@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
 import { Typography, Card, Input, InputNumber, Row, Col } from 'antd';
-import { PlayCircleFilled } from '@ant-design/icons';
+import PlayCircleFilled from '@ant-design/icons/PlayCircleFilled';
 const { Text } = Typography
 import range from 'lodash/range'
 import Editor from 'react-simple-code-editor';
