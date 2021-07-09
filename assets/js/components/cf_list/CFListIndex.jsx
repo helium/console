@@ -3,8 +3,9 @@ import DashboardLayout from "../common/DashboardLayout";
 import NavPointTriangle from "../common/NavPointTriangle";
 import AddResourceButton from "../common/AddResourceButton";
 import { Typography, Row, Col } from "antd";
+import CFListIcon from "../../../img/cf-list/cf-list-icon.svg";
+import CFListAllIcon from "../../../img/cf-list/cf-list-icon-all.svg";
 import analyticsLogger from "../../util/analyticsLogger";
-import { SettingOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 
 export const cfListText1 = `
@@ -68,14 +69,13 @@ export default (props) => {
                 height: "100px",
               }}
             >
-              <SettingOutlined
+              <img
+                src={CFListAllIcon}
                 style={{
                   height: 12,
                   marginRight: 12,
                   position: "relative",
                   top: -4,
-                  color: "white",
-                  fontSize: 16,
                 }}
               />
               <div>
@@ -110,14 +110,12 @@ export default (props) => {
           <Row gutter={30} style={{ padding: 30, minWidth: 700 }}>
             <Col span={12}>
               <div style={{ padding: 20 }}>
-                <SettingOutlined
+                <img
+                  src={CFListIcon}
                   style={{
-                    color: "white",
-                    padding: 15,
+                    position: "relative",
+                    top: -4,
                     marginBottom: 10,
-                    backgroundColor: "#2C79EE",
-                    fontSize: "18px",
-                    borderRadius: "25px",
                   }}
                 />
                 <Text
