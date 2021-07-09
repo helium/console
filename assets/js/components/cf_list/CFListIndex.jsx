@@ -52,8 +52,8 @@ export default (props) => {
               padding: "5px 10px 5px 10px",
               cursor: "pointer",
               height: 50,
-              width: 100,
-              minWidth: 100,
+              width: 160,
+              minWidth: 160,
               display: "flex",
               flexDirection: "column",
               marginRight: 12,
@@ -75,18 +75,32 @@ export default (props) => {
                   height: 12,
                   marginRight: 12,
                   position: "relative",
+                  top: -4,
                 }}
               />
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontWeight: 500,
-                  whiteSpace: "nowrap",
-                  display: "block",
-                }}
-              >
-                CF List
-              </Text>
+              <div>
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontWeight: 500,
+                    whiteSpace: "nowrap",
+                    display: "block",
+                  }}
+                >
+                  CF List Enabled
+                </Text>
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    whiteSpace: "nowrap",
+                    position: "relative",
+                    top: -4,
+                    fontSize: 10,
+                  }}
+                >
+                  CF List
+                </Text>
+              </div>
             </div>
             <NavPointTriangle />
           </div>
