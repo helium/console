@@ -250,7 +250,7 @@ class UpdateLabelModal extends Component {
                 }</Text>
               </div>
 
-              <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with Join-Accept CF List disabled to apply this setting for devices.</Text>
+              <Text strong style={{ fontSize: 16 }}>Note: It only takes a single Label with Join-Accept CF List enabled to apply this setting for devices.</Text>
             </div>
           </TabPane>
         </Tabs>
