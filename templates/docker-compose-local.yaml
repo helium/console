@@ -3,6 +3,8 @@ services:
   console:
     build:
       context: .
+      args:
+        socket_check_origin: "//localhost"
     image: helium/console:latest
     container_name: helium_console
     restart: always
