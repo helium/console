@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import DebugEntry from "./DebugEntry";
 import { debugSidebarHeaderColor, debugTextColor } from "../../util/colors";
-import { Typography, Popover, Button, Checkbox } from "antd";
+import { Typography, Popover, Button, Checkbox, Tooltip } from "antd";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import ReloadOutlined from "@ant-design/icons/ReloadOutlined";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
@@ -103,25 +103,27 @@ class Debug extends Component {
       return (
         <Fragment>
           {this.props.handleToggle && (
-            <Button
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                marginRight: 10,
-                left: "35px",
-              }}
-              onClick={() => {
-                this.props.handleToggle();
-              }}
-              icon={
-                <CloseOutlined
-                  style={{
-                    fontSize: 30,
-                    color: debugTextColor,
-                  }}
-                />
-              }
-            />
+            <Tooltip title="Close">
+              <Button
+                style={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  marginRight: 10,
+                  left: "35px",
+                }}
+                onClick={() => {
+                  this.props.handleToggle();
+                }}
+                icon={
+                  <CloseOutlined
+                    style={{
+                      fontSize: 30,
+                      color: debugTextColor,
+                    }}
+                  />
+                }
+              />
+            </Tooltip>
           )}
           <div
             style={{
@@ -165,24 +167,26 @@ class Debug extends Component {
           }}
         >
           {this.props.handleToggle && (
-            <Button
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                marginRight: 10,
-              }}
-              onClick={() => {
-                this.props.handleToggle();
-              }}
-              icon={
-                <CloseOutlined
-                  style={{
-                    fontSize: 30,
-                    color: "#D2DDE8",
-                  }}
-                />
-              }
-            />
+            <Tooltip title="Close">
+              <Button
+                style={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  marginRight: 10,
+                }}
+                onClick={() => {
+                  this.props.handleToggle();
+                }}
+                icon={
+                  <CloseOutlined
+                    style={{
+                      fontSize: 30,
+                      color: "#D2DDE8",
+                    }}
+                  />
+                }
+              />
+            </Tooltip>
           )}
           <Text style={{ color: "white" }}>
             <span style={{ fontWeight: "500" }}>Displaying</span>{" "}
@@ -205,14 +209,16 @@ class Debug extends Component {
           >
             Expand All
           </Checkbox>
-          <Button
-            type="primary"
-            icon={<ReloadOutlined />}
-            shape="circle"
-            onClick={() => {
-              this.setState({ data: [] });
-            }}
-          />
+          <Tooltip title="Refresh">
+            <Button
+              type="primary"
+              icon={<ReloadOutlined />}
+              shape="circle"
+              onClick={() => {
+                this.setState({ data: [] });
+              }}
+            />
+          </Tooltip>
         </div>
         <div style={{ width: "100%", marginTop: 50 }}>
           {data.map((d) => (

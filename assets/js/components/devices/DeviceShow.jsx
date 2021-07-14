@@ -37,7 +37,6 @@ import {
   Switch,
   Popover,
 } from "antd";
-import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
@@ -94,7 +93,7 @@ class DeviceShow extends Component {
   handleDeviceNameUpdate = (id, e) => {
     const { newName } = this.state;
     if (newName !== "") {
-      this.props.updateDevice(id, { name: this.state.newName });
+      this.props.updateDevice(id, { name: newName });
       analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
         id: id,
         name: newName,
@@ -267,35 +266,11 @@ class DeviceShow extends Component {
 
     return (
       <DeviceDashboardLayout {...this.props}>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 20,
-            }}
-          >
+        <div className="show-page">
+          <div className="show-header">
             <Text style={{ fontSize: 24, fontWeight: 600 }}>{device.name}</Text>
             <UserCan>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
+              <div className="show-buttons">
                 <Popover
                   content={`This device is currently ${
                     device.active ? "active" : "inactive"
@@ -309,16 +284,16 @@ class DeviceShow extends Component {
                   />
                 </Popover>
                 <Button
+                  style={{ borderRadius: 4, marginLeft: 12 }}
                   type="danger"
                   icon={<DeleteOutlined />}
-                  shape="circle"
-                  size="small"
-                  style={{ marginLeft: 8 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     this.openDeleteDeviceModal(device);
                   }}
-                />
+                >
+                  Delete Device
+                </Button>
               </div>
             </UserCan>
           </div>
@@ -349,14 +324,14 @@ class DeviceShow extends Component {
                               <Input
                                 name="newName"
                                 placeholder={device.name}
-                                value={this.state.newName}
+                                value={newName}
                                 onChange={this.handleInputUpdate}
                                 style={{
                                   width: 300,
                                   marginRight: 5,
                                   verticalAlign: "middle",
                                 }}
-                                suffix={`${this.state.newName.length}/50`}
+                                suffix={`${newName.length}/50`}
                                 maxLength={50}
                               />
                               <Button
@@ -629,7 +604,7 @@ class DeviceShow extends Component {
           open={showDeleteDeviceModal}
           onClose={this.closeDeleteDeviceModal}
           allDevicesSelected={false}
-          devicesToDelete={this.state.deviceToDelete}
+          devicesToDelete={deviceToDelete}
           totalDevices={1}
           from="deviceShow"
         />

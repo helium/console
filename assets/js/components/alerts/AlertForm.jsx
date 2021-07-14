@@ -19,6 +19,7 @@ import DeleteAlertModal from "./DeleteAlertModal";
 import { useHistory } from "react-router-dom";
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 
 export default (props) => {
   const history = useHistory();
@@ -120,10 +121,11 @@ export default (props) => {
               <Button
                 size="middle"
                 type="danger"
-                style={{ borderRadius: 5 }}
+                style={{ borderRadius: 5, marginRight: 35 }}
                 onClick={openDeleteAlertModal}
+                icon={<DeleteOutlined />}
               >
-                Delete
+                Delete Alert
               </Button>
             </div>
           </UserCan>

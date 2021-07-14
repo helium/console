@@ -65,10 +65,18 @@ class NavDrawer extends Component {
             to={"/devices"}
             activeClassName="is-active"
             className="menu-link-device"
+            isActive={(_match, location) => {
+              if (
+                location.pathname.indexOf("/labels") !== -1 ||
+                location.pathname.indexOf("/devices") !== -1
+              )
+                return true;
+            }}
           >
             Devices
           </NavLink>
-          {history.location.pathname.indexOf("/devices") !== -1 && (
+          {(history.location.pathname.indexOf("/devices") !== -1 ||
+            history.location.pathname.indexOf("/labels") !== -1) && (
             <img
               draggable="false"
               src={CaretD}

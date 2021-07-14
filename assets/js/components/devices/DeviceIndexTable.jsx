@@ -1,18 +1,28 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import moment from 'moment'
-import LabelTag from '../common/LabelTag'
-import UserCan from '../common/UserCan'
-import { updateDevice, setDevicesActive } from '../../actions/device'
-import { redForTablesDeleteText } from '../../util/colors'
-import { minWidth } from '../../util/constants'
-import { Table, Button, Pagination, Typography, Select, Popover, Switch, Checkbox } from 'antd';
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
-import { StatusIcon } from '../common/StatusIcon'
-const { Text } = Typography
-const { Option } = Select
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import moment from "moment";
+import LabelTag from "../common/LabelTag";
+import UserCan from "../common/UserCan";
+import { updateDevice, setDevicesActive } from "../../actions/device";
+import { redForTablesDeleteText } from "../../util/colors";
+import { minWidth } from "../../util/constants";
+import {
+  Table,
+  Button,
+  Pagination,
+  Typography,
+  Select,
+  Popover,
+  Switch,
+  Checkbox,
+  Tooltip,
+} from "antd";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import { StatusIcon } from "../common/StatusIcon";
+const { Text } = Typography;
+const { Option } = Select;
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -23,7 +33,7 @@ const columnKeyNameText = {
   dc_usage: "DC Used",
   inserted_at: "Date Activated",
   last_connected: "Last Connected",
-}
+};
 
 @connect(null, mapDispatchToProps)
 class DeviceIndexTable extends Component {
@@ -40,202 +50,243 @@ class DeviceIndexTable extends Component {
       inserted_at: true,
       last_connected: true,
     },
-  }
+  };
 
   componentDidMount() {
-    const columnsToShow = localStorage.getItem(`columnsToShow-${this.props.userEmail}`)
+    const columnsToShow = localStorage.getItem(
+      `columnsToShow-${this.props.userEmail}`
+    );
     if (columnsToShow) {
-      this.setState({ columnsToShow: JSON.parse(columnsToShow) })
+      this.setState({ columnsToShow: JSON.parse(columnsToShow) });
     }
 
-    this.props.handleChangePage(1) // this refetches the table when switching back from label show
+    this.props.handleChangePage(1); // this refetches the table when switching back from label show
   }
 
   handleSelectOption = (value) => {
-    if (value === 'addLabel') {
-      this.props.openDevicesAddLabelModal(this.state.selectedRows)
-    } else if (value === 'removeAllLabels') {
-      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows)
-    } else if (value === 'setActive') {
-      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), true)
-    } else if (value === 'setInactive') {
-      this.props.setDevicesActive(this.state.selectedRows.map(r => r.id), false)
+    if (value === "addLabel") {
+      this.props.openDevicesAddLabelModal(this.state.selectedRows);
+    } else if (value === "removeAllLabels") {
+      this.props.openDeviceRemoveAllLabelsModal(this.state.selectedRows);
+    } else if (value === "setActive") {
+      this.props.setDevicesActive(
+        this.state.selectedRows.map((r) => r.id),
+        true
+      );
+    } else if (value === "setInactive") {
+      this.props.setDevicesActive(
+        this.state.selectedRows.map((r) => r.id),
+        false
+      );
     } else {
-      this.props.openDeleteDeviceModal(this.state.selectedRows)
+      this.props.openDeleteDeviceModal(this.state.selectedRows);
     }
-  }
+  };
 
   handleChangePage = (page) => {
     this.setState({ selectedRows: [] });
     this.props.handleChangePage(page);
-  }
+  };
 
   toggleDeviceActive = (active, id) => {
-    this.props.updateDevice(id, { active })
-  }
+    this.props.updateDevice(id, { active });
+  };
 
   handleSort = (pagi, filter, sorter) => {
-    const { order, column } = this.props
+    const { order, column } = this.props;
 
-    if (column == sorter.field && order == 'asc') {
-      this.props.handleSortChange(column, 'desc')
+    if (column == sorter.field && order == "asc") {
+      this.props.handleSortChange(column, "desc");
     }
-    if (column == sorter.field && order == 'desc') {
-      this.props.handleSortChange(column, 'asc')
+    if (column == sorter.field && order == "desc") {
+      this.props.handleSortChange(column, "asc");
     }
     if (column != sorter.field) {
-      this.props.handleSortChange(sorter.field, 'asc')
+      this.props.handleSortChange(sorter.field, "asc");
     }
-  }
+  };
 
   updateColumns = (key, checked) => {
-    const { columnsToShow } = this.state
-    const updatedColumnsToShow = Object.assign({}, columnsToShow, { [key]: checked })
-    this.setState({ columnsToShow: updatedColumnsToShow })
-    localStorage.setItem(`columnsToShow-${this.props.userEmail}`, JSON.stringify(updatedColumnsToShow))
-  }
+    const { columnsToShow } = this.state;
+    const updatedColumnsToShow = Object.assign({}, columnsToShow, {
+      [key]: checked,
+    });
+    this.setState({ columnsToShow: updatedColumnsToShow });
+    localStorage.setItem(
+      `columnsToShow-${this.props.userEmail}`,
+      JSON.stringify(updatedColumnsToShow)
+    );
+  };
 
   render() {
-    const { history } = this.props
+    const { history } = this.props;
     const columns = [
       {
-        title: 'Device Name',
-        dataIndex: 'name',
+        title: "Device Name",
+        dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link className={record.labels.length === 0 ? 'dull' : undefined} to={`/devices/${record.id}`}>
+          <Link
+            className={record.labels.length === 0 ? "dull" : undefined}
+            to={`/devices/${record.id}`}
+          >
             {text}
-            {
-              moment().utc().local().subtract(1, 'days').isBefore(moment.utc(record.last_connected).local()) &&
-                <StatusIcon tooltipTitle='Last connected within the last 24h' />
-            }
+            {moment()
+              .utc()
+              .local()
+              .subtract(1, "days")
+              .isBefore(moment.utc(record.last_connected).local()) && (
+              <StatusIcon tooltipTitle="Last connected within the last 24h" />
+            )}
           </Link>
-        )
+        ),
       },
       {
-        title: 'Device EUI',
-        dataIndex: 'dev_eui',
+        title: "Device EUI",
+        dataIndex: "dev_eui",
         sorter: true,
-        render: (text, record) => <Text code>{text}</Text>
+        render: (text, record) => <Text code>{text}</Text>,
       },
       {
-        title: 'Labels',
-        dataIndex: 'labels',
+        title: "Labels",
+        dataIndex: "labels",
         render: (labels, record) => {
-          return <React.Fragment>
-            {
-              labels.length > 0 ? labels.map(l => (
-                <UserCan
-                  key={l.id}
-                  alternate={
+          return (
+            <React.Fragment>
+              {labels.length > 0 ? (
+                labels.map((l) => (
+                  <UserCan
+                    key={l.id}
+                    alternate={
+                      <Link to={`/labels/${l.id}`}>
+                        <LabelTag key={l.name} text={l.name} />
+                      </Link>
+                    }
+                  >
                     <Link to={`/labels/${l.id}`}>
                       <LabelTag
                         key={l.name}
                         text={l.name}
+                        closable
+                        onClose={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          this.props.openDevicesRemoveLabelModal([l], record);
+                        }}
                       />
                     </Link>
-                  }
-                >
-                  <Link to={`/labels/${l.id}`}>
-                    <LabelTag
-                      key={l.name}
-                      text={l.name}
-                      closable
-                      onClose={e => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        this.props.openDevicesRemoveLabelModal([l], record)
-                      }}
-                    />
-                  </Link>
-                </UserCan>
-              )) : <Text type="danger">None</Text>
-            }
-          </React.Fragment>
-        }
+                  </UserCan>
+                ))
+              ) : (
+                <Text type="danger">None</Text>
+              )}
+            </React.Fragment>
+          );
+        },
       },
       {
-        title: 'Frame Up',
+        title: "Frame Up",
         sorter: true,
-        dataIndex: 'frame_up',
+        dataIndex: "frame_up",
       },
       {
-        title: 'Frame Down',
+        title: "Frame Down",
         sorter: true,
-        dataIndex: 'frame_down',
+        dataIndex: "frame_down",
       },
       {
-        title: 'Packets Transferred',
+        title: "Packets Transferred",
         sorter: true,
-        dataIndex: 'total_packets',
+        dataIndex: "total_packets",
       },
       {
-        title: 'DC Used',
+        title: "DC Used",
         sorter: true,
-        dataIndex: 'dc_usage'
+        dataIndex: "dc_usage",
       },
       {
-        title: 'Date Activated',
-        dataIndex: 'inserted_at',
+        title: "Date Activated",
+        dataIndex: "inserted_at",
         sorter: true,
-        render: data => moment.utc(data).local().format('lll')
+        render: (data) => moment.utc(data).local().format("lll"),
       },
       {
-        title: 'Last Connected',
-        dataIndex: 'last_connected',
+        title: "Last Connected",
+        dataIndex: "last_connected",
         sorter: true,
-        render: data => data ? moment.utc(data).local().format('lll') : ""
+        render: (data) => (data ? moment.utc(data).local().format("lll") : ""),
       },
       {
-        title: '',
-        key: 'action',
+        title: "",
+        key: "action",
         render: (text, record) => (
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
             <UserCan>
               <Popover
-                content={`This device is currently ${record.active ? "active" : "inactive"}`}
+                content={`This device is currently ${
+                  record.active ? "active" : "inactive"
+                }`}
                 placement="top"
                 overlayStyle={{ width: 140 }}
               >
                 <Switch
                   checked={record.active}
                   onChange={(active, e) => {
-                    e.stopPropagation()
-                    this.toggleDeviceActive(active, record.id)
+                    e.stopPropagation();
+                    this.toggleDeviceActive(active, record.id);
                   }}
                 />
               </Popover>
-              <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                shape="circle"
-                size="small"
-                style={{ marginLeft: 8 }}
-                onClick={e => {
-                  e.stopPropagation()
-                  this.props.openDeleteDeviceModal([record])
-                }}
-              />
+              <Tooltip title="Delete Device">
+                <Button
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  shape="circle"
+                  size="small"
+                  style={{ marginLeft: 8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.props.openDeleteDeviceModal([record]);
+                  }}
+                />
+              </Tooltip>
             </UserCan>
           </div>
-        )
+        ),
       },
-    ].filter(col => {
-      if (col.dataIndex == "name" || col.key == "action") return true
-      return this.state.columnsToShow[col.dataIndex]
-    })
+    ].filter((col) => {
+      if (col.dataIndex == "name" || col.key == "action") return true;
+      return this.state.columnsToShow[col.dataIndex];
+    });
 
     const { devices, onChangePageSize } = this.props;
     const rowSelection = {
-      onChange: (keys, selectedRows) => this.setState({ selectedRows, allSelected: false }),
-      onSelectAll: () => this.setState({allSelected: !this.state.allSelected})
-    }
+      onChange: (keys, selectedRows) =>
+        this.setState({ selectedRows, allSelected: false }),
+      onSelectAll: () =>
+        this.setState({ allSelected: !this.state.allSelected }),
+    };
 
-    const { selectedRows } = this.state
+    const { selectedRows } = this.state;
 
     return (
-      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
-        <div style={{ minWidth, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+      <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+        <div
+          style={{
+            minWidth,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            padding: "30px 20px 20px 30px",
+          }}
+        >
           <Text style={{ fontSize: 22, fontWeight: 600 }}>All Devices</Text>
           <div>
             <Popover
@@ -243,22 +294,22 @@ class DeviceIndexTable extends Component {
               placement="bottom"
               content={
                 <div>
-                  {
-                    Object.keys(this.state.columnsToShow).map(key => (
-                      <div key={key}>
-                        <Checkbox
-                          onChange={e => this.updateColumns(key, e.target.checked)}
-                          checked={this.state.columnsToShow[key]}
-                        >
-                          {columnKeyNameText[key]}
-                        </Checkbox>
-                      </div>
-                    ))
-                  }
+                  {Object.keys(this.state.columnsToShow).map((key) => (
+                    <div key={key}>
+                      <Checkbox
+                        onChange={(e) =>
+                          this.updateColumns(key, e.target.checked)
+                        }
+                        checked={this.state.columnsToShow[key]}
+                      >
+                        {columnKeyNameText[key]}
+                      </Checkbox>
+                    </div>
+                  ))}
                 </div>
               }
             >
-              <Button style={{marginRight: 10}}>Edit Columns</Button>
+              <Button style={{ marginRight: 10 }}>Edit Columns</Button>
             </Popover>
             <UserCan>
               <Select
@@ -266,20 +317,43 @@ class DeviceIndexTable extends Component {
                 style={{ width: 270, marginRight: 10 }}
                 onSelect={this.handleSelectOption}
               >
-                <Option value="addLabel" disabled={selectedRows.length === 0}>Add Label to Selected Devices</Option>
-                <Option value="removeAllLabels" disabled={selectedRows.length === 0}>Remove All Labels From Selected Devices</Option>
-                {
-                  selectedRows.find(r => r.active === false) && (
-                    <Option value="setActive" disabled={selectedRows.length === 0}>Resume Packet Transfer for Selected Devices</Option>
-                  )
-                }
+                <Option value="addLabel" disabled={selectedRows.length === 0}>
+                  Add Label to Selected Devices
+                </Option>
+                <Option
+                  value="removeAllLabels"
+                  disabled={selectedRows.length === 0}
+                >
+                  Remove All Labels From Selected Devices
+                </Option>
+                {selectedRows.find((r) => r.active === false) && (
+                  <Option
+                    value="setActive"
+                    disabled={selectedRows.length === 0}
+                  >
+                    Resume Packet Transfer for Selected Devices
+                  </Option>
+                )}
 
-                {
-                  (selectedRows.length == 0 || !selectedRows.find(r => r.active === false)) && (
-                    <Option value="setInactive" disabled={selectedRows.length === 0}>Pause Packet Transfer for Selected Devices</Option>
-                  )
-                }
-                <Option value="delete" disabled={selectedRows.length === 0} style={{ color: redForTablesDeleteText }}>Delete Selected Devices</Option>
+                {(selectedRows.length == 0 ||
+                  !selectedRows.find((r) => r.active === false)) && (
+                  <Option
+                    value="setInactive"
+                    disabled={selectedRows.length === 0}
+                  >
+                    Pause Packet Transfer for Selected Devices
+                  </Option>
+                )}
+                <Option
+                  value="delete"
+                  disabled={selectedRows.length === 0}
+                  style={{
+                    color:
+                      selectedRows.length === 0 ? "" : redForTablesDeleteText,
+                  }}
+                >
+                  Delete Selected Devices
+                </Option>
               </Select>
             </UserCan>
           </div>
@@ -289,21 +363,30 @@ class DeviceIndexTable extends Component {
           <Table
             columns={columns}
             dataSource={devices.entries}
-            rowKey={record => record.id}
+            rowKey={(record) => record.id}
             pagination={false}
             rowSelection={rowSelection}
             onChange={this.handleSort}
-            style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
+            style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
             className="no-scroll-bar"
             onRow={(record, rowIndex) => ({
-              onClick: e => {
-                if (e.target.tagName === 'TD') {
-                  this.props.history.push(`/devices/${record.id}`)
+              onClick: (e) => {
+                if (e.target.tagName === "TD") {
+                  this.props.history.push(`/devices/${record.id}`);
                 }
-              }
+              },
             })}
           />
-          <div style={{ minWidth, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 0}}>
+          <div
+            style={{
+              minWidth,
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              paddingBottom: 0,
+            }}
+          >
             <Select
               value={`${devices.pageSize} results`}
               onSelect={onChangePageSize}
@@ -317,19 +400,19 @@ class DeviceIndexTable extends Component {
               current={devices.pageNumber}
               pageSize={devices.pageSize}
               total={devices.totalEntries}
-              onChange={page => this.handleChangePage(page)}
-              style={{marginBottom: 20}}
+              onChange={(page) => this.handleChangePage(page)}
+              style={{ marginBottom: 20 }}
               showSizeChanger={false}
             />
           </div>
         </React.Fragment>
       </div>
-    )
+    );
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch)
+  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch);
 }
 
-export default DeviceIndexTable
+export default DeviceIndexTable;

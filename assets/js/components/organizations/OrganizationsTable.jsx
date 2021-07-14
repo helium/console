@@ -13,7 +13,15 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
 import UserCan from "../common/UserCan";
 import withGql from "../../graphql/withGql";
-import { Table, Typography, Button, Pagination, Switch, Popover } from "antd";
+import {
+  Table,
+  Typography,
+  Button,
+  Pagination,
+  Switch,
+  Popover,
+  Tooltip,
+} from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
@@ -150,15 +158,17 @@ class OrganizationsTable extends Component {
               </Button>
 
               <UserCan noManager>
-                <Button
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  shape="circle"
-                  size="small"
-                  onClick={() => {
-                    this.props.openDeleteOrganizationModal(record.id);
-                  }}
-                />
+                <Tooltip title="Delete Organization">
+                  <Button
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    shape="circle"
+                    size="small"
+                    onClick={() => {
+                      this.props.openDeleteOrganizationModal(record.id);
+                    }}
+                  />
+                </Tooltip>
               </UserCan>
             </div>
           ) : (

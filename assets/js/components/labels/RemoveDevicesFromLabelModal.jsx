@@ -1,33 +1,40 @@
-import React, { Component } from 'react'
-import { Modal, Button, Typography } from 'antd';
-const { Text } = Typography
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { removeDevicesFromLabel } from '../../actions/label'
-import { displayError } from '../../util/messages'
-import analyticsLogger from '../../util/analyticsLogger'
+import React, { Component } from "react";
+import { Modal, Button, Typography } from "antd";
+const { Text } = Typography;
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { removeDevicesFromLabel } from "../../actions/label";
+import { displayError } from "../../util/messages";
+import analyticsLogger from "../../util/analyticsLogger";
 
 @connect(null, mapDispatchToProps)
 class RemoveDevicesFromLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { devicesToRemove, removeDevicesFromLabel, label, onClose } = this.props
+    const { devicesToRemove, removeDevicesFromLabel, label, onClose } =
+      this.props;
 
-    if (devicesToRemove.length === 0) displayError("No devices are selected for removal")
+    if (devicesToRemove.length === 0)
+      displayError("No devices are selected for removal");
     else {
-      analyticsLogger.logEvent("ACTION_REMOVE_DEVICES_FROM_LABEL",  {id: label.id, devices: devicesToRemove.map(d => d.id)})
-      removeDevicesFromLabel(devicesToRemove, label.id)
+      analyticsLogger.logEvent("ACTION_REMOVE_DEVICES_FROM_LABEL", {
+        id: label.id,
+        devices: devicesToRemove.map((d) => d.id),
+      });
+      removeDevicesFromLabel(devicesToRemove, label.id);
     }
 
-    onClose()
-  }
+    onClose();
+  };
 
   render() {
-    const { open, onClose, devicesToRemove } = this.props
+    const { open, onClose, devicesToRemove } = this.props;
 
     return (
       <Modal
-        title="Remove Devices from Label"
+        title={`Remove Device${
+          devicesToRemove.length > 1 ? "s" : ""
+        } from Label`}
         visible={open}
         onCancel={onClose}
         centered
@@ -36,34 +43,42 @@ class RemoveDevicesFromLabelModal extends Component {
           <Button key="back" onClick={onClose}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={this.handleSubmit} disabled={devicesToRemove.length === 0}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={this.handleSubmit}
+            disabled={devicesToRemove.length === 0}
+          >
             Submit
           </Button>,
         ]}
       >
         <div style={{ marginBottom: 20 }}>
-          <Text>Are you sure you want to remove the following devices from this label?</Text>
+          <Text>
+            Are you sure you want to remove the following device
+            {devicesToRemove.length > 1 ? "s" : ""} from this label?
+          </Text>
         </div>
-        {
-          devicesToRemove.length == 0 ? (
-            <div>
-              <Text>&ndash; No Devices Currently Selected</Text>
+        {devicesToRemove.length == 0 ? (
+          <div>
+            <Text>&ndash; No Devices Currently Selected</Text>
+          </div>
+        ) : (
+          devicesToRemove.map((d) => (
+            <div key={d.id}>
+              <Text>
+                &ndash; <b>{d.name}</b>
+              </Text>
             </div>
-          ) : (
-            devicesToRemove.map(d => (
-              <div key={d.id}>
-                <Text>&ndash; {d.name}</Text>
-              </div>
-            ))
-          )
-        }
+          ))
+        )}
       </Modal>
-    )
+    );
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ removeDevicesFromLabel }, dispatch)
+  return bindActionCreators({ removeDevicesFromLabel }, dispatch);
 }
 
-export default RemoveDevicesFromLabelModal
+export default RemoveDevicesFromLabelModal;

@@ -1,20 +1,23 @@
 import React, { Component } from "react";
 import FunctionDashboardLayout from "./FunctionDashboardLayout";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import _JSXStyle from "styled-jsx/style";
 
 class FunctionHome extends Component {
   render() {
     return (
       <FunctionDashboardLayout {...this.props}>
-        <div className="blankstateWrapper no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div
+          className="blankstateWrapper no-scroll-bar"
+          style={{ overflowX: "scroll" }}
+        >
           <div className="message" style={{ minWidth }}>
             <h1>Functions</h1>
 
             <div className="explainer">
               <p>
-                Functions are operators that can be applied to devices and
-                labels. They act on the data of these linked devices and labels.
+                Functions are operators that act on the data of its linked
+                devices and labels.
               </p>
               <p>
                 <a

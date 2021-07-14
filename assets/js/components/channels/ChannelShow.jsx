@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import UserCan from "../common/UserCan";
 import { displayError } from "../../util/messages";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
@@ -18,20 +18,14 @@ import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
 import analyticsLogger from "../../util/analyticsLogger";
 import withGql from "../../graphql/withGql";
-import {
-  Typography,
-  Button,
-  Input,
-  Card,
-  Divider,
-  Row,
-  Col,
-} from "antd";
+import { Typography, Button, Input, Card, Divider, Row, Col } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import MqttDetails from "./MqttDetails";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text, Paragraph } = Typography;
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import DeleteChannelModal from "./DeleteChannelModal";
 
 class ChannelShow extends Component {
   state = {
@@ -40,6 +34,7 @@ class ChannelShow extends Component {
     showDownlinkToken: false,
     templateBody: undefined,
     validInput: true,
+    showDeleteChannelModal: false,
   };
 
   componentDidMount() {
@@ -185,6 +180,14 @@ class ChannelShow extends Component {
     }
   };
 
+  openDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: true });
+  };
+
+  closeDeleteChannelModal = () => {
+    this.setState({ showDeleteChannelModal: false });
+  };
+
   render() {
     const { loading, error, channel } = this.props.channelShowQuery;
 
@@ -217,152 +220,169 @@ class ChannelShow extends Component {
       downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
     }
 
-    const { showDownlinkToken } = this.state;
+    const { showDownlinkToken, showDeleteChannelModal } = this.state;
 
     return (
       <ChannelDashboardLayout {...this.props}>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
-          <Card title="Integration Details" bodyStyle={{ padding: 0 }}>
-            <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
-            <div style={{ padding: 24, minWidth }}>
-              <UserCan alternate={<Text strong>{channel.name}</Text>}>
-                <Input
-                  name="newName"
-                  placeholder={channel.name}
-                  value={this.state.newName}
-                  onChange={this.handleInputUpdate}
-                  style={{ width: 300, marginRight: 5, verticalAlign: "middle" }}
-                  suffix={`${this.state.newName.length}/50`}
-                  maxLength={50}
-                />
-                <Button type="primary" onClick={this.handleNameChange}>
-                  Update
+        <div className="show-page">
+          <div className="show-header">
+            <Text style={{ fontSize: 24, fontWeight: 600 }}>
+              {channel.name}
+            </Text>
+            <UserCan>
+              <div className="show-buttons">
+                <Button
+                  style={{ borderRadius: 4 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteChannelModal();
+                  }}
+                >
+                  Delete Integration
                 </Button>
-              </UserCan>
-              <Divider />
-              <Row>
-                <Col span={12}>
-                  <Paragraph>
-                    <Text strong>Type: </Text>
-                    <Text>{channel.type_name}</Text>
-                  </Paragraph>
-                  <Paragraph>
-                    <Text strong>Active:</Text>
-                    <Text> {channel.active ? "Yes" : "No"}</Text>
-                  </Paragraph>
-                  <Paragraph>
-                    <Text strong> ID: </Text>
-                    <Text code>{channel.id}</Text>
-                  </Paragraph>
-                </Col>
-                <Col span={12}>
-                  {channel.type === "http" && (
-                    <Card size="small" title="HTTP Details">
-                      <HttpDetails channel={channel} />
-                    </Card>
-                  )}
-                  {channel.type === "aws" && (
-                    <Card size="small" title="AWS Details">
-                      <AwsDetails channel={channel} />
-                    </Card>
-                  )}
-                  {channel.type === "mqtt" && (
-                    <Card size="small" title="MQTT Details">
-                      <MqttDetails channel={channel} />
-                    </Card>
-                  )}
-                </Col>
-              </Row>
-              {channel.type === "http" && (
-                <UserCan>
-                  <Divider />
-                  <Text>Downlink URL</Text>
-                  <div
+              </div>
+            </UserCan>
+          </div>
+          <Card title="Integration Details" bodyStyle={{ padding: 0 }}>
+            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+              <div style={{ padding: 24, minWidth }}>
+                <UserCan alternate={<Text strong>{channel.name}</Text>}>
+                  <Input
+                    name="newName"
+                    placeholder={channel.name}
+                    value={this.state.newName}
+                    onChange={this.handleInputUpdate}
                     style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      marginBottom: 16,
+                      width: 300,
+                      marginRight: 5,
+                      verticalAlign: "middle",
                     }}
-                  >
-                    <Input value={downlinkUrl} style={{ marginRight: 10 }} />
-                    <CopyToClipboard text={downlinkUrl}>
-                      <Button
-                        onClick={() => {}}
-                        style={{ marginRight: 0 }}
-                        type="primary"
-                      >
-                        Copy
-                      </Button>
-                    </CopyToClipboard>
-                  </div>
-                  <Text>Downlink Key</Text>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <Input
-                      value={
-                        showDownlinkToken
-                          ? channel.downlink_token
-                          : "************************"
-                      }
-                      style={{
-                        marginRight: 10,
-                        color: "#38A2FF",
-                        fontFamily: "monospace",
-                      }}
-                      suffix={
-                        showDownlinkToken ? (
-                          <EyeOutlined
-                            onClick={() =>
-                              this.setState({
-                                showDownlinkToken: !showDownlinkToken,
-                              })
-                            }
-                          />
-                        ) : (
-                          <EyeInvisibleOutlined
-                            onClick={() =>
-                              this.setState({
-                                showDownlinkToken: !showDownlinkToken,
-                              })
-                            }
-                          />
-                        )
-                      }
-                    />
-                    <CopyToClipboard text={channel.downlink_token}>
-                      <Button
-                        onClick={() => {}}
-                        style={{ marginRight: 10 }}
-                        type="primary"
-                      >
-                        Copy
-                      </Button>
-                    </CopyToClipboard>
-                    <Button
-                      onClick={this.handleChangeDownlinkToken}
-                      style={{ marginRight: 0 }}
-                    >
-                      Generate New Key
-                    </Button>
-                  </div>
+                    suffix={`${this.state.newName.length}/50`}
+                    maxLength={50}
+                  />
+                  <Button type="primary" onClick={this.handleNameChange}>
+                    Update
+                  </Button>
                 </UserCan>
-              )}
-            </div>
+                <Divider />
+                <Row>
+                  <Col span={12}>
+                    <Paragraph>
+                      <Text strong>Type: </Text>
+                      <Text>{channel.type_name}</Text>
+                    </Paragraph>
+                    <Paragraph>
+                      <Text strong>Active:</Text>
+                      <Text> {channel.active ? "Yes" : "No"}</Text>
+                    </Paragraph>
+                    <Paragraph>
+                      <Text strong> ID: </Text>
+                      <Text code>{channel.id}</Text>
+                    </Paragraph>
+                  </Col>
+                  <Col span={12}>
+                    {channel.type === "http" && (
+                      <Card size="small" title="HTTP Details">
+                        <HttpDetails channel={channel} />
+                      </Card>
+                    )}
+                    {channel.type === "aws" && (
+                      <Card size="small" title="AWS Details">
+                        <AwsDetails channel={channel} />
+                      </Card>
+                    )}
+                    {channel.type === "mqtt" && (
+                      <Card size="small" title="MQTT Details">
+                        <MqttDetails channel={channel} />
+                      </Card>
+                    )}
+                  </Col>
+                </Row>
+                {channel.type === "http" && (
+                  <UserCan>
+                    <Divider />
+                    <Text>Downlink URL</Text>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        marginBottom: 16,
+                      }}
+                    >
+                      <Input value={downlinkUrl} style={{ marginRight: 10 }} />
+                      <CopyToClipboard text={downlinkUrl}>
+                        <Button
+                          onClick={() => {}}
+                          style={{ marginRight: 0 }}
+                          type="primary"
+                        >
+                          Copy
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                    <Text>Downlink Key</Text>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <Input
+                        value={
+                          showDownlinkToken
+                            ? channel.downlink_token
+                            : "************************"
+                        }
+                        style={{
+                          marginRight: 10,
+                          color: "#38A2FF",
+                          fontFamily: "monospace",
+                        }}
+                        suffix={
+                          showDownlinkToken ? (
+                            <EyeOutlined
+                              onClick={() =>
+                                this.setState({
+                                  showDownlinkToken: !showDownlinkToken,
+                                })
+                              }
+                            />
+                          ) : (
+                            <EyeInvisibleOutlined
+                              onClick={() =>
+                                this.setState({
+                                  showDownlinkToken: !showDownlinkToken,
+                                })
+                              }
+                            />
+                          )
+                        }
+                      />
+                      <CopyToClipboard text={channel.downlink_token}>
+                        <Button
+                          onClick={() => {}}
+                          style={{ marginRight: 10 }}
+                          type="primary"
+                        >
+                          Copy
+                        </Button>
+                      </CopyToClipboard>
+                      <Button
+                        onClick={this.handleChangeDownlinkToken}
+                        style={{ marginRight: 0 }}
+                      >
+                        Generate New Key
+                      </Button>
+                    </div>
+                  </UserCan>
+                )}
+              </div>
             </div>
           </Card>
 
           <UserCan>
-            <Card title="Update your Connection Details" bodyStyle={{ padding: 0 }}>
-              <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+            <Card
+              title="Update your Connection Details"
+              bodyStyle={{ padding: 0 }}
+            >
+              <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
                 <div style={{ padding: 24, minWidth }}>
                   {this.renderForm()}
                   <Divider />
@@ -390,6 +410,11 @@ class ChannelShow extends Component {
             />
           )}
         </div>
+        <DeleteChannelModal
+          open={showDeleteChannelModal}
+          onClose={this.closeDeleteChannelModal}
+          channel={channel}
+        />
       </ChannelDashboardLayout>
     );
   }

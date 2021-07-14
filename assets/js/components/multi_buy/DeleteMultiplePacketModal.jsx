@@ -35,7 +35,7 @@ export default ({ open, selected, close }) => {
       {selected && (
         <div style={{ textAlign: "center" }}>
           <Text>
-            Are you sure you want to delete <b>{selected.name}</b>?
+            Are you sure you want to delete the config, <b>{selected.name}</b>?
           </Text>
         </div>
       )}
