@@ -11,7 +11,7 @@ module.exports = function(env) {
     entry: './js/app.js',
     output: {
       path: path.resolve(__dirname, '../priv/static/js'),
-      filename: 'app.js',
+      filename: '[name].bundle.js',
       publicPath: '/',
     },
     module: {
@@ -43,6 +43,61 @@ module.exports = function(env) {
     resolve: {
       modules: ['node_modules', path.resolve(__dirname, 'js')],
       extensions: ['.js', '.jsx'],
+    },
+    optimization: {
+      minimize: true,
+      runtimeChunk: 'single',
+      splitChunks: {
+        chunks: 'all',
+        maxInitialRequests: Infinity,
+        minSize: 0,
+        cacheGroups: {
+          antdVendor: {
+            test: /[\\/]node_modules[\\/](antd)[\\/]/,
+            name: "antd"
+          },
+          chartjsVendor: {
+            test: /[\\/]node_modules[\\/](chart.js)[\\/]/,
+            name: "chartjs"
+          },
+          flowVendor: {
+            test: /[\\/]node_modules[\\/](react-flow-renderer)[\\/]/,
+            name: "reactflow"
+          },
+          apolloVendor: {
+            test: /[\\/]node_modules[\\/](@apollo)[\\/]/,
+            name: "apollo"
+          },
+          amplitudeVendor: {
+            test: /[\\/]node_modules[\\/](amplitude-js)[\\/]/,
+            name: "amplitude"
+          },
+          antDesignVendor: {
+            test: /[\\/]node_modules[\\/](@ant-design)[\\/]/,
+            name: "antdesign"
+          },
+          auth0Vendor: {
+            test: /[\\/]node_modules[\\/](@auth0)[\\/]/,
+            name: "auth0"
+          },
+          utilityVendor: {
+            test: /[\\/]node_modules[\\/](lodash|moment)[\\/]/,
+            name: "utility"
+          },
+          sanitizeVendor: {
+            test: /[\\/]node_modules[\\/](sanitize-html)[\\/]/,
+            name: "sanitize"
+          },
+          reactReduxVendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-redux|redux)[\\/]/,
+            name: "reactredux"
+          },
+          vendor: {
+            test: /[\\/]node_modules[\\/](!antd)(!chart.js)(!react-flow-renderer)(!@apollo)(!amplitude-js)(!@ant-design)(!@auth0)(!lodash)(!moment)(!sanitize-html)(!react)(!react-dom)(!react-redux)(!redux)[\\/]/,
+            name: "vendor"
+          },
+        },
+      },
     },
     plugins: [
       new webpack.EnvironmentPlugin(['AUTH_0_DOMAIN', 'AUTH_0_CLIENT_ID', 'ENV_DOMAIN', 'STRIPE_PUBLIC_KEY', 'SELF_HOSTED', 'INTERCOM_ID_SECRET', 'CONSOLE_VERSION', 'RELEASE_BLOG_LINK']),
