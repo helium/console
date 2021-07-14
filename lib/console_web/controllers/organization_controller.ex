@@ -40,7 +40,7 @@ defmodule ConsoleWeb.OrganizationController do
       membership_info = %{id: organization.id, name: organization.name, role: membership.role}
       case Enum.count(organizations) do
         1 ->
-          Organizations.update_organization(organization, %{ "dc_balance" => 10000, "dc_balance_nonce" => 1, "received_free_dc" => true })
+          Organizations.update_organization(organization, %{ "dc_balance" => System.get_env("INITIAL_DC_BALANCE") || 10000, "dc_balance_nonce" => 1, "received_free_dc" => true })
 
           render(conn, "show.json", organization: membership_info)
         _ ->
