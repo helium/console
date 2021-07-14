@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import LabelTag from "../common/LabelTag";
 import UserCan from "../common/UserCan";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
-import { Card, Button, Typography, Table, Pagination } from "antd";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import { Card, Button, Typography, Table, Pagination, Tooltip } from "antd";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
@@ -57,10 +57,12 @@ class DeviceShowLabelsTable extends Component {
   render() {
     const columns = [
       {
-        title: "Labels",
+        title: "Label",
         dataIndex: "name",
         render: (text, record) => (
-          <Link to={`/labels/${record.id}`}>{text} <LabelTag text={text} style={{ marginLeft: 10 }} /></Link>
+          <Link to={`/labels/${record.id}`}>
+            {text} <LabelTag text={text} style={{ marginLeft: 10 }} />
+          </Link>
         ),
       },
       {
@@ -74,17 +76,19 @@ class DeviceShowLabelsTable extends Component {
         render: (text, record) => (
           <div>
             <UserCan>
-              <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                shape="circle"
-                size="small"
-                style={{ marginLeft: 8 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.props.openRemoveLabelFromDeviceModal([record]);
-                }}
-              />
+              <Tooltip title="Remove Label">
+                <Button
+                  type="danger"
+                  icon={<CloseOutlined />}
+                  shape="circle"
+                  size="small"
+                  style={{ marginLeft: 8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.props.openRemoveLabelFromDeviceModal([record]);
+                  }}
+                />
+              </Tooltip>
             </UserCan>
           </div>
         ),
@@ -127,11 +131,11 @@ class DeviceShowLabelsTable extends Component {
             pagination={false}
             style={{ minWidth }}
             onRow={(record, rowIndex) => ({
-              onClick: e => {
-                if (e.target.tagName === 'TD') {
-                  this.props.history.push(`/labels/${record.id}`)
+              onClick: (e) => {
+                if (e.target.tagName === "TD") {
+                  this.props.history.push(`/labels/${record.id}`);
                 }
-              }
+              },
             })}
           />
           <div
@@ -139,7 +143,7 @@ class DeviceShowLabelsTable extends Component {
               display: "flex",
               justifyContent: "flex-end",
               paddingBottom: 0,
-              minWidth
+              minWidth,
             }}
           >
             <Pagination

@@ -12,6 +12,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserCan, { userCan } from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 
 export default ({ show, id, openDeleteMultiplePacketModal }) => {
   const history = useHistory();
@@ -69,8 +70,9 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
               type="danger"
               style={{ borderRadius: 5, marginRight: 50 }}
               onClick={() => openDeleteMultiplePacketModal(data.multiBuy)}
+              icon={<DeleteOutlined />}
             >
-              Delete
+              Delete Config
             </Button>
           </div>
         </UserCan>

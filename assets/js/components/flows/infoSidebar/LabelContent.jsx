@@ -25,11 +25,13 @@ import {
   Popover,
   Switch,
   Tabs,
+  Tooltip,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
@@ -235,17 +237,19 @@ class LabelContent extends Component {
                   }}
                 />
               </Popover>
-              <Button
-                type="danger"
-                icon={<DeleteOutlined />}
-                shape="circle"
-                size="small"
-                style={{ marginLeft: 8 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openRemoveDevicesFromLabelModal([record]);
-                }}
-              />
+              <Tooltip title="Remove from Label">
+                <Button
+                  type="danger"
+                  icon={<CloseOutlined />}
+                  shape="circle"
+                  size="small"
+                  style={{ marginLeft: 8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openRemoveDevicesFromLabelModal([record]);
+                  }}
+                />
+              </Tooltip>
             </UserCan>
           </div>
         ),

@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Table, Button } from "antd";
+import { Table, Button, Tooltip } from "antd";
 import Text from "antd/lib/typography/Text";
 import DeviceLabelTriggerIcon from "../../../img/alerts/alert-trigger-device-label.svg";
 import IntegrationTriggerIcon from "../../../img/alerts/alert-trigger-integration.svg";
 import moment from "moment";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import UserCan from "../common/UserCan";
 import findKey from "lodash/findKey";
@@ -95,16 +95,18 @@ export default (props) => {
               alignItems: "center",
             }}
           >
-            <Button
-              type="danger"
-              icon={<DeleteOutlined />}
-              shape="circle"
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                props.openDeleteAlertModal(record);
-              }}
-            />
+            <Tooltip title="Delete Alert">
+              <Button
+                type="danger"
+                icon={<DeleteOutlined />}
+                shape="circle"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  props.openDeleteAlertModal(record);
+                }}
+              />
+            </Tooltip>
           </div>
         </UserCan>
       ),
@@ -112,7 +114,7 @@ export default (props) => {
   ];
 
   return (
-    <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+    <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
       <div style={{ padding: "30px 20px 20px 30px", minWidth }}>
         <Text style={{ fontSize: 22, fontWeight: 600 }}>All Alerts</Text>
       </div>
@@ -121,13 +123,13 @@ export default (props) => {
         columns={columns}
         rowKey={(record) => record.id}
         pagination={false}
-        style={{ minWidth, overflowX: 'scroll', overflowY: 'hidden' }}
+        style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
         onRow={(record, rowIndex) => ({
-          onClick: e => {
-            if (e.target.tagName === 'TD') {
-              props.history.push(`/alerts/${record.id}`)
+          onClick: (e) => {
+            if (e.target.tagName === "TD") {
+              props.history.push(`/alerts/${record.id}`);
             }
-          }
+          },
         })}
       />
     </div>

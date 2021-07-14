@@ -10,7 +10,7 @@ import GoogleSheetForm from "../channels/forms/GoogleSheetForm";
 import { FUNCTION_SHOW } from "../../graphql/functions";
 import { deleteFunction, updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import { Typography, Card, Button } from "antd";
 import PauseOutlined from "@ant-design/icons/PauseOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
@@ -125,53 +125,50 @@ class FunctionShow extends Component {
 
     return (
       <FunctionDashboardLayout {...this.props}>
-        <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+        <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
           <div
+            className="show-page"
             style={{
-              padding: "30px 30px 10px 30px",
-              height: "100%",
-              width: "100%",
-              backgroundColor: "#ffffff",
-              borderRadius: 6,
-              overflow: "hidden",
-              boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-              minWidth
+              minWidth,
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                marginBottom: 12,
-              }}
-            >
+            <div className="show-header">
+              <Text style={{ fontSize: 24, fontWeight: 600 }}>{fxn.name}</Text>
               <UserCan>
-                <Button
-                  style={{ borderRadius: 4, marginRight: 12 }}
-                  type="default"
-                  icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
-                  onClick={() => {
-                    this.props.updateFunction(fxn.id, { active: !fxn.active });
-                    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
-                      id: fxn.id,
-                      active: !fxn.active,
-                    });
-                  }}
-                >
-                  {fxn.active ? "Pause" : "Start"} Function
-                </Button>
-                <Button
-                  style={{ borderRadius: 4 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.openDeleteFunctionModal();
-                  }}
-                >
-                  Delete Function
-                </Button>
+                <div className="show-buttons">
+                  <Button
+                    style={{ borderRadius: 4, marginRight: 12 }}
+                    type="default"
+                    icon={
+                      fxn.active ? <PauseOutlined /> : <CaretRightOutlined />
+                    }
+                    onClick={() => {
+                      this.props.updateFunction(fxn.id, {
+                        active: !fxn.active,
+                      });
+                      analyticsLogger.logEvent(
+                        "ACTION_UPDATE_FUNCTION_ACTIVE",
+                        {
+                          id: fxn.id,
+                          active: !fxn.active,
+                        }
+                      );
+                    }}
+                  >
+                    {fxn.active ? "Pause" : "Start"} Function
+                  </Button>
+                  <Button
+                    style={{ borderRadius: 4 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.openDeleteFunctionModal();
+                    }}
+                  >
+                    Delete Function
+                  </Button>
+                </div>
               </UserCan>
             </div>
 
@@ -190,11 +187,12 @@ class FunctionShow extends Component {
             />
 
             <UserCan>
-              {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
-                <Card title="Google Form Fields">
-                  <GoogleSheetForm />
-                </Card>
-              )}
+              {fxn.format === "custom" &&
+                fxn.body.indexOf("Google Form") !== -1 && (
+                  <Card title="Google Form Fields">
+                    <GoogleSheetForm />
+                  </Card>
+                )}
             </UserCan>
 
             {(format === "custom" || (fxn.format === "custom" && !format)) && (

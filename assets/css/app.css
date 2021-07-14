@@ -623,3 +623,27 @@ a.version-link {
   font-weight: 400;
   text-decoration: underline;
 }
+
+.show-page {
+  padding: 30px 30px 10px 30px;
+  height: 100%;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0px 20px 20px -7px rgba(17, 24, 31, 0.19);
+}
+
+.show-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.show-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}

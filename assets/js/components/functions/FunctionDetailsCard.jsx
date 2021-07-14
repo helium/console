@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import UserCan, { userCan } from "../common/UserCan";
 import { Typography, Card, Button, Input, Select } from "antd";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import ClearOutlined from "@ant-design/icons/ClearOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Text } = Typography;
 const { Option } = Select;
@@ -26,12 +26,14 @@ export default ({
     <Card title="Function Details">
       <Text>Update Function</Text>
       <div style={{ marginTop: 5 }}>
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          marginBottom: 8,
-        }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 8,
+          }}
+        >
           <Input
             placeholder={fxn.name}
             name="name"
@@ -76,7 +78,7 @@ export default ({
           </Select>
         </div>
         <UserCan>
-          <Button icon={<DeleteOutlined />} onClick={clearInputs}>
+          <Button icon={<ClearOutlined />} onClick={clearInputs}>
             Clear
           </Button>
         </UserCan>

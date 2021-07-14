@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import BugOutlined from "@ant-design/icons/BugOutlined";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import MenuOutlined from "@ant-design/icons/MenuOutlined";
-import { Button, Tabs } from "antd";
+import { Button, Tabs, Tooltip } from "antd";
 const { TabPane } = Tabs;
 import { useStoreActions } from "react-flow-renderer";
 import Debug from "../../common/Debug";
@@ -32,11 +32,15 @@ export default ({ toggle, show, width, debug, children, id, type }) => {
     >
       {show && (
         <React.Fragment>
-          <Button
-            style={{ border: "none", top: "50px", left: "35px" }}
-            onClick={handleToggle}
-            icon={<CloseOutlined style={{ fontSize: 30, color: "#D2DDE8" }} />}
-          />
+          <Tooltip title="Close">
+            <Button
+              style={{ border: "none", top: "50px", left: "35px" }}
+              onClick={handleToggle}
+              icon={
+                <CloseOutlined style={{ fontSize: 30, color: "#D2DDE8" }} />
+              }
+            />
+          </Tooltip>
           {children}
         </React.Fragment>
       )}
