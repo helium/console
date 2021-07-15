@@ -53,12 +53,6 @@ export default (props) => {
     }
   }, []);
 
-  if (loading) return <SkeletonLayout />;
-  if (error)
-    return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    );
-
   const renderIcon = () => {
     if (props.show) {
       const ICONS = {
@@ -90,7 +84,7 @@ export default (props) => {
           integration: "Integration Alert Settings",
         }
       : {
-          "device/Label": "New Device/Label Alert",
+          "device/label": "New Device/Label Alert",
           integration: "New Integration Alert",
         };
 
@@ -109,7 +103,7 @@ export default (props) => {
             Back
           </Button>
         )}
-        {props.show && (
+        {props.show && !error && (
           <UserCan>
             <div
               style={{
@@ -147,41 +141,49 @@ export default (props) => {
             </div>
           </Col>
           <Col span={12} style={{ padding: "40px 20px" }}>
-            <AlertSettings
-              alertType={alertType}
-              save={(name, config) => {
-                if (props.show) {
-                  analyticsLogger.logEvent("ACTION_UPDATE_ALERT", {
-                    id: props.id,
-                    config,
-                  });
-                  dispatch(
-                    updateAlert(props.id, {
-                      ...(name && { name }),
+            {error && (
+              <Text>
+                Data failed to load, please reload the page and try again
+              </Text>
+            )}
+            {loading && <SkeletonLayout />}
+            {!error && !loading && (
+              <AlertSettings
+                alertType={alertType}
+                save={(name, config) => {
+                  if (props.show) {
+                    analyticsLogger.logEvent("ACTION_UPDATE_ALERT", {
+                      id: props.id,
                       config,
-                    })
-                  );
-                } else {
-                  analyticsLogger.logEvent("ACTION_CREATE_ALERT", {
-                    node_type: props.alertType,
-                    config,
-                  });
-                  dispatch(
-                    createAlert({
-                      name: name,
-                      config,
+                    });
+                    dispatch(
+                      updateAlert(props.id, {
+                        ...(name && { name }),
+                        config,
+                      })
+                    );
+                  } else {
+                    analyticsLogger.logEvent("ACTION_CREATE_ALERT", {
                       node_type: props.alertType,
-                    })
-                  ).then((_) => {
-                    history.push("/alerts");
-                  });
-                }
-              }}
-              saveText={props.show ? "Update" : "Create"}
-              saveIcon={props.show ? <EditOutlined /> : <PlusOutlined />}
-              data={data}
-              show={props.show}
-            />
+                      config,
+                    });
+                    dispatch(
+                      createAlert({
+                        name: name,
+                        config,
+                        node_type: props.alertType,
+                      })
+                    ).then((_) => {
+                      history.push("/alerts");
+                    });
+                  }
+                }}
+                saveText={props.show ? "Update" : "Create"}
+                saveIcon={props.show ? <EditOutlined /> : <PlusOutlined />}
+                data={data}
+                show={props.show}
+              />
+            )}
           </Col>
         </Row>
       </div>
