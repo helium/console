@@ -23,7 +23,6 @@ class DeviceRemoveLabelModal extends Component {
 
   render() {
     const { open, onClose, labels } = this.props;
-    console.log(labels);
 
     return (
       <Modal
