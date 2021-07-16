@@ -241,7 +241,6 @@ defmodule Console.Search do
         ) d ORDER BY id, score DESC)
       ) a
       ORDER BY score DESC
-      LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
@@ -263,7 +262,6 @@ defmodule Console.Search do
       WHERE score > $3
     )
     ORDER BY score DESC
-    LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
@@ -296,7 +294,6 @@ defmodule Console.Search do
         ) d ORDER BY id, score DESC)
       ) a
       ORDER BY score DESC
-      LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
@@ -318,7 +315,6 @@ defmodule Console.Search do
       WHERE score > $3
     )
     ORDER BY score DESC
-    LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
@@ -351,7 +347,6 @@ defmodule Console.Search do
         ) d ORDER BY id, score DESC)
       ) a
       ORDER BY score DESC
-      LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
@@ -373,7 +368,6 @@ defmodule Console.Search do
       WHERE score > $3
     )
     ORDER BY score DESC
-    LIMIT 5
     """
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
