@@ -9,7 +9,7 @@ export default ({ open, apiKey, close }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    analyticsLogger.logEvent("ACTION_DELETE_API_apiKey", {
+    analyticsLogger.logEvent("ACTION_DELETE_API_KEY", {
       id: apiKey.id,
     });
     dispatch(deleteKey(apiKey.id)).then((_) => {
