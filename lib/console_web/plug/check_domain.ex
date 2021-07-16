@@ -15,7 +15,10 @@ defmodule ConsoleWeb.Plug.CheckDomain do
     else
       case conn.host do
         "helium-console-dev.herokuapp.com" -> conn
-        "helium-console-vip.herokuapp.com" -> conn
+        "helium-console-vip.herokuapp.com" ->
+          conn
+          |> Plug.Conn.resp(:found, "")
+          |> Plug.Conn.put_resp_header("location", "https://console-vip.helium.com")
         "console-vip.helium.com" -> conn
         "console.helium.com" -> conn
         "www.example.com" -> conn
