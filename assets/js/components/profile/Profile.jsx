@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
 import { logOut, getMfaStatus, enrollInMfa } from "../../actions/auth";
-import { generateKey, deleteKey } from "../../actions/apiKeys";
+import { generateKey } from "../../actions/apiKeys";
 import DashboardLayout from "../common/DashboardLayout";
 import UserCan from "../common/UserCan";
 import ProfileNewKeyModal from "./ProfileNewKeyModal";
@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import DeleteApiKeyModal from "./DeleteApiKeyModal";
 const { Text } = Typography;
 const { Option } = Select;
 
@@ -32,6 +33,8 @@ class Profile extends Component {
     role: null,
     newKey: null,
     showEnrollButton: null,
+    showDeleteApiKeyModal: false,
+    selectedKey: null,
   };
 
   componentDidMount() {
@@ -76,7 +79,7 @@ class Profile extends Component {
   };
 
   handleCloseModal = () => {
-    this.setState({ newKey: null });
+    this.setState({ newKey: null, name: "", role: null });
   };
 
   handleEnrollInMfa = () => {
@@ -86,12 +89,20 @@ class Profile extends Component {
     });
   };
 
+  openDeleteApiKeyModal = (key) => {
+    this.setState({ selectedKey: key, showDeleteApiKeyModal: true });
+  };
+
+  closeDeleteApiKeyModal = () => {
+    this.setState({ showDeleteApiKeyModal: false, selectedKey: null });
+  };
+
   render() {
     const { email } = this.props.user;
     const { role } = this.props;
     const { logOut } = this.props;
     const { apiKeys } = this.props.apiKeysQuery;
-    const { newKey } = this.state;
+    const { newKey, showDeleteApiKeyModal, selectedKey } = this.state;
 
     const columns = [
       {
@@ -127,7 +138,7 @@ class Profile extends Component {
                   type="danger"
                   icon={<DeleteOutlined />}
                   shape="circle"
-                  onClick={() => this.props.deleteKey(record.id)}
+                  onClick={() => this.openDeleteApiKeyModal(record)}
                 />
               </Tooltip>
             </UserCan>
@@ -207,11 +218,13 @@ class Profile extends Component {
                     placeholder="Enter key name"
                     onChange={this.handleInputUpdate}
                     style={{ width: 180 }}
+                    value={this.state.name}
                   />
                   <Select
                     placeholder="Select key role"
                     style={{ width: 180, marginLeft: 10 }}
                     onChange={this.handleSelectOption}
+                    value={this.state.role}
                   >
                     <Option value={role}>
                       <RoleName role={role} />
@@ -244,6 +257,11 @@ class Profile extends Component {
         </div>
 
         <ProfileNewKeyModal newKey={newKey} onClose={this.handleCloseModal} />
+        <DeleteApiKeyModal
+          apiKey={selectedKey}
+          open={showDeleteApiKeyModal}
+          close={this.closeDeleteApiKeyModal}
+        />
       </DashboardLayout>
     );
   }
@@ -259,7 +277,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { logOut, generateKey, deleteKey, getMfaStatus, enrollInMfa },
+    { logOut, generateKey, getMfaStatus, enrollInMfa },
     dispatch
   );
 }
