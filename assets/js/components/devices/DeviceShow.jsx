@@ -254,13 +254,13 @@ class DeviceShow extends Component {
       );
     if (error)
       return (
-        <FunctionDashboardLayout {...this.props}>
+        <DeviceDashboardLayout {...this.props}>
           <div style={{ padding: 40 }}>
             <Text>
               Data failed to load, please reload the page and try again
             </Text>
           </div>
-        </FunctionDashboardLayout>
+        </DeviceDashboardLayout>
       );
     const smallerText = device.total_packets > 10000;
 

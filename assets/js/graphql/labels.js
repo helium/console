@@ -14,6 +14,7 @@ export const LABEL_FRAGMENT = gql`
       last_connected
     }
     cf_list_enabled
+    updated_at
   }
 `;
 

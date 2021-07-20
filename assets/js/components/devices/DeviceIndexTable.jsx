@@ -126,10 +126,7 @@ class DeviceIndexTable extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link
-            className={record.labels.length === 0 ? "dull" : undefined}
-            to={`/devices/${record.id}`}
-          >
+          <Link to={`/devices/${record.id}`}>
             {text}
             {moment()
               .utc()
@@ -178,7 +175,7 @@ class DeviceIndexTable extends Component {
                   </UserCan>
                 ))
               ) : (
-                <Text type="danger">None</Text>
+                <Text>None</Text>
               )}
             </React.Fragment>
           );
