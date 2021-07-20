@@ -61,7 +61,7 @@ class DevicesAddLabelModal extends Component {
       <Modal
         title={`Add Label to ${
           devicesToUpdate ? devicesToUpdate.length : 0
-        } Devices`}
+        } Device${devicesToUpdate && devicesToUpdate.length > 1 ? "s" : ""}`}
         visible={open}
         centered
         onCancel={onClose}

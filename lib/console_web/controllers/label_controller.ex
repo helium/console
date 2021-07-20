@@ -234,6 +234,7 @@ defmodule ConsoleWeb.LabelController do
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device.id}:device_update", %{})
 
           broadcast_router_update_devices(devices)
 
