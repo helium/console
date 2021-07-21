@@ -117,11 +117,7 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
       order: $order
     ) {
       entries {
-        name
-        id
-        active
-        inserted_at
-        last_connected
+        ...DeviceFragment
         labels {
           id
           name
@@ -133,4 +129,5 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
       pageNumber
     }
   }
+  ${DEVICE_FRAGMENT}
 `;
