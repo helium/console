@@ -16,6 +16,7 @@ import {
   Typography,
   Table,
   Pagination,
+  Checkbox,
   Select,
   Popover,
   Switch,
@@ -30,6 +31,17 @@ const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 
+const columnKeyNameText = {
+  dev_eui: "Device EUI",
+  labels: "Labels",
+  frame_up: "Frame Up",
+  frame_down: "Frame Down",
+  total_packets: "Packets Transferred",
+  dc_usage: "DC Used",
+  inserted_at: "Date Activated",
+  last_connected: "Last Connected",
+};
+
 class LabelShowTable extends Component {
   state = {
     page: 1,
@@ -38,6 +50,16 @@ class LabelShowTable extends Component {
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
     showDeleteLabelModal: false,
+    columnsToShow: {
+      dev_eui: true,
+      labels: true,
+      frame_up: true,
+      frame_down: true,
+      total_packets: true,
+      dc_usage: true,
+      inserted_at: true,
+      last_connected: true,
+    },
   };
 
   componentDidMount() {
@@ -57,6 +79,14 @@ class LabelShowTable extends Component {
       const { page, pageSize, column, order } = this.state;
       this.refetchPaginatedEntries(page, pageSize, column, order);
     }
+
+    const columnsToShow = localStorage.getItem(
+      `columnsToShow-${this.props.userEmail}`
+    );
+    if (columnsToShow) {
+      this.setState({ columnsToShow: JSON.parse(columnsToShow) });
+    }
+    this.handleChangePage(1)
   }
 
   componentWillUnmount() {
@@ -118,6 +148,18 @@ class LabelShowTable extends Component {
 
   toggleDeviceActive = (active, id) => {
     this.props.updateDevice(id, { active });
+  };
+
+  updateColumns = (key, checked) => {
+    const { columnsToShow } = this.state;
+    const updatedColumnsToShow = Object.assign({}, columnsToShow, {
+      [key]: checked,
+    });
+    this.setState({ columnsToShow: updatedColumnsToShow });
+    localStorage.setItem(
+      `columnsToShow-${this.props.userEmail}`,
+      JSON.stringify(updatedColumnsToShow)
+    );
   };
 
   render() {
@@ -238,7 +280,10 @@ class LabelShowTable extends Component {
           </div>
         ),
       },
-    ];
+    ].filter((col) => {
+      if (col.dataIndex == "name" || col.key == "action") return true;
+      return this.state.columnsToShow[col.dataIndex];
+    });
 
     const { loading, error, devices_by_label } =
       this.props.paginatedDevicesQuery;
@@ -278,6 +323,28 @@ class LabelShowTable extends Component {
           <Text style={{ fontSize: 22, fontWeight: 600 }}>{label.name}</Text>
           <div>
             <UserCan>
+              <Popover
+                trigger="click"
+                placement="bottom"
+                content={
+                  <div>
+                    {Object.keys(this.state.columnsToShow).map((key) => (
+                      <div key={key}>
+                        <Checkbox
+                          onChange={(e) =>
+                            this.updateColumns(key, e.target.checked)
+                          }
+                          checked={this.state.columnsToShow[key]}
+                        >
+                          {columnKeyNameText[key]}
+                        </Checkbox>
+                      </div>
+                    ))}
+                  </div>
+                }
+              >
+                <Button style={{ marginRight: 10 }}>Edit Columns</Button>
+              </Popover>
               <Button
                 icon={<SettingOutlined />}
                 style={{ borderRadius: 4, marginRight: 10 }}

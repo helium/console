@@ -163,6 +163,7 @@ class LabelShow extends Component {
             openRemoveDevicesFromLabelModal={
               this.openRemoveDevicesFromLabelModal
             }
+            userEmail={this.props.user.email}
             history={this.props.history}
             devicesSelected={this.setDevicesSelected}
             openDeleteDeviceModal={this.openDeleteDeviceModal}
