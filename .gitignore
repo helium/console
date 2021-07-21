@@ -37,6 +37,6 @@ npm-debug.log
 data/
 
 # Files needed for self-hosting on Docker
-.env
-.env-router
-docker-compose.yaml 
+/.env
+/.env-router
+docker-compose.yaml

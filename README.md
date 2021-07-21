@@ -46,6 +46,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   ROUTER_SECRETS=[Unix Timestamp:Random 64 char secret key]
   OUI=3
   SELF_HOSTED=true
+  INITIAL_ORG_GIFTED_DC=[Defaults to 10000 (optional)]
   ENV_DOMAIN=[Your host domain]
   AUTH_0_CLIENT_ID=[Client ID under Auth0 app settings]
   AUTH_0_DOMAIN=[Domain under Auth0 app settings]
