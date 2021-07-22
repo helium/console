@@ -55,31 +55,10 @@ ARG MIX_ENV
 ENV USER="nobody"
 
 WORKDIR "/home/nobody/app"
-# Creates an unprivileged user to be used exclusively to run the Phoenix app
-# RUN \
-#   addgroup \
-#    -g 1000 \
-#    -S "${USER}" \
-#   && adduser \
-#    -s /bin/sh \
-#    -u 1000 \
-#    -G "${USER}" \
-#    -h /home/nobody \
-#    -D "${USER}" \
-#   && su "${USER}"
-
-# Everything from this line onwards will run in the context of the unprivileged user.
 
 COPY --from=build --chown="${USER}" /app/_build/prod/rel/console ./
 RUN chown -R nobody: .
 USER nobody
 
 ENTRYPOINT ["bin/console"]
-
-# Usage:
-#  * build: sudo docker image build -t elixir/console .
-#  * shell: sudo docker container run --rm -it --entrypoint "" -p 127.0.0.1:4000:4000 elixir/console sh
-#  * run:   sudo docker container run --rm -it -p 127.0.0.1:4000:4000 --name console elixir/console
-#  * exec:  sudo docker container exec -it console sh
-#  * logs:  sudo docker container logs --follow --tail 100 console
 CMD ["start"]
