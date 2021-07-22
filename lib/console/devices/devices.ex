@@ -172,4 +172,10 @@ defmodule Console.Devices do
     devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
     length(devices)
   end
+
+  def update_in_xor_filter(device_ids) do
+    from(d in Device, where: d.id in ^device_ids) |> Repo.update_all(set: [in_xor_filter: true])
+    devices = from(d in Device, where: d.id in ^device_ids) |> Repo.all()
+    {:ok, devices}
+  end
 end

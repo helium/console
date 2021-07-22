@@ -99,6 +99,7 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, only: [:index, :show] do
       post "/event", DeviceController, :add_device_event
     end
+    post "/devices/update_in_xor_filter", DeviceController, :update_devices_in_xor_filter
     resources "/organizations", OrganizationController, only: [:show]
     post "/organizations/burned", OrganizationController, :burned_dc
     post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc

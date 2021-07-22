@@ -26,6 +26,7 @@ defmodule Console.Devices.Device do
     field :hotspot_address, :string
     field :adr_allowed, :boolean
     field :cf_list_enabled, :boolean
+    field :in_xor_filter, :boolean
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
@@ -72,7 +73,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled, :in_xor_filter])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)
