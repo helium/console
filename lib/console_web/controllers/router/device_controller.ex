@@ -41,7 +41,9 @@ defmodule ConsoleWeb.Router.DeviceController do
         adr_allowed =
           case length(device.labels) do
             0 -> device.adr_allowed
-            _ -> device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
+            _ ->
+              label_has_adr_allowed = device.labels |> Enum.map(fn l -> l.adr_allowed end) |> Enum.any?(fn s -> s == true end)
+              if device.adr_allowed == true or label_has_adr_allowed do true else false end
           end
 
         cf_list_enabled =
