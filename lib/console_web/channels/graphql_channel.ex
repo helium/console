@@ -109,6 +109,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:devices_in_labels_update", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:resources_update", _message, socket) do
     {:ok, socket}
   end

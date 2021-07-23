@@ -244,6 +244,12 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Flows.FlowResolver.get_by_device/2)
     end
 
+    @desc "Get count of devices in flows with specified channel ID"
+    field :devices_in_flows_with_channel, :device_count do
+      arg :channel_id, non_null(:id)
+      resolve(&Console.Flows.FlowResolver.get_count_devices_in_flows_with_channel/2)
+    end
+
     field :device_names, list_of(:device) do
       arg :device_ids, non_null(list_of(:id))
       resolve(&Console.Devices.DeviceResolver.get_names/2)

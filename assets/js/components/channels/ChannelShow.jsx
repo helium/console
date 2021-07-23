@@ -16,6 +16,7 @@ import MQTTForm from "./forms/MQTTForm.jsx";
 import HTTPForm from "./forms/HTTPForm.jsx";
 import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
+import { DEVICES_IN_FLOWS_WITH_CHANNEL } from "../../graphql/flows";
 import analyticsLogger from "../../util/analyticsLogger";
 import withGql from "../../graphql/withGql";
 import { Typography, Button, Input, Card, Divider, Row, Col } from "antd";
@@ -51,10 +52,32 @@ class ChannelShow extends Component {
         this.props.channelShowQuery.refetch();
       }
     );
+
+    this.devicesInFlowsChannel = socket.channel("graphql:flows_update", {});
+    this.devicesInFlowsChannel.join();
+    this.devicesInFlowsChannel.on(
+      `graphql:flows_update:${this.props.currentOrganizationId}:organization_flows_update`,
+      (_message) => {
+        this.props.devicesInFlowsWithChannelQuery.refetch();
+      }
+    );
+
+    this.devicesInLabelsChannel = socket.channel(
+      "graphql:devices_in_labels_update",
+      {}
+    );
+    this.devicesInLabelsChannel.join();
+    this.devicesInLabelsChannel.on(
+      `graphql:devices_in_labels_update:${this.props.currentOrganizationId}:organization_devices_in_labels_update`,
+      (_message) => {
+        this.props.devicesInFlowsWithChannelQuery.refetch();
+      }
+    );
   }
 
   componentWillUnmount() {
     this.channel.leave();
+    this.devicesInFlowsChannel.leave();
   }
 
   componentDidUpdate(prevProps) {
@@ -65,11 +88,6 @@ class ChannelShow extends Component {
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
       });
-    }
-
-    if (!this.props.channelShowQuery.loading) {
-      const { refetch } = this.props.channelShowQuery;
-      refetch();
     }
   }
 
@@ -190,6 +208,11 @@ class ChannelShow extends Component {
 
   render() {
     const { loading, error, channel } = this.props.channelShowQuery;
+    const {
+      loading: flowsLoading,
+      error: flowsError,
+      devicesInFlowsWithChannel,
+    } = this.props.devicesInFlowsWithChannelQuery;
 
     if (loading)
       return (
@@ -278,8 +301,15 @@ class ChannelShow extends Component {
                       <Text> {channel.active ? "Yes" : "No"}</Text>
                     </Paragraph>
                     <Paragraph>
-                      <Text strong> ID: </Text>
+                      <Text strong>ID: </Text>
                       <Text code>{channel.id}</Text>
+                    </Paragraph>
+                    <Paragraph>
+                      <Text strong>No. Piped Devices: </Text>
+                      <Text>
+                        {devicesInFlowsWithChannel &&
+                          devicesInFlowsWithChannel.count}
+                      </Text>
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -423,6 +453,7 @@ class ChannelShow extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId,
   };
 }
 
@@ -434,9 +465,17 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(
-  withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
-    fetchPolicy: "cache-first",
-    variables: { id: props.match.params.id },
-    name: "channelShowQuery",
-  }))
+  withGql(
+    withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
+      fetchPolicy: "cache-first",
+      variables: { id: props.match.params.id },
+      name: "channelShowQuery",
+    })),
+    DEVICES_IN_FLOWS_WITH_CHANNEL,
+    (props) => ({
+      fetchPolicy: "cache-and-network",
+      variables: { channelId: props.match.params.id },
+      name: "devicesInFlowsWithChannelQuery",
+    })
+  )
 );

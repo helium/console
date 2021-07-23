@@ -64,6 +64,14 @@ export const FLOWS_BY_DEVICE = gql`
   }
 `;
 
+export const DEVICES_IN_FLOWS_WITH_CHANNEL = gql`
+  query DevicesInFlowsWithChannel($channelId: ID!) {
+    devicesInFlowsWithChannel(channelId: $channelId) {
+      count
+    }
+  }
+`;
+
 export const GET_RESOURCES_NAMES = gql`
   query GetResourcesNames(
     $deviceIds: [ID]!
