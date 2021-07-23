@@ -11,17 +11,22 @@ import analyticsLogger from "../../util/analyticsLogger";
 class RemoveDevicesFromLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { devicesToRemove, removeDevicesFromLabel, label, onClose } =
+    const { devicesToRemove, removeDevicesFromLabel, label, onClose, onLabelSidebarDevicesUpdate } =
       this.props;
 
     if (devicesToRemove.length === 0)
       displayError("No devices are selected for removal");
     else {
-      analyticsLogger.logEvent("ACTION_REMOVE_DEVICES_FROM_LABEL", {
-        id: label.id,
-        devices: devicesToRemove.map((d) => d.id),
-      });
-      removeDevicesFromLabel(devicesToRemove, label.id);
+      removeDevicesFromLabel(devicesToRemove, label.id)
+      .then(response => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_REMOVE_DEVICES_FROM_LABEL", {
+            id: label.id,
+            devices: devicesToRemove.map((d) => d.id),
+          });
+          if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + label.id, -1 * devicesToRemove.length)
+        }
+      })
     }
 
     onClose();
