@@ -91,7 +91,7 @@ defmodule ConsoleWeb.LabelController do
 
         conn
         |> put_resp_header("message", msg)
-        |> send_resp(:no_content, "")
+        |> send_resp(:ok, Poison.encode!(%{ devicesAdded: count }))
       end
     end
   end
