@@ -55,7 +55,7 @@ defmodule ConsoleWeb.FlowsController do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => all_device_ids })
 
         conn
-        |> put_resp_header("message", "Updated all edges successfully")
+        |> put_resp_header("message", "Flows changes have been successfully saved")
         |> send_resp(:ok, "")
       {:error, :added_flows, "fail", _} ->
         {:error, :bad_request, "Failed to connect all flows. Please make sure you are not duplicating flows with the same nodes."}
