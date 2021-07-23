@@ -36,12 +36,11 @@ export const deleteLabel = (id) => {
 //label show page add devices modal
 export const addDevicesToLabels = (devices, labels, toLabel) => {
   return (dispatch) => {
-    rest.post(`/api/devices_labels`, {
+    return rest.post(`/api/devices_labels`, {
       devices: Object.keys(devices),
       labels: Object.keys(labels),
       to_label: toLabel
     })
-    .then(response => {})
   }
 }
 
@@ -71,11 +70,10 @@ export const addDevicesToNewLabel = (devices, labelName) => {
 
 export const removeDevicesFromLabel = (devices, label_id) => {
   return (dispatch) => {
-    rest.post(`/api/devices_labels/delete`, {
+    return rest.post(`/api/devices_labels/delete`, {
       devices: devices.map(d => d.id),
       label_id,
     })
-    .then(response => {})
   }
 }
 

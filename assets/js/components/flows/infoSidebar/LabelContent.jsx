@@ -448,6 +448,7 @@ class LabelContent extends Component {
           open={this.state.showRemoveDevicesFromLabelModal}
           onClose={this.closeRemoveDevicesFromLabelModal}
           devicesToRemove={this.state.selectedDevices}
+          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
         <LabelAddDeviceModal
           label={label}
@@ -455,6 +456,7 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
+          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
         <DeleteLabelModal
           open={this.state.showDeleteLabelModal}

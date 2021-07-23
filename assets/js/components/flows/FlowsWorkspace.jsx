@@ -206,6 +206,16 @@ export default ({
     }
   };
 
+  const onLabelSidebarDevicesUpdate = (id, count) => {
+    const newNodeData = Object.assign({}, elementsMap[id].data, {
+      deviceCount: elementsMap[id].data.deviceCount + count
+    });
+    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
+    setElements((elsMap) =>
+      Object.assign({}, elsMap, { [newNode.id]: newNode })
+    );
+  }
+
   const handleToggleSidebar = () => {
     if (!showInfoSidebar) {
       analyticsLogger.logEvent("ACTION_OPEN_NODE_INFO_SIDEBAR", {
@@ -299,6 +309,7 @@ export default ({
               selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
           }
           elementsMap={elementsMap}
+          onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
           onAdrUpdate={onAdrUpdate}
           onCFListUpdate={onCFListUpdate}
           onMultiBuyUpdate={onMultiBuyUpdate}

@@ -14,6 +14,7 @@ export default ({
   id,
   type,
   onAdrUpdate,
+  onLabelSidebarDevicesUpdate,
   onMultiBuyUpdate,
   onAlertUpdate,
   deleteNode,
@@ -73,6 +74,7 @@ export default ({
           <LabelContent
             id={id}
             type={type}
+            onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
