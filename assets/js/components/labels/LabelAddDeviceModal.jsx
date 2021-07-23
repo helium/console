@@ -17,17 +17,23 @@ class LabelAddDeviceModal extends Component {
 
   handleSubmit = () => {
     const { checkedDevices, checkedLabels } = this.state;
+    const { onLabelSidebarDevicesUpdate } = this.props;
 
     this.props.addDevicesToLabels(
       checkedDevices,
       checkedLabels,
       this.props.label.id
-    );
-    analyticsLogger.logEvent("ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL", {
-      id: this.props.label.id,
-      devices: Object.keys(checkedDevices),
-      labels: Object.keys(checkedLabels),
-    });
+    ).then(response => {
+      if (response.status === 204) {
+        analyticsLogger.logEvent("ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL", {
+          id: this.props.label.id,
+          devices: Object.keys(checkedDevices),
+          labels: Object.keys(checkedLabels),
+        });
+        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + this.props.label.id, Object.keys(checkedDevices).length)
+      }
+    })
+
     this.props.onClose();
   };
 
