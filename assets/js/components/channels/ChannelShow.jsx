@@ -16,7 +16,6 @@ import MQTTForm from "./forms/MQTTForm.jsx";
 import HTTPForm from "./forms/HTTPForm.jsx";
 import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
-import { DEVICES_IN_FLOWS_WITH_CHANNEL } from "../../graphql/flows";
 import analyticsLogger from "../../util/analyticsLogger";
 import withGql from "../../graphql/withGql";
 import { Typography, Button, Input, Card, Divider, Row, Col } from "antd";
@@ -58,7 +57,7 @@ class ChannelShow extends Component {
     this.devicesInFlowsChannel.on(
       `graphql:flows_update:${this.props.currentOrganizationId}:organization_flows_update`,
       (_message) => {
-        this.props.devicesInFlowsWithChannelQuery.refetch();
+        this.props.channelShowQuery.refetch();
       }
     );
 
@@ -70,7 +69,7 @@ class ChannelShow extends Component {
     this.devicesInLabelsChannel.on(
       `graphql:devices_in_labels_update:${this.props.currentOrganizationId}:organization_devices_in_labels_update`,
       (_message) => {
-        this.props.devicesInFlowsWithChannelQuery.refetch();
+        this.props.channelShowQuery.refetch();
       }
     );
   }
@@ -208,11 +207,6 @@ class ChannelShow extends Component {
 
   render() {
     const { loading, error, channel } = this.props.channelShowQuery;
-    const {
-      loading: flowsLoading,
-      error: flowsError,
-      devicesInFlowsWithChannel,
-    } = this.props.devicesInFlowsWithChannelQuery;
 
     if (loading)
       return (
@@ -305,11 +299,8 @@ class ChannelShow extends Component {
                       <Text code>{channel.id}</Text>
                     </Paragraph>
                     <Paragraph>
-                      <Text strong>No. Piped Devices: </Text>
-                      <Text>
-                        {devicesInFlowsWithChannel &&
-                          devicesInFlowsWithChannel.count}
-                      </Text>
+                      <Text strong># Piped Devices: </Text>
+                      <Text>{channel.number_devices}</Text>
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -465,17 +456,9 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(
-  withGql(
-    withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
-      fetchPolicy: "cache-first",
-      variables: { id: props.match.params.id },
-      name: "channelShowQuery",
-    })),
-    DEVICES_IN_FLOWS_WITH_CHANNEL,
-    (props) => ({
-      fetchPolicy: "cache-and-network",
-      variables: { channelId: props.match.params.id },
-      name: "devicesInFlowsWithChannelQuery",
-    })
-  )
+  withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
+    fetchPolicy: "cache-first",
+    variables: { id: props.match.params.id },
+    name: "channelShowQuery",
+  }))
 );

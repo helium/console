@@ -4,6 +4,7 @@ defmodule Console.Flows do
 
   alias Console.Flows.Flow
   alias Console.Labels
+  alias Console.Devices
 
   def get_flows(organization_id) do
      from(f in Flow, where: f.organization_id == ^organization_id)
@@ -45,5 +46,16 @@ defmodule Console.Flows do
     label_ids = flows |> Enum.filter(fn f -> f.label_id != nil end) |> Enum.map(fn f -> f.label_id end)
     label_device_ids = Labels.get_labels_and_attached_devices(label_ids) |> Enum.map(fn l -> l.devices end) |> List.flatten() |> Enum.map(fn d -> d.id end)
     device_ids ++ label_device_ids |> Enum.uniq()
+  end
+
+  def get_number_devices_in_flows_with_channel(current_organization, channel_id) do
+   query = from f in Flow,
+      where: f.organization_id == ^current_organization.id and (f.channel_id == ^channel_id),
+      select: %{id: f.id, device_id: f.device_id, label_id: f.label_id, function_id: f.function_id, channel_id: f.channel_id}
+   flows = Repo.all(query)
+   labels = flows |> Enum.filter(fn f -> f.label_id != nil end) |> Enum.map(fn f -> f.label_id end)
+   devices = flows |> Enum.filter(fn f -> f.device_id != nil end) |> Enum.map(fn f -> f.device_id end)
+   devices_in_labels = labels |> Enum.map(fn l -> Devices.get_devices_for_label(l) end) |> List.flatten() |> Enum.map(fn d -> d.id end)
+   devices_in_labels |> Enum.concat(devices) |> Enum.uniq() |> length()
   end
 end

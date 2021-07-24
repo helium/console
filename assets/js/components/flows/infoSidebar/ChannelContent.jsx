@@ -47,6 +47,27 @@ class ChannelContent extends Component {
       }
     );
 
+    this.devicesInFlowsChannel = socket.channel("graphql:flows_update", {});
+    this.devicesInFlowsChannel.join();
+    this.devicesInFlowsChannel.on(
+      `graphql:flows_update:${this.props.currentOrganizationId}:organization_flows_update`,
+      (_message) => {
+        this.props.channelShowQuery.refetch();
+      }
+    );
+
+    this.devicesInLabelsChannel = socket.channel(
+      "graphql:devices_in_labels_update",
+      {}
+    );
+    this.devicesInLabelsChannel.join();
+    this.devicesInLabelsChannel.on(
+      `graphql:devices_in_labels_update:${this.props.currentOrganizationId}:organization_devices_in_labels_update`,
+      (_message) => {
+        this.props.channelShowQuery.refetch();
+      }
+    );
+
     if (this.props.channelShowQuery.channel) {
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
@@ -56,6 +77,8 @@ class ChannelContent extends Component {
 
   componentWillUnmount() {
     this.channel.leave();
+    this.devicesInFlowsChannel.leave();
+    this.devicesInLabelsChannel.leave();
   }
 
   componentDidUpdate(prevProps) {
@@ -183,6 +206,10 @@ class ChannelContent extends Component {
               <Paragraph>
                 <Text strong> ID: </Text>
                 <Text code>{channel.id}</Text>
+              </Paragraph>
+              <Paragraph>
+                <Text strong># Piped Devices: </Text>
+                <Text>{channel.number_devices}</Text>
               </Paragraph>
               {channel.type === "http" && (
                 <Card size="small" title="HTTP Details">
