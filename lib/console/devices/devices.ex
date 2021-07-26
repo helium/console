@@ -62,6 +62,13 @@ defmodule Console.Devices do
     Repo.all(query)
   end
 
+  def get_devices_for_labels(label_ids) do
+    query = from d in Device,
+      join: dl in DevicesLabels, on: dl.device_id == d.id,
+      where: dl.label_id in ^label_ids
+    Repo.all(query)
+  end
+
   def get_device_for_hotspot_address(address) do
     Device
       |> where([d], d.hotspot_address == ^address)

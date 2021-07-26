@@ -21,6 +21,10 @@ class ChannelIndexTable extends Component {
         dataIndex: "type_name",
       },
       {
+        title: "Devices",
+        dataIndex: "number_devices",
+      },
+      {
         title: "",
         key: "action",
         render: (text, record) => (

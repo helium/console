@@ -1,27 +1,28 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CHANNEL_FRAGMENT = gql`
   fragment ChannelFragment on Channel {
-    name,
-    type,
-    type_name,
-    id,
-    active,
+    name
+    type
+    type_name
+    id
+    active
     credentials {
-      endpoint,
+      endpoint
       downlink {
         topic
       }
       uplink {
         topic
       }
-    },
+    }
     updated_at
+    number_devices
   }
-`
+`;
 
 export const CHANNEL_SHOW = gql`
-  query ChannelShowQuery ($id: ID!) {
+  query ChannelShowQuery($id: ID!) {
     channel(id: $id) {
       ...ChannelFragment
       downlink_token
@@ -37,32 +38,32 @@ export const CHANNEL_SHOW = gql`
     }
   }
   ${CHANNEL_FRAGMENT}
-`
+`;
 
 export const PAGINATED_CHANNELS = gql`
-  query PaginatedChannelsQuery ($page: Int, $pageSize: Int) {
+  query PaginatedChannelsQuery($page: Int, $pageSize: Int) {
     channels(page: $page, pageSize: $pageSize) {
       entries {
         ...ChannelFragment
-      },
-      totalEntries,
-      totalPages,
-      pageSize,
+      }
+      totalEntries
+      totalPages
+      pageSize
       pageNumber
     }
   }
   ${CHANNEL_FRAGMENT}
-`
+`;
 
 export const ALL_CHANNELS = gql`
   query AllChannelsQuery {
     allChannels {
-      name,
-      type,
-      type_name,
-      id,
-      active,
+      name
+      type
+      type_name
+      id
+      active
       endpoint
     }
   }
-`
+`;

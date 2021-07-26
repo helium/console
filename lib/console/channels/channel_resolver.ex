@@ -1,6 +1,7 @@
 defmodule Console.Channels.ChannelResolver do
   alias Console.Repo
   alias Console.Channels.Channel
+  alias Console.Flows
   import Ecto.Query
   alias Console.Alerts
 
@@ -12,6 +13,7 @@ defmodule Console.Channels.ChannelResolver do
     updated_entries = channels.entries
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
+        Map.put(c, :number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, c.id))
       end)
 
     {:ok, Map.put(channels, :entries, updated_entries)}
@@ -21,6 +23,8 @@ defmodule Console.Channels.ChannelResolver do
     channel = Channel
       |> where([c], c.id == ^id and c.organization_id == ^current_organization.id)
       |> Repo.one!()
+
+    channel = channel |> Map.put(:number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, id))
 
     channel =
       case channel.type do

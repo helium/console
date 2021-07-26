@@ -51,10 +51,33 @@ class ChannelShow extends Component {
         this.props.channelShowQuery.refetch();
       }
     );
+
+    this.devicesInFlowsChannel = socket.channel("graphql:flows_update", {});
+    this.devicesInFlowsChannel.join();
+    this.devicesInFlowsChannel.on(
+      `graphql:flows_update:${this.props.currentOrganizationId}:organization_flows_update`,
+      (_message) => {
+        this.props.channelShowQuery.refetch();
+      }
+    );
+
+    this.devicesInLabelsChannel = socket.channel(
+      "graphql:devices_in_labels_update",
+      {}
+    );
+    this.devicesInLabelsChannel.join();
+    this.devicesInLabelsChannel.on(
+      `graphql:devices_in_labels_update:${this.props.currentOrganizationId}:organization_devices_in_labels_update`,
+      (_message) => {
+        this.props.channelShowQuery.refetch();
+      }
+    );
   }
 
   componentWillUnmount() {
     this.channel.leave();
+    this.devicesInFlowsChannel.leave();
+    this.devicesInLabelsChannel.leave();
   }
 
   componentDidUpdate(prevProps) {
@@ -65,11 +88,6 @@ class ChannelShow extends Component {
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
       });
-    }
-
-    if (!this.props.channelShowQuery.loading) {
-      const { refetch } = this.props.channelShowQuery;
-      refetch();
     }
   }
 
@@ -278,8 +296,12 @@ class ChannelShow extends Component {
                       <Text> {channel.active ? "Yes" : "No"}</Text>
                     </Paragraph>
                     <Paragraph>
-                      <Text strong> ID: </Text>
+                      <Text strong>ID: </Text>
                       <Text code>{channel.id}</Text>
+                    </Paragraph>
+                    <Paragraph>
+                      <Text strong># Piped Devices: </Text>
+                      <Text>{channel.number_devices}</Text>
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -423,6 +445,7 @@ class ChannelShow extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId,
   };
 }
 

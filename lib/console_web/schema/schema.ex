@@ -122,6 +122,7 @@ defmodule ConsoleWeb.Schema do
     field :time_first_uplink, :naive_datetime
     field :updated_at, :naive_datetime
     field :alerts, list_of(:alert)
+    field :number_devices, :integer
   end
 
   paginated object :membership do

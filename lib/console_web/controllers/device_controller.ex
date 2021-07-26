@@ -82,6 +82,7 @@ defmodule ConsoleWeb.DeviceController do
     with {:ok, %Device{} = device} <- Devices.delete_device(device) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
       broadcast_router_update_devices([id])
 
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
@@ -154,6 +155,7 @@ defmodule ConsoleWeb.DeviceController do
     Devices.delete_all_devices_for_org(organization_id)
     ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{organization_id}:device_list_update", %{})
     ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{organization_id}:device_list_update", %{})
+    ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{organization_id}:organization_devices_in_labels_update", %{})
     broadcast_router_update_devices(all_devices |> Enum.map(fn d -> d.id end))
 
     # now that devices have been deleted, send notification if applicable
