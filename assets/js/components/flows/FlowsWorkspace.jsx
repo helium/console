@@ -6,6 +6,7 @@ import ReactFlow, {
   useStoreActions,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
+import { Link } from 'react-router-dom';
 import FlowsNodesMenu from "./FlowsNodesMenu";
 import FlowsUpdateButtons from "./FlowsUpdateButtons";
 import LabelNode from "./nodes/LabelNode";
@@ -15,6 +16,8 @@ import DebugNode from "./nodes/DebugNode";
 import DeviceNode from "./nodes/DeviceNode";
 import InfoSidebar from "./infoSidebar/InfoSidebar";
 import NodeInfo from "./infoSidebar/NodeInfo";
+import { getStartedLinks } from "../Welcome"
+import RocketFilled from '@ant-design/icons/RocketFilled';
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
 
@@ -35,6 +38,7 @@ export default ({
   functions,
   channels,
   devices,
+  organization
 }) => {
   const setSelectedElements = useStoreActions(
     (actions) => actions.setSelectedElements
@@ -236,6 +240,27 @@ export default ({
         ref={reactFlowWrapper}
         style={{ position: "relative", height: "100%", width: "100%" }}
       >
+        {
+          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 20,
+                right: 100,
+                zIndex: 100,
+                paddingLeft: 20,
+              }}
+            >
+              <div className="pod" id="left">
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'bottom' }}>
+                  <RocketFilled className="bigicon" />
+                  <h2>Get Started with Console</h2>
+                </div>
+                { getStartedLinks() }
+              </div>
+            </div>
+          )
+        }
         <ReactFlow
           elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
