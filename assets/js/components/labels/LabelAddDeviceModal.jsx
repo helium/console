@@ -24,13 +24,19 @@ class LabelAddDeviceModal extends Component {
       checkedLabels,
       this.props.label.id
     ).then(response => {
-      if (response.status === 204) {
+      if (response.status === 200) {
         analyticsLogger.logEvent("ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL", {
           id: this.props.label.id,
           devices: Object.keys(checkedDevices),
           labels: Object.keys(checkedLabels),
         });
-        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + this.props.label.id, Object.keys(checkedDevices).length)
+
+        this.setState({
+          checkedDevices: {},
+          checkedLabels: {},
+        })
+        
+        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + this.props.label.id, response.data.devicesAdded)
       }
     })
 
