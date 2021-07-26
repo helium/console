@@ -8,7 +8,6 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
-  alias Console.Devices.Device
   alias Console.DeviceStats
   alias Console.Events
   alias Console.DcPurchases
@@ -217,6 +216,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               "last_connected" => event.reported_at_naive,
               "total_packets" => locked_device.total_packets + packet_count,
               "dc_usage" => locked_device.dc_usage + dc_used,
+              "in_xor_filter" => true
             }
 
             device_updates = cond do
@@ -424,5 +424,12 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
         end
     end
+  end
+
+  def update_devices_in_xor_filter(conn, %{"added" => added_device_ids, "removed" => _removed_device_ids}) do
+     with {:ok, _} <- Devices.update_in_xor_filter(added_device_ids) do
+      # TODO broadcasts to graphql once front end is implemented
+      conn |> send_resp(200, "")
+     end
   end
 end
