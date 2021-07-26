@@ -426,11 +426,23 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  def update_devices_in_xor_filter(conn, %{"device_ids" => device_ids}) do
-    with {:ok, devices} <- Devices.update_in_xor_filter(device_ids) do
-      # TODO graphql broadcasts for org and device when frontend implemented
-      conn
-      |> send_resp(200, "")
-    end
+  def update_devices_in_xor_filter(conn, %{"added" => added_device_ids, "removed" => removed_device_ids}) do
+    result = Ecto.Multi.new()
+      |> Ecto.Multi.run(:added_devices, fn _repo, _ ->
+        with {:ok, devices} <- Devices.update_in_xor_filter(added_device_ids, true) do
+          {:ok, devices}
+        end
+      end)
+      |> Ecto.Multi.run(:removed_devices, fn _repo, _ ->
+        with {:ok, devices} <- Devices.update_in_xor_filter(removed_device_ids, false) do
+          {:ok, devices}
+        end
+      end)
+     |> Repo.transaction()
+
+     with {:ok, _} <- result do
+      # TODO broadcasts to graphql once front end is implemented
+      conn |> send_resp(200, "")
+     end
   end
 end
