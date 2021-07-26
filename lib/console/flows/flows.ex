@@ -55,7 +55,7 @@ defmodule Console.Flows do
    flows = Repo.all(query)
    labels = flows |> Enum.filter(fn f -> f.label_id != nil end) |> Enum.map(fn f -> f.label_id end)
    devices = flows |> Enum.filter(fn f -> f.device_id != nil end) |> Enum.map(fn f -> f.device_id end)
-   devices_in_labels = labels |> Enum.map(fn l -> Devices.get_devices_for_label(l) end) |> List.flatten() |> Enum.map(fn d -> d.id end)
+   devices_in_labels = Devices.get_devices_for_labels(labels) |> Enum.map(fn d -> d.id end)
    devices_in_labels |> Enum.concat(devices) |> Enum.uniq() |> length()
   end
 end

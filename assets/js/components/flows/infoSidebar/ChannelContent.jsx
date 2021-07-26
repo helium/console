@@ -323,6 +323,7 @@ function mapStateToProps(state, _ownProps) {
   return {
     socket: state.apollo.socket,
     currentRole: state.organization.currentRole,
+    currentOrganizationId: state.organization.currentOrganizationId,
   };
 }
 
@@ -335,7 +336,7 @@ export default connect(
   mapDispatchToProps
 )(
   withGql(ChannelContent, CHANNEL_SHOW, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: { id: props.id },
     name: "channelShowQuery",
   }))

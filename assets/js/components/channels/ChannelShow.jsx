@@ -77,6 +77,7 @@ class ChannelShow extends Component {
   componentWillUnmount() {
     this.channel.leave();
     this.devicesInFlowsChannel.leave();
+    this.devicesInLabelsChannel.leave();
   }
 
   componentDidUpdate(prevProps) {
