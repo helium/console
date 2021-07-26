@@ -95,21 +95,9 @@ class FlowsIndex extends Component {
             channels={nodesByType.channels}
             functions={nodesByType.functions}
             devices={nodesByType.devices}
+            organization={organization}
           />
         </ReactFlowProvider>
-        {false && this.state.selectedNode && (
-          <div
-            style={{
-              backgroundColor: "red",
-              position: "absolute",
-              height: "calc(100% - 135px)",
-              width: 300,
-              top: 95,
-              right: 40,
-              zIndex: 100,
-            }}
-          />
-        )}
       </DashboardLayout>
     );
   }

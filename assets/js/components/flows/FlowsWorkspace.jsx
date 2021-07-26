@@ -6,6 +6,7 @@ import ReactFlow, {
   useStoreActions,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
+import { Link } from 'react-router-dom';
 import FlowsNodesMenu from "./FlowsNodesMenu";
 import FlowsUpdateButtons from "./FlowsUpdateButtons";
 import LabelNode from "./nodes/LabelNode";
@@ -15,6 +16,8 @@ import DebugNode from "./nodes/DebugNode";
 import DeviceNode from "./nodes/DeviceNode";
 import InfoSidebar from "./infoSidebar/InfoSidebar";
 import NodeInfo from "./infoSidebar/NodeInfo";
+import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
+import RocketFilled from '@ant-design/icons/RocketFilled';
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
 
@@ -35,6 +38,7 @@ export default ({
   functions,
   channels,
   devices,
+  organization
 }) => {
   const setSelectedElements = useStoreActions(
     (actions) => actions.setSelectedElements
@@ -236,6 +240,28 @@ export default ({
         ref={reactFlowWrapper}
         style={{ position: "relative", height: "100%", width: "100%" }}
       >
+        {
+          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 20,
+                right: 100,
+                zIndex: 100,
+                paddingLeft: 20,
+              }}
+            >
+              <div className="pod" id="left">
+                <RocketFilled className="bigicon" />
+                <h2>Get Started with Console</h2>
+                <Link to="/devices"><p>Add and Manage Devices <span>for the Helium Network</span><CaretRightOutlined className="caret" /></p></Link>
+                <Link to="/integrations"><p>Set up an Integration <span>to send and receive device data</span><CaretRightOutlined className="caret" /></p></Link>
+                <Link to="/functions"><p>Apply Functions <span>to your devices</span><CaretRightOutlined className="caret" /></p></Link>
+                <Link to="/users"><p>Invite other Users <span> to your Console Organization</span><CaretRightOutlined className="caret" /></p></Link>
+              </div>
+            </div>
+          )
+        }
         <ReactFlow
           elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
