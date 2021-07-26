@@ -71,9 +71,9 @@ defmodule Console.Devices.Device do
   def update_changeset(device, attrs) do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
-
+    
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled, :in_xor_filter])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)
@@ -83,7 +83,7 @@ defmodule Console.Devices.Device do
 
   def router_update_changeset(device, attrs) do
     device
-      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage])
+      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter])
   end
 
   defp check_attrs_format(changeset) do
