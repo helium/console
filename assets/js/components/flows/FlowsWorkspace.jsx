@@ -125,6 +125,7 @@ export default ({
       data = Object.assign({}, data, {
         type_name: event.dataTransfer.getData("node/channel_type_name"),
         type: event.dataTransfer.getData("node/channel_type"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
       });
     }
 
@@ -137,8 +138,23 @@ export default ({
     if (type === "labelNode") {
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
+        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
+        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
       });
     }
+
+    if (type === "deviceNode") {
+      data = Object.assign({}, data, {
+        deviceCount: event.dataTransfer.getData("node/label_device_count"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
+        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
+        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
+      });
+    }
+    console.log(data)
 
     const newNode = { id, type, position, data };
 
@@ -241,7 +257,7 @@ export default ({
         style={{ position: "relative", height: "100%", width: "100%" }}
       >
         {
-          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && (
+          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && !showInfoSidebar && (
             <div
               style={{
                 position: "absolute",
