@@ -125,12 +125,18 @@ const createApolloClient = (link) => (
           fields: {
             devices: {
               merge: false
+            },
+            alerts: {
+              merge: false
             }
           }
         },
         Device: {
           fields: {
             labels: {
+              merge: false
+            },
+            alerts: {
               merge: false
             }
           }

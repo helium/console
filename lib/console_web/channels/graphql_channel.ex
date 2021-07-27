@@ -113,6 +113,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:flows_nodes_menu", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:resources_update", _message, socket) do
     {:ok, socket}
   end

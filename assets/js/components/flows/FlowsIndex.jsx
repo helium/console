@@ -39,6 +39,18 @@ class FlowsIndex extends Component {
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_FLOWS_PAGE");
+
+    const orgId = this.props.currentOrganizationId
+    const { socket } = this.props;
+
+    this.channel = socket.channel("graphql:flows_nodes_menu", {});
+    this.channel.join();
+    this.channel.on(
+      `graphql:flows_nodes_menu:${orgId}:all_resources_update`,
+      (message) => {
+        this.props.allResourcesQuery.refetch();
+      }
+    );
   }
 
   render() {
@@ -71,6 +83,7 @@ class FlowsIndex extends Component {
       );
 
     const { organization } = this.props.allResourcesQuery.data;
+
     const flowPositions = JSON.parse(organization.flow);
     const [initialElementsMap, nodesByType] = generateInitialElementsMap(
       this.props.allResourcesQuery.data,
@@ -293,6 +306,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
 function mapStateToProps(state, ownProps) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
   };
 }
 

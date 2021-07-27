@@ -154,7 +154,6 @@ export default ({
         multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
       });
     }
-    console.log(data)
 
     const newNode = { id, type, position, data };
 
@@ -201,29 +200,28 @@ export default ({
   };
 
   const onAlertUpdate = (id, type, hasAlerts) => {
-    if (type === "function") {
-      let functionNodes = {};
-      for (const [key, _value] of Object.entries(elementsMap)) {
-        if (key.split("_copy")[0] === id) {
-          const newNodeData = Object.assign({}, elementsMap[key].data, {
-            hasAlerts,
-          });
-          const newNode = Object.assign({}, elementsMap[key], {
-            data: newNodeData,
-          });
-          Object.assign(functionNodes, { [newNode.id]: newNode });
-        }
-      }
-      setElements((elsMap) => Object.assign({}, elsMap, functionNodes));
-    } else {
-      const newNodeData = Object.assign({}, elementsMap[id].data, {
-        hasAlerts,
-      });
-      const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-      setElements((elsMap) =>
-        Object.assign({}, elsMap, { [newNode.id]: newNode })
-      );
-    }
+    // if (type === "function") { FOR FUNCTION ALERTS LATER IF NEEDED
+    //   let functionNodes = {};
+    //   for (const [key, _value] of Object.entries(elementsMap)) {
+    //     if (key.split("_copy")[0] === id) {
+    //       const newNodeData = Object.assign({}, elementsMap[key].data, {
+    //         hasAlerts,
+    //       });
+    //       const newNode = Object.assign({}, elementsMap[key], {
+    //         data: newNodeData,
+    //       });
+    //       Object.assign(functionNodes, { [newNode.id]: newNode });
+    //     }
+    //   }
+    //   setElements((elsMap) => Object.assign({}, elsMap, functionNodes));
+    // }
+    const newNodeData = Object.assign({}, elementsMap[id].data, {
+      hasAlerts,
+    });
+    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
+    setElements((elsMap) =>
+      Object.assign({}, elsMap, { [newNode.id]: newNode })
+    );
   };
 
   const onLabelSidebarDevicesUpdate = (id, count) => {
