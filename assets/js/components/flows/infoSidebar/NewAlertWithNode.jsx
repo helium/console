@@ -39,10 +39,20 @@ export default (props) => {
               nodeId: props.nodeId,
               nodeType: props.nodeType,
             });
-            dispatch(
+            return dispatch(
               addAlertToNode(data.data.id, props.nodeId, props.nodeType)
             );
-            props.back();
+          }).then(() => {
+            let prefix = `${
+              props.nodeType === "integration" ? "channel" : props.nodeType
+            }-`;
+            props.onAlertUpdate(
+              prefix + props.nodeId,
+              props.nodeType,
+              true
+            );
+
+            props.back()
           });
         }}
         saveText="Create"

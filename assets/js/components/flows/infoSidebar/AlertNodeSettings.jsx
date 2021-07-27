@@ -191,6 +191,7 @@ export default (props) => {
         <NewAlertWithNode
           nodeId={props.nodeId}
           nodeType={props.type}
+          onAlertUpdate={props.onAlertUpdate}
           back={() => {
             setShowNew(false);
           }}
