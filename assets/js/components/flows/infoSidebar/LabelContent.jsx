@@ -374,7 +374,10 @@ class LabelContent extends Component {
                 <Option
                   disabled={selectedDevices.length === 0}
                   value="remove"
-                  style={{ color: redForTablesDeleteText }}
+                  style={{
+                    color:
+                      selectedDevices.length === 0 ? "" : redForTablesDeleteText,
+                   }}
                 >
                   Remove Selected Devices from Label
                 </Option>
