@@ -178,6 +178,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         multi_buy_id: device.multi_buy_id,
         hasAlerts: device.alerts.length > 0,
         cfListEnabled: device.cf_list_enabled,
+        inXORFilter: device.in_xor_filter,
       },
       position: [0, 0],
     };
@@ -189,6 +190,9 @@ const generateInitialElementsMap = (data, flowPositions) => {
     }
   });
   allLabels.forEach((label) => {
+    const devicesNotInFilter =
+      label.devices.filter((device) => device.in_xor_filter === false).length >
+      0;
     const node = {
       id: `label-${label.id}`,
       type: "labelNode",
@@ -200,6 +204,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         multi_buy_id: label.multi_buy_id,
         hasAlerts: label.alerts.length > 0,
         cfListEnabled: label.cf_list_enabled,
+        devicesNotInFilter,
       },
       position: [0, 0],
     };

@@ -26,6 +26,7 @@ import {
   Switch,
   Tabs,
   Tooltip,
+  Tag,
 } from "antd";
 import { StatusIcon } from "../../common/StatusIcon";
 import EditOutlined from "@ant-design/icons/EditOutlined";
@@ -41,6 +42,7 @@ const { TabPane } = Tabs;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 import CFListNodeSettings from "./CFListNodeSettings";
+import inXORFilterDeviceTag from "../../../../img/in_xor_filter/in-xor-filter-device-table-tag.svg";
 
 class LabelContent extends Component {
   state = {
@@ -200,20 +202,39 @@ class LabelContent extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
               .subtract(1, "days")
               .isBefore(moment.utc(record.last_connected).local()) && (
-              <StatusIcon
-                tooltipTitle="Last connected within the last 24h"
-                style={{ marginLeft: "4px" }}
-                {...this.props}
-              />
+              <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && (
+              <Tooltip title="Device not yet in XOR filter">
+                <Tag
+                  style={{
+                    marginLeft: 10,
+                    padding: 5,
+                    backgroundColor: "transparent",
+                    color: "#2C79EE",
+                    borderColor: "#2C79EE",
+                    borderRadius: 33,
+                    borderWidth: 1,
+                  }}
+                  icon={
+                    <img
+                      src={inXORFilterDeviceTag}
+                      style={{ height: 14, marginRight: 5 }}
+                    />
+                  }
+                >
+                  Pending...
+                </Tag>
+              </Tooltip>
+            )}
+          </React.Fragment>
         ),
       },
       {

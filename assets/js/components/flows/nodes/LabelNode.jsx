@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Handle } from "react-flow-renderer";
-import { Typography } from "antd";
+import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import LabelsIcon from "../../../../img/label-node-icon.svg";
 import AdrTag from "../../../../img/adr/adr-node-tag.svg";
@@ -8,6 +8,7 @@ import CFListTag from "../../../../img/cf-list/cf-list-node-tag.svg";
 import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
+import inXORFilterLabelTag from "../../../../img/in_xor_filter/in-xor-filter-label-tag.svg";
 
 export default ({ data, fromSidebar, selected }) => {
   return (
@@ -23,6 +24,19 @@ export default ({ data, fromSidebar, selected }) => {
           position: "relative",
         }}
       >
+        {data.devicesNotInFilter && (
+          <Tooltip title="One or more devices in this label not yet in XOR filter">
+            <img
+              draggable="false"
+              src={inXORFilterLabelTag}
+              style={{
+                top: "-11px",
+                left: "-11px",
+                position: "absolute",
+              }}
+            />
+          </Tooltip>
+        )}
         <div
           style={{
             height: "100%",

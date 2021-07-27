@@ -21,7 +21,8 @@ defmodule ConsoleWeb.V1.DeviceView do
       oui: device.oui,
       organization_id: device.organization_id,
       adr_allowed: device.adr_allowed,
-      cf_list_enabled: device.cf_list_enabled
+      cf_list_enabled: device.cf_list_enabled,
+      in_xor_filter: device.in_xor_filter
     }
 
     if Ecto.assoc_loaded?(device.labels) do

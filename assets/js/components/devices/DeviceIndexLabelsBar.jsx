@@ -3,23 +3,44 @@ import NavPointTriangle from "../common/NavPointTriangle";
 import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
 import { ALL_LABELS } from "../../graphql/labels";
-import { Typography } from "antd";
+import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import LabelsIcon from "../../../img/label-node-icon.svg";
+import inXORFilterLabelTag from "../../../img/in_xor_filter/in-xor-filter-label-tag.svg";
 
-const Node = ({ name, device_count, push, pathname, id }) => (
+const Node = ({
+  name,
+  device_count,
+  push,
+  pathname,
+  id,
+  devicesNotInFilter,
+}) => (
   <div
     style={{
       background: "#2C79EE",
-      padding: "4px 24px 4px 8px",
+      padding: "4px 24px 4px 15px",
       borderRadius: 5,
       height: 50,
-      marginRight: 12,
+      marginRight: 15,
       cursor: "pointer",
       position: "relative",
     }}
     onClick={() => push("/labels/" + id)}
   >
+    {devicesNotInFilter && (
+      <Tooltip title="One or more devices in this label not yet in XOR filter">
+        <img
+          draggable="false"
+          src={inXORFilterLabelTag}
+          style={{
+            top: "-11px",
+            left: "-11px",
+            position: "absolute",
+          }}
+        />
+      </Tooltip>
+    )}
     <div
       style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
@@ -79,16 +100,22 @@ class DeviceIndexLabelsBar extends Component {
 
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
-        {allLabels.map((l) => (
-          <Node
-            key={l.id}
-            name={l.name}
-            device_count={l.device_count}
-            id={l.id}
-            push={this.props.push}
-            pathname={this.props.pathname}
-          />
-        ))}
+        {allLabels.map((l) => {
+          const devicesNotInFilter =
+            l.devices.filter((device) => device.in_xor_filter === false)
+              .length > 0;
+          return (
+            <Node
+              key={l.id}
+              name={l.name}
+              device_count={l.device_count}
+              id={l.id}
+              push={this.props.push}
+              pathname={this.props.pathname}
+              devicesNotInFilter={devicesNotInFilter}
+            />
+          );
+        })}
       </div>
     );
   }

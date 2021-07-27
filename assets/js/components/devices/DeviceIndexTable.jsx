@@ -18,11 +18,13 @@ import {
   Switch,
   Checkbox,
   Tooltip,
+  Tag,
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { StatusIcon } from "../common/StatusIcon";
 const { Text } = Typography;
 const { Option } = Select;
+import inXORFilterDeviceTag from "../../../img/in_xor_filter/in-xor-filter-device-table-tag.svg";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -126,8 +128,8 @@ class DeviceIndexTable extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
@@ -135,7 +137,30 @@ class DeviceIndexTable extends Component {
               .isBefore(moment.utc(record.last_connected).local()) && (
               <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && (
+              <Tooltip title="Device not yet in XOR filter">
+                <Tag
+                  style={{
+                    marginLeft: 10,
+                    padding: 5,
+                    backgroundColor: "transparent",
+                    color: "#2C79EE",
+                    borderColor: "#2C79EE",
+                    borderRadius: 33,
+                    borderWidth: 1,
+                  }}
+                  icon={
+                    <img
+                      src={inXORFilterDeviceTag}
+                      style={{ height: 14, marginRight: 5 }}
+                    />
+                  }
+                >
+                  Pending...
+                </Tag>
+              </Tooltip>
+            )}
+          </React.Fragment>
         ),
       },
       {

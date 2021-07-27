@@ -41,6 +41,7 @@ defmodule Console.Labels.LabelResolver do
 
     labels = Label
       |> where([l], l.organization_id == ^current_organization.id)
+      |> preload([:devices])
       |> Repo.all()
       |> Enum.map(
         fn label ->

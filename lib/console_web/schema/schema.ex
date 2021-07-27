@@ -35,6 +35,7 @@ defmodule ConsoleWeb.Schema do
     field :multi_buy_id, :id
     field :alerts, list_of(:alert)
     field :cf_list_enabled, :boolean
+    field :in_xor_filter, :boolean
     field :updated_at, :naive_datetime
   end
 

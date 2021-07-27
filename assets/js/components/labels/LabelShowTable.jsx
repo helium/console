@@ -21,6 +21,7 @@ import {
   Popover,
   Switch,
   Tooltip,
+  Tag,
 } from "antd";
 import { StatusIcon } from "../common/StatusIcon";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
@@ -30,6 +31,7 @@ const { Text } = Typography;
 const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
+import inXORFilterDeviceTag from "../../../img/in_xor_filter/in-xor-filter-device-table-tag.svg";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -86,7 +88,7 @@ class LabelShowTable extends Component {
     if (columnsToShow) {
       this.setState({ columnsToShow: JSON.parse(columnsToShow) });
     }
-    this.handleChangePage(1)
+    this.handleChangePage(1);
   }
 
   componentWillUnmount() {
@@ -169,20 +171,39 @@ class LabelShowTable extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
               .subtract(1, "days")
               .isBefore(moment.utc(record.last_connected).local()) && (
-              <StatusIcon
-                tooltipTitle="Last connected within the last 24h"
-                style={{ marginLeft: "4px" }}
-                {...this.props}
-              />
+              <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && (
+              <Tooltip title="Device not yet in XOR filter">
+                <Tag
+                  style={{
+                    marginLeft: 10,
+                    padding: 5,
+                    backgroundColor: "transparent",
+                    color: "#2C79EE",
+                    borderColor: "#2C79EE",
+                    borderRadius: 33,
+                    borderWidth: 1,
+                  }}
+                  icon={
+                    <img
+                      src={inXORFilterDeviceTag}
+                      style={{ height: 14, marginRight: 5 }}
+                    />
+                  }
+                >
+                  Pending...
+                </Tag>
+              </Tooltip>
+            )}
+          </React.Fragment>
         ),
       },
       {
