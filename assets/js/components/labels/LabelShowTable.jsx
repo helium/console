@@ -411,7 +411,8 @@ class LabelShowTable extends Component {
           pagination={false}
           rowSelection={rowSelection}
           onChange={this.handleSortChange}
-          style={{ minWidth }}
+          style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
+          className="no-scroll-bar"
           onRow={(record, rowIndex) => ({
             onClick: (e) => {
               if (e.target.tagName === "TD") {
