@@ -13,6 +13,7 @@ import find from "lodash/find";
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
+import { checkIfDevicesNotInFilter } from "../../util/constants";
 
 class FlowsIndex extends Component {
   state = {
@@ -178,6 +179,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         multi_buy_id: device.multi_buy_id,
         hasAlerts: device.alerts.length > 0,
         cfListEnabled: device.cf_list_enabled,
+        inXORFilter: device.in_xor_filter,
       },
       position: [0, 0],
     };
@@ -200,6 +202,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         multi_buy_id: label.multi_buy_id,
         hasAlerts: label.alerts.length > 0,
         cfListEnabled: label.cf_list_enabled,
+        devicesNotInFilter: checkIfDevicesNotInFilter(label),
       },
       position: [0, 0],
     };

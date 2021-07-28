@@ -3,23 +3,33 @@ import NavPointTriangle from "../common/NavPointTriangle";
 import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
 import { ALL_LABELS } from "../../graphql/labels";
-import { Typography } from "antd";
+import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import LabelsIcon from "../../../img/label-node-icon.svg";
+import LabelNotInFilterBadge from "../common/LabelNotInFilterBadge";
+import { checkIfDevicesNotInFilter } from "../../util/constants";
 
-const Node = ({ name, device_count, push, pathname, id }) => (
+const Node = ({
+  name,
+  device_count,
+  push,
+  pathname,
+  id,
+  devicesNotInFilter,
+}) => (
   <div
     style={{
       background: "#2C79EE",
-      padding: "4px 24px 4px 8px",
+      padding: "4px 24px 4px 15px",
       borderRadius: 5,
       height: 50,
-      marginRight: 12,
+      marginRight: 15,
       cursor: "pointer",
       position: "relative",
     }}
     onClick={() => push("/labels/" + id)}
   >
+    {devicesNotInFilter && <LabelNotInFilterBadge />}
     <div
       style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
@@ -79,16 +89,19 @@ class DeviceIndexLabelsBar extends Component {
 
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
-        {allLabels.map((l) => (
-          <Node
-            key={l.id}
-            name={l.name}
-            device_count={l.device_count}
-            id={l.id}
-            push={this.props.push}
-            pathname={this.props.pathname}
-          />
-        ))}
+        {allLabels.map((l) => {
+          return (
+            <Node
+              key={l.id}
+              name={l.name}
+              device_count={l.device_count}
+              id={l.id}
+              push={this.props.push}
+              pathname={this.props.pathname}
+              devicesNotInFilter={checkIfDevicesNotInFilter(l)}
+            />
+          );
+        })}
       </div>
     );
   }

@@ -72,7 +72,7 @@ class DeviceDashboardLayout extends Component {
                       flexDirection: "row",
                       justifyContent: "center",
                       alignItems: "center",
-                      marginRight: 12,
+                      marginRight: 15,
                       whiteSpace: "nowrap",
                       position: "relative",
                     }}

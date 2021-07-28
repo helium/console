@@ -23,6 +23,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { StatusIcon } from "../common/StatusIcon";
 const { Text } = Typography;
 const { Option } = Select;
+import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -126,8 +127,8 @@ class DeviceIndexTable extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
@@ -135,7 +136,8 @@ class DeviceIndexTable extends Component {
               .isBefore(moment.utc(record.last_connected).local()) && (
               <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
+          </React.Fragment>
         ),
       },
       {

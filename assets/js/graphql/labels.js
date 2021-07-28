@@ -12,6 +12,7 @@ export const LABEL_FRAGMENT = gql`
       name
       id
       last_connected
+      in_xor_filter
     }
     cf_list_enabled
     updated_at
@@ -48,6 +49,10 @@ export const ALL_LABELS = gql`
       id
       name
       device_count
+      devices {
+        id
+        in_xor_filter
+      }
     }
   }
 `;

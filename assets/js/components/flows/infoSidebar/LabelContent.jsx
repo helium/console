@@ -41,6 +41,7 @@ const { TabPane } = Tabs;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 import CFListNodeSettings from "./CFListNodeSettings";
+import DeviceNotInFilterTableBadge from "../../common/DeviceNotInFilterTableBadge";
 
 class LabelContent extends Component {
   state = {
@@ -200,20 +201,17 @@ class LabelContent extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
               .subtract(1, "days")
               .isBefore(moment.utc(record.last_connected).local()) && (
-              <StatusIcon
-                tooltipTitle="Last connected within the last 24h"
-                style={{ marginLeft: "4px" }}
-                {...this.props}
-              />
+              <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
+          </React.Fragment>
         ),
       },
       {

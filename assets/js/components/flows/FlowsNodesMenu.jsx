@@ -82,7 +82,7 @@ export default ({ devices, labels, functions, channels }) => {
     labels.length > 0 ? (
       labels.map((node) => (
         <div
-          style={{ marginBottom: 12 }}
+          style={{ margin: "12px 0px 12px 0px" }}
           key={node.id}
           draggable
           onDragStart={(event) => onDragStart(event, node)}
@@ -98,7 +98,7 @@ export default ({ devices, labels, functions, channels }) => {
     devices.length > 0 ? (
       devices.map((node) => (
         <div
-          style={{ marginBottom: 12 }}
+          style={{ margin: "12px 0px 12px 0px" }}
           key={node.id}
           draggable
           onDragStart={(event) => onDragStart(event, node)}
@@ -285,45 +285,49 @@ export default ({ devices, labels, functions, channels }) => {
               Functions
             </Text>
           </div>
-          {
-            false && (
-              <div
+          {false && (
+            <div
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginLeft: 5,
+                marginRight: 5,
+                paddingBottom: 10,
+                borderBottom:
+                  tab === "utilities"
+                    ? "4px solid #F18F47"
+                    : "4px solid #ffffff",
+              }}
+              onClick={() => setTab("utilities")}
+              className="noselect"
+            >
+              {tab === "utilities" ? (
+                <img
+                  draggable="false"
+                  src={UtilityIcon}
+                  style={{ height: 20 }}
+                />
+              ) : (
+                <img
+                  draggable="false"
+                  src={UtilityGreyIcon}
+                  style={{ height: 20 }}
+                />
+              )}
+              <Text
                 style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  marginLeft: 5,
-                  marginRight: 5,
-                  paddingBottom: 10,
-                  borderBottom:
-                    tab === "utilities" ? "4px solid #F18F47" : "4px solid #ffffff",
+                  display: "block",
+                  color: tab === "utilities" ? "#F18F47" : "#D8E2EC",
+                  fontWeight: 500,
+                  marginTop: 4,
                 }}
-                onClick={() => setTab("utilities")}
-                className="noselect"
               >
-                {tab === "utilities" ? (
-                  <img draggable="false" src={UtilityIcon} style={{ height: 20 }} />
-                ) : (
-                  <img
-                    draggable="false"
-                    src={UtilityGreyIcon}
-                    style={{ height: 20 }}
-                  />
-                )}
-                <Text
-                  style={{
-                    display: "block",
-                    color: tab === "utilities" ? "#F18F47" : "#D8E2EC",
-                    fontWeight: 500,
-                    marginTop: 4,
-                  }}
-                >
-                  Utilities
-                </Text>
-              </div>
-            )
-          }
+                Utilities
+              </Text>
+            </div>
+          )}
           <div
             style={{
               cursor: "pointer",
@@ -367,8 +371,8 @@ export default ({ devices, labels, functions, channels }) => {
       {showMenu && (
         <div
           style={{
-            paddingLeft: 10,
-            paddingRight: 10,
+            paddingLeft: 15,
+            paddingRight: 15,
             marginTop: 10,
             maxHeight: "calc(100vh - 220px)",
             overflowY: "scroll",

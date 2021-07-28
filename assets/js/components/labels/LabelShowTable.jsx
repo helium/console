@@ -30,6 +30,7 @@ const { Text } = Typography;
 const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
+import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -86,7 +87,7 @@ class LabelShowTable extends Component {
     if (columnsToShow) {
       this.setState({ columnsToShow: JSON.parse(columnsToShow) });
     }
-    this.handleChangePage(1)
+    this.handleChangePage(1);
   }
 
   componentWillUnmount() {
@@ -169,20 +170,17 @@ class LabelShowTable extends Component {
         dataIndex: "name",
         sorter: true,
         render: (text, record) => (
-          <Link to={`/devices/${record.id}`}>
-            {text}
+          <React.Fragment>
+            <Link to={`/devices/${record.id}`}>{text}</Link>
             {moment()
               .utc()
               .local()
               .subtract(1, "days")
               .isBefore(moment.utc(record.last_connected).local()) && (
-              <StatusIcon
-                tooltipTitle="Last connected within the last 24h"
-                style={{ marginLeft: "4px" }}
-                {...this.props}
-              />
+              <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-          </Link>
+            {record.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
+          </React.Fragment>
         ),
       },
       {

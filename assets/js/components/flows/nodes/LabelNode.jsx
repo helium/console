@@ -8,6 +8,7 @@ import CFListTag from "../../../../img/cf-list/cf-list-node-tag.svg";
 import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
+import LabelNotInFilterBadge from "../../common/LabelNotInFilterBadge";
 
 export default ({ data, fromSidebar, selected }) => {
   return (
@@ -23,6 +24,7 @@ export default ({ data, fromSidebar, selected }) => {
           position: "relative",
         }}
       >
+        {data.devicesNotInFilter && <LabelNotInFilterBadge />}
         <div
           style={{
             height: "100%",
