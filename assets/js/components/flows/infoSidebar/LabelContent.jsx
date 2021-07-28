@@ -476,6 +476,7 @@ class LabelContent extends Component {
           open={this.state.showDeleteLabelModal}
           onClose={this.closeDeleteLabelModal}
           labelId={label.id}
+          doNotRedirect
         />
       </div>
     );

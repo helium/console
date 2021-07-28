@@ -29,6 +29,7 @@ class DeleteDeviceModal extends Component {
       onClose,
       from,
       label,
+      doNotRedirect,
     } = this.props;
     const { applyToAll } = this.state;
 
@@ -36,7 +37,7 @@ class DeleteDeviceModal extends Component {
       devices: applyToAll ? "all" : devicesToDelete.map((d) => d.id),
     });
     if (from == "deviceShow") {
-      deleteDevice(devicesToDelete[0].id, true);
+      deleteDevice(devicesToDelete[0].id, doNotRedirect === true ? false : true);
     } else {
       deleteDevices(!applyToAll && devicesToDelete, label ? label.id : "none");
     }

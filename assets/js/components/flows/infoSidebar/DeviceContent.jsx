@@ -431,6 +431,7 @@ class DeviceContent extends Component {
           devicesToDelete={this.state.deviceToDelete}
           totalDevices={1}
           from="deviceShow"
+          doNotRedirect
         />
       </div>
     );

@@ -10,9 +10,9 @@ import { deleteChannel } from "../../actions/channel";
 class DeleteChannelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { channel, onClose } = this.props;
+    const { channel, onClose, doNotRedirect } = this.props;
 
-    this.props.deleteChannel(channel.id);
+    this.props.deleteChannel(channel.id, doNotRedirect === true ? false : true);
     analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", { channel: channel.id });
     onClose();
   };

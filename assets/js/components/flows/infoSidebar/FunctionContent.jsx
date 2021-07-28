@@ -169,7 +169,7 @@ class FunctionContent extends Component {
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={fxn}
-          redirect
+          doNotRedirect
         />
       </div>
     );

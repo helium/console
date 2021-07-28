@@ -24,11 +24,11 @@ export const updateLabel = (id, params) => {
   }
 }
 
-export const deleteLabel = (id) => {
+export const deleteLabel = (id, redirect = true) => {
   return (dispatch) => {
     rest.destroy(`/api/labels/${id}`)
       .then(response => {
-        dispatch(replace('/devices'))
+        if (redirect) dispatch(replace('/devices'))
       })
   }
 }

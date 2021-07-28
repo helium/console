@@ -10,12 +10,12 @@ import { deleteFunction } from "../../actions/function";
 class DeleteFunctionModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteFunction, functionToDelete, onClose, redirect } = this.props;
+    const { deleteFunction, functionToDelete, onClose, doNotRedirect } = this.props;
 
     analyticsLogger.logEvent("ACTION_DELETE_FUNCTION", {
       function: functionToDelete.id,
     });
-    deleteFunction(functionToDelete.id, redirect);
+    deleteFunction(functionToDelete.id, doNotRedirect === true ? false : true);
 
     onClose();
   };

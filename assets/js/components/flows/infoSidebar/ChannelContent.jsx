@@ -313,6 +313,7 @@ class ChannelContent extends Component {
           open={this.state.showDeleteChannelModal}
           onClose={this.closeDeleteChannelModal}
           channel={channel}
+          doNotRedirect
         />
       </div>
     );
