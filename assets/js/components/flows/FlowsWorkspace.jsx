@@ -6,7 +6,6 @@ import ReactFlow, {
   useStoreActions,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
-import { Link } from 'react-router-dom';
 import FlowsNodesMenu from "./FlowsNodesMenu";
 import FlowsUpdateButtons from "./FlowsUpdateButtons";
 import LabelNode from "./nodes/LabelNode";
@@ -16,8 +15,8 @@ import DebugNode from "./nodes/DebugNode";
 import DeviceNode from "./nodes/DeviceNode";
 import InfoSidebar from "./infoSidebar/InfoSidebar";
 import NodeInfo from "./infoSidebar/NodeInfo";
-import { getStartedLinks } from "../Welcome"
-import RocketFilled from '@ant-design/icons/RocketFilled';
+import { getStartedLinks } from "../Welcome";
+import RocketFilled from "@ant-design/icons/RocketFilled";
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
 
@@ -38,12 +37,15 @@ export default ({
   functions,
   channels,
   devices,
-  organization
+  organization,
 }) => {
   const setSelectedElements = useStoreActions(
     (actions) => actions.setSelectedElements
   );
   const currentRole = useSelector((state) => state.organization.currentRole);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [showInfoSidebar, setShowInfoSidebar] = useState(false);
@@ -140,8 +142,12 @@ export default ({
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
-        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
-        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        cfListEnabled:
+          event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id:
+          event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        devicesNotInFilter:
+          event.dataTransfer.getData("node/devices_not_in_filter") === "true",
       });
     }
 
@@ -150,8 +156,12 @@ export default ({
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
-        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
-        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        cfListEnabled:
+          event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id:
+          event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        inXORFilter:
+          event.dataTransfer.getData("node/in_xor_filter") === "true",
       });
     }
 
@@ -200,7 +210,8 @@ export default ({
   };
 
   const onAlertUpdate = (id, type, hasAlerts) => {
-    // if (type === "function") { FOR FUNCTION ALERTS LATER IF NEEDED
+    // FOR FUNCTION ALERTS LATER IF NEEDED
+    // if (type === "function") {
     //   let functionNodes = {};
     //   for (const [key, _value] of Object.entries(elementsMap)) {
     //     if (key.split("_copy")[0] === id) {
@@ -226,13 +237,13 @@ export default ({
 
   const onLabelSidebarDevicesUpdate = (id, count) => {
     const newNodeData = Object.assign({}, elementsMap[id].data, {
-      deviceCount: elementsMap[id].data.deviceCount + count
+      deviceCount: elementsMap[id].data.deviceCount + count,
     });
     const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
     setElements((elsMap) =>
       Object.assign({}, elsMap, { [newNode.id]: newNode })
     );
-  }
+  };
 
   const handleToggleSidebar = () => {
     if (!showInfoSidebar) {
@@ -254,8 +265,9 @@ export default ({
         ref={reactFlowWrapper}
         style={{ position: "relative", height: "100%", width: "100%" }}
       >
-        {
-          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && !showInfoSidebar && (
+        {(organization.flow === '{"edges":[],"copies":[]}' ||
+          organization.flow === "{}") &&
+          !showInfoSidebar && (
             <div
               style={{
                 position: "absolute",
@@ -266,15 +278,20 @@ export default ({
               }}
             >
               <div className="pod" id="left">
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'bottom' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "bottom",
+                  }}
+                >
                   <RocketFilled className="bigicon" />
                   <h2>Get Started with Console</h2>
                 </div>
-                { getStartedLinks() }
+                {getStartedLinks()}
               </div>
             </div>
-          )
-        }
+          )}
         <ReactFlow
           elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
@@ -380,6 +397,7 @@ export default ({
             setShowInfoSidebar(false);
             setSelectedElements([]);
           }}
+          orgId={currentOrganizationId}
         />
       </InfoSidebar>
     </Fragment>

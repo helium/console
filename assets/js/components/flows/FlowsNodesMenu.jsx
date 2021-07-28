@@ -40,15 +40,26 @@ export default ({ devices, labels, functions, channels }) => {
       );
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
       event.dataTransfer.setData("node/adr_allowed", node.data.adrAllowed);
-      event.dataTransfer.setData("node/cf_list_enabled", node.data.cfListEnabled);
+      event.dataTransfer.setData(
+        "node/cf_list_enabled",
+        node.data.cfListEnabled
+      );
       event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData(
+        "node/devices_not_in_filter",
+        node.data.devicesNotInFilter
+      );
     }
 
     if (node.type == "deviceNode") {
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
       event.dataTransfer.setData("node/adr_allowed", node.data.adrAllowed);
-      event.dataTransfer.setData("node/cf_list_enabled", node.data.cfListEnabled);
+      event.dataTransfer.setData(
+        "node/cf_list_enabled",
+        node.data.cfListEnabled
+      );
       event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData("node/in_xor_filter", node.data.inXORFilter);
     }
 
     if (node.type == "functionNode") {

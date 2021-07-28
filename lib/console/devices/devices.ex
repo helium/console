@@ -182,6 +182,7 @@ defmodule Console.Devices do
 
   def update_in_xor_filter(device_ids) do
     result = from(d in Device, where: d.id in ^device_ids) |> Repo.update_all(set: [in_xor_filter: true])
-    {:ok, result}
+     devices = from(d in Device, where: d.id in ^device_ids) |> Repo.all()
+    {:ok, devices}
   end
 end

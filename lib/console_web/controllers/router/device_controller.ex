@@ -427,8 +427,17 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def update_devices_in_xor_filter(conn, %{"added" => added_device_ids, "removed" => _removed_device_ids}) do
-     with {:ok, _} <- Devices.update_in_xor_filter(added_device_ids) do
-      # TODO broadcasts to graphql once front end is implemented
+     with {:ok, devices} <- Devices.update_in_xor_filter(added_device_ids) do
+      Enum.map(devices,fn (d) -> d.organization_id end)
+      |> Enum.uniq()
+      |> Enum.each(fn org_id ->
+        Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+          ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{org_id}:device_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{org_id}:label_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:xor_filter_update", "graphql:xor_filter_update:#{org_id}:organization_xor_filter_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{org_id}:all_resources_update", %{})
+        end)
+      end)
       conn |> send_resp(200, "")
      end
   end

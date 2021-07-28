@@ -82,6 +82,16 @@ class LabelContent extends Component {
       }
     );
 
+    this.filterUpdateChannel = socket.channel("graphql:xor_filter_update", {});
+    this.filterUpdateChannel.join();
+    this.filterUpdateChannel.on(
+      `graphql:xor_filter_update:${this.props.orgId}:organization_xor_filter_update`,
+      (message) => {
+        const { page, pageSize, column, order } = this.state;
+        this.refetchPaginatedEntries(page, pageSize, column, order);
+      }
+    );
+
     if (!this.props.paginatedDevicesQuery.loading) {
       const { page, pageSize, column, order } = this.state;
       this.refetchPaginatedEntries(page, pageSize, column, order);
@@ -91,6 +101,7 @@ class LabelContent extends Component {
   componentWillUnmount() {
     this.channel.leave();
     this.labelChannel.leave();
+    this.filterUpdateChannel.leave();
   }
 
   handleSelectOption = (value) => {
@@ -374,8 +385,10 @@ class LabelContent extends Component {
                   value="remove"
                   style={{
                     color:
-                      selectedDevices.length === 0 ? "" : redForTablesDeleteText,
-                   }}
+                      selectedDevices.length === 0
+                        ? ""
+                        : redForTablesDeleteText,
+                  }}
                 >
                   Remove Selected Devices from Label
                 </Option>

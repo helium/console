@@ -21,6 +21,7 @@ export default ({
   hasConnectedEdges,
   elementsMap,
   onCFListUpdate,
+  orgId,
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
@@ -48,11 +49,7 @@ export default ({
     switch (type) {
       case "function":
         return (
-          <FunctionContent
-            id={id}
-            type={type}
-            onNodeDelete={onNodeDelete}
-          />
+          <FunctionContent id={id} type={type} onNodeDelete={onNodeDelete} />
         );
       case "device":
         return (
@@ -72,6 +69,7 @@ export default ({
         return (
           <LabelContent
             id={id}
+            orgId={orgId}
             type={type}
             onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
             onAdrUpdate={onAdrUpdate}
