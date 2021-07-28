@@ -46,7 +46,7 @@ defmodule ConsoleWeb.AlertController do
 
     with {:ok, %Alert{} = alert} <- Alerts.update_alert(alert, alert_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:alert_show", "graphql:alert_show:#{alert.id}:alert_update", %{})
-
+      ConsoleWeb.Endpoint.broadcast("graphql:alerts_index_table", "graphql:alerts_index_table:#{current_organization.id}:alert_list_update", %{})
       msg =
         cond do
           alert.name == name -> "Alert #{alert.name} updated successfully"
