@@ -181,8 +181,13 @@ defmodule Console.Devices do
   end
 
   def update_in_xor_filter(device_ids) do
-    result = from(d in Device, where: d.id in ^device_ids) |> Repo.update_all(set: [in_xor_filter: true])
-     devices = from(d in Device, where: d.id in ^device_ids) |> Repo.all()
-    {:ok, devices}
+    with {count, nil} <- from(d in Device, where: d.id in ^device_ids) |> Repo.update_all(set: [in_xor_filter: true]) do
+      if count > 0 do
+        devices = from(d in Device, where: d.id in ^device_ids) |> Repo.all()
+        {:ok, devices}
+      else
+        {:error, :not_found, "No devices were updated"}
+      end
+    end
   end
 end
