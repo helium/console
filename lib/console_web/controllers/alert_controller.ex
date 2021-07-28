@@ -65,7 +65,7 @@ defmodule ConsoleWeb.AlertController do
 
     with {:ok, %AlertNode{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
       ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
-      
+      ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
       msg =
         case alert_node do
           nil -> "Alert was already assigned to node"
@@ -85,7 +85,7 @@ defmodule ConsoleWeb.AlertController do
 
     with {:ok, %AlertNode{} = deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
       ConsoleWeb.Endpoint.broadcast("graphql:alert_settings_table", "graphql:alert_settings_table:#{node_type}-#{node_id}:alert_settings_update", %{})
-
+      ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
       msg =
         case deleted_alert_node do
           nil -> "Alert not attached to provided node"

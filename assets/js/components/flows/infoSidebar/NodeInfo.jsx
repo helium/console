@@ -51,7 +51,6 @@ export default ({
           <FunctionContent
             id={id}
             type={type}
-            onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
           />
         );

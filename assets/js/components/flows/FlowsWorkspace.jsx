@@ -125,6 +125,7 @@ export default ({
       data = Object.assign({}, data, {
         type_name: event.dataTransfer.getData("node/channel_type_name"),
         type: event.dataTransfer.getData("node/channel_type"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
       });
     }
 
@@ -137,6 +138,20 @@ export default ({
     if (type === "labelNode") {
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
+        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
+        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
+      });
+    }
+
+    if (type === "deviceNode") {
+      data = Object.assign({}, data, {
+        deviceCount: event.dataTransfer.getData("node/label_device_count"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
+        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
+        cfListEnabled: event.dataTransfer.getData("node/cf_list_enabled") === "true",
+        multi_buy_id: event.dataTransfer.getData("node/multi_buy_id") !== "null",
       });
     }
 
@@ -185,29 +200,28 @@ export default ({
   };
 
   const onAlertUpdate = (id, type, hasAlerts) => {
-    if (type === "function") {
-      let functionNodes = {};
-      for (const [key, _value] of Object.entries(elementsMap)) {
-        if (key.split("_copy")[0] === id) {
-          const newNodeData = Object.assign({}, elementsMap[key].data, {
-            hasAlerts,
-          });
-          const newNode = Object.assign({}, elementsMap[key], {
-            data: newNodeData,
-          });
-          Object.assign(functionNodes, { [newNode.id]: newNode });
-        }
-      }
-      setElements((elsMap) => Object.assign({}, elsMap, functionNodes));
-    } else {
-      const newNodeData = Object.assign({}, elementsMap[id].data, {
-        hasAlerts,
-      });
-      const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-      setElements((elsMap) =>
-        Object.assign({}, elsMap, { [newNode.id]: newNode })
-      );
-    }
+    // if (type === "function") { FOR FUNCTION ALERTS LATER IF NEEDED
+    //   let functionNodes = {};
+    //   for (const [key, _value] of Object.entries(elementsMap)) {
+    //     if (key.split("_copy")[0] === id) {
+    //       const newNodeData = Object.assign({}, elementsMap[key].data, {
+    //         hasAlerts,
+    //       });
+    //       const newNode = Object.assign({}, elementsMap[key], {
+    //         data: newNodeData,
+    //       });
+    //       Object.assign(functionNodes, { [newNode.id]: newNode });
+    //     }
+    //   }
+    //   setElements((elsMap) => Object.assign({}, elsMap, functionNodes));
+    // }
+    const newNodeData = Object.assign({}, elementsMap[id].data, {
+      hasAlerts,
+    });
+    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
+    setElements((elsMap) =>
+      Object.assign({}, elsMap, { [newNode.id]: newNode })
+    );
   };
 
   const onLabelSidebarDevicesUpdate = (id, count) => {
@@ -241,7 +255,7 @@ export default ({
         style={{ position: "relative", height: "100%", width: "100%" }}
       >
         {
-          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && (
+          (organization.flow === "{\"edges\":[],\"copies\":[]}" || organization.flow === "{}") && !showInfoSidebar && (
             <div
               style={{
                 position: "absolute",
