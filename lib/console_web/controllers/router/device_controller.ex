@@ -435,7 +435,6 @@ defmodule ConsoleWeb.Router.DeviceController do
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{org_id}:device_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{org_id}:label_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:xor_filter_update", "graphql:xor_filter_update:#{org_id}:organization_xor_filter_update", %{})
-          ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{org_id}:all_resources_update", %{})
         end)
       end)
       conn |> send_resp(200, "")

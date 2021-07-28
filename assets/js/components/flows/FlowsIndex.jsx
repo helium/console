@@ -8,7 +8,7 @@ import { updateFlows } from "../../actions/flow";
 import { getIntegrationTypeForFlows } from "../../util/flows";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
-import { Typography, Spin } from "antd";
+import { Typography, Spin, message } from "antd";
 import find from "lodash/find";
 const { Text } = Typography;
 import UserCan from "../common/UserCan";
@@ -41,7 +41,7 @@ class FlowsIndex extends Component {
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_FLOWS_PAGE");
 
-    const orgId = this.props.currentOrganizationId
+    const orgId = this.props.currentOrganizationId;
     const { socket } = this.props;
 
     this.channel = socket.channel("graphql:flows_nodes_menu", {});
@@ -52,6 +52,21 @@ class FlowsIndex extends Component {
         this.props.allResourcesQuery.refetch();
       }
     );
+
+    this.filterChannel = socket.channel("graphql:xor_filter_update", {});
+    this.filterChannel.join();
+    this.filterChannel.on(
+      `graphql:xor_filter_update:${orgId}:organization_xor_filter_update`,
+      (msg) => {
+        this.props.allResourcesQuery.refetch();
+        message.info("Devices in filter updated. Please refresh.", 60);
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.channel.leave();
+    this.filterChannel.leave();
   }
 
   render() {
