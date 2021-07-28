@@ -22,6 +22,7 @@ export default ({
   elementsMap,
   onCFListUpdate,
   orgId,
+  hasChanges
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
@@ -49,7 +50,12 @@ export default ({
     switch (type) {
       case "function":
         return (
-          <FunctionContent id={id} type={type} onNodeDelete={onNodeDelete} />
+          <FunctionContent
+            id={id}
+            type={type}
+            onNodeDelete={onNodeDelete}
+            hasChanges={hasChanges}
+          />
         );
       case "device":
         return (
@@ -61,6 +67,7 @@ export default ({
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
             onCFListUpdate={onCFListUpdate}
+            hasChanges={hasChanges}
           />
         );
       case "utility":
@@ -77,6 +84,7 @@ export default ({
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
             onCFListUpdate={onCFListUpdate}
+            hasChanges={hasChanges}
           />
         );
       case "channel":
@@ -86,6 +94,7 @@ export default ({
             type={type}
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
+            hasChanges={hasChanges}
           />
         );
       case "edge":

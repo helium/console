@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../../graphql/withGql";
-import { Button, Typography, Card, Divider, Input, Tabs } from "antd";
+import { Button, Typography, Card, Divider, Input, Tabs, Tooltip } from "antd";
 const { TabPane } = Tabs;
 const { Text, Paragraph } = Typography;
 import moment from "moment";
@@ -173,17 +173,34 @@ class ChannelContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              <Button
-                style={{ borderRadius: 4, marginRight: 5 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openDeleteChannelModal();
-                }}
-              >
-                Delete
-              </Button>
+              { this.props.hasChanges ? (
+                  <Tooltip
+                    title="Undo or save your workspace changes before deleting this integration"
+                    overlayStyle={{ width: 230 }}
+                  >
+                    <Button
+                      style={{ borderRadius: 4, marginRight: 5 }}
+                      type="danger"
+                      icon={<DeleteOutlined />}
+                      disabled
+                    >
+                      Delete
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    style={{ borderRadius: 4, marginRight: 5 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.openDeleteChannelModal();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )
+              }
             </UserCan>
           </div>
         </div>

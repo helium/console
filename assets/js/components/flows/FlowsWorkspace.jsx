@@ -365,6 +365,7 @@ export default ({
               selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
           }
           elementsMap={elementsMap}
+          hasChanges={hasChanges}
           onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
           onAdrUpdate={onAdrUpdate}
           onCFListUpdate={onCFListUpdate}
