@@ -6,7 +6,8 @@ import { ALL_LABELS } from "../../graphql/labels";
 import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import LabelsIcon from "../../../img/label-node-icon.svg";
-import inXORFilterLabelTag from "../../../img/in_xor_filter/in-xor-filter-label-tag.svg";
+import LabelNotInFilterBadge from "../common/LabelNotInFilterBadge";
+import { checkIfDevicesNotInFilter } from "../../util/constants";
 
 const Node = ({
   name,
@@ -28,19 +29,7 @@ const Node = ({
     }}
     onClick={() => push("/labels/" + id)}
   >
-    {devicesNotInFilter && (
-      <Tooltip title="One or more devices in this label not yet in XOR filter">
-        <img
-          draggable="false"
-          src={inXORFilterLabelTag}
-          style={{
-            top: "-11px",
-            left: "-11px",
-            position: "absolute",
-          }}
-        />
-      </Tooltip>
-    )}
+    {devicesNotInFilter && <LabelNotInFilterBadge />}
     <div
       style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
@@ -101,9 +90,6 @@ class DeviceIndexLabelsBar extends Component {
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         {allLabels.map((l) => {
-          const devicesNotInFilter =
-            l.devices.filter((device) => device.in_xor_filter === false)
-              .length > 0;
           return (
             <Node
               key={l.id}
@@ -112,7 +98,7 @@ class DeviceIndexLabelsBar extends Component {
               id={l.id}
               push={this.props.push}
               pathname={this.props.pathname}
-              devicesNotInFilter={devicesNotInFilter}
+              devicesNotInFilter={checkIfDevicesNotInFilter(l)}
             />
           );
         })}

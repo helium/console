@@ -21,7 +21,6 @@ import {
   Popover,
   Switch,
   Tooltip,
-  Tag,
 } from "antd";
 import { StatusIcon } from "../common/StatusIcon";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
@@ -31,7 +30,7 @@ const { Text } = Typography;
 const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
-import inXORFilterDeviceTag from "../../../img/in_xor_filter/in-xor-filter-device-table-tag.svg";
+import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -180,29 +179,7 @@ class LabelShowTable extends Component {
               .isBefore(moment.utc(record.last_connected).local()) && (
               <StatusIcon tooltipTitle="Last connected within the last 24h" />
             )}
-            {record.in_xor_filter === false && (
-              <Tooltip title="Device not yet in XOR filter">
-                <Tag
-                  style={{
-                    marginLeft: 10,
-                    padding: 5,
-                    backgroundColor: "transparent",
-                    color: "#2C79EE",
-                    borderColor: "#2C79EE",
-                    borderRadius: 33,
-                    borderWidth: 1,
-                  }}
-                  icon={
-                    <img
-                      src={inXORFilterDeviceTag}
-                      style={{ height: 14, marginRight: 5 }}
-                    />
-                  }
-                >
-                  Pending...
-                </Tag>
-              </Tooltip>
-            )}
+            {record.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
           </React.Fragment>
         ),
       },
