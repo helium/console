@@ -380,7 +380,7 @@ export default ({
           deleteNode={() => {
             let edges = [];
 
-            if (selectedNodeId.slice(0, 4) === "edge") {
+            if (selectedNodeId.slice(0, 4) !== "edge") {
               edges = Object.values(elementsMap)
                 .filter(
                   (el) =>
