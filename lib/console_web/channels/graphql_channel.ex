@@ -140,4 +140,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:multi_buy_show", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:xor_filter_update", _message, socket) do
+    {:ok, socket}
+  end
 end
