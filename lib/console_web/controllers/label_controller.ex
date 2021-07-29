@@ -254,7 +254,6 @@ defmodule ConsoleWeb.LabelController do
   end
 
   defp apply_label_to_devices(devices, label_id, organization, conn) do
-    IO.puts "\n\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n\n\n"
     current_organization = conn.assigns.current_organization
     destination_label = Labels.get_label!(organization, label_id)
 
