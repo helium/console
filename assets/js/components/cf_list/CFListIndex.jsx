@@ -166,13 +166,13 @@ export default (props) => {
                 >
                   Note: This setting is only applicable to US915 devices.
                 </Text>
-                {/* <a
+                <a
                   className="help-link"
                   target="_blank"
-                  href="https://docs.helium.com/use-the-network/console/"
+                  href="https://docs.helium.com/use-the-network/console/adr#cf-list"
                 >
                   Learn more about CF List
-                </a> */}
+                </a>
               </div>
             </Col>
             <Col span={12}></Col>

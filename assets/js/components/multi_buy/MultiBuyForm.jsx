@@ -94,7 +94,13 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
               device.
             </p>
             <p>
-              <a className="help-link">Learn more about Multiple Packets</a>
+              <a
+                className="help-link"
+                href="https://docs.helium.com/use-the-network/console/adr#multiple-packets"
+                target="_blank"
+              >
+                Learn more about Multiple Packets
+              </a>
             </p>
           </div>
         </Col>

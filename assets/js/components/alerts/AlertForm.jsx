@@ -136,7 +136,13 @@ export default (props) => {
                 Nodes.
               </p>
               <p>
-                <a className="help-link">Learn more about alerts</a>
+                <a
+                  className="help-link"
+                  href="https://docs.helium.com/use-the-network/console/adr#alerts"
+                  target="_blank"
+                >
+                  Learn more about alerts
+                </a>
               </p>
             </div>
           </Col>

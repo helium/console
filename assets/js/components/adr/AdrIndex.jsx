@@ -11,7 +11,7 @@ const { Text } = Typography;
 export const adrText1 =
   "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. When ADR is disabled the channel mask is still transmitted via ADR command, but power output and data rates are not impacted. ";
 export const adrText2 =
-  "Recommended: only use ADR for fixed or non-mobile devices to ensure reliable connectivity."
+  "Recommended: only use ADR for fixed or non-mobile devices to ensure reliable connectivity.";
 
 export default (props) => {
   useEffect(() => {
@@ -99,7 +99,7 @@ export default (props) => {
           </div>
         </div>
 
-        <div style={{ overflowX: 'scroll' }} className="no-scroll-bar">
+        <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
           <Row gutter={30} style={{ padding: 30, minWidth: 700 }}>
             <Col span={12}>
               <div style={{ padding: 20 }}>
@@ -151,7 +151,7 @@ export default (props) => {
                 <a
                   className="help-link"
                   target="_blank"
-                  href="https://docs.helium.com/use-the-network/console/adr/"
+                  href="https://docs.helium.com/use-the-network/console/adr#adr"
                 >
                   Learn more about ADR
                 </a>
