@@ -334,17 +334,35 @@ class LabelContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              <Button
-                style={{ borderRadius: 4, marginRight: 5 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openDeleteLabelModal();
-                }}
-              >
-                Delete
-              </Button>
+              { this.props.hasChanges ? (
+                  <Tooltip
+                    title="Undo or save your workspace changes before deleting this label"
+                    overlayStyle={{ width: 230 }}
+                  >
+                    <Button
+                      style={{ borderRadius: 4, marginRight: 5 }}
+                      type="danger"
+                      icon={<DeleteOutlined />}
+                      disabled
+                    >
+                      Delete
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    style={{ borderRadius: 4, marginRight: 5 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.openDeleteLabelModal();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )
+              }
+
             </UserCan>
           </div>
         </div>
@@ -476,6 +494,8 @@ class LabelContent extends Component {
           open={this.state.showDeleteLabelModal}
           onClose={this.closeDeleteLabelModal}
           labelId={label.id}
+          doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

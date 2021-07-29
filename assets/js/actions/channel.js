@@ -29,11 +29,12 @@ export const updateChannel = (id, params) => {
   }
 }
 
-export const deleteChannel = (id) => {
+export const deleteChannel = (id, redirect = true) => {
   return (dispatch) => {
-    rest.destroy(`/api/channels/${id}`)
+    return rest.destroy(`/api/channels/${id}`)
       .then(response => {
-        dispatch(replace('/integrations'))
+        if (redirect) dispatch(replace('/integrations'))
+        return response
       })
   }
 }

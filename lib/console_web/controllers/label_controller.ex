@@ -61,6 +61,7 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, %Label{} = label} <- Labels.delete_label(label) do
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
       Alerts.delete_alert_nodes(id, "label")
       broadcast_router_update_devices(device_ids)
 

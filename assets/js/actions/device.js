@@ -42,9 +42,11 @@ export const updateDevice = (id, params) => {
 
 export const deleteDevice = (id, redirect = true) => {
   return (dispatch) => {
-    rest.destroy(`/api/devices/${id}`).then((response) => {
-      if (redirect) dispatch(replace("/devices"));
-    });
+    return rest.destroy(`/api/devices/${id}`)
+      .then((response) => {
+        if (redirect) dispatch(replace("/devices"));
+        return response
+      });
   };
 };
 

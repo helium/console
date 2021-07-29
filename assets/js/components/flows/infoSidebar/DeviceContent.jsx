@@ -14,7 +14,7 @@ import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
 import { displayError } from "../../../util/messages";
 import withGql from "../../../graphql/withGql";
-import { Typography, Button, Input, Tag, Card, Tabs } from "antd";
+import { Typography, Button, Input, Tag, Card, Tabs, Tooltip } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
@@ -231,17 +231,35 @@ class DeviceContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              <Button
-                style={{ borderRadius: 4, marginRight: 5 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openDeleteDeviceModal(device);
-                }}
-              >
-                Delete
-              </Button>
+              {
+                this.props.hasChanges ? (
+                  <Tooltip
+                    title="Undo or save your workspace changes before deleting this device"
+                    overlayStyle={{ width: 230 }}
+                  >
+                    <Button
+                      style={{ borderRadius: 4, marginRight: 5 }}
+                      type="danger"
+                      icon={<DeleteOutlined />}
+                      disabled
+                    >
+                      Delete
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    style={{ borderRadius: 4, marginRight: 5 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.openDeleteDeviceModal(device);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )
+              }
             </UserCan>
           </div>
         </div>
@@ -431,6 +449,8 @@ class DeviceContent extends Component {
           devicesToDelete={this.state.deviceToDelete}
           totalDevices={1}
           from="deviceShow"
+          doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

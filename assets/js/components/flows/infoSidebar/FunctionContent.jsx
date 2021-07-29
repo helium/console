@@ -7,7 +7,7 @@ import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
-import { Button, Typography, Tabs, Card } from "antd";
+import { Button, Typography, Tabs, Card, Tooltip } from "antd";
 const { Text, Paragraph } = Typography;
 import UserCan, { userCan } from "../../common/UserCan";
 import { FUNCTION_SHOW } from "../../../graphql/functions";
@@ -125,17 +125,34 @@ class FunctionContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              <Button
-                style={{ borderRadius: 4, marginRight: 5 }}
-                type="danger"
-                icon={<DeleteOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  this.openDeleteFunctionModal();
-                }}
-              >
-                Delete
-              </Button>
+            { this.props.hasChanges ? (
+                <Tooltip
+                  title="Undo or save your workspace changes before deleting this function"
+                  overlayStyle={{ width: 230 }}
+                >
+                  <Button
+                    style={{ borderRadius: 4, marginRight: 5 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    disabled
+                  >
+                    Delete
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  style={{ borderRadius: 4, marginRight: 5 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteFunctionModal();
+                  }}
+                >
+                  Delete
+                </Button>
+              )
+            }
             </UserCan>
           </div>
         </div>
@@ -169,7 +186,8 @@ class FunctionContent extends Component {
           open={showDeleteFunctionModal}
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={fxn}
-          redirect
+          doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

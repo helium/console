@@ -54,6 +54,7 @@ defmodule ConsoleWeb.FunctionController do
     with {:ok, _} <- Functions.delete_function(function) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_bar", "graphql:function_index_bar:#{current_organization.id}:function_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
       Alerts.delete_alert_nodes(id, "function")
       broadcast_router_update_devices(all_device_ids)
 

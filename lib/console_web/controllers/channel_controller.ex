@@ -136,6 +136,7 @@ defmodule ConsoleWeb.ChannelController do
     with {:ok, %Channel{} = channel} <- Channels.delete_channel(channel) do
       ConsoleWeb.Endpoint.broadcast("graphql:channels_index_table", "graphql:channels_index_table:#{current_organization.id}:channel_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
 
       if (deleted_channel != nil) do
         { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
