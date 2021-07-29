@@ -495,6 +495,7 @@ class LabelContent extends Component {
           onClose={this.closeDeleteLabelModal}
           labelId={label.id}
           doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

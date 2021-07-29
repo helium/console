@@ -187,6 +187,7 @@ class FunctionContent extends Component {
           onClose={this.closeDeleteFunctionModal}
           functionToDelete={fxn}
           doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

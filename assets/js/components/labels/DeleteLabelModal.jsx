@@ -10,10 +10,15 @@ import { deleteLabel } from '../../actions/label'
 class DeleteLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { deleteLabel, labelId, onClose, doNotRedirect } = this.props
+    const { deleteLabel, labelId, onClose, doNotRedirect, deleteResource } = this.props
 
     analyticsLogger.logEvent("ACTION_DELETE_LABEL", { labels: [labelId] })
     deleteLabel(labelId, doNotRedirect === true ? false : true)
+    .then(response => {
+      if (response.status === 204) {
+        deleteResource(true)
+      }
+    })
 
     onClose()
   }

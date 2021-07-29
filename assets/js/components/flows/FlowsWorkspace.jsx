@@ -378,7 +378,7 @@ export default ({
                 (el.source === selectedNodeId || el.target === selectedNodeId)
             ).length > 0
           }
-          deleteNode={() => {
+          deleteNode={(actualResourceDeleted = false) => {
             let edges = [];
 
             if (selectedNodeId.slice(0, 4) !== "edge") {
@@ -394,7 +394,11 @@ export default ({
 
             setElements((elsMap) => omit(elsMap, edges.concat(selectedNodeId)));
 
-            setChangesState(true);
+            if (actualResourceDeleted) {
+              setChangesState(false);
+            } else {
+              setChangesState(true);
+            }
             setShowInfoSidebar(false);
             setSelectedElements([]);
           }}

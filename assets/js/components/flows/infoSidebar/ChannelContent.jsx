@@ -331,6 +331,7 @@ class ChannelContent extends Component {
           onClose={this.closeDeleteChannelModal}
           channel={channel}
           doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

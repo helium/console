@@ -55,6 +55,7 @@ export default ({
             type={type}
             onNodeDelete={onNodeDelete}
             hasChanges={hasChanges}
+            deleteResource={deleteNode}
           />
         );
       case "device":
@@ -68,6 +69,7 @@ export default ({
             onNodeDelete={onNodeDelete}
             onCFListUpdate={onCFListUpdate}
             hasChanges={hasChanges}
+            deleteResource={deleteNode}
           />
         );
       case "utility":
@@ -85,6 +87,7 @@ export default ({
             onNodeDelete={onNodeDelete}
             onCFListUpdate={onCFListUpdate}
             hasChanges={hasChanges}
+            deleteResource={deleteNode}
           />
         );
       case "channel":
@@ -95,6 +98,7 @@ export default ({
             onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
             hasChanges={hasChanges}
+            deleteResource={deleteNode}
           />
         );
       case "edge":

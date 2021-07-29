@@ -28,9 +28,10 @@ export const updateFunction = (id, params) => {
 
 export const deleteFunction = (id, redirect = true) => {
   return (dispatch) => {
-    rest.destroy(`/api/functions/${id}`)
+    return rest.destroy(`/api/functions/${id}`)
       .then(response => {
         if (redirect) dispatch(replace('/functions'))
+        return response
       })
   }
 }

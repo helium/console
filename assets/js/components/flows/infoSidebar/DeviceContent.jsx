@@ -450,6 +450,7 @@ class DeviceContent extends Component {
           totalDevices={1}
           from="deviceShow"
           doNotRedirect
+          deleteResource={this.props.deleteResource}
         />
       </div>
     );

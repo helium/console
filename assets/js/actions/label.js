@@ -26,9 +26,10 @@ export const updateLabel = (id, params) => {
 
 export const deleteLabel = (id, redirect = true) => {
   return (dispatch) => {
-    rest.destroy(`/api/labels/${id}`)
+    return rest.destroy(`/api/labels/${id}`)
       .then(response => {
         if (redirect) dispatch(replace('/devices'))
+        return response
       })
   }
 }
