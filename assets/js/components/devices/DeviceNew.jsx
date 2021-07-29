@@ -11,7 +11,7 @@ import UserCan from "../common/UserCan";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import ImportDevicesModal from "./import/ImportDevicesModal";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import { Card, Button, Typography, Input, Row, Col } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
@@ -25,8 +25,12 @@ class DeviceNew extends Component {
 
   state = {
     name: "",
-    devEUI: process.env.SELF_HOSTED ? randomString(16) : "6081F9" + randomString(10),
-    appEUI: process.env.SELF_HOSTED ? randomString(16) : this.props.currentOrganizationAppEui,
+    devEUI: process.env.SELF_HOSTED
+      ? randomString(16)
+      : "6081F9" + randomString(10),
+    appEUI: process.env.SELF_HOSTED
+      ? randomString(16)
+      : this.props.currentOrganizationAppEui,
     appKey: randomString(32),
     labelName: null,
     showAppKey: false,
@@ -48,7 +52,9 @@ class DeviceNew extends Component {
       (message) => {
         const { page, pageSize } = this.state;
         this.props.importsQuery.refetch({ page, pageSize });
-        const user_id = user.sub.startsWith("auth0") ? user.sub.slice(6) : user.sub;
+        const user_id = user.sub.startsWith("auth0")
+          ? user.sub.slice(6)
+          : user.sub;
 
         if (user_id === message.user_id && message.status === "success") {
           this.setState({ importComplete: true });
@@ -131,10 +137,25 @@ class DeviceNew extends Component {
 
     return (
       <DeviceDashboardLayout {...this.props}>
-        <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
           <div style={{ padding: "30px 30px 20px 30px", minWidth }}>
-            <Text style={{ fontSize: 22, fontWeight: 600 }}>Add New Device</Text>
-            <Row gutter={30} style={{ marginTop: 20 }}>
+            <Text style={{ fontSize: 22, fontWeight: 600 }}>
+              Add New Device
+            </Text>
+            <div>
+              <p style={{ fontSize: 16 }}>
+                <b>Important:</b> The first time a device joins the Network
+                could take up to 20 mins.{" "}
+                <a
+                  className="help-link"
+                  href="https://docs.helium.com/use-the-network/console/adding-devices/#important-information-when-adding-devices"
+                  target="_blank"
+                >
+                  Learn more about adding devices
+                </a>
+              </p>
+            </div>
+            <Row gutter={30} style={{ marginTop: 10 }}>
               <Col span={14}>
                 <Card title="Enter Device Details">
                   <Input
