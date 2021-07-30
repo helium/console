@@ -13,6 +13,11 @@ defmodule Console.Devices do
     Repo.all(Device)
   end
 
+  def list_devices_no_disco_mode do
+    from(d in Device, where: is_nil(d.hotspot_address))
+    |> Repo.all()
+  end
+
   def get_device(id), do: Repo.get(Device, id)
   def get_device!(id), do: Repo.get!(Device, id)
 

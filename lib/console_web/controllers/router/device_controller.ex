@@ -23,7 +23,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   ]
 
   def index(conn, _) do
-    devices = Devices.list_devices()
+    devices = Devices.list_devices_no_disco_mode()
 
     render(conn, "index.json", devices: devices)
   end
