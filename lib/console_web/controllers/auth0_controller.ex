@@ -4,7 +4,7 @@ defmodule ConsoleWeb.Auth0Controller do
   action_fallback(ConsoleWeb.FallbackController)
 
   def get_enrolled_mfa(conn, _params) do
-    base_url = Application.get_env(:console, :auth0_baseurl)
+    base_url = Application.get_env(:console, :auth0_mfa_baseurl)
     auth0_id = conn.assigns.auth0_id
     case Application.get_env(:console, :auth0_expiration) do
       nil ->
@@ -39,7 +39,7 @@ defmodule ConsoleWeb.Auth0Controller do
   end
 
   def enroll_in_mfa(conn, _params) do
-    base_url = Application.get_env(:console, :auth0_baseurl)
+    base_url = Application.get_env(:console, :auth0_mfa_baseurl)
     auth0_id = conn.assigns.auth0_id
     case Application.get_env(:console, :auth0_expiration) do
       nil ->
@@ -77,7 +77,7 @@ defmodule ConsoleWeb.Auth0Controller do
   end
 
   defp fetch_new_auth0_token() do
-    base_url = Application.get_env(:console, :auth0_baseurl)
+    base_url = Application.get_env(:console, :auth0_mfa_baseurl)
     auth0_client_id = Application.get_env(:console, :auth0_management_id)
     auth0_secret = Application.get_env(:console, :auth0_secret)
     auth0_management_audience = Application.get_env(:console, :auth0_management_aud)
