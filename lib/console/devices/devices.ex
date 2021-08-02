@@ -191,7 +191,7 @@ defmodule Console.Devices do
         devices = from(d in Device, where: d.id in ^device_ids) |> Repo.all()
         {:ok, devices}
       else
-        {:error, :not_found, "No devices were updated"}
+        {:error, "No devices were updated"}
       end
     end
   end
