@@ -118,7 +118,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
           "sub_category" => "uplink_integration_req"
         })
 
-      assert response(resp_conn, 200) # handles when the invalid Unicode code point is in the body
+      assert response(resp_conn, 200) # handles when the invalid Unicode code point (\u0000\) is in the body
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
@@ -144,7 +144,7 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
           "sub_category" => "uplink_integration_req"
         })
 
-      assert response(resp_conn, 200) # handles when the invalid Unicode code point is in the body
+      assert response(resp_conn, 200) # handles when the invalid Unicode code point (\u0000) is in the body
     end
   end
 end
