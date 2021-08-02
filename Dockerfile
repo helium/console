@@ -32,6 +32,9 @@ COPY priv priv
 # your Elixir templates, you will need to move the asset compilation step
 # down so that `lib` is available.
 COPY assets assets
+# webpack docker config needs to replace the regular webpack config due to env vars
+RUN rm assets/webpack.config.js
+RUN mv assets/webpack-docker.config.js assets/webpack.config.js
 # use webpack to compile npm dependencies - https://www.npmjs.com/package/webpack-deploy
 RUN cd assets && yarn && yarn run deploy
 # COPY package.json package-lock.json ./assets/
