@@ -174,7 +174,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             event = case event["data"]["req"]["body"] do
               nil -> event
               _ ->
-                if String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000\\") do
+                if String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") do
                   Kernel.put_in(event["data"]["req"]["body"], "Unsupported unicode escape sequence in request body")
                 else
                   event
