@@ -119,6 +119,32 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
         })
 
       assert response(resp_conn, 200) # handles when the invalid Unicode code point is in the body
+
+      resp_conn = build_conn()
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> post("/api/router/devices/#{device_0.id}/event", %{
+          "category" => "uplink",
+          "data" => %{
+            "integration" => %{
+              "id" => channel.id,
+              "name" => "AMmq",
+              "status" => "success"
+            },
+            "req" => %{
+              "body" => "{\"app_eui\":\"6081F9856D334002\",\"decoded\":{\"payload\":{\"key_press\":\"\\u0001ú«X\\u0015%Ý\\u0000 b\\b\\u0002\\u0001\\u0007hS\\u0006s'*\\u0002g\\u0000ì\\u0004\\u00025Ä\\u0003qÿÿÿü$\"},\"status\":\"success\"},\"dev_eui\":\"90813481F4N5417\",\"devaddr\":\"06000098\",\"downlink_url\":\"https://console.helium.com/api/v1/down/\",\"fcnt\":135,\"hotspots\":[{\"channel\":14,\"frequency\":918.0,\"hold_time\":2934,\"id\":\"22Bb5Z7v4fN5g4cbX1uf3oHKKs6uYGun189ztAdGzd3ogLVPWsP\",\"lat\":-34.935295547741546,\"long\":138.59471168244602,\"name\":\"bouncy-dancing-lobster\",\"reported_at\":1627881788579,\"rssi\":-46.0,\"snr\":9.800000190734863,\"spreading\":\"SF10BW125\",\"status\":\"success\"}],\"id\":\"83gbbeb8-14ad-6789-ag33-1c02e093e275\",\"metadata\":{\"adr_allowed\":false,\"cf_list_enabled\":false,\"multi_buy\":1,\"organization_id\":\"36q4g683-b12e-7ce7-u8f0-d36251942c02\"},\"name\":\"somedevicename\",\"payload\":\"AYj6q1gVJd0AIGIIAgGUB2hTBnMnKgJnAOwEAjXEA3H/k////CQ=\",\"payload_size\":38,\"port\":8,\"reported_at\":1627881788579,\"uuid\":\"mhw1n5fn-5632-5895-g612-56893236456a\"}",
+              "endpoint" => "mqtt://broker.hivemq.com",
+              "qos" => 0,
+              "topic" => "helium/aa969c12-e1d1-4876-adb8-2b22f6c6a8fd/rx"
+            }
+          },
+          "description" => "Request sent to <<\"AMmq\">>",
+          "device_id" => "aa969c12-e1d1-4876-adb8-2b22f6c6a8fd",
+          "id" => "7667e570-ddbf-47f9-9384-59479780a8f3",
+          "reported_at" => timestamp,
+          "sub_category" => "uplink_integration_req"
+        })
+
+      assert response(resp_conn, 200) # handles when the invalid Unicode code point is in the body
     end
   end
 end
