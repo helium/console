@@ -42,6 +42,9 @@ config :console,
 config :console,
   auth0_baseurl: System.get_env("AUTH0_BASE_URL")
 
+config :console,
+  auth0_mfa_baseurl: System.get_env("AUTH0_MFA_BASE_URL")
+
 config :appsignal, :config,
   active: true,
   name: System.get_env("APPSIGNAL_APP_NAME"),
