@@ -45,6 +45,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
+import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 
 class DeviceShow extends Component {
   state = {
@@ -80,10 +81,20 @@ class DeviceShow extends Component {
         this.props.deviceShowQuery.refetch();
       }
     );
+
+    this.filterUpdate = socket.channel("graphql:xor_filter_update", {});
+    this.filterUpdate.join();
+    this.filterUpdate.on(
+      `graphql:xor_filter_update:${this.props.currentOrgId}:organization_xor_filter_update`,
+      (message) => {
+        this.props.deviceShowQuery.refetch();
+      }
+    );
   }
 
   componentWillUnmount() {
     this.channel.leave();
+    this.filterUpdate.leave();
   }
 
   handleInputUpdate = (e) => {
@@ -268,7 +279,20 @@ class DeviceShow extends Component {
       <DeviceDashboardLayout {...this.props}>
         <div className="show-page">
           <div className="show-header">
-            <Text style={{ fontSize: 24, fontWeight: 600 }}>{device.name}</Text>
+            <div>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: 600,
+                  verticalAlign: "middle",
+                }}
+              >
+                {device.name}
+              </Text>
+              {device.in_xor_filter === false && (
+                <DeviceNotInFilterTableBadge />
+              )}
+            </div>
             <UserCan>
               <div className="show-buttons">
                 <Popover
@@ -669,6 +693,7 @@ class DeviceShow extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentOrgId: state.organization.currentOrganizationId,
   };
 }
 
