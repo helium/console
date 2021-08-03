@@ -396,8 +396,8 @@ export default ({ devices, labels, functions, channels }) => {
           style={{
             paddingLeft: 15,
             paddingRight: 15,
-            marginTop: 10,
-            maxHeight: "calc(100vh - 220px)",
+            marginTop: 0,
+            maxHeight: "calc(100vh - 270px)",
             overflowY: "scroll",
           }}
         >
