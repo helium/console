@@ -40,6 +40,7 @@ defmodule ConsoleWeb.DeviceController do
 
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
+      broadcast_router_update_devices([device.id])
 
       conn
       |> put_status(:created)
@@ -275,7 +276,7 @@ defmodule ConsoleWeb.DeviceController do
     ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{})
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
-        added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0}, fn device, acc ->
+        added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0, device_ids: []}, fn device, acc ->
           case device
           |> Map.put("organization_id", current_organization.id)
           |> Devices.create_device(current_organization) do
@@ -304,7 +305,8 @@ defmodule ConsoleWeb.DeviceController do
 
               %{
                 label_device_map: label_device_map,
-                device_count: acc.device_count + 1
+                device_count: acc.device_count + 1,
+                device_ids: [new_device.id | acc.device_ids]
               }
             _ -> acc
           end
@@ -336,12 +338,14 @@ defmodule ConsoleWeb.DeviceController do
             successful_devices: added_devices.device_count
           }
         )
+
         ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
           status: "success",
           user_id: successful_import.user_id,
           successful_devices: successful_import.successful_devices,
           type: successful_import.type
         })
+        broadcast_router_update_devices(added_devices.device_ids)
       rescue
         _ ->
           {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})

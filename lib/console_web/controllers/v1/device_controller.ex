@@ -106,6 +106,8 @@ defmodule ConsoleWeb.V1.DeviceController do
       |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
+      broadcast_router_update_devices(device)
+      
       conn
       |> put_status(:created)
       |> render("show.json", device: device |> Repo.preload([:labels]))
