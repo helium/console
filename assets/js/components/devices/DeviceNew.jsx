@@ -37,6 +37,8 @@ class DeviceNew extends Component {
     showImportDevicesModal: false,
     importComplete: false,
     importType: "",
+    page: 1,
+    pageSize: 10
   };
 
   componentDidMount() {
