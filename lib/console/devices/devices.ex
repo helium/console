@@ -38,6 +38,11 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
+  def get_devices_in_list(ids) do
+     from(d in Device, where: d.id in ^ids)
+     |> Repo.all()
+  end
+
   def get_device_and_lock_for_add_device_event(device_id) do
     Device
       |> where([d], d.id == ^device_id)
