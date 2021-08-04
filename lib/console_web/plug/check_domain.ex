@@ -2,6 +2,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
   def init(default), do: default
 
   def call(conn, _default) do
+    IO.inspect conn
     header_cl = Plug.Conn.get_req_header(conn, "content-length")
     header_te = Plug.Conn.get_req_header(conn, "transfer-encoding")
 
