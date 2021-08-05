@@ -80,7 +80,6 @@ defmodule ConsoleWeb.V1.LabelController do
         case count do
           0 -> "Device has already been added to label"
           _ ->
-            ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
             broadcast_router_update_devices([device])
             "Device added to label successfully"
         end
@@ -100,7 +99,6 @@ defmodule ConsoleWeb.V1.LabelController do
         case count do
           0 -> "Device was not in label"
           _ ->
-            ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
             broadcast_router_update_devices([device])
             "Device removed from label successfully"
         end

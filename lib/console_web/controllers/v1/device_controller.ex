@@ -85,7 +85,6 @@ defmodule ConsoleWeb.V1.DeviceController do
             time: time
           }
 
-          ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
           AlertEvents.delete_unsent_alert_events_for_device(deleted_device.device_id)
           AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
           Alerts.delete_alert_nodes(deleted_device.device_id, "device")
@@ -107,7 +106,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       broadcast_router_update_devices(device)
-      
+
       conn
       |> put_status(:created)
       |> render("show.json", device: device |> Repo.preload([:labels]))
