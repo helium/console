@@ -90,7 +90,7 @@ defmodule Console.Jobs do
   end
 
   def delete_sent_alerts do
-    # since events are kept as "sent" so we can check against flapping, delete them in 24-hr batches
+    # since events are kept as "sent" so we can check against flapping, delete them in 25-hr batches, 24 + 1 to delete alerts triggered in last 5 min before reset
     buffer = -25
     AlertEvents.delete_sent_alert_events_since(Timex.shift(Timex.now, hours: buffer))
   end
