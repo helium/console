@@ -72,6 +72,8 @@ config :console,
 config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
 
+config :console, env: Mix.env
+
 config :console, oui: 1
 
 config :console,
