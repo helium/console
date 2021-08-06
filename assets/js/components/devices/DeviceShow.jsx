@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useQuery } from "@apollo/client";
 import OutsideClick from "react-outside-click-handler";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import EventsDashboard from "../events/EventsDashboard";
 import UserCan from "../common/UserCan";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
@@ -25,7 +25,6 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { displayError } from "../../util/messages";
 import DownlinkImage from "../../../img/downlink.svg";
 import { debugSidebarBackgroundColor } from "../../util/colors";
-import withGql from "../../graphql/withGql";
 import {
   Typography,
   Button,
@@ -47,675 +46,597 @@ const { Text } = Typography;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 
-class DeviceShow extends Component {
-  state = {
-    newName: "",
-    newDevEUI: "",
-    newAppEUI: "",
-    newAppKey: "",
-    showNameInput: false,
-    showDevEUIInput: false,
-    showAppEUIInput: false,
-    showAppKeyInput: false,
-    labelsSelected: null,
-    showDeviceRemoveLabelModal: false,
-    showDevicesAddLabelModal: false,
-    showDeleteDeviceModal: false,
-    showDebugSidebar: false,
-    showDownlinkSidebar: false,
-    deviceToDelete: null,
-    showAppKey: false,
-  };
+export default (props) => {
+  const deviceId = props.match.params.id;
+  const dispatch = useDispatch();
+  const currentOrgId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
 
-  componentDidMount() {
-    const deviceId = this.props.match.params.id;
+  const [name, setName] = useState("");
+  const [devEUI, setDevEUI] = useState("");
+  const [appEUI, setAppEUI] = useState("");
+  const [appKey, setAppKey] = useState("");
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [showDevEUIInput, setShowDevEUIInput] = useState(false);
+  const [showAppEUIInput, setShowAppEUIInput] = useState(false);
+  const [showAppKeyInput, setShowAppKeyInput] = useState(false);
+  const [labelsSelected, setLabelsSelected] = useState(null);
+  const [showDeviceRemoveLabelModal, setShowDeviceRemoveLabelModal] =
+    useState(false);
+  const [showDevicesAddLabelModal, setShowDevicesAddLabelModal] =
+    useState(false);
+  const [showDeleteDeviceModal, setShowDeleteDeviceModal] = useState(false);
+  const [showDebugSidebar, setShowDebugSidebar] = useState(false);
+  const [showDownlinkSidebar, setShowDownlinkSidebar] = useState(false);
+  const [deviceToDelete, setDeviceToDelete] = useState(null);
+  const [showAppKey, setShowAppKey] = useState(false);
+
+  const socket = useSelector((state) => state.apollo.socket);
+  const channel = socket.channel("graphql:device_show", {});
+  const filterUpdate = socket.channel("graphql:xor_filter_update", {});
+
+  const { loading, error, data, refetch } = useQuery(DEVICE_SHOW, {
+    variables: { id: deviceId },
+    skip: !deviceId,
+  });
+  const device = data ? data.device : {};
+
+  useEffect(() => {
+    // executed when mounted
     analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", { id: deviceId });
 
-    const { socket } = this.props;
+    channel.join();
+    channel.on(`graphql:device_show:${deviceId}:device_update`, (_message) => {
+      refetch();
+    });
 
-    this.channel = socket.channel("graphql:device_show", {});
-    this.channel.join();
-    this.channel.on(
-      `graphql:device_show:${deviceId}:device_update`,
-      (message) => {
-        this.props.deviceShowQuery.refetch();
+    filterUpdate.join();
+    filterUpdate.on(
+      `graphql:xor_filter_update:${currentOrgId}:organization_xor_filter_update`,
+      (_message) => {
+        refetch();
       }
     );
 
-    this.filterUpdate = socket.channel("graphql:xor_filter_update", {});
-    this.filterUpdate.join();
-    this.filterUpdate.on(
-      `graphql:xor_filter_update:${this.props.currentOrgId}:organization_xor_filter_update`,
-      (message) => {
-        this.props.deviceShowQuery.refetch();
-      }
-    );
-  }
+    // executed when unmounted
+    return () => {
+      channel.leave();
+      filterUpdate.leave();
+    };
+  }, []);
 
-  componentWillUnmount() {
-    this.channel.leave();
-    this.filterUpdate.leave();
-  }
+  useEffect(() => {
+    if (device) {
+      setName(device.name);
+      setAppEUI(device.app_eui);
+      setAppKey(device.app_key);
+      setDevEUI(device.dev_eui);
+    }
+  }, [device]);
 
-  handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  handleDeviceNameUpdate = (id, e) => {
-    const { newName } = this.state;
-    if (newName !== "") {
-      this.props.updateDevice(id, { name: newName });
+  const handleDeviceNameUpdate = (id, e) => {
+    if (name !== "") {
+      dispatch(updateDevice(id, { name: name }));
       analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
         id: id,
-        name: newName,
+        name: name,
       });
+      setShowNameInput(false);
+    } else {
+      displayError(`Device name cannot be blank`);
     }
-    this.setState({ newName: "", showNameInput: false });
   };
 
-  handleDeviceEUIUpdate = (id) => {
-    const { newDevEUI } = this.state;
-    if (newDevEUI.length === 16) {
-      this.props.updateDevice(id, {
-        dev_eui: this.state.newDevEUI.toUpperCase(),
-      });
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+  const handleDeviceEUIUpdate = (id) => {
+    if (devEUI.length === 16) {
+      dispatch(
+        updateDevice(id, {
+          dev_eui: devEUI.toUpperCase(),
+        })
+      );
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
         id: id,
-        dev_eui: newDevEUI,
+        dev_eui: devEUI,
       });
-      return this.setState({ newDevEUI: "", showDevEUIInput: false });
-    }
-    if (newDevEUI === "") {
-      this.setState({ newDevEUI: "", showDevEUIInput: false });
+      setShowDevEUIInput(false);
     } else {
       displayError(`Device EUI must be exactly 8 bytes long`);
     }
   };
 
-  handleAppEUIUpdate = (id) => {
-    const { newAppEUI } = this.state;
-    if (newAppEUI.length === 16) {
-      this.props.updateDevice(id, {
-        app_eui: this.state.newAppEUI.toUpperCase(),
-      });
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+  const handleAppEUIUpdate = (id) => {
+    if (appEUI.length === 16) {
+      dispatch(
+        updateDevice(id, {
+          app_eui: appEUI.toUpperCase(),
+        })
+      );
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
         id: id,
-        app_eui: newAppEUI,
+        app_eui: appEUI,
       });
-      return this.setState({ newAppEUI: "", showAppEUIInput: false });
-    }
-    if (newAppEUI === "") {
-      this.setState({ newAppEUI: "", showAppEUIInput: false });
+      setShowAppEUIInput(false);
     } else {
       displayError(`App EUI must be exactly 8 bytes long`);
     }
   };
 
-  handleAppKeyUpdate = (id) => {
-    const { newAppKey } = this.state;
-    if (newAppKey.length === 32) {
-      this.props.updateDevice(id, {
-        app_key: this.state.newAppKey.toUpperCase(),
-      });
-      analyticsLogger.logEvent("ACTION_RENAME_DEVICE", {
+  const handleAppKeyUpdate = (id) => {
+    if (appKey.length === 32) {
+      dispatch(
+        updateDevice(id, {
+          app_key: appKey.toUpperCase(),
+        })
+      );
+      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
         id: id,
-        app_key: newAppKey,
+        app_key: appKey,
       });
-      return this.setState({ newAppKey: "", showAppKeyInput: false });
-    }
-    if (newAppKey === "") {
-      this.setState({ newAppKey: "", showAppKeyInput: false });
+      setShowAppKeyInput(false);
     } else {
       displayError(`App Key must be exactly 16 bytes long`);
     }
   };
 
-  handleToggleDownlink = () => {
-    const { showDownlinkSidebar } = this.state;
-
-    this.setState({ showDownlinkSidebar: !showDownlinkSidebar });
+  const handleToggleDownlink = () => {
+    setShowDownlinkSidebar(!showDownlinkSidebar);
   };
 
-  handleToggleDebug = () => {
-    const { showDebugSidebar } = this.state;
+  const handleToggleDebug = () => {
     if (!showDebugSidebar) {
       analyticsLogger.logEvent("ACTION_OPEN_DEVICE_DEBUG", {
-        id: this.props.match.params.id,
+        id: deviceId,
       });
     } else {
       analyticsLogger.logEvent("ACTION_CLOSE_DEVICE_DEBUG", {
-        id: this.props.match.params.id,
+        id: deviceId,
       });
     }
-    this.setState({ showDebugSidebar: !showDebugSidebar });
+    setShowDebugSidebar(!showDebugSidebar);
   };
 
-  toggleNameInput = () => {
-    const { showNameInput } = this.state;
-    this.setState({ showNameInput: !showNameInput });
+  const toggleNameInput = () => {
+    setName(device.name);
+    setShowNameInput(!showNameInput);
   };
 
-  toggleDevEUIInput = () => {
-    const { showDevEUIInput } = this.state;
-    this.setState({ showDevEUIInput: !showDevEUIInput });
+  const toggleDevEUIInput = () => {
+    setDevEUI(device.dev_eui);
+    setShowDevEUIInput(!showDevEUIInput);
   };
 
-  toggleAppEUIInput = () => {
-    const { showAppEUIInput } = this.state;
-    this.setState({ showAppEUIInput: !showAppEUIInput });
+  const toggleAppEUIInput = () => {
+    setAppEUI(device.app_eui);
+    setShowAppEUIInput(!showAppEUIInput);
   };
 
-  toggleAppKeyInput = () => {
-    const { showAppKeyInput } = this.state;
-    this.setState({ showAppKeyInput: !showAppKeyInput });
+  const toggleAppKeyInput = () => {
+    setAppKey(device.app_key);
+    setShowAppKeyInput(!showAppKeyInput);
   };
 
-  openDeviceRemoveLabelModal = (labelsSelected) => {
-    this.setState({ showDeviceRemoveLabelModal: true, labelsSelected });
+  const openDeviceRemoveLabelModal = (labelsSelected) => {
+    setShowDeviceRemoveLabelModal(true);
+    setLabelsSelected(labelsSelected);
   };
 
-  closeDeviceRemoveLabelModal = () => {
-    this.setState({ showDeviceRemoveLabelModal: false });
+  const closeDeviceRemoveLabelModal = () => {
+    setShowDeviceRemoveLabelModal(false);
   };
 
-  openDevicesAddLabelModal = () => {
-    this.setState({ showDevicesAddLabelModal: true });
+  const openDevicesAddLabelModal = () => {
+    setShowDevicesAddLabelModal(true);
   };
 
-  closeDevicesAddLabelModal = () => {
-    this.setState({ showDevicesAddLabelModal: false });
+  const closeDevicesAddLabelModal = () => {
+    setShowDevicesAddLabelModal(false);
   };
 
-  openDeleteDeviceModal = (device) => {
-    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] });
+  const openDeleteDeviceModal = (device) => {
+    setShowDeleteDeviceModal(true);
+    setDeviceToDelete([device]);
   };
 
-  closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false });
+  const closeDeleteDeviceModal = () => {
+    setShowDeleteDeviceModal(false);
   };
 
-  toggleDeviceActive = (active) => {
-    this.props.updateDevice(this.props.match.params.id, { active });
+  const toggleDeviceActive = (active) => {
+    dispatch(updateDevice(deviceId, { active }));
   };
 
-  render() {
-    const {
-      newName,
-      showNameInput,
-      showDevEUIInput,
-      showAppEUIInput,
-      showAppKeyInput,
-      showDeviceRemoveLabelModal,
-      labelsSelected,
-      showDevicesAddLabelModal,
-      showDebugSidebar,
-      showDeleteDeviceModal,
-      deviceToDelete,
-      showAppKey,
-    } = this.state;
-    const { loading, error, device } = this.props.deviceShowQuery;
-
-    if (loading)
-      return (
-        <DeviceDashboardLayout {...this.props}>
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        </DeviceDashboardLayout>
-      );
-    if (error)
-      return (
-        <DeviceDashboardLayout {...this.props}>
-          <div style={{ padding: 40 }}>
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          </div>
-        </DeviceDashboardLayout>
-      );
-    const smallerText = device.total_packets > 10000;
-
+  if (loading) {
     return (
-      <DeviceDashboardLayout {...this.props}>
-        <div className="show-page">
-          <div className="show-header">
-            <div>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: 600,
-                  verticalAlign: "middle",
+      <DeviceDashboardLayout {...props}>
+        <div style={{ padding: 40 }}>
+          <SkeletonLayout />
+        </div>
+      </DeviceDashboardLayout>
+    );
+  }
+  if (error) {
+    return (
+      <DeviceDashboardLayout {...props}>
+        <div style={{ padding: 40 }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </div>
+      </DeviceDashboardLayout>
+    );
+  }
+  const smallerText = device.total_packets > 10000;
+
+  return (
+    <DeviceDashboardLayout {...props}>
+      <div className="show-page">
+        <div className="show-header">
+          <div>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: 600,
+                verticalAlign: "middle",
+              }}
+            >
+              {device.name}
+            </Text>
+            {device.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
+          </div>
+          <UserCan>
+            <div className="show-buttons">
+              <Popover
+                content={`This device is currently ${
+                  device.active ? "active" : "inactive"
+                }`}
+                placement="top"
+                overlayStyle={{ width: 140 }}
+              >
+                <Switch checked={device.active} onChange={toggleDeviceActive} />
+              </Popover>
+              <Button
+                style={{ borderRadius: 4, marginLeft: 12 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDeleteDeviceModal(device);
                 }}
               >
-                {device.name}
-              </Text>
-              {device.in_xor_filter === false && (
-                <DeviceNotInFilterTableBadge />
-              )}
+                Delete Device
+              </Button>
             </div>
-            <UserCan>
-              <div className="show-buttons">
-                <Popover
-                  content={`This device is currently ${
-                    device.active ? "active" : "inactive"
-                  }`}
-                  placement="top"
-                  overlayStyle={{ width: 140 }}
-                >
-                  <Switch
-                    checked={device.active}
-                    onChange={this.toggleDeviceActive}
-                  />
-                </Popover>
-                <Button
-                  style={{ borderRadius: 4, marginLeft: 12 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.openDeleteDeviceModal(device);
-                  }}
-                >
-                  Delete Device
-                </Button>
-              </div>
-            </UserCan>
-          </div>
-
-          <Row gutter={20} type="flex">
-            <Col span={15}>
-              <Card
-                title="Device Details"
-                bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 272 }}
-              >
-                <div
-                  style={{
-                    overflowX: "scroll",
-                    paddingRight: 24,
-                    paddingLeft: 24,
-                  }}
-                  className="no-scroll-bar"
-                >
-                  <table style={{ minWidth: 450 }}>
-                    <tbody>
-                      <tr style={{ height: "30px" }}>
-                        <td style={{ width: "150px" }}>
-                          <Text strong>Name</Text>
-                        </td>
-                        <td>
-                          {showNameInput ? (
-                            <OutsideClick onOutsideClick={this.toggleNameInput}>
-                              <Input
-                                name="newName"
-                                placeholder={device.name}
-                                value={newName}
-                                onChange={this.handleInputUpdate}
-                                style={{
-                                  width: 300,
-                                  marginRight: 5,
-                                  verticalAlign: "middle",
-                                }}
-                                suffix={`${newName.length}/50`}
-                                maxLength={50}
-                              />
-                              <Button
-                                type="primary"
-                                name="newName"
-                                onClick={() =>
-                                  this.handleDeviceNameUpdate(device.id)
-                                }
-                              >
-                                Update
-                              </Button>
-                            </OutsideClick>
-                          ) : (
-                            <React.Fragment>
-                              <Text style={{ marginRight: 5 }}>
-                                {device.name}{" "}
-                              </Text>
-                              <UserCan>
-                                <Button
-                                  size="small"
-                                  onClick={this.toggleNameInput}
-                                >
-                                  <EditOutlined />
-                                </Button>
-                              </UserCan>
-                            </React.Fragment>
-                          )}
-                        </td>
-                      </tr>
-                      <tr style={{ height: "30px" }}>
-                        <td>
-                          <Text strong>ID</Text>
-                        </td>
-                        <td>
-                          <Text code style={{ whiteSpace: "nowrap" }}>
-                            {device.id}
-                          </Text>
-                        </td>
-                      </tr>
-                      <tr style={{ height: "20px" }} />
-                      <tr style={{ height: "30px" }}>
-                        <td>
-                          <Text strong>Device EUI</Text>
-                        </td>
-                        <td>
-                          {showDevEUIInput && (
-                            <OutsideClick
-                              onOutsideClick={this.toggleDevEUIInput}
-                            >
-                              <Input
-                                name="newDevEUI"
-                                placeholder={device.dev_eui}
-                                value={this.state.newDevEUI}
-                                onChange={this.handleInputUpdate}
-                                maxLength={16}
-                                style={{ width: 200, marginRight: 5 }}
-                              />
-                              <Button
-                                type="primary"
-                                name="newDevEUI"
-                                onClick={() =>
-                                  this.handleDeviceEUIUpdate(device.id)
-                                }
-                              >
-                                Update
-                              </Button>
-                            </OutsideClick>
-                          )}
-                          {!showDevEUIInput && (
-                            <React.Fragment>
-                              {device.dev_eui &&
-                              device.dev_eui.length === 16 ? (
-                                <DeviceCredentials data={device.dev_eui} />
-                              ) : (
-                                <Text style={{ marginRight: 5 }}>
-                                  Add a Device EUI
-                                </Text>
-                              )}
-                              <UserCan>
-                                <Button
-                                  size="small"
-                                  onClick={this.toggleDevEUIInput}
-                                >
-                                  <EditOutlined />
-                                </Button>
-                              </UserCan>
-                            </React.Fragment>
-                          )}
-                        </td>
-                      </tr>
-                      <tr style={{ height: "30px" }}>
-                        <td>
-                          <Text strong>App EUI</Text>
-                        </td>
-                        <td>
-                          {showAppEUIInput && (
-                            <OutsideClick
-                              onOutsideClick={this.toggleAppEUIInput}
-                            >
-                              <Input
-                                name="newAppEUI"
-                                placeholder={device.app_eui}
-                                value={this.state.newAppEUI}
-                                onChange={this.handleInputUpdate}
-                                maxLength={16}
-                                style={{ width: 200, marginRight: 5 }}
-                              />
-                              <Button
-                                type="primary"
-                                name="newAppEUI"
-                                onClick={() =>
-                                  this.handleAppEUIUpdate(device.id)
-                                }
-                              >
-                                Update
-                              </Button>
-                            </OutsideClick>
-                          )}
-                          {!showAppEUIInput && (
-                            <React.Fragment>
-                              {device.app_eui &&
-                              device.app_eui.length === 16 ? (
-                                <DeviceCredentials data={device.app_eui} />
-                              ) : (
-                                <Text style={{ marginRight: 5 }}>
-                                  Add a App EUI
-                                </Text>
-                              )}
-                              <UserCan>
-                                <Button
-                                  size="small"
-                                  onClick={this.toggleAppEUIInput}
-                                >
-                                  <EditOutlined />
-                                </Button>
-                              </UserCan>
-                            </React.Fragment>
-                          )}
-                        </td>
-                      </tr>
-                      <UserCan>
-                        <tr style={{ height: "30px" }}>
-                          <td
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Text strong>App Key</Text>
-                            {showAppKey ? (
-                              <EyeOutlined
-                                onClick={() =>
-                                  this.setState({ showAppKey: !showAppKey })
-                                }
-                                style={{ marginLeft: 5 }}
-                              />
-                            ) : (
-                              <EyeInvisibleOutlined
-                                onClick={() =>
-                                  this.setState({ showAppKey: !showAppKey })
-                                }
-                                style={{ marginLeft: 5 }}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            {showAppKeyInput && (
-                              <OutsideClick
-                                onOutsideClick={this.toggleAppKeyInput}
-                              >
-                                <Input
-                                  name="newAppKey"
-                                  placeholder={device.app_key}
-                                  value={this.state.newAppKey}
-                                  onChange={this.handleInputUpdate}
-                                  maxLength={32}
-                                  style={{ width: 300, marginRight: 5 }}
-                                />
-                                <Button
-                                  type="primary"
-                                  name="newAppKey"
-                                  onClick={() =>
-                                    this.handleAppKeyUpdate(device.id)
-                                  }
-                                >
-                                  Update
-                                </Button>
-                              </OutsideClick>
-                            )}
-                            {!showAppKeyInput && showAppKey && (
-                              <React.Fragment>
-                                {device.app_key &&
-                                device.app_key.length === 32 ? (
-                                  <DeviceCredentials data={device.app_key} />
-                                ) : (
-                                  <Text style={{ marginRight: 5 }}>
-                                    Add a App Key
-                                  </Text>
-                                )}
-                                <Button
-                                  size="small"
-                                  onClick={this.toggleAppKeyInput}
-                                >
-                                  <EditOutlined />
-                                </Button>
-                              </React.Fragment>
-                            )}
-                            {!showAppKeyInput && !showAppKey && (
-                              <Text code>************************</Text>
-                            )}
-                          </td>
-                        </tr>
-                      </UserCan>
-                      <tr style={{ height: "20px" }} />
-                      <tr style={{ height: "30px" }}>
-                        <td style={{ width: "150px" }}>
-                          <Text strong>Activation Method</Text>
-                        </td>
-                        <td>
-                          <Tag
-                            style={{ fontWeight: 500, fontSize: 14 }}
-                            color="#9254DE"
-                          >
-                            OTAA
-                          </Tag>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            </Col>
-
-            <Col span={9}>
-              <DeviceShowStats device={device} smallerText={smallerText} />
-            </Col>
-          </Row>
-
-          <DeviceShowLabelsTable
-            deviceId={this.props.match.params.id}
-            history={this.props.history}
-            openRemoveLabelFromDeviceModal={this.openDeviceRemoveLabelModal}
-            openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-          />
-
-          <DeviceFlows deviceId={this.props.match.params.id} />
-
-          <Card title="Real Time Packets" bodyStyle={{ padding: 0 }}>
-            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-              <EventsDashboard device_id={device.id} />
-            </div>
-          </Card>
+          </UserCan>
         </div>
 
-        <DeviceRemoveLabelModal
-          open={showDeviceRemoveLabelModal}
-          onClose={this.closeDeviceRemoveLabelModal}
-          labels={labelsSelected}
-          device={device}
-        />
-
-        <DevicesAddLabelModal
-          open={showDevicesAddLabelModal}
-          onClose={this.closeDevicesAddLabelModal}
-          devicesToUpdate={[device]}
-        />
-
-        <DeleteDeviceModal
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={false}
-          devicesToDelete={deviceToDelete}
-          totalDevices={1}
-          from="deviceShow"
-        />
-
-        <Sidebar
-          show={showDebugSidebar}
-          toggle={this.handleToggleDebug}
-          sidebarIcon={<BugOutlined />}
-          iconBackground={debugSidebarBackgroundColor}
-          iconPosition="top"
-          message="Access Debug mode to view device packet transfer"
-        >
-          <Debug deviceId={this.props.match.params.id} entryWidth={600} />
-        </Sidebar>
-
-        <UserCan>
-          {
-            <Sidebar
-              show={this.state.showDownlinkSidebar}
-              toggle={this.handleToggleDownlink}
-              sidebarIcon={<img src={DownlinkImage} />}
-              iconBackground="#40A9FF"
-              iconPosition="middle"
-              message="Send a manual downlink to this device"
+        <Row gutter={20} type="flex">
+          <Col span={15}>
+            <Card
+              title="Device Details"
+              bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 272 }}
             >
-              <Downlink
-                src="DeviceShow"
-                id={device.id}
-                devices={[device]}
-                socket={this.props.socket}
-                onSend={(payload, confirm, port, position) => {
-                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
-                    device: device.id,
-                  });
-                  this.props.sendDownlinkMessage(
+              <div
+                style={{
+                  overflowX: "scroll",
+                  paddingRight: 24,
+                  paddingLeft: 24,
+                }}
+                className="no-scroll-bar"
+              >
+                <table style={{ minWidth: 450 }}>
+                  <tbody>
+                    <tr style={{ height: "30px" }}>
+                      <td style={{ width: "150px" }}>
+                        <Text strong>Name</Text>
+                      </td>
+                      <td>
+                        {showNameInput ? (
+                          <OutsideClick onOutsideClick={toggleNameInput}>
+                            <Input
+                              name="name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              style={{
+                                width: 300,
+                                marginRight: 5,
+                                verticalAlign: "middle",
+                              }}
+                              suffix={`${name.length}/50`}
+                              maxLength={50}
+                            />
+                            <Button
+                              type="primary"
+                              name="name"
+                              onClick={() => handleDeviceNameUpdate(device.id)}
+                            >
+                              Update
+                            </Button>
+                          </OutsideClick>
+                        ) : (
+                          <React.Fragment>
+                            <Text style={{ marginRight: 5 }}>
+                              {device.name}{" "}
+                            </Text>
+                            <UserCan>
+                              <Button size="small" onClick={toggleNameInput}>
+                                <EditOutlined />
+                              </Button>
+                            </UserCan>
+                          </React.Fragment>
+                        )}
+                      </td>
+                    </tr>
+                    <tr style={{ height: "30px" }}>
+                      <td>
+                        <Text strong>ID</Text>
+                      </td>
+                      <td>
+                        <Text code style={{ whiteSpace: "nowrap" }}>
+                          {device.id}
+                        </Text>
+                      </td>
+                    </tr>
+                    <tr style={{ height: "20px" }} />
+                    <tr style={{ height: "30px" }}>
+                      <td>
+                        <Text strong>Device EUI</Text>
+                      </td>
+                      <td>
+                        {showDevEUIInput && (
+                          <OutsideClick onOutsideClick={toggleDevEUIInput}>
+                            <Input
+                              name="devEUI"
+                              value={devEUI}
+                              onChange={(e) => setDevEUI(e.target.value)}
+                              maxLength={16}
+                              style={{ width: 200, marginRight: 5 }}
+                            />
+                            <Button
+                              type="primary"
+                              name="devEUI"
+                              onClick={() => handleDeviceEUIUpdate(device.id)}
+                            >
+                              Update
+                            </Button>
+                          </OutsideClick>
+                        )}
+                        {!showDevEUIInput && (
+                          <React.Fragment>
+                            {device.dev_eui && device.dev_eui.length === 16 ? (
+                              <DeviceCredentials data={device.dev_eui} />
+                            ) : (
+                              <Text style={{ marginRight: 5 }}>
+                                Add a Device EUI
+                              </Text>
+                            )}
+                            <UserCan>
+                              <Button size="small" onClick={toggleDevEUIInput}>
+                                <EditOutlined />
+                              </Button>
+                            </UserCan>
+                          </React.Fragment>
+                        )}
+                      </td>
+                    </tr>
+                    <tr style={{ height: "30px" }}>
+                      <td>
+                        <Text strong>App EUI</Text>
+                      </td>
+                      <td>
+                        {showAppEUIInput && (
+                          <OutsideClick onOutsideClick={toggleAppEUIInput}>
+                            <Input
+                              name="appEUI"
+                              value={appEUI}
+                              onChange={(e) => setAppEUI(e.target.value)}
+                              maxLength={16}
+                              style={{ width: 200, marginRight: 5 }}
+                            />
+                            <Button
+                              type="primary"
+                              name="appEUI"
+                              onClick={() => handleAppEUIUpdate(device.id)}
+                            >
+                              Update
+                            </Button>
+                          </OutsideClick>
+                        )}
+                        {!showAppEUIInput && (
+                          <React.Fragment>
+                            {device.app_eui && device.app_eui.length === 16 ? (
+                              <DeviceCredentials data={device.app_eui} />
+                            ) : (
+                              <Text style={{ marginRight: 5 }}>
+                                Add a App EUI
+                              </Text>
+                            )}
+                            <UserCan>
+                              <Button size="small" onClick={toggleAppEUIInput}>
+                                <EditOutlined />
+                              </Button>
+                            </UserCan>
+                          </React.Fragment>
+                        )}
+                      </td>
+                    </tr>
+                    <UserCan>
+                      <tr style={{ height: "30px" }}>
+                        <td
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text strong>App Key</Text>
+                          {showAppKey ? (
+                            <EyeOutlined
+                              onClick={() => setShowAppKey(!showAppKey)}
+                              style={{ marginLeft: 5 }}
+                            />
+                          ) : (
+                            <EyeInvisibleOutlined
+                              onClick={() => setShowAppKey(!showAppKey)}
+                              style={{ marginLeft: 5 }}
+                            />
+                          )}
+                        </td>
+                        <td>
+                          {showAppKeyInput && (
+                            <OutsideClick onOutsideClick={toggleAppKeyInput}>
+                              <Input
+                                name="appKey"
+                                value={appKey}
+                                onChange={(e) => setAppKey(e.target.value)}
+                                maxLength={32}
+                                style={{ width: 300, marginRight: 5 }}
+                              />
+                              <Button
+                                type="primary"
+                                name="appKey"
+                                onClick={() => handleAppKeyUpdate(device.id)}
+                              >
+                                Update
+                              </Button>
+                            </OutsideClick>
+                          )}
+                          {!showAppKeyInput && showAppKey && (
+                            <React.Fragment>
+                              {device.app_key &&
+                              device.app_key.length === 32 ? (
+                                <DeviceCredentials data={device.app_key} />
+                              ) : (
+                                <Text style={{ marginRight: 5 }}>
+                                  Add a App Key
+                                </Text>
+                              )}
+                              <Button size="small" onClick={toggleAppKeyInput}>
+                                <EditOutlined />
+                              </Button>
+                            </React.Fragment>
+                          )}
+                          {!showAppKeyInput && !showAppKey && (
+                            <Text code>************************</Text>
+                          )}
+                        </td>
+                      </tr>
+                    </UserCan>
+                    <tr style={{ height: "20px" }} />
+                    <tr style={{ height: "30px" }}>
+                      <td style={{ width: "150px" }}>
+                        <Text strong>Activation Method</Text>
+                      </td>
+                      <td>
+                        <Tag
+                          style={{ fontWeight: 500, fontSize: 14 }}
+                          color="#9254DE"
+                        >
+                          OTAA
+                        </Tag>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </Col>
+
+          <Col span={9}>
+            <DeviceShowStats device={device} smallerText={smallerText} />
+          </Col>
+        </Row>
+
+        <DeviceShowLabelsTable
+          deviceId={deviceId}
+          history={props.history}
+          openRemoveLabelFromDeviceModal={openDeviceRemoveLabelModal}
+          openDevicesAddLabelModal={openDevicesAddLabelModal}
+        />
+
+        <DeviceFlows deviceId={deviceId} />
+
+        <Card title="Real Time Packets" bodyStyle={{ padding: 0 }}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+            <EventsDashboard device_id={device.id} />
+          </div>
+        </Card>
+      </div>
+
+      <DeviceRemoveLabelModal
+        open={showDeviceRemoveLabelModal}
+        onClose={closeDeviceRemoveLabelModal}
+        labels={labelsSelected}
+        device={device}
+      />
+
+      <DevicesAddLabelModal
+        open={showDevicesAddLabelModal}
+        onClose={closeDevicesAddLabelModal}
+        devicesToUpdate={[device]}
+      />
+
+      <DeleteDeviceModal
+        open={showDeleteDeviceModal}
+        onClose={closeDeleteDeviceModal}
+        allDevicesSelected={false}
+        devicesToDelete={deviceToDelete}
+        totalDevices={1}
+        from="deviceShow"
+      />
+
+      <Sidebar
+        show={showDebugSidebar}
+        toggle={handleToggleDebug}
+        sidebarIcon={<BugOutlined />}
+        iconBackground={debugSidebarBackgroundColor}
+        iconPosition="top"
+        message="Access Debug mode to view device packet transfer"
+      >
+        <Debug deviceId={deviceId} entryWidth={600} />
+      </Sidebar>
+
+      <UserCan>
+        {
+          <Sidebar
+            show={showDownlinkSidebar}
+            toggle={handleToggleDownlink}
+            sidebarIcon={<img src={DownlinkImage} />}
+            iconBackground="#40A9FF"
+            iconPosition="middle"
+            message="Send a manual downlink to this device"
+          >
+            <Downlink
+              src="DeviceShow"
+              id={device.id}
+              devices={[device]}
+              socket={socket}
+              onSend={(payload, confirm, port, position) => {
+                analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
+                  device: device.id,
+                });
+                dispatch(
+                  sendDownlinkMessage(
                     payload,
                     port,
                     confirm,
                     position,
                     "device",
                     device.id
-                  );
-                }}
-                onClear={() => {
-                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", {
-                    devices: [device.id],
-                  });
-                  this.props.sendClearDownlinkQueue({ device_id: device.id });
-                }}
-                fetchDownlinkQueue={() =>
-                  this.props.fetchDownlinkQueue(device.id, "device")
-                }
-              />
-            </Sidebar>
-          }
-        </UserCan>
-      </DeviceDashboardLayout>
-    );
-  }
-}
-
-function mapStateToProps(state, ownProps) {
-  return {
-    socket: state.apollo.socket,
-    currentOrgId: state.organization.currentOrganizationId,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      updateDevice,
-      sendClearDownlinkQueue,
-      sendDownlinkMessage,
-      fetchDownlinkQueue,
-    },
-    dispatch
+                  )
+                );
+              }}
+              onClear={() => {
+                analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", {
+                  devices: [device.id],
+                });
+                dispatch(sendClearDownlinkQueue({ device_id: device.id }));
+              }}
+              fetchDownlinkQueue={() =>
+                dispatch(fetchDownlinkQueue(device.id, "device"))
+              }
+            />
+          </Sidebar>
+        }
+      </UserCan>
+    </DeviceDashboardLayout>
   );
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  withGql(DeviceShow, DEVICE_SHOW, (props) => ({
-    fetchPolicy: "cache-first",
-    variables: { id: props.match.params.id },
-    name: "deviceShowQuery",
-  }))
-);
+};
