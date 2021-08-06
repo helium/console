@@ -64,7 +64,7 @@ config :console,
 config :console, Console.Scheduler,
   jobs: [
     trigger_device_stops_transmitting: [
-      schedule: "*/3 * * * *", # every 15th min
+      schedule: "*/15 * * * *", # every 15th min
       task: {Console.Jobs, :trigger_device_stops_transmitting, []}
     ],
     send_alerts: [
