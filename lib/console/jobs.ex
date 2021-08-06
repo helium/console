@@ -48,7 +48,7 @@ defmodule Console.Jobs do
       end
       recipients = Organizations.get_memberships_by_organization_and_role(alert.organization_id, roles) |> Enum.map(fn (member) -> member.email end)
       details = Enum.map(events, fn (e) -> e.details end)
-      has_hotspot_info = case Enum.find(details, fn d -> d["hotspot"] !== nil end) do
+      has_hotspot_info = case Enum.find(details, fn d -> d["hotspot"] !== nil and length(Map.keys(d["hotspot"])) > 0 end) do
         nil -> false
         _ -> true
       end

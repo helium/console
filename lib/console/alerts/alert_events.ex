@@ -57,11 +57,14 @@ defmodule Console.AlertEvents do
           if not email_restrict_to_prevent_flapping do
             email_attrs = Map.put(attrs, :type, "email")
             if Map.has_key?(alert_event_email_config, "value") do
+              # since email and webhook can have diff value, must check against buffer value checked
               if alert_event_email_config["value"] == details.buffer do
                 create_alert_event(email_attrs)
+                Alerts.update_alert_last_triggered_at(alert)
               end
             else
               create_alert_event(email_attrs)
+              Alerts.update_alert_last_triggered_at(alert)
             end
           end
         end
@@ -78,16 +81,17 @@ defmodule Console.AlertEvents do
           if not webhook_restrict_to_prevent_flapping do
             webhook_attrs = Map.put(attrs, :type, "webhook")
             if Map.has_key?(alert_event_webhook_config, "value") do
+              # since email and webhook can have diff value, must check against buffer value checked
               if alert_event_webhook_config["value"] == details.buffer do
                 create_alert_event(webhook_attrs)
+                Alerts.update_alert_last_triggered_at(alert)
               end
             else
               create_alert_event(webhook_attrs)
+              Alerts.update_alert_last_triggered_at(alert)
             end
           end
         end
-
-        Alerts.update_alert_last_triggered_at(alert)
       end)
     end
   end

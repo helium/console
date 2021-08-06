@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
+  <head>
     <meta charset="utf-8"> <!-- utf-8 works for most cases -->
     <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
@@ -23,112 +23,112 @@
     <!-- CSS Reset : BEGIN -->
     <style>
 
-        /* What it does: Tells the email client that only light styles are provided but the client can transform them to dark. A duplicate of meta color-scheme meta tag above. */
-        :root {
-          color-scheme: light;
-          supported-color-schemes: light;
-        }
+      /* What it does: Tells the email client that only light styles are provided but the client can transform them to dark. A duplicate of meta color-scheme meta tag above. */
+      :root {
+        color-scheme: light;
+        supported-color-schemes: light;
+      }
 
-        /* What it does: Remove spaces around the email design added by some email clients. */
-        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
-        html,
-        body {
-            margin: 0 auto !important;
-            padding: 0 !important;
-            height: 100% !important;
-            width: 100% !important;
-        }
+      /* What it does: Remove spaces around the email design added by some email clients. */
+      /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+      html,
+      body {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        height: 100% !important;
+        width: 100% !important;
+      }
 
-        /* What it does: Stops email clients resizing small text. */
-        * {
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
-        }
+      /* What it does: Stops email clients resizing small text. */
+      * {
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
 
-        /* What it does: Centers email on Android 4.4 */
-        div[style*="margin: 16px 0"] {
-            margin: 0 !important;
-        }
-        /* What it does: forces Samsung Android mail clients to use the entire viewport */
-        #MessageViewBody, #MessageWebViewDiv{
-            width: 100% !important;
-        }
+      /* What it does: Centers email on Android 4.4 */
+      div[style*="margin: 16px 0"] {
+        margin: 0 !important;
+      }
+      /* What it does: forces Samsung Android mail clients to use the entire viewport */
+      #MessageViewBody, #MessageWebViewDiv{
+        width: 100% !important;
+      }
 
-        /* What it does: Stops Outlook from adding extra spacing to tables. */
-        table,
-        td {
-            mso-table-lspace: 0pt !important;
-            mso-table-rspace: 0pt !important;
-        }
+      /* What it does: Stops Outlook from adding extra spacing to tables. */
+      table,
+      td {
+        mso-table-lspace: 0pt !important;
+        mso-table-rspace: 0pt !important;
+      }
 
-        /* What it does: Fixes webkit padding issue. */
-        table {
-            border-spacing: 0 !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin: 0 auto !important;
-        }
+      /* What it does: Fixes webkit padding issue. */
+      table {
+        border-spacing: 0 !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        margin: 0 auto !important;
+      }
 
-        /* What it does: Uses a better rendering method when resizing images in IE. */
-        img {
-            -ms-interpolation-mode:bicubic;
-        }
+      /* What it does: Uses a better rendering method when resizing images in IE. */
+      img {
+        -ms-interpolation-mode:bicubic;
+      }
 
-        /* What it does: Prevents Windows 10 Mail from underlining links despite inline CSS. Styles for underlined links should be inline. */
-        a {
-            text-decoration: none;
-        }
+      /* What it does: Prevents Windows 10 Mail from underlining links despite inline CSS. Styles for underlined links should be inline. */
+      a {
+        text-decoration: none;
+      }
 
-        /* What it does: A work-around for email clients meddling in triggered links. */
-        a[x-apple-data-detectors],  /* iOS */
-        .unstyle-auto-detected-links a,
-        .aBn {
-            border-bottom: 0 !important;
-            cursor: default !important;
-            color: inherit !important;
-            text-decoration: none !important;
-            font-size: inherit !important;
-            font-family: inherit !important;
-            font-weight: inherit !important;
-            line-height: inherit !important;
-        }
+      /* What it does: A work-around for email clients meddling in triggered links. */
+      a[x-apple-data-detectors],  /* iOS */
+      .unstyle-auto-detected-links a,
+      .aBn {
+        border-bottom: 0 !important;
+        cursor: default !important;
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
 
-        /* What it does: Prevents Gmail from changing the text color in conversation threads. */
-        .im {
-            color: inherit !important;
-        }
+      /* What it does: Prevents Gmail from changing the text color in conversation threads. */
+      .im {
+        color: inherit !important;
+      }
 
-        /* What it does: Prevents Gmail from displaying a download button on large, non-linked images. */
-        .a6S {
-            display: none !important;
-            opacity: 0.01 !important;
-        }
-        /* If the above doesn't work, add a .g-img class to any image in question. */
-        img.g-img + div {
-            display: none !important;
-        }
+      /* What it does: Prevents Gmail from displaying a download button on large, non-linked images. */
+      .a6S {
+        display: none !important;
+        opacity: 0.01 !important;
+      }
+      /* If the above doesn't work, add a .g-img class to any image in question. */
+      img.g-img + div {
+        display: none !important;
+      }
 
-        /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
-        /* Create one of these media queries for each additional viewport size you'd like to fix */
+      /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+      /* Create one of these media queries for each additional viewport size you'd like to fix */
 
-        /* iPhone 4, 4S, 5, 5S, 5C, and 5SE */
-        @media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
-            u ~ div .email-container {
-                min-width: 320px !important;
-            }
+      /* iPhone 4, 4S, 5, 5S, 5C, and 5SE */
+      @media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
+        u ~ div .email-container {
+            min-width: 320px !important;
         }
-        /* iPhone 6, 6S, 7, 8, and X */
-        @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
-            u ~ div .email-container {
-                min-width: 375px !important;
-            }
+      }
+      /* iPhone 6, 6S, 7, 8, and X */
+      @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+        u ~ div .email-container {
+            min-width: 375px !important;
         }
-        /* iPhone 6+, 7+, and 8+ */
-        @media only screen and (min-device-width: 414px) {
-            u ~ div .email-container {
-                min-width: 414px !important;
-            }
+      }
+      /* iPhone 6+, 7+, and 8+ */
+      @media only screen and (min-device-width: 414px) {
+        u ~ div .email-container {
+            min-width: 414px !important;
         }
+      }
 
     </style>
     <!-- CSS Reset : END -->
@@ -136,190 +136,185 @@
     <!-- Progressive Enhancements : BEGIN -->
     <style>
 
-	    /* What it does: Hover styles for buttons */
-	    .button-td,
-	    .button-a {
-	        transition: all 100ms ease-in;
-	    }
-	    .button-td-primary:hover,
-	    .button-a-primary:hover {
-	      filter: brightness(0.9);
-	    }
+      /* What it does: Hover styles for buttons */
+      .button-td,
+      .button-a {
+          transition: all 100ms ease-in;
+      }
+      .button-td-primary:hover,
+      .button-a-primary:hover {
+        filter: brightness(0.9);
+      }
 
-	    /* Media Queries */
-	    @media screen and (max-width: 480px) {
+      /* Media Queries */
+      @media screen and (max-width: 480px) {
 
-	        /* What it does: Forces table cells into full-width rows. */
-	        .stack-column,
-	        .stack-column-center {
-	            display: block !important;
-	            width: 100% !important;
-	            max-width: 100% !important;
-	            direction: ltr !important;
-	        }
-	        /* And center justify these ones. */
-	        .stack-column-center {
-	            text-align: center !important;
-	        }
+        /* What it does: Forces table cells into full-width rows. */
+        .stack-column,
+        .stack-column-center {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            direction: ltr !important;
+        }
+        /* And center justify these ones. */
+        .stack-column-center {
+            text-align: center !important;
+        }
 
-	        /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
-	        .center-on-narrow {
-	            text-align: center !important;
-	            display: block !important;
-	            margin-left: auto !important;
-	            margin-right: auto !important;
-	            float: none !important;
-	        }
-	        table.center-on-narrow {
-	            display: inline-block !important;
-	        }
+        /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+        .center-on-narrow {
+            text-align: center !important;
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            float: none !important;
+        }
+        table.center-on-narrow {
+            display: inline-block !important;
+        }
 
-	        /* What it does: Adjust typography on small screens to improve readability */
-	        .email-container p {
-	            font-size: 17px !important;
-	        }
-	    }
+        /* What it does: Adjust typography on small screens to improve readability */
+        .email-container p {
+            font-size: 17px !important;
+        }
+      }
 
     </style>
     <!-- Progressive Enhancements : END -->
-
-</head>
-<!--
-	The email background color (#EFEFEF) is defined in three places:
-	1. body tag: for most email clients
-	2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
-	3. mso conditional: For Windows 10 Mail
--->
-<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #EFEFEF;">
-  <center role="article" aria-roledescription="email" lang="en" style="width: 100%; background-color: #EFEFEF;">
-    <!--[if mso | IE]>
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #EFEFEF;">
-    <tr>
-    <td>
-    <![endif]-->
-
-        <!-- Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary. -->
-        <!-- Preview Text Spacing Hack : BEGIN -->
-        <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
-	        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
-        </div>
-        <!-- Preview Text Spacing Hack : END -->
-
-        <!--
-            Set the email width. Defined in two places:
-            1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 680px.
-            2. MSO tags for Desktop Windows Outlook enforce a 680px width.
-            Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.
-        -->
-        <div style="max-width: 680px; margin: 0 auto;" class="email-container">
-            <!--[if mso]>
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="680">
-            <tr>
-            <td>
-            <![endif]-->
-
-	        <!-- Email Body : BEGIN -->
-	        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
-		        <!-- Email Header : BEGIN -->
-	            <tr>
-	                <td align="center" style="padding: 55px 0 85px 0;">
-                  <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
-                  </td>
-	            </tr>
-		        <!-- Email Header : END -->
-
-                <!-- 1 Column Text + Button : BEGIN -->
-                <tr>
-                    <td style="background-color: #ffffff; border-radius: 15px; padding: 0 50px">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                            <tr>
-                              <td style="display: flex;justify-content: center;">
-                                  <img src="<%= @url <> "/images/bell.png" %>" width="80" border="0" height="80" alt="security_image" style="position: absolute; top: 150px; left: 0; right: 0; margin: auto;">
-                              </td>
-                            </tr>
-                            <!-- Spacing -->
-                              <tr>
-                                <td width="100%" height="65"></td>
-                              </tr>
-                            <!-- Spacing -->
-                            <tr>
-                                <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Alert: <%= @alert_name %></h1>
-                                    <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
-                                      <%= if @num_devices == 1 do %>
-                                        The device <b><%= List.first(@details)["device_name"] %></b> that belongs to the Organization <b><%= @organization_name%></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
-                                      <% end %>
-                                      <%= if @num_devices > 1 && @num_devices <= 5 do %>
-                                        The following devices that belong to the Organization <b><%= @organization_name %></b> were deleted:
-                                        <br />
-                                        <ul style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
-                                        <%= Enum.map(@details, fn(d) -> %>
-                                          <li><b><%= d["device_name"] %></b>, by <b><%= d["deleted_by"] %></b> on <b><%= d["time"] %></b></li>
-                                        <% end) %>
-                                        </ul>
-                                      <% end %>
-                                      <%= if @num_devices > 5 do %>
-                                        More than 5 devices that belong to the Organization <b><%= @organization_name %></b> were deleted.
-                                      <% end %>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <!-- Button : BEGIN -->
-                                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
-                                        <tr>
-                                            <td class="button-td button-td-primary" style="border: none;">
-                                              <a class="button-a button-a-primary" href="<%= @url <> "/alerts/" <> @alert_id %>" style="background: #B173F3; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">See Alert in Console</a>
-                                          </td>
-                                        </tr>
-                                    </table>
-                                    <!-- Button : END -->
-                                </td>
-                            </tr>
-                            <!-- Spacing -->
-                              <tr>
-                                <td width="100%" height="45"></td>
-                              </tr>
-                            <!-- Spacing -->
-
-                        </table>
-                    </td>
-                </tr>
-                <!-- 1 Column Text + Button : END -->
-
-            </table>
-            <!-- Email Body : END -->
-
-            <!-- Email Footer : BEGIN -->
-            <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 680px;">
-                <!-- Spacing -->
-                  <tr>
-                    <td width="100%" height="40"></td>
-                  </tr>
-                <!-- Spacing -->
-                <tr>
-                    <td align="center"  style="padding: 20px 0;">
-                  <!-- Helium Console Logo -->
-                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
-                  </td>
-                </tr>
-            </table>
-            <!-- Email Footer : END -->
-
-            <!--[if mso]>
+  </head>
+  <!--
+    The email background color (#EFEFEF) is defined in three places:
+    1. body tag: for most email clients
+    2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
+    3. mso conditional: For Windows 10 Mail
+  -->
+  <body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #EFEFEF;">
+    <center role="article" aria-roledescription="email" lang="en" style="width: 100%; background-color: #EFEFEF;">
+      <!--[if mso | IE]>
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #EFEFEF;">
+      <tr>
+      <td>
+      <![endif]-->
+      <!-- Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary. -->
+      <%# <!-- Preview Text Spacing Hack : BEGIN -->
+      <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+      </div>
+      <!-- Preview Text Spacing Hack : END --> %>
+      <!--
+          Set the email width. Defined in two places:
+          1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 680px.
+          2. MSO tags for Desktop Windows Outlook enforce a 680px width.
+          Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.
+      -->
+      <div style="max-width: 680px; margin: 0 auto;" class="email-container">
+        <!--[if mso]>
+        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="680">
+        <tr>
+        <td>
+        <![endif]-->
+        <!-- Email Body : BEGIN -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+          <!-- Email Header : BEGIN -->
+          <tr>
+            <td align="center" style="padding: 55px 0 85px 0;">
+            <!-- Helium Logo Image -->
+              <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
             </td>
-            </tr>
-            </table>
-            <![endif]-->
-        </div>
+          </tr>
+          <!-- Email Header : END -->
+          <!-- 1 Column Text + Button : BEGIN -->
+          <tr>
+            <td style="background-color: #ffffff; border-radius: 15px; padding: 0 50px">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="display: flex;justify-content: center;">
+                    <img src="<%= @url <> "/images/bell.png" %>" width="80" border="0" height="80" alt="security_image" style="position: absolute; top: 150px; left: 0; right: 0; margin: auto;">
+                  </td>
+                </tr>
+                <!-- Spacing -->
+                <tr>
+                  <td width="100%" height="65"></td>
+                </tr>
+                <!-- Spacing -->
+                <tr>
+                  <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; line-height: 25px; color: #333333;">
+                    <h1 style="margin: 0 0 30px; font-size: 30px; line-height: 30px; font-weight: normal; ">Alert: <%= @alert_name %></h1>
+                    <div style="margin: 0">
+                      <%= if @num_devices == 1 do %>
+                        The device <b><%= List.first(@details)["device_name"] %></b> that belongs to the Organization <b><%= @organization_name%></b> was deleted by <b><%= List.first(@details)["deleted_by"] %></b> at <b><%= List.first(@details)["time"] %></b>.
+                      <% end %>
+                      <%= if @num_devices > 1 && @num_devices <= 5 do %>
+                        The following devices that belong to the Organization <b><%= @organization_name %></b> were deleted:
+                        <br />
+                        <ul>
+                        <%= Enum.map(@details, fn(d) -> %>
+                          <li><b><%= d["device_name"] %></b>, by <b><%= d["deleted_by"] %></b> on <b><%= d["time"] %></b></li>
+                        <% end) %>
+                        </ul>
+                      <% end %>
+                      <%= if @num_devices > 5 do %>
+                        More than 5 devices that belong to the Organization <b><%= @organization_name %></b> were deleted.
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <!-- Button : BEGIN -->
+                    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
+                      <tr>
+                        <td class="button-td button-td-primary" style="border: none;">
+                          <a class="button-a button-a-primary" href="<%= @url <> "/alerts/" <> @alert_id %>" style="background: #B173F3; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px; margin-top: 15px;">See Alert in Console</a>
+                        </td>
+                      </tr>
+                    </table>
+                    <!-- Button : END -->
+                  </td>
+                </tr>
+                <!-- Spacing -->
+                <tr>
+                  <td width="100%" height="45"></td>
+                </tr>
+                <!-- Spacing -->
 
-    <!--[if mso | IE]>
-    </td>
-    </tr>
-    </table>
-    <![endif]-->
-    </center>
-</body>
+              </table>
+            </td>
+          </tr>
+          <!-- 1 Column Text + Button : END -->
+
+        </table>
+        <!-- Email Body : END -->
+
+        <!-- Email Footer : BEGIN -->
+        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 680px;">
+          <!-- Spacing -->
+            <tr>
+              <td width="100%" height="40"></td>
+            </tr>
+          <!-- Spacing -->
+          <tr>
+              <td align="center"  style="padding: 20px 0;">
+            <!-- Helium Console Logo -->
+                <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
+            </td>
+          </tr>
+        </table>
+        <!-- Email Footer : END -->
+
+        <!--[if mso]>
+        </td>
+        </tr>
+        </table>
+        <![endif]-->
+      </div>
+
+      <!--[if mso | IE]>
+      </td>
+      </tr>
+      </table>
+      <![endif]-->
+      </center>
+  </body>
 </html>

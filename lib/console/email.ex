@@ -138,7 +138,7 @@ defmodule Console.Email do
   def device_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more device(s) have been deleted.")
+    |> subject("Helium Console: One or more devices have been deleted.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
@@ -150,7 +150,7 @@ defmodule Console.Email do
   def integration_with_devices_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more integration(s) with device(s) have been deleted.")
+    |> subject("Helium Console: One or more integrations with device(s) have been deleted.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
@@ -162,7 +162,7 @@ defmodule Console.Email do
   def integration_with_devices_updated_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more integration(s) with device(s) have been updated.")
+    |> subject("Helium Console: One or more integrations with device(s) have been updated.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
@@ -174,7 +174,7 @@ defmodule Console.Email do
   def device_join_otaa_first_time_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more device(s) have joined via OTAA for the first time.")
+    |> subject("Helium Console: One or more devices have joined via OTAA for the first time.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
@@ -187,7 +187,7 @@ defmodule Console.Email do
   def integration_stops_working_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more integration(s) have stopped working.")
+    |> subject("Helium Console: One or more integrations have stopped working.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
@@ -199,7 +199,7 @@ defmodule Console.Email do
   def device_stops_transmitting_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more device(s) have stopped transmitting.")
+    |> subject("Helium Console: One or more devices have stopped transmitting.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
@@ -212,7 +212,7 @@ defmodule Console.Email do
   def downlink_unsuccessful_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more device(s) have experienced downlink issues.")
+    |> subject("Helium Console: One or more devices have experienced downlink issues.")
     |> assign(:alert_name, alert_name)
     |> assign(:num_devices, length(details))
     |> assign(:organization_name, organization_name)
@@ -224,7 +224,7 @@ defmodule Console.Email do
   def integration_receives_first_event_notification_email(recipients, alert_name, details, organization_name, alert_id) do
     base_email()
     |> to(recipients)
-    |> subject("Helium Console: One or more integration(s) received the first packet(s).")
+    |> subject("Helium Console: One or more integrations received the first packet(s).")
     |> assign(:alert_name, alert_name)
     |> assign(:num_channels, length(details))
     |> assign(:organization_name, organization_name)
