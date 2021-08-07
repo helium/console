@@ -35,7 +35,6 @@ export default ({
           }}
         >
           <Input
-            placeholder={fxn.name}
             name="name"
             value={name}
             onChange={handleInputUpdate}
@@ -44,7 +43,7 @@ export default ({
                 ? { width: 300, verticalAlign: "middle" }
                 : { width: "100%", marginBottom: 11 }
             }
-            suffix={`${name.length}/50`}
+            suffix={`${name && name.length}/50`}
             maxLength={50}
             disabled={!userCan({ role: currentRole })}
           />
@@ -91,7 +90,15 @@ export default ({
                 type="primary"
                 onClick={handleSubmit}
                 disabled={
-                  !type && !format && name.length === 0 && body.length === 0
+                  !type ||
+                  !format ||
+                  !name ||
+                  (format === "custom" && !body) ||
+                  (name === fxn.name &&
+                    type === fxn.type &&
+                    format === fxn.format &&
+                    ((format === "custom" && body === fxn.body) ||
+                      format !== "custom"))
                 }
                 style={{ marginTop: 20 }}
               >
