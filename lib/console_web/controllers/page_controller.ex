@@ -4,7 +4,32 @@ defmodule ConsoleWeb.PageController do
   action_fallback ConsoleWeb.FallbackController
 
   def index(conn, _params) do
-    render conn, "index.html"
+    main_path = conn.path_info |> List.first()
+    valid_page_paths =
+      [
+        "join_organization",
+        "terms",
+        "welcome",
+        "devices",
+        "labels",
+        "integrations",
+        "functions",
+        "organizations",
+        "users", 
+        "datacredits",
+        "flows",
+        "alerts",
+        "adr",
+        "multi_buys",
+        "cf_list",
+        "profile"
+      ]
+
+    if conn.request_path == "/" or Enum.member?(valid_page_paths, main_path) do
+      render conn, "index.html"
+    else
+      send_resp(conn, 404, "Not Found")
+    end
   end
 
   def google_verify(conn, _params) do
