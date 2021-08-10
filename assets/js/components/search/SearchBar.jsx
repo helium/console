@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
-import findIndex from 'lodash/findIndex'
-import last from 'lodash/last'
-import SearchResults from './SearchResults'
-import searchPages from './pages'
-import analyticsLogger from '../../util/analyticsLogger'
-import { GENERAL_SEARCH } from '../../graphql/search'
-import SearchOutlined from '@ant-design/icons/SearchOutlined';
-import withGql from '../../graphql/withGql'
-import _JSXStyle from "styled-jsx/style"
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import findIndex from "lodash/findIndex";
+import last from "lodash/last";
+import SearchResults from "./SearchResults";
+import searchPages from "./pages";
+import analyticsLogger from "../../util/analyticsLogger";
+import { GENERAL_SEARCH } from "../../graphql/search";
+import SearchOutlined from "@ant-design/icons/SearchOutlined";
+import withGql from "../../graphql/withGql";
+import _JSXStyle from "styled-jsx/style";
 
 @withRouter
 class SearchBar extends Component {
@@ -18,184 +18,207 @@ class SearchBar extends Component {
     searchResults: [],
     pageResults: [],
     flatResults: [],
-    selectedResult: null
-  }
+    selectedResult: null,
+  };
 
-  searchBarInput = React.createRef()
+  searchBarInput = React.createRef();
 
   componentDidMount() {
-    document.addEventListener('keydown', this.handleKeydown)
-    this.searchBarInput.current.addEventListener('focus', this.handleFocus)
-    window.addEventListener('click', this.handleClick)
+    document.addEventListener("keydown", this.handleKeydown);
+    this.searchBarInput.current.addEventListener("focus", this.handleFocus);
+    window.addEventListener("click", this.handleClick);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeydown)
-    this.searchBarInput.current.removeEventListener('focus', this.handleFocus)
-    window.removeEventListener('click', this.handleClick)
+    document.removeEventListener("keydown", this.handleKeydown);
+    this.searchBarInput.current.removeEventListener("focus", this.handleFocus);
+    window.removeEventListener("click", this.handleClick);
   }
 
   handleUpdateQuery = (e) => {
     // Update query state first
-    const newQuery = e.target.value
+    const newQuery = e.target.value;
 
     this.setState({
       query: newQuery,
-      open: newQuery.length > 0
-    })
+      open: newQuery.length > 0,
+    });
 
     // update page results state
-    const { searchResults } = this.state
-    const pageResults = searchPages(newQuery)
-    const flatResults = searchResults.concat(pageResults)
-    const selectedResult = flatResults[0]
+    const { searchResults } = this.state;
+    const pageResults = searchPages(newQuery);
+    const flatResults = searchResults.concat(pageResults);
+    const selectedResult = flatResults[0];
 
     this.setState({
       pageResults,
       flatResults,
-      selectedResult
-    })
+      selectedResult,
+    });
 
     // fire off graphql query to get searchResults
-    const { refetch } = this.props.searchQuery
+    const { refetch } = this.props.searchQuery;
 
-    refetch({ query: newQuery })
-    .then(({ data }) => {
-      const { searchResults } = data
-      const { pageResults } = this.state
-      const flatResults = searchResults.concat(pageResults)
-      const selectedResult = flatResults[0]
+    refetch({ query: newQuery }).then(({ data }) => {
+      const { searchResults } = data;
+      const { pageResults } = this.state;
+      const flatResults = searchResults.concat(pageResults);
+      const selectedResult = flatResults[0];
 
       this.setState({
         searchResults,
         flatResults,
-        selectedResult
-      })
-    })
-  }
+        selectedResult,
+      });
+    });
+  };
 
   handleFocus = (e) => {
-    const { query } = this.state
+    const { query } = this.state;
     this.setState({
-      open: query.length > 0
-    })
-  }
+      open: query.length > 0,
+    });
+  };
 
   handleClick = (e) => {
-    const clickPath = e.composedPath().map(p => p.id)
-    if (findIndex(clickPath, el => el === 'searchResults') > -1) return
-    if (findIndex(clickPath, el => el === 'searchBar') > -1) return
-    if (!this.state.open) return
+    const clickPath = e.composedPath().map((p) => p.id);
+    if (findIndex(clickPath, (el) => el === "searchResults") > -1) return;
+    if (findIndex(clickPath, (el) => el === "searchBar") > -1) return;
+    if (!this.state.open) return;
     this.setState({
-      open: false
-    })
-  }
+      open: false,
+    });
+  };
 
   handleKeydown = (event) => {
     if (this.state.open) {
-      if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
-        event.preventDefault()
-        this.nextResult()
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+        event.preventDefault();
+        this.nextResult();
       }
 
-      if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
-        event.preventDefault()
-        this.previousResult()
+      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        this.previousResult();
       }
 
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        this.gotoResult(this.state.selectedResult)
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.gotoResult(this.state.selectedResult);
       }
 
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        this.clearResults()
+      if (event.key === "Escape") {
+        event.preventDefault();
+        this.clearResults();
       }
     }
 
     // Disable the following keyboard shortcuts when the user is typing
-    if (document.activeElement.tagName === "INPUT") return
-    if (document.activeElement.tagName === "TEXTAREA") return
+    if (document.activeElement.tagName === "INPUT") return;
+    if (document.activeElement.tagName === "TEXTAREA") return;
 
-    if (event.key === '/') {
-      event.preventDefault()
-      this.focusSearchBar()
+    if (event.key === "/") {
+      event.preventDefault();
+      this.focusSearchBar();
     }
-  }
+  };
 
   focusSearchBar = () => {
-    this.searchBarInput.current.focus()
-  }
+    this.searchBarInput.current.focus();
+  };
 
   nextResult = () => {
-    const { selectedResult, flatResults } = this.state
-    const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
-    const result = flatResults[resultIndex + 1]
+    const { selectedResult, flatResults } = this.state;
+    const resultIndex = findIndex(
+      flatResults,
+      (r) => selectedResult && r.id === selectedResult.id
+    );
+    const result = flatResults[resultIndex + 1];
     this.setState({
-      selectedResult: result
-    })
-  }
+      selectedResult: result,
+    });
+  };
 
   previousResult = () => {
-    const { selectedResult, flatResults } = this.state
-    const resultIndex = findIndex(flatResults, r => selectedResult && r.id === selectedResult.id)
-    const result = resultIndex >= 0 ? flatResults[resultIndex - 1] : last(flatResults)
+    const { selectedResult, flatResults } = this.state;
+    const resultIndex = findIndex(
+      flatResults,
+      (r) => selectedResult && r.id === selectedResult.id
+    );
+    const result =
+      resultIndex >= 0 ? flatResults[resultIndex - 1] : last(flatResults);
     this.setState({
-      selectedResult: result
-    })
-  }
+      selectedResult: result,
+    });
+  };
 
   clearResults = () => {
-    this.searchBarInput.current.blur()
+    this.searchBarInput.current.blur();
     this.setState({
       query: "",
       open: false,
-      selectedResult: null
-    })
-  }
+      selectedResult: null,
+    });
+  };
 
   gotoResult = (result) => {
-    analyticsLogger.logEvent("ACTION_SEARCH", { "query": this.state.query, "title": result.title })
-    this.clearResults()
-    this.props.history.push(result.url)
-  }
+    analyticsLogger.logEvent("ACTION_SEARCH", {
+      query: this.state.query,
+      title: result.title,
+    });
+    this.clearResults();
+    this.props.history.push(result.url);
+  };
 
   render() {
-    const { query, open, selectedResult, pageResults, searchResults } = this.state
+    const { query, open, selectedResult, pageResults, searchResults } =
+      this.state;
 
     return (
-      <div style={{display: 'inline-block'}}>
-        <div onClick={this.focusSearchBar} id="searchBar" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <SearchOutlined style={{ color: 'white', fontSize: 18 }} />
+      <div style={{ display: "inline-block" }}>
+        <div
+          onClick={this.focusSearchBar}
+          id="searchBar"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <SearchOutlined style={{ color: "white", fontSize: 18 }} />
           <input
             ref={this.searchBarInput}
             value={query}
             onChange={this.handleUpdateQuery}
             placeholder="Search Console..."
-            className="noselect"
           />
         </div>
 
-        {open && <SearchResults
-          searchResults={searchResults}
-          pageResults={pageResults}
-          selectedResult={selectedResult}
-          gotoResult={this.gotoResult}
-        /> }
+        {open && (
+          <SearchResults
+            searchResults={searchResults}
+            pageResults={pageResults}
+            selectedResult={selectedResult}
+            gotoResult={this.gotoResult}
+          />
+        )}
 
-            <style jsx>{`
-              input::placeholder {
-                color: #56769D;
-                transiton: all .2s ease;
-              }
-              #searchBar {
-                transiton: all .2s ease;
-              }
-            `}</style>
+        <style jsx>{`
+          input::placeholder {
+            color: #56769d;
+            transiton: all 0.2s ease;
+          }
+          #searchBar {
+            transiton: all 0.2s ease;
+          }
+        `}</style>
       </div>
-    )
+    );
   }
 }
 
-export default withGql(SearchBar, GENERAL_SEARCH, props => ({ fetchPolicy: 'network-only', variables: { query: "" }, name: 'searchQuery' }))
+export default withGql(SearchBar, GENERAL_SEARCH, (props) => ({
+  fetchPolicy: "network-only",
+  variables: { query: "" },
+  name: "searchQuery",
+}));
