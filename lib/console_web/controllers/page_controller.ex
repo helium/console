@@ -15,7 +15,7 @@ defmodule ConsoleWeb.PageController do
         "integrations",
         "functions",
         "organizations",
-        "users", 
+        "users",
         "datacredits",
         "flows",
         "alerts",

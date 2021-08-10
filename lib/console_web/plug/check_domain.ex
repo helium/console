@@ -19,6 +19,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
           conn
           |> Plug.Conn.resp(:found, "")
           |> Plug.Conn.put_resp_header("location", "https://console-vip.helium.com")
+          |> Plug.Conn.halt()
         "console-vip.helium.com" -> conn
         "console.helium.com" -> conn
         "www.example.com" -> conn
@@ -28,6 +29,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
             conn
             |> Plug.Conn.resp(:found, "")
             |> Plug.Conn.put_resp_header("location", "https://console.helium.com")
+            |> Plug.Conn.halt()
           else
             conn
           end
