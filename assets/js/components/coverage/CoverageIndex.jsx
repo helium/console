@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
-import AddResourceButton from "../common/AddResourceButton";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
@@ -15,7 +14,7 @@ export default (props) => {
   //   analyticsLogger.logEvent("ACTION_NAV_COVERAGE_INDEX");
   // }, []);
   return (
-    <DashboardLayout title="Coverage" user={props.user}>
+    <DashboardLayout title="Coverage" user={props.user} noAddButton>
       <div
         style={{
           height: "100%",

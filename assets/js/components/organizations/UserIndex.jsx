@@ -61,6 +61,7 @@ class UserIndex extends Component {
       <DashboardLayout
         title="Users"
         user={this.props.user}
+        noAddButton
       >
         <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth: 320 }}>

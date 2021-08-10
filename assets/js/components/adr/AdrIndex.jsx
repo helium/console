@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import NavPointTriangle from "../common/NavPointTriangle";
-import AddResourceButton from "../common/AddResourceButton";
 import HomeIcon from "../../../img/adr/adr-all-icon.svg";
 import AdrIcon from "../../../img/adr/adr-logo-icon.svg";
 import { Typography, Row, Col } from "antd";
@@ -161,8 +160,6 @@ export default (props) => {
           </Row>
         </div>
       </div>
-
-      <AddResourceButton />
     </DashboardLayout>
   );
 };
