@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import AddResourceButton from "../common/AddResourceButton";
+import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
 import CoverageSearchTab from "./CoverageSearchTab"
-import { Typography, Tabs } from "antd";
+import { Typography, Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -25,24 +26,29 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <Tabs
-          defaultActiveKey="main"
-          size="large"
-          tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
-        >
-          <TabPane tab="Coverage Breakdown" key="main">
-            <CoverageMainTab />
-          </TabPane>
-          <TabPane tab="My Hotspots" key="followed">
-            <CoverageFollowedTab />
-          </TabPane>
-          <TabPane tab="Hotspot Search" key="search">
-            <CoverageSearchTab />
-          </TabPane>
-        </Tabs>
+        <Row>
+          <Col sm={14}>
+            <Tabs
+              defaultActiveKey="main"
+              size="large"
+              tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
+            >
+              <TabPane tab="Coverage Breakdown" key="main">
+                <CoverageMainTab />
+              </TabPane>
+              <TabPane tab="My Hotspots" key="followed">
+                <CoverageFollowedTab />
+              </TabPane>
+              <TabPane tab="Hotspot Search" key="search">
+                <CoverageSearchTab />
+              </TabPane>
+            </Tabs>
+          </Col>
+          <Col sm={10}>
+            <Mapbox />
+          </Col>
+        </Row>
       </div>
-
-      <AddResourceButton />
     </DashboardLayout>
   );
 };
