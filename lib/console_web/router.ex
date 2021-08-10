@@ -7,15 +7,15 @@ defmodule ConsoleWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.RateLimit, ["browser_actions", 60]
+    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.RateLimit, ["auth_actions", 60]
+    plug ConsoleWeb.Plug.CheckDomain
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
 
