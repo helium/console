@@ -21,7 +21,7 @@ const FormatPopover = () => (
       </Text>
     }
   >
-    <a className="help-link" style={{ marginBottom: 20, color: "deepskyblue" }}>
+    <a className="help-link" style={{ marginBottom: 20 }}>
       How do I format my .csv?
     </a>
   </Popover>
