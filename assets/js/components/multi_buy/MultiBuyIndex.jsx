@@ -8,7 +8,6 @@ import MultiBuyIndexTable from "./MultiBuyIndexTable";
 import DeleteMultiplePacketModal from "./DeleteMultiplePacketModal";
 import PlusIcon from "../../../img/multi_buy/multi-buy-index-plus-icon.svg";
 import AllIcon from "../../../img/multi_buy/multi-buy-index-all-icon.svg";
-import AddResourceButton from "../common/AddResourceButton";
 import { ALL_MULTI_BUYS } from "../../graphql/multiBuys";
 import { useQuery } from "@apollo/client";
 import { SkeletonLayout } from "../common/SkeletonLayout";
@@ -76,7 +75,7 @@ export default (props) => {
   }, [props.match.params.id]);
 
   return (
-    <DashboardLayout title="Multiple Packets" user={props.user} noAddButton>
+    <DashboardLayout title="Multiple Packets" user={props.user}>
       <TableHeader
         backgroundColor="#D3E0EE"
         otherColor="#ACC6DD"
@@ -144,7 +143,6 @@ export default (props) => {
           </div>
         )}
       </TableHeader>
-      <AddResourceButton />
 
       <DeleteMultiplePacketModal
         open={showDeleteMultiplePacketModal}

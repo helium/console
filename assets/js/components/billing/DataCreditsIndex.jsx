@@ -359,7 +359,7 @@ class DataCreditsIndex extends Component {
     );
 
     return (
-      <DashboardLayout title="Data Credits" user={this.props.user}>
+      <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
         <div
           style={{
             padding: "30px 30px 10px 30px",

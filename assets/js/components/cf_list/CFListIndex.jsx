@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import NavPointTriangle from "../common/NavPointTriangle";
-import AddResourceButton from "../common/AddResourceButton";
 import { Typography, Row, Col } from "antd";
 import CFListIcon from "../../../img/cf-list/cf-list-icon.svg";
 import CFListAllIcon from "../../../img/cf-list/cf-list-icon-all.svg";
@@ -179,8 +178,6 @@ export default (props) => {
           </Row>
         </div>
       </div>
-
-      <AddResourceButton />
     </DashboardLayout>
   );
 };

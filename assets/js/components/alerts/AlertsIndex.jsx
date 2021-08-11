@@ -5,7 +5,6 @@ import TableHeader from "../common/TableHeader";
 import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
 import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
 import AlertIcon from "../../../img/alerts/alert-index-add-icon.svg";
-import AddResourceButton from "../common/AddResourceButton";
 import { minWidth } from "../../util/constants";
 import AlertForm from "../alerts/AlertForm";
 import AlertIndexTable from "./AlertIndexTable";
@@ -71,7 +70,7 @@ export default (props) => {
   };
 
   return (
-    <DashboardLayout title="My Alerts" user={props.user} noAddButton>
+    <DashboardLayout title="My Alerts" user={props.user}>
       <TableHeader
         backgroundColor="#D3E0EE"
         otherColor="#ACC6DD"
@@ -209,7 +208,6 @@ export default (props) => {
           />
         )}
       </TableHeader>
-      <AddResourceButton />
       <DeleteAlertModal
         open={showDeleteAlertModal}
         alert={selectedAlert}
