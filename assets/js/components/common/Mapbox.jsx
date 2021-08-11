@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react'
 import mapboxgl from '!mapbox-gl'
 
-mapboxgl.accessToken = 'pk.eyJ1IjoicGV0ZXJtYWluIiwiYSI6ImNrczZkZTByazA4eWwycHA1OTV4Mml1OWcifQ.WRdWVfa35mv_9VogDL40xw'
+mapboxgl.accessToken =
+  window.mapbox_pk || process.env.MAPBOX_PRIVATE_KEY || 'pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ'
+
 
 export default (props) => {
   const mapContainer = useRef(null);
