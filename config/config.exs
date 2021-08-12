@@ -76,7 +76,7 @@ config :console, Console.Scheduler,
       task: {Console.Jobs, :delete_sent_alerts, []}
     ],
     sync_hotspots: [
-      schedule: "0 * * * *", # every hour @ 0 mins # TODO CHANGE THIS TO 0 * * * *
+      schedule: "0 * * * *", # every hour @ 0 mins
       task: {Console.Jobs, :sync_hotspots, []}
     ]
   ]
