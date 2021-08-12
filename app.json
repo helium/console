@@ -1,7 +1,6 @@
 {
   "name": "console",
-  "scripts": {
-  },
+  "scripts": {},
   "env": {
     "CLOAK_SECRET_KEY": {
       "required": true
@@ -24,9 +23,7 @@
       "quantity": 1
     }
   },
-  "addons": [
-    "heroku-postgresql"
-  ],
+  "addons": ["heroku-postgresql"],
   "buildpacks": [
     {
       "url": "https://github.com/helium/heroku-buildpack-elixir.git"

@@ -58,6 +58,7 @@ defmodule Console.Mixfile do
       {:guardian, "~> 2.1"},
       {:bamboo, "~> 1.6.0"},
       {:httpoison, "~> 1.7.0"},
+      {:httpoison_retry, "~> 1.0.0"},
       {:html_sanitize_ex, "~> 1.4.1"},
       {:cors_plug, "~> 2.0.2"},
       {:hammer, "~> 6.0"},
