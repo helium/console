@@ -33,7 +33,8 @@ const ImportDevicesModal = (props) => {
     importStarted,
     importStarting,
     genericImportScanned,
-    scannedGenericDevices
+    scannedGenericDevices,
+    import_status,
   } = props;
 
   const handleImport = (withLabel) => {
@@ -112,7 +113,36 @@ const ImportDevicesModal = (props) => {
               <Title style={{width: '100%', textAlign: 'center'}}>Import Status</Title>
               {importStarted && !importComplete && <Spin indicator={antLoaderGrey} style={{ marginBottom: 20 }}/>}
               {importStarted && !importComplete && <Text style={{ textAlign: 'center' }}>Please wait while your import is being completed.</Text>}
-              {importComplete && <Text style={{ textAlign: 'center' }}>Your import is complete, please return to the device index page to view your new devices.</Text>}
+              {importComplete && (
+                <div>
+                  {
+                    import_status.successful_count && (
+                      <Text style={{ display: 'block', marginBottom: 12, textAlign: 'center' }}>
+                        Successfully imported {import_status.successful_count} device{(import_status.successful_count !== 1 && "s") || ""}, please return to the device index page to view your new devices.
+                      </Text>
+                    )
+                  }
+                  {
+                    import_status.failed_devices.length > 0 && (
+                      <Text style={{ display: 'block', marginBottom: 12, textAlign: 'center' }}>
+                        Errors Encountered:
+                      </Text>
+                    )
+                  }
+                  {
+                    import_status.failed_devices.length == 0 && (
+                      <Text style={{ display: 'block', marginBottom: 12, textAlign: 'center' }}>
+                        An unexpected error has occurred, please try again later or contact support.
+                      </Text>
+                    )
+                  }
+                  {
+                    import_status.failed_devices.map(msg => (
+                      <Text key={msg} style={{ display: 'block', fontSize: 10 }}>{msg}</Text>
+                    ))
+                  }
+                </div>
+              )}
             </div>
           )
         )

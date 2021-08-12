@@ -16,7 +16,7 @@ const FormatPopover = () => (
     content={
       <Text style={{ display: "table", whiteSpace: "normal", width: 200 }}>
         The fields <b>DevEUI, AppEUI, AppKey,</b> and <b>Name</b> are all
-        required. Optionally you can include a <b>LabelID</b> column to add
+        required. Optionally you can include a <b>LabelID</b> column and a <b>LabelID2</b> to add
         labels to imported devices.
       </Text>
     }
