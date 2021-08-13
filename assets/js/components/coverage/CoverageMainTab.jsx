@@ -1,16 +1,36 @@
 import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { Table, Typography, Row, Col } from "antd";
+import Icon from '@ant-design/icons/lib/components/Icon';
+import startCase from 'lodash/startCase'
 import { minWidth } from "../../util/constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+
+const RedStatusSvg = () => (
+  <svg height="11" width="10">
+    <circle cx="5" cy="5" r="5" fill="#E06550" />
+  </svg>
+);
+
+const GreenStatusSvg = () => (
+  <svg height="11" width="10">
+    <circle cx="5" cy="5" r="5" fill="#70DC6D" />
+  </svg>
+);
+
+const OrangeStatusSvg = () => (
+  <svg height="11" width="10">
+    <circle cx="5" cy="5" r="5" fill="#E39355" />
+  </svg>
+);
 
 export default (props) => {
   const columns = [
     {
       title: "Hotspot Name",
       dataIndex: "hotspot_name",
-      render: (data) => data.split("-").map(str => str.charAt(0).toUpperCase()+ str.slice(1)).join(" "),
+      render: (data) => startCase(data),
     },
     {
       title: "Location",
@@ -33,6 +53,26 @@ export default (props) => {
     {
       title: "Status",
       dataIndex: "status",
+      render: (data) => {
+        let svg
+        switch (data) {
+          case "online":
+            svg = GreenStatusSvg
+            break;
+          case "offline":
+            svg = RedStatusSvg
+            break;
+          default:
+            svg = OrangeStatusSvg
+            break;
+        }
+        return (
+          <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Icon component={svg} style={{ marginRight: 4 }} />
+            {startCase(data)}
+          </span>
+        )
+      }
     },
   ];
 
