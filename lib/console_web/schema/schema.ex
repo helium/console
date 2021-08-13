@@ -39,6 +39,17 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
+  object :hotspot_stats do
+    field :hotspot_address, :string
+    field :hotspot_name, :string
+    field :packet_count, :integer
+    field :device_count, :integer
+    field :status, :string
+    field :long_city, :string
+    field :short_country, :string
+    field :short_state, :string
+  end
+
   object :device_stats do
     field :packets_last_1d, :integer
     field :packets_last_7d, :integer
@@ -297,6 +308,10 @@ defmodule ConsoleWeb.Schema do
     field :device_dc_stats, :device_dc_stats do
       arg :id, non_null(:id)
       resolve &Console.Devices.DeviceResolver.get_device_dc_stats/2
+    end
+
+    field :hotspot_stats, list_of(:hotspot_stats) do
+      resolve &Console.HotspotStats.HotspotStatsResolver.all/2
     end
 
     @desc "Get device import jobs"
