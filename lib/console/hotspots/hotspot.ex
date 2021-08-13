@@ -40,5 +40,6 @@ defmodule Console.Hotspots.Hotspot do
       :address,
       :name
     ])
+    |> unique_constraint(:address, name: :hotspots_address_index, message: "This hotspot address already exists")
   end
 end
