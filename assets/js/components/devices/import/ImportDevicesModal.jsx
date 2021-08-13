@@ -124,13 +124,13 @@ const ImportDevicesModal = (props) => {
                   }
                   {
                     import_status.failed_devices.length > 0 && (
-                      <Text style={{ display: 'block', marginBottom: 12, textAlign: 'center' }}>
+                      <Text style={{ display: 'block', fontWeight: 500, marginBottom: 12, textAlign: 'center', color: '#F5222D' }}>
                         Errors Encountered:
                       </Text>
                     )
                   }
                   {
-                    import_status.failed_devices.length == 0 && (
+                    !import_status.successful_count && import_status.failed_devices.length == 0 && (
                       <Text style={{ display: 'block', marginBottom: 12, textAlign: 'center' }}>
                         An unexpected error has occurred, please try again later or contact support.
                       </Text>
@@ -138,7 +138,7 @@ const ImportDevicesModal = (props) => {
                   }
                   {
                     import_status.failed_devices.map(msg => (
-                      <Text key={msg} style={{ display: 'block', fontSize: 10 }}>{msg}</Text>
+                      <Text key={msg} style={{ display: 'block', fontSize: 12 }}>{msg}</Text>
                     ))
                   }
                 </div>

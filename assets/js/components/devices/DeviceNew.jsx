@@ -141,7 +141,7 @@ class DeviceNew extends Component {
   };
 
   closeImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: false, importComplete: false });
+    this.setState({ showImportDevicesModal: false, importComplete: false, import_status: { failed_devices: [] } });
   };
 
   render() {
