@@ -243,7 +243,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
           |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ event: event, device: device } ->
-            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed", "join_request"] do
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
               HotspotStats.create_stat(%{
                 "router_uuid" => event.router_uuid,
                 "hotspot_address" => event.data["hotspot"]["id"],
