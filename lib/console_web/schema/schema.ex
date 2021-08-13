@@ -47,6 +47,7 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
     field :long_city, :string
     field :short_country, :string
+    field :short_state, :string
   end
 
   object :device_stats do

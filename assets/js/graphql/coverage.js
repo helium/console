@@ -10,6 +10,7 @@ export const HOTSPOT_STATS = gql`
       status
       long_city
       short_country
+      short_state
     }
   }
 `

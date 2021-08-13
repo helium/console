@@ -36,8 +36,11 @@ export default (props) => {
       title: "Location",
       dataIndex: "location",
       render: (data, record) => {
-        if (record.long_city && record.short_country) {
-          return record.long_city + ", " + record.short_country
+        if (record.long_city && record.short_country && record.short_state) {
+          return record.long_city + ", " + record.short_state + ", " + record.short_country
+        }
+        if (!record.long_city && record.short_country) {
+          return record.short_country
         }
         return ""
       }

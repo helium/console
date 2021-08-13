@@ -38,6 +38,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
               status: attrs.status,
               long_city: attrs.long_city,
               short_country: attrs.short_country,
+              short_state: attrs.short_state,
             }
           _ ->
             %{
