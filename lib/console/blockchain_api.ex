@@ -33,20 +33,15 @@ defmodule Console.BlockchainApi do
             {:ok, body |> Jason.decode!()}
 
           400 ->
-            IO.puts("Cursor invalid")
             {:error, :cursor_invalid}
 
           404 ->
-            IO.puts("404")
             {:error, :not_found}
 
           503 ->
-            IO.puts("Too busy")
             {:error, :too_busy}
 
           _ ->
-            IO.puts("Unknown error status code: #{status_code}")
-            IO.inspect(body)
             {:error, String.to_atom("unknown_#{status_code}")}
         end
 
