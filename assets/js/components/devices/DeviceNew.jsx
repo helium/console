@@ -38,7 +38,8 @@ class DeviceNew extends Component {
     importComplete: false,
     importType: "",
     page: 1,
-    pageSize: 10
+    pageSize: 10,
+    import_status: { failed_devices: [] }
   };
 
   componentDidMount() {
@@ -58,9 +59,9 @@ class DeviceNew extends Component {
           ? user.sub.slice(6)
           : user.sub;
 
-        if (user_id === message.user_id && message.status === "success") {
-          this.setState({ importComplete: true });
+        this.setState({ importComplete: true });
 
+        if (user_id === message.user_id && message.status === "success") {
           displayInfo(
             `Imported ${message.successful_devices} device${
               (message.successful_devices !== 1 && "s") || ""
@@ -68,6 +69,12 @@ class DeviceNew extends Component {
               message.type === "ttn" ? "The Things Network" : "CSV"
             }. Refresh this page to see the changes.`
           );
+          this.setState({
+            import_status: {
+              failed_devices: message.failed_devices,
+              successful_count: message.successful_devices,
+            }
+          })
         }
         if (user_id === message.user_id && message.status === "failed") {
           displayError(
@@ -75,6 +82,11 @@ class DeviceNew extends Component {
               message.type === "ttn" ? "The Things Network" : "CSV"
             }.`
           );
+          this.setState({
+            import_status: {
+              failed_devices: message.failed_devices || [],
+            }
+          })
         }
       }
     );
@@ -129,7 +141,7 @@ class DeviceNew extends Component {
   };
 
   closeImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: false, importComplete: false });
+    this.setState({ showImportDevicesModal: false, importComplete: false, import_status: { failed_devices: [] } });
   };
 
   render() {
@@ -307,6 +319,7 @@ class DeviceNew extends Component {
           onClose={this.closeImportDevicesModal}
           importComplete={importComplete}
           importType={importType}
+          import_status={this.state.import_status}
         />
       </DeviceDashboardLayout>
     );

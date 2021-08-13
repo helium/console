@@ -276,7 +276,7 @@ defmodule ConsoleWeb.DeviceController do
     ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{})
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
-        added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0, device_ids: []}, fn device, acc ->
+        added_devices = Enum.reduce(devices, %{label_device_map: %{}, device_count: 0, device_ids: [], failed_devices: []}, fn device, acc ->
           case device
           |> Map.put("organization_id", current_organization.id)
           |> Devices.create_device(current_organization) do
@@ -306,9 +306,19 @@ defmodule ConsoleWeb.DeviceController do
               %{
                 label_device_map: label_device_map,
                 device_count: acc.device_count + 1,
-                device_ids: [new_device.id | acc.device_ids]
+                device_ids: [new_device.id | acc.device_ids],
+                failed_devices: acc.failed_devices
               }
-            _ -> acc
+            {:error, %Ecto.Changeset{ valid?: false, action: :insert, errors: errors}} ->
+              error_msg = errors |> List.first |> elem(1) |> elem(0)
+              %{
+                label_device_map: acc.label_device_map,
+                device_count: acc.device_count,
+                device_ids: acc.device_ids,
+                failed_devices: ["#{device["name"]}: #{error_msg}" | acc.failed_devices]
+              }
+            _ ->
+              acc
           end
         end)
 
@@ -331,21 +341,34 @@ defmodule ConsoleWeb.DeviceController do
             end
           end)
         end
-        {:ok, successful_import} = Devices.update_import(
-          device_import,
-          %{
-            status: "successful",
-            successful_devices: added_devices.device_count
-          }
-        )
 
-        ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
-          status: "success",
-          user_id: successful_import.user_id,
-          successful_devices: successful_import.successful_devices,
-          type: successful_import.type
-        })
-        broadcast_router_update_devices(added_devices.device_ids)
+        if added_devices.device_count == 0 do
+          {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
+
+          ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
+            status: "failed",
+            user_id: failed_import.user_id,
+            type: failed_import.type,
+            failed_devices: added_devices.failed_devices
+          })
+        else
+          {:ok, successful_import} = Devices.update_import(
+            device_import,
+            %{
+              status: "successful",
+              successful_devices: added_devices.device_count
+            }
+          )
+
+          ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{current_organization.id}:import_list_updated", %{
+            status: "success",
+            user_id: successful_import.user_id,
+            successful_devices: successful_import.successful_devices,
+            type: successful_import.type,
+            failed_devices: added_devices.failed_devices
+          })
+          broadcast_router_update_devices(added_devices.device_ids)
+        end
       rescue
         _ ->
           {:ok, failed_import} = Devices.update_import(device_import, %{status: "failed"})
