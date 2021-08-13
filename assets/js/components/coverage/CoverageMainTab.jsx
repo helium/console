@@ -9,7 +9,7 @@ export default (props) => {
   const columns = [
     {
       title: "Hotspot Name",
-      dataIndex: "name",
+      dataIndex: "hotspot_address",
     },
     {
       title: "Location",
@@ -17,11 +17,11 @@ export default (props) => {
     },
     {
       title: "Packets",
-      dataIndex: "packets",
+      dataIndex: "packet_count",
     },
     {
       title: "# of Devices",
-      dataIndex: "devices",
+      dataIndex: "device_count",
     },
     {
       title: "Status",
@@ -82,14 +82,19 @@ export default (props) => {
         </Row>
       </div>
 
-      <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-        <Table
-          dataSource={[]}
-          columns={columns}
-          rowKey={(record) => record.id}
-          pagination={false}
-          style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
-        />
+      <div>
+        {
+          props.hotspotStats && (
+            <Table
+              dataSource={props.hotspotStats}
+              columns={columns}
+              rowKey={(record) => record.hotspot_address}
+              pagination={false}
+              className="no-scroll-bar"
+              style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
+            />
+          )
+        }
       </div>
     </div>
   );

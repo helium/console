@@ -4,7 +4,8 @@ export const HOTSPOT_STATS = gql`
   query HotspotStatsQuery {
     hotspotStats {
       hotspot_address
-      device_id
+      packet_count
+      device_count
     }
   }
 `

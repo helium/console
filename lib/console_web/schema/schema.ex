@@ -41,10 +41,8 @@ defmodule ConsoleWeb.Schema do
 
   object :hotspot_stats do
     field :hotspot_address, :string
-    field :device_id, :id
-    field :category, :string
-    field :sub_category, :string
-    field :reported_at_epoch, :integer
+    field :packet_count, :integer
+    field :device_count, :integer
   end
 
   object :device_stats do
