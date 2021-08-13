@@ -55,6 +55,19 @@ defmodule ConsoleWeb.Schema do
     field :dc_last_30d, :integer
   end
 
+  object :hotspot do
+    field :name, :string
+    field :status, :string
+    field :height, :integer
+    field :location, :string
+    field :lat, :decimal
+    field :lng, :decimal
+    field :short_state, :string
+    field :short_country, :string
+    field :long_city, :string
+    field :address, :string
+  end
+
   object :flow do
     field :id, :id
     field :organization_id, :id

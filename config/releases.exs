@@ -40,7 +40,9 @@ config :cloak, Cloak.AES.CTR,
   ]
 
 config :console,
-  router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
+  router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ","),
+  blockchain_api_retry: String.to_integer(System.get_env("BLOCKCHAIN_API_RETRY") || "1"),
+  blockchain_api_url: System.get_env("BLOCKCHAIN_API_URL")
 
 config :console,
   self_hosted: true

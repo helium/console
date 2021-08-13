@@ -10,6 +10,8 @@ defmodule Console.Jobs do
   alias Console.Alerts
   alias Console.AlertEvents
   alias Console.Repo
+  alias Console.BlockchainApi
+  alias Console.Hotspots
 
   def send_alerts do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
@@ -32,7 +34,7 @@ defmodule Console.Jobs do
     end)
   end
 
-  def send_specific_event_email(identifiers, events) do
+  defp send_specific_event_email(identifiers, events) do
     alert = Alerts.get_alert(identifiers.alert_id)
     alert_event_email_config = alert.config[identifiers.event]["email"]
 
@@ -69,7 +71,7 @@ defmodule Console.Jobs do
     end
   end
 
-  def send_webhook(identifiers, events) do
+  defp send_webhook(identifiers, events) do
     alert = Alerts.get_alert(identifiers.alert_id)
     alert_event_webhook_config = alert.config[identifiers.event]["webhook"]
 
@@ -157,5 +159,55 @@ defmodule Console.Jobs do
         end
       end
     end)
+  end
+
+  def sync_hotspots() do
+    case BlockchainApi.each_page("/hotspots", &process_hotspots/1) do
+      :ok ->
+        :ok
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
+  defp process_hotspots(hotspots) do
+    hotspots
+    |> Enum.map(&sanitize/1)
+    |> Enum.each(&upsert_hotspot/1)
+  end
+
+  @fields [
+    :address,
+    :lat,
+    :lng,
+    :location,
+    :name,
+    :status,
+    :height,
+    :short_state,
+    :short_country,
+    :long_city
+  ]
+
+  defp sanitize(hotspot) do
+    hotspot
+    |> Map.put("status", hotspot["status"]["online"])
+    |> Map.put("height", hotspot["status"]["height"])
+    |> Map.put("short_state", hotspot["geocode"]["short_state"])
+    |> Map.put("short_country", hotspot["geocode"]["short_country"])
+    |> Map.put("long_city", hotspot["geocode"]["long_city"])
+    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Map.take(@fields)
+  end
+
+  defp upsert_hotspot(%{address: address} = params) do
+    hotspot = Hotspots.get_hotspot(address)
+
+    if hotspot == nil do
+      Hotspots.create_hotspot(params)
+    else
+      Hotspots.update_hotspot(hotspot, params)
+    end
   end
 end
