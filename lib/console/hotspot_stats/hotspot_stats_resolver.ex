@@ -1,9 +1,7 @@
 defmodule Console.HotspotStats.HotspotStatsResolver do
-  alias Console.HotspotStats
+  alias Console.Hotspots
 
   def all(_, %{context: %{current_organization: current_organization}}) do
-    all_stats = HotspotStats.get_all_stats(current_organization)
-
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
     sql = """
       SELECT
@@ -17,14 +15,39 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     """
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id])
 
+    hotspot_addresses =
+      result.rows
+      |> Enum.map(fn r -> Enum.at(r, 0) end)
+
+    hotspots_on_chain =
+      Hotspots.get_hotspots(hotspot_addresses)
+      |> Enum.reduce(%{}, fn hotspot, acc ->
+        Map.put(acc, hotspot.address, hotspot)
+      end)
+
     hotspot_stats =
       result.rows
       |> Enum.map(fn r ->
-        %{
-          hotspot_address: Enum.at(r, 0),
-          packet_count: Enum.at(r, 1),
-          device_count: Enum.at(r, 2),
-        }
+        case Map.fetch(hotspots_on_chain, Enum.at(r, 0)) do
+          {:ok, attrs} ->
+            %{
+              hotspot_address: Enum.at(r, 0),
+              hotspot_name: attrs.name,
+              packet_count: Enum.at(r, 1),
+              device_count: Enum.at(r, 2),
+              status: attrs.status,
+              long_city: attrs.long_city,
+              short_country: attrs.short_country,
+            }
+          _ ->
+            %{
+              hotspot_address: Enum.at(r, 0),
+              hotspot_name: "Unknown Hotspot",
+              packet_count: Enum.at(r, 1),
+              device_count: Enum.at(r, 2),
+              status: "Unknown",
+            }
+        end
       end)
     # todo: add getting data for past 48 hours and comparison
 

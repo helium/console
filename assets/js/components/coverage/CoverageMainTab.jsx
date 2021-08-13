@@ -9,11 +9,18 @@ export default (props) => {
   const columns = [
     {
       title: "Hotspot Name",
-      dataIndex: "hotspot_address",
+      dataIndex: "hotspot_name",
+      render: (data) => data.split("-").map(str => str.charAt(0).toUpperCase()+ str.slice(1)).join(" "),
     },
     {
       title: "Location",
       dataIndex: "location",
+      render: (data, record) => {
+        if (record.long_city && record.short_country) {
+          return record.long_city + ", " + record.short_country
+        }
+        return ""
+      }
     },
     {
       title: "Packets",

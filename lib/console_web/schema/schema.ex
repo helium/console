@@ -41,8 +41,12 @@ defmodule ConsoleWeb.Schema do
 
   object :hotspot_stats do
     field :hotspot_address, :string
+    field :hotspot_name, :string
     field :packet_count, :integer
     field :device_count, :integer
+    field :status, :string
+    field :long_city, :string
+    field :short_country, :string
   end
 
   object :device_stats do
