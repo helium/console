@@ -4,7 +4,6 @@ defmodule ConsoleWeb.V1.AlertController do
   alias Console.Alerts
   alias Console.Alerts.Alert
   alias Console.Alerts.AlertNode
-  alias Console.Organizations.Organization
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -29,7 +28,7 @@ defmodule ConsoleWeb.V1.AlertController do
       nil ->
         {:error, :not_found, "Alert not found"}
       %Alert{} = alert ->
-        with {:ok, %Alert{} = alert} <- Alerts.update_alert(alert, alert_params) do
+        with {:ok, %Alert{}} <- Alerts.update_alert(alert, alert_params) do
           conn
           |> send_resp(:ok, "Alert updated")
         end
@@ -59,7 +58,7 @@ defmodule ConsoleWeb.V1.AlertController do
         nil ->
           {:error, :not_found, "Alert not found"}
         %Alert{} = alert ->
-          with {:ok, %AlertNode{} = alert_node} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
+          with {:ok, %AlertNode{}} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
             conn
             |> send_resp(:ok, "Alert was successfully added to the #{node_type} node")
         end

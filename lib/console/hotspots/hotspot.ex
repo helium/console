@@ -2,8 +2,6 @@ defmodule Console.Hotspots.Hotspot do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias Console.Helpers
-  alias Console.Organizations.Organization
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
