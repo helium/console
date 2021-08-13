@@ -136,11 +136,13 @@ const ImportDevicesModal = (props) => {
                       </Text>
                     )
                   }
-                  {
-                    import_status.failed_devices.map(msg => (
-                      <Text key={msg} style={{ display: 'block', fontSize: 12 }}>{msg}</Text>
-                    ))
-                  }
+                  <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                    {
+                      import_status.failed_devices.map((msg, i) => (
+                        <Text key={`${msg}-${i}`} style={{ display: 'block', fontSize: 14 }}>{msg}</Text>
+                      ))
+                    }
+                  </div>
                 </div>
               )}
             </div>
