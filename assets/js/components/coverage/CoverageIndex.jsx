@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
+import { useQuery } from "@apollo/client";
+import { HOTSPOT_STATS } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
@@ -10,9 +12,15 @@ const { Text } = Typography;
 const { TabPane } = Tabs;
 
 export default (props) => {
-  // useEffect(() => {
-  //   analyticsLogger.logEvent("ACTION_NAV_COVERAGE_INDEX");
-  // }, []);
+  const {
+    loading: hotspotStatsLoading,
+    error: hotspotStatsError,
+    data: hotspotStatsData,
+    refetch: hotspotStatsRefetch
+  } = useQuery(HOTSPOT_STATS, {
+    fetchPolicy: "cache-and-network",
+  });
+
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton>
       <div
@@ -33,7 +41,7 @@ export default (props) => {
               tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
             >
               <TabPane tab="Coverage Breakdown" key="main">
-                <CoverageMainTab />
+                <CoverageMainTab hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats} />
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
                 <CoverageFollowedTab />

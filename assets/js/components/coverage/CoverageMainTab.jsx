@@ -1,10 +1,34 @@
 import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
-import { Typography, Row, Col } from "antd";
+import { Table, Typography, Row, Col } from "antd";
+import { minWidth } from "../../util/constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 
 export default (props) => {
+  const columns = [
+    {
+      title: "Hotspot Name",
+      dataIndex: "name",
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+    },
+    {
+      title: "Packets",
+      dataIndex: "packets",
+    },
+    {
+      title: "# of Devices",
+      dataIndex: "devices",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+    },
+  ];
+
   return (
     <div>
       <div style={{ padding: 25 }}>
@@ -56,6 +80,16 @@ export default (props) => {
             </div>
           </Col>
         </Row>
+      </div>
+
+      <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+        <Table
+          dataSource={[]}
+          columns={columns}
+          rowKey={(record) => record.id}
+          pagination={false}
+          style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
+        />
       </div>
     </div>
   );
