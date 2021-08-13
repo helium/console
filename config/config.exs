@@ -75,10 +75,10 @@ config :console, Console.Scheduler,
       schedule: "0 0 * * *", # every day @ 00:00
       task: {Console.Jobs, :delete_sent_alerts, []}
     ],
-    sync_hotspots: [
-      schedule: "0 * * * *", # every hour @ 0 mins
-      task: {Console.Jobs, :sync_hotspots, []}
-    ]
+    # sync_hotspots: [
+    #   schedule: "0 * * * *", # every hour @ 0 mins
+    #   task: {Console.Jobs, :sync_hotspots, []}
+    # ] # TODO uncomment when shipping coverage feature
   ]
 
 # Import environment specific config. This must remain at the bottom
