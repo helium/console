@@ -2,7 +2,6 @@ defmodule Console.Flows.FlowResolver do
   alias Console.Repo
   alias Console.Flows.Flow
   alias Console.Labels
-  alias Console.Devices
   import Ecto.Query
 
   def get_by_device(%{device_id: device_id}, %{context: %{current_organization: current_organization}}) do

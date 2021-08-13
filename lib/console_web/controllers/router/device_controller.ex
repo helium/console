@@ -9,6 +9,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Channels
   alias Console.Organizations
   alias Console.DeviceStats
+  alias Console.HotspotStats
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
@@ -233,6 +234,25 @@ defmodule ConsoleWeb.Router.DeviceController do
                 "router_uuid" => event.router_uuid,
                 "payload_size" => event.data["payload_size"],
                 "dc_used" => event.data["dc"]["used"],
+                "reported_at_epoch" => event.reported_at_epoch,
+                "device_id" => device.id,
+                "organization_id" => device.organization_id
+              })
+            else
+              {:ok, %{}}
+            end
+          end)
+          |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ event: event, device: device } ->
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed", "join_request"] do
+              HotspotStats.create_stat(%{
+                "router_uuid" => event.router_uuid,
+                "hotspot_address" => event.data["hotspot"]["id"],
+                "rssi" => event.data["hotspot"]["rssi"],
+                "snr" => event.data["hotspot"]["snr"],
+                "channel" => event.data["hotspot"]["channel"],
+                "spreading" => event.data["hotspot"]["spreading"],
+                "category" => event.category,
+                "sub_category" => event.sub_category,
                 "reported_at_epoch" => event.reported_at_epoch,
                 "device_id" => device.id,
                 "organization_id" => device.organization_id
