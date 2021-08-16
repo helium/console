@@ -4,8 +4,10 @@ import { Table, Typography, Row, Col } from "antd";
 import Icon from '@ant-design/icons/lib/components/Icon';
 import startCase from 'lodash/startCase'
 import { minWidth } from "../../util/constants";
+import { updateOrganizationHotspot } from '../../actions/coverage'
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -28,9 +30,27 @@ const OrangeStatusSvg = () => (
 export default (props) => {
   const columns = [
     {
+      width: '30px',
+      render: (data, record) => {
+        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address]
+
+        return (
+          <Link to="#" onClick={() => updateOrganizationHotspot(record.hotspot_address, !hotspot_claimed)}>
+            <img
+              draggable="false"
+              src={hotspot_claimed ? SelectedFlag : UnselectedFlag}
+              style={{
+                height: 14,
+              }}
+            />
+          </Link>
+        )
+      }
+    },
+    {
       title: "Hotspot Name",
       dataIndex: "hotspot_name",
-      render: (data) => startCase(data),
+      render: (data) => startCase(data)
     },
     {
       title: "Location",

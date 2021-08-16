@@ -50,6 +50,13 @@ defmodule ConsoleWeb.Schema do
     field :short_state, :string
   end
 
+  object :organization_hotspot do
+    field :hotspot_address, :string
+    field :claimed, :boolean
+    field :alias, :string
+    field :organization_id, :id
+  end
+
   object :device_stats do
     field :packets_last_1d, :integer
     field :packets_last_7d, :integer
@@ -312,6 +319,10 @@ defmodule ConsoleWeb.Schema do
 
     field :hotspot_stats, list_of(:hotspot_stats) do
       resolve &Console.HotspotStats.HotspotStatsResolver.all/2
+    end
+
+    field :all_organization_hotspots, list_of(:organization_hotspot) do
+      resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all/2
     end
 
     @desc "Get device import jobs"

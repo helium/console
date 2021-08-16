@@ -25,6 +25,6 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
       :alias,
       :organization_id
     ])
-    |> unique_constraint(:address, name: :organization_hotspots_organization_id_hotspot_address_index, message: "This hotspot address entry already exists for this organization")
+    |> unique_constraint(:address, name: :organization_hotspots_organization_id_hotspot_address_index, message: "This hotspot has already been claimed for this organization")
   end
 end

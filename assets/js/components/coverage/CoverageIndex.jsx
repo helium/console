@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
-import { HOTSPOT_STATS } from "../../graphql/coverage";
+import { HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
@@ -18,6 +18,15 @@ export default (props) => {
     data: hotspotStatsData,
     refetch: hotspotStatsRefetch
   } = useQuery(HOTSPOT_STATS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const {
+    loading: allOrganizationHotspotsLoading,
+    error: allOrganizationHotspotsError,
+    data: allOrganizationHotspotsData,
+    refetch: allOrganizationHotspotsRefetch
+  } = useQuery(ALL_ORGANIZATION_HOTSPOTS, {
     fetchPolicy: "cache-and-network",
   });
 
@@ -41,7 +50,18 @@ export default (props) => {
               tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
             >
               <TabPane tab="Coverage Breakdown" key="main">
-                <CoverageMainTab hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats} />
+                <CoverageMainTab
+                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  orgHotspotsMap={
+                    allOrganizationHotspotsData ?
+                    allOrganizationHotspotsData.allOrganizationHotspots.reduce(
+                      (acc, hs) => {
+                        acc[hs.hotspot_address] = true
+                        return acc
+                      }, {}
+                    ) : {}
+                  }
+                />
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
                 <CoverageFollowedTab />
