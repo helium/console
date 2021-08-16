@@ -94,7 +94,7 @@ cp templates/nginx-default.conf nginx.conf
 
 - Get a certificate (https://certbot.eff.org/instructions)
 - Update `nginx.conf` with cert and key information
-- Update `docker-config.yaml` `socket_check_origin` to reflect your hosted URL
+- In `.env`, set `SOCKET_CHECK_ORIGIN`
 - Build with `docker-compose build`
 - Run with `docker-compose up`
 
