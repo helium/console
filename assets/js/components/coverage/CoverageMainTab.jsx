@@ -132,7 +132,10 @@ export default (props) => {
         </Row>
       </div>
 
-      <div>
+      <div
+        style={{ overflowX: "scroll", overflowY: "hidden" }}
+        className="no-scroll-bar"
+      >
         {
           props.hotspotStats && (
             <Table
@@ -140,8 +143,7 @@ export default (props) => {
               columns={columns}
               rowKey={(record) => record.hotspot_address}
               pagination={false}
-              className="no-scroll-bar"
-              style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
+              style={{ minWidth, overflowY: "hidden" }}
             />
           )
         }
