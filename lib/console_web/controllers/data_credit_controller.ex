@@ -37,7 +37,8 @@ defmodule ConsoleWeb.DataCreditController do
              request_body = URI.encode_query(%{
                "customer" => organization.stripe_customer_id,
                "amount" => Float.round(amount * 100) |> trunc(),
-               "currency" => "usd"
+               "currency" => "usd",
+               "receipt_email" => conn.assigns.current_user.email
              })
 
              with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
@@ -62,7 +63,8 @@ defmodule ConsoleWeb.DataCreditController do
       request_body = URI.encode_query(%{
         "customer" => current_organization.stripe_customer_id,
         "amount" => Float.round(amount * 100) |> trunc(),
-        "currency" => "usd"
+        "currency" => "usd",
+        "receipt_email" => conn.assigns.current_user.email
       })
 
       with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
@@ -329,7 +331,7 @@ defmodule ConsoleWeb.DataCreditController do
     else {:error, _} ->
       conn
       |> send_resp(502, "")
-    end 
+    end
   end
 
   def broadcast_router_refill_dc_balance(%Organization{} = organization) do
