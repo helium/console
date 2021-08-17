@@ -54,4 +54,16 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
     {:ok, hotspot_stats}
   end
+
+  def device_count(_, %{context: %{current_organization: current_organization}}) do
+    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+    sql = """
+      SELECT
+        COUNT(DISTINCT(device_id))
+      FROM hotspot_stats
+      WHERE organization_id = $1
+    """
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id])
+    {:ok, %{ count: result.rows |> Enum.at(0) |> Enum.at(0) }}
+  end
 end

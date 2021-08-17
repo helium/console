@@ -15,6 +15,14 @@ export const HOTSPOT_STATS = gql`
   }
 `
 
+export const HOTSPOT_STATS_DEVICE_COUNT = gql`
+  query HotspotStatsDeviceCountQuery {
+    hotspotStatsDeviceCount {
+      count
+    }
+  }
+`
+
 export const ALL_ORGANIZATION_HOTSPOTS = gql`
   query AllOrganizationHotspotsQuery {
     allOrganizationHotspots {

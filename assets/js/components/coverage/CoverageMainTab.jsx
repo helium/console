@@ -9,19 +9,19 @@ const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 
-const RedStatusSvg = () => (
+export const RedStatusSvg = () => (
   <svg height="11" width="10">
     <circle cx="5" cy="5" r="5" fill="#E06550" />
   </svg>
 );
 
-const GreenStatusSvg = () => (
+export const GreenStatusSvg = () => (
   <svg height="11" width="10">
     <circle cx="5" cy="5" r="5" fill="#70DC6D" />
   </svg>
 );
 
-const OrangeStatusSvg = () => (
+export const OrangeStatusSvg = () => (
   <svg height="11" width="10">
     <circle cx="5" cy="5" r="5" fill="#E39355" />
   </svg>
@@ -113,8 +113,9 @@ export default (props) => {
                 <Link
                   to={"/devices"}
                   className="help-link"
-                > # devices </Link>
-                over the past 30 days.
+                  style={{ fontSize: 15 }}
+                >{props.deviceCount ? " " + props.deviceCount.count : ""} devices </Link>
+                over the past 2 days.
               </Text>
             </div>
             <div>
