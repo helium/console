@@ -14,6 +14,8 @@ defmodule ConsoleWeb.OrganizationHotspotController do
     case claimed do
       true ->
         with {:ok, _} <- OrganizationHotspots.create_org_hotspot(attrs) do
+          ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+
           conn
           |> put_resp_header("message", "Hotspot claimed successfully")
           |> send_resp(:ok, "")
@@ -22,6 +24,8 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         case OrganizationHotspots.get_org_hotspot(hotspot_address, current_organization) do
           %OrganizationHotspot{} = org_hotspot ->
             with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
+              ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+              
               conn
               |> put_resp_header("message", "Hotspot removed from My Hotspots tab successfully")
               |> send_resp(:ok, "")

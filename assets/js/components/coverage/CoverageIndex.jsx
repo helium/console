@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
 import { HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS } from "../../graphql/coverage";
@@ -29,6 +30,28 @@ export default (props) => {
   } = useQuery(ALL_ORGANIZATION_HOTSPOTS, {
     fetchPolicy: "cache-and-network",
   });
+
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+  const orgHotspotsChannel = socket.channel("graphql:coverage_index_org_hotspots", {});
+
+  useEffect(() => {
+    // executed when mounted
+    orgHotspotsChannel.join();
+    orgHotspotsChannel.on(
+      `graphql:coverage_index_org_hotspots:${currentOrganizationId}:org_hotspots_update`,
+      (_message) => {
+        allOrganizationHotspotsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      orgHotspotsChannel.leave();
+    };
+  }, []);
 
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton>

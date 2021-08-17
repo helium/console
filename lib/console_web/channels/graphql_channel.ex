@@ -144,4 +144,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:xor_filter_update", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:coverage_index_org_hotspots", _message, socket) do
+    {:ok, socket}
+  end
 end
