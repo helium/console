@@ -412,6 +412,8 @@ class LabelContent extends Component {
                 </Option>
               </Select>
               <Table
+                showSorterTooltip={false}
+                sortDirections={['descend', 'ascend', 'descend']}
                 onRow={(record, rowIndex) => ({
                   onClick: () =>
                     this.props.history.push(`/devices/${record.id}`),

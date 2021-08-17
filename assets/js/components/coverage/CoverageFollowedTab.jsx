@@ -33,11 +33,13 @@ export default (props) => {
     },
     {
       title: "Hotspot Name",
+      sorter: true,
       dataIndex: "hotspot_name",
       render: (data) => startCase(data)
     },
     {
       title: "Location",
+      sorter: true,
       dataIndex: "location",
       render: (data, record) => {
         if (record.long_city && record.short_country && record.short_state) {
@@ -51,14 +53,17 @@ export default (props) => {
     },
     {
       title: "Packets",
+      sorter: true,
       dataIndex: "packet_count",
     },
     {
       title: "# of Devices",
+      sorter: true,
       dataIndex: "device_count",
     },
     {
       title: "Status",
+      sorter: true,
       dataIndex: "status",
       render: (data) => {
         let svg
@@ -114,6 +119,8 @@ export default (props) => {
         {
           props.hotspotStats && (
             <Table
+              showSorterTooltip={false}
+              sortDirections={['descend', 'ascend', 'descend']}
               dataSource={
                 props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address])
               }
