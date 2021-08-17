@@ -269,7 +269,7 @@
                                       After you complete registration you will receive a confirmation email.
                                       <br />
                                       <br />
-                                      If you cannot locate the email, please check Spam or Promotion folders or perform a search for an email from the address: <b>console@helium.com.</b>
+                                      If you cannot locate the email, please check Spam or Promotion folders or perform a search for an email from the address: <b><%= System.get_env("MAIL_REPLY_TO") || "console@helium.com"%>.</b>
                                     </p>
                                 </td>
                             </tr>
