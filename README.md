@@ -28,7 +28,7 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-## Running Console+Router with Docker
+## Running Console+Router with Docker locally
 
 - Clone the repo and `cd console`
 - Sign up with Auth0 (https://auth0.com/)
@@ -94,7 +94,7 @@ cp templates/nginx-default.conf nginx.conf
 
 - Get a certificate (https://certbot.eff.org/instructions)
 - Update `nginx.conf` with cert and key information
-- Update `docker-config.yaml` `socket_check_origin` to reflect your hosted URL
+- In `.env`, set `SOCKET_CHECK_ORIGIN` to your host domain
 - Build with `docker-compose build`
 - Run with `docker-compose up`
 
