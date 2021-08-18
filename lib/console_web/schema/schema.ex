@@ -83,15 +83,11 @@ defmodule ConsoleWeb.Schema do
     field :hotspot_name, :string
     field :hotspot_address, :string
     field :status, :string
-    field :height, :integer
-    field :location, :string
-    field :lat, :decimal
-    field :lng, :decimal
-    field :short_state, :string
-    field :short_country, :string
     field :long_city, :string
     field :packet_count, :integer
     field :device_count, :integer
+    field :short_country, :string
+    field :short_state, :string
   end
 
   object :flow do
@@ -339,6 +335,11 @@ defmodule ConsoleWeb.Schema do
 
     field :all_organization_hotspots, list_of(:organization_hotspot) do
       resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all/2
+    end
+
+    field :hotspot, :hotspot do
+      arg :address, non_null(:string)
+      resolve &Console.HotspotStats.HotspotStatsResolver.show/2
     end
 
     @desc "Get device import jobs"
