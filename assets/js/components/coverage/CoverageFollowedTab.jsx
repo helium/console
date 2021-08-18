@@ -7,7 +7,7 @@ import { minWidth } from "../../util/constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 
 export default (props) => {
-  const columns = getColumns(props, updateOrganizationHotspot)
+  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
   return (
     <div>

@@ -23,7 +23,7 @@ const OrangeStatusSvg = () => (
   </svg>
 );
 
-export const getColumns = (props, updateOrganizationHotspot) => {
+export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddress) => {
   return [
     {
       width: "30px",
@@ -55,7 +55,11 @@ export const getColumns = (props, updateOrganizationHotspot) => {
       title: "Hotspot Name",
       sorter: true,
       dataIndex: "hotspot_name",
-      render: (data) => startCase(data),
+      render: (data, record) => (
+        <Link to="#" onClick={() => selectHotspotAddress(record.hotspot_address)}>
+          {startCase(data)}
+        </Link>
+      )
     },
     {
       title: "Location",

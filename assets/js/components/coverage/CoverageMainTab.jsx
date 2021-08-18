@@ -8,7 +8,7 @@ const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 
 export default (props) => {
-  const columns = getColumns(props, updateOrganizationHotspot)
+  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
   return (
     <div>
