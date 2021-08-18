@@ -11,6 +11,7 @@ export default (props) => {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+  const [showMap, setShowMap] = useState(false)
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -20,11 +21,14 @@ export default (props) => {
       center: [lng, lat],
       zoom: zoom
     });
+
+    map.current.on('load', function () {
+      map.current.resize();
+      setShowMap(true)
+    })
   });
 
   return (
-    <div>
-      <div ref={mapContainer} style={{ height: 600 }} />
-    </div>
+    <div ref={mapContainer} style={{ height: '100%', visibility: showMap ? 'visible' : 'hidden' }} />
   )
 }

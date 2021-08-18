@@ -7,10 +7,31 @@ export const HOTSPOT_STATS = gql`
       hotspot_name
       packet_count
       device_count
+      packet_count_2d
+      device_count_2d
       status
       long_city
       short_country
       short_state
+    }
+  }
+`
+
+export const HOTSPOT_STATS_DEVICE_COUNT = gql`
+  query HotspotStatsDeviceCountQuery {
+    hotspotStatsDeviceCount {
+      count
+    }
+  }
+`
+
+export const ALL_ORGANIZATION_HOTSPOTS = gql`
+  query AllOrganizationHotspotsQuery {
+    allOrganizationHotspots {
+      hotspot_address
+      organization_id
+      claimed
+      alias
     }
   }
 `

@@ -405,6 +405,8 @@ class LabelShowTable extends Component {
           </div>
         </div>
         <Table
+          showSorterTooltip={false}
+          sortDirections={['descend', 'ascend', 'descend']}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={(record) => record.id}

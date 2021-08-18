@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
-import { HOTSPOT_STATS } from "../../graphql/coverage";
+import { HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS, HOTSPOT_STATS_DEVICE_COUNT } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
@@ -20,6 +21,55 @@ export default (props) => {
   } = useQuery(HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
   });
+
+  const {
+    loading: hotspotStatsDeviceCountLoading,
+    error: hotspotStatsDeviceCountError,
+    data: hotspotStatsDeviceCountData,
+    refetch: hotspotStatsDeviceCountRefetch
+  } = useQuery(HOTSPOT_STATS_DEVICE_COUNT, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const {
+    loading: allOrganizationHotspotsLoading,
+    error: allOrganizationHotspotsError,
+    data: allOrganizationHotspotsData,
+    refetch: allOrganizationHotspotsRefetch
+  } = useQuery(ALL_ORGANIZATION_HOTSPOTS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+  const orgHotspotsChannel = socket.channel("graphql:coverage_index_org_hotspots", {});
+
+  useEffect(() => {
+    // executed when mounted
+    orgHotspotsChannel.join();
+    orgHotspotsChannel.on(
+      `graphql:coverage_index_org_hotspots:${currentOrganizationId}:org_hotspots_update`,
+      (_message) => {
+        allOrganizationHotspotsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      orgHotspotsChannel.leave();
+    };
+  }, []);
+
+  const orgHotspotsMap =
+    allOrganizationHotspotsData ?
+    allOrganizationHotspotsData.allOrganizationHotspots.reduce(
+      (acc, hs) => {
+        acc[hs.hotspot_address] = true
+        return acc
+      }, {}
+    ) : {}
 
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton>
@@ -41,10 +91,17 @@ export default (props) => {
               tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
             >
               <TabPane tab="Coverage Breakdown" key="main">
-                <CoverageMainTab hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats} />
+                <CoverageMainTab
+                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  orgHotspotsMap={orgHotspotsMap}
+                  deviceCount={hotspotStatsDeviceCountData && hotspotStatsDeviceCountData.hotspotStatsDeviceCount}
+                />
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
-                <CoverageFollowedTab />
+                <CoverageFollowedTab
+                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  orgHotspotsMap={orgHotspotsMap}
+                />
               </TabPane>
               <TabPane tab="Hotspot Search" key="search">
                 <CoverageSearchTab />

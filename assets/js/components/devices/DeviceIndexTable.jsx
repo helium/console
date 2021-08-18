@@ -360,6 +360,8 @@ class DeviceIndexTable extends Component {
 
         <React.Fragment>
           <Table
+            showSorterTooltip={false}
+            sortDirections={['descend', 'ascend', 'descend']}
             columns={columns}
             dataSource={devices.entries}
             rowKey={(record) => record.id}

@@ -1,83 +1,14 @@
 import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { Table, Typography, Row, Col } from "antd";
-import Icon from '@ant-design/icons/lib/components/Icon';
-import startCase from 'lodash/startCase'
 import { minWidth } from "../../util/constants";
+import { updateOrganizationHotspot } from '../../actions/coverage'
+import { getColumns } from './Constants'
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 
-const RedStatusSvg = () => (
-  <svg height="11" width="10">
-    <circle cx="5" cy="5" r="5" fill="#E06550" />
-  </svg>
-);
-
-const GreenStatusSvg = () => (
-  <svg height="11" width="10">
-    <circle cx="5" cy="5" r="5" fill="#70DC6D" />
-  </svg>
-);
-
-const OrangeStatusSvg = () => (
-  <svg height="11" width="10">
-    <circle cx="5" cy="5" r="5" fill="#E39355" />
-  </svg>
-);
-
 export default (props) => {
-  const columns = [
-    {
-      title: "Hotspot Name",
-      dataIndex: "hotspot_name",
-      render: (data) => startCase(data),
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      render: (data, record) => {
-        if (record.long_city && record.short_country && record.short_state) {
-          return record.long_city + ", " + record.short_state + ", " + record.short_country
-        }
-        if (!record.long_city && record.short_country) {
-          return record.short_country
-        }
-        return ""
-      }
-    },
-    {
-      title: "Packets",
-      dataIndex: "packet_count",
-    },
-    {
-      title: "# of Devices",
-      dataIndex: "device_count",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      render: (data) => {
-        let svg
-        switch (data) {
-          case "online":
-            svg = GreenStatusSvg
-            break;
-          case "offline":
-            svg = RedStatusSvg
-            break;
-          default:
-            svg = OrangeStatusSvg
-            break;
-        }
-        return (
-          <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Icon component={svg} style={{ marginRight: 4 }} />
-            {startCase(data)}
-          </span>
-        )
-      }
-    },
-  ];
+  const columns = getColumns(props, updateOrganizationHotspot)
 
   return (
     <div>
@@ -93,8 +24,9 @@ export default (props) => {
                 <Link
                   to={"/devices"}
                   className="help-link"
-                > # devices </Link>
-                over the past 30 days.
+                  style={{ fontSize: 15 }}
+                >{props.deviceCount ? " " + props.deviceCount.count : ""} devices </Link>
+                over the past 2 days.
               </Text>
             </div>
             <div>
@@ -132,16 +64,20 @@ export default (props) => {
         </Row>
       </div>
 
-      <div>
+      <div
+        style={{ overflowX: "scroll", overflowY: "hidden" }}
+        className="no-scroll-bar"
+      >
         {
           props.hotspotStats && (
             <Table
+              sortDirections={['descend', 'ascend', 'descend']}
+              showSorterTooltip={false}
               dataSource={props.hotspotStats}
               columns={columns}
               rowKey={(record) => record.hotspot_address}
               pagination={false}
-              className="no-scroll-bar"
-              style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
+              style={{ minWidth, overflowY: "hidden" }}
             />
           )
         }

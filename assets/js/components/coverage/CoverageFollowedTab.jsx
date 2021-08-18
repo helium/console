@@ -1,9 +1,14 @@
 import React, { useEffect } from "react";
-import { Typography, Row, Col } from "antd";
+import { Typography, Row, Col, Table } from "antd";
 const { Text } = Typography;
+import { updateOrganizationHotspot } from '../../actions/coverage'
+import { getColumns } from './Constants'
+import { minWidth } from "../../util/constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 
 export default (props) => {
+  const columns = getColumns(props, updateOrganizationHotspot)
+
   return (
     <div>
       <div style={{ padding: 25, paddingTop: 8 }}>
@@ -26,6 +31,27 @@ export default (props) => {
             </Text>
           </Col>
         </Row>
+      </div>
+
+      <div
+        style={{ overflowX: "scroll", overflowY: "hidden" }}
+        className="no-scroll-bar"
+      >
+        {
+          props.hotspotStats && (
+            <Table
+              showSorterTooltip={false}
+              sortDirections={['descend', 'ascend', 'descend']}
+              dataSource={
+                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address])
+              }
+              columns={columns}
+              rowKey={(record) => record.hotspot_address}
+              pagination={false}
+              style={{ minWidth, overflowY: "hidden" }}
+            />
+          )
+        }
       </div>
     </div>
   );
