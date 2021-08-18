@@ -54,12 +54,32 @@ export default (props) => {
     {
       title: "Packets",
       sorter: true,
-      dataIndex: "packet_count",
+      render: (data, record) => {
+        const positive = record.packet_count - record.packet_count_2d >= 0
+        return (
+          <span>
+            {`${record.packet_count} `}
+            <span style={{ fontSize: 14, color: positive ? '#12CB9E' : '#F15B47', marginLeft: 8 }}>
+              {record.packet_count_2d != 0 && `${positive ? "+" : ""}${((record.packet_count - record.packet_count_2d) / record.packet_count_2d * 100).toFixed(2)}%`}
+            </span>
+          </span>
+        )
+      }
     },
     {
       title: "# of Devices",
       sorter: true,
-      dataIndex: "device_count",
+      render: (data, record) => {
+        const positive = record.device_count - record.device_count_2d >= 0
+        return (
+          <span>
+            {`${record.device_count} `}
+            <span style={{ fontSize: 14, color: positive ? '#12CB9E' : '#F15B47', marginLeft: 8 }}>
+              {record.packet_count_2d != 0 && `${positive ? "+" : ""}${((record.device_count - record.device_count_2d) / record.device_count_2d * 100).toFixed(2)}%`}
+            </span>
+          </span>
+        )
+      }
     },
     {
       title: "Status",

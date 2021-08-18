@@ -7,6 +7,8 @@ export const HOTSPOT_STATS = gql`
       hotspot_name
       packet_count
       device_count
+      packet_count_2d
+      device_count_2d
       status
       long_city
       short_country
