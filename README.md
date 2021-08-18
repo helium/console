@@ -104,6 +104,7 @@ cp templates/nginx-default.conf nginx.conf
 - Build with `docker-compose build`, you do not have to bring down your server until this completes
 - Bring down your server with `docker-compose down`, then run your new build with `docker-compose up`
 - If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
+- If needed, you can manually migrate the db with `docker exec -it helium_console /bin/bash`, then `_build/prod/rel/console/bin/console eval "Console.Release.migrate"`
 
 ## Upgrading your v1 Console to v2 (originally released 07/29/2021)
 
