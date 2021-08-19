@@ -6,8 +6,8 @@ defmodule Console.Hotspots do
   def get_hotspot!(address), do: Repo.get_by!(Hotspot, [address: address])
   def get_hotspot(address), do: Repo.get_by(Hotspot,[address: address])
 
-  def get_hotspots(ids) do
-     from(h in Hotspot, where: h.address in ^ids)
+  def get_hotspots(addresses) do
+     from(h in Hotspot, where: h.address in ^addresses)
      |> Repo.all()
   end
 

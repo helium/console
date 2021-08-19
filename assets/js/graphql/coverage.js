@@ -1,20 +1,36 @@
 import { gql } from '@apollo/client';
 
+const HOTSPOT_STAT_FRAGMENT = gql`
+  fragment HotspotStatFragment on HotspotStats {
+    hotspot_address
+    hotspot_name
+    packet_count
+    device_count
+    packet_count_2d
+    device_count_2d
+    status
+    long_city
+    short_country
+    short_state
+  }
+`;
+
 export const HOTSPOT_STATS = gql`
   query HotspotStatsQuery {
     hotspotStats {
-      hotspot_address
-      hotspot_name
-      packet_count
-      device_count
-      packet_count_2d
-      device_count_2d
-      status
-      long_city
-      short_country
-      short_state
+      ...HotspotStatFragment
     }
   }
+  ${HOTSPOT_STAT_FRAGMENT}
+`
+
+export const FOLLOWED_HOTSPOT_STATS = gql`
+  query FollowedHotspotStatsQuery {
+    followedHotspotStats {
+      ...HotspotStatFragment
+    }
+  }
+  ${HOTSPOT_STAT_FRAGMENT}
 `
 
 export const HOTSPOT_STATS_DEVICE_COUNT = gql`

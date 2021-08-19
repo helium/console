@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
-import { HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS, HOTSPOT_STATS_DEVICE_COUNT } from "../../graphql/coverage";
+import { HOTSPOT_STATS, FOLLOWED_HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS, HOTSPOT_STATS_DEVICE_COUNT } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab"
 import CoverageFollowedTab from "./CoverageFollowedTab"
@@ -32,6 +32,15 @@ export default (props) => {
   });
 
   const {
+    loading: followedHotspotStatsLoading,
+    error: followedHotspotStatsError,
+    data: followedHotspotStatsData,
+    refetch: followedHotspotStatsRefetch
+  } = useQuery(FOLLOWED_HOTSPOT_STATS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const {
     loading: allOrganizationHotspotsLoading,
     error: allOrganizationHotspotsError,
     data: allOrganizationHotspotsData,
@@ -53,9 +62,9 @@ export default (props) => {
       `graphql:coverage_index_org_hotspots:${currentOrganizationId}:org_hotspots_update`,
       (_message) => {
         allOrganizationHotspotsRefetch();
+        followedHotspotStatsRefetch();
       }
     );
-
     // executed when unmounted
     return () => {
       orgHotspotsChannel.leave();
@@ -99,7 +108,7 @@ export default (props) => {
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
                 <CoverageFollowedTab
-                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  hotspotStats={followedHotspotStatsData && followedHotspotStatsData.followedHotspotStats}
                   orgHotspotsMap={orgHotspotsMap}
                 />
               </TabPane>
