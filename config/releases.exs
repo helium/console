@@ -68,4 +68,5 @@ config :console,
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),
-  domain: System.get_env("SITE_DOMAIN_MAILGUN")
+  domain: System.get_env("SITE_DOMAIN_MAILGUN"),
+  base_uri: System.get_env("MAILGUN_URL") || "https://api.mailgun.net/v3"
