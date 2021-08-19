@@ -336,17 +336,15 @@ const Router = (props) => {
                                 <Profile user={user} {...props} />
                               )}
                             />
-                            {
-                              true && (
-                                <Route
-                                  exact
-                                  path="/coverage"
-                                  component={(props) => (
-                                    <CoverageIndex user={user} {...props} />
-                                  )}
-                                />
-                              )
-                            }
+                            {false && (
+                              <Route
+                                exact
+                                path="/coverage"
+                                component={(props) => (
+                                  <CoverageIndex user={user} {...props} />
+                                )}
+                              />
+                            )}
                           </Switch>
                         </ApolloProvider>
                       ))
