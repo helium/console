@@ -2,11 +2,15 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
-import { HOTSPOT_STATS, ALL_ORGANIZATION_HOTSPOTS, HOTSPOT_STATS_DEVICE_COUNT } from "../../graphql/coverage";
+import {
+  HOTSPOT_STATS,
+  ALL_ORGANIZATION_HOTSPOTS,
+  HOTSPOT_STATS_DEVICE_COUNT,
+} from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
-import CoverageMainTab from "./CoverageMainTab"
-import CoverageFollowedTab from "./CoverageFollowedTab"
-import CoverageSearchTab from "./CoverageSearchTab"
+import CoverageMainTab from "./CoverageMainTab";
+import CoverageFollowedTab from "./CoverageFollowedTab";
+import CoverageSearchTab from "./CoverageSearchTab";
 import { Typography, Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
@@ -17,7 +21,7 @@ export default (props) => {
     loading: hotspotStatsLoading,
     error: hotspotStatsError,
     data: hotspotStatsData,
-    refetch: hotspotStatsRefetch
+    refetch: hotspotStatsRefetch,
   } = useQuery(HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
   });
@@ -26,7 +30,7 @@ export default (props) => {
     loading: hotspotStatsDeviceCountLoading,
     error: hotspotStatsDeviceCountError,
     data: hotspotStatsDeviceCountData,
-    refetch: hotspotStatsDeviceCountRefetch
+    refetch: hotspotStatsDeviceCountRefetch,
   } = useQuery(HOTSPOT_STATS_DEVICE_COUNT, {
     fetchPolicy: "cache-and-network",
   });
@@ -35,7 +39,7 @@ export default (props) => {
     loading: allOrganizationHotspotsLoading,
     error: allOrganizationHotspotsError,
     data: allOrganizationHotspotsData,
-    refetch: allOrganizationHotspotsRefetch
+    refetch: allOrganizationHotspotsRefetch,
   } = useQuery(ALL_ORGANIZATION_HOTSPOTS, {
     fetchPolicy: "cache-and-network",
   });
@@ -44,7 +48,10 @@ export default (props) => {
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
-  const orgHotspotsChannel = socket.channel("graphql:coverage_index_org_hotspots", {});
+  const orgHotspotsChannel = socket.channel(
+    "graphql:coverage_index_org_hotspots",
+    {}
+  );
 
   useEffect(() => {
     // executed when mounted
@@ -62,14 +69,12 @@ export default (props) => {
     };
   }, []);
 
-  const orgHotspotsMap =
-    allOrganizationHotspotsData ?
-    allOrganizationHotspotsData.allOrganizationHotspots.reduce(
-      (acc, hs) => {
-        acc[hs.hotspot_address] = true
-        return acc
-      }, {}
-    ) : {}
+  const orgHotspotsMap = allOrganizationHotspotsData
+    ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
+        acc[hs.hotspot_address] = true;
+        return acc;
+      }, {})
+    : {};
 
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton>
@@ -88,23 +93,35 @@ export default (props) => {
             <Tabs
               defaultActiveKey="main"
               size="large"
-              tabBarStyle={{ paddingLeft: 20, paddingRight: 20, height: 40, marginTop: 20 }}
+              tabBarStyle={{
+                paddingLeft: 20,
+                paddingRight: 20,
+                height: 40,
+                marginTop: 20,
+              }}
             >
               <TabPane tab="Coverage Breakdown" key="main">
                 <CoverageMainTab
-                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  hotspotStats={
+                    hotspotStatsData && hotspotStatsData.hotspotStats
+                  }
                   orgHotspotsMap={orgHotspotsMap}
-                  deviceCount={hotspotStatsDeviceCountData && hotspotStatsDeviceCountData.hotspotStatsDeviceCount}
+                  deviceCount={
+                    hotspotStatsDeviceCountData &&
+                    hotspotStatsDeviceCountData.hotspotStatsDeviceCount
+                  }
                 />
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
                 <CoverageFollowedTab
-                  hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+                  hotspotStats={
+                    hotspotStatsData && hotspotStatsData.hotspotStats
+                  }
                   orgHotspotsMap={orgHotspotsMap}
                 />
               </TabPane>
               <TabPane tab="Hotspot Search" key="search">
-                <CoverageSearchTab />
+                <CoverageSearchTab orgHotspotsMap={orgHotspotsMap} />
               </TabPane>
             </Tabs>
           </Col>
