@@ -40,43 +40,7 @@ cp templates/.env-router .env-router
 cp templates/docker-compose-local.yaml docker-compose.yaml
 ```
 
-- Populate .env file with the following
-
-```
-SECRET_KEY_BASE=[Random 64 char secret key]
-CLOAK_SECRET_KEY=[Run in iex: 32 |> :crypto.strong_rand_bytes() |> Base.encode64()]
-GUARDIAN_SECRET_KEY=[Random 64 char secret key]
-ROUTER_SECRETS=[Unix Timestamp:Random 64 char secret key]
-OUI=3
-SELF_HOSTED=true
-INITIAL_ORG_GIFTED_DC=[Defaults to 10000 (optional)]
-ENV_DOMAIN=[Your host domain]
-AUTH_0_CLIENT_ID=[Client ID under Auth0 app settings]
-AUTH_0_DOMAIN=[Domain under Auth0 app settings]
-AUTH0_BASE_URL=[https:// + Auth0 Domain]
-MAILGUN_API_KEY=[Your Mailgun api key (optional)]
-SITE_DOMAIN_MAILGUN=[Your Mailgun host domain (optional)]
-DATABASE_DB=console
-DATABASE_HOST=postgres
-DATABASE_USER=postgres
-DATABASE_PASSWORD=postgres
-BLOCKCHAIN_API_URL="https://api.helium.io/v1"
-BLOCKCHAIN_API_RETRY="1"
-```
-
-- Populate .env-router file with the following
-
-```
-ROUTER_SEED_NODES=/ip4/35.166.211.46/tcp/2154,/ip4/44.236.95.167/tcp/2154
-ROUTER_CONSOLE_ENDPOINT=http://helium_console:4000
-ROUTER_CONSOLE_WS_ENDPOINT=ws://helium_console:4000/socket/router/websocket
-ROUTER_CONSOLE_SECRET=[Same secret from .env file]
-ROUTER_OUI=3
-ROUTER_DEFAULT_DEVADDR=AAQASA==
-ROUTER_SC_OPEN_DC_AMOUNT=100000
-ROUTER_SC_EXPIRATION_INTERVAL=45
-```
-
+- Populate your newly copied .env file and .env-router file
 - Build with `docker-compose build`
 - Run with `docker-compose up`
 
