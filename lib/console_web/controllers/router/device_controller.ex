@@ -262,7 +262,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: _device, event: created_event } ->
-            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] do
+            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
               cond do
                 organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
                   Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
