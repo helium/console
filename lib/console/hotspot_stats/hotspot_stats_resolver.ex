@@ -126,13 +126,16 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
   def device_count(_, %{context: %{current_organization: current_organization}}) do
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix2d = current_unix - 86400000 * 2
+
     sql = """
       SELECT
         COUNT(DISTINCT(device_id))
       FROM hotspot_stats
-      WHERE organization_id = $1
+      WHERE organization_id = $1 and reported_at_epoch > $2
     """
-    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id])
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, unix2d])
     {:ok, %{ count: result.rows |> Enum.at(0) |> Enum.at(0) }}
   end
 end

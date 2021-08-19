@@ -25,7 +25,7 @@ export default (props) => {
                   to={"/devices"}
                   className="help-link"
                   style={{ fontSize: 15 }}
-                >{props.deviceCount ? " " + props.deviceCount.count : ""} devices </Link>
+                >{props.deviceCount ? " " + props.deviceCount.count : " 0"} devices </Link>
                 over the past 2 days.
               </Text>
             </div>
