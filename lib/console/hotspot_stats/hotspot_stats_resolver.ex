@@ -199,10 +199,4 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
     hotspot_stats_d1 ++ hotspot_stats_d2_only
   end
-
-  def show(%{ address: address }, _) do
-    hotspot = Hotspots.get_hotspot!(address)
-
-    {:ok, hotspot}
-  end
 end

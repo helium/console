@@ -126,6 +126,7 @@ export default (props) => {
                         hotspotStatsDeviceCountData &&
                         hotspotStatsDeviceCountData.hotspotStatsDeviceCount
                       }
+                      selectHotspotAddress={selectHotspotAddress}
                     />
                   ) : (
                     <CoverageHotspotShow hotspotAddress={hotspotAddressSelected} />
@@ -141,6 +142,7 @@ export default (props) => {
                         followedHotspotStatsData.followedHotspotStats
                       }
                       orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
                     />
                   ) : (
                     <CoverageHotspotShow hotspotAddress={hotspotAddressSelected} />

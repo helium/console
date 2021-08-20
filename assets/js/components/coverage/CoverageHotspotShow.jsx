@@ -13,6 +13,7 @@ export default (props) => {
       variables: { address: props.hotspotAddress }
     })
   }, [props.hotspotAddress]);
+  console.log(data)
 
   return (
     <div style={{ padding: 25}}>

@@ -339,7 +339,7 @@ defmodule ConsoleWeb.Schema do
 
     field :hotspot, :hotspot do
       arg :address, non_null(:string)
-      resolve &Console.HotspotStats.HotspotStatsResolver.show/2
+      resolve &Console.Hotspots.HotspotResolver.show/2
     end
 
     @desc "Get device import jobs"
