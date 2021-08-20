@@ -8,7 +8,6 @@ import { useQuery } from "@apollo/client";
 import debounce from "lodash/debounce";
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
-import { SkeletonLayout } from "../common/SkeletonLayout";
 import { getColumns } from "./Constants";
 import { updateOrganizationHotspot } from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
