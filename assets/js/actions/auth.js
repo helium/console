@@ -16,6 +16,12 @@ export const enrollInMfa = () => {
   }
 }
 
+export const disableMfa = () => {
+  return (dispatch) => {
+    return rest.destroy('/api/mfa_enrollments');
+  }
+}
+
 export const logOut = () => {
   analyticsLogger.setUserId(null)
   return async (dispatch) => {
