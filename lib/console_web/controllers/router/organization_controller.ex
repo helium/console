@@ -9,6 +9,12 @@ defmodule ConsoleWeb.Router.OrganizationController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
+  def index(conn, _) do
+    organizations = Organizations.get_all()
+
+    render(conn, "index.json", organizations: organizations)
+  end
+
   def show(conn, %{"id" => id}) do
     organization = Organizations.get_organization!(id)
 

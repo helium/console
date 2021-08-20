@@ -329,6 +329,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.HotspotStats.HotspotStatsResolver.all/2
     end
 
+    field :followed_hotspot_stats, list_of(:hotspot_stats) do
+      resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
+    end
+
     field :hotspot_stats_device_count, :hotspot_stats_device_count do
       resolve &Console.HotspotStats.HotspotStatsResolver.device_count/2
     end

@@ -9,6 +9,10 @@ defmodule Console.Organizations do
   alias Console.Auth.User
   alias Console.ApiKeys.ApiKey
 
+  def get_all do
+    Repo.all(Organization)
+  end
+
   def list_organizations do
     query = from o in Organization,
       select: %{id: o.id, name: o.name, role: "admin", dc_balance: o.dc_balance, inserted_at: o.inserted_at, app_eui: o.default_app_eui}
