@@ -6,15 +6,7 @@ defmodule ConsoleWeb.Auth0Controller do
   def get_enrolled_mfa(conn, _params) do
     base_url = Application.get_env(:console, :auth0_mfa_baseurl)
     auth0_id = conn.assigns.auth0_id
-    case Application.get_env(:console, :auth0_expiration) do
-      nil ->
-        # Get new Auth0 Management Token
-        fetch_new_auth0_token()
-      expiration ->
-        if expiration <= DateTime.utc_now() do
-          fetch_new_auth0_token()
-        end
-    end
+    check_token_expiration()
 
     authorization_header = ["Authorization": "Bearer #{Application.get_env(:console, :auth0_token)}"]
     # Fetch user enrollments from Auth0
@@ -41,15 +33,7 @@ defmodule ConsoleWeb.Auth0Controller do
   def enroll_in_mfa(conn, _params) do
     base_url = Application.get_env(:console, :auth0_mfa_baseurl)
     auth0_id = conn.assigns.auth0_id
-    case Application.get_env(:console, :auth0_expiration) do
-      nil ->
-        # Get new Auth0 Management Token
-        fetch_new_auth0_token()
-      expiration ->
-        if expiration <= DateTime.utc_now() do
-          fetch_new_auth0_token()
-        end
-    end
+    check_token_expiration()
 
     {:ok, body} = Poison.encode(%{
       user_id: auth0_id,
@@ -69,11 +53,54 @@ defmodule ConsoleWeb.Auth0Controller do
     end
   end
 
+  def disable_mfa(conn, _params) do
+    base_url = Application.get_env(:console, :auth0_mfa_baseurl)
+    auth0_id = conn.assigns.auth0_id
+    check_token_expiration()
+
+    authorization_header = ["Authorization": "Bearer #{Application.get_env(:console, :auth0_token)}"]
+    enrollments =
+      "#{base_url}/api/v2/users/#{auth0_id}/enrollments"
+        |> URI.encode()
+        |> HTTPoison.get!(authorization_header)
+        |> Map.get(:body)
+        |> Poison.decode!()
+
+    IO.inspect enrollments
+    confirmed_enrollments =
+      case Enum.filter(enrollments, fn enrollment ->
+        enrollment["status"] == "confirmed"
+      end)
+    IO.inspect current_enrollment
+    current_enrollment = confirmed_enrollments |> List.first()
+
+    response =
+      "#{base_url}/api/v2/guardian/enrollments/#{current_enrollment["id"]}"
+        |> URI.encode()
+        |> HTTPoison.delete!(authorization_header)
+    IO.inspect response
+    with 200 <- response.status_code do
+      conn |> send_resp(:ok, "")
+    end
+  end
+
   def subscribe_new_user(conn, %{ "email" => email }) do
     ConsoleWeb.Mailerlite.subscribe(email)
 
     conn
     |> send_resp(:no_content, "")
+  end
+
+  defp check_token_expiration() do
+    case Application.get_env(:console, :auth0_expiration) do
+      nil ->
+        # Get new Auth0 Management Token
+        fetch_new_auth0_token()
+      expiration ->
+        if expiration <= DateTime.utc_now() do
+          fetch_new_auth0_token()
+        end
+    end
   end
 
   defp fetch_new_auth0_token() do
@@ -102,5 +129,4 @@ defmodule ConsoleWeb.Auth0Controller do
         |> DateTime.add(body["expires_in"] - 10, :second)
     Application.put_env(:console, :auth0_expiration, new_expiration)
   end
-
 end

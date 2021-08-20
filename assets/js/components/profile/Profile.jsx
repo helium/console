@@ -3,14 +3,15 @@ import withGql from "../../graphql/withGql";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
-import { logOut, getMfaStatus, enrollInMfa } from "../../actions/auth";
+import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/auth";
 import { generateKey } from "../../actions/apiKeys";
 import DashboardLayout from "../common/DashboardLayout";
 import UserCan from "../common/UserCan";
 import ProfileNewKeyModal from "./ProfileNewKeyModal";
+import DisableMFAModal from "./DisableMFAModal";
 import RoleName from "../common/RoleName";
 import analyticsLogger from "../../util/analyticsLogger";
-import { displayInfo } from "../../util/messages";
+import { displayInfo, displayError } from "../../util/messages";
 import { ALL_API_KEYS } from "../../graphql/apiKeys";
 import {
   Typography,
@@ -32,7 +33,8 @@ class Profile extends Component {
     name: "",
     role: null,
     newKey: null,
-    showEnrollButton: null,
+    enrolledIn2FA: true,
+    showDisableMFAModal: false,
     showDeleteApiKeyModal: false,
     selectedKey: null,
   };
@@ -50,7 +52,7 @@ class Profile extends Component {
     );
 
     this.props.getMfaStatus().then(({ data }) => {
-      this.setState({ showEnrollButton: !data.enrollment_status });
+      this.setState({ enrolledIn2FA: data.enrollment_status });
     });
   }
 
@@ -89,6 +91,19 @@ class Profile extends Component {
     });
   };
 
+  handleDisableMfa = () => {
+    this.props.disableMfa()
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({ enrolledIn2FA: false });
+          displayInfo("Two-Factor has been disabled for this account");
+        }
+      })
+      .catch(() => {
+        displayError()
+      })
+  };
+
   openDeleteApiKeyModal = (key) => {
     this.setState({ selectedKey: key, showDeleteApiKeyModal: true });
   };
@@ -97,12 +112,16 @@ class Profile extends Component {
     this.setState({ showDeleteApiKeyModal: false, selectedKey: null });
   };
 
+  closeDisableMFAModal = () => {
+    this.setState({ showDisableMFAModal: false });
+  };
+
   render() {
     const { email } = this.props.user;
     const { role } = this.props;
     const { logOut } = this.props;
     const { apiKeys } = this.props.apiKeysQuery;
-    const { newKey, showDeleteApiKeyModal, selectedKey } = this.state;
+    const { newKey, showDeleteApiKeyModal, selectedKey, showDisableMFAModal } = this.state;
 
     const columns = [
       {
@@ -177,7 +196,7 @@ class Profile extends Component {
                     marginTop: 10,
                   }}
                 >
-                  {this.state.showEnrollButton && (
+                  {!this.state.enrolledIn2FA && (
                     <UserCan noManager>
                       <Button
                         type="primary"
@@ -188,9 +207,20 @@ class Profile extends Component {
                       </Button>
                     </UserCan>
                   )}
-                  {this.state.showEnrollButton === false && (
+                  {this.state.enrolledIn2FA && (
                     <Button type="primary" style={{ marginRight: 10 }} disabled>
                       Enrolled In 2FA
+                    </Button>
+                  )}
+                  {this.state.enrolledIn2FA && (
+                    <Button
+                      type="danger"
+                      style={{ marginRight: 10 }}
+                      onClick={() => {
+                        this.setState({ showDisableMFAModal: true })
+                      }}
+                    >
+                      Disable 2FA
                     </Button>
                   )}
                   <Button
@@ -262,6 +292,12 @@ class Profile extends Component {
           open={showDeleteApiKeyModal}
           close={this.closeDeleteApiKeyModal}
         />
+
+        <DisableMFAModal
+          open={showDisableMFAModal}
+          close={this.closeDisableMFAModal}
+          handleSubmit={this.handleDisableMfa}
+        />
       </DashboardLayout>
     );
   }
@@ -277,7 +313,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { logOut, generateKey, getMfaStatus, enrollInMfa },
+    { logOut, generateKey, getMfaStatus, enrollInMfa, disableMfa },
     dispatch
   );
 }

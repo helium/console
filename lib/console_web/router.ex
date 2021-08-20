@@ -57,6 +57,7 @@ defmodule ConsoleWeb.Router do
     post "/channels/google_sheets", ChannelController, :get_google_form_data
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/mfa_enrollments", Auth0Controller, :enroll_in_mfa
+    delete "/mfa_enrollments", Auth0Controller, :disable_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
 
