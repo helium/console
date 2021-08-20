@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Row, Col, Table, Select, Pagination } from "antd";
-const { Option } = Select;
+import { Typography, Row, Col } from "antd";
 const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
@@ -9,10 +8,10 @@ import { useQuery } from "@apollo/client";
 import debounce from "lodash/debounce";
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
-import { minWidth } from "../../util/constants";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { getColumns } from "./Constants";
 import { updateOrganizationHotspot } from "../../actions/coverage";
+import CoverageSearchTable from "./CoverageSearchTable";
 
 export default (props) => {
   const columns = getColumns(props, updateOrganizationHotspot);
@@ -30,7 +29,7 @@ export default (props) => {
 
   const runSearch = () => {
     if (!loading) {
-      refetch();
+      refetch({ searchTerm, page, pageSize, column, order });
     }
   };
 
@@ -43,21 +42,19 @@ export default (props) => {
   const handleChangePageSize = (pageSize) => {
     setPageSize(pageSize);
     localStorage.setItem(PAGE_SIZE_KEY, pageSize);
-    refetch();
+    refetch({ searchTerm, page, pageSize, column, order });
   };
 
   const handleSortChange = (column, order) => {
     setColumn(column);
     setOrder(order);
-    refetch();
+    refetch({ searchTerm, page, pageSize, column, order });
   };
 
   const handleChangePage = (page) => {
     setPage(page);
-    refetch();
+    refetch({ searchTerm, page, pageSize, column, order });
   };
-
-  console.log(data);
 
   return (
     <div>
@@ -93,7 +90,7 @@ export default (props) => {
           />
         </div>
 
-        {searchTerm.length === 0 ? (
+        {searchTerm.length === 0 && (
           <Row gutter={24}>
             <Col sm={12}>
               <Text style={{ fontSize: 16, fontWeight: 600 }}>
@@ -120,59 +117,23 @@ export default (props) => {
               </Text>
             </Col>
           </Row>
-        ) : loading || !data ? (
-          <div style={{ padding: 10 }}>
-            <SkeletonLayout />
-          </div>
-        ) : (
-          <React.Fragment>
-            <Table
-              showSorterTooltip={false}
-              sortDirections={["descend", "ascend", "descend"]}
-              rowKey={(record) => record.hotspot_address}
-              dataSource={data && data.hotspots && data.hotspots.entries}
-              columns={columns}
-              pagination={false}
-              onChange={(pagi, filter, sorter) => {
-                handleSortChange(
-                  sorter.field === "location" ? "long_city" : sorter.field,
-                  sorter.order === "descend" ? "desc" : "asc"
-                );
-              }}
-              style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
-              className="no-scroll-bar"
-            />
-            <div
-              style={{
-                minWidth,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                paddingBottom: 0,
-              }}
-            >
-              <Select
-                value={`${
-                  data && data.hotspots && data.hotspots.pageSize
-                } results`}
-                onSelect={handleChangePageSize}
-                style={{ marginRight: 40, paddingTop: 2 }}
-              >
-                <Option value={10}>10</Option>
-                <Option value={25}>25</Option>
-                <Option value={100}>100</Option>
-              </Select>
-              <Pagination
-                current={data && data.hotspots && data.hotspots.pageNumber}
-                pageSize={data && data.hotspots && data.hotspots.pageSize}
-                total={data && data.hotspots && data.hotspots.totalEntries}
-                onChange={(page) => handleChangePage(page)}
-                style={{ marginBottom: 20 }}
-                showSizeChanger={false}
-              />
-            </div>
-          </React.Fragment>
+        )}
+        {error && (
+          <Text>Data failed to load, please reload the page and try again</Text>
+        )}
+        {searchTerm.length !== 0 && (
+          <CoverageSearchTable
+            hotspots={
+              data
+                ? data.hotspots
+                : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
+            }
+            handleChangePageSize={handleChangePageSize}
+            handleSortChange={handleSortChange}
+            handleChangePage={handleChangePage}
+            columns={columns}
+            loading={loading}
+          />
         )}
       </div>
     </div>

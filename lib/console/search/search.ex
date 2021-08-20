@@ -386,7 +386,7 @@ defmodule Console.Search do
   def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) < 3 do
     order_by = case [column, order] do
       [nil, nil] -> [desc: :score]
-      _ -> [{:desc, :score}, {String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}]
+      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}, ]
     end
 
     sub_query_1 = from h in Hotspot,
@@ -427,13 +427,13 @@ defmodule Console.Search do
   def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) >= 3 do
     order_by = case [column, order] do
       [nil, nil] -> [desc: :score]
-      _ -> [{:desc, :score}, {String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}]
+      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}]
     end
 
     sub_query = from h in Hotspot,
       select: %{
-        address: h.address,
-        name: h.name,
+        hotspot_address: h.address,
+        hotspot_name: h.name,
         long_city: h.long_city,
         short_state: h.short_state,
         short_country: h.short_country,
@@ -449,8 +449,8 @@ defmodule Console.Search do
       }
     
     query = from d in subquery(sub_query), select: %{
-      hotspot_address: d.address,
-      hotspot_name: d.name,
+      hotspot_address: d.hotspot_address,
+      hotspot_name: d.hotspot_name,
       long_city: d.long_city,
       short_state: d.short_state,
       short_country: d.short_country,
