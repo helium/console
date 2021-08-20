@@ -4,7 +4,6 @@ defmodule Console.Search do
   import Ecto.Query
   alias Console.Organizations.Organization
   alias Console.Hotspots.Hotspot
-  alias Console.HotspotStats.HotspotStat
   @sim_limit 0.05
 
   # When query is empty, just return an array
@@ -379,7 +378,7 @@ defmodule Console.Search do
     to_json(result, "function")
   end
 
-  def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) == 0 do
+  def run_for_hotspots(query, _page, _page_size, _column, _order) when byte_size(query) == 0 do
     %{}
   end
 
