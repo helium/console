@@ -33,7 +33,7 @@ class Profile extends Component {
     name: "",
     role: null,
     newKey: null,
-    enrolledIn2FA: true,
+    enrolledIn2FA: null,
     showDisableMFAModal: false,
     showDeleteApiKeyModal: false,
     selectedKey: null,
@@ -95,7 +95,7 @@ class Profile extends Component {
     this.props.disableMfa()
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ enrolledIn2FA: false });
+          this.setState({ enrolledIn2FA: false, showDisableMFAModal: false });
           displayInfo("Two-Factor has been disabled for this account");
         }
       })
@@ -196,7 +196,7 @@ class Profile extends Component {
                     marginTop: 10,
                   }}
                 >
-                  {!this.state.enrolledIn2FA && (
+                  {this.state.enrolledIn2FA === false && (
                     <UserCan noManager>
                       <Button
                         type="primary"
@@ -207,12 +207,12 @@ class Profile extends Component {
                       </Button>
                     </UserCan>
                   )}
-                  {this.state.enrolledIn2FA && (
+                  {this.state.enrolledIn2FA === true && (
                     <Button type="primary" style={{ marginRight: 10 }} disabled>
                       Enrolled In 2FA
                     </Button>
                   )}
-                  {this.state.enrolledIn2FA && (
+                  {this.state.enrolledIn2FA === true && (
                     <Button
                       type="danger"
                       style={{ marginRight: 10 }}
