@@ -1,5 +1,9 @@
 defmodule Console.Search do
+  alias Console.Repo
+  alias Console.Helpers
+  import Ecto.Query
   alias Console.Organizations.Organization
+  alias Console.Hotspots.Hotspot
   @sim_limit 0.05
 
   # When query is empty, just return an array
@@ -372,6 +376,92 @@ defmodule Console.Search do
 
     result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
     to_json(result, "function")
+  end
+
+  def run_for_hotspots(query, _page, _page_size, _column, _order) when byte_size(query) == 0 do
+    %{}
+  end
+
+  def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) < 3 do
+    order_by = case [column, order] do
+      [nil, nil] -> [desc: :score]
+      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}, ]
+    end
+
+    sub_query_1 = from h in Hotspot,
+      where: ilike(h.name, ^"%#{query}%") or ilike(h.long_city, ^"%#{query}%"),
+      select: %{
+        hotspot_address: h.address,
+        hotspot_name: h.name,
+        long_city: h.long_city,
+        short_state: h.short_state,
+        short_country: h.short_country,
+        status: h.status,
+        score: 1.0,
+        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
+        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+      }
+
+    sub_query_2 = from h in Hotspot,
+      where: ilike(h.name, ^"%#{query}%") or ilike(h.long_city, ^"%#{query}%"),
+      select: %{
+        hotspot_address: h.address,
+        hotspot_name: h.name,
+        long_city: h.long_city,
+        short_state: h.short_state,
+        short_country: h.short_country,
+        status: h.status,
+        score: 0.5,
+        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
+        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+      }
+
+    main_subquery = from q in subquery(union(sub_query_1, ^sub_query_2)), distinct: q.hotspot_address, order_by: [desc: q.hotspot_address, desc: q.score]
+    
+    query = from h in subquery(main_subquery), order_by: ^order_by
+    
+    query |> Repo.paginate(page: page, page_size: page_size)
+  end
+
+  def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) >= 3 do
+    order_by = case [column, order] do
+      [nil, nil] -> [desc: :score]
+      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}]
+    end
+
+    sub_query = from h in Hotspot,
+      select: %{
+        hotspot_address: h.address,
+        hotspot_name: h.name,
+        long_city: h.long_city,
+        short_state: h.short_state,
+        short_country: h.short_country,
+        status: h.status,
+        score: fragment("CASE WHEN SIMILARITY(? || ' ', ?) > SIMILARITY(? || ' ', ?) THEN SIMILARITY(? || ' ', ?) ELSE SIMILARITY(? || ' ', ?) END",
+          h.name, ^query,
+          h.long_city, ^query,
+          h.name, ^query,
+          h.long_city, ^query
+        ),
+        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
+        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+      }
+    
+    query = from d in subquery(sub_query), select: %{
+      hotspot_address: d.hotspot_address,
+      hotspot_name: d.hotspot_name,
+      long_city: d.long_city,
+      short_state: d.short_state,
+      short_country: d.short_country,
+      status: d.status,
+      score: d.score,
+      packet_count: d.packet_count,
+      device_count: d.device_count
+    },
+    where: d.score > @sim_limit,
+    order_by: ^order_by
+
+    query |> Repo.paginate(page: page, page_size: page_size)
   end
 
   def to_json(%Postgrex.Result{rows: records}) do

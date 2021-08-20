@@ -79,8 +79,9 @@ defmodule ConsoleWeb.Schema do
     field :dc_last_30d, :integer
   end
 
-  object :hotspot do
-    field :name, :string
+  paginated object :hotspot do
+    field :hotspot_name, :string
+    field :hotspot_address, :string
     field :status, :string
     field :height, :integer
     field :location, :string
@@ -89,7 +90,8 @@ defmodule ConsoleWeb.Schema do
     field :short_state, :string
     field :short_country, :string
     field :long_city, :string
-    field :address, :string
+    field :packet_count, :integer
+    field :device_count, :integer
   end
 
   object :flow do
@@ -457,6 +459,14 @@ defmodule ConsoleWeb.Schema do
     field :search_functions, list_of(:function) do
       arg :query, :string
       resolve &Console.Search.SearchResolver.search_functions/2
+    end
+
+    @desc "Get paginated search results for hotspots"
+    paginated field :hotspots, :paginated_hotspots do
+      arg :query, :string
+      arg :column, :string
+      arg :order, :string
+      resolve(&Console.Search.SearchResolver.paginated_search_hotspots/2)
     end
 
     field :api_keys, list_of(:api_key) do
