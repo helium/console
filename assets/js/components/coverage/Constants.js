@@ -93,7 +93,7 @@ export const getColumns = (props, updateOrganizationHotspot) => {
                 marginLeft: 8,
               }}
             >
-              {record.packet_count_2d != 0 &&
+              {record.packet_count_2d !== 0 &&
                 `${positive ? "+" : ""}${(
                   ((record.packet_count - record.packet_count_2d) /
                     record.packet_count_2d) *
@@ -120,7 +120,7 @@ export const getColumns = (props, updateOrganizationHotspot) => {
                 marginLeft: 8,
               }}
             >
-              {record.packet_count_2d != 0 &&
+              {record.packet_count_2d !== 0 &&
                 `${positive ? "+" : ""}${(
                   ((record.device_count - record.device_count_2d) /
                     record.device_count_2d) *
