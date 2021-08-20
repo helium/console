@@ -68,11 +68,12 @@ defmodule ConsoleWeb.Auth0Controller do
 
     IO.inspect enrollments
     confirmed_enrollments =
-      case Enum.filter(enrollments, fn enrollment ->
+      Enum.filter(enrollments, fn enrollment ->
         enrollment["status"] == "confirmed"
       end)
-    IO.inspect current_enrollment
+
     current_enrollment = confirmed_enrollments |> List.first()
+    IO.inspect current_enrollment
 
     response =
       "#{base_url}/api/v2/guardian/enrollments/#{current_enrollment["id"]}"
