@@ -207,7 +207,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             locked_device = Devices.get_device_and_lock_for_add_device_event(device.id)
 
             dc_used =
-              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
                 true -> event.data["dc"]["used"]
                 false -> 0
               end
@@ -229,7 +229,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             Devices.update_device(locked_device, device_updates, "router")
           end)
           |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
-            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
               DeviceStats.create_stat(%{
                 "router_uuid" => event.router_uuid,
                 "payload_size" => event.data["payload_size"],
@@ -262,7 +262,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ device: _device, event: created_event } ->
-            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] do
+            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
               cond do
                 organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
                   Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
