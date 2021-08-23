@@ -131,6 +131,7 @@ export default (props) => {
                   ) : (
                     <CoverageHotspotShow
                       hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
                       selectHotspotAddress={selectHotspotAddress}
                     />
                   )
@@ -150,6 +151,7 @@ export default (props) => {
                   ) : (
                     <CoverageHotspotShow
                       hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
                       selectHotspotAddress={selectHotspotAddress}
                     />
                   )

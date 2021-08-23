@@ -23,6 +23,36 @@ const OrangeStatusSvg = () => (
   </svg>
 );
 
+export const renderStatusLabel = (status) => {
+  let svg;
+  switch (status) {
+    case "online":
+      svg = GreenStatusSvg;
+      break;
+    case "offline":
+      svg = RedStatusSvg;
+      break;
+    default:
+      svg = OrangeStatusSvg;
+      break;
+  }
+  return (
+    <span
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: '#F2F6FC',
+        borderRadius: 20,
+        padding: '2px 6px 2px 6px'
+      }}
+    >
+      <Icon component={svg} style={{ marginRight: 6 }}/>
+      {startCase(status)}
+    </span>
+  );
+}
+
 export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddress) => {
   return [
     {
