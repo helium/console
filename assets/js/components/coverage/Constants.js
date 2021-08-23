@@ -63,12 +63,13 @@ export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddres
         return (
           <Link
             to="#"
-            onClick={() =>
+            onClick={e => {
+              e.preventDefault()
               updateOrganizationHotspot(
                 record.hotspot_address,
                 !hotspot_claimed
               )
-            }
+            }}
           >
             <img
               draggable="false"
@@ -86,7 +87,13 @@ export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddres
       sorter: true,
       dataIndex: "hotspot_name",
       render: (data, record) => (
-        <Link to="#" onClick={() => selectHotspotAddress(record.hotspot_address)}>
+        <Link
+          to="#"
+          onClick={e => {
+            e.preventDefault()
+            selectHotspotAddress(record.hotspot_address)}
+          }
+        >
           {startCase(data)}
         </Link>
       )

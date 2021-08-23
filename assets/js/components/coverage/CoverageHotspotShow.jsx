@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useLazyQuery } from "@apollo/client";
-import { Typography, Row, Col, Button } from "antd";
+import { Typography, Row, Col, Button, Tooltip } from "antd";
 const { Text } = Typography;
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import { HOTSPOT_SHOW } from "../../graphql/coverage";
@@ -28,8 +28,9 @@ export default (props) => {
   )
 
   const hotspot = data.hotspot
-  const org_hotspot = props.orgHotspotsMap[hotspot.hotspot_address]
-  const hotspot_claimed = org_hotspot ? org_hotspot.claimed : false
+  const orgHotspot = props.orgHotspotsMap[hotspot.hotspot_address]
+  const hotspotClaimed = orgHotspot ? orgHotspot.claimed : false
+  const hotspotAlias = orgHotspot ? orgHotspot.alias : null
 
   return (
     <div style={{ padding: 25, paddingTop: 8 }}>
@@ -56,14 +57,23 @@ export default (props) => {
               />
               {locationString(hotspot.long_city, hotspot.short_state, hotspot.short_country)}
             </span>
-            <span style={{ color: '#2C79EE', marginRight: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <img
-                draggable="false"
-                src={AliasIcon}
-                style={{ height: 12, marginRight: 4 }}
-              />
-              Alias
-            </span>
+            <Link
+              to="#"
+              onClick={e => {
+                e.preventDefault()
+              }}
+            >
+              <span style={{ color: '#2C79EE', marginRight: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <img
+                  draggable="false"
+                  src={AliasIcon}
+                  style={{ height: 12, marginRight: 4 }}
+                />
+                <Tooltip title="Click to Edit Alias">
+                  {hotspotAlias || "No Alias"}
+                </Tooltip>
+              </span>
+            </Link>
           </div>
           <div style={{ marginBottom: 8 }}>
             <Text style={{ fontSize: 15 }}>
@@ -77,12 +87,12 @@ export default (props) => {
               <Link
                 to="#"
                 onClick={() => {
-                  updateOrganizationHotspot(hotspot.hotspot_address, !hotspot_claimed)
+                  updateOrganizationHotspot(hotspot.hotspot_address, !hotspotClaimed)
                 }}
               >
                 <img
                   draggable="false"
-                  src={hotspot_claimed ? SelectedFlag : UnselectedFlag}
+                  src={hotspotClaimed ? SelectedFlag : UnselectedFlag}
                   style={{
                     height: 20,
                     marginBottom: 8
@@ -93,7 +103,7 @@ export default (props) => {
                 <Text
                   style={{ fontSize: 16, color: '#2C79EE'}}
                 >
-                  {hotspot_claimed ? "Claimed!" : "Unclaimed"}
+                  {hotspotClaimed ? "Claimed!" : "Unclaimed"}
                 </Text>
               </div>
             </div>
