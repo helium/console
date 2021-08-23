@@ -129,7 +129,10 @@ export default (props) => {
                       selectHotspotAddress={selectHotspotAddress}
                     />
                   ) : (
-                    <CoverageHotspotShow hotspotAddress={hotspotAddressSelected} />
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
                   )
                 }
               </TabPane>
@@ -145,7 +148,10 @@ export default (props) => {
                       selectHotspotAddress={selectHotspotAddress}
                     />
                   ) : (
-                    <CoverageHotspotShow hotspotAddress={hotspotAddressSelected} />
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
                   )
                 }
               </TabPane>
