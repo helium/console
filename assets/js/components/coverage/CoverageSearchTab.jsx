@@ -1,16 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Row, Col } from "antd";
+import React, { useEffect, useState, useCallback } from "react";
+import { Typography, Row, Col, Button } from "antd";
 const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import { SEARCH_HOTSPOTS } from "../../graphql/search";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import debounce from "lodash/debounce";
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 import { getColumns } from "./Constants";
 import { updateOrganizationHotspot } from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
+const RECENT_HOTSPOT_SEARCH_TERMS = "recentHotspotSearchTerms";
+let recentSearchTerms;
+try {
+  recentSearchTerms =
+    JSON.parse(localStorage.getItem(RECENT_HOTSPOT_SEARCH_TERMS)) || [];
+} catch (e) {
+  recentSearchTerms = [];
+}
 
 export default (props) => {
   const columns = getColumns(props, updateOrganizationHotspot);
@@ -19,40 +27,83 @@ export default (props) => {
   const [pageSize, setPageSize] = useState(startPageSize);
   const [column, setColumn] = useState(null);
   const [order, setOrder] = useState(null);
+  const [term, setTerm] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [storedSearchTerms, setStoredSearchTerms] = useState(recentSearchTerms);
 
-  const { loading, error, data, refetch } = useQuery(SEARCH_HOTSPOTS, {
-    fetchPolicy: "cache-and-network",
-    variables: { query: searchTerm, page, pageSize, column, order },
-  });
+  const [searchHotspots, { loading, error, data }] = useLazyQuery(
+    SEARCH_HOTSPOTS,
+    {
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
-  const runSearch = () => {
-    if (!loading) {
-      refetch({ searchTerm, page, pageSize, column, order });
+  const storeTerm = () => {
+    if (searchTerm !== "") {
+      let modifiedTerms = storedSearchTerms;
+
+      /* if case-insensitive searchTerm already exists,
+      remove so that searchTerm can be added to index 0 */
+      var query = searchTerm.toLowerCase();
+      var index = -1;
+      modifiedTerms.some(function (element, i) {
+        if (query === element.toLowerCase()) {
+          index = i;
+          return true;
+        }
+      });
+      if (index !== -1) modifiedTerms.splice(index, 1);
+
+      if (recentSearchTerms.length === 10) modifiedTerms.pop(); // store max 10 terms
+      modifiedTerms.unshift(searchTerm);
+      setStoredSearchTerms(modifiedTerms);
+      localStorage.setItem(
+        RECENT_HOTSPOT_SEARCH_TERMS,
+        JSON.stringify(modifiedTerms)
+      );
     }
   };
 
-  const debouncedSearch = debounce(runSearch, 300);
+  const runSearch = () => {
+    if (!loading) {
+      searchHotspots({
+        variables: { query: searchTerm, page, pageSize, column, order },
+      });
+      storeTerm();
+    }
+  };
+
+  const debouncedSearch = useCallback(
+    debounce(() => {
+      runSearch();
+    }, 800)
+  );
 
   useEffect(() => {
-    debouncedSearch(searchTerm);
+    debouncedSearch();
   }, [searchTerm]);
 
   const handleChangePageSize = (pageSize) => {
     setPageSize(pageSize);
     localStorage.setItem(PAGE_SIZE_KEY, pageSize);
-    refetch({ searchTerm, page, pageSize, column, order });
+    searchHotspots({
+      variables: { query: searchTerm, page, pageSize, column, order },
+    });
   };
 
   const handleSortChange = (column, order) => {
     setColumn(column);
     setOrder(order);
-    refetch({ searchTerm, page, pageSize, column, order });
+    searchHotspots({
+      variables: { query: searchTerm, page, pageSize, column, order },
+    });
   };
 
   const handleChangePage = (page) => {
     setPage(page);
-    refetch({ searchTerm, page, pageSize, column, order });
+    searchHotspots({
+      variables: { query: searchTerm, page, pageSize, column, order },
+    });
   };
 
   return (
@@ -85,7 +136,15 @@ export default (props) => {
               width: "90%",
             }}
             placeholder="Search by hotspot name or city"
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                setSearchTerm(event.target.value);
+              }
+            }}
+            onChange={(event) => {
+              setTerm(event.target.value);
+            }}
+            value={term}
           />
         </div>
 
@@ -95,6 +154,34 @@ export default (props) => {
               <Text style={{ fontSize: 16, fontWeight: 600 }}>
                 Recent Searches
               </Text>
+              {storedSearchTerms.length > 0 ? (
+                storedSearchTerms.map((t) => (
+                  <Row key={t}>
+                    <Button
+                      style={{ border: "none" }}
+                      onClick={() => {
+                        setTerm(t);
+                        setSearchTerm(t);
+                      }}
+                    >
+                      <Text
+                        style={{
+                          textDecoration: "underline",
+                          color: "#1890ff",
+                        }}
+                      >
+                        {t}
+                      </Text>
+                    </Button>
+                  </Row>
+                ))
+              ) : (
+                <Row>
+                  <Text style={{ color: "grey" }}>
+                    <i>No recent searches</i>
+                  </Text>
+                </Row>
+              )}
             </Col>
             <Col sm={12}>
               <div style={{ marginBottom: 4 }}>

@@ -17,7 +17,7 @@ defmodule Console.Search.SearchResolver do
     {:ok, Search.run_for_functions(query, current_organization)}
   end
 
-  def paginated_search_hotspots(%{query: query, page: page, page_size: page_size, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
+  def paginated_search_hotspots(%{query: query, page: page, page_size: page_size, column: column, order: order}, %{context: %{current_organization: _current_organization}}) do
     {:ok, Search.run_for_hotspots(query, page, page_size, column, order)}
   end
 end
