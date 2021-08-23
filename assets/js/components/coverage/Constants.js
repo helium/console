@@ -86,17 +86,21 @@ export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddres
       title: "Hotspot Name",
       sorter: true,
       dataIndex: "hotspot_name",
-      render: (data, record) => (
-        <Link
-          to="#"
-          onClick={e => {
-            e.preventDefault()
-            selectHotspotAddress(record.hotspot_address)}
-          }
-        >
-          {startCase(data)}
-        </Link>
-      )
+      render: (data, record) => {
+        const hotspot_alias = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].alias
+
+        return (
+          <Link
+            to="#"
+            onClick={e => {
+              e.preventDefault()
+              selectHotspotAddress(record.hotspot_address)}
+            }
+          >
+            {hotspot_alias || startCase(data)}
+          </Link>
+        )
+      }
     },
     {
       title: "Location",

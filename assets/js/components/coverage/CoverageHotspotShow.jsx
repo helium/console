@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import OutsideClick from "react-outside-click-handler";
 import { useLazyQuery } from "@apollo/client";
-import { Typography, Row, Col, Button, Tooltip } from "antd";
+import { Typography, Row, Col, Button, Tooltip, Input } from "antd";
 const { Text } = Typography;
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import { HOTSPOT_SHOW } from "../../graphql/coverage";
 import startCase from "lodash/startCase";
 import { renderStatusLabel } from './Constants'
-import { updateOrganizationHotspot } from '../../actions/coverage'
+import { updateOrganizationHotspot, updateHotspotAlias } from '../../actions/coverage'
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import LocationIcon from "../../../img/coverage/hotspot-show-location-icon.svg";
@@ -15,6 +16,8 @@ import AliasIcon from "../../../img/coverage/hotspot-show-alias-icon.svg";
 
 export default (props) => {
   const [getHotspot, { error, loading, data, refetch }] = useLazyQuery(HOTSPOT_SHOW);
+  const [name, setName] = useState("");
+  const [showAliasInput, toggleAliasInput] = useState(false);
 
   useEffect(() => {
     getHotspot({
@@ -57,23 +60,48 @@ export default (props) => {
               />
               {locationString(hotspot.long_city, hotspot.short_state, hotspot.short_country)}
             </span>
-            <Link
-              to="#"
-              onClick={e => {
-                e.preventDefault()
-              }}
-            >
-              <span style={{ color: '#2C79EE', marginRight: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <img
-                  draggable="false"
-                  src={AliasIcon}
-                  style={{ height: 12, marginRight: 4 }}
-                />
-                <Tooltip title="Click to Edit Alias">
-                  {hotspotAlias || "No Alias"}
-                </Tooltip>
-              </span>
-            </Link>
+            {
+              showAliasInput ? (
+                <OutsideClick
+                  onOutsideClick={() => {
+                    toggleAliasInput(false)
+                    updateHotspotAlias(hotspot.hotspot_address, name)
+                  }}
+                >
+                  <Input
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{
+                      width: 200,
+                      verticalAlign: "middle",
+                    }}
+                    suffix={`${name.length}/50`}
+                    maxLength={50}
+                  />
+                </OutsideClick>
+              ) : (
+                <Link
+                  to="#"
+                  onClick={e => {
+                    e.preventDefault()
+                    toggleAliasInput(true)
+                    setName(hotspotAlias || "")
+                  }}
+                >
+                  <span style={{ color: '#2C79EE', marginRight: 20, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <img
+                      draggable="false"
+                      src={AliasIcon}
+                      style={{ height: 12, marginRight: 4 }}
+                    />
+                    <Tooltip title="Click to Edit Alias">
+                      {hotspotAlias || "No Alias"}
+                    </Tooltip>
+                  </span>
+                </Link>
+              )
+            }
           </div>
           <div style={{ marginBottom: 8 }}>
             <Text style={{ fontSize: 15 }}>
