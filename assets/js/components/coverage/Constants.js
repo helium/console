@@ -58,7 +58,7 @@ export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddres
     {
       width: "30px",
       render: (data, record) => {
-        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address];
+        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].claimed;
 
         return (
           <Link

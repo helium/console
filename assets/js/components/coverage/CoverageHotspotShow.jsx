@@ -28,6 +28,8 @@ export default (props) => {
   )
 
   const hotspot = data.hotspot
+  const org_hotspot = props.orgHotspotsMap[hotspot.hotspot_address]
+  const hotspot_claimed = org_hotspot ? org_hotspot.claimed : false
 
   return (
     <div style={{ padding: 25, paddingTop: 8 }}>
@@ -74,16 +76,13 @@ export default (props) => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Link
                 to="#"
-                onClick={() =>
-                  updateOrganizationHotspot(
-                    hotspot.hotspot_address,
-                    !props.orgHotspotsMap[hotspot.hotspot_address]
-                  )
-                }
+                onClick={() => {
+                  updateOrganizationHotspot(hotspot.hotspot_address, !hotspot_claimed)
+                }}
               >
                 <img
                   draggable="false"
-                  src={props.orgHotspotsMap[hotspot.hotspot_address] ? SelectedFlag : UnselectedFlag}
+                  src={hotspot_claimed ? SelectedFlag : UnselectedFlag}
                   style={{
                     height: 20,
                     marginBottom: 8
@@ -94,7 +93,7 @@ export default (props) => {
                 <Text
                   style={{ fontSize: 16, color: '#2C79EE'}}
                 >
-                  {props.orgHotspotsMap[hotspot.hotspot_address] ? "Claimed!" : "Unclaimed"}
+                  {hotspot_claimed ? "Claimed!" : "Unclaimed"}
                 </Text>
               </div>
             </div>

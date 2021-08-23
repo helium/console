@@ -43,7 +43,7 @@ export default (props) => {
               showSorterTooltip={false}
               sortDirections={['descend', 'ascend', 'descend']}
               dataSource={
-                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address])
+                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address] && props.orgHotspotsMap[hs.hotspot_address].claimed)
               }
               columns={columns}
               rowKey={(record) => record.hotspot_address}

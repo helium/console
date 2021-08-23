@@ -84,7 +84,7 @@ export default (props) => {
 
   const orgHotspotsMap = allOrganizationHotspotsData
     ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
-        acc[hs.hotspot_address] = true;
+        acc[hs.hotspot_address] = hs;
         return acc;
       }, {})
     : {};
