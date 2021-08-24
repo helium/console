@@ -211,7 +211,7 @@ export default (props) => {
           <CoverageSearchTable
             hotspots={
               data
-                ? data.hotspots
+                ? data.searchHotspots
                 : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
             }
             handleChangePageSize={handleChangePageSize}

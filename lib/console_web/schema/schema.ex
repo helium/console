@@ -452,7 +452,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Get paginated search results for hotspots"
-    paginated field :hotspots, :paginated_hotspots do
+    paginated field :search_hotspots, :paginated_hotspots do
       arg :query, :string
       arg :column, :string
       arg :order, :string
