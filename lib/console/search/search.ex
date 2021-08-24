@@ -388,6 +388,10 @@ defmodule Console.Search do
       _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}, ]
     end
 
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix2d = current_unix - 86400000 * 2
+
     sub_query_1 = from h in Hotspot,
       where: ilike(h.name, ^"%#{query}%") or ilike(h.long_city, ^"%#{query}%"),
       select: %{
@@ -398,8 +402,10 @@ defmodule Console.Search do
         short_country: h.short_country,
         status: h.status,
         score: 1.0,
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
+        packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
+        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
+        device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d)
       }
 
     sub_query_2 = from h in Hotspot,
@@ -412,8 +418,10 @@ defmodule Console.Search do
         short_country: h.short_country,
         status: h.status,
         score: 0.5,
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
+        packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
+        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
+        device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d)
       }
 
     main_subquery = from q in subquery(union(sub_query_1, ^sub_query_2)), distinct: q.hotspot_address, order_by: [desc: q.hotspot_address, desc: q.score]
@@ -442,10 +450,12 @@ defmodule Console.Search do
           h.long_city, ^query,
           h.name, ^query,
           h.long_city, ^query
-        ),
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ?", h.address),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ?", h.address)
+        )
       }
+    
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix2d = current_unix - 86400000 * 2
     
     query = from d in subquery(sub_query), select: %{
       hotspot_address: d.hotspot_address,
@@ -455,8 +465,10 @@ defmodule Console.Search do
       short_country: d.short_country,
       status: d.status,
       score: d.score,
-      packet_count: d.packet_count,
-      device_count: d.device_count
+      packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", d.hotspot_address, ^unix1d),
+      packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", d.hotspot_address, ^unix1d, ^unix2d),
+      device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", d.hotspot_address, ^unix1d),
+      device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", d.hotspot_address, ^unix1d, ^unix2d)
     },
     where: d.score > @sim_limit,
     order_by: ^order_by

@@ -63,7 +63,9 @@ export const SEARCH_HOTSPOTS = gql`
         short_country
         status
         packet_count
+        packet_count_2d
         device_count
+        device_count_2d
       }
       totalEntries
       totalPages

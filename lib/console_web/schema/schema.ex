@@ -85,7 +85,9 @@ defmodule ConsoleWeb.Schema do
     field :status, :string
     field :long_city, :string
     field :packet_count, :integer
+    field :packet_count_2d, :integer
     field :device_count, :integer
+    field :device_count_2d, :integer
     field :short_country, :string
     field :short_state, :string
   end
