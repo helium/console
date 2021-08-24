@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import OutsideClick from "react-outside-click-handler";
 import { useLazyQuery } from "@apollo/client";
@@ -38,7 +38,7 @@ export default (props) => {
   const hotspotAlias = orgHotspot ? orgHotspot.alias : null
 
   return (
-    <div>
+    <Fragment>
       <div style={{ padding: 25, paddingTop: 8 }}>
         <Button
           icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
@@ -158,7 +158,7 @@ export default (props) => {
         <TabPane tab="My Devices Heard" key="devicesTable">
         </TabPane>
       </Tabs>
-    </div>
+    </Fragment>
   );
 };
 
