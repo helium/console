@@ -160,9 +160,16 @@ export default (props) => {
               <TabPane tab="Hotspot Search" key="search">
                 {
                   !hotspotAddressSelected ? (
-                    <CoverageSearchTab orgHotspotsMap={orgHotspotsMap} />
+                    <CoverageSearchTab
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
                   ) : (
-                    <CoverageHotspotShow hotspotAddress={hotspotAddressSelected} />
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
                   )
                 }
               </TabPane>

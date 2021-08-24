@@ -13,7 +13,7 @@ import { updateOrganizationHotspot } from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
 
 export default (props) => {
-  const columns = getColumns(props, updateOrganizationHotspot);
+  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(startPageSize);

@@ -105,7 +105,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   def device_count(_, %{context: %{current_organization: current_organization}}) do
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix2d = current_unix - 86400000 * 2
+    unix2d = current_unix - 86400000
 
     sql = """
       SELECT
