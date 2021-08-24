@@ -50,6 +50,9 @@ defmodule ConsoleWeb.Schema do
     field :device_count_2d, :integer
     field :short_country, :string
     field :short_state, :string
+    field :most_heard_device_id, :string
+    field :most_heard_device_name, :string
+    field :most_heard_packet_count, :integer
   end
 
   object :hotspot_stats_device_count do

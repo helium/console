@@ -1,5 +1,6 @@
 defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Hotspots
+  alias Console.Devices
 
   def all(_, %{context: %{current_organization: current_organization}}) do
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
@@ -149,21 +150,30 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
     most_heard_device =
       case length(past_1d_result.rows) do
-        0 -> ["None", 0]
+        0 -> [nil, nil, 0]
         _ ->
           first_row = Enum.at(past_1d_result.rows, 0)
           {:ok, device_id} = Ecto.UUID.load(Enum.at(first_row, 0))
 
-          [ device_id, Enum.at(first_row, 1) ]
+          device_name =
+            case Devices.get_device(current_organization, device_id) do
+              nil -> "Unknown"
+              device -> device.name
+            end
+
+          [ device_id, device_name, Enum.at(first_row, 1) ]
       end
 
+
+
     attrs = %{
-      past_1d_device_count: length(past_1d_result.rows),
-      past_2d_device_count: length(past_2d_result.rows),
-      past_1d_packet_count: past_1d_result.rows |> Enum.reduce(0, fn row, acc -> Enum.at(row, 1, 0) + acc end),
-      past_2d_packet_count: past_2d_result.rows |> Enum.reduce(0, fn row, acc -> Enum.at(row, 1, 0) + acc end),
+      device_count: length(past_1d_result.rows),
+      device_count_2d: length(past_2d_result.rows),
+      packet_count: past_1d_result.rows |> Enum.reduce(0, fn row, acc -> Enum.at(row, 1, 0) + acc end),
+      packet_count_2d: past_2d_result.rows |> Enum.reduce(0, fn row, acc -> Enum.at(row, 1, 0) + acc end),
       most_heard_device_id: Enum.at(most_heard_device, 0),
-      most_heard_packet_count: Enum.at(most_heard_device, 1),
+      most_heard_device_name: Enum.at(most_heard_device, 1),
+      most_heard_packet_count: Enum.at(most_heard_device, 2),
       hotspot_name: hotspot.name,
       hotspot_address: hotspot.address
     }

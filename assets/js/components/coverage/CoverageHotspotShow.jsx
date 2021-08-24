@@ -35,7 +35,6 @@ export default (props) => {
   const orgHotspot = props.orgHotspotsMap[hotspot.hotspot_address]
   const hotspotClaimed = orgHotspot ? orgHotspot.claimed : false
   const hotspotAlias = orgHotspot ? orgHotspot.alias : null
-  console.log(hotspot)
 
   return (
     <div>
@@ -108,7 +107,7 @@ export default (props) => {
             </div>
             <div style={{ marginBottom: 8 }}>
               <Text style={{ fontSize: 16 }}>
-                This Hotspot has heard from none of your devices over the past 24 hours.
+                This Hotspot has heard from {hotspot.device_count || "none"} of your devices over the past 24 hours.
               </Text>
             </div>
           </Col>
