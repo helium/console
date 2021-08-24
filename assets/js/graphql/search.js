@@ -48,7 +48,7 @@ export const SEARCH_HOTSPOTS = gql`
     $column: String
     $order: String
   ) {
-    hotspots(
+    searchHotspots(
       query: $query
       page: $page
       pageSize: $pageSize

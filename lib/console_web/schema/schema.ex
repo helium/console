@@ -39,17 +39,20 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
   end
 
-  object :hotspot_stats do
-    field :hotspot_address, :string
+  paginated object :hotspot do
     field :hotspot_name, :string
-    field :packet_count, :integer
-    field :device_count, :integer
-    field :packet_count_2d, :integer
-    field :device_count_2d, :integer
+    field :hotspot_address, :string
     field :status, :string
     field :long_city, :string
+    field :packet_count, :integer
+    field :packet_count_2d, :integer
+    field :device_count, :integer
+    field :device_count_2d, :integer
     field :short_country, :string
     field :short_state, :string
+    field :most_heard_device_id, :string
+    field :most_heard_device_name, :string
+    field :most_heard_packet_count, :integer
   end
 
   object :hotspot_stats_device_count do
@@ -77,19 +80,6 @@ defmodule ConsoleWeb.Schema do
     field :dc_last_1d, :integer
     field :dc_last_7d, :integer
     field :dc_last_30d, :integer
-  end
-
-  paginated object :hotspot do
-    field :hotspot_name, :string
-    field :hotspot_address, :string
-    field :status, :string
-    field :long_city, :string
-    field :packet_count, :integer
-    field :packet_count_2d, :integer
-    field :device_count, :integer
-    field :device_count_2d, :integer
-    field :short_country, :string
-    field :short_state, :string
   end
 
   object :flow do
@@ -323,11 +313,15 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Devices.DeviceResolver.get_device_dc_stats/2
     end
 
-    field :hotspot_stats, list_of(:hotspot_stats) do
+    field :all_organization_hotspots, list_of(:organization_hotspot) do
+      resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all/2
+    end
+
+    field :hotspot_stats, list_of(:hotspot) do
       resolve &Console.HotspotStats.HotspotStatsResolver.all/2
     end
 
-    field :followed_hotspot_stats, list_of(:hotspot_stats) do
+    field :followed_hotspot_stats, list_of(:hotspot) do
       resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
     end
 
@@ -335,13 +329,9 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.HotspotStats.HotspotStatsResolver.device_count/2
     end
 
-    field :all_organization_hotspots, list_of(:organization_hotspot) do
-      resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all/2
-    end
-
     field :hotspot, :hotspot do
       arg :address, non_null(:string)
-      resolve &Console.Hotspots.HotspotResolver.show/2
+      resolve &Console.HotspotStats.HotspotStatsResolver.show/2
     end
 
     @desc "Get device import jobs"
@@ -465,7 +455,7 @@ defmodule ConsoleWeb.Schema do
     end
 
     @desc "Get paginated search results for hotspots"
-    paginated field :hotspots, :paginated_hotspots do
+    paginated field :search_hotspots, :paginated_hotspots do
       arg :query, :string
       arg :column, :string
       arg :order, :string

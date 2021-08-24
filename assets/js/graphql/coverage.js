@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-const HOTSPOT_STAT_FRAGMENT = gql`
-  fragment HotspotStatFragment on HotspotStats {
+const HOTSPOT_FRAGMENT = gql`
+  fragment HotspotFragment on Hotspot {
     hotspot_address
     hotspot_name
     packet_count
@@ -18,19 +18,19 @@ const HOTSPOT_STAT_FRAGMENT = gql`
 export const HOTSPOT_STATS = gql`
   query HotspotStatsQuery {
     hotspotStats {
-      ...HotspotStatFragment
+      ...HotspotFragment
     }
   }
-  ${HOTSPOT_STAT_FRAGMENT}
+  ${HOTSPOT_FRAGMENT}
 `
 
 export const FOLLOWED_HOTSPOT_STATS = gql`
   query FollowedHotspotStatsQuery {
     followedHotspotStats {
-      ...HotspotStatFragment
+      ...HotspotFragment
     }
   }
-  ${HOTSPOT_STAT_FRAGMENT}
+  ${HOTSPOT_FRAGMENT}
 `
 
 export const HOTSPOT_STATS_DEVICE_COUNT = gql`
@@ -53,16 +53,13 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
 `
 
 export const HOTSPOT_SHOW = gql`
-  query HotspotShowQuery(
-    $address: String
-  ) {
+  query HotspotShowQuery($address: String) {
     hotspot(address: $address) {
-      hotspot_address
-      hotspot_name
-      status
-      long_city
-      short_country
-      short_state
+      ...HotspotFragment
+      most_heard_device_id
+      most_heard_device_name
+      most_heard_packet_count
     }
   }
+  ${HOTSPOT_FRAGMENT}
 `
