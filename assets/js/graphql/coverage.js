@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 const HOTSPOT_STAT_FRAGMENT = gql`
-  fragment HotspotStatFragment on HotspotStats {
+  fragment HotspotStatFragment on Hotspot {
     hotspot_address
     hotspot_name
     packet_count
