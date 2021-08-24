@@ -4,6 +4,7 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
   import Ecto.Query, warn: false
 
   alias Console.Organizations.Organization
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -18,6 +19,8 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
   end
 
   def changeset(hotspot, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["alias"])
+
     hotspot
     |> cast(attrs, [
       :hotspot_address,
@@ -25,6 +28,7 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
       :alias,
       :organization_id
     ])
+    |> validate_length(:alias, max: 50)
     |> unique_constraint(:address, name: :organization_hotspots_organization_id_hotspot_address_index, message: "This hotspot has already been claimed for this organization")
   end
 end

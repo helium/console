@@ -23,22 +23,53 @@ const OrangeStatusSvg = () => (
   </svg>
 );
 
-export const getColumns = (props, updateOrganizationHotspot) => {
+export const renderStatusLabel = (status) => {
+  let svg;
+  switch (status) {
+    case "online":
+      svg = GreenStatusSvg;
+      break;
+    case "offline":
+      svg = RedStatusSvg;
+      break;
+    default:
+      svg = OrangeStatusSvg;
+      break;
+  }
+  return (
+    <span
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: '#F2F6FC',
+        borderRadius: 20,
+        padding: '2px 6px 2px 6px'
+      }}
+    >
+      <Icon component={svg} style={{ marginRight: 6 }}/>
+      {startCase(status)}
+    </span>
+  );
+}
+
+export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddress) => {
   return [
     {
       width: "30px",
       render: (data, record) => {
-        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address];
+        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].claimed;
 
         return (
           <Link
             to="#"
-            onClick={() =>
+            onClick={e => {
+              e.preventDefault()
               updateOrganizationHotspot(
                 record.hotspot_address,
                 !hotspot_claimed
               )
-            }
+            }}
           >
             <img
               draggable="false"
@@ -55,7 +86,21 @@ export const getColumns = (props, updateOrganizationHotspot) => {
       title: "Hotspot Name",
       sorter: true,
       dataIndex: "hotspot_name",
-      render: (data) => startCase(data),
+      render: (data, record) => {
+        const hotspot_alias = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].alias
+
+        return (
+          <Link
+            to="#"
+            onClick={e => {
+              e.preventDefault()
+              selectHotspotAddress(record.hotspot_address)}
+            }
+          >
+            {hotspot_alias || startCase(data)}
+          </Link>
+        )
+      }
     },
     {
       title: "Location",

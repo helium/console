@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { useQuery } from "@apollo/client";
@@ -9,15 +9,18 @@ import {
   HOTSPOT_STATS_DEVICE_COUNT,
 } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
-import CoverageMainTab from "./CoverageMainTab";
-import CoverageFollowedTab from "./CoverageFollowedTab";
-import CoverageSearchTab from "./CoverageSearchTab";
+import CoverageMainTab from "./CoverageMainTab"
+import CoverageFollowedTab from "./CoverageFollowedTab"
+import CoverageSearchTab from "./CoverageSearchTab"
+import CoverageHotspotShow from "./CoverageHotspotShow"
 import { Typography, Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
 const { TabPane } = Tabs;
 
 export default (props) => {
+  const [hotspotAddressSelected, selectHotspotAddress] = useState(null);
+
   const {
     loading: hotspotStatsLoading,
     error: hotspotStatsError,
@@ -81,7 +84,7 @@ export default (props) => {
 
   const orgHotspotsMap = allOrganizationHotspotsData
     ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
-        acc[hs.hotspot_address] = true;
+        acc[hs.hotspot_address] = hs;
         return acc;
       }, {})
     : {};
@@ -109,30 +112,66 @@ export default (props) => {
                 height: 40,
                 marginTop: 20,
               }}
+              onTabClick={() => selectHotspotAddress(null)}
             >
               <TabPane tab="Coverage Breakdown" key="main">
-                <CoverageMainTab
-                  hotspotStats={
-                    hotspotStatsData && hotspotStatsData.hotspotStats
-                  }
-                  orgHotspotsMap={orgHotspotsMap}
-                  deviceCount={
-                    hotspotStatsDeviceCountData &&
-                    hotspotStatsDeviceCountData.hotspotStatsDeviceCount
-                  }
-                />
+                {
+                  !hotspotAddressSelected ? (
+                    <CoverageMainTab
+                      hotspotStats={
+                        hotspotStatsData && hotspotStatsData.hotspotStats
+                      }
+                      orgHotspotsMap={orgHotspotsMap}
+                      deviceCount={
+                        hotspotStatsDeviceCountData &&
+                        hotspotStatsDeviceCountData.hotspotStatsDeviceCount
+                      }
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  ) : (
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  )
+                }
               </TabPane>
               <TabPane tab="My Hotspots" key="followed">
-                <CoverageFollowedTab
-                  hotspotStats={
-                    followedHotspotStatsData &&
-                    followedHotspotStatsData.followedHotspotStats
-                  }
-                  orgHotspotsMap={orgHotspotsMap}
-                />
+                {
+                  !hotspotAddressSelected ? (
+                    <CoverageFollowedTab
+                      hotspotStats={
+                        followedHotspotStatsData &&
+                        followedHotspotStatsData.followedHotspotStats
+                      }
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  ) : (
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  )
+                }
               </TabPane>
               <TabPane tab="Hotspot Search" key="search">
-                <CoverageSearchTab orgHotspotsMap={orgHotspotsMap} />
+                {
+                  !hotspotAddressSelected ? (
+                    <CoverageSearchTab
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  ) : (
+                    <CoverageHotspotShow
+                      hotspotAddress={hotspotAddressSelected}
+                      orgHotspotsMap={orgHotspotsMap}
+                      selectHotspotAddress={selectHotspotAddress}
+                    />
+                  )
+                }
               </TabPane>
             </Tabs>
           </Col>

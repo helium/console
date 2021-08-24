@@ -7,7 +7,7 @@ import { minWidth } from "../../util/constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 
 export default (props) => {
-  const columns = getColumns(props, updateOrganizationHotspot)
+  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
   return (
     <div>
@@ -43,7 +43,7 @@ export default (props) => {
               showSorterTooltip={false}
               sortDirections={['descend', 'ascend', 'descend']}
               dataSource={
-                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address])
+                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address] && props.orgHotspotsMap[hs.hotspot_address].claimed)
               }
               columns={columns}
               rowKey={(record) => record.hotspot_address}

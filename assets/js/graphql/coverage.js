@@ -51,3 +51,18 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
     }
   }
 `
+
+export const HOTSPOT_SHOW = gql`
+  query HotspotShowQuery(
+    $address: String
+  ) {
+    hotspot(address: $address) {
+      hotspot_address
+      hotspot_name
+      status
+      long_city
+      short_country
+      short_state
+    }
+  }
+`
