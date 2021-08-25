@@ -22,6 +22,7 @@ defmodule Console.Alerts.Alert do
   end
 
   def changeset(alert, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name"])
     attrs =
       cond do
         Map.has_key?(attrs, "config") == true ->
@@ -34,7 +35,7 @@ defmodule Console.Alerts.Alert do
     |> cast(attrs, [:name, :organization_id, :last_triggered_at, :config, :node_type])
     |> validate_required([:organization_id, :config, :node_type])
     |> validate_required(:name, message: "Name cannot be blank")
-    |> validate_length(:name, max: 88, message: "Name cannot be longer than 88 characters") # TODO reduce to 25 after 2.0 data migration
+    |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters") # TODO reduce to 25 after 2.0 data migration
     |> check_config_not_empty
     |> check_valid_config
     |> check_webhook_config_url
@@ -45,7 +46,7 @@ defmodule Console.Alerts.Alert do
   defp check_config_not_empty(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
-        empty_config = 
+        empty_config =
           case config do
             map when map == %{} -> true # must use guard since %{} matches any map
             _ -> false
@@ -114,7 +115,7 @@ defmodule Console.Alerts.Alert do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
         invalid_config = Enum.any?(config, fn alert_event_config ->
           {event_key, _event_config} = alert_event_config
-          
+
           Enum.member?([
             "device_deleted",
             "device_join_otaa_first_time",
@@ -138,7 +139,7 @@ defmodule Console.Alerts.Alert do
   defp check_valid_node_type(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{node_type: node_type}} ->
-        invalid_node_type = 
+        invalid_node_type =
           Enum.member?([
             "device/label",
             "integration"

@@ -6,6 +6,7 @@ defmodule Console.MultiBuys.MultiBuy do
   alias Console.Devices.Device
   alias Console.Labels.Label
   alias Console.Organizations.Organization
+  alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -20,6 +21,8 @@ defmodule Console.MultiBuys.MultiBuy do
   end
 
   def changeset(multi_buy, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name"])
+
     multi_buy
     |> cast(attrs, [:name, :value, :organization_id])
     |> validate_required([:organization_id, :value])

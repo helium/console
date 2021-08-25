@@ -21,7 +21,7 @@ defmodule Console.Functions.Function do
 
   @doc false
   def changeset(function, attrs) do
-    attrs = Helpers.sanitize_attrs(attrs, ["name"])
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "type", "format"])
 
     function
     |> cast(attrs, [:name, :body, :type, :format, :organization_id, :active])
