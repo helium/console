@@ -20,13 +20,16 @@ export default (props) => {
           <Col sm={12}>
             <div style={{ marginBottom: 12 }}>
               <Text style={{ fontSize: 15 }}>
-                The hotspots listed below provided coverage for your
+                The hotspots listed below provided coverage for
+                {props.deviceCount ? ` ${props.deviceCount.count_1d} ` : " none "}
+                of your
                 <Link
                   to={"/devices"}
                   className="help-link"
                   style={{ fontSize: 15 }}
-                >{props.deviceCount ? " " + props.deviceCount.count : " 0"} devices </Link>
+                > devices </Link>
                 over the past 24 hours.
+                {` (${props.deviceCount ? `${props.deviceCount.count_2d} ` : "None "} in the past 48 hours)`}
               </Text>
             </div>
             <div>
