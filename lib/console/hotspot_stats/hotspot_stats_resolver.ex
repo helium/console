@@ -106,16 +106,29 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   def device_count(_, %{context: %{current_organization: current_organization}}) do
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix2d = current_unix - 86400000
+    unix1d = current_unix - 86400000
+    unix2d = current_unix - 86400000 * 2
 
-    sql = """
+    sql_1d = """
       SELECT
         COUNT(DISTINCT(device_id))
       FROM hotspot_stats
       WHERE organization_id = $1 and reported_at_epoch > $2
     """
-    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, unix2d])
-    {:ok, %{ count: result.rows |> Enum.at(0) |> Enum.at(0) }}
+
+    sql_2d = """
+      SELECT
+        COUNT(DISTINCT(device_id))
+      FROM hotspot_stats
+      WHERE organization_id = $1 and reported_at_epoch > $2 and reported_at_epoch < $3
+    """
+    result_1d = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d])
+    result_2d = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix2d, unix1d])
+
+    {:ok, %{
+      count_1d: result_1d.rows |> Enum.at(0) |> Enum.at(0),
+      count_2d: result_2d.rows |> Enum.at(0) |> Enum.at(0)
+    }}
   end
 
   def show(%{ address: address }, %{context: %{current_organization: current_organization}}) do

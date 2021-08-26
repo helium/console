@@ -56,7 +56,8 @@ defmodule ConsoleWeb.Schema do
   end
 
   object :hotspot_stats_device_count do
-    field :count, :integer
+    field :count_1d, :integer
+    field :count_2d, :integer
   end
 
   object :organization_hotspot do

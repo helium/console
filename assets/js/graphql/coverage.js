@@ -36,7 +36,8 @@ export const FOLLOWED_HOTSPOT_STATS = gql`
 export const HOTSPOT_STATS_DEVICE_COUNT = gql`
   query HotspotStatsDeviceCountQuery {
     hotspotStatsDeviceCount {
-      count
+      count_1d
+      count_2d
     }
   }
 `
