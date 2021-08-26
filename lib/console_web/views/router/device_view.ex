@@ -2,6 +2,7 @@ defmodule ConsoleWeb.Router.DeviceView do
   use ConsoleWeb, :view
   alias ConsoleWeb.Router.DeviceView
   alias ConsoleWeb.Router.ChannelView
+  alias ConsoleWeb.Router.LabelView
 
   def render("index.json", %{devices: devices}) do
     render_many(devices, DeviceView, "device_short.json")
@@ -30,6 +31,7 @@ defmodule ConsoleWeb.Router.DeviceView do
       cf_list_enabled: device.cf_list_enabled
     }
     |> ChannelView.append_channels(device.channels)
+    |> LabelView.append_labels(device.labels)
   end
 
   def render("device_short.json", %{device: device}) do
