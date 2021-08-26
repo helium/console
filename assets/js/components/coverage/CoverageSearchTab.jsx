@@ -1,110 +1,31 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import { Typography, Row, Col, Button } from "antd";
 const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
-import { SEARCH_HOTSPOTS } from "../../graphql/search";
-import { useLazyQuery } from "@apollo/client";
-import debounce from "lodash/debounce";
-const PAGE_SIZE_KEY = "hotspotSearchPageSize";
-let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 import { getColumns } from "./Constants";
 import { updateOrganizationHotspot } from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
-const RECENT_HOTSPOT_SEARCH_TERMS = "recentHotspotSearchTerms";
-let recentSearchTerms;
-try {
-  recentSearchTerms =
-    JSON.parse(localStorage.getItem(RECENT_HOTSPOT_SEARCH_TERMS)) || [];
-} catch (e) {
-  recentSearchTerms = [];
-}
 
-export default (props) => {
-  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress);
-
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(startPageSize);
-  const [column, setColumn] = useState(null);
-  const [order, setOrder] = useState(null);
-  const [term, setTerm] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [storedSearchTerms, setStoredSearchTerms] = useState(recentSearchTerms);
-
-  const [searchHotspots, { loading, error, data }] = useLazyQuery(
-    SEARCH_HOTSPOTS,
-    {
-      fetchPolicy: "cache-and-network",
-    }
+export default ({
+  data,
+  term,
+  searchTerm,
+  updateSearchTerm,
+  handleChangePageSize,
+  handleSortChange,
+  handleChangePage,
+  onInputChange,
+  storedSearchTerms,
+  error,
+  loading,
+  ...props
+}) => {
+  const columns = getColumns(
+    props,
+    updateOrganizationHotspot,
+    props.selectHotspotAddress
   );
-
-  const storeTerm = () => {
-    if (searchTerm !== "") {
-      let modifiedTerms = storedSearchTerms;
-
-      /* if case-insensitive searchTerm already exists,
-      remove so that searchTerm can be added to index 0 */
-      var query = searchTerm.toLowerCase();
-      var index = -1;
-      modifiedTerms.some(function (element, i) {
-        if (query === element.toLowerCase()) {
-          index = i;
-          return true;
-        }
-      });
-      if (index !== -1) modifiedTerms.splice(index, 1);
-
-      if (recentSearchTerms.length === 10) modifiedTerms.pop(); // store max 10 terms
-      modifiedTerms.unshift(searchTerm);
-      setStoredSearchTerms(modifiedTerms);
-      localStorage.setItem(
-        RECENT_HOTSPOT_SEARCH_TERMS,
-        JSON.stringify(modifiedTerms)
-      );
-    }
-  };
-
-  const runSearch = () => {
-    if (!loading) {
-      searchHotspots({
-        variables: { query: searchTerm, page, pageSize, column, order },
-      });
-      storeTerm();
-    }
-  };
-
-  const debouncedSearch = useCallback(
-    debounce(() => {
-      runSearch();
-    }, 800)
-  );
-
-  useEffect(() => {
-    debouncedSearch();
-  }, [searchTerm]);
-
-  const handleChangePageSize = (pageSize) => {
-    setPageSize(pageSize);
-    localStorage.setItem(PAGE_SIZE_KEY, pageSize);
-    searchHotspots({
-      variables: { query: searchTerm, page, pageSize, column, order },
-    });
-  };
-
-  const handleSortChange = (column, order) => {
-    setColumn(column);
-    setOrder(order);
-    searchHotspots({
-      variables: { query: searchTerm, page, pageSize, column, order },
-    });
-  };
-
-  const handleChangePage = (page) => {
-    setPage(page);
-    searchHotspots({
-      variables: { query: searchTerm, page, pageSize, column, order },
-    });
-  };
 
   return (
     <div>
@@ -136,14 +57,8 @@ export default (props) => {
               width: "90%",
             }}
             placeholder="Search by hotspot name or city"
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                setSearchTerm(event.target.value);
-              }
-            }}
-            onChange={(event) => {
-              setTerm(event.target.value);
-            }}
+            onKeyDown={onInputChange}
+            onChange={onInputChange}
             value={term}
           />
         </div>
@@ -160,8 +75,7 @@ export default (props) => {
                     <Button
                       style={{ border: "none" }}
                       onClick={() => {
-                        setTerm(t);
-                        setSearchTerm(t);
+                        updateSearchTerm(t);
                       }}
                     >
                       <Text
