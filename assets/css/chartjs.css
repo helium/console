@@ -1,3 +1,8 @@
+#hotspot-show-bar-chart {
+  max-height: 120px;
+  min-height: 120px;
+}
+
 .chartjs-render-monitor {
   max-height: 400px;
   min-height: 400px;
