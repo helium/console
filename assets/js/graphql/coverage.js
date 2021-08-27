@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 const HOTSPOT_FRAGMENT = gql`
   fragment HotspotFragment on Hotspot {
@@ -12,6 +12,8 @@ const HOTSPOT_FRAGMENT = gql`
     long_city
     short_country
     short_state
+    longitude
+    latitude
   }
 `;
 
@@ -22,7 +24,7 @@ export const HOTSPOT_STATS = gql`
     }
   }
   ${HOTSPOT_FRAGMENT}
-`
+`;
 
 export const FOLLOWED_HOTSPOT_STATS = gql`
   query FollowedHotspotStatsQuery {
@@ -31,7 +33,7 @@ export const FOLLOWED_HOTSPOT_STATS = gql`
     }
   }
   ${HOTSPOT_FRAGMENT}
-`
+`;
 
 export const HOTSPOT_STATS_DEVICE_COUNT = gql`
   query HotspotStatsDeviceCountQuery {
@@ -40,7 +42,7 @@ export const HOTSPOT_STATS_DEVICE_COUNT = gql`
       count_2d
     }
   }
-`
+`;
 
 export const ALL_ORGANIZATION_HOTSPOTS = gql`
   query AllOrganizationHotspotsQuery {
@@ -51,7 +53,7 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
       alias
     }
   }
-`
+`;
 
 export const HOTSPOT_SHOW = gql`
   query HotspotShowQuery($address: String) {
@@ -63,4 +65,4 @@ export const HOTSPOT_SHOW = gql`
     }
   }
   ${HOTSPOT_FRAGMENT}
-`
+`;

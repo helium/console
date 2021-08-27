@@ -42,33 +42,40 @@ export const renderStatusLabel = (status) => {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: '#F2F6FC',
+        backgroundColor: "#F2F6FC",
         borderRadius: 20,
-        padding: '2px 6px 2px 6px'
+        padding: "2px 6px 2px 6px",
       }}
     >
-      <Icon component={svg} style={{ marginRight: 6 }}/>
+      <Icon component={svg} style={{ marginRight: 6 }} />
       {startCase(status)}
     </span>
   );
-}
+};
 
-export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddress) => {
+export const getColumns = (
+  props,
+  updateOrganizationHotspot,
+  selectHotspotAddress
+) => {
   return [
     {
       width: "30px",
       render: (data, record) => {
-        const hotspot_claimed = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].claimed;
+        const hotspot_claimed =
+          props.orgHotspotsMap &&
+          props.orgHotspotsMap[record.hotspot_address] &&
+          props.orgHotspotsMap[record.hotspot_address].claimed;
 
         return (
           <Link
             to="#"
-            onClick={e => {
-              e.preventDefault()
+            onClick={(e) => {
+              e.preventDefault();
               updateOrganizationHotspot(
                 record.hotspot_address,
                 !hotspot_claimed
-              )
+              );
             }}
           >
             <img
@@ -87,20 +94,23 @@ export const getColumns = (props, updateOrganizationHotspot, selectHotspotAddres
       sorter: true,
       dataIndex: "hotspot_name",
       render: (data, record) => {
-        const hotspot_alias = props.orgHotspotsMap[record.hotspot_address] && props.orgHotspotsMap[record.hotspot_address].alias
+        const hotspot_alias =
+          props.orgHotspotsMap &&
+          props.orgHotspotsMap[record.hotspot_address] &&
+          props.orgHotspotsMap[record.hotspot_address].alias;
 
         return (
           <Link
             to="#"
-            onClick={e => {
-              e.preventDefault()
-              selectHotspotAddress(record.hotspot_address)}
-            }
+            onClick={(e) => {
+              e.preventDefault();
+              selectHotspotAddress(record.hotspot_address);
+            }}
           >
             {hotspot_alias || startCase(data)}
           </Link>
-        )
-      }
+        );
+      },
     },
     {
       title: "Location",
