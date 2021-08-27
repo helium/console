@@ -177,8 +177,6 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           [ device_id, device_name, Enum.at(first_row, 1) ]
       end
 
-
-
     attrs = %{
       device_count: length(past_1d_result.rows),
       device_count_2d: length(past_2d_result.rows),
@@ -188,7 +186,9 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       most_heard_device_name: Enum.at(most_heard_device, 1),
       most_heard_packet_count: Enum.at(most_heard_device, 2),
       hotspot_name: hotspot.name,
-      hotspot_address: hotspot.address
+      hotspot_address: hotspot.address,
+      latitude: hotspot.lat,
+      longitude: hotspot.lng
     }
 
     {:ok, Map.merge(hotspot, attrs) }
@@ -229,6 +229,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
               long_city: attrs.long_city,
               short_country: attrs.short_country,
               short_state: attrs.short_state,
+              latitude: attrs.lat,
+              longitude: attrs.lng
             }
             |> Map.merge(past_2d_stat)
           _ ->
@@ -260,6 +262,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
               long_city: attrs.long_city,
               short_country: attrs.short_country,
               short_state: attrs.short_state,
+              latitude: attrs.lat,
+              longitude: attrs.lng
             }
           _ ->
             %{

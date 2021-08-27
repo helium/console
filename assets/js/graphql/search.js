@@ -66,6 +66,8 @@ export const SEARCH_HOTSPOTS = gql`
         packet_count_2d
         device_count
         device_count_2d
+        longitude
+        latitude
       }
       totalEntries
       totalPages

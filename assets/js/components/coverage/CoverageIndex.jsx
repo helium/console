@@ -32,6 +32,7 @@ try {
 
 export default (props) => {
   const [hotspotAddressSelected, selectHotspotAddress] = useState(null);
+  const [currentTab, setCurrentTab] = useState("main");
 
   // for paginated search page
   const [page, setPage] = useState(1);
@@ -189,6 +190,30 @@ export default (props) => {
       }, {})
     : {};
 
+  const renderMap = () => {
+    if (currentTab === "main") {
+      if (hotspotStatsData)
+        return <Mapbox data={hotspotStatsData.hotspotStats} key="main" />;
+    } else if (currentTab === "followed") {
+      if (followedHotspotStatsData)
+        return (
+          <Mapbox
+            data={followedHotspotStatsData.followedHotspotStats}
+            key="followed"
+          />
+        );
+    } else if (currentTab === "search") {
+      if (searchHotspotsData) {
+        return (
+          <Mapbox
+            data={searchHotspotsData.searchHotspots.entries || []}
+            key="search"
+          />
+        );
+      }
+    }
+  };
+
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton>
       <div
@@ -212,7 +237,10 @@ export default (props) => {
                 height: 40,
                 marginTop: 20,
               }}
-              onTabClick={() => selectHotspotAddress(null)}
+              onTabClick={(tab) => {
+                setCurrentTab(tab);
+                selectHotspotAddress(null);
+              }}
             >
               <TabPane tab="Coverage Breakdown" key="main">
                 {!hotspotAddressSelected ? (
@@ -220,7 +248,6 @@ export default (props) => {
                     hotspotStats={
                       hotspotStatsData && hotspotStatsData.hotspotStats
                     }
-                    orgHotspotsMap={orgHotspotsMap}
                     deviceCount={
                       hotspotStatsDeviceCountData &&
                       hotspotStatsDeviceCountData.hotspotStatsDeviceCount
@@ -288,9 +315,7 @@ export default (props) => {
               </TabPane>
             </Tabs>
           </Col>
-          <Col sm={10}>
-            <Mapbox />
-          </Col>
+          <Col sm={10}>{renderMap()}</Col>
         </Row>
       </div>
     </DashboardLayout>
