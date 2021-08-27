@@ -19,6 +19,12 @@ defmodule ConsoleWeb.Router do
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
 
+  pipeline :router_api do
+    plug :accepts, ["json"]
+    plug ConsoleWeb.Plug.RateLimit, ["router_auth_actions", 10]
+    plug ConsoleWeb.Plug.VerifyRemoteIpRange
+  end
+
   scope "/graphql" do
     pipe_through ConsoleWeb.Plug.GraphqlPipeline
 
@@ -90,7 +96,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/router", ConsoleWeb.Router do
-    pipe_through :api
+    pipe_through :router_api
 
     post "/sessions", SessionController, :create
     post "/sessions/refresh", SessionController, :refresh
