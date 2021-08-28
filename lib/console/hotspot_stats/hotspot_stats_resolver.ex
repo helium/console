@@ -194,6 +194,31 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, Map.merge(hotspot, attrs) }
   end
 
+  def hotspot_show_packets(%{ address: address }, %{context: %{current_organization: current_organization}}) do
+    hotspot = Hotspots.get_hotspot!(address)
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+
+    sql = """
+      SELECT
+        device_id,
+        reported_at_epoch
+      FROM hotspot_stats
+      WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
+      ORDER BY reported_at_epoch DESC
+    """
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, address, unix1d])
+    rows =
+      result.rows
+      |> Enum.map(fn r ->
+        {:ok, device_id} = Ecto.UUID.load(Enum.at(r, 0))
+        %{ reported_at_epoch: Enum.at(r, 1), device_id: device_id }
+      end)
+
+    {:ok, rows}
+  end
+
   defp generateStats(past_1d_result, past_2d_result, hotspots_on_chain) do
     past_1d_hotspot_map =
       past_1d_result.rows

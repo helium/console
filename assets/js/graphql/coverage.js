@@ -65,4 +65,13 @@ export const HOTSPOT_SHOW = gql`
     }
   }
   ${HOTSPOT_FRAGMENT}
-`;
+`
+
+export const HOTSPOT_SHOW_PACKETS = gql`
+  query HotspotShowPacketsQuery($address: String) {
+    hotspotPackets(address: $address) {
+      device_id
+      reported_at_epoch
+    }
+  }
+`
