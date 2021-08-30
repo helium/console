@@ -192,24 +192,64 @@ export default (props) => {
 
   const renderMap = () => {
     if (currentTab === "main") {
-      if (hotspotStatsData)
-        return <Mapbox data={hotspotStatsData.hotspotStats} key="main" />;
+      if (hotspotStatsData) {
+        if (hotspotAddressSelected) {
+          const selectedHotspot = hotspotStatsData.hotspotStats.filter(
+            (h) => h.hotspot_address === hotspotAddressSelected
+          );
+          return (
+            <Mapbox
+              data={selectedHotspot}
+              key={`${selectedHotspot.hotspot_address}`}
+            />
+          );
+        } else {
+          return <Mapbox data={hotspotStatsData.hotspotStats} key="main" />;
+        }
+      }
     } else if (currentTab === "followed") {
-      if (followedHotspotStatsData)
-        return (
-          <Mapbox
-            data={followedHotspotStatsData.followedHotspotStats}
-            key="followed"
-          />
-        );
+      if (followedHotspotStatsData) {
+        if (hotspotAddressSelected) {
+          const selectedHotspot =
+            followedHotspotStatsData.followedHotspotStats.filter(
+              (h) => h.hotspot_address === hotspotAddressSelected
+            );
+          return (
+            <Mapbox
+              data={selectedHotspot}
+              key={`${selectedHotspot.hotspot_address}`}
+            />
+          );
+        } else {
+          return (
+            <Mapbox
+              data={followedHotspotStatsData.followedHotspotStats}
+              key="followed"
+            />
+          );
+        }
+      }
     } else if (currentTab === "search") {
       if (searchHotspotsData) {
-        return (
-          <Mapbox
-            data={searchHotspotsData.searchHotspots.entries || []}
-            key="search"
-          />
-        );
+        if (hotspotAddressSelected) {
+          const selectedHotspot =
+            searchHotspotsData.searchHotspots.entries.filter(
+              (h) => h.hotspot_address === hotspotAddressSelected
+            );
+          return (
+            <Mapbox
+              data={selectedHotspot}
+              key={`${selectedHotspot.hotspot_address}`}
+            />
+          );
+        } else {
+          return (
+            <Mapbox
+              data={searchHotspotsData.searchHotspots.entries || []}
+              key="search"
+            />
+          );
+        }
       }
     }
   };
