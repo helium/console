@@ -18,6 +18,11 @@ export default (props) => {
   const generateMapPoints = () => {
     let results = [];
     props.data.forEach((h) => {
+      const hotspot_alias =
+        (props.orgHotspotsMap &&
+          props.orgHotspotsMap[h.hotspot_address] &&
+          props.orgHotspotsMap[h.hotspot_address].alias) ||
+        "";
       results.push({
         type: "Feature",
         geometry: {
@@ -27,8 +32,13 @@ export default (props) => {
         properties: {
           id: h.hotspot_address,
           name: `${h.hotspot_name}`,
-          description: `description for hotspot ${h.hotspot_address}`,
+          alias: hotspot_alias,
           packetCount: h.packet_count,
+          isFollowed: String(
+            props.followedHotspotStats.filter(function (followedHotspot) {
+              return followedHotspot.hotspot_address === h.hotspot_address;
+            }).length > 0
+          ),
         },
       });
     });
@@ -144,6 +154,7 @@ export default (props) => {
             750,
             40,
           ],
+          "circle-opacity": 0.7,
         },
       });
 
@@ -168,10 +179,39 @@ export default (props) => {
         source: "hotspots-points-data",
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-color": "#2C79EE",
-          "circle-radius": 4,
+          "circle-color": [
+            "match",
+            ["get", "isFollowed"],
+            "true",
+            "#2C79EE",
+            "false",
+            "#ACB9CD",
+            "#ACB9CD",
+          ],
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["get", "packetCount"],
+            1000,
+            6,
+            5000,
+            9,
+            10000,
+            12,
+            15000,
+            15,
+            20000,
+            20,
+            25000,
+            25,
+            30000,
+            30,
+            35000,
+            35,
+          ],
           "circle-stroke-width": 1,
           "circle-stroke-color": "#fff",
+          "circle-opacity": 0.7,
         },
       });
 
@@ -228,9 +268,10 @@ export default (props) => {
         new mapboxgl.Popup({ closeButton: false })
           .setLngLat(coordinates)
           .setHTML(
-            `<div style="text-align:center;"><b>${startCase(
-              e.features[0].properties.name.replace("-", " ")
-            )}</b><br/>${e.features[0].properties.packetCount} packets</div>`
+            `<div style="text-align:center;"><b>${
+              e.features[0].properties.alias ||
+              startCase(e.features[0].properties.name.replace("-", " "))
+            }</b><br/>${e.features[0].properties.packetCount} packets</div>`
           )
           .addTo(map.current);
       });
