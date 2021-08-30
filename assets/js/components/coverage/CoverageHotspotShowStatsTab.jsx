@@ -19,55 +19,52 @@ const styles = {
 }
 
 const chartOptions = {
-  maintainAspectRatio: false,
-  legend: {
-    display: false
+  layout: {
+    padding: 12
   },
-  scales: {
-    xAxes: [
-      {
-        ticks: {
-          display: false,
+  borderRadius: 100,
+  borderSkipped: false,
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      titleFont: {
+        size: 12, weight: 400
+      },
+      titleMarginBottom: 0,
+      bodyFont: {
+        size: 12, weight: 300
+      },
+      footerMarginTop: 10,
+      footerFont: {
+        size: 10, weight: 400
+      },
+      footerColor: '#909090',
+      displayColors: false,
+      callbacks: {
+        title: (tooltip) => {
+          if (tooltip[0].raw == 0.5) return '0 Packets'
+          else return `${tooltip[0].raw} Packets`
         },
-        gridLines: {
-          display: false,
-        }
-      },
-    ],
-    yAxes: [
-      {
-        ticks: {
-          display: false,
+        label: (tooltip) => {
+          return `${tooltip.label} Devices`
         },
-        gridLines: {
-          display: false,
-        }
-      },
-    ],
-  },
-  tooltips: {
-    xPadding: 10,
-    titleFontSize: 13,
-    titleFontStyle: 'normal',
-    titleMarginBottom: 0,
-    bodyFontSize: 12,
-    footerMarginTop: 10,
-    footerFontSize: 10,
-    footerFontStyle: 'normal',
-    footerFontColor: '#909090',
-    displayColors: false,
-    callbacks: {
-      title: (tooltip) => {
-        return `${tooltip[0].yLabel} Packets`
-      },
-      label: (tooltip) => {
-        return `${tooltip.xLabel} Devices`
-      },
-      footer: (tooltip) => {
-        return `${24 - tooltip[0].index} Hours Ago`
+        footer: (tooltip) => {
+          return `${24 - tooltip[0].dataIndex} ${24 - tooltip[0].dataIndex === 1 ? "Hour" : "Hours"} Ago`
+        },
       },
     },
   },
+  scales: {
+    xAxis: {
+      display: false
+    },
+    yAxis: {
+      display: false
+    }
+  },
+  maintainAspectRatio: false,
 };
 
 export default (props) => {
@@ -128,7 +125,7 @@ export default (props) => {
         if (packetsMap[index]) {
           return Object.values(packetsMap[index]).reduce((a,b) => a + b)
         }
-        return 0
+        return 0.5
       })
 
       const labels = range(24, 0).map(index => {
@@ -138,12 +135,17 @@ export default (props) => {
         return 0
       })
 
+      const backgroundColor = data.map(val => {
+        if (val == 0.5) return '#ACB9CD'
+        else return '#2C79EE'
+      })
+
       const chartData = {
         labels,
         datasets: [
           {
             data,
-            backgroundColor: '#2C79EE'
+            backgroundColor
           },
         ],
       };

@@ -3,7 +3,7 @@
   min-height: 120px;
 }
 
-.chartjs-render-monitor {
+#packet-graph {
   max-height: 400px;
   min-height: 400px;
 }
