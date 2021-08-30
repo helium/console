@@ -19,6 +19,11 @@ const styles = {
 }
 
 const chartOptions = {
+  layout: {
+    padding: {
+      right: 8
+    }
+  },
   maintainAspectRatio: false,
   legend: {
     display: false
@@ -58,13 +63,14 @@ const chartOptions = {
     displayColors: false,
     callbacks: {
       title: (tooltip) => {
-        return `${tooltip[0].yLabel} Packets`
+        if (tooltip[0].yLabel == 0.5) return '0 Packets'
+        else return `${tooltip[0].yLabel} Packets`
       },
       label: (tooltip) => {
         return `${tooltip.xLabel} Devices`
       },
       footer: (tooltip) => {
-        return `${24 - tooltip[0].index} Hours Ago`
+        return `${24 - tooltip[0].index} ${24 - tooltip[0].index === 1 ? "Hour" : "Hours"} Ago`
       },
     },
   },
@@ -128,7 +134,7 @@ export default (props) => {
         if (packetsMap[index]) {
           return Object.values(packetsMap[index]).reduce((a,b) => a + b)
         }
-        return 0
+        return 0.5
       })
 
       const labels = range(24, 0).map(index => {
@@ -138,12 +144,17 @@ export default (props) => {
         return 0
       })
 
+      const backgroundColor = data.map(val => {
+        if (val == 0.5) return '#ACB9CD'
+        else return '#2C79EE'
+      })
+
       const chartData = {
         labels,
         datasets: [
           {
             data,
-            backgroundColor: '#2C79EE'
+            backgroundColor
           },
         ],
       };
