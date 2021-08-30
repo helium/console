@@ -659,3 +659,33 @@ a.version-link {
 .ant-tabs-nav-wrap:after {
   box-shadow: none !important;
 }
+
+.mapboxgl-popup-content {
+  background: black;
+  color: white;
+  border-radius: 10px;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip {
+  border-bottom-color: black;
+  padding-top: 10px;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip {
+  border-top-color: black;
+  padding-bottom: 10px;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: black;
+  padding-left: 10px;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: black;
+  padding-right: 10px;
+}
