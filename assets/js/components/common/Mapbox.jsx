@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "!mapbox-gl";
+import startCase from "lodash/startCase";
 
 mapboxgl.accessToken =
   window.mapbox_pk ||
@@ -17,6 +18,7 @@ export default (props) => {
   const generateMapPoints = () => {
     let results = [];
     props.data.forEach((h) => {
+      console.log({ h });
       results.push({
         type: "Feature",
         geometry: {
@@ -27,6 +29,7 @@ export default (props) => {
           id: h.hotspot_address,
           name: `${h.hotspot_name}`,
           description: `description for hotspot ${h.hotspot_address}`,
+          packetCount: h.packet_count,
         },
       });
     });
@@ -176,6 +179,62 @@ export default (props) => {
       map.current.getSource("hotspots-points-data").setData({
         type: "FeatureCollection",
         features: mapPoints,
+      });
+
+      // inspect a cluster on click
+      map.current.on("click", "clusters", (e) => {
+        const features = map.current.queryRenderedFeatures(e.point, {
+          layers: ["clusters"],
+        });
+        const clusterId = features[0].properties.cluster_id;
+        map.current
+          .getSource("hotspots-points-data")
+          .getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+
+            map.current.easeTo({
+              center: features[0].geometry.coordinates,
+              zoom: zoom,
+            });
+          });
+      });
+
+      map.current.on("mouseenter", "clusters", () => {
+        map.current.getCanvas().style.cursor = "pointer";
+      });
+      map.current.on("mouseleave", "clusters", () => {
+        map.current.getCanvas().style.cursor = "";
+      });
+      map.current.on("mouseenter", "unclustered-point", () => {
+        map.current.getCanvas().style.cursor = "pointer";
+      });
+      map.current.on("mouseleave", "unclustered-point", () => {
+        map.current.getCanvas().style.cursor = "";
+      });
+
+      // When a click event occurs on a feature in
+      // the unclustered-point layer, open a popup at
+      // the location of the feature, with
+      // description HTML from its properties.
+      map.current.on("click", "unclustered-point", (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        console.log(e.features[0]);
+
+        // Ensure that if the map is zoomed out such that
+        // multiple copies of the feature are visible, the
+        // popup appears over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(coordinates)
+          .setHTML(
+            `<div style="text-align:center;"><b>${startCase(
+              e.features[0].properties.name.replace("-", " ")
+            )}</b><br/>${e.features[0].properties.packetCount} packets</div>`
+          )
+          .addTo(map.current);
       });
 
       if (mapPoints.length > 1) {
