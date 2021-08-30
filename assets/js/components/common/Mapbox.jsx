@@ -18,7 +18,6 @@ export default (props) => {
   const generateMapPoints = () => {
     let results = [];
     props.data.forEach((h) => {
-      console.log({ h });
       results.push({
         type: "Feature",
         geometry: {
@@ -218,7 +217,6 @@ export default (props) => {
       // description HTML from its properties.
       map.current.on("click", "unclustered-point", (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
-        console.log(e.features[0]);
 
         // Ensure that if the map is zoomed out such that
         // multiple copies of the feature are visible, the
