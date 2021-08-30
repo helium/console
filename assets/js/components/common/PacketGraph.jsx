@@ -43,64 +43,50 @@ class PacketGraph extends Component {
           bottom: 0,
         },
       },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          displayColors: false,
+          callbacks: {
+            label: (tooltip) => {
+              return (
+                tooltip.raw.tag +
+                " (" +
+                (tooltip.raw.r - 2) * 4 +
+                " bytes) by " +
+                tooltip.raw.h
+              );
+            },
+          },
+        },
+      },
       scales: {
-        yAxes: [
-          {
-            id: "RSSI-axis",
-            type: "linear",
-            position: "left",
-            offset: true,
-            ticks: {
-              beginAtZero: true,
-              min: -120,
-              max: 0,
-            },
-            scaleLabel: {
-              display: true,
-              labelString: "RSSI",
-            },
+        y: {
+          title: {
+            text: 'RSSI',
+            display: true
           },
-        ],
-        xAxes: [
-          {
-            id: "Time-axis",
-            type: "linear",
-            position: "bottom",
-            gridLines: {
-              display: false,
-            },
-            ticks: {
-              beginAtZero: true,
-              min: 0,
-              max: 300000,
-              stepSize: 30000,
-              callback: (value) => {
-                if (value !== 0) return "-" + parseInt(value) / 1000 + "s";
-                else return value + "s";
-              },
-            },
-            scaleLabel: {
-              display: true,
-              labelString: "Time Past in Seconds",
-            },
+          min: -120,
+          max: 20,
+        },
+        x: {
+          title: {
+            text: 'Time Past in Seconds',
+            display: true
           },
-        ],
-      },
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        displayColors: false,
-        callbacks: {
-          label: (tooltip, data) => {
-            return (
-              data.datasets[tooltip.datasetIndex].data[tooltip.index].tag +
-              " (" +
-              (data.datasets[tooltip.datasetIndex].data[tooltip.index].r - 2) * 4 +
-              " bytes) by " +
-              data.datasets[tooltip.datasetIndex].data[tooltip.index].h
-            );
+          min: 0,
+          max: 300,
+          grid: {
+            display: false
           },
+          ticks: {
+            callback: (value) => {
+              if (value !== 0) return "-" + parseInt(value) + "s";
+              else return value + "s";
+            },
+          }
         },
       },
     };
@@ -146,7 +132,7 @@ class PacketGraph extends Component {
         if (integrations.length > 0 && integrations[0].id !== "no_channel") {
           if (integrations.findIndex((i) => i.status === "error") !== -1) {
             error.push({
-              x: timeDiff,
+              x: timeDiff / 1000,
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
@@ -154,7 +140,7 @@ class PacketGraph extends Component {
             });
           } else {
             success.push({
-              x: timeDiff,
+              x: timeDiff / 1000,
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
@@ -163,7 +149,7 @@ class PacketGraph extends Component {
           }
         } else {
           noIntegration.push({
-            x: timeDiff,
+            x: timeDiff / 1000,
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: hotspots[0] ? hotspots[0].name : "unknown",
@@ -197,7 +183,7 @@ class PacketGraph extends Component {
   };
 
   render() {
-    return <Bubble data={this.state.data} options={this.chartOptions} />;
+    return <Bubble id="packet-graph" data={this.state.data} options={this.chartOptions} />;
   }
 }
 
