@@ -154,7 +154,7 @@ export default (props) => {
             750,
             40,
           ],
-          "circle-opacity": 0.7,
+          "circle-opacity": 0.8,
         },
       });
 
@@ -211,7 +211,7 @@ export default (props) => {
           ],
           "circle-stroke-width": 1,
           "circle-stroke-color": "#fff",
-          "circle-opacity": 0.7,
+          "circle-opacity": 0.8,
         },
       });
 
