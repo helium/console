@@ -75,3 +75,14 @@ export const HOTSPOT_SHOW_PACKETS = gql`
     }
   }
 `
+
+export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
+  query HotspotShowDevicesHeardQuery($address: String) {
+    hotspotDevicesHeard(address: $address) {
+      device_id
+      device_name
+      packet_count
+      reported_at
+    }
+  }
+`
