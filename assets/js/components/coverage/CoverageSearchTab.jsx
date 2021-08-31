@@ -28,7 +28,7 @@ export default ({
   );
 
   return (
-    <div>
+    <React.Fragment>
       <div style={{ padding: 25 }}>
         <div style={{ marginBottom: 8 }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>Hotspot Search</Text>
@@ -41,7 +41,7 @@ export default ({
             background: "#F5F7F9",
             borderRadius: 4,
             padding: "4px 16px 4px 16px",
-            marginBottom: 32,
+            marginBottom: 20,
           }}
         >
           <SearchOutlined style={{ color: "#8B9FC1", fontSize: 16 }} />
@@ -118,24 +118,24 @@ export default ({
             </Col>
           </Row>
         )}
-        {error && (
-          <Text>Data failed to load, please reload the page and try again</Text>
-        )}
-        {searchTerm.length !== 0 && (
-          <CoverageSearchTable
-            hotspots={
-              data
-                ? data.searchHotspots
-                : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
-            }
-            handleChangePageSize={handleChangePageSize}
-            handleSortChange={handleSortChange}
-            handleChangePage={handleChangePage}
-            columns={columns}
-            loading={loading}
-          />
-        )}
       </div>
-    </div>
+      {error && (
+        <Text>Data failed to load, please reload the page and try again</Text>
+      )}
+      {searchTerm.length !== 0 && (
+        <CoverageSearchTable
+          hotspots={
+            data
+              ? data.searchHotspots
+              : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
+          }
+          handleChangePageSize={handleChangePageSize}
+          handleSortChange={handleSortChange}
+          handleChangePage={handleChangePage}
+          columns={columns}
+          loading={loading}
+        />
+      )}
+    </React.Fragment>
   );
 };
