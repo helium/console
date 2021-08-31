@@ -8,7 +8,7 @@ Any and all contributions from the community are encouraged.
 
 - Guidelines for how to contribute to this repository [are here](https://github.com/helium/console/blob/master/CONTRIBUTING.md).
 - Discussion about the development and usage of the Helium Console takes place in the [official Helium Discord Server](https://discord.gg/helium), specifically in the `#console` channel. Join us!
-- For a list of issues and prioritization, please go to our [Project page](https://github.com/orgs/helium/projects/15).
+- To post feature requests or see a list of current issues please go [here](https://github.com/helium/console/issues).
 
 ## Running Console Development Environment
 
