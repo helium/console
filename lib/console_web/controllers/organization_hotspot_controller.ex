@@ -27,7 +27,18 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         end
       _ ->
         if claimed do
-          {:error, :bad_request, "Hotspot has already been claimed, please refresh the page and check again"}
+          case org_hotspot.claimed do
+            true ->
+              {:error, :bad_request, "Hotspot has already been claimed, please refresh the page and check again"}
+            false ->
+              with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ claimed: true }) do
+                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+
+                conn
+                |> put_resp_header("message", "Hotspot claimed successfully")
+                |> send_resp(:ok, "")
+              end
+          end
         else
           case org_hotspot.alias do
             nil ->

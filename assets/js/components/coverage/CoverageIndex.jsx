@@ -321,6 +321,7 @@ export default (props) => {
                       hotspotStatsDeviceCountData &&
                       hotspotStatsDeviceCountData.hotspotStatsDeviceCount
                     }
+                    orgHotspotsMap={orgHotspotsMap}
                     selectHotspotAddress={selectHotspotAddress}
                   />
                 ) : (
