@@ -284,10 +284,10 @@ export default (props) => {
   };
 
   return (
-    <DashboardLayout title="Coverage" user={props.user} noAddButton>
+    <DashboardLayout title="Coverage" user={props.user} noAddButton full>
       <div
         style={{
-          height: "100%",
+          height: "90%",
           width: "100%",
           backgroundColor: "#ffffff",
           borderRadius: 6,
@@ -295,8 +295,8 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <Row>
-          <Col sm={14}>
+        <Row style={{ height: "100%" }}>
+          <Col sm={14} style={{ height: "100%", overflow: "scroll" }}>
             <Tabs
               defaultActiveKey="main"
               size="large"
