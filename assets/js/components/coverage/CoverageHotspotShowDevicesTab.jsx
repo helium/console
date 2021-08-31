@@ -56,7 +56,8 @@ export default (props) => {
         columns={columns}
         rowKey={(record) => record.device_id}
         pagination={false}
-        style={{ minWidth, overflowY: "hidden" }}
+        style={{ overflowY: "hidden" }}
+        className="no-scroll-bar"
       />
     </div>
   );

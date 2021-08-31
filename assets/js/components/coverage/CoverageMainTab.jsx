@@ -80,7 +80,8 @@ export default (props) => {
               columns={columns}
               rowKey={(record) => record.hotspot_address}
               pagination={false}
-              style={{ minWidth, overflowY: "hidden" }}
+              style={{ overflowY: "hidden" }}
+              className="no-scroll-bar"
             />
           )
         }
