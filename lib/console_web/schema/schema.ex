@@ -67,6 +67,13 @@ defmodule ConsoleWeb.Schema do
     field :reported_at_epoch, :integer
   end
 
+  object :hotspot_device_heard do
+    field :device_id, :string
+    field :device_name, :string
+    field :packet_count, :integer
+    field :reported_at, :naive_datetime
+  end
+
   object :organization_hotspot do
     field :hotspot_address, :string
     field :claimed, :boolean
@@ -345,6 +352,11 @@ defmodule ConsoleWeb.Schema do
     field :hotspot_packets, list_of(:hotspot_packet) do
       arg :address, non_null(:string)
       resolve &Console.HotspotStats.HotspotStatsResolver.hotspot_show_packets/2
+    end
+
+    field :hotspot_devices_heard, list_of(:hotspot_device_heard) do
+      arg :address, non_null(:string)
+      resolve &Console.HotspotStats.HotspotStatsResolver.hotspot_show_devices_heard/2
     end
 
     @desc "Get device import jobs"

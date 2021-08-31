@@ -208,12 +208,49 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
       ORDER BY reported_at_epoch DESC
     """
-    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, address, unix1d])
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d])
     rows =
       result.rows
       |> Enum.map(fn r ->
         {:ok, device_id} = Ecto.UUID.load(Enum.at(r, 0))
         %{ reported_at_epoch: Enum.at(r, 1), device_id: device_id }
+      end)
+
+    {:ok, rows}
+  end
+
+  def hotspot_show_devices_heard(%{ address: address }, %{context: %{current_organization: current_organization}}) do
+    hotspot = Hotspots.get_hotspot!(address)
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+
+    sql = """
+      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
+      FROM
+        (
+          SELECT
+            DISTINCT(device_id) AS device_id,
+            COUNT(device_id) AS packet_count,
+            MAX(reported_at_epoch) AS reported_at_epoch
+          FROM hotspot_stats
+          WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
+          GROUP BY device_id
+        ) AS stats
+      LEFT JOIN devices d ON stats.device_id = d.id
+      ORDER BY packet_count DESC;
+    """
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d])
+    rows =
+      result.rows
+      |> Enum.map(fn r ->
+        {:ok, device_id} = Ecto.UUID.load(Enum.at(r, 0))
+        %{
+          device_id: device_id,
+          device_name: Enum.at(r, 1),
+          packet_count: Enum.at(r, 2),
+          reported_at: Enum.at(r, 3) |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive(),
+        }
       end)
 
     {:ok, rows}

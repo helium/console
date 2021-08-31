@@ -7,6 +7,7 @@ const { TabPane } = Tabs;
 const { Text } = Typography;
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import { HOTSPOT_SHOW } from "../../graphql/coverage";
+import CoverageHotspotShowDevicesTab from './CoverageHotspotShowDevicesTab'
 import CoverageHotspotShowStatsTab from './CoverageHotspotShowStatsTab'
 import startCase from "lodash/startCase";
 import { renderStatusLabel } from './Constants'
@@ -156,6 +157,7 @@ export default (props) => {
           <CoverageHotspotShowStatsTab hotspot={hotspot}/>
         </TabPane>
         <TabPane tab="My Devices Heard" key="devicesTable">
+          <CoverageHotspotShowDevicesTab hotspot={hotspot}/>
         </TabPane>
       </Tabs>
     </Fragment>
