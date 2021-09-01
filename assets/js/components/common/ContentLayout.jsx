@@ -11,6 +11,7 @@ class ContentLayout extends Component {
       <div
         style={{
           padding: 30,
+          paddingBottom: full ? 55 : 30,
           height: full ? "100%" : "auto",
           minHeight: "100%",
           backgroundColor: "#F5F7F9",

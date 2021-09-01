@@ -120,10 +120,10 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       SELECT
         COUNT(DISTINCT(device_id))
       FROM hotspot_stats
-      WHERE organization_id = $1 and reported_at_epoch > $2 and reported_at_epoch < $3
+      WHERE organization_id = $1 and reported_at_epoch > $2
     """
     result_1d = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d])
-    result_2d = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix2d, unix1d])
+    result_2d = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix2d])
 
     {:ok, %{
       count_1d: result_1d.rows |> Enum.at(0) |> Enum.at(0),
