@@ -338,6 +338,8 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :followed_hotspot_stats, list_of(:hotspot) do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
       resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
     end
 

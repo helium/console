@@ -30,8 +30,11 @@ export const HOTSPOT_STATS = gql`
 `;
 
 export const FOLLOWED_HOTSPOT_STATS = gql`
-  query FollowedHotspotStatsQuery {
-    followedHotspotStats {
+  query FollowedHotspotStatsQuery(
+    $column: String
+    $order: String
+  ) {
+    followedHotspotStats(column: $column, order: $order) {
       ...HotspotFragment
     }
   }
