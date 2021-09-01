@@ -56,7 +56,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         "device_count" -> HotspotStats.get_followed_query_for_integer_sort()
         _ -> HotspotStats.get_followed_query_for_string_sort()
       end
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, all_claimed_hotspot_addresses, unix1d, column, order])
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, all_claimed_hotspot_addresses, current_unix, unix1d, column, order])
 
     sql_2d = """
       SELECT

@@ -99,9 +99,9 @@ defmodule Console.HotspotStats do
   def get_followed_query_for_string_sort() do
     """
       SELECT
-        stats.hotspot_address,
-        stats.packet_count,
-        stats.device_count,
+        parsed_stats.hotspot_address,
+        parsed_stats.packet_count,
+        parsed_stats.device_count,
         h.name,
         h.status,
         h.long_city,
@@ -111,25 +111,39 @@ defmodule Console.HotspotStats do
         h.lng
       FROM (
         SELECT
-          DISTINCT(hotspot_address),
-          COUNT(hotspot_address) AS packet_count,
-          COUNT(DISTINCT(device_id)) AS device_count
-        FROM hotspot_stats
-        WHERE organization_id = $1 and hotspot_address = ANY($2) and reported_at_epoch > $3
-        GROUP BY hotspot_address
-      ) stats
-      LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address
+         hotspot_address,
+         CASE
+           WHEN device_count = 0 THEN 0
+           ELSE packet_count
+         END AS packet_count,
+         device_count
+        FROM (
+          SELECT
+            DISTINCT(stats.hotspot_address),
+            COUNT(stats.hotspot_address) AS packet_count,
+            COUNT(DISTINCT(stats.device_id)) AS device_count
+          FROM (
+            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $3) AS reported_at_epoch FROM (
+              SELECT * FROM organization_hotspots
+              WHERE organization_id = $1 and hotspot_address = ANY($2)
+            ) oh
+            LEFT JOIN hotspot_stats hs ON oh.hotspot_address = hs.hotspot_address
+          ) stats
+          WHERE stats.reported_at_epoch > $4
+          GROUP BY stats.hotspot_address
+        ) grouped_stats
+      ) parsed_stats
+      LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       ORDER BY
-        CASE $5 WHEN 'asc' THEN
-          CASE $4
+        CASE $6 WHEN 'asc' THEN
+          CASE $5
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
           END
         END ASC NULLS FIRST,
-        CASE $5 WHEN 'desc' THEN
-          CASE $4
+        CASE $6 WHEN 'desc' THEN
+          CASE $5
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
@@ -141,9 +155,9 @@ defmodule Console.HotspotStats do
   def get_followed_query_for_integer_sort() do
     """
       SELECT
-        stats.hotspot_address,
-        stats.packet_count,
-        stats.device_count,
+        parsed_stats.hotspot_address,
+        parsed_stats.packet_count,
+        parsed_stats.device_count,
         h.name,
         h.status,
         h.long_city,
@@ -153,26 +167,40 @@ defmodule Console.HotspotStats do
         h.lng
       FROM (
         SELECT
-          DISTINCT(hotspot_address),
-          COUNT(hotspot_address) AS packet_count,
-          COUNT(DISTINCT(device_id)) AS device_count
-        FROM hotspot_stats
-        WHERE organization_id = $1 and hotspot_address = ANY($2) and reported_at_epoch > $3
-        GROUP BY hotspot_address
-      ) stats
-      LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address
+         hotspot_address,
+         CASE
+           WHEN device_count = 0 THEN 0
+           ELSE packet_count
+         END AS packet_count,
+         device_count
+        FROM (
+          SELECT
+            DISTINCT(stats.hotspot_address),
+            COUNT(stats.hotspot_address) AS packet_count,
+            COUNT(DISTINCT(stats.device_id)) AS device_count
+          FROM (
+            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $3) AS reported_at_epoch FROM (
+              SELECT * FROM organization_hotspots
+              WHERE organization_id = $1 and hotspot_address = ANY($2)
+            ) oh
+            LEFT JOIN hotspot_stats hs ON oh.hotspot_address = hs.hotspot_address
+          ) stats
+          WHERE stats.reported_at_epoch > $4
+          GROUP BY stats.hotspot_address
+        ) grouped_stats
+      ) parsed_stats
+      LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       ORDER BY
-        CASE $5 WHEN 'asc' THEN
-          CASE $4
-            WHEN 'packet_count' THEN stats.packet_count
-            WHEN 'device_count' THEN stats.device_count
+        CASE $6 WHEN 'asc' THEN
+          CASE $5
+            WHEN 'packet_count' THEN parsed_stats.packet_count
+            WHEN 'device_count' THEN parsed_stats.device_count
           END
         END ASC NULLS FIRST,
-        CASE $5 WHEN 'desc' THEN
-          CASE $4
-            WHEN 'packet_count' THEN stats.packet_count
-            WHEN 'device_count' THEN stats.device_count
+        CASE $6 WHEN 'desc' THEN
+          CASE $5
+            WHEN 'packet_count' THEN parsed_stats.packet_count
+            WHEN 'device_count' THEN parsed_stats.device_count
           END
         END DESC NULLS LAST
     """
