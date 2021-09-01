@@ -1,7 +1,7 @@
 defmodule Console.HotspotStats.HotspotStatsResolver do
-  alias Console.Helpers
   alias Console.Hotspots
   alias Console.Devices
+  alias Console.HotspotStats
 
   def all(%{ column: column, order: order }, %{context: %{current_organization: current_organization}}) do
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
@@ -9,24 +9,13 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     unix2d = current_unix - 86400000 * 2
 
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
-    sql_1d = """
-      SELECT * FROM (
-        SELECT
-          DISTINCT(hotspot_address),
-          COUNT(hotspot_address) AS packet_count,
-          COUNT(DISTINCT(device_id)) AS device_count
-        FROM hotspot_stats
-        WHERE organization_id = $1 and reported_at_epoch > $2
-        GROUP BY hotspot_address
-      ) sub
-      ORDER BY
-        CASE $4 WHEN 'asc' THEN
-          CASE $3 WHEN 'packet_count' THEN sub.packet_count END
-        END ASC NULLS FIRST,
-        CASE $4 WHEN 'desc' THEN
-          CASE $3 WHEN 'packet_count' THEN sub.packet_count END
-        END DESC NULLS LAST
-    """
+    sql_1d =
+      case column do
+        "packet_count" -> HotspotStats.get_all_query_for_integer_sort()
+        "device_count" -> HotspotStats.get_all_query_for_integer_sort()
+        _ -> HotspotStats.get_all_query_for_string_sort()
+      end
+
     past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d, column, order])
 
     hotspot_addresses =
@@ -44,13 +33,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     """
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, hotspot_addresses, unix1d, unix2d])
 
-    hotspots_on_chain =
-      Hotspots.get_hotspots(hotspot_addresses)
-      |> Enum.reduce(%{}, fn hotspot, acc ->
-        Map.put(acc, hotspot.address, hotspot)
-      end)
-
-    results = generateStats(past_1d_result, past_2d_result, hotspots_on_chain)
+    results = generateStats(past_1d_result, past_2d_result)
 
     {:ok, results}
   end
@@ -105,7 +88,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         Map.put(acc, hotspot.address, hotspot)
       end)
 
-    results = generateStats(past_1d_result, past_2d_result, hotspots_on_chain)
+    results = generateStats(past_1d_result, past_2d_result)
 
     {:ok, results}
   end
@@ -254,11 +237,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, rows}
   end
 
-  defp generateStats(past_1d_result, past_2d_result, hotspots_on_chain) do
-    past_1d_hotspot_map =
-      past_1d_result.rows
-      |> Enum.reduce(%{}, fn r, acc -> Map.put(acc, Enum.at(r, 0), true) end)
-
+  defp generateStats(past_1d_result, past_2d_result) do
     past_2d_hotspot_map =
       past_2d_result.rows
       |> Enum.reduce(%{}, fn r, acc ->
@@ -278,31 +257,19 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
             stat -> stat
           end
 
-        case Map.fetch(hotspots_on_chain, Enum.at(r, 0)) do
-          {:ok, attrs} ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: attrs.name,
-              packet_count: Enum.at(r, 1),
-              device_count: Enum.at(r, 2),
-              status: attrs.status,
-              long_city: attrs.long_city,
-              short_country: attrs.short_country,
-              short_state: attrs.short_state,
-              latitude: attrs.lat,
-              longitude: attrs.lng
-            }
-            |> Map.merge(past_2d_stat)
-          _ ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: "Unknown Hotspot",
-              packet_count: Enum.at(r, 1),
-              device_count: Enum.at(r, 2),
-              status: "Unknown",
-            }
-            |> Map.merge(past_2d_stat)
-        end
+        %{
+          hotspot_address: Enum.at(r, 0),
+          hotspot_name: Enum.at(r, 3),
+          packet_count: Enum.at(r, 1),
+          device_count: Enum.at(r, 2),
+          status: Enum.at(r, 4),
+          long_city: Enum.at(r, 5),
+          short_country: Enum.at(r, 6),
+          short_state: Enum.at(r, 7),
+          latitude: Enum.at(r, 8),
+          longitude: Enum.at(r, 9),
+        }
+        |> Map.merge(past_2d_stat)
       end)
 
     hotspot_stats
