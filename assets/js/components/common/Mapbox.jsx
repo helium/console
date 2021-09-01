@@ -45,7 +45,20 @@ export default (props) => {
     return results;
   };
 
-  const [mapPoints, _setMapPoints] = useState(generateMapPoints());
+  const [mapPoints, setMapPoints] = useState(generateMapPoints());
+
+  useEffect(() => {
+    setMapPoints(generateMapPoints());
+  }, [props.orgHotspotsMap]);
+
+  useEffect(() => {
+    map.current &&
+      map.current.getSource("hotspots-points-data") &&
+      map.current.getSource("hotspots-points-data").setData({
+        type: "FeatureCollection",
+        features: mapPoints,
+      });
+  }, [mapPoints]);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
