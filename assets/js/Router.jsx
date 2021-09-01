@@ -336,7 +336,7 @@ const Router = (props) => {
                                 <Profile user={user} {...props} />
                               )}
                             />
-                            {false && (
+                            {true && (
                               <Route
                                 exact
                                 path="/coverage"

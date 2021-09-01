@@ -29,7 +29,6 @@ export default (props) => {
                   style={{ fontSize: 15 }}
                 > devices </Link>
                 over the past 24 hours.
-                {` (${props.deviceCount ? `${props.deviceCount.count_2d} ` : "None "} in the past 48 hours)`}
               </Text>
             </div>
             <div>

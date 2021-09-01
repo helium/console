@@ -59,7 +59,6 @@ defmodule ConsoleWeb.Schema do
 
   object :hotspot_stats_device_count do
     field :count_1d, :integer
-    field :count_2d, :integer
   end
 
   object :hotspot_packet do
@@ -333,6 +332,8 @@ defmodule ConsoleWeb.Schema do
     end
 
     field :hotspot_stats, list_of(:hotspot) do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
       resolve &Console.HotspotStats.HotspotStatsResolver.all/2
     end
 
