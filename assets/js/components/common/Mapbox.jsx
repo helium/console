@@ -23,6 +23,10 @@ export default (props) => {
           props.orgHotspotsMap[h.hotspot_address] &&
           props.orgHotspotsMap[h.hotspot_address].alias) ||
         "";
+      console.log({
+        name: h.hotspot_name,
+        isFollowed: h.hotspot_address in props.orgHotspotsMap,
+      });
       results.push({
         type: "Feature",
         geometry: {

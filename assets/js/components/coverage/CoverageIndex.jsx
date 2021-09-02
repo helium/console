@@ -100,11 +100,12 @@ export default (props) => {
         acc[hs.hotspot_address] = hs;
         return acc;
       }, {})
-    : {};
+    : null;
 
   const renderMap = () => {
     if (currentTab === "main") {
-      if (hotspotStatsData && followedHotspotStatsData) {
+      console.log({ orgHotspotsMap });
+      if (hotspotStatsData && followedHotspotStatsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot = hotspotStatsData.hotspotStats.filter(
             (h) => h.hotspot_address === hotspotAddressSelected
@@ -130,7 +131,7 @@ export default (props) => {
         }
       }
     } else if (currentTab === "followed") {
-      if (followedHotspotStatsData) {
+      if (followedHotspotStatsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot =
             followedHotspotStatsData.followedHotspotStats.filter(
@@ -154,7 +155,7 @@ export default (props) => {
         }
       }
     } else if (currentTab === "search") {
-      if (searchHotspotsData && followedHotspotStatsData) {
+      if (searchHotspotsData && followedHotspotStatsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot =
             searchHotspotsData.searchHotspots.entries.filter(
