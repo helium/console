@@ -17,6 +17,9 @@ export default (props) => {
       case 'hotspot_name':
         column = 'hotspot_name'
         break;
+      case 'alias':
+        column = 'alias'
+        break;
       case 'location':
         column = 'long_city'
         break;

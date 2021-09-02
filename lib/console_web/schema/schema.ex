@@ -55,6 +55,7 @@ defmodule ConsoleWeb.Schema do
     field :most_heard_packet_count, :integer
     field :longitude, :decimal
     field :latitude, :decimal
+    field :alias, :string
   end
 
   object :hotspot_stats_device_count do

@@ -30,7 +30,8 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
   const columns = getColumns(
     props,
     updateOrganizationHotspot,
-    props.selectHotspotAddress
+    props.selectHotspotAddress,
+    true
   );
 
   const handleChangePageSize = (pageSize) => {

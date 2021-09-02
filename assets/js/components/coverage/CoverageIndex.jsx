@@ -88,6 +88,7 @@ export default (props) => {
       `graphql:coverage_index_org_hotspots:${currentOrganizationId}:org_hotspots_update`,
       (_message) => {
         allOrganizationHotspotsRefetch();
+        hotspotStatsRefetch();
         followedHotspotStatsRefetch();
       }
     );
