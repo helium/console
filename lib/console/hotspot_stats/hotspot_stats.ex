@@ -26,7 +26,8 @@ defmodule Console.HotspotStats do
         h.short_country,
         h.short_state,
         h.lat,
-        h.lng
+        h.lng,
+        os.alias
       FROM (
         SELECT
           DISTINCT(hotspot_address),
@@ -44,6 +45,7 @@ defmodule Console.HotspotStats do
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
+            WHEN 'alias' THEN os.alias
           END
         END ASC NULLS FIRST,
         CASE $4 WHEN 'desc' THEN
@@ -51,6 +53,7 @@ defmodule Console.HotspotStats do
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
+            WHEN 'alias' THEN os.alias
           END
         END DESC NULLS LAST
     """
@@ -68,7 +71,8 @@ defmodule Console.HotspotStats do
         h.short_country,
         h.short_state,
         h.lat,
-        h.lng
+        h.lng,
+        os.alias
       FROM (
         SELECT
           DISTINCT(hotspot_address),
@@ -108,7 +112,8 @@ defmodule Console.HotspotStats do
         h.short_country,
         h.short_state,
         h.lat,
-        h.lng
+        h.lng,
+        oh.alias
       FROM (
         SELECT
          hotspot_address,
@@ -136,12 +141,14 @@ defmodule Console.HotspotStats do
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
+            WHEN 'alias' THEN oh.alias
           END
         END ASC NULLS FIRST,
         CASE $5 WHEN 'desc' THEN
@@ -149,6 +156,7 @@ defmodule Console.HotspotStats do
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
+            WHEN 'alias' THEN oh.alias
           END
         END DESC NULLS LAST
     """
@@ -166,7 +174,8 @@ defmodule Console.HotspotStats do
         h.short_country,
         h.short_state,
         h.lat,
-        h.lng
+        h.lng,
+        oh.alias
       FROM (
         SELECT
          hotspot_address,
@@ -194,6 +203,7 @@ defmodule Console.HotspotStats do
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4

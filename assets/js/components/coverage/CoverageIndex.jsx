@@ -88,6 +88,7 @@ export default (props) => {
       `graphql:coverage_index_org_hotspots:${currentOrganizationId}:org_hotspots_update`,
       (_message) => {
         allOrganizationHotspotsRefetch();
+        hotspotStatsRefetch();
         followedHotspotStatsRefetch();
       }
     );
@@ -153,7 +154,7 @@ export default (props) => {
         }
       }
     } else if (currentTab === "search") {
-      if (searchHotspotsData && followedHotspotStatsData && orgHotspotsMap) {
+      if (searchHotspotsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot =
             searchHotspotsData.searchHotspots.entries.filter(

@@ -14,6 +14,7 @@ const HOTSPOT_FRAGMENT = gql`
     short_state
     longitude
     latitude
+    alias
   }
 `;
 

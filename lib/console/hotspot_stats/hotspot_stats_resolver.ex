@@ -239,6 +239,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           short_state: Enum.at(r, 7),
           latitude: Enum.at(r, 8),
           longitude: Enum.at(r, 9),
+          alias: Enum.at(r,10)
         }
         |> Map.merge(past_2d_stat)
       end)

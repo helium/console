@@ -56,9 +56,10 @@ export const renderStatusLabel = (status) => {
 export const getColumns = (
   props,
   updateOrganizationHotspot,
-  selectHotspotAddress
+  selectHotspotAddress,
+  fromSearch = false
 ) => {
-  return [
+  const columns = [
     {
       width: "30px",
       render: (data, record) => {
@@ -94,11 +95,6 @@ export const getColumns = (
       sorter: true,
       dataIndex: "hotspot_name",
       render: (data, record) => {
-        const hotspot_alias =
-          props.orgHotspotsMap &&
-          props.orgHotspotsMap[record.hotspot_address] &&
-          props.orgHotspotsMap[record.hotspot_address].alias;
-
         return (
           <Link
             to="#"
@@ -107,10 +103,15 @@ export const getColumns = (
               selectHotspotAddress(record.hotspot_address);
             }}
           >
-            {hotspot_alias ? `${hotspot_alias} (${startCase(data)})` : startCase(data)}
+            {startCase(data)}
           </Link>
         );
       },
+    },
+    {
+      title: "Alias",
+      sorter: true,
+      dataIndex: "alias",
     },
     {
       title: "Location",
@@ -221,4 +222,7 @@ export const getColumns = (
       },
     },
   ];
+
+  if (fromSearch) return columns.filter(c => c.dataIndex !== 'alias')
+  return columns
 };
