@@ -35,7 +35,7 @@ export default (props) => {
           alias: hotspot_alias,
           packetCount: h.packet_count,
           isFollowed: String(
-            props.followedHotspotStats.filter(function (followedHotspot) {
+            props.allOrganizationHotspots.filter(function (followedHotspot) {
               return followedHotspot.hotspot_address === h.hotspot_address;
             }).length > 0
           ),
