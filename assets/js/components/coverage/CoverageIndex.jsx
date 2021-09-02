@@ -107,7 +107,7 @@ export default (props) => {
 
   const renderMap = () => {
     if (currentTab === "main") {
-      if (hotspotStatsData && followedHotspotStatsData && orgHotspotsMap) {
+      if (hotspotStatsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot = hotspotStatsData.hotspotStats.filter(
             (h) => h.hotspot_address === hotspotAddressSelected
@@ -124,9 +124,6 @@ export default (props) => {
             <Mapbox
               data={hotspotStatsData.hotspotStats}
               key="main"
-              followedHotspotStats={
-                followedHotspotStatsData.followedHotspotStats
-              }
               orgHotspotsMap={orgHotspotsMap}
             />
           );
@@ -157,7 +154,7 @@ export default (props) => {
         }
       }
     } else if (currentTab === "search") {
-      if (searchHotspotsData && followedHotspotStatsData && orgHotspotsMap) {
+      if (searchHotspotsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot =
             searchHotspotsData.searchHotspots.entries.filter(
