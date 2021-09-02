@@ -1,6 +1,5 @@
 defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Hotspots
-  alias Console.OrganizationHotspots
   alias Console.Devices
   alias Console.HotspotStats
 
@@ -46,17 +45,17 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
 
-    all_claimed_hotspot_addresses =
-      OrganizationHotspots.all_claimed(current_organization)
-      |> Enum.map(fn h -> h.hotspot_address end)
-
     sql_1d =
       case column do
         "packet_count" -> HotspotStats.get_followed_query_for_integer_sort()
         "device_count" -> HotspotStats.get_followed_query_for_integer_sort()
         _ -> HotspotStats.get_followed_query_for_string_sort()
       end
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, all_claimed_hotspot_addresses, current_unix, unix1d, column, order])
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, current_unix, unix1d, column, order])
+
+    all_claimed_hotspot_addresses =
+      past_1d_result.rows
+      |> Enum.map(fn r -> Enum.at(r, 0) end)
 
     sql_2d = """
       SELECT

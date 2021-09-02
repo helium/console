@@ -123,27 +123,29 @@ defmodule Console.HotspotStats do
             COUNT(stats.hotspot_address) AS packet_count,
             COUNT(DISTINCT(stats.device_id)) AS device_count
           FROM (
-            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $3) AS reported_at_epoch FROM (
+            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
               SELECT * FROM organization_hotspots
-              WHERE organization_id = $1 and hotspot_address = ANY($2)
+              WHERE organization_id = $1 and claimed = true
             ) oh
-            LEFT JOIN hotspot_stats hs ON oh.hotspot_address = hs.hotspot_address
+            LEFT JOIN (
+              SELECT * FROM hotspot_stats
+              WHERE organization_id = $1 and reported_at_epoch > $3
+            ) hs ON oh.hotspot_address = hs.hotspot_address
           ) stats
-          WHERE stats.reported_at_epoch > $4
           GROUP BY stats.hotspot_address
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       ORDER BY
-        CASE $6 WHEN 'asc' THEN
-          CASE $5
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
           END
         END ASC NULLS FIRST,
-        CASE $6 WHEN 'desc' THEN
-          CASE $5
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
@@ -179,26 +181,28 @@ defmodule Console.HotspotStats do
             COUNT(stats.hotspot_address) AS packet_count,
             COUNT(DISTINCT(stats.device_id)) AS device_count
           FROM (
-            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $3) AS reported_at_epoch FROM (
+            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
               SELECT * FROM organization_hotspots
-              WHERE organization_id = $1 and hotspot_address = ANY($2)
+              WHERE organization_id = $1 and claimed = true
             ) oh
-            LEFT JOIN hotspot_stats hs ON oh.hotspot_address = hs.hotspot_address
+            LEFT JOIN (
+              SELECT * FROM hotspot_stats
+              WHERE organization_id = $1 and reported_at_epoch > $3
+            ) hs ON oh.hotspot_address = hs.hotspot_address
           ) stats
-          WHERE stats.reported_at_epoch > $4
           GROUP BY stats.hotspot_address
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       ORDER BY
-        CASE $6 WHEN 'asc' THEN
-          CASE $5
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
             WHEN 'packet_count' THEN parsed_stats.packet_count
             WHEN 'device_count' THEN parsed_stats.device_count
           END
         END ASC NULLS FIRST,
-        CASE $6 WHEN 'desc' THEN
-          CASE $5
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
             WHEN 'packet_count' THEN parsed_stats.packet_count
             WHEN 'device_count' THEN parsed_stats.device_count
           END
