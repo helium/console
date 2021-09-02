@@ -38,11 +38,7 @@ export default (props) => {
           name: `${h.hotspot_name}`,
           alias: hotspot_alias,
           packetCount: h.packet_count,
-          isFollowed: String(
-            props.followedHotspotStats.filter(function (followedHotspot) {
-              return followedHotspot.hotspot_address === h.hotspot_address;
-            }).length > 0
-          ),
+          isFollowed: String(h.hotspot_address in props.orgHotspotsMap),
           ...(isEitherCoordNaN && { invalid_coordinates: true }),
         },
       });
