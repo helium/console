@@ -116,7 +116,7 @@ export const getColumns = (
       title: "Location",
       sorter: true,
       dataIndex: "location",
-      render: (data, record) => {
+      render: (_data, record) => {
         if (record.long_city && record.short_country && record.short_state) {
           return (
             record.long_city +
@@ -126,7 +126,10 @@ export const getColumns = (
             record.short_country
           );
         }
-        if (!record.long_city && record.short_country) {
+        if (record.long_city && record.short_country) {
+          return record.long_city + ", " + record.short_country;
+        }
+        if (record.short_country) {
           return record.short_country;
         }
         return "";

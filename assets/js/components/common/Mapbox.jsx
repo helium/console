@@ -23,15 +23,15 @@ export default (props) => {
           props.orgHotspotsMap[h.hotspot_address] &&
           props.orgHotspotsMap[h.hotspot_address].alias) ||
         "";
-      console.log({
-        name: h.hotspot_name,
-        isFollowed: h.hotspot_address in props.orgHotspotsMap,
-      });
+      const isEitherCoordNaN =
+        isNaN(parseFloat(h.longitude)) || isNaN(parseFloat(h.latitude));
       results.push({
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [parseFloat(h.longitude), parseFloat(h.latitude)],
+          coordinates: isEitherCoordNaN
+            ? [0.0, 0.0]
+            : [parseFloat(h.longitude), parseFloat(h.latitude)],
         },
         properties: {
           id: h.hotspot_address,
@@ -39,6 +39,7 @@ export default (props) => {
           alias: hotspot_alias,
           packetCount: h.packet_count,
           isFollowed: String(h.hotspot_address in props.orgHotspotsMap),
+          ...(isEitherCoordNaN && { invalid_coordinates: true }),
         },
       });
     });
@@ -190,7 +191,11 @@ export default (props) => {
         id: "unclustered-point",
         type: "circle",
         source: "hotspots-points-data",
-        filter: ["!", ["has", "point_count"]],
+        filter: [
+          "all",
+          ["!", ["has", "point_count"]],
+          ["!", ["has", "invalid_coordinates"]],
+        ],
         paint: {
           "circle-color": [
             "match",
