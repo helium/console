@@ -133,6 +133,9 @@ export const getColumns = (
         if (record.short_country) {
           return record.short_country;
         }
+        if (record.long_city) {
+          return record.long_city;
+        }
         return "";
       },
     },
@@ -223,6 +226,6 @@ export const getColumns = (
     },
   ];
 
-  if (fromSearch) return columns.filter(c => c.dataIndex !== 'alias')
-  return columns
+  if (fromSearch) return columns.filter((c) => c.dataIndex !== "alias");
+  return columns;
 };
