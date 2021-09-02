@@ -41,8 +41,28 @@ export default (props) => {
     refetch: devicesHeardRefetch,
   } = useQuery(HOTSPOT_SHOW_DEVICES_HEARD, {
     fetchPolicy: "cache-and-network",
-    variables: { address: props.hotspot.hotspot_address }
+    variables: { address: props.hotspot.hotspot_address, column: "packet_count", order: "desc" }
   });
+
+  const handleSort = (pagi, filter, sorter) => {
+    const order = sorter.order === 'ascend' ? 'asc' : 'desc'
+    let column
+    switch (sorter.field) {
+      case 'device_name':
+        column = 'device_name'
+        break;
+      case 'packet_count':
+        column = 'packet_count'
+        break;
+      case 'reported_at':
+        column = 'reported_at'
+        break;
+      default:
+        column = 'packet_count'
+    }
+
+    devicesHeardRefetch({ column, order })
+  }
 
   return (
     <div
@@ -58,6 +78,7 @@ export default (props) => {
         pagination={false}
         style={{ overflowY: "hidden" }}
         className="no-scroll-bar"
+        onChange={handleSort}
       />
     </div>
   );

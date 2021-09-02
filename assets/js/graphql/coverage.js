@@ -82,8 +82,12 @@ export const HOTSPOT_SHOW_PACKETS = gql`
 `
 
 export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
-  query HotspotShowDevicesHeardQuery($address: String) {
-    hotspotDevicesHeard(address: $address) {
+  query HotspotShowDevicesHeardQuery(
+    $address: String
+    $column: String
+    $order: String
+  ) {
+    hotspotDevicesHeard(address: $address, column: $column, order: $order) {
       device_id
       device_name
       packet_count

@@ -209,4 +209,62 @@ defmodule Console.HotspotStats do
         END DESC NULLS LAST
     """
   end
+
+  def get_device_heard_query_for_string_sort() do
+    """
+      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
+      FROM
+        (
+          SELECT
+            DISTINCT(device_id) AS device_id,
+            COUNT(device_id) AS packet_count,
+            MAX(reported_at_epoch) AS reported_at_epoch
+          FROM hotspot_stats
+          WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
+          GROUP BY device_id
+        ) AS stats
+      LEFT JOIN devices d ON stats.device_id = d.id
+      ORDER BY
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
+            WHEN 'device_name' THEN d.name
+          END
+        END ASC NULLS FIRST,
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
+            WHEN 'device_name' THEN d.name
+          END
+        END DESC NULLS LAST
+    """
+  end
+
+  def get_device_heard_query_for_integer_sort() do
+    """
+      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
+      FROM
+        (
+          SELECT
+            DISTINCT(device_id) AS device_id,
+            COUNT(device_id) AS packet_count,
+            MAX(reported_at_epoch) AS reported_at_epoch
+          FROM hotspot_stats
+          WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
+          GROUP BY device_id
+        ) AS stats
+      LEFT JOIN devices d ON stats.device_id = d.id
+      ORDER BY
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
+            WHEN 'packet_count' THEN stats.packet_count
+            WHEN 'reported_at' THEN stats.reported_at_epoch
+          END
+        END ASC NULLS FIRST,
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
+            WHEN 'packet_count' THEN stats.packet_count
+            WHEN 'reported_at' THEN stats.reported_at_epoch
+          END
+        END DESC NULLS LAST
+    """
+  end
 end

@@ -359,6 +359,8 @@ defmodule ConsoleWeb.Schema do
 
     field :hotspot_devices_heard, list_of(:hotspot_device_heard) do
       arg :address, non_null(:string)
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
       resolve &Console.HotspotStats.HotspotStatsResolver.hotspot_show_devices_heard/2
     end
 
