@@ -104,7 +104,6 @@ export default (props) => {
 
   const renderMap = () => {
     if (currentTab === "main") {
-      console.log({ orgHotspotsMap });
       if (hotspotStatsData && followedHotspotStatsData && orgHotspotsMap) {
         if (hotspotAddressSelected) {
           const selectedHotspot = hotspotStatsData.hotspotStats.filter(
