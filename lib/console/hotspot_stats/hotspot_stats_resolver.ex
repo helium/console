@@ -1,113 +1,82 @@
 defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Hotspots
   alias Console.Devices
+  alias Console.HotspotStats
 
-  def all(_, %{context: %{current_organization: current_organization}}) do
+  def all(%{ column: column, order: order }, %{context: %{current_organization: current_organization}}) do
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
     unix2d = current_unix - 86400000 * 2
 
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
-    sql_1d = """
-      SELECT
-        DISTINCT(hotspot_address),
-        COUNT(hotspot_address) AS packet_count,
-        COUNT(DISTINCT(device_id)) AS device_count
-      FROM hotspot_stats
-      WHERE organization_id = $1 and reported_at_epoch > $2
-      GROUP BY hotspot_address
-      ORDER BY packet_count DESC
-    """
+    sql_1d =
+      case column do
+        "packet_count" -> HotspotStats.get_all_query_for_integer_sort()
+        "device_count" -> HotspotStats.get_all_query_for_integer_sort()
+        _ -> HotspotStats.get_all_query_for_string_sort()
+      end
 
-    sql_2d = """
-      SELECT
-        DISTINCT(hotspot_address),
-        COUNT(hotspot_address) AS packet_count,
-        COUNT(DISTINCT(device_id)) AS device_count
-      FROM hotspot_stats
-      WHERE organization_id = $1 and reported_at_epoch < $2 and reported_at_epoch > $3
-      GROUP BY hotspot_address
-      ORDER BY packet_count DESC
-    """
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d])
-    past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix1d, unix2d])
-
-    hotspot_addresses =
-      past_1d_result.rows ++ past_2d_result.rows
-      |> Enum.map(fn r -> Enum.at(r, 0) end)
-      |> Enum.uniq()
-
-    hotspots_on_chain =
-      Hotspots.get_hotspots(hotspot_addresses)
-      |> Enum.reduce(%{}, fn hotspot, acc ->
-        Map.put(acc, hotspot.address, hotspot)
-      end)
-
-    results = generateStats(past_1d_result, past_2d_result, hotspots_on_chain)
-
-    {:ok, results}
-  end
-
-  def followed(_, %{context: %{current_organization: current_organization}}) do
-    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix1d = current_unix - 86400000
-    unix2d = current_unix - 86400000 * 2
-
-    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
-
-    sql_1d = """
-      SELECT
-        DISTINCT(q1.hotspot_address),
-        COUNT(q1.device_id) AS packet_count,
-        COUNT(DISTINCT(q1.device_id)) AS device_count
-      FROM (
-        SELECT oh.hotspot_address, hs.reported_at_epoch, hs.device_id
-        FROM organization_hotspots oh LEFT JOIN (
-          SELECT * FROM hotspot_stats WHERE organization_id = $1 and reported_at_epoch > $2
-        ) hs ON oh.hotspot_address = hs.hotspot_address
-      ) AS q1
-      GROUP BY hotspot_address
-      ORDER BY packet_count DESC;
-    """
-
-    sql_2d = """
-      SELECT
-        DISTINCT(q1.hotspot_address),
-        COUNT(q1.device_id) AS packet_count,
-        COUNT(DISTINCT(q1.device_id)) AS device_count
-      FROM (
-        SELECT oh.hotspot_address, hs.reported_at_epoch, hs.device_id
-        FROM organization_hotspots oh LEFT JOIN (
-          SELECT * FROM hotspot_stats WHERE organization_id = $1 and reported_at_epoch < $2 and reported_at_epoch > $3
-        ) hs ON oh.hotspot_address = hs.hotspot_address
-      ) AS q1
-      GROUP BY hotspot_address
-      ORDER BY packet_count DESC;
-    """
-
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d])
-    past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix1d, unix2d])
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d, column, order])
 
     hotspot_addresses =
       past_1d_result.rows
       |> Enum.map(fn r -> Enum.at(r, 0) end)
 
-    hotspots_on_chain =
-      Hotspots.get_hotspots(hotspot_addresses)
-      |> Enum.reduce(%{}, fn hotspot, acc ->
-        Map.put(acc, hotspot.address, hotspot)
-      end)
+    sql_2d = """
+      SELECT
+        DISTINCT(hotspot_address),
+        COUNT(hotspot_address) AS packet_count,
+        COUNT(DISTINCT(device_id)) AS device_count
+      FROM hotspot_stats
+      WHERE organization_id = $1 and hotspot_address = ANY($2) and reported_at_epoch < $3 and reported_at_epoch > $4
+      GROUP BY hotspot_address
+    """
+    past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, hotspot_addresses, unix1d, unix2d])
 
-      results = generateStats(past_1d_result, past_2d_result, hotspots_on_chain)
+    results = generateStats(past_1d_result, past_2d_result)
 
-      {:ok, results}
+    {:ok, results}
+  end
+
+  def followed(%{ column: column, order: order }, %{context: %{current_organization: current_organization}}) do
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix2d = current_unix - 86400000 * 2
+
+    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+
+    sql_1d =
+      case column do
+        "packet_count" -> HotspotStats.get_followed_query_for_integer_sort()
+        "device_count" -> HotspotStats.get_followed_query_for_integer_sort()
+        _ -> HotspotStats.get_followed_query_for_string_sort()
+      end
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, current_unix, unix1d, column, order])
+
+    all_claimed_hotspot_addresses =
+      past_1d_result.rows
+      |> Enum.map(fn r -> Enum.at(r, 0) end)
+
+    sql_2d = """
+      SELECT
+        DISTINCT(hotspot_address),
+        COUNT(hotspot_address) AS packet_count,
+        COUNT(DISTINCT(device_id)) AS device_count
+      FROM hotspot_stats
+      WHERE organization_id = $1 and hotspot_address = ANY($2) and reported_at_epoch < $3 and reported_at_epoch > $4
+      GROUP BY hotspot_address
+    """
+    past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_claimed_hotspot_addresses, unix1d, unix2d])
+
+    results = generateStats(past_1d_result, past_2d_result)
+
+    {:ok, results}
   end
 
   def device_count(_, %{context: %{current_organization: current_organization}}) do
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
-    unix2d = current_unix - 86400000 * 2
 
     sql_1d = """
       SELECT
@@ -116,18 +85,10 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       WHERE organization_id = $1 and reported_at_epoch > $2
     """
 
-    sql_2d = """
-      SELECT
-        COUNT(DISTINCT(device_id))
-      FROM hotspot_stats
-      WHERE organization_id = $1 and reported_at_epoch > $2 and reported_at_epoch < $3
-    """
     result_1d = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d])
-    result_2d = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, unix2d, unix1d])
 
     {:ok, %{
-      count_1d: result_1d.rows |> Enum.at(0) |> Enum.at(0),
-      count_2d: result_2d.rows |> Enum.at(0) |> Enum.at(0)
+      count_1d: result_1d.rows |> Enum.at(0) |> Enum.at(0)
     }}
   end
 
@@ -219,28 +180,19 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, rows}
   end
 
-  def hotspot_show_devices_heard(%{ address: address }, %{context: %{current_organization: current_organization}}) do
+  def hotspot_show_devices_heard(%{ address: address, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
     hotspot = Hotspots.get_hotspot!(address)
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
     {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
 
-    sql = """
-      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
-      FROM
-        (
-          SELECT
-            DISTINCT(device_id) AS device_id,
-            COUNT(device_id) AS packet_count,
-            MAX(reported_at_epoch) AS reported_at_epoch
-          FROM hotspot_stats
-          WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
-          GROUP BY device_id
-        ) AS stats
-      LEFT JOIN devices d ON stats.device_id = d.id
-      ORDER BY packet_count DESC;
-    """
-    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d])
+    sql =
+      case column do
+        "device_name" -> HotspotStats.get_device_heard_query_for_string_sort
+        _ -> HotspotStats.get_device_heard_query_for_integer_sort
+      end
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d, column, order])
     rows =
       result.rows
       |> Enum.map(fn r ->
@@ -256,11 +208,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, rows}
   end
 
-  defp generateStats(past_1d_result, past_2d_result, hotspots_on_chain) do
-    past_1d_hotspot_map =
-      past_1d_result.rows
-      |> Enum.reduce(%{}, fn r, acc -> Map.put(acc, Enum.at(r, 0), true) end)
-
+  defp generateStats(past_1d_result, past_2d_result) do
     past_2d_hotspot_map =
       past_2d_result.rows
       |> Enum.reduce(%{}, fn r, acc ->
@@ -271,7 +219,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         )
       end)
 
-    hotspot_stats_d1 =
+    hotspot_stats =
       past_1d_result.rows
       |> Enum.map(fn r ->
         past_2d_stat =
@@ -280,66 +228,21 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
             stat -> stat
           end
 
-        case Map.fetch(hotspots_on_chain, Enum.at(r, 0)) do
-          {:ok, attrs} ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: attrs.name,
-              packet_count: Enum.at(r, 1),
-              device_count: Enum.at(r, 2),
-              status: attrs.status,
-              long_city: attrs.long_city,
-              short_country: attrs.short_country,
-              short_state: attrs.short_state,
-              latitude: attrs.lat,
-              longitude: attrs.lng
-            }
-            |> Map.merge(past_2d_stat)
-          _ ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: "Unknown Hotspot",
-              packet_count: Enum.at(r, 1),
-              device_count: Enum.at(r, 2),
-              status: "Unknown",
-            }
-            |> Map.merge(past_2d_stat)
-        end
+        %{
+          hotspot_address: Enum.at(r, 0),
+          hotspot_name: Enum.at(r, 3),
+          packet_count: Enum.at(r, 1),
+          device_count: Enum.at(r, 2),
+          status: Enum.at(r, 4),
+          long_city: Enum.at(r, 5),
+          short_country: Enum.at(r, 6),
+          short_state: Enum.at(r, 7),
+          latitude: Enum.at(r, 8),
+          longitude: Enum.at(r, 9),
+        }
+        |> Map.merge(past_2d_stat)
       end)
 
-    hotspot_stats_d2_only =
-      past_2d_result.rows
-      |> Enum.filter(fn r -> Map.get(past_1d_hotspot_map, Enum.at(r, 0)) == nil end)
-      |> Enum.map(fn r ->
-        case Map.fetch(hotspots_on_chain, Enum.at(r, 0)) do
-          {:ok, attrs} ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: attrs.name,
-              packet_count: 0,
-              device_count: 0,
-              packet_count_2d: Enum.at(r, 1),
-              device_count_2d: Enum.at(r, 2),
-              status: attrs.status,
-              long_city: attrs.long_city,
-              short_country: attrs.short_country,
-              short_state: attrs.short_state,
-              latitude: attrs.lat,
-              longitude: attrs.lng
-            }
-          _ ->
-            %{
-              hotspot_address: Enum.at(r, 0),
-              hotspot_name: "Unknown Hotspot",
-              packet_count: 0,
-              device_count: 0,
-              packet_count_2d: Enum.at(r, 1),
-              device_count_2d: Enum.at(r, 2),
-              status: "Unknown",
-            }
-        end
-      end)
-
-    hotspot_stats_d1 ++ hotspot_stats_d2_only
+    hotspot_stats
   end
 end

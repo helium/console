@@ -9,6 +9,32 @@ import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 export default (props) => {
   const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
+  const handleSort = (pagi, filter, sorter) => {
+    const order = sorter.order === 'ascend' ? 'asc' : 'desc'
+    let column
+    switch (sorter.field) {
+      case 'hotspot_name':
+        column = 'hotspot_name'
+        break;
+      case 'location':
+        column = 'long_city'
+        break;
+      case 'packet_count':
+        column = 'packet_count'
+        break;
+      case 'device_count':
+        column = 'device_count'
+        break;
+      case 'status':
+        column = 'status'
+        break;
+      default:
+        column = 'packet_count'
+    }
+
+    props.refetch({ column, order })
+  }
+
   return (
     <div>
       <div style={{ padding: 25, paddingTop: 8 }}>
@@ -50,6 +76,7 @@ export default (props) => {
               pagination={false}
               style={{ overflowY: "hidden" }}
               className="no-scroll-bar"
+              onChange={handleSort}
             />
           )
         }

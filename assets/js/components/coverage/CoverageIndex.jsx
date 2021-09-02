@@ -30,6 +30,7 @@ export default (props) => {
     refetch: hotspotStatsRefetch,
   } = useQuery(HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
+    variables: { column: "packet_count", order: "desc" },
   });
 
   const {
@@ -48,6 +49,7 @@ export default (props) => {
     refetch: followedHotspotStatsRefetch,
   } = useQuery(FOLLOWED_HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
+    variables: { column: "packet_count", order: "desc" },
   });
 
   const {
@@ -220,6 +222,7 @@ export default (props) => {
                     }
                     orgHotspotsMap={orgHotspotsMap}
                     selectHotspotAddress={selectHotspotAddress}
+                    refetch={hotspotStatsRefetch}
                   />
                 ) : (
                   <CoverageHotspotShow
@@ -238,6 +241,7 @@ export default (props) => {
                     }
                     orgHotspotsMap={orgHotspotsMap}
                     selectHotspotAddress={selectHotspotAddress}
+                    refetch={followedHotspotStatsRefetch}
                   />
                 ) : (
                   <CoverageHotspotShow

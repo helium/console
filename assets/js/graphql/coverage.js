@@ -18,8 +18,11 @@ const HOTSPOT_FRAGMENT = gql`
 `;
 
 export const HOTSPOT_STATS = gql`
-  query HotspotStatsQuery {
-    hotspotStats {
+  query HotspotStatsQuery(
+    $column: String
+    $order: String
+  ) {
+    hotspotStats(column: $column, order: $order) {
       ...HotspotFragment
     }
   }
@@ -27,8 +30,11 @@ export const HOTSPOT_STATS = gql`
 `;
 
 export const FOLLOWED_HOTSPOT_STATS = gql`
-  query FollowedHotspotStatsQuery {
-    followedHotspotStats {
+  query FollowedHotspotStatsQuery(
+    $column: String
+    $order: String
+  ) {
+    followedHotspotStats(column: $column, order: $order) {
       ...HotspotFragment
     }
   }
@@ -39,7 +45,6 @@ export const HOTSPOT_STATS_DEVICE_COUNT = gql`
   query HotspotStatsDeviceCountQuery {
     hotspotStatsDeviceCount {
       count_1d
-      count_2d
     }
   }
 `;
@@ -77,8 +82,12 @@ export const HOTSPOT_SHOW_PACKETS = gql`
 `
 
 export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
-  query HotspotShowDevicesHeardQuery($address: String) {
-    hotspotDevicesHeard(address: $address) {
+  query HotspotShowDevicesHeardQuery(
+    $address: String
+    $column: String
+    $order: String
+  ) {
+    hotspotDevicesHeard(address: $address, column: $column, order: $order) {
       device_id
       device_name
       packet_count

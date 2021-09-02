@@ -107,7 +107,7 @@ export const getColumns = (
               selectHotspotAddress(record.hotspot_address);
             }}
           >
-            {hotspot_alias || startCase(data)}
+            {hotspot_alias ? `${hotspot_alias} (${startCase(data)})` : startCase(data)}
           </Link>
         );
       },
