@@ -202,27 +202,23 @@ class NavDrawer extends Component {
             ADMIN
           </Text>
         </div>
-        {
-          false && (
-            <div style={{ position: "relative" }}>
-              <NavLink
-                draggable="false"
-                to={"/coverage"}
-                activeClassName="is-active"
-                className="menu-link"
-              >
-                Coverage
-              </NavLink>
-              {history.location.pathname === "/coverage" && (
-                <img
-                  draggable="false"
-                  src={Caret}
-                  style={{ right: -16, position: "absolute", top: 8, height: 12 }}
-                />
-              )}
-            </div>
-          )
-        }
+        <div style={{ position: "relative" }}>
+          <NavLink
+            draggable="false"
+            to={"/coverage"}
+            activeClassName="is-active"
+            className="menu-link"
+          >
+            Coverage
+          </NavLink>
+          {history.location.pathname === "/coverage" && (
+            <img
+              draggable="false"
+              src={Caret}
+              style={{ right: -16, position: "absolute", top: 8, height: 12 }}
+            />
+          )}
+        </div>
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
