@@ -22,6 +22,7 @@ import { SEARCH_HOTSPOTS } from "../../graphql/search";
 export default (props) => {
   const [hotspotAddressSelected, selectHotspotAddress] = useState(null);
   const [currentTab, setCurrentTab] = useState("main");
+  const [mapData, setMapData] = useState([]);
 
   const {
     loading: hotspotStatsLoading,
@@ -81,6 +82,13 @@ export default (props) => {
     {}
   );
 
+  const orgHotspotsMap = allOrganizationHotspotsData
+    ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
+        acc[hs.hotspot_address] = hs;
+        return acc;
+      }, {})
+    : null;
+
   useEffect(() => {
     // executed when mounted
     orgHotspotsChannel.join();
@@ -98,87 +106,56 @@ export default (props) => {
     };
   }, []);
 
-  const orgHotspotsMap = allOrganizationHotspotsData
-    ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
-        acc[hs.hotspot_address] = hs;
-        return acc;
-      }, {})
-    : null;
-
-  const renderMap = () => {
-    if (currentTab === "main") {
-      if (hotspotStatsData && orgHotspotsMap) {
-        if (hotspotAddressSelected) {
-          const selectedHotspot = hotspotStatsData.hotspotStats.filter(
-            (h) => h.hotspot_address === hotspotAddressSelected
-          );
-          return (
-            <Mapbox
-              data={selectedHotspot}
-              key={`${selectedHotspot.hotspot_address}`}
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
-        } else {
-          return (
-            <Mapbox
-              data={hotspotStatsData.hotspotStats}
-              key="main"
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
-        }
-      }
-    } else if (currentTab === "followed") {
-      if (followedHotspotStatsData && orgHotspotsMap) {
-        if (hotspotAddressSelected) {
-          const selectedHotspot =
-            followedHotspotStatsData.followedHotspotStats.filter(
+  useEffect(() => {
+    switch (currentTab) {
+      case "main":
+        if (hotspotStatsData) {
+          if (hotspotAddressSelected) {
+            const selectedHotspot = hotspotStatsData.hotspotStats.filter(
               (h) => h.hotspot_address === hotspotAddressSelected
             );
-          return (
-            <Mapbox
-              data={selectedHotspot}
-              key={`${selectedHotspot.hotspot_address}`}
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
-        } else {
-          return (
-            <Mapbox
-              data={followedHotspotStatsData.followedHotspotStats}
-              key="followed"
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
+            setMapData(selectedHotspot);
+          } else {
+            setMapData(hotspotStatsData.hotspotStats);
+          }
         }
-      }
-    } else if (currentTab === "search") {
-      if (searchHotspotsData && orgHotspotsMap) {
-        if (hotspotAddressSelected) {
-          const selectedHotspot =
-            searchHotspotsData.searchHotspots.entries.filter(
-              (h) => h.hotspot_address === hotspotAddressSelected
-            );
-          return (
-            <Mapbox
-              data={selectedHotspot}
-              key={`${selectedHotspot.hotspot_address}`}
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
-        } else {
-          return (
-            <Mapbox
-              data={searchHotspotsData.searchHotspots.entries || []}
-              key="search"
-              orgHotspotsMap={orgHotspotsMap}
-            />
-          );
+        break;
+      case "followed":
+        if (followedHotspotStatsData) {
+          if (hotspotAddressSelected) {
+            const selectedHotspot =
+              followedHotspotStatsData.followedHotspotStats.filter(
+                (h) => h.hotspot_address === hotspotAddressSelected
+              );
+            setMapData(selectedHotspot);
+          } else {
+            setMapData(followedHotspotStatsData.followedHotspotStats);
+          }
         }
-      }
+        break;
+      case "search":
+        if (searchHotspotsData) {
+          if (hotspotAddressSelected) {
+            const selectedHotspot =
+              searchHotspotsData.searchHotspots.entries.filter(
+                (h) => h.hotspot_address === hotspotAddressSelected
+              );
+            setMapData(selectedHotspot);
+          } else {
+            setMapData(searchHotspotsData.searchHotspots.entries || []);
+          }
+        }
+        break;
+      default:
+        return;
     }
-  };
+  }, [
+    currentTab,
+    hotspotAddressSelected,
+    searchHotspotsData,
+    followedHotspotStatsData,
+    hotspotStatsData,
+  ]);
 
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton full>
@@ -269,7 +246,9 @@ export default (props) => {
               </TabPane>
             </Tabs>
           </Col>
-          <Col sm={10}>{renderMap()}</Col>
+          <Col sm={10}>
+            <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
+          </Col>
         </Row>
       </div>
     </DashboardLayout>

@@ -7,21 +7,21 @@ mapboxgl.accessToken =
   process.env.MAPBOX_PRIVATE_KEY ||
   "pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ";
 
-export default (props) => {
+export default ({ orgHotspotsMap, data }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
+  const DEFAULT_LNG = -70.9;
+  const DEFAULT_LAT = 42.35;
+  const DEFAULT_ZOOM = 9;
   const [showMap, setShowMap] = useState(false);
 
   const generateMapPoints = () => {
     let results = [];
-    props.data.forEach((h) => {
+    data.forEach((h) => {
       const hotspot_alias =
-        (props.orgHotspotsMap &&
-          props.orgHotspotsMap[h.hotspot_address] &&
-          props.orgHotspotsMap[h.hotspot_address].alias) ||
+        (orgHotspotsMap &&
+          orgHotspotsMap[h.hotspot_address] &&
+          orgHotspotsMap[h.hotspot_address].alias) ||
         "";
       const isEitherCoordNaN =
         isNaN(parseFloat(h.longitude)) || isNaN(parseFloat(h.latitude));
@@ -38,7 +38,9 @@ export default (props) => {
           name: `${h.hotspot_name}`,
           alias: hotspot_alias,
           packetCount: h.packet_count,
-          isFollowed: String(h.hotspot_address in props.orgHotspotsMap),
+          isFollowed: String(
+            orgHotspotsMap ? h.hotspot_address in orgHotspotsMap : false
+          ),
           ...(isEitherCoordNaN && { invalid_coordinates: true }),
         },
       });
@@ -50,15 +52,26 @@ export default (props) => {
 
   useEffect(() => {
     setMapPoints(generateMapPoints());
-  }, [props.orgHotspotsMap]);
+  }, [orgHotspotsMap, data]);
 
   useEffect(() => {
-    map.current &&
+    if (map.current) {
       map.current.getSource("hotspots-points-data") &&
-      map.current.getSource("hotspots-points-data").setData({
-        type: "FeatureCollection",
-        features: mapPoints,
-      });
+        map.current.getSource("hotspots-points-data").setData({
+          type: "FeatureCollection",
+          features: mapPoints,
+        });
+
+      if (mapPoints.length > 1) {
+        var bounds = new mapboxgl.LngLatBounds();
+
+        mapPoints.forEach(function (feature) {
+          bounds.extend(feature.geometry.coordinates);
+        });
+
+        map.current.fitBounds(bounds, { padding: 80 });
+      }
+    }
   }, [mapPoints]);
 
   useEffect(() => {
@@ -67,10 +80,10 @@ export default (props) => {
       container: mapContainer.current,
       style: "mapbox://styles/petermain/cksu26oim22gv18o73imni3el", // mapbox://styles/petermain/cksu26oim22gv18o73imni3el || mapbox://styles/mapbox/dark-v9
       center: (mapPoints.length > 0 && mapPoints[0].geometry.coordinates) || [
-        lng,
-        lat,
+        DEFAULT_LNG,
+        DEFAULT_LAT,
       ],
-      zoom: zoom,
+      zoom: DEFAULT_ZOOM,
     });
 
     map.current.on("load", function () {
