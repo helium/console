@@ -87,12 +87,15 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
     $address: String
     $column: String
     $order: String
+    $page: Int
+    $pageSize: Int
   ) {
-    hotspotDevicesHeard(address: $address, column: $column, order: $order) {
+    hotspotDevicesHeard(address: $address, column: $column, order: $order, page: $page, pageSize: $pageSize) {
       device_id
       device_name
       packet_count
       reported_at
+      total_entries
     }
   }
 `

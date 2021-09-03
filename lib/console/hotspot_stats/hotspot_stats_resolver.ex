@@ -180,7 +180,10 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, rows}
   end
 
-  def hotspot_show_devices_heard(%{ address: address, column: column, order: order }, %{context: %{current_organization: current_organization}}) do
+  def hotspot_show_devices_heard(
+    %{ address: address, column: column, order: order, page: page, page_size: page_size },
+    %{context: %{current_organization: current_organization}}
+  ) do
     hotspot = Hotspots.get_hotspot!(address)
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
@@ -192,7 +195,9 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         _ -> HotspotStats.get_device_heard_query_for_integer_sort
       end
 
-    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d, column, order])
+    offset = page_size * (page - 1)
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [organization_id, hotspot.address, unix1d, column, order, page_size, offset])
+
     rows =
       result.rows
       |> Enum.map(fn r ->
@@ -202,6 +207,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           device_name: Enum.at(r, 1),
           packet_count: Enum.at(r, 2),
           reported_at: Enum.at(r, 3) |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive(),
+          total_entries: Enum.at(r, 4)
         }
       end)
 
