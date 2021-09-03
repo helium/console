@@ -222,7 +222,7 @@ defmodule Console.HotspotStats do
 
   def get_device_heard_query_for_string_sort() do
     """
-      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
+      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch, COUNT(*) OVER() AS total_entries
       FROM
         (
           SELECT
@@ -245,12 +245,14 @@ defmodule Console.HotspotStats do
             WHEN 'device_name' THEN d.name
           END
         END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
     """
   end
 
   def get_device_heard_query_for_integer_sort() do
     """
-      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch
+      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch, COUNT(*) OVER() AS total_entries
       FROM
         (
           SELECT
@@ -275,6 +277,8 @@ defmodule Console.HotspotStats do
             WHEN 'reported_at' THEN stats.reported_at_epoch
           END
         END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
     """
   end
 end

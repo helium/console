@@ -72,6 +72,7 @@ defmodule ConsoleWeb.Schema do
     field :device_name, :string
     field :packet_count, :integer
     field :reported_at, :naive_datetime
+    field :total_entries, :integer
   end
 
   object :organization_hotspot do
@@ -362,6 +363,8 @@ defmodule ConsoleWeb.Schema do
       arg :address, non_null(:string)
       arg :column, non_null(:string)
       arg :order, non_null(:string)
+      arg :page, non_null(:integer)
+      arg :page_size, non_null(:integer)
       resolve &Console.HotspotStats.HotspotStatsResolver.hotspot_show_devices_heard/2
     end
 

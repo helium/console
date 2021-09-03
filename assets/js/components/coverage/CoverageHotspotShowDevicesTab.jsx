@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { useQuery } from "@apollo/client";
 import { HOTSPOT_SHOW_DEVICES_HEARD } from "../../graphql/coverage";
 import { minWidth } from "../../util/constants";
-import { Typography, Table } from "antd";
+import { Typography, Table, Pagination } from "antd";
 import { Link } from "react-router-dom";
 const { Text } = Typography;
 
@@ -34,6 +34,11 @@ const columns = [
 ];
 
 export default (props) => {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [column, setColumn] = useState("packet_count");
+  const [order, setOrder] = useState("desc");
+
   const {
     loading: devicesHeardLoading,
     error: devicesHeardError,
@@ -41,7 +46,13 @@ export default (props) => {
     refetch: devicesHeardRefetch,
   } = useQuery(HOTSPOT_SHOW_DEVICES_HEARD, {
     fetchPolicy: "cache-and-network",
-    variables: { address: props.hotspot.hotspot_address, column: "packet_count", order: "desc" }
+    variables: {
+      address: props.hotspot.hotspot_address,
+      column,
+      order,
+      page,
+      pageSize
+    }
   });
 
   const handleSort = (pagi, filter, sorter) => {
@@ -61,8 +72,28 @@ export default (props) => {
         column = 'packet_count'
     }
 
-    devicesHeardRefetch({ column, order })
+    devicesHeardRefetch({
+      address: props.hotspot.hotspot_address,
+      page,
+      pageSize,
+      column,
+      order
+    });
+
+    setOrder(order)
+    setColumn(column)
   }
+
+  const handleChangePage = (page) => {
+    setPage(page);
+    devicesHeardRefetch({
+      address: props.hotspot.hotspot_address,
+      page,
+      pageSize,
+      column,
+      order
+    });
+  };
 
   return (
     <div
@@ -80,6 +111,27 @@ export default (props) => {
         className="no-scroll-bar"
         onChange={handleSort}
       />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          paddingBottom: 0,
+        }}
+      >
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={
+            devicesHeardData && devicesHeardData.hotspotDevicesHeard.length > 0 ?
+            devicesHeardData.hotspotDevicesHeard[0].total_entries : 0
+          }
+          onChange={(page) => handleChangePage(page)}
+          style={{ marginBottom: 20 }}
+          showSizeChanger={false}
+        />
+      </div>
     </div>
   );
 };
