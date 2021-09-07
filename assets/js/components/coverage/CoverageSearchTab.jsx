@@ -194,11 +194,11 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
                   }}
                 />
                 <Text style={{ fontSize: 16, fontWeight: 600 }}>
-                  Flag to Mark
+                  Claim to Follow
                 </Text>
               </div>
               <Text>
-                Any Hotspot in the network can be flagged, which adds it to your
+                Any Hotspot in the network can be claimed, which adds it to your
                 Organization's 'My Hotspots' tab.
               </Text>
             </Col>

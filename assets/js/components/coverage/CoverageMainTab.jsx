@@ -104,7 +104,7 @@ export default (props) => {
                 <Text
                   style={{ color: '#2C79EE'}}
                 >
-                  Claiming a Hotspot allows you to mark which Hotspots are owned by your Organization.
+                  Claiming a Hotspot allows you to mark which Hotspots to follow in your Organization, which adds it to your Organization's 'My Hotspots' tab.
                 </Text>
               </div>
             </div>
