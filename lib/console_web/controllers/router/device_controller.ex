@@ -176,7 +176,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               nil -> event
               _ ->
                 if String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") do
-                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode")
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
                 else
                   event
                 end
@@ -195,7 +195,8 @@ defmodule ConsoleWeb.Router.DeviceController do
               nil -> event
               _ ->
                 if String.contains?(event["data"]["payload"], <<0>>) or String.contains?(event["data"]["payload"], <<1>>) do
-                  Kernel.put_in(event["data"]["payload"], "Payload contains unprintable characters when encoding to Unicode")
+                  b64_payload = event["data"]["payload"] |> :base64.encode
+                  Kernel.put_in(event["data"]["payload"], "Payload contains unprintable Unicode characters, (#{b64_payload} in Base64)")
                 else
                   event
                 end
