@@ -23,8 +23,10 @@ export const HOTSPOT_STATS = gql`
   query HotspotStatsQuery(
     $column: String
     $order: String
+    $page: Int
+    $pageSize: Int
   ) {
-    hotspotStats(column: $column, order: $order) {
+    hotspotStats(column: $column, order: $order, page: $page, pageSize: $pageSize) {
       ...HotspotFragment
     }
   }

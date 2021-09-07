@@ -31,7 +31,7 @@ export default (props) => {
     refetch: hotspotStatsRefetch,
   } = useQuery(HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
-    variables: { column: "packet_count", order: "desc" },
+    variables: { column: "packet_count", order: "desc", page: 1, pageSize: 25 },
   });
 
   const {
@@ -170,7 +170,7 @@ export default (props) => {
         }}
       >
         <Row style={{ height: "100%" }}>
-          <Col sm={14} style={{ height: "100%", overflow: "scroll" }}>
+          <Col sm={14} style={{ height: "100%", overflow: "scroll" }} className="no-scroll-bar">
             <Tabs
               defaultActiveKey="main"
               size="large"
