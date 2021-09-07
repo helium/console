@@ -9,7 +9,7 @@ import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 
 export default (props) => {
   const [page, setPage] = useState(1);
-  const pageSize = 2;
+  const pageSize = 25;
   const [column, setColumn] = useState("packet_count");
   const [order, setOrder] = useState("desc");
 
