@@ -47,7 +47,6 @@ export default ({
         >
           <Option value={10}>10</Option>
           <Option value={25}>25</Option>
-          <Option value={100}>100</Option>
         </Select>
         <Pagination
           current={hotspots.pageNumber}

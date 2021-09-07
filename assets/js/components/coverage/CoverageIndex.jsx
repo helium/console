@@ -170,7 +170,11 @@ export default (props) => {
         }}
       >
         <Row style={{ height: "100%" }}>
-          <Col sm={14} style={{ height: "100%", overflow: "scroll" }} className="no-scroll-bar">
+          <Col
+            sm={14}
+            style={{ height: "100%", overflow: "scroll" }}
+            className="no-scroll-bar"
+          >
             <Tabs
               defaultActiveKey="main"
               size="large"
