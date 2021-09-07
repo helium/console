@@ -11,7 +11,7 @@ const AlertButton = ({ id, name, nodeType, selected }) => (
     <Link to={`/alerts/${id}`}>
       <div style={{
         position: 'relative',
-        background: ALERT_TYPES[nodeType].color,
+        background: selected ? ALERT_TYPES[nodeType].selectedColor : ALERT_TYPES[nodeType].color,
         marginRight: 10,
         marginRight: '10px',
         width: '140px',

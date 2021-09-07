@@ -19,7 +19,7 @@ const Node = ({
 }) => (
   <div
     style={{
-      background: "#2C79EE",
+      background: pathname === "/labels/" + id ? "#3C6B95" : "#2C79EE",
       padding: "4px 24px 4px 15px",
       borderRadius: 5,
       height: 50,

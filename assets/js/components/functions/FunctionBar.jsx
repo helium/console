@@ -11,7 +11,7 @@ const FunctionButton = ({ id, name, type, selected }) => (
     <Link to={`/functions/${id}`}>
       <div
         style={{
-          backgroundColor: '#9E59F6',
+          backgroundColor: selected ? '#8261C2' : '#9E59F6',
           borderRadius: 6,
           padding: '5px 10px 5px 10px',
           cursor: 'pointer',

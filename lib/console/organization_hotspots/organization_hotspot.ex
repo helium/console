@@ -13,7 +13,7 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
     field :claimed, :boolean
     field :alias, :string
 
-    belongs_to :organization, ConsoleOrganization
+    belongs_to :organization, Organization
 
     timestamps()
   end
