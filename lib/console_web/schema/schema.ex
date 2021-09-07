@@ -56,6 +56,7 @@ defmodule ConsoleWeb.Schema do
     field :longitude, :decimal
     field :latitude, :decimal
     field :alias, :string
+    field :total_entries, :integer
   end
 
   object :hotspot_stats_device_count do
@@ -336,12 +337,16 @@ defmodule ConsoleWeb.Schema do
     field :hotspot_stats, list_of(:hotspot) do
       arg :column, non_null(:string)
       arg :order, non_null(:string)
+      arg :page, non_null(:integer)
+      arg :page_size, non_null(:integer)
       resolve &Console.HotspotStats.HotspotStatsResolver.all/2
     end
 
     field :followed_hotspot_stats, list_of(:hotspot) do
       arg :column, non_null(:string)
       arg :order, non_null(:string)
+      arg :page, non_null(:integer)
+      arg :page_size, non_null(:integer)
       resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
     end
 

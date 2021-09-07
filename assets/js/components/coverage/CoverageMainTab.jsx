@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { Table, Typography, Row, Col } from "antd";
+import { Table, Typography, Row, Col, Pagination } from "antd";
 import { minWidth } from "../../util/constants";
 import { updateOrganizationHotspot } from '../../actions/coverage'
 import { getColumns } from './Constants'
@@ -8,6 +8,11 @@ const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 
 export default (props) => {
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
+  const [column, setColumn] = useState("packet_count");
+  const [order, setOrder] = useState("desc");
+
   const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
   const handleSort = (pagi, filter, sorter) => {
@@ -36,8 +41,20 @@ export default (props) => {
         column = 'packet_count'
     }
 
-    props.refetch({ column, order })
+    props.refetch({ column, order, page, pageSize })
+    setOrder(order)
+    setColumn(column)
   }
+
+  const handleChangePage = (page) => {
+    setPage(page);
+    props.refetch({
+      page,
+      pageSize,
+      column,
+      order
+    });
+  };
 
   return (
     <div>
@@ -87,7 +104,7 @@ export default (props) => {
                 <Text
                   style={{ color: '#2C79EE'}}
                 >
-                  Claiming a Hotspot allows you to mark which Hotspots are owned by your Organization.
+                  Claiming a Hotspot allows you to mark which Hotspots to follow in your Organization, which adds it to your Organization's 'My Hotspots' tab.
                 </Text>
               </div>
             </div>
@@ -95,12 +112,12 @@ export default (props) => {
         </Row>
       </div>
 
-      <div
-        style={{ overflowX: "scroll", overflowY: "hidden" }}
-        className="no-scroll-bar"
-      >
-        {
-          props.hotspotStats && (
+      {
+        props.hotspotStats && (
+          <div
+            style={{ overflowX: "scroll", overflowY: "hidden" }}
+            className="no-scroll-bar"
+          >
             <Table
               sortDirections={['descend', 'ascend', 'descend']}
               showSorterTooltip={false}
@@ -112,9 +129,30 @@ export default (props) => {
               className="no-scroll-bar"
               onChange={handleSort}
             />
-          )
-        }
-      </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                paddingBottom: 0,
+              }}
+            >
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={
+                  props.hotspotStats && props.hotspotStats.length > 0 ?
+                  props.hotspotStats[0].total_entries : 0
+                }
+                onChange={(page) => handleChangePage(page)}
+                style={{ marginBottom: 20 }}
+                showSizeChanger={false}
+              />
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 };

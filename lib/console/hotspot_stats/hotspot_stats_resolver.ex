@@ -3,7 +3,10 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Devices
   alias Console.HotspotStats
 
-  def all(%{ column: column, order: order }, %{context: %{current_organization: current_organization}}) do
+  def all(
+    %{ column: column, order: order, page: page, page_size: page_size },
+    %{context: %{current_organization: current_organization}}
+  ) do
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
     unix2d = current_unix - 86400000 * 2
@@ -16,7 +19,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         _ -> HotspotStats.get_all_query_for_string_sort()
       end
 
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d, column, order])
+    offset = page_size * (page - 1)
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, unix1d, column, order, page_size, offset])
 
     hotspot_addresses =
       past_1d_result.rows
@@ -38,7 +42,10 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     {:ok, results}
   end
 
-  def followed(%{ column: column, order: order }, %{context: %{current_organization: current_organization}}) do
+  def followed(
+    %{ column: column, order: order, page: page, page_size: page_size },
+    %{context: %{current_organization: current_organization}}
+  ) do
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
     unix2d = current_unix - 86400000 * 2
@@ -51,7 +58,9 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
         "device_count" -> HotspotStats.get_followed_query_for_integer_sort()
         _ -> HotspotStats.get_followed_query_for_string_sort()
       end
-    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, current_unix, unix1d, column, order])
+
+    offset = page_size * (page - 1)
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, current_unix, unix1d, column, order, page_size, offset])
 
     all_claimed_hotspot_addresses =
       past_1d_result.rows
@@ -245,7 +254,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           short_state: Enum.at(r, 7),
           latitude: Enum.at(r, 8),
           longitude: Enum.at(r, 9),
-          alias: Enum.at(r,10)
+          alias: Enum.at(r,10),
+          total_entries: Enum.at(r, 11)
         }
         |> Map.merge(past_2d_stat)
       end)
