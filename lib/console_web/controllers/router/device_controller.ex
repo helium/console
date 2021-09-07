@@ -176,7 +176,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               nil -> event
               _ ->
                 if String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") do
-                  Kernel.put_in(event["data"]["req"]["body"], "Unsupported unicode escape sequence in request body")
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode")
                 else
                   event
                 end
@@ -195,7 +195,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               nil -> event
               _ ->
                 if String.contains?(event["data"]["payload"], <<0>>) or String.contains?(event["data"]["payload"], <<1>>) do
-                  Kernel.put_in(event["data"]["payload"], "Unsupported unicode escape sequence in payload")
+                  Kernel.put_in(event["data"]["payload"], "Payload contains unprintable characters when encoding to Unicode")
                 else
                   event
                 end
@@ -452,7 +452,7 @@ defmodule ConsoleWeb.Router.DeviceController do
       ids_to_report = removed_devices |> Enum.map(fn d -> d.id end)
       Appsignal.send_error(%RuntimeError{ message: Enum.join(ids_to_report, ", ") }, "Removed devices in XOR filter that exist", ["router/device_controller.ex/update_devices_in_xor_filter"])
     end
-    
+
     if length(added_device_ids) > 0 do
       with {:ok, devices} <- Devices.update_in_xor_filter(added_device_ids) do
         Enum.map(devices,fn (d) -> d.organization_id end)
