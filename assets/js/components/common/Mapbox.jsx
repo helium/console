@@ -12,7 +12,7 @@ export default ({ orgHotspotsMap, data }) => {
   const map = useRef(null);
   const DEFAULT_LNG = -70.9;
   const DEFAULT_LAT = 42.35;
-  const DEFAULT_ZOOM = 9;
+  const DEFAULT_ZOOM = 10;
   const [showMap, setShowMap] = useState(false);
 
   const generateMapPoints = () => {
@@ -84,6 +84,7 @@ export default ({ orgHotspotsMap, data }) => {
         DEFAULT_LAT,
       ],
       zoom: DEFAULT_ZOOM,
+      maxZoom: DEFAULT_ZOOM,
     });
 
     map.current.on("load", function () {
@@ -98,8 +99,8 @@ export default ({ orgHotspotsMap, data }) => {
           features: [],
         },
         cluster: true,
-        clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+        clusterMaxZoom: 5, // Max zoom to cluster points on
+        clusterRadius: 40, // Radius of each cluster when clustering points (defaults to 50)
       });
 
       // now add the layer, and reference the data source above by name
