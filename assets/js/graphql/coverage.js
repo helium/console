@@ -15,6 +15,7 @@ const HOTSPOT_FRAGMENT = gql`
     longitude
     latitude
     alias
+    total_entries
   }
 `;
 
@@ -34,8 +35,10 @@ export const FOLLOWED_HOTSPOT_STATS = gql`
   query FollowedHotspotStatsQuery(
     $column: String
     $order: String
+    $page: Int
+    $pageSize: Int
   ) {
-    followedHotspotStats(column: $column, order: $order) {
+    followedHotspotStats(column: $column, order: $order, page: $page, pageSize: $pageSize) {
       ...HotspotFragment
     }
   }

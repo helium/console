@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Typography, Row, Col, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { Typography, Row, Col, Table, Pagination } from "antd";
 const { Text } = Typography;
 import { updateOrganizationHotspot } from '../../actions/coverage'
 import { getColumns } from './Constants'
@@ -7,6 +7,11 @@ import { minWidth } from "../../util/constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 
 export default (props) => {
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
+  const [column, setColumn] = useState("packet_count");
+  const [order, setOrder] = useState("desc");
+
   const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
 
   const handleSort = (pagi, filter, sorter) => {
@@ -32,8 +37,20 @@ export default (props) => {
         column = 'packet_count'
     }
 
-    props.refetch({ column, order })
+    props.refetch({ column, order, page, pageSize })
+    setOrder(order)
+    setColumn(column)
   }
+
+  const handleChangePage = (page) => {
+    setPage(page);
+    props.refetch({
+      page,
+      pageSize,
+      column,
+      order
+    });
+  };
 
   return (
     <div>
@@ -59,12 +76,12 @@ export default (props) => {
         </Row>
       </div>
 
-      <div
-        style={{ overflowX: "scroll", overflowY: "hidden" }}
-        className="no-scroll-bar"
-      >
-        {
-          props.hotspotStats && (
+      {
+        props.hotspotStats && (
+          <div
+            style={{ overflowX: "scroll", overflowY: "hidden" }}
+            className="no-scroll-bar"
+          >
             <Table
               showSorterTooltip={false}
               sortDirections={['descend', 'ascend', 'descend']}
@@ -78,9 +95,30 @@ export default (props) => {
               className="no-scroll-bar"
               onChange={handleSort}
             />
-          )
-        }
-      </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                paddingBottom: 0,
+              }}
+            >
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={
+                  props.hotspotStats && props.hotspotStats.length > 0 ?
+                  props.hotspotStats[0].total_entries : 0
+                }
+                onChange={(page) => handleChangePage(page)}
+                style={{ marginBottom: 20 }}
+                showSizeChanger={false}
+              />
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 };

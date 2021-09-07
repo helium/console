@@ -50,7 +50,7 @@ export default (props) => {
     refetch: followedHotspotStatsRefetch,
   } = useQuery(FOLLOWED_HOTSPOT_STATS, {
     fetchPolicy: "cache-and-network",
-    variables: { column: "packet_count", order: "desc" },
+    variables: { column: "packet_count", order: "desc", page: 1, pageSize: 25 },
   });
 
   const {

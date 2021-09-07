@@ -113,7 +113,8 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        oh.alias
+        oh.alias,
+        COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
          hotspot_address,
@@ -159,6 +160,8 @@ defmodule Console.HotspotStats do
             WHEN 'alias' THEN oh.alias
           END
         END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
     """
   end
 
@@ -175,7 +178,8 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        oh.alias
+        oh.alias,
+        COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
          hotspot_address,
@@ -217,6 +221,8 @@ defmodule Console.HotspotStats do
             WHEN 'device_count' THEN parsed_stats.device_count
           END
         END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
     """
   end
 
