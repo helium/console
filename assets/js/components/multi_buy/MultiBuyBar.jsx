@@ -9,7 +9,7 @@ const MultiBuyButton = ({ id, name, selected }) => (
     <Link to={`/multi_buys/${id}`}>
       <div style={{
         position: 'relative',
-        background: '#2C79EE',
+        background: selected ? "#3C6B95" : "#2C79EE",
         marginRight: 10,
         marginRight: '10px',
         width: '140px',

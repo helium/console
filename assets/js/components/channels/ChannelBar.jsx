@@ -11,7 +11,7 @@ const ChannelButton = ({ id, name, type, selected }) => (
     <Link to={`/integrations/${id}`}>
       <div
         style={{
-          backgroundColor: '#12CB9E',
+          backgroundColor: selected ? '#0CA47F' : '#12CB9E',
           borderRadius: 6,
           cursor: 'pointer',
           height: 50,

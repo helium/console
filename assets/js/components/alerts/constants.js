@@ -70,9 +70,11 @@ export const ALERT_TYPES = {
   "device/label": {
     name: "Device/Label",
     color: "#2C79EE",
+    selectedColor: "#3C6B95"
   },
   integration: {
     name: "Integration",
     color: "#12CB9E",
+    selectedColor: "#0CA47F"
   },
 };
