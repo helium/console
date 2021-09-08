@@ -58,10 +58,30 @@ const chartOptions = {
   },
   scales: {
     xAxis: {
-      display: false
+      display: true,
+      title: {
+        display: true,
+        text: 'Time Ago in Hours'
+      },
+      ticks: {
+        display: false
+      },
+      grid: {
+        display: false
+      }
     },
     yAxis: {
-      display: false
+      display: true,
+      title: {
+        display: true,
+        text: '# of Packets'
+      },
+      ticks: {
+        display: false
+      },
+      grid: {
+        display: false
+      }
     }
   },
   maintainAspectRatio: false,
