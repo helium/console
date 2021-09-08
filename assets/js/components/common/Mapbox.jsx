@@ -50,26 +50,35 @@ export default ({ orgHotspotsMap, data }) => {
 
   const [mapPoints, setMapPoints] = useState(generateMapPoints());
 
+  const loadMapPoints = () => {
+    map.current.getSource("hotspots-points-data").setData({
+      type: "FeatureCollection",
+      features: mapPoints,
+    });
+
+    if (mapPoints.length > 1) {
+      var bounds = new mapboxgl.LngLatBounds();
+
+      mapPoints.forEach(function (feature) {
+        bounds.extend(feature.geometry.coordinates);
+      });
+
+      map.current.fitBounds(bounds, { padding: 80 });
+    }
+  };
+
   useEffect(() => {
     setMapPoints(generateMapPoints());
   }, [orgHotspotsMap, data]);
 
   useEffect(() => {
     if (map.current) {
-      map.current.getSource("hotspots-points-data") &&
-        map.current.getSource("hotspots-points-data").setData({
-          type: "FeatureCollection",
-          features: mapPoints,
-        });
-
-      if (mapPoints.length > 1) {
-        var bounds = new mapboxgl.LngLatBounds();
-
-        mapPoints.forEach(function (feature) {
-          bounds.extend(feature.geometry.coordinates);
-        });
-
-        map.current.fitBounds(bounds, { padding: 80 });
+      if (map.current.getSource("hotspots-points-data")) {
+        loadMapPoints();
+      } else {
+        setTimeout(function () {
+          loadMapPoints();
+        }, 2000);
       }
     }
   }, [mapPoints]);
