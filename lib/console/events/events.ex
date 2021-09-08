@@ -29,6 +29,14 @@ defmodule Console.Events do
       |> Repo.all()
   end
 
+  def get_device_last_events(device_id, count, sub_category) do
+    Event
+      |> where([e], e.device_id == ^device_id and e.sub_category == ^sub_category)
+      |> limit(^count)
+      |> order_by(desc: :reported_at_naive)
+      |> Repo.all()
+  end
+
   def create_event(attrs \\ %{}) do
     reported_at_naive =
       attrs["reported_at"]

@@ -115,16 +115,20 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def get_events(conn, %{ "device_id" => device_id }) do
+  def get_events(conn, params = %{ "device_id" => device_id }) do
     current_organization = conn.assigns.current_organization
 
     case Devices.get_device(current_organization, device_id) do
       nil ->
         {:error, :not_found, "Device not found"}
       %Device{} = device ->
-        events = Events.get_device_last_events(device.id, 100)
+        events =
+          case params["sub_category"] do
+            nil -> Events.get_device_last_events(device.id, 100)
+            sub_category -> Events.get_device_last_events(device.id, 10, sub_category)
+          end
         device = Map.put(device, :events, events)
-        
+
         render(conn, "show_events.json", device: device)
     end
   end
