@@ -101,6 +101,8 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
       packet_count
       reported_at
       total_entries
+      rssi
+      snr
     }
   }
 `

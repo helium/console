@@ -26,6 +26,18 @@ const columns = [
     dataIndex: "packet_count",
   },
   {
+    title: "Average RSSI",
+    sorter: true,
+    dataIndex: "rssi",
+    render: data => data.toFixed(2)
+  },
+  {
+    title: "Average SNR",
+    sorter: true,
+    dataIndex: "snr",
+    render: data => data.toFixed(2)
+  },
+  {
     title: "Last Heard",
     sorter: true,
     dataIndex: "reported_at",
