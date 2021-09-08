@@ -234,13 +234,22 @@ defmodule Console.HotspotStats do
 
   def get_device_heard_query_for_string_sort() do
     """
-      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch, COUNT(*) OVER() AS total_entries
+      SELECT
+        stats.device_id,
+        d.name,
+        stats.packet_count,
+        stats.reported_at_epoch,
+        COUNT(*) OVER() AS total_entries,
+        stats.rssi,
+        stats.snr
       FROM
         (
           SELECT
             DISTINCT(device_id) AS device_id,
             COUNT(device_id) AS packet_count,
-            MAX(reported_at_epoch) AS reported_at_epoch
+            MAX(reported_at_epoch) AS reported_at_epoch,
+            AVG(rssi) AS rssi,
+            AVG(snr) AS snr
           FROM hotspot_stats
           WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
           GROUP BY device_id
@@ -264,13 +273,22 @@ defmodule Console.HotspotStats do
 
   def get_device_heard_query_for_integer_sort() do
     """
-      SELECT stats.device_id, d.name, stats.packet_count, stats.reported_at_epoch, COUNT(*) OVER() AS total_entries
+      SELECT
+        stats.device_id,
+        d.name,
+        stats.packet_count,
+        stats.reported_at_epoch,
+        COUNT(*) OVER() AS total_entries,
+        stats.rssi,
+        stats.snr
       FROM
         (
           SELECT
             DISTINCT(device_id) AS device_id,
             COUNT(device_id) AS packet_count,
-            MAX(reported_at_epoch) AS reported_at_epoch
+            MAX(reported_at_epoch) AS reported_at_epoch,
+            AVG(rssi) AS rssi,
+            AVG(snr) AS snr
           FROM hotspot_stats
           WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
           GROUP BY device_id
@@ -281,12 +299,16 @@ defmodule Console.HotspotStats do
           CASE $4
             WHEN 'packet_count' THEN stats.packet_count
             WHEN 'reported_at' THEN stats.reported_at_epoch
+            WHEN 'rssi' THEN stats.rssi
+            WHEN 'snr' THEN stats.snr
           END
         END ASC NULLS FIRST,
         CASE $5 WHEN 'desc' THEN
           CASE $4
             WHEN 'packet_count' THEN stats.packet_count
             WHEN 'reported_at' THEN stats.reported_at_epoch
+            WHEN 'rssi' THEN stats.rssi
+            WHEN 'snr' THEN stats.snr
           END
         END DESC NULLS LAST
       LIMIT $6

@@ -74,6 +74,8 @@ defmodule ConsoleWeb.Schema do
     field :packet_count, :integer
     field :reported_at, :naive_datetime
     field :total_entries, :integer
+    field :rssi, :float
+    field :snr, :float
   end
 
   object :organization_hotspot do

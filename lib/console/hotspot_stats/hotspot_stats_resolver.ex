@@ -216,7 +216,9 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           device_name: Enum.at(r, 1),
           packet_count: Enum.at(r, 2),
           reported_at: Enum.at(r, 3) |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive(),
-          total_entries: Enum.at(r, 4)
+          total_entries: Enum.at(r, 4),
+          rssi: Enum.at(r,5),
+          snr: Enum.at(r,6),
         }
       end)
 
