@@ -1,11 +1,13 @@
 defmodule ConsoleWeb.V1.DeviceController do
   use ConsoleWeb, :controller
+  import Ecto.Query, warn: false
 
   alias Console.Repo
   alias Console.Organizations
   alias Console.Labels
   alias Console.Devices
   alias Console.Devices.Device
+  alias Console.Events
   alias Console.Repo
   alias Console.AlertEvents
   alias Console.Alerts
@@ -110,6 +112,20 @@ defmodule ConsoleWeb.V1.DeviceController do
       conn
       |> put_status(:created)
       |> render("show.json", device: device |> Repo.preload([:labels]))
+    end
+  end
+
+  def get_events(conn, %{ "device_id" => device_id }) do
+    current_organization = conn.assigns.current_organization
+
+    case Devices.get_device(current_organization, device_id) do
+      nil ->
+        {:error, :not_found, "Device not found"}
+      %Device{} = device ->
+        events = Events.get_device_last_events(device.id, 100)
+        device = Map.put(device, :events, events)
+        
+        render(conn, "show_events.json", device: device)
     end
   end
 
