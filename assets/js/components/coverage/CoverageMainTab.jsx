@@ -87,7 +87,13 @@ export default (props) => {
               </Text>
             </div>
             <div>
-              <a className="help-link">Learn More</a>
+              <a
+                className="help-link"
+                href="https://docs.helium.com/use-the-network/console/coverage/"
+                target="_blank"
+              >
+                Learn More about Coverage
+              </a>
             </div>
           </Col>
           <Col sm={12}>

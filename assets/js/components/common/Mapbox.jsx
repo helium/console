@@ -10,6 +10,7 @@ mapboxgl.accessToken =
 export default ({ orgHotspotsMap, data }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
+  const popup = useRef(null);
   const DEFAULT_LNG = -70.9;
   const DEFAULT_LAT = 42.35;
   const DEFAULT_ZOOM = 10;
@@ -73,6 +74,9 @@ export default ({ orgHotspotsMap, data }) => {
 
   useEffect(() => {
     if (map.current) {
+      if (popup.current) {
+        popup.current.remove();
+      }
       if (map.current.getSource("hotspots-points-data")) {
         loadMapPoints();
       } else {
@@ -245,7 +249,10 @@ export default ({ orgHotspotsMap, data }) => {
           coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
-        new mapboxgl.Popup({ closeButton: false })
+        popup.current = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnMove: true,
+        })
           .setLngLat(coordinates)
           .setHTML(
             `<div style="text-align:center;"><b>${
