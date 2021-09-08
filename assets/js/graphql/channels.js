@@ -35,6 +35,7 @@ export const CHANNEL_SHOW = gql`
       aws_access_key
       topic
       payload_template
+      receive_joins
     }
   }
   ${CHANNEL_FRAGMENT}

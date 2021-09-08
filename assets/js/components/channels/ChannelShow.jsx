@@ -18,7 +18,7 @@ import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
 import analyticsLogger from "../../util/analyticsLogger";
 import withGql from "../../graphql/withGql";
-import { Typography, Button, Input, Card, Divider, Row, Col } from "antd";
+import { Typography, Button, Input, Card, Divider, Row, Col, Switch } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import MqttDetails from "./MqttDetails";
@@ -107,6 +107,15 @@ class ChannelShow extends Component {
     });
     this.props.updateChannel(channel.id, { name: this.state.newName });
     this.setState({ newName: "" });
+  };
+
+  handleReceiveJoinsChange = (value) => {
+    const { channel } = this.props.channelShowQuery;
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_RECEIVE_JOINS", {
+      id: channel.id,
+      receive_joins: value,
+    });
+    this.props.updateChannel(channel.id, { receive_joins: value });
   };
 
   handleChangeDownlinkToken = () => {
@@ -292,12 +301,16 @@ class ChannelShow extends Component {
                       <Text>{channel.type_name}</Text>
                     </Paragraph>
                     <Paragraph>
-                      <Text strong>Active:</Text>
-                      <Text> {channel.active ? "Yes" : "No"}</Text>
-                    </Paragraph>
-                    <Paragraph>
                       <Text strong>ID: </Text>
                       <Text code>{channel.id}</Text>
+                    </Paragraph>
+                    <Paragraph>
+                      <Text strong>Receive Device Joins: </Text>
+                      <Switch
+                        style={{ marginLeft: 2 }}
+                        checked={channel.receive_joins}
+                        onChange={this.handleReceiveJoinsChange}
+                      />
                     </Paragraph>
                     <Paragraph>
                       <Text strong># Piped Devices: </Text>

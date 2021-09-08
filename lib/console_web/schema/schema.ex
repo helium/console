@@ -170,6 +170,7 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
     field :alerts, list_of(:alert)
     field :number_devices, :integer
+    field :receive_joins, :boolean
   end
 
   paginated object :membership do
