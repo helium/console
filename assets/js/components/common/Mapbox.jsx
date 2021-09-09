@@ -91,7 +91,10 @@ export default ({ orgHotspotsMap, data }) => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: process.env.MAPBOX_STYLE_URL || "mapbox://styles/mapbox/dark-v9",
+      style:
+        window.mapbox_style_url ||
+        process.env.MAPBOX_STYLE_URL ||
+        "mapbox://styles/mapbox/dark-v9",
       center: (mapPoints.length > 0 && mapPoints[0].geometry.coordinates) || [
         DEFAULT_LNG,
         DEFAULT_LAT,
