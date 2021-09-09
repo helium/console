@@ -64,7 +64,12 @@ const chartOptions = {
         text: 'Time Ago in Hours'
       },
       ticks: {
-        display: false
+        display: true,
+        callback: (value, index, values) => {
+          const list = [24, 12, 6, 3, 1]
+          if (list.includes(24 - index)) return 24 - index
+          return ""
+        }
       },
       grid: {
         display: false
