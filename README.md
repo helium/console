@@ -32,6 +32,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 - Clone the repo and `cd console`
 - Sign up with Auth0 (https://auth0.com/)
+- Sign up with Mapbox (https://mapbox.com/)
 - In root directory, copy environment templates
 
 ```
