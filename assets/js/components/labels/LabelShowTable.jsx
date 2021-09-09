@@ -25,6 +25,7 @@ import {
 import { StatusIcon } from "../common/StatusIcon";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import SettingOutlined from "@ant-design/icons/SettingOutlined";
+import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 const { Option } = Select;
@@ -113,8 +114,6 @@ class LabelShowTable extends Component {
       );
     } else if (value === "delete") {
       this.props.openDeleteDeviceModal(this.state.selectedRows);
-    } else if (value === "deleteLabel") {
-      this.setState({ showDeleteLabelModal: true });
     }
   };
 
@@ -319,8 +318,8 @@ class LabelShowTable extends Component {
           }}
         >
           <Text style={{ fontSize: 22, fontWeight: 600 }}>{label.name}</Text>
-          <div>
-            <UserCan>
+          <UserCan>
+            <div>
               <Popover
                 trigger="click"
                 placement="bottom"
@@ -341,14 +340,22 @@ class LabelShowTable extends Component {
                   </div>
                 }
               >
-                <Button style={{ marginRight: 10 }}>Edit Columns</Button>
+                <Button style={{ borderRadius: 4, marginRight: 10 }}>Edit Columns</Button>
               </Popover>
               <Button
                 icon={<SettingOutlined />}
                 style={{ borderRadius: 4, marginRight: 10 }}
                 onClick={this.props.openUpdateLabelModal}
               >
-                Label Settings
+                Settings
+              </Button>
+              <Button
+                icon={<DeleteOutlined />}
+                style={{ borderRadius: 4, marginRight: 10 }}
+                onClick={() => this.setState({ showDeleteLabelModal: true })}
+                type="danger"
+              >
+                Delete
               </Button>
               <Select
                 value="Quick Action"
@@ -394,15 +401,9 @@ class LabelShowTable extends Component {
                 >
                   Delete Selected Devices
                 </Option>
-                <Option
-                  value="deleteLabel"
-                  style={{ color: redForTablesDeleteText }}
-                >
-                  Delete This Label
-                </Option>
               </Select>
-            </UserCan>
-          </div>
+            </div>
+          </UserCan>
         </div>
         <Table
           showSorterTooltip={false}
