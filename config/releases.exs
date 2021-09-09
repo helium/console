@@ -65,6 +65,9 @@ config :console,
 config :console,
   mapbox_pk: System.get_env("MAPBOX_PRIVATE_KEY")
 
+config :console,
+  mapbox_style_url: System.get_env("MAPBOX_STYLE_URL")
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),
