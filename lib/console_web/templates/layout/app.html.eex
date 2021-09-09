@@ -23,6 +23,7 @@
       window.auth0_client_id = "<%= Application.get_env(:console, :auth0_client_id) %>"
       window.env_domain = "<%= Application.get_env(:console, :env_domain) %>"
       window.mapbox_pk = "<%= Application.get_env(:console, :mapbox_pk) %>"
+      window.mapbox_style_url = "<%= Application.get_env(:console, :mapbox_style_url) %>"
     </script>
     <div class="mainContainer">
       <main role="main">
