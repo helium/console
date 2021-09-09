@@ -5,7 +5,7 @@ import startCase from "lodash/startCase";
 mapboxgl.accessToken =
   window.mapbox_pk ||
   process.env.MAPBOX_PRIVATE_KEY ||
-  "pk.eyJ1IjoiYWxsZW5hbiIsImEiOiJjajNtNTF0Z2QwMDBkMzdsNngzbW4wczJkIn0.vLlTjNry3kcFE7zgXeHNzQ";
+  "pk.eyJ1IjoidmljbWdzIiwiYSI6ImNraGNkdnVseDA0NTMyeW94N3lyYWRiZmIifQ.yl0UT_-yc7i8t2EF0xgurg";
 
 export default ({ orgHotspotsMap, data }) => {
   const mapContainer = useRef(null);
@@ -91,7 +91,7 @@ export default ({ orgHotspotsMap, data }) => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/petermain/cksu26oim22gv18o73imni3el", // mapbox://styles/petermain/cksu26oim22gv18o73imni3el || mapbox://styles/mapbox/dark-v9
+      style: process.env.MAPBOX_STYLE_URL || "mapbox://styles/mapbox/dark-v9",
       center: (mapPoints.length > 0 && mapPoints[0].geometry.coordinates) || [
         DEFAULT_LNG,
         DEFAULT_LAT,
