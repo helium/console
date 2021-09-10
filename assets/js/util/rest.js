@@ -1,5 +1,6 @@
 import { store } from '../store/configureStore';
 import axios from '../config/axios.js'
+import { displayError } from './messages'
 import { getIdTokenClaims, logout } from '../components/auth/Auth0Provider'
 
 export const get = async (path, params = {}, extraHeaders = {}) => {
@@ -41,12 +42,16 @@ const headers = async () => {
   let headerParams = {
     'Content-Type': 'application/json'
   };
-  let organizationId;
-  try {
-    organizationId = JSON.parse(localStorage.getItem('organization')).id;
-  } catch (e) {
-    // unable to retrieve the organization
+  let organizationId = store.getState().organization && store.getState().organization.currentOrganizationId
+
+  if (!organizationId) {
+    try {
+      organizationId = JSON.parse(localStorage.getItem('organization')).id;
+    } catch (e) {
+      return displayError()
+    }
   }
+
   if (organizationId) {
     Object.assign(headerParams, { organization: organizationId })
   }

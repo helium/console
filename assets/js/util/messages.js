@@ -15,6 +15,6 @@ export const displayInfo = (msg) => {
 }
 
 export const displayError = (errorMsg) => {
-  const msg = errorMsg || "An unexpected error has occurred, please try again"
+  const msg = errorMsg || "An unexpected error has occurred, please refesh the page and try again"
   debounceMessage(msg, () => message.error(msg))
 }
