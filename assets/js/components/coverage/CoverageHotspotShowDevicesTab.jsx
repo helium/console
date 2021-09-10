@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { useQuery } from "@apollo/client";
 import { HOTSPOT_SHOW_DEVICES_HEARD } from "../../graphql/coverage";
 import { minWidth } from "../../util/constants";
+import analyticsLogger from "../../util/analyticsLogger";
 import { Typography, Table, Pagination } from "antd";
 import { Link } from "react-router-dom";
 const { Text } = Typography;
@@ -66,6 +67,11 @@ export default (props) => {
       pageSize
     }
   });
+
+  useEffect(() => {
+    // executed when mounted
+    analyticsLogger.logEvent("ACTION_NAV_COVERAGE_SHOW_DEVICES_HEARD", { address: props.hotspot.hotspot_address });
+  }, []);
 
   const handleSort = (pagi, filter, sorter) => {
     const order = sorter.order === 'ascend' ? 'asc' : 'desc'

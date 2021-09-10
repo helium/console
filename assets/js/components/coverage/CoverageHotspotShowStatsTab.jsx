@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import numeral from "numeral";
 import { useQuery } from "@apollo/client";
 import { Bar } from 'react-chartjs-2';
 import range from 'lodash/range'
+import analyticsLogger from "../../util/analyticsLogger";
 import { HOTSPOT_SHOW_PACKETS } from "../../graphql/coverage";
 import { Typography, Row, Col } from "antd";
 import { Link } from "react-router-dom";
@@ -102,6 +103,11 @@ export default (props) => {
     fetchPolicy: "cache-and-network",
     variables: { address: props.hotspot.hotspot_address }
   });
+
+  useEffect(() => {
+    // executed when mounted
+    analyticsLogger.logEvent("ACTION_NAV_COVERAGE_SHOW_STATS", { address: props.hotspot.hotspot_address });
+  }, []);
 
   const renderDiffPacketCount = (hotspot) => {
     const positive = hotspot.packet_count - hotspot.packet_count_2d >= 0;
