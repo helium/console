@@ -100,6 +100,8 @@ export default (props) => {
         followedHotspotStatsRefetch();
       }
     );
+
+    analyticsLogger.logEvent("ACTION_NAV_COVERAGE_MAIN");
     // executed when unmounted
     return () => {
       orgHotspotsChannel.leave();
@@ -186,6 +188,7 @@ export default (props) => {
               }}
               onTabClick={(tab) => {
                 setCurrentTab(tab);
+                analyticsLogger.logEvent(`ACTION_NAV_COVERAGE_${tab.toUpperCase()}`);
                 selectHotspotAddress(null);
               }}
             >
