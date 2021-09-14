@@ -325,8 +325,6 @@ export default ({
           />
           <FlowsUpdateButtons
             hasChanges={hasChanges}
-            resetElementsMap={resetElementsMap}
-            submitChanges={() => submitChanges(elementsMap)}
           />
         </UserCan>
       </div>
