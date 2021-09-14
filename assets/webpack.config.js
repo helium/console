@@ -111,6 +111,7 @@ module.exports = function (env) {
         "RELEASE_BLOG_LINK",
         "MAPBOX_PRIVATE_KEY",
         "MAPBOX_STYLE_URL",
+        "HOST_DC_CHARGE_PERCENT",
       ]),
     ],
   };
