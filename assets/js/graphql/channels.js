@@ -36,6 +36,9 @@ export const CHANNEL_SHOW = gql`
       topic
       payload_template
       receive_joins
+      azure_hub_name
+      azure_policy_name
+      azure_policy_key
     }
   }
   ${CHANNEL_FRAGMENT}
