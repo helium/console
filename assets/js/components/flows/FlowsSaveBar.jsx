@@ -17,7 +17,7 @@ export default ({ hasChanges }) => {
       }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Spin size="small" style={{ marginRight: 10, height: 16 }} />
-          <Text>Saving Changes</Text>
+          <Text>Autosaving Changes</Text>
         </div>
       </div>
     )

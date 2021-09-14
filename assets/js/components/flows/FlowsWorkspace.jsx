@@ -1,4 +1,4 @@
-import React, { useState, useRef, Fragment } from "react";
+import React, { useState, useEffect, useRef, useCallback, Fragment } from "react";
 import { useSelector } from "react-redux";
 import ReactFlow, {
   isNode,
@@ -7,7 +7,7 @@ import ReactFlow, {
 } from "react-flow-renderer";
 import omit from "lodash/omit";
 import FlowsNodesMenu from "./FlowsNodesMenu";
-import FlowsUpdateButtons from "./FlowsUpdateButtons";
+import FlowsSaveBar from "./FlowsSaveBar";
 import LabelNode from "./nodes/LabelNode";
 import FunctionNode from "./nodes/FunctionNode";
 import ChannelNode from "./nodes/ChannelNode";
@@ -19,6 +19,7 @@ import { getStartedLinks } from "../Welcome";
 import RocketFilled from "@ant-design/icons/RocketFilled";
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
+import debounce from 'lodash/debounce'
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -39,6 +40,7 @@ export default ({
   devices,
   organization,
 }) => {
+  const firstRender = useRef(true);
   const setSelectedElements = useStoreActions(
     (actions) => actions.setSelectedElements
   );
@@ -54,15 +56,25 @@ export default ({
     setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
+  const debouncedSubmit = useCallback(debounce(submitChanges, 2000), [])
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    debouncedSubmit(elementsMap)
+  }, [elementsMap]);
 
   const onElementDragStop = (event, node) => {
-    const updatedNode = Object.assign({}, elementsMap[node.id], {
-      position: { x: node.position.x, y: node.position.y },
-    });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [node.id]: updatedNode })
-    );
-    setChangesState(true);
+    if (userCan({ role: currentRole })) {
+      const updatedNode = Object.assign({}, elementsMap[node.id], {
+        position: { x: node.position.x, y: node.position.y },
+      });
+      setElements((elsMap) =>
+        Object.assign({}, elsMap, { [node.id]: updatedNode })
+      )
+      setChangesState(true)
+    }
   };
 
   const onElementsRemove = (elementsToRemove) => {
@@ -98,11 +110,6 @@ export default ({
       setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
       setChangesState(true);
     }
-  };
-
-  const resetElementsMap = () => {
-    setElements((elsMap) => initialElementsMap);
-    setChangesState(false);
   };
 
   const onDragOver = (event) => {
@@ -323,7 +330,7 @@ export default ({
             channels={channels}
             devices={devices}
           />
-          <FlowsUpdateButtons
+          <FlowsSaveBar
             hasChanges={hasChanges}
           />
         </UserCan>
@@ -392,11 +399,7 @@ export default ({
 
             setElements((elsMap) => omit(elsMap, edges.concat(selectedNodeId)));
 
-            if (actualResourceDeleted) {
-              setChangesState(false);
-            } else {
-              setChangesState(true);
-            }
+            setChangesState(true);
             setShowInfoSidebar(false);
             setSelectedElements([]);
           }}
