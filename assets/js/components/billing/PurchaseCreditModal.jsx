@@ -145,11 +145,7 @@ class PurchaseCreditModal extends Component {
         countDC: e.target.value,
         countUSD:
           e.target.value * 0.00001 +
-          e.target.value *
-            0.00001 *
-            (window.host_dc_charge_percent ||
-              process.env.HOST_DC_CHARGE_PERCENT ||
-              0),
+          e.target.value * 0.00001 * (window.host_dc_charge_percent || 0),
         countB: e.target.value * 24,
         gettingPrice: true,
       });
@@ -348,11 +344,8 @@ class PurchaseCreditModal extends Component {
         }}
       >
         <Text>{`1 DC = 24 Byte Packet = $${
-          window.host_dc_charge_percent || process.env.HOST_DC_CHARGE_PERCENT
-            ? 0.00001 +
-              (window.host_dc_charge_percent ||
-                process.env.HOST_DC_CHARGE_PERCENT) *
-                0.00001
+          window.host_dc_charge_percent
+            ? 0.00001 + window.host_dc_charge_percent * 0.00001
             : 0.00001
         } USD`}</Text>
         {!process.env.SELF_HOSTED && (
