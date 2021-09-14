@@ -36,7 +36,14 @@ export const NEW_CHANNEL_TYPES = [
     docLink:
       "https://docs.helium.com/use-the-network/console/integrations/aws-iot-core",
   },
-  // { name: "Azure IoT", type: "azure", img: `${Azure}`, inactive: true },
+  {
+    name: "Azure IoT",
+    type: "azure",
+    img: `${Azure}`,
+    info: "This Integration facilitates connecting your devices to Azure.",
+    docLink:
+      "https://docs.helium.com/use-the-network/console/integrations/azure",
+  },
   // { name: "Google IoT", type: "google", img: `${Google}`, inactive: true },
 ];
 

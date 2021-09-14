@@ -171,6 +171,9 @@ defmodule ConsoleWeb.Schema do
     field :alerts, list_of(:alert)
     field :number_devices, :integer
     field :receive_joins, :boolean
+    field :azure_hub_name, :string
+    field :azure_policy_name, :string
+    field :azure_policy_key, :string
   end
 
   paginated object :membership do

@@ -40,6 +40,11 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:aws_region, channel.credentials["aws_region"])
           |> Map.put(:aws_access_key, channel.credentials["aws_access_key"])
           |> Map.put(:topic, channel.credentials["topic"])
+        "azure" ->
+          channel
+          |> Map.put(:azure_hub_name, channel.credentials["azure_hub_name"])
+          |> Map.put(:azure_policy_name, channel.credentials["azure_policy_name"])
+          |> Map.put(:azure_policy_key, channel.credentials["azure_policy_key"])
         "mqtt" ->
           channel
           |> Map.put(:credentials, %{
