@@ -7,6 +7,8 @@ defmodule ConsoleWeb.FlowsController do
   alias Console.Flows.Flow
   alias Console.Devices
   alias Console.Labels
+  alias Console.Functions
+  alias Console.Channels
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -64,7 +66,13 @@ defmodule ConsoleWeb.FlowsController do
       end)
       |> Ecto.Multi.run(:added_flows, fn _repo, %{ flows_changes: flows_changes } ->
         flows_to_insert =
-          flows_changes.flows_to_add |> Enum.map(fn f -> put_timestamps(f) end)
+          flows_changes.flows_to_add |> Enum.map(fn f ->
+            if f.device_id != nil, do: Devices.get_device!(current_organization, f.device_id)
+            if f.label_id != nil, do: Labels.get_label!(current_organization, f.label_id)
+            if f.function_id != nil, do: Functions.get_function!(current_organization, f.function_id)
+            if f.channel_id != nil, do: Channels.get_channel!(current_organization, f.channel_id)
+            put_timestamps(f)
+          end)
 
         { count, _ } = Repo.insert_all(Flow, flows_to_insert, on_conflict: :nothing)
         if count == length(flows_changes.flows_to_add) do
