@@ -10,6 +10,7 @@ import UserCan from "../common/UserCan";
 import { redForTablesDeleteText } from "../../util/colors";
 import { minWidth } from "../../util/constants";
 import { updateDevice, setDevicesActive } from "../../actions/device";
+import { deleteLabel } from '../../actions/label'
 import { PAGINATED_DEVICES_BY_LABEL } from "../../graphql/devices";
 import {
   Button,
@@ -352,7 +353,10 @@ class LabelShowTable extends Component {
               <Button
                 icon={<DeleteOutlined />}
                 style={{ borderRadius: 4, marginRight: 10 }}
-                onClick={() => this.setState({ showDeleteLabelModal: true })}
+                onClick={() => {
+                  if (label.devices.length > 0) this.setState({ showDeleteLabelModal: true })
+                  else this.props.deleteLabel(label.id)
+                }}
                 type="danger"
               >
                 Delete
@@ -459,7 +463,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, setDevicesActive }, dispatch);
+  return bindActionCreators({ updateDevice, setDevicesActive, deleteLabel }, dispatch);
 }
 
 export default connect(
