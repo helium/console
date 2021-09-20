@@ -48,6 +48,7 @@ export const ALL_RESOURCES = gql`
         id
         name
       }
+      last_errored
     }
     organization(id: $id) {
       flow

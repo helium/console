@@ -174,6 +174,7 @@ defmodule ConsoleWeb.Schema do
     field :azure_hub_name, :string
     field :azure_policy_name, :string
     field :azure_policy_key, :string
+    field :last_errored, :boolean
   end
 
   paginated object :membership do

@@ -6,11 +6,15 @@ import ChannelIcon from "../../../../img/channel-node-icon.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import { integrationImgMap } from "../../../util/flows";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
+import Warning from "../Warning";
 
 export default ({ data, fromSidebar, selected }) => {
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
+      {!fromSidebar && data.lastErrored === true && (
+        <Warning numberWarnings={1} />
+      )}
       <div
         style={{
           background: "#12CB9E",

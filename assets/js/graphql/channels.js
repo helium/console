@@ -39,6 +39,7 @@ export const CHANNEL_SHOW = gql`
       azure_hub_name
       azure_policy_name
       azure_policy_key
+      last_errored
     }
   }
   ${CHANNEL_FRAGMENT}
@@ -68,6 +69,7 @@ export const ALL_CHANNELS = gql`
       id
       active
       endpoint
+      last_errored
     }
   }
 `;

@@ -42,6 +42,8 @@ const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 import CFListNodeSettings from "./CFListNodeSettings";
 import DeviceNotInFilterTableBadge from "../../common/DeviceNotInFilterTableBadge";
+import Warning from "../Warning";
+import WarningItem from "../WarningItem";
 
 class LabelContent extends Component {
   state = {
@@ -334,35 +336,33 @@ class LabelContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              { this.props.hasChanges ? (
-                  <Tooltip
-                    title="Undo or save your workspace changes before deleting this label"
-                    overlayStyle={{ width: 230 }}
-                  >
-                    <Button
-                      style={{ borderRadius: 4, marginRight: 5 }}
-                      type="danger"
-                      icon={<DeleteOutlined />}
-                      disabled
-                    >
-                      Delete
-                    </Button>
-                  </Tooltip>
-                ) : (
+              {this.props.hasChanges ? (
+                <Tooltip
+                  title="Undo or save your workspace changes before deleting this label"
+                  overlayStyle={{ width: 230 }}
+                >
                   <Button
                     style={{ borderRadius: 4, marginRight: 5 }}
                     type="danger"
                     icon={<DeleteOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      this.openDeleteLabelModal();
-                    }}
+                    disabled
                   >
                     Delete
                   </Button>
-                )
-              }
-
+                </Tooltip>
+              ) : (
+                <Button
+                  style={{ borderRadius: 4, marginRight: 5 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteLabelModal();
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
             </UserCan>
           </div>
         </div>
@@ -373,76 +373,88 @@ class LabelContent extends Component {
             key="1"
             style={{ padding: "0px 40px 0px 40px" }}
           >
-            <Card title="Grouped Devices">
-              <Select
-                value="Quick Action"
-                style={{ width: 295 }}
-                onSelect={this.handleSelectOption}
-              >
-                <Option value="addDevices">Add this Label to a Device</Option>
-                {selectedDevices.find((r) => r.active === false) && (
-                  <Option
-                    value="setActive"
-                    disabled={selectedDevices.length === 0}
-                  >
-                    Resume Packet Transfer for Selected Devices
-                  </Option>
-                )}
+            <React.Fragment>
+              <Card title="Grouped Devices">
+                <Select
+                  value="Quick Action"
+                  style={{ width: 295 }}
+                  onSelect={this.handleSelectOption}
+                >
+                  <Option value="addDevices">Add this Label to a Device</Option>
+                  {selectedDevices.find((r) => r.active === false) && (
+                    <Option
+                      value="setActive"
+                      disabled={selectedDevices.length === 0}
+                    >
+                      Resume Packet Transfer for Selected Devices
+                    </Option>
+                  )}
 
-                {(selectedDevices.length === 0 ||
-                  !selectedDevices.find((r) => r.active === false)) && (
+                  {(selectedDevices.length === 0 ||
+                    !selectedDevices.find((r) => r.active === false)) && (
+                    <Option
+                      value="setInactive"
+                      disabled={selectedDevices.length === 0}
+                    >
+                      Pause Packet Transfer for Selected Devices
+                    </Option>
+                  )}
                   <Option
-                    value="setInactive"
                     disabled={selectedDevices.length === 0}
+                    value="remove"
+                    style={{
+                      color:
+                        selectedDevices.length === 0
+                          ? ""
+                          : redForTablesDeleteText,
+                    }}
                   >
-                    Pause Packet Transfer for Selected Devices
+                    Remove Selected Devices from Label
                   </Option>
-                )}
-                <Option
-                  disabled={selectedDevices.length === 0}
-                  value="remove"
+                </Select>
+                <Table
+                  showSorterTooltip={false}
+                  sortDirections={["descend", "ascend", "descend"]}
+                  onRow={(record, rowIndex) => ({
+                    onClick: () =>
+                      this.props.history.push(`/devices/${record.id}`),
+                  })}
+                  columns={columns}
+                  dataSource={devices_by_label.entries}
+                  rowKey={(record) => record.id}
+                  pagination={false}
+                  rowSelection={rowSelection}
+                  onChange={this.handleSortChange}
+                  style={{ maxHeight: 400, overflow: "scroll" }}
+                />
+                <div
                   style={{
-                    color:
-                      selectedDevices.length === 0
-                        ? ""
-                        : redForTablesDeleteText,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    paddingBottom: 0,
                   }}
                 >
-                  Remove Selected Devices from Label
-                </Option>
-              </Select>
-              <Table
-                showSorterTooltip={false}
-                sortDirections={['descend', 'ascend', 'descend']}
-                onRow={(record, rowIndex) => ({
-                  onClick: () =>
-                    this.props.history.push(`/devices/${record.id}`),
-                })}
-                columns={columns}
-                dataSource={devices_by_label.entries}
-                rowKey={(record) => record.id}
-                pagination={false}
-                rowSelection={rowSelection}
-                onChange={this.handleSortChange}
-                style={{ maxHeight: 400, overflow: "scroll" }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  paddingBottom: 0,
-                }}
-              >
-                <Pagination
-                  current={devices_by_label.pageNumber}
-                  pageSize={devices_by_label.pageSize}
-                  total={devices_by_label.totalEntries}
-                  onChange={(page) => this.handleChangePage(page)}
-                  style={{ marginBottom: 20 }}
-                  showSizeChanger={false}
-                />
-              </div>
-            </Card>
+                  <Pagination
+                    current={devices_by_label.pageNumber}
+                    pageSize={devices_by_label.pageSize}
+                    total={devices_by_label.totalEntries}
+                    onChange={(page) => this.handleChangePage(page)}
+                    style={{ marginBottom: 20 }}
+                    showSizeChanger={false}
+                  />
+                </div>
+              </Card>
+              {label.devices.length === 0 && (
+                <React.Fragment>
+                  <Warning numberWarnings={1} />
+                  <WarningItem
+                    warningText={
+                      "The Label contains no devices. Add at least 1 device to the Label."
+                    }
+                  />
+                </React.Fragment>
+              )}
+            </React.Fragment>
           </TabPane>
           <TabPane tab="Alerts" key="3">
             <AlertNodeSettings
