@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Tag, Tooltip } from "antd";
 import Icon from "@ant-design/icons/lib/components/Icon";
+import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
@@ -95,17 +97,27 @@ export const getColumns = (
       sorter: true,
       dataIndex: "hotspot_name",
       render: (data, record) => {
+        if (data) {
+          return (
+            <Link
+              to="#"
+              onClick={(e) => {
+                e.preventDefault();
+                selectHotspotAddress(record.hotspot_address);
+              }}
+            >
+              {startCase(data)}
+            </Link>
+          );
+        }
         return (
-          <Link
-            to="#"
-            onClick={(e) => {
-              e.preventDefault();
-              selectHotspotAddress(record.hotspot_address);
-            }}
-          >
-            {startCase(data)}
-          </Link>
-        );
+          <span>
+            <span>Unknown Hotspot</span>
+            <Tooltip title={"Hotspot data is currently unavailable. Please wait for next API sync."}>
+              <InfoCircleOutlined style={{ marginLeft: 6 }} />
+            </Tooltip>
+          </span>
+        )
       },
     },
     {
