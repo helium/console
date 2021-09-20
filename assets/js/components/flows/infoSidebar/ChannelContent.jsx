@@ -22,6 +22,8 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
+import Warning from "../Warning";
+import WarningItem from "../WarningItem";
 
 class ChannelContent extends Component {
   state = {
@@ -173,34 +175,33 @@ class ChannelContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              { this.props.hasChanges ? (
-                  <Tooltip
-                    title="Undo or save your workspace changes before deleting this integration"
-                    overlayStyle={{ width: 230 }}
-                  >
-                    <Button
-                      style={{ borderRadius: 4, marginRight: 5 }}
-                      type="danger"
-                      icon={<DeleteOutlined />}
-                      disabled
-                    >
-                      Delete
-                    </Button>
-                  </Tooltip>
-                ) : (
+              {this.props.hasChanges ? (
+                <Tooltip
+                  title="Undo or save your workspace changes before deleting this integration"
+                  overlayStyle={{ width: 230 }}
+                >
                   <Button
                     style={{ borderRadius: 4, marginRight: 5 }}
                     type="danger"
                     icon={<DeleteOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      this.openDeleteChannelModal();
-                    }}
+                    disabled
                   >
                     Delete
                   </Button>
-                )
-              }
+                </Tooltip>
+              ) : (
+                <Button
+                  style={{ borderRadius: 4, marginRight: 5 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteChannelModal();
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
             </UserCan>
           </div>
         </div>
@@ -211,111 +212,123 @@ class ChannelContent extends Component {
             key="1"
             style={{ padding: "0px 40px 0px 40px" }}
           >
-            <Card title="Integration Details">
-              <Paragraph>
-                <Text strong>Type: </Text>
-                <Text>{channel.type_name}</Text>
-              </Paragraph>
-              <Paragraph>
-                <Text strong>Active:</Text>
-                <Text> {channel.active ? "Yes" : "No"}</Text>
-              </Paragraph>
-              <Paragraph>
-                <Text strong> ID: </Text>
-                <Text code>{channel.id}</Text>
-              </Paragraph>
-              <Paragraph>
-                <Text strong># Piped Devices: </Text>
-                <Text>{channel.number_devices}</Text>
-              </Paragraph>
-              {channel.type === "http" && (
-                <Card size="small" title="HTTP Details">
-                  <HttpDetails channel={channel} />
-                </Card>
-              )}
-              {channel.type === "aws" && (
-                <Card size="small" title="AWS Details">
-                  <AwsDetails channel={channel} />
-                </Card>
-              )}
-              {channel.type === "mqtt" && (
-                <Card size="small" title="MQTT Details">
-                  <MqttDetails channel={channel} />
-                </Card>
-              )}
-              {channel.type === "http" && (
-                <UserCan>
-                  <Divider />
-                  <Text>Downlink URL</Text>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      marginBottom: 16,
-                    }}
-                  >
-                    <Input
-                      value={downlinkUrl}
-                      style={{ marginRight: 10 }}
-                      disabled
-                    />
-                    <CopyToClipboard text={downlinkUrl}>
-                      <Button
-                        onClick={() => {}}
-                        style={{ marginRight: 0 }}
-                        type="primary"
-                      >
-                        Copy
-                      </Button>
-                    </CopyToClipboard>
-                  </div>
-                  <Text>Downlink Key</Text>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <Input
-                      value={
-                        showDownlinkToken
-                          ? channel.downlink_token
-                          : "************************"
-                      }
+            <React.Fragment>
+              <Card title="Integration Details">
+                <Paragraph>
+                  <Text strong>Type: </Text>
+                  <Text>{channel.type_name}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Active:</Text>
+                  <Text> {channel.active ? "Yes" : "No"}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong> ID: </Text>
+                  <Text code>{channel.id}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong># Piped Devices: </Text>
+                  <Text>{channel.number_devices}</Text>
+                </Paragraph>
+                {channel.type === "http" && (
+                  <Card size="small" title="HTTP Details">
+                    <HttpDetails channel={channel} />
+                  </Card>
+                )}
+                {channel.type === "aws" && (
+                  <Card size="small" title="AWS Details">
+                    <AwsDetails channel={channel} />
+                  </Card>
+                )}
+                {channel.type === "mqtt" && (
+                  <Card size="small" title="MQTT Details">
+                    <MqttDetails channel={channel} />
+                  </Card>
+                )}
+                {channel.type === "http" && (
+                  <UserCan>
+                    <Divider />
+                    <Text>Downlink URL</Text>
+                    <div
                       style={{
-                        marginRight: 10,
-                        color: "#38A2FF",
-                        fontFamily: "monospace",
+                        display: "flex",
+                        flexDirection: "row",
+                        marginBottom: 16,
                       }}
-                      suffix={
-                        showDownlinkToken ? (
-                          <EyeOutlined
-                            onClick={() =>
-                              this.setState({
-                                showDownlinkToken: !showDownlinkToken,
-                              })
-                            }
-                          />
-                        ) : (
-                          <EyeInvisibleOutlined
-                            onClick={() =>
-                              this.setState({
-                                showDownlinkToken: !showDownlinkToken,
-                              })
-                            }
-                          />
-                        )
-                      }
-                      disabled
-                    />
-                    <CopyToClipboard text={channel.downlink_token}>
-                      <Button
-                        onClick={() => {}}
+                    >
+                      <Input
+                        value={downlinkUrl}
                         style={{ marginRight: 10 }}
-                        type="primary"
-                      >
-                        Copy
-                      </Button>
-                    </CopyToClipboard>
-                  </div>
-                </UserCan>
+                        disabled
+                      />
+                      <CopyToClipboard text={downlinkUrl}>
+                        <Button
+                          onClick={() => {}}
+                          style={{ marginRight: 0 }}
+                          type="primary"
+                        >
+                          Copy
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                    <Text>Downlink Key</Text>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <Input
+                        value={
+                          showDownlinkToken
+                            ? channel.downlink_token
+                            : "************************"
+                        }
+                        style={{
+                          marginRight: 10,
+                          color: "#38A2FF",
+                          fontFamily: "monospace",
+                        }}
+                        suffix={
+                          showDownlinkToken ? (
+                            <EyeOutlined
+                              onClick={() =>
+                                this.setState({
+                                  showDownlinkToken: !showDownlinkToken,
+                                })
+                              }
+                            />
+                          ) : (
+                            <EyeInvisibleOutlined
+                              onClick={() =>
+                                this.setState({
+                                  showDownlinkToken: !showDownlinkToken,
+                                })
+                              }
+                            />
+                          )
+                        }
+                        disabled
+                      />
+                      <CopyToClipboard text={channel.downlink_token}>
+                        <Button
+                          onClick={() => {}}
+                          style={{ marginRight: 10 }}
+                          type="primary"
+                        >
+                          Copy
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                  </UserCan>
+                )}
+              </Card>
+              {channel.last_errored === true && (
+                <React.Fragment>
+                  <Warning numberWarnings={1} />
+                  <WarningItem
+                    warningText={
+                      "The Integration is unsuccessful. Check the Integration for details."
+                    }
+                  />
+                </React.Fragment>
               )}
-            </Card>
+            </React.Fragment>
           </TabPane>
           <TabPane tab="Alerts" key="2">
             <AlertNodeSettings

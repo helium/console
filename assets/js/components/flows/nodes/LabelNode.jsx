@@ -9,11 +9,13 @@ import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import LabelNotInFilterBadge from "../../common/LabelNotInFilterBadge";
+import Warning from "../Warning";
 
 export default ({ data, fromSidebar, selected }) => {
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
+      {!fromSidebar && data.deviceCount === 0 && <Warning numberWarnings={1} />}
       <div
         style={{
           background: "#2C79EE",

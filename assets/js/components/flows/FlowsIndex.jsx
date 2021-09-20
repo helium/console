@@ -272,6 +272,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
         type_name: channel.type_name,
         type,
         hasAlerts: channel.alerts.length > 0,
+        lastErrored: channel.last_errored,
       },
       position: [0, 0],
     };

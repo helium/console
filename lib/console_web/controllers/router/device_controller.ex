@@ -323,6 +323,9 @@ defmodule ConsoleWeb.Router.DeviceController do
                   }
                   limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
                   AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+                  Channels.update_channel(event_integration, organization, %{ last_errored: true })
+                else
+                  Channels.update_channel(event_integration, organization, %{ last_errored: false })
                 end
               end
             "downlink" ->

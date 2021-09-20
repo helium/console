@@ -73,7 +73,7 @@ export default ({ devices, labels, functions, channels }) => {
     channels.length > 0 ? (
       channels.map((node) => (
         <div
-          style={{ marginBottom: 12 }}
+          style={{ margin: "12px 0px 12px 0px" }}
           key={node.id}
           draggable
           onDragStart={(event) => onDragStart(event, node)}
@@ -89,7 +89,7 @@ export default ({ devices, labels, functions, channels }) => {
     functions.length > 0 ? (
       functions.map((node) => (
         <div
-          style={{ marginBottom: 12 }}
+          style={{ margin: "12px 0px 12px 0px" }}
           key={node.id}
           draggable
           onDragStart={(event) => onDragStart(event, node)}

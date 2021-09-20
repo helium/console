@@ -19,6 +19,7 @@ defmodule Console.Channels.Channel do
     field :payload_template, :string
     field :time_first_uplink, :naive_datetime
     field :receive_joins, :boolean, default: false
+    field :last_errored, :boolean, default: false
 
     belongs_to :organization, Organization
 
@@ -50,7 +51,7 @@ defmodule Console.Channels.Channel do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     channel
-    |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template, :time_first_uplink, :receive_joins])
+    |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template, :time_first_uplink, :receive_joins, :last_errored])
     |> validate_required([:name, :type, :credentials])
     |> validate_length(:name, max: 50)
     |> check_credentials_update(channel.type)
