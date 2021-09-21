@@ -4,7 +4,7 @@
   "scripts": {
     "deploy": "webpack --mode production",
     "start": "yarn run watch",
-    "watch": "webpack --mode development --watch-stdin"
+    "watch": "webpack --mode development --watch --watch-options-stdin"
   },
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
@@ -67,7 +67,7 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.46.0",
     "webpack-bundle-analyzer": "^4.4.2",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^4.8.0"
   },
   "engines": {
     "node": "14.x",
