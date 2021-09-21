@@ -13,6 +13,7 @@ export const ALL_RESOURCES = gql`
         id
         name
       }
+      last_connected
     }
     allLabels {
       id
@@ -27,6 +28,7 @@ export const ALL_RESOURCES = gql`
       }
       devices {
         in_xor_filter
+        last_connected
       }
     }
     allFunctions {

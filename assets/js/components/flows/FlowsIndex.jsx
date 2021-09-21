@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import withGql from "../../graphql/withGql";
+import moment from "moment";
 import { connect } from "react-redux";
 import { isEdge, isNode, ReactFlowProvider } from "react-flow-renderer";
 import { Prompt } from "react-router";
@@ -25,7 +26,10 @@ class FlowsIndex extends Component {
   };
 
   submitChanges = (newElementsMap) => {
-    const [completePaths, elementPositions] = getCompleteFlows(newElementsMap);
+    const [completePaths, elementPositions] = getCompleteFlows(
+      newElementsMap,
+      this.props.allResourcesQuery.data
+    );
 
     updateFlows(completePaths, elementPositions)
       .then((status) => {
@@ -132,7 +136,7 @@ class FlowsIndex extends Component {
   }
 }
 
-const getCompleteFlows = (newElementsMap) => {
+const getCompleteFlows = (newElementsMap, data) => {
   const deviceAndLabelNodes = Object.values(newElementsMap).filter(
     (el) => el.type === "deviceNode" || el.type === "labelNode"
   );
@@ -175,9 +179,15 @@ const getCompleteFlows = (newElementsMap) => {
           return Object.assign({}, acc, { [key]: element });
         }
       } else {
+        const isAnimated = checkEdgeAnimation(
+          data,
+          edges,
+          newElementsMap[key].source
+        );
         const edge = {
           source: newElementsMap[key].source,
           target: newElementsMap[key].target,
+          animated: isAnimated,
         };
         return Object.assign({}, acc, { edges: acc.edges.concat(edge) });
       }
@@ -186,6 +196,63 @@ const getCompleteFlows = (newElementsMap) => {
   );
 
   return [paths, elementPositions];
+};
+
+const checkEdgeAnimation = (resources, edges, source) => {
+  if (source.startsWith("label")) {
+    const label = resources.allLabels.find((l) => {
+      return l.id === source.split(/-(.+)/)[1];
+    });
+    if (label.devices.length > 0) {
+      const labelHasStaleDevices = label.devices.some(
+        (d) =>
+          !moment()
+            .utc()
+            .local()
+            .subtract(1, "days")
+            .isBefore(moment.utc(d.last_connected).local())
+      );
+      return !labelHasStaleDevices;
+    }
+  } else if (source.startsWith("device")) {
+    const device = resources.allDevices.find((d) => {
+      return d.id === source.split(/-(.+)/)[1];
+    });
+    return moment()
+      .utc()
+      .local()
+      .subtract(1, "days")
+      .isBefore(moment.utc(device.last_connected).local());
+  } else {
+    const relevantEdges = edges.filter((e) => e.target === source);
+    return relevantEdges.some((e) => {
+      if (e.source.startsWith("label")) {
+        const label = resources.allLabels.find((l) => {
+          return l.id === e.source.split(/-(.+)/)[1];
+        });
+        if (label.devices.length > 0) {
+          const labelHasStaleDevices = label.devices.some(
+            (d) =>
+              !moment()
+                .utc()
+                .local()
+                .subtract(1, "days")
+                .isBefore(moment.utc(d.last_connected).local())
+          );
+          return !labelHasStaleDevices;
+        }
+      } else if (e.source.startsWith("device")) {
+        const device = resources.allDevices.find((d) => {
+          return d.id === e.source.split(/-(.+)/)[1];
+        });
+        return moment()
+          .utc()
+          .local()
+          .subtract(1, "days")
+          .isBefore(moment.utc(device.last_connected).local());
+      }
+    });
+  }
 };
 
 const generateInitialElementsMap = (data, flowPositions) => {
@@ -315,7 +382,17 @@ const generateInitialElementsMap = (data, flowPositions) => {
     flowPositions.edges.forEach((edge) => {
       if (initialElementsMap[edge.source] && initialElementsMap[edge.target]) {
         const id = "edge-" + edge.source + "-" + edge.target;
-        const element = { id, source: edge.source, target: edge.target };
+        const isAnimated = checkEdgeAnimation(
+          data,
+          flowPositions.edges,
+          edge.source
+        );
+        const element = {
+          id,
+          source: edge.source,
+          target: edge.target,
+          animated: isAnimated,
+        };
         initialElementsMap[id] = element;
       }
     });
