@@ -296,9 +296,10 @@ class ChannelNew extends Component {
                 <IntegrationTypeTileSimple type={type} />
                 <Link
                   to="#"
-                  onClick={() =>
+                  onClick={e => {
+                    e.preventDefault()
                     this.setState({ type: null, showNextSteps: false })
-                  }
+                  }}
                 >
                   <Button size="small">Change</Button>
                 </Link>
