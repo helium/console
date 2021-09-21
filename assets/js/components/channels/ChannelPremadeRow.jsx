@@ -35,7 +35,7 @@ class ChannelPremadeRow extends Component {
           PREMADE_CHANNEL_TYPES.map((channel, i) => {
             if (channel.name) return (
               <div className="wrapper" style={{ ...styles.button, opacity: channel.inactive && '0.3', filter: channel.inactive && 'grayscale(1)' }} key={channel.name}>
-                <Link to="#" onClick={() => this.props.selectType(channel.type)}>
+                <Link to="#" onClick={e => { e.preventDefault(); this.props.selectType(channel.type) }}>
                   <IntegrationTypeTile
                     tileStyle={styles.tile}
                     iconStyle={styles.icon}
