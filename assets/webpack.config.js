@@ -3,10 +3,12 @@ const webpack = require("webpack");
 const dotenv = require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = function (env) {
   const production = process.env.NODE_ENV === "production";
   return {
+    mode: production ? "production" : "development",
     devtool: production ? "source-maps" : "eval",
     entry: "./js/app.js",
     output: {
@@ -92,7 +94,7 @@ module.exports = function (env) {
             test: /[\\/]node_modules[\\/](react|react-dom|react-redux|redux)[\\/]/,
             name: "reactredux",
           },
-          vendor: {
+          defaultVendors: {
             test: /[\\/]node_modules[\\/](!antd)(!chart.js)(!react-flow-renderer)(!@apollo)(!amplitude-js)(!@ant-design)(!@auth0)(!lodash)(!moment)(!sanitize-html)(!react)(!react-dom)(!react-redux)(!redux)[\\/]/,
             name: "vendor",
           },
@@ -105,13 +107,13 @@ module.exports = function (env) {
         "AUTH_0_CLIENT_ID",
         "ENV_DOMAIN",
         "STRIPE_PUBLIC_KEY",
-        "SELF_HOSTED",
         "INTERCOM_ID_SECRET",
         "CONSOLE_VERSION",
         "RELEASE_BLOG_LINK",
         "MAPBOX_PRIVATE_KEY",
         "MAPBOX_STYLE_URL",
       ]),
+      new NodePolyfillPlugin()
     ],
   };
 };
