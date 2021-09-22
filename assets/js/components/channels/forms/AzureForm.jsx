@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 class AzureForm extends Component {
   state = {
-    hostName: "",
+    hubName: "",
     accessKeyName: "",
     accessKey: "",
   };
@@ -15,7 +15,7 @@ class AzureForm extends Component {
 
     if (channel) {
       this.setState({
-        hostName: channel.azure_hub_name,
+        hubName: channel.azure_hub_name,
         accessKeyName: channel.azure_policy_name,
         accessKey: channel.azure_policy_key,
       });
@@ -24,14 +24,14 @@ class AzureForm extends Component {
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      const { accessKeyName, hostName, accessKey } = this.state;
+      const { accessKeyName, hubName, accessKey } = this.state;
       const validCredentials =
-        accessKeyName.length > 0 && hostName.length > 0 && accessKey.length > 0;
+        accessKeyName.length > 0 && hubName.length > 0 && accessKey.length > 0;
       // check validation, if pass
       this.props.onValidInput(
         {
           azure_policy_name: accessKeyName,
-          azure_hub_name: hostName,
+          azure_hub_name: hubName,
           azure_policy_key: accessKey,
         },
         validCredentials
@@ -43,11 +43,11 @@ class AzureForm extends Component {
     return (
       <div>
         <div>
-          <Text>Hostname</Text>
+          <Text>Hub Name</Text>
           <Input
-            placeholder="Hostname"
-            name="hostName"
-            value={this.state.hostName}
+            placeholder="Hub Name"
+            name="hubName"
+            value={this.state.hubName}
             onChange={this.handleInputUpdate}
           />
           <br />
