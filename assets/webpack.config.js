@@ -107,7 +107,6 @@ module.exports = function (env) {
         "AUTH_0_CLIENT_ID",
         "ENV_DOMAIN",
         "STRIPE_PUBLIC_KEY",
-        "SELF_HOSTED",
         "INTERCOM_ID_SECRET",
         "CONSOLE_VERSION",
         "RELEASE_BLOG_LINK",
