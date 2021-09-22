@@ -179,15 +179,9 @@ const getCompleteFlows = (newElementsMap, data) => {
           return Object.assign({}, acc, { [key]: element });
         }
       } else {
-        const isAnimated = checkEdgeAnimation(
-          data,
-          edges,
-          newElementsMap[key].source
-        );
         const edge = {
           source: newElementsMap[key].source,
           target: newElementsMap[key].target,
-          animated: isAnimated,
         };
         return Object.assign({}, acc, { edges: acc.edges.concat(edge) });
       }
