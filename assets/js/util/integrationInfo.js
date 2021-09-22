@@ -37,10 +37,10 @@ export const NEW_CHANNEL_TYPES = [
       "https://docs.helium.com/use-the-network/console/integrations/aws-iot-core",
   },
   {
-    name: "Azure IoT",
+    name: "Azure IoT Hub",
     type: "azure",
     img: `${Azure}`,
-    info: "This Integration facilitates connecting your devices to Azure.",
+    info: "This Integration facilitates connecting your devices to Azure IoT Hub.",
     docLink:
       "https://docs.helium.com/use-the-network/console/integrations/azure",
   },
