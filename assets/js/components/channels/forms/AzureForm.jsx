@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import { Typography, Input, Tooltip } from "antd";
 import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
 const { Text } = Typography;
+import { WarningTwoTone } from "@ant-design/icons";
 
 class AzureForm extends Component {
   state = {
-    hostName: "",
-    accessKeyName: "",
-    accessKey: "",
+    hubName: "",
+    policyName: "",
+    primaryKey: "",
   };
 
   componentDidMount() {
@@ -15,24 +16,24 @@ class AzureForm extends Component {
 
     if (channel) {
       this.setState({
-        hostName: channel.azure_hub_name,
-        accessKeyName: channel.azure_policy_name,
-        accessKey: channel.azure_policy_key,
+        hubName: channel.azure_hub_name,
+        policyName: channel.azure_policy_name,
+        primaryKey: channel.azure_policy_key,
       });
     }
   }
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      const { accessKeyName, hostName, accessKey } = this.state;
+      const { policyName, hubName, primaryKey } = this.state;
       const validCredentials =
-        accessKeyName.length > 0 && hostName.length > 0 && accessKey.length > 0;
+        policyName.length > 0 && hubName.length > 0 && primaryKey.length > 0;
       // check validation, if pass
       this.props.onValidInput(
         {
-          azure_policy_name: accessKeyName,
-          azure_hub_name: hostName,
-          azure_policy_key: accessKey,
+          azure_policy_name: policyName,
+          azure_hub_name: hubName,
+          azure_policy_key: primaryKey,
         },
         validCredentials
       );
@@ -41,40 +42,53 @@ class AzureForm extends Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <Text>Hostname</Text>
-          <Input
-            placeholder="Hostname"
-            name="hostName"
-            value={this.state.hostName}
-            onChange={this.handleInputUpdate}
+      <React.Fragment>
+        <Text>Hub Name</Text>
+        <Tooltip title="For example: {Hub Name}.azure-devices.net">
+          <QuestionCircleFilled
+            style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
           />
-          <br />
-          <br />
-          <Text>Shared Access Key Name</Text>
-          <Tooltip title="In order for this integration to work properly, this policy must have the following permissions enabled on your Azure Hub: Registry Read, Registry Write, and Device Connect.">
-            <QuestionCircleFilled
-              style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
-            />
-          </Tooltip>
-          <Input
-            placeholder="Shared Access Key Name"
-            name="accessKeyName"
-            value={this.state.accessKeyName}
-            onChange={this.handleInputUpdate}
+        </Tooltip>
+        <Input
+          placeholder="Hub Name"
+          name="hubName"
+          value={this.state.hubName}
+          onChange={this.handleInputUpdate}
+        />
+        <br />
+        <br />
+        <Text>Policy Name</Text>
+        <Tooltip title="In order for this integration to work properly, this policy must have the following permissions enabled on your Azure Hub: Registry Read, Registry Write, and Device Connect.">
+          <QuestionCircleFilled
+            style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
           />
-          <br />
-          <br />
-          <Text>Shared Access Key</Text>
-          <Input
-            placeholder="Shared Access Key"
-            name="accessKey"
-            value={this.state.accessKey}
-            onChange={this.handleInputUpdate}
+        </Tooltip>
+        <Input
+          placeholder="Policy Name"
+          name="policyName"
+          value={this.state.policyName}
+          onChange={this.handleInputUpdate}
+        />
+        <br />
+        <br />
+        <Text>Primary Key</Text>
+        <Input
+          placeholder="Primary Key"
+          name="primaryKey"
+          value={this.state.primaryKey}
+          onChange={this.handleInputUpdate}
+        />
+        <div style={{ marginTop: 20 }}>
+          <WarningTwoTone
+            twoToneColor="#FFA500"
+            style={{ fontSize: 18, paddingRight: 5 }}
           />
+          <Text strong>
+            To help ensure stable device connectivity, only use Console to
+            connect to client IDs.
+          </Text>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
