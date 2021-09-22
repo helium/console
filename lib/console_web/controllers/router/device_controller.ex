@@ -306,26 +306,28 @@ defmodule ConsoleWeb.Router.DeviceController do
             "uplink" ->
               if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"])
+                
+                if event_integration != nil do
+                  if event_integration.time_first_uplink == nil do
+                    Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
+                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                    details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
+                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
+                  end
 
-                if event_integration.time_first_uplink == nil do
-                  Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
-                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                  details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
-                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
-                end
-
-                if event.data["integration"]["status"] != "success" do
-                  { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                  details = %{
-                    channel_name: event_integration.name,
-                    channel_id: event_integration.id,
-                    time: time
-                  }
-                  limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                  Channels.update_channel(event_integration, organization, %{ last_errored: true })
-                else
-                  Channels.update_channel(event_integration, organization, %{ last_errored: false })
+                  if event.data["integration"]["status"] != "success" do
+                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                    details = %{
+                      channel_name: event_integration.name,
+                      channel_id: event_integration.id,
+                      time: time
+                    }
+                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
+                  else
+                    Channels.update_channel(event_integration, organization, %{ last_errored: false })
+                  end
                 end
               end
             "downlink" ->
