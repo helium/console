@@ -1,22 +1,32 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
           "node": "14"
         }
       }
     ],
-    "babel-preset-react"
+    "@babel/preset-react"
   ],
   "plugins": [
-    "transform-es2015-destructuring",
-    "transform-es2015-parameters",
-    "transform-object-rest-spread",
-    "transform-decorators-legacy",
-    "transform-class-properties",
+    "@babel/plugin-transform-destructuring",
+    "@babel/plugin-transform-parameters",
+    "@babel/plugin-proposal-object-rest-spread",
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ],
+    "@babel/plugin-proposal-class-properties",
     "styled-jsx/babel",
-    ["import", { "libraryName": "antd" }]
+    [
+      "import",
+      {
+        "libraryName": "antd"
+      }
+    ]
   ]
 }
