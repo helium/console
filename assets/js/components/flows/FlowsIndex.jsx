@@ -42,6 +42,42 @@ class FlowsIndex extends Component {
       .catch((err) => {});
   };
 
+  getActiveLabels() {
+    let activeLabels = {};
+    const { allLabels } = this.props.allResourcesQuery.data;
+    allLabels.forEach((l) => {
+      const labelHasStaleDevices = l.devices.some(
+        (d) =>
+          !moment()
+            .utc()
+            .local()
+            .subtract(1, "days")
+            .isBefore(moment.utc(d.last_connected).local())
+      );
+      if (!labelHasStaleDevices) {
+        activeLabels[l.id] = l;
+      }
+    });
+    return activeLabels;
+  }
+
+  getActiveDevices() {
+    let activeDevices = {};
+    const { allDevices } = this.props.allResourcesQuery.data;
+    allDevices.forEach((d) => {
+      if (
+        moment()
+          .utc()
+          .local()
+          .subtract(1, "days")
+          .isBefore(moment.utc(d.last_connected).local())
+      ) {
+        activeDevices[d.id] = d;
+      }
+    });
+    return activeDevices;
+  }
+
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_FLOWS_PAGE");
 
@@ -104,10 +140,17 @@ class FlowsIndex extends Component {
 
     const { organization } = this.props.allResourcesQuery.data;
 
+    const activeLabels = this.getActiveLabels();
+    const activeDevices = this.getActiveDevices();
+
     const flowPositions = JSON.parse(organization.flow);
     const [initialElementsMap, nodesByType] = generateInitialElementsMap(
       this.props.allResourcesQuery.data,
-      flowPositions
+      flowPositions,
+      {
+        activeLabels,
+        activeDevices,
+      }
     );
 
     return (
@@ -129,6 +172,16 @@ class FlowsIndex extends Component {
             functions={nodesByType.functions}
             devices={nodesByType.devices}
             organization={organization}
+            checkEdgeAnimation={(source) => {
+              return checkEdgeAnimation(
+                {
+                  activeLabels,
+                  activeDevices,
+                },
+                flowPositions.edges,
+                source
+              );
+            }}
           />
         </ReactFlowProvider>
       </DashboardLayout>
@@ -194,62 +247,26 @@ const getCompleteFlows = (newElementsMap, data) => {
 
 const checkEdgeAnimation = (resources, edges, source) => {
   if (source.startsWith("label")) {
-    const label = resources.allLabels.find((l) => {
-      return l.id === source.split(/-(.+)/)[1];
-    });
-    if (label.devices.length > 0) {
-      const labelHasStaleDevices = label.devices.some(
-        (d) =>
-          !moment()
-            .utc()
-            .local()
-            .subtract(1, "days")
-            .isBefore(moment.utc(d.last_connected).local())
-      );
-      return !labelHasStaleDevices;
-    }
+    return resources.activeLabels[source.split(/-(.+)/)[1]] ? true : false;
   } else if (source.startsWith("device")) {
-    const device = resources.allDevices.find((d) => {
-      return d.id === source.split(/-(.+)/)[1];
-    });
-    return moment()
-      .utc()
-      .local()
-      .subtract(1, "days")
-      .isBefore(moment.utc(device.last_connected).local());
+    return resources.activeDevices[source.split(/-(.+)/)[1]] ? true : false;
   } else {
     const relevantEdges = edges.filter((e) => e.target === source);
     return relevantEdges.some((e) => {
       if (e.source.startsWith("label")) {
-        const label = resources.allLabels.find((l) => {
-          return l.id === e.source.split(/-(.+)/)[1];
-        });
-        if (label.devices.length > 0) {
-          const labelHasStaleDevices = label.devices.some(
-            (d) =>
-              !moment()
-                .utc()
-                .local()
-                .subtract(1, "days")
-                .isBefore(moment.utc(d.last_connected).local())
-          );
-          return !labelHasStaleDevices;
-        }
+        return resources.activeLabels[e.source.split(/-(.+)/)[1]]
+          ? true
+          : false;
       } else if (e.source.startsWith("device")) {
-        const device = resources.allDevices.find((d) => {
-          return d.id === e.source.split(/-(.+)/)[1];
-        });
-        return moment()
-          .utc()
-          .local()
-          .subtract(1, "days")
-          .isBefore(moment.utc(device.last_connected).local());
+        return resources.activeDevices[e.source.split(/-(.+)/)[1]]
+          ? true
+          : false;
       }
     });
   }
 };
 
-const generateInitialElementsMap = (data, flowPositions) => {
+const generateInitialElementsMap = (data, flowPositions, activeResources) => {
   const { allLabels, allFunctions, allChannels, allDevices } = data;
   let initialElementsMap = {};
   const labels = [];
@@ -377,7 +394,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
       if (initialElementsMap[edge.source] && initialElementsMap[edge.target]) {
         const id = "edge-" + edge.source + "-" + edge.target;
         const isAnimated = checkEdgeAnimation(
-          data,
+          activeResources,
           flowPositions.edges,
           edge.source
         );
@@ -387,6 +404,7 @@ const generateInitialElementsMap = (data, flowPositions) => {
           target: edge.target,
           animated: isAnimated,
         };
+        console.log(element);
         initialElementsMap[id] = element;
       }
     });
