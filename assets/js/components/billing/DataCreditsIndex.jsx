@@ -132,23 +132,29 @@ class DataCreditsIndex extends Component {
               10000 Data Credits. You have {organization.dc_balance} remaining.
             </p>
           )}
-          <UserCan noManager>
-            <p style={{ fontSize: 16 }}>
-              Click here to purchase more Data Credits, set up an automatic
-              renewal, and monitor balances.
-            </p>
-          </UserCan>
-          <UserCan noManager>
-            <Button
-              size="large"
-              type="primary"
-              icon={<WalletOutlined />}
-              onClick={() => this.openModal("showPurchaseCreditModal")}
-              style={{ borderRadius: 4 }}
-            >
-              Purchase Data Credits
-            </Button>
-          </UserCan>
+          {
+            window.disable_user_burn !== "true" && (
+              <React.Fragment>
+                <UserCan noManager>
+                  <p style={{ fontSize: 16 }}>
+                    Click here to purchase more Data Credits, set up an automatic
+                    renewal, and monitor balances.
+                  </p>
+                </UserCan>
+                <UserCan noManager>
+                  <Button
+                    size="large"
+                    type="primary"
+                    icon={<WalletOutlined />}
+                    onClick={() => this.openModal("showPurchaseCreditModal")}
+                    style={{ borderRadius: 4 }}
+                  >
+                    Purchase Data Credits
+                  </Button>
+                </UserCan>
+              </React.Fragment>
+            )
+          }
 
           <div className="explainer">
             <h2>What are Data Credits?</h2>
@@ -412,7 +418,10 @@ class DataCreditsIndex extends Component {
                     type="primary"
                     icon={<WalletOutlined />}
                     onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ borderRadius: 4 }}
+                    style={{
+                      borderRadius: 4,
+                      display: window.disable_user_burn !== "true" ? "inline" : "none"
+                    }}
                   >
                     Purchase Data Credits
                   </Button>

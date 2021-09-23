@@ -69,7 +69,7 @@ config :console,
   mapbox_style_url: System.get_env("MAPBOX_STYLE_URL")
 
 config :console,
-  host_dc_charge_percent: System.get_env("HOST_DC_CHARGE_PERCENT")
+  disable_user_burn: System.get_env("DISABLE_USER_BURN")
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
