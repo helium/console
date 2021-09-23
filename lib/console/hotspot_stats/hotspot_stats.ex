@@ -39,7 +39,7 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address
+      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
@@ -87,7 +87,7 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address
+      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
@@ -148,7 +148,7 @@ defmodule Console.HotspotStats do
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4
@@ -213,7 +213,7 @@ defmodule Console.HotspotStats do
         ) grouped_stats
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4

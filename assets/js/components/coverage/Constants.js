@@ -48,7 +48,7 @@ export const renderStatusLabel = (status) => {
       }}
     >
       <Icon component={svg} style={{ marginRight: 6 }} />
-      {startCase(status)}
+      {status ? startCase(status) : "Unknown"}
     </span>
   );
 };
@@ -219,7 +219,7 @@ export const getColumns = (
             }}
           >
             <Icon component={svg} style={{ marginRight: 4 }} />
-            {startCase(data)}
+            {data ? startCase(data) : "Unknown"}
           </span>
         );
       },
