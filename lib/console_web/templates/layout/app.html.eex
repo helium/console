@@ -24,7 +24,7 @@
       window.env_domain = "<%= Application.get_env(:console, :env_domain) %>"
       window.mapbox_pk = "<%= Application.get_env(:console, :mapbox_pk) %>"
       window.mapbox_style_url = "<%= Application.get_env(:console, :mapbox_style_url) %>"
-      window.host_dc_charge_percent = "<%= Application.get_env(:console, :host_dc_charge_percent) %>"
+      window.disable_user_burn = "<%= Application.get_env(:console, :disable_user_burn) %>"
     </script>
     <div class="mainContainer">
       <main role="main">
