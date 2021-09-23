@@ -143,9 +143,7 @@ class PurchaseCreditModal extends Component {
     if (e.target.name == "countDC") {
       this.setState({
         countDC: e.target.value,
-        countUSD:
-          e.target.value * 0.00001 +
-          e.target.value * 0.00001 * (window.host_dc_charge_percent || 0),
+        countUSD: e.target.value / 100000,
         countB: e.target.value * 24,
         gettingPrice: true,
       });
@@ -343,11 +341,7 @@ class PurchaseCreditModal extends Component {
           alignItems: "center",
         }}
       >
-        <Text>{`1 DC = 24 Byte Packet = $${
-          window.host_dc_charge_percent
-            ? 0.00001 + window.host_dc_charge_percent * 0.00001
-            : 0.00001
-        } USD`}</Text>
+        <Text>{`1 DC = 24 Byte Packet = $${0.00001} USD`}</Text>
         {!process.env.SELF_HOSTED && (
           <Text>(Credit Card purchases: minimum $10)</Text>
         )}
