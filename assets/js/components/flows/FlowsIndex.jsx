@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import withGql from "../../graphql/withGql";
+import moment from "moment";
 import { connect } from "react-redux";
 import { isEdge, isNode, ReactFlowProvider } from "react-flow-renderer";
 import { Prompt } from "react-router";
@@ -37,6 +38,42 @@ class FlowsIndex extends Component {
       })
       .catch((err) => {});
   };
+
+  getActiveLabels() {
+    let activeLabels = {};
+    const { allLabels } = this.props.allResourcesQuery.data;
+    allLabels.forEach((l) => {
+      const labelHasStaleDevices = l.devices.some(
+        (d) =>
+          !moment()
+            .utc()
+            .local()
+            .subtract(1, "days")
+            .isBefore(moment.utc(d.last_connected).local())
+      );
+      if (!labelHasStaleDevices) {
+        activeLabels[l.id] = l;
+      }
+    });
+    return activeLabels;
+  }
+
+  getActiveDevices() {
+    let activeDevices = {};
+    const { allDevices } = this.props.allResourcesQuery.data;
+    allDevices.forEach((d) => {
+      if (
+        moment()
+          .utc()
+          .local()
+          .subtract(1, "days")
+          .isBefore(moment.utc(d.last_connected).local())
+      ) {
+        activeDevices[d.id] = d;
+      }
+    });
+    return activeDevices;
+  }
 
   componentDidMount() {
     analyticsLogger.logEvent("ACTION_NAV_FLOWS_PAGE");
@@ -100,10 +137,17 @@ class FlowsIndex extends Component {
 
     const { organization } = this.props.allResourcesQuery.data;
 
+    const activeLabels = this.getActiveLabels();
+    const activeDevices = this.getActiveDevices();
+
     const flowPositions = JSON.parse(organization.flow);
     const [initialElementsMap, nodesByType] = generateInitialElementsMap(
       this.props.allResourcesQuery.data,
-      flowPositions
+      flowPositions,
+      {
+        activeLabels,
+        activeDevices,
+      }
     );
 
     return (
@@ -125,6 +169,16 @@ class FlowsIndex extends Component {
             functions={nodesByType.functions}
             devices={nodesByType.devices}
             organization={organization}
+            checkEdgeAnimation={(source) => {
+              return checkEdgeAnimation(
+                {
+                  activeLabels,
+                  activeDevices,
+                },
+                flowPositions.edges,
+                source
+              );
+            }}
           />
         </ReactFlowProvider>
       </DashboardLayout>
@@ -188,7 +242,24 @@ const getCompleteFlows = (newElementsMap) => {
   return [paths, elementPositions];
 };
 
-const generateInitialElementsMap = (data, flowPositions) => {
+const checkEdgeAnimation = (resources, edges, source) => {
+  if (source.startsWith("label")) {
+    return !!resources.activeLabels[source.split(/-(.+)/)[1]];
+  } else if (source.startsWith("device")) {
+    return !!resources.activeDevices[source.split(/-(.+)/)[1]];
+  } else {
+    const relevantEdges = edges.filter((e) => e.target === source);
+    return relevantEdges.some((e) => {
+      if (e.source.startsWith("label")) {
+        return !!resources.activeLabels[e.source.split(/-(.+)/)[1]];
+      } else if (e.source.startsWith("device")) {
+        return !!resources.activeDevices[e.source.split(/-(.+)/)[1]];
+      }
+    });
+  }
+};
+
+const generateInitialElementsMap = (data, flowPositions, activeResources) => {
   const { allLabels, allFunctions, allChannels, allDevices } = data;
   let initialElementsMap = {};
   const labels = [];
@@ -315,7 +386,17 @@ const generateInitialElementsMap = (data, flowPositions) => {
     flowPositions.edges.forEach((edge) => {
       if (initialElementsMap[edge.source] && initialElementsMap[edge.target]) {
         const id = "edge-" + edge.source + "-" + edge.target;
-        const element = { id, source: edge.source, target: edge.target };
+        const isAnimated = checkEdgeAnimation(
+          activeResources,
+          flowPositions.edges,
+          edge.source
+        );
+        const element = {
+          id,
+          source: edge.source,
+          target: edge.target,
+          animated: isAnimated,
+        };
         initialElementsMap[id] = element;
       }
     });

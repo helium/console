@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  Fragment,
+} from "react";
 import { useSelector } from "react-redux";
 import ReactFlow, {
   isNode,
@@ -19,7 +25,7 @@ import { getStartedLinks } from "../Welcome";
 import RocketFilled from "@ant-design/icons/RocketFilled";
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
-import debounce from 'lodash/debounce'
+import debounce from "lodash/debounce";
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -39,6 +45,7 @@ export default ({
   channels,
   devices,
   organization,
+  checkEdgeAnimation,
 }) => {
   const firstRender = useRef(true);
   const setSelectedElements = useStoreActions(
@@ -56,14 +63,20 @@ export default ({
     setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
-  const debouncedSubmit = useCallback(debounce(submitChanges, 2000), [])
+  const [latestElems, setLatestElems] = useState(initialElementsMap);
+  const debouncedSubmit = useCallback(debounce(submitChanges, 2000), []);
+
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    debouncedSubmit(elementsMap)
+    debouncedSubmit(elementsMap);
   }, [elementsMap]);
+
+  useEffect(() => {
+    setLatestElems(initialElementsMap);
+  }, [initialElementsMap]);
 
   const onElementDragStop = (event, node) => {
     if (userCan({ role: currentRole })) {
@@ -72,8 +85,8 @@ export default ({
       });
       setElements((elsMap) =>
         Object.assign({}, elsMap, { [node.id]: updatedNode })
-      )
-      setChangesState(true)
+      );
+      setChangesState(true);
     }
   };
 
@@ -105,7 +118,12 @@ export default ({
   const onElementsAdd = ({ source, target }) => {
     if (userCan({ role: currentRole })) {
       const id = "edge-" + source + "-" + target;
-      const newEdge = { id, source, target };
+      const newEdge = {
+        id,
+        source,
+        target,
+        animated: checkEdgeAnimation(source),
+      };
 
       setElements((elsMap) => Object.assign({}, elsMap, { [id]: newEdge }));
       setChangesState(true);
@@ -300,7 +318,9 @@ export default ({
             </div>
           )}
         <ReactFlow
-          elements={Object.values(elementsMap)}
+          elements={
+            hasChanges ? Object.values(elementsMap) : Object.values(latestElems)
+          }
           nodeTypes={nodeTypes}
           onLoad={onLoad}
           onElementsRemove={onElementsRemove}
@@ -330,9 +350,7 @@ export default ({
             channels={channels}
             devices={devices}
           />
-          <FlowsSaveBar
-            hasChanges={hasChanges}
-          />
+          <FlowsSaveBar hasChanges={hasChanges} />
         </UserCan>
       </div>
       <InfoSidebar
@@ -398,7 +416,6 @@ export default ({
             }
 
             setElements((elsMap) => omit(elsMap, edges.concat(selectedNodeId)));
-
             setChangesState(true);
             setShowInfoSidebar(false);
             setSelectedElements([]);
