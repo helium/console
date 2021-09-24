@@ -247,20 +247,16 @@ const getCompleteFlows = (newElementsMap, data) => {
 
 const checkEdgeAnimation = (resources, edges, source) => {
   if (source.startsWith("label")) {
-    return resources.activeLabels[source.split(/-(.+)/)[1]] ? true : false;
+    return !!resources.activeLabels[source.split(/-(.+)/)[1]];
   } else if (source.startsWith("device")) {
-    return resources.activeDevices[source.split(/-(.+)/)[1]] ? true : false;
+    return !!resources.activeDevices[source.split(/-(.+)/)[1]];
   } else {
     const relevantEdges = edges.filter((e) => e.target === source);
     return relevantEdges.some((e) => {
       if (e.source.startsWith("label")) {
-        return resources.activeLabels[e.source.split(/-(.+)/)[1]]
-          ? true
-          : false;
+        return !!resources.activeLabels[e.source.split(/-(.+)/)[1]];
       } else if (e.source.startsWith("device")) {
-        return resources.activeDevices[e.source.split(/-(.+)/)[1]]
-          ? true
-          : false;
+        return !!resources.activeDevices[e.source.split(/-(.+)/)[1]];
       }
     });
   }

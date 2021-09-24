@@ -63,7 +63,9 @@ export default ({
     setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
+  const [latestElems, setLatestElems] = useState(initialElementsMap);
   const debouncedSubmit = useCallback(debounce(submitChanges, 2000), []);
+
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
@@ -71,6 +73,10 @@ export default ({
     }
     debouncedSubmit(elementsMap);
   }, [elementsMap]);
+
+  useEffect(() => {
+    setLatestElems(initialElementsMap);
+  }, [initialElementsMap]);
 
   const onElementDragStop = (event, node) => {
     if (userCan({ role: currentRole })) {
@@ -312,7 +318,9 @@ export default ({
             </div>
           )}
         <ReactFlow
-          elements={Object.values(elementsMap)}
+          elements={
+            hasChanges ? Object.values(elementsMap) : Object.values(latestElems)
+          }
           nodeTypes={nodeTypes}
           onLoad={onLoad}
           onElementsRemove={onElementsRemove}
@@ -408,7 +416,6 @@ export default ({
             }
 
             setElements((elsMap) => omit(elsMap, edges.concat(selectedNodeId)));
-
             setChangesState(true);
             setShowInfoSidebar(false);
             setSelectedElements([]);
