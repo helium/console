@@ -26,10 +26,7 @@ class FlowsIndex extends Component {
   };
 
   submitChanges = (newElementsMap) => {
-    const [completePaths, elementPositions] = getCompleteFlows(
-      newElementsMap,
-      this.props.allResourcesQuery.data
-    );
+    const [completePaths, elementPositions] = getCompleteFlows(newElementsMap);
 
     updateFlows(completePaths, elementPositions)
       .then((status) => {
@@ -189,7 +186,7 @@ class FlowsIndex extends Component {
   }
 }
 
-const getCompleteFlows = (newElementsMap, data) => {
+const getCompleteFlows = (newElementsMap) => {
   const deviceAndLabelNodes = Object.values(newElementsMap).filter(
     (el) => el.type === "deviceNode" || el.type === "labelNode"
   );
@@ -400,7 +397,6 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
           target: edge.target,
           animated: isAnimated,
         };
-        console.log(element);
         initialElementsMap[id] = element;
       }
     });
