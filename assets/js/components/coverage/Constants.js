@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Tag, Tooltip } from "antd";
+import { Tag, Tooltip, Button } from "antd";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
@@ -113,11 +113,15 @@ export const getColumns = (
         return (
           <span>
             <span>Unknown Hotspot</span>
-            <Tooltip title={"Hotspot data is currently unavailable. Please wait for next API sync."}>
+            <Tooltip
+              title={
+                "Hotspot data is currently unavailable. Please wait for next API sync."
+              }
+            >
               <InfoCircleOutlined style={{ marginLeft: 6 }} />
             </Tooltip>
           </span>
-        )
+        );
       },
     },
     {
@@ -241,3 +245,31 @@ export const getColumns = (
   if (fromSearch) return columns.filter((c) => c.dataIndex !== "alias");
   return columns;
 };
+
+export const ClaimButton = ({ onClick }) => (
+  <Button style={{ borderRadius: 4 }} onClick={onClick}>
+    <img
+      draggable="false"
+      src={SelectedFlag}
+      style={{
+        height: 18,
+        marginRight: 10,
+      }}
+    />
+    Claim
+  </Button>
+);
+
+export const UnclaimButton = ({ onClick }) => (
+  <Button style={{ borderRadius: 4 }} onClick={onClick}>
+    <img
+      draggable="false"
+      src={UnselectedFlag}
+      style={{
+        height: 18,
+        marginRight: 10,
+      }}
+    />
+    Unclaim
+  </Button>
+);

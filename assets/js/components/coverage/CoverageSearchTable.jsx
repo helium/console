@@ -10,6 +10,7 @@ export default ({
   handleSortChange,
   handleChangePage,
   loading,
+  rowSelection,
 }) => {
   return (
     <React.Fragment>
@@ -29,6 +30,7 @@ export default ({
         style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
         className="no-scroll-bar"
         loading={loading}
+        rowSelection={rowSelection}
       />
       <div
         style={{

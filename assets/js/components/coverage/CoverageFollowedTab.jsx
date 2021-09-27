@@ -1,46 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Row, Col, Table, Pagination } from "antd";
 const { Text } = Typography;
-import { updateOrganizationHotspot } from '../../actions/coverage'
-import { getColumns } from './Constants'
-import { minWidth } from "../../util/constants";
+import {
+  updateOrganizationHotspot,
+  updateOrganizationHotspots,
+} from "../../actions/coverage";
+import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
+import UserCan from "../common/UserCan";
 
 export default (props) => {
   const [page, setPage] = useState(1);
   const pageSize = 25;
   const [column, setColumn] = useState("packet_count");
   const [order, setOrder] = useState("desc");
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [allSelected, setAllSelected] = useState(false);
 
-  const columns = getColumns(props, updateOrganizationHotspot, props.selectHotspotAddress)
+  const columns = getColumns(
+    props,
+    updateOrganizationHotspot,
+    props.selectHotspotAddress
+  );
 
   const handleSort = (pagi, filter, sorter) => {
-    const order = sorter.order === 'ascend' ? 'asc' : 'desc'
-    let column
+    const order = sorter.order === "ascend" ? "asc" : "desc";
+    let column;
     switch (sorter.field) {
-      case 'hotspot_name':
-        column = 'hotspot_name'
+      case "hotspot_name":
+        column = "hotspot_name";
         break;
-      case 'location':
-        column = 'long_city'
+      case "location":
+        column = "long_city";
         break;
-      case 'packet_count':
-        column = 'packet_count'
+      case "packet_count":
+        column = "packet_count";
         break;
-      case 'device_count':
-        column = 'device_count'
+      case "device_count":
+        column = "device_count";
         break;
-      case 'status':
-        column = 'status'
+      case "status":
+        column = "status";
         break;
       default:
-        column = 'packet_count'
+        column = "packet_count";
     }
 
-    props.refetch({ column, order, page, pageSize })
-    setOrder(order)
-    setColumn(column)
-  }
+    props.refetch({ column, order, page, pageSize });
+    setOrder(order);
+    setColumn(column);
+  };
 
   const handleChangePage = (page) => {
     setPage(page);
@@ -48,7 +57,7 @@ export default (props) => {
       page,
       pageSize,
       column,
-      order
+      order,
     });
   };
 
@@ -61,7 +70,7 @@ export default (props) => {
           style={{
             height: 32,
             width: 32,
-            marginBottom: 6
+            marginBottom: 6,
           }}
         />
         <div style={{ marginBottom: 12 }}>
@@ -76,49 +85,87 @@ export default (props) => {
         </Row>
       </div>
 
-      {
-        props.hotspotStats && (
-          <div
-            style={{ overflowX: "scroll", overflowY: "hidden" }}
-            className="no-scroll-bar"
-          >
-            <Table
-              showSorterTooltip={false}
-              sortDirections={['descend', 'ascend', 'descend']}
-              dataSource={
-                props.hotspotStats.filter(hs => props.orgHotspotsMap[hs.hotspot_address] && props.orgHotspotsMap[hs.hotspot_address].claimed)
-              }
-              columns={columns}
-              rowKey={(record) => record.hotspot_address}
-              pagination={false}
-              style={{ overflowY: "hidden" }}
-              className="no-scroll-bar"
-              onChange={handleSort}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-end",
-                paddingBottom: 0,
+      <UserCan>
+        <div className="hotspot-claim">
+          {selectedRows.length === 0 ||
+          !selectedRows.find(
+            (r) =>
+              props.orgHotspotsMap[r.hotspot_address] &&
+              props.orgHotspotsMap[r.hotspot_address].claimed === true
+          ) ? (
+            <ClaimButton
+              onClick={() => {
+                updateOrganizationHotspots(
+                  selectedRows.map((r) => r.hotspot_address),
+                  true
+                );
               }}
-            >
-              <Pagination
-                current={page}
-                pageSize={pageSize}
-                total={
-                  props.hotspotStats && props.hotspotStats.length > 0 ?
-                  props.hotspotStats[0].total_entries : 0
-                }
-                onChange={(page) => handleChangePage(page)}
-                style={{ marginBottom: 20 }}
-                showSizeChanger={false}
-              />
-            </div>
+            />
+          ) : (
+            <UnclaimButton
+              onClick={() => {
+                updateOrganizationHotspots(
+                  selectedRows.map((r) => r.hotspot_address),
+                  false
+                );
+              }}
+            />
+          )}
+        </div>
+      </UserCan>
+      {props.hotspotStats && (
+        <div
+          style={{ overflowX: "scroll", overflowY: "hidden" }}
+          className="no-scroll-bar"
+        >
+          <Table
+            showSorterTooltip={false}
+            sortDirections={["descend", "ascend", "descend"]}
+            dataSource={props.hotspotStats.filter(
+              (hs) =>
+                props.orgHotspotsMap[hs.hotspot_address] &&
+                props.orgHotspotsMap[hs.hotspot_address].claimed
+            )}
+            columns={columns}
+            rowKey={(record) => record.hotspot_address}
+            pagination={false}
+            style={{ overflowY: "hidden" }}
+            className="no-scroll-bar"
+            onChange={handleSort}
+            rowSelection={{
+              onChange: (keys, selectedRows) => {
+                setSelectedRows(selectedRows);
+                setAllSelected(false);
+              },
+              onSelectAll: () => {
+                setAllSelected(!allSelected);
+              },
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              paddingBottom: 0,
+            }}
+          >
+            <Pagination
+              current={page}
+              pageSize={pageSize}
+              total={
+                props.hotspotStats && props.hotspotStats.length > 0
+                  ? props.hotspotStats[0].total_entries
+                  : 0
+              }
+              onChange={(page) => handleChangePage(page)}
+              style={{ marginBottom: 20 }}
+              showSizeChanger={false}
+            />
           </div>
-        )
-      }
+        </div>
+      )}
     </div>
   );
 };
