@@ -4,7 +4,6 @@ import { Typography, Tooltip } from 'antd';
 const { Text } = Typography
 
 class Sidebar extends Component {
-
   state = {
     showMessage: false
   }
@@ -21,7 +20,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage, message } = this.props;
+    const { show, iconPosition, sidebarIcon, iconBackground, disabled, disabledMessage, message, from } = this.props;
     let topPercentage;
     switch (iconPosition) {
       case 'top':
@@ -38,9 +37,9 @@ class Sidebar extends Component {
         style={{
           background: debugSidebarBackgroundColor,
           position: 'absolute',
-          top: 55,
-          width: show ? 650 : 0,
-          height: 'calc(100vh - 55px)',
+          top: from === 'hotspotShow' ? 0 : 55,
+          width: show ? (from === 'hotspotShow' ? 550 : 650) : 0,
+          height: from === 'hotspotShow' ? '100%' : 'calc(100vh - 55px)',
           right: 0,
           zIndex: show ? 10 : 1,
           padding: 0,
@@ -54,7 +53,7 @@ class Sidebar extends Component {
               left: '-60px',
               width: 50,
               height: 50,
-              top: `calc(${topPercentage}% - 25px)`,
+              top: from === 'hotspotShow' ? "200px" : `calc(${topPercentage}% - 25px)`,
               backgroundColor: disabled ? 'grey' : iconBackground,
               borderRadius: '9999px',
               cursor: disabled ? 'not-allowed' : 'pointer',
