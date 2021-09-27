@@ -23,13 +23,13 @@ class Debug extends Component {
   componentDidMount() {
     this.setState({ data: [] });
 
-    const { socket, deviceId, labelId } = this.props;
+    const { socket, currentOrganizationId, deviceId, labelId, hotspotAddress } = this.props;
 
     if (deviceId) {
       this.channel = socket.channel("graphql:device_show_debug", {});
       this.channel.join();
       this.channel.on(
-        `graphql:device_show_debug:${this.props.deviceId}:get_event`,
+        `graphql:device_show_debug:${this.props.deviceId}:new_event`,
         (message) => {
           this.updateData(message);
         }
@@ -39,7 +39,17 @@ class Debug extends Component {
       this.channel = socket.channel("graphql:label_show_debug", {});
       this.channel.join();
       this.channel.on(
-        `graphql:label_show_debug:${this.props.labelId}:get_event`,
+        `graphql:label_show_debug:${this.props.labelId}:new_event`,
+        (message) => {
+          this.updateData(message);
+        }
+      );
+    }
+    if (hotspotAddress) {
+      this.channel = socket.channel("graphql:coverage_hotspot_show_debug", {});
+      this.channel.join();
+      this.channel.on(
+        `graphql:coverage_hotspot_show_debug:${currentOrganizationId}_${hotspotAddress}:new_event`,
         (message) => {
           this.updateData(message);
         }
@@ -240,6 +250,7 @@ class Debug extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
+    currentOrganizationId: state.organization.currentOrganizationId
   };
 }
 

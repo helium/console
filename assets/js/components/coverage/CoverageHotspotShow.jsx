@@ -2,11 +2,15 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import OutsideClick from "react-outside-click-handler";
 import { useLazyQuery } from "@apollo/client";
+import analyticsLogger from "../../util/analyticsLogger";
 import { Typography, Row, Col, Button, Tooltip, Input, Tabs } from "antd";
 const { TabPane } = Tabs;
 const { Text } = Typography;
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import BugOutlined from "@ant-design/icons/BugOutlined";
 import { HOTSPOT_SHOW } from "../../graphql/coverage";
+import Debug from "../common/Debug";
+import Sidebar from "../common/Sidebar";
 import CoverageHotspotShowDevicesTab from './CoverageHotspotShowDevicesTab'
 import CoverageHotspotShowStatsTab from './CoverageHotspotShowStatsTab'
 import startCase from "lodash/startCase";
@@ -16,11 +20,13 @@ import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import LocationIcon from "../../../img/coverage/hotspot-show-location-icon.svg";
 import AliasIcon from "../../../img/coverage/hotspot-show-alias-icon.svg";
+import { debugSidebarBackgroundColor } from "../../util/colors";
 
 export default (props) => {
   const [getHotspot, { error, loading, data, refetch }] = useLazyQuery(HOTSPOT_SHOW);
   const [name, setName] = useState("");
   const [showAliasInput, toggleAliasInput] = useState(false);
+  const [showDebugSidebar, setShowDebugSidebar] = useState(false);
 
   useEffect(() => {
     getHotspot({
@@ -37,6 +43,19 @@ export default (props) => {
   const orgHotspot = props.orgHotspotsMap[hotspot.hotspot_address]
   const hotspotClaimed = orgHotspot ? orgHotspot.claimed : false
   const hotspotAlias = orgHotspot ? orgHotspot.alias : null
+
+  const handleToggleDebug = () => {
+    if (!showDebugSidebar) {
+      analyticsLogger.logEvent("ACTION_OPEN_HOTSPOT_SHOW_DEBUG", {
+        address: hotspot.hotspot_address,
+      });
+    } else {
+      analyticsLogger.logEvent("ACTION_CLOSE_HOTSPOT_SHOW_DEBUG", {
+        address: hotspot.hotspot_address,
+      });
+    }
+    setShowDebugSidebar(!showDebugSidebar);
+  };
 
   return (
     <Fragment>
@@ -160,6 +179,17 @@ export default (props) => {
           <CoverageHotspotShowDevicesTab hotspot={hotspot}/>
         </TabPane>
       </Tabs>
+
+      <Sidebar
+        show={showDebugSidebar}
+        toggle={handleToggleDebug}
+        sidebarIcon={<BugOutlined />}
+        iconBackground={debugSidebarBackgroundColor}
+        from="hotspotShow"
+        message="Access Debug mode to view hotspot packet transfer"
+      >
+        <Debug hotspotAddress={hotspot.hotspot_address} entryWidth={500} />
+      </Sidebar>
     </Fragment>
   );
 };
