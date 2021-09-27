@@ -306,7 +306,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             "uplink" ->
               if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"])
-                
+
                 if event_integration != nil do
                   if event_integration.time_first_uplink == nil do
                     Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
@@ -360,12 +360,20 @@ defmodule ConsoleWeb.Router.DeviceController do
       |> Map.delete(:organization)
 
     ConsoleWeb.Endpoint.broadcast("graphql:events_dashboard", "graphql:events_dashboard:#{device.id}:new_event", event_to_publish)
-    ConsoleWeb.Endpoint.broadcast("graphql:device_show_debug", "graphql:device_show_debug:#{device.id}:get_event", event_to_publish)
+    ConsoleWeb.Endpoint.broadcast("graphql:device_show_debug", "graphql:device_show_debug:#{device.id}:new_event", event_to_publish)
 
     label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
     Enum.each(label_ids, fn id ->
-      ConsoleWeb.Endpoint.broadcast("graphql:label_show_debug", "graphql:label_show_debug:#{id}:get_event", event_to_publish)
+      ConsoleWeb.Endpoint.broadcast("graphql:label_show_debug", "graphql:label_show_debug:#{id}:new_event", event_to_publish)
     end)
+
+    if event.data["hotspot"] != nil and event.data["hotspot"]["id"] != nil do
+      ConsoleWeb.Endpoint.broadcast(
+        "graphql:coverage_hotspot_show_debug",
+        "graphql:coverage_hotspot_show_debug:#{event.organization_id}_#{event.data["hotspot"]["id"]}:new_event",
+        event_to_publish
+      )
+    end
   end
 
   defp check_org_dc_balance(organization, prev_dc_balance) do
