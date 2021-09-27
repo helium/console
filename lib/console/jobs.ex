@@ -187,7 +187,8 @@ defmodule Console.Jobs do
     :height,
     :short_state,
     :short_country,
-    :long_city
+    :long_city,
+    :owner
   ]
 
   defp sanitize(hotspot) do

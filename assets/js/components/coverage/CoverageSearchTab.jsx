@@ -137,7 +137,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
               height: 28,
               width: "90%",
             }}
-            placeholder="Search by hotspot name or city"
+            placeholder="Search by wallet address, hotspot name or city"
             onKeyDown={(event) => {
               setTerm(event.target.value);
               if (event.key === "Enter") {
@@ -164,7 +164,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
                 storedSearchTerms.map((t) => (
                   <Row key={t}>
                     <Button
-                      style={{ border: "none" }}
+                      style={{ border: "none", overflow: "hidden" }}
                       onClick={() => {
                         setTerm(t);
                         setSearchTerm(t);
@@ -175,6 +175,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
                           textDecoration: "underline",
                           color: "#1890ff",
                         }}
+                        ellipsis
                       >
                         {t}
                       </Text>

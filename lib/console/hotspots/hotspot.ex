@@ -16,6 +16,7 @@ defmodule Console.Hotspots.Hotspot do
     field :short_country, :string
     field :long_city, :string
     field :address, :string
+    field :owner, :string
 
     timestamps()
   end
@@ -32,7 +33,8 @@ defmodule Console.Hotspots.Hotspot do
       :short_state,
       :short_country,
       :long_city,
-      :address
+      :address,
+      :owner
     ])
     |> validate_required([
       :address,

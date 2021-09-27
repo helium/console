@@ -461,6 +461,7 @@ defmodule Console.Search do
           h.name, ^query,
           h.long_city, ^query
         ),
+        owner: h.owner,
         packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
         packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
         device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
@@ -482,7 +483,7 @@ defmodule Console.Search do
       device_count: d.device_count,
       device_count_2d: d.device_count_2d
     },
-    where: d.score > @sim_limit,
+    where: d.score > @sim_limit or d.owner == ^query,
     order_by: ^order_by
 
     query |> Repo.paginate(page: page, page_size: page_size)
