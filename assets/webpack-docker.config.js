@@ -94,8 +94,12 @@ module.exports = function(env) {
             test: /[\\/]node_modules[\\/](react|react-dom|react-redux|redux)[\\/]/,
             name: "reactredux"
           },
+          mapboxVendor: {
+            test: /[\\/]node_modules[\\/](mapbox-gl)[\\/]/,
+            name: "mapbox",
+          },
           defaultVendors: {
-            test: /[\\/]node_modules[\\/](!antd)(!chart.js)(!react-flow-renderer)(!@apollo)(!amplitude-js)(!@ant-design)(!@auth0)(!lodash)(!moment)(!sanitize-html)(!react)(!react-dom)(!react-redux)(!redux)[\\/]/,
+            test: /[\\/]node_modules[\\/](!mapbox-gl)(!antd)(!chart.js)(!react-flow-renderer)(!@apollo)(!amplitude-js)(!@ant-design)(!@auth0)(!lodash)(!moment)(!sanitize-html)(!react)(!react-dom)(!react-redux)(!redux)[\\/]/,
             name: "vendor"
           },
         },
