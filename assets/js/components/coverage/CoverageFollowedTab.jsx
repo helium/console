@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Row, Col, Table, Pagination } from "antd";
 const { Text } = Typography;
-import {
-  updateOrganizationHotspot,
-  updateOrganizationHotspots,
-} from "../../actions/coverage";
-import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
+import { updateOrganizationHotspot } from "../../actions/coverage";
+import { getColumns } from "./Constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
-import UserCan from "../common/UserCan";
 
 export default (props) => {
   const [page, setPage] = useState(1);
   const pageSize = 25;
   const [column, setColumn] = useState("packet_count");
   const [order, setOrder] = useState("desc");
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [allSelected, setAllSelected] = useState(false);
 
   const columns = getColumns(
     props,
@@ -85,34 +79,6 @@ export default (props) => {
         </Row>
       </div>
 
-      <UserCan>
-        <div className="hotspot-claim">
-          {selectedRows.length === 0 ||
-          !selectedRows.find(
-            (r) =>
-              props.orgHotspotsMap[r.hotspot_address] &&
-              props.orgHotspotsMap[r.hotspot_address].claimed === true
-          ) ? (
-            <ClaimButton
-              onClick={() => {
-                updateOrganizationHotspots(
-                  selectedRows.map((r) => r.hotspot_address),
-                  true
-                );
-              }}
-            />
-          ) : (
-            <UnclaimButton
-              onClick={() => {
-                updateOrganizationHotspots(
-                  selectedRows.map((r) => r.hotspot_address),
-                  false
-                );
-              }}
-            />
-          )}
-        </div>
-      </UserCan>
       {props.hotspotStats && (
         <div
           style={{ overflowX: "scroll", overflowY: "hidden" }}
@@ -132,15 +98,6 @@ export default (props) => {
             style={{ overflowY: "hidden" }}
             className="no-scroll-bar"
             onChange={handleSort}
-            rowSelection={{
-              onChange: (keys, selectedRows) => {
-                setSelectedRows(selectedRows);
-                setAllSelected(false);
-              },
-              onSelectAll: () => {
-                setAllSelected(!allSelected);
-              },
-            }}
           />
           <div
             style={{
