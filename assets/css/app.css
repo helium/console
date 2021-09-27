@@ -691,8 +691,5 @@ a.version-link {
 }
 
 .hotspot-claim {
-  display: flex;
-  width: 100%;
-  justify-content: end;
   padding: 0 25px 15px;
 }

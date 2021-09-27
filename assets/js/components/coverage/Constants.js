@@ -256,7 +256,7 @@ export const ClaimButton = ({ onClick }) => (
         marginRight: 10,
       }}
     />
-    Claim
+    Claim Selected Hotspots
   </Button>
 );
 
@@ -270,6 +270,6 @@ export const UnclaimButton = ({ onClick }) => (
         marginRight: 10,
       }}
     />
-    Unclaim
+    (Un)claim Selected Hotspots
   </Button>
 );

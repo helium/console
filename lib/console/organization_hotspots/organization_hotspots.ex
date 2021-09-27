@@ -36,8 +36,14 @@ defmodule Console.OrganizationHotspots do
   end
 
   def claim_org_hotspots(hotspot_addresses, organization) do
+    existing_org_hotspots =
+      OrganizationHotspot
+      |> where([oh], oh.hotspot_address in ^hotspot_addresses and oh.organization_id == ^organization.id)
+      |> Repo.all()
+      |> Enum.map(fn h -> h.hotspot_address end)
+    
     new_organization_hotspots = Enum.reduce(hotspot_addresses, [], fn hotspot_address, acc ->
-      if Repo.get_by(OrganizationHotspot, hotspot_address: hotspot_address, organization_id: organization.id) == nil do
+      if hotspot_address not in existing_org_hotspots do
         acc ++ [%{ hotspot_address: hotspot_address, organization_id: organization.id, claimed: true }]
       else
         acc
