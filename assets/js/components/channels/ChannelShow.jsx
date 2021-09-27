@@ -304,15 +304,19 @@ class ChannelShow extends Component {
                       <Text strong>ID: </Text>
                       <Text code>{channel.id}</Text>
                     </Paragraph>
-                    <Paragraph>
-                      <Text strong>Receive Device Joins: </Text>
-                      <Switch
-                        style={{ marginLeft: 2 }}
-                        checked={channel.receive_joins}
-                        onChange={this.handleReceiveJoinsChange}
-                        disabled={!userCan({ role: this.props.currentRole })}
-                      />
-                    </Paragraph>
+                    {
+                      false && (
+                        <Paragraph>
+                          <Text strong>Receive Device Joins: </Text>
+                          <Switch
+                            style={{ marginLeft: 2 }}
+                            checked={channel.receive_joins}
+                            onChange={this.handleReceiveJoinsChange}
+                            disabled={!userCan({ role: this.props.currentRole })}
+                          />
+                        </Paragraph>
+                      )
+                    }
                     <Paragraph>
                       <Text strong># Piped Devices: </Text>
                       <Text>{channel.number_devices}</Text>
