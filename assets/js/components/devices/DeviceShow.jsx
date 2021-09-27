@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
 import OutsideClick from "react-outside-click-handler";
 import EventsDashboard from "../events/EventsDashboard";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import Debug from "../common/Debug";
 import Downlink from "../common/Downlink";
@@ -51,6 +51,9 @@ export default (props) => {
   const dispatch = useDispatch();
   const currentOrgId = useSelector(
     (state) => state.organization.currentOrganizationId
+  );
+  const currentRole = useSelector(
+    (state) => state.organization.currentRole
   );
 
   const [name, setName] = useState("");
@@ -282,17 +285,18 @@ export default (props) => {
             </Text>
             {device.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
           </div>
-          <UserCan>
-            <div className="show-buttons">
-              <Popover
-                content={`This device is currently ${
-                  device.active ? "active" : "inactive"
-                }`}
-                placement="top"
-                overlayStyle={{ width: 140 }}
-              >
-                <Switch checked={device.active} onChange={toggleDeviceActive} />
-              </Popover>
+
+          <div className="show-buttons">
+            <Popover
+              content={`This device is currently ${
+                device.active ? "active" : "inactive"
+              }`}
+              placement="top"
+              overlayStyle={{ width: 140 }}
+            >
+              <Switch checked={device.active} onChange={toggleDeviceActive} disabled={!userCan({ role: currentRole })} />
+            </Popover>
+            <UserCan>
               <Button
                 style={{ borderRadius: 4, marginLeft: 12 }}
                 type="danger"
@@ -304,8 +308,9 @@ export default (props) => {
               >
                 Delete Device
               </Button>
-            </div>
-          </UserCan>
+            </UserCan>
+          </div>
+
         </div>
 
         <Row gutter={20} type="flex">

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import moment from "moment";
 import LabelTag from "../common/LabelTag";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
 import { updateDevice, setDevicesActive } from "../../actions/device";
 import { redForTablesDeleteText } from "../../util/colors";
 import { minWidth } from "../../util/constants";
@@ -36,7 +36,7 @@ const columnKeyNameText = {
   last_connected: "Last Connected",
 };
 
-@connect(null, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 class DeviceIndexTable extends Component {
   state = {
     selectedRows: [],
@@ -227,22 +227,23 @@ class DeviceIndexTable extends Component {
               alignItems: "center",
             }}
           >
+            <Popover
+              content={`This device is currently ${
+                record.active ? "active" : "inactive"
+              }`}
+              placement="top"
+              overlayStyle={{ width: 140 }}
+            >
+              <Switch
+                checked={record.active}
+                onChange={(active, e) => {
+                  e.stopPropagation();
+                  this.toggleDeviceActive(active, record.id);
+                }}
+                disabled={!userCan({ role: this.props.currentRole })}
+              />
+            </Popover>
             <UserCan>
-              <Popover
-                content={`This device is currently ${
-                  record.active ? "active" : "inactive"
-                }`}
-                placement="top"
-                overlayStyle={{ width: 140 }}
-              >
-                <Switch
-                  checked={record.active}
-                  onChange={(active, e) => {
-                    e.stopPropagation();
-                    this.toggleDeviceActive(active, record.id);
-                  }}
-                />
-              </Popover>
               <Tooltip title="Delete Device">
                 <Button
                   type="danger"
@@ -410,6 +411,12 @@ class DeviceIndexTable extends Component {
       </div>
     );
   }
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    currentRole: state.organization.currentRole
+  };
 }
 
 function mapDispatchToProps(dispatch) {

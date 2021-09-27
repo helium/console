@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
 import { displayError } from "../../util/messages";
 import { minWidth } from "../../util/constants";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -310,6 +310,7 @@ class ChannelShow extends Component {
                         style={{ marginLeft: 2 }}
                         checked={channel.receive_joins}
                         onChange={this.handleReceiveJoinsChange}
+                        disabled={!userCan({ role: this.props.currentRole })}
                       />
                     </Paragraph>
                     <Paragraph>
@@ -459,6 +460,7 @@ function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
     currentOrganizationId: state.organization.currentOrganizationId,
+    currentRole: state.organization.currentRole
   };
 }
 

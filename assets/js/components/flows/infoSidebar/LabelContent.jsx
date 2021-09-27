@@ -232,22 +232,23 @@ class LabelContent extends Component {
         key: "action",
         render: (text, record) => (
           <div>
+            <Popover
+              content={`This device is currently ${
+                record.active ? "active" : "inactive"
+              }`}
+              placement="top"
+              overlayStyle={{ width: 140 }}
+            >
+              <Switch
+                checked={record.active}
+                onChange={(active, e) => {
+                  e.stopPropagation();
+                  this.toggleDeviceActive(active, record.id);
+                }}
+                disabled={!userCan({ role: this.props.currentRole })}
+              />
+            </Popover>
             <UserCan>
-              <Popover
-                content={`This device is currently ${
-                  record.active ? "active" : "inactive"
-                }`}
-                placement="top"
-                overlayStyle={{ width: 140 }}
-              >
-                <Switch
-                  checked={record.active}
-                  onChange={(active, e) => {
-                    e.stopPropagation();
-                    this.toggleDeviceActive(active, record.id);
-                  }}
-                />
-              </Popover>
               <Tooltip title="Remove from Label">
                 <Button
                   type="danger"
@@ -519,6 +520,7 @@ class LabelContent extends Component {
 function mapStateToProps(state) {
   return {
     socket: state.apollo.socket,
+    currentRole: state.organization.currentRole
   };
 }
 

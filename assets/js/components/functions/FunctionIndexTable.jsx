@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
 import { updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
@@ -51,28 +51,30 @@ class FunctionIndexTable extends Component {
               alignItems: "center",
             }}
           >
+
+            <Popover
+              content={`This function is currently ${
+                record.active ? "active" : "inactive"
+              }`}
+              placement="top"
+              overlayStyle={{ width: 140 }}
+            >
+              <Switch
+                checked={record.active}
+                onChange={(value, e) => {
+                  e.stopPropagation();
+                  this.props.updateFunction(record.id, {
+                    active: !record.active,
+                  });
+                  analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
+                    id: record.id,
+                    active: !record.active,
+                  });
+                }}
+                disabled={!userCan({ role: this.props.currentRole })}
+              />
+            </Popover>
             <UserCan>
-              <Popover
-                content={`This function is currently ${
-                  record.active ? "active" : "inactive"
-                }`}
-                placement="top"
-                overlayStyle={{ width: 140 }}
-              >
-                <Switch
-                  checked={record.active}
-                  onChange={(value, e) => {
-                    e.stopPropagation();
-                    this.props.updateFunction(record.id, {
-                      active: !record.active,
-                    });
-                    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
-                      id: record.id,
-                      active: !record.active,
-                    });
-                  }}
-                />
-              </Popover>
               <Tooltip title="Delete Function">
                 <Button
                   type="danger"
@@ -143,8 +145,14 @@ class FunctionIndexTable extends Component {
   }
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    currentRole: state.organization.currentRole
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ updateFunction }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(FunctionIndexTable);
+export default connect(mapStateToProps, mapDispatchToProps)(FunctionIndexTable);
