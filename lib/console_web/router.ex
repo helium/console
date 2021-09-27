@@ -92,7 +92,8 @@ defmodule ConsoleWeb.Router do
     post "/clear_downlink_queue", DownlinkController, :clear_downlink_queue
     get "/downlink_queue", DownlinkController, :fetch_downlink_queue
 
-    post "/organization_hotspots", OrganizationHotspotController, :update_organization_hotspot
+    post "/organization_hotspot", OrganizationHotspotController, :update_organization_hotspot
+    post "/organization_hotspots", OrganizationHotspotController, :update_organization_hotspots
   end
 
   scope "/api/router", ConsoleWeb.Router do

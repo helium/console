@@ -3,10 +3,15 @@ import { Typography, Row, Col, Button } from "antd";
 const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
-import { getColumns } from "./Constants";
-import { updateOrganizationHotspot } from "../../actions/coverage";
+import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
+import {
+  updateOrganizationHotspot,
+  updateOrganizationHotspots,
+} from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
 import debounce from "lodash/debounce";
+import UserCan from "../common/UserCan";
+
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 const RECENT_HOTSPOT_SEARCH_TERMS = "recentHotspotSearchTerms";
@@ -26,6 +31,8 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [term, setTerm] = useState("");
   const [storedSearchTerms, setStoredSearchTerms] = useState(recentSearchTerms);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [allSelected, setAllSelected] = useState(false);
 
   const columns = getColumns(
     props,
@@ -116,7 +123,6 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
             background: "#F5F7F9",
             borderRadius: 4,
             padding: "4px 16px 4px 16px",
-            marginBottom: 20,
           }}
         >
           <SearchOutlined style={{ color: "#8B9FC1", fontSize: 16 }} />
@@ -149,7 +155,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
         </div>
 
         {searchTerm.length === 0 && (
-          <Row gutter={24}>
+          <Row gutter={24} style={{ marginTop: 20 }}>
             <Col sm={12}>
               <Text style={{ fontSize: 16, fontWeight: 600 }}>
                 Recent Searches
@@ -209,18 +215,57 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
         <Text>Data failed to load, please reload the page and try again</Text>
       )}
       {searchTerm.length !== 0 && (
-        <CoverageSearchTable
-          hotspots={
-            data
-              ? data.searchHotspots
-              : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
-          }
-          handleChangePageSize={handleChangePageSize}
-          handleSortChange={handleSortChange}
-          handleChangePage={handleChangePage}
-          columns={columns}
-          loading={loading}
-        />
+        <React.Fragment>
+          <UserCan>
+            <div className="hotspot-claim">
+              {selectedRows.length === 0 ||
+              !selectedRows.find(
+                (r) =>
+                  props.orgHotspotsMap[r.hotspot_address] &&
+                  props.orgHotspotsMap[r.hotspot_address].claimed === true
+              ) ? (
+                <ClaimButton
+                  onClick={() => {
+                    updateOrganizationHotspots(
+                      selectedRows.map((r) => r.hotspot_address),
+                      true
+                    );
+                  }}
+                />
+              ) : (
+                <UnclaimButton
+                  onClick={() => {
+                    updateOrganizationHotspots(
+                      selectedRows.map((r) => r.hotspot_address),
+                      false
+                    );
+                  }}
+                />
+              )}
+            </div>
+          </UserCan>
+          <CoverageSearchTable
+            hotspots={
+              data
+                ? data.searchHotspots
+                : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
+            }
+            handleChangePageSize={handleChangePageSize}
+            handleSortChange={handleSortChange}
+            handleChangePage={handleChangePage}
+            columns={columns}
+            loading={loading}
+            rowSelection={{
+              onChange: (keys, selectedRows) => {
+                setSelectedRows(selectedRows);
+                setAllSelected(false);
+              },
+              onSelectAll: () => {
+                setAllSelected(!allSelected);
+              },
+            }}
+          />
+        </React.Fragment>
       )}
     </React.Fragment>
   );

@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Typography, Row, Col, Pagination } from "antd";
-import { minWidth } from "../../util/constants";
-import { updateOrganizationHotspot } from "../../actions/coverage";
-import { getColumns } from "./Constants";
+import {
+  updateOrganizationHotspot,
+  updateOrganizationHotspots,
+} from "../../actions/coverage";
+import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+import UserCan from "../common/UserCan";
 
 export default (props) => {
   const [page, setPage] = useState(1);
   const pageSize = 25;
   const [column, setColumn] = useState("packet_count");
   const [order, setOrder] = useState("desc");
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [allSelected, setAllSelected] = useState(false);
 
   const columns = getColumns(
     props,
@@ -131,6 +136,34 @@ export default (props) => {
         </Row>
       </div>
 
+      <UserCan>
+        <div className="hotspot-claim">
+          {selectedRows.length === 0 ||
+          !selectedRows.find(
+            (r) =>
+              props.orgHotspotsMap[r.hotspot_address] &&
+              props.orgHotspotsMap[r.hotspot_address].claimed === true
+          ) ? (
+            <ClaimButton
+              onClick={() => {
+                updateOrganizationHotspots(
+                  selectedRows.map((r) => r.hotspot_address),
+                  true
+                );
+              }}
+            />
+          ) : (
+            <UnclaimButton
+              onClick={() => {
+                updateOrganizationHotspots(
+                  selectedRows.map((r) => r.hotspot_address),
+                  false
+                );
+              }}
+            />
+          )}
+        </div>
+      </UserCan>
       {props.hotspotStats && (
         <div
           style={{ overflowX: "scroll", overflowY: "hidden" }}
@@ -146,6 +179,15 @@ export default (props) => {
             style={{ overflowY: "hidden" }}
             className="no-scroll-bar"
             onChange={handleSort}
+            rowSelection={{
+              onChange: (keys, selectedRows) => {
+                setSelectedRows(selectedRows);
+                setAllSelected(false);
+              },
+              onSelectAll: () => {
+                setAllSelected(!allSelected);
+              },
+            }}
           />
           <div
             style={{

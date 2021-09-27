@@ -689,3 +689,7 @@ a.version-link {
   border-left-color: black;
   padding-right: 10px;
 }
+
+.hotspot-claim {
+  padding: 0 25px 15px;
+}
