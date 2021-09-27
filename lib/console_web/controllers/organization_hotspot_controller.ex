@@ -27,36 +27,14 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         end
       _ ->
         if claimed do
-          case org_hotspot.claimed do
-            true ->
-              {:error, :bad_request, "Hotspot has already been claimed, please refresh the page and check again"}
-            false ->
-              with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ claimed: true }) do
-                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
-
-                conn
-                |> put_resp_header("message", "Hotspot claimed successfully")
-                |> send_resp(:ok, "")
-              end
-          end
+          {:error, :bad_request, "Hotspot has already been claimed, please refresh the page and check again"}
         else
-          case org_hotspot.alias do
-            nil ->
-              with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
-                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
+            ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
 
-                conn
-                |> put_resp_header("message", "Hotspot removed from My Hotspots tab successfully")
-                |> send_resp(:ok, "")
-              end
-            _ ->
-              with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ claimed: false }) do
-                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
-
-                conn
-                |> put_resp_header("message", "Hotspot removed from My Hotspots tab successfully")
-                |> send_resp(:ok, "")
-              end
+            conn
+            |> put_resp_header("message", "Hotspot removed from My Hotspots tab successfully")
+            |> send_resp(:ok, "")
           end
         end
     end
@@ -64,7 +42,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
 
   def update_organization_hotspot(conn, params = %{"hotspot_address" => hotspot_address, "alias" => alias}) do
     current_organization = conn.assigns.current_organization
-    attrs = Map.merge(params, %{"organization_id" => current_organization.id})
+    attrs = Map.merge(params, %{"organization_id" => current_organization.id, "claimed" => true})
 
     org_hotspot = OrganizationHotspots.get_org_hotspot(hotspot_address, current_organization)
 
@@ -83,23 +61,12 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         end
       _ ->
         if alias == "" do
-          case org_hotspot.claimed do
-            true ->
-              with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ "alias" => nil }) do
-                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ "alias" => nil }) do
+            ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
 
-                conn
-                |> put_resp_header("message", "Hotspot Alias removed successfully")
-                |> send_resp(:ok, "")
-              end
-            false ->
-              with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
-                ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
-
-                conn
-                |> put_resp_header("message", "Hotspot Alias removed successfully")
-                |> send_resp(:ok, "")
-              end
+            conn
+            |> put_resp_header("message", "Hotspot Alias removed successfully")
+            |> send_resp(:ok, "")
           end
         else
           with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ "alias" => alias }) do
