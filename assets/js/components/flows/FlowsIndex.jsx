@@ -51,7 +51,7 @@ class FlowsIndex extends Component {
             .subtract(1, "days")
             .isBefore(moment.utc(d.last_connected).local())
       );
-      if (!labelHasStaleDevices) {
+      if (l.devices.length > 0 && !labelHasStaleDevices) {
         activeLabels[l.id] = l;
       }
     });
