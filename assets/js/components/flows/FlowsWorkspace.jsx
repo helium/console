@@ -319,7 +319,11 @@ export default ({
           )}
         <ReactFlow
           elements={
-            hasChanges ? Object.values(elementsMap) : Object.values(latestElems)
+            hasChanges
+              ? Object.values(elementsMap) !== Object.values(latestElems)
+                ? Object.values(latestElems)
+                : Object.values(elementsMap)
+              : Object.values(latestElems)
           }
           nodeTypes={nodeTypes}
           onLoad={onLoad}
