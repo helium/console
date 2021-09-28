@@ -146,13 +146,13 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
-            to={"/adr"}
+            to={"/config_profiles"}
             activeClassName="is-active"
             className="menu-link"
           >
-            ADR
+            Profiles
           </NavLink>
-          {history.location.pathname === "/adr" && (
+          {history.location.pathname === "/config_profiles" && (
             <img
               draggable="false"
               src={Caret}
@@ -170,23 +170,6 @@ class NavDrawer extends Component {
             Multiple Packets
           </NavLink>
           {history.location.pathname === "/multi_buys" && (
-            <img
-              draggable="false"
-              src={Caret}
-              style={{ right: -16, position: "absolute", top: 8, height: 12 }}
-            />
-          )}
-        </div>
-        <div style={{ marginBottom: 30, position: "relative" }}>
-          <NavLink
-            draggable="false"
-            to={"/cf_list"}
-            activeClassName="is-active"
-            className="menu-link"
-          >
-            CF List
-          </NavLink>
-          {history.location.pathname === "/cf_list" && (
             <img
               draggable="false"
               src={Caret}
