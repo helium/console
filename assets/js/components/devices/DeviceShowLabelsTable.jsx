@@ -175,7 +175,7 @@ export default connect(
   null
 )(
   withGql(DeviceShowLabelsTable, PAGINATED_LABELS_BY_DEVICE, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: {
       page: 1,
       pageSize: 10,
