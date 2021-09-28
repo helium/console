@@ -284,6 +284,12 @@ export default ({
     setShowInfoSidebar(!showInfoSidebar);
   };
 
+  console.log({
+    hasChanges,
+    elementsMap: Object.values(elementsMap),
+    latestElems: Object.values(latestElems),
+  });
+
   return (
     <Fragment>
       <div
@@ -319,7 +325,11 @@ export default ({
           )}
         <ReactFlow
           elements={
-            hasChanges ? Object.values(elementsMap) : Object.values(latestElems)
+            hasChanges
+              ? Object.values(elementsMap) !== Object.values(latestElems)
+                ? Object.values(latestElems)
+                : Object.values(elementsMap)
+              : Object.values(latestElems)
           }
           nodeTypes={nodeTypes}
           onLoad={onLoad}
