@@ -25,22 +25,33 @@ class DevicesAddLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { labelName, labelId, applyToAll } = this.state;
+    const { onLabelSidebarDevicesUpdate } = this.props;
     const deviceIds = applyToAll
       ? []
       : this.props.devicesToUpdate.map((d) => d.id);
 
     if (labelId) {
-      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-        devices: applyToAll ? "all" : deviceIds,
-        label: labelId,
-      });
+      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId)
+      .then(response => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+            devices: applyToAll ? "all" : deviceIds,
+            label: labelId,
+          });
+
+          if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + labelId, 1)
+        }
+      })
     } else if (labelName) {
-      this.props.addDevicesToNewLabel(!applyToAll && deviceIds, labelName);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-        devices: applyToAll ? "all" : deviceIds,
-        label_name: labelName,
-      });
+      this.props.addDevicesToNewLabel(!applyToAll && deviceIds, labelName)
+      .then(response => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+            devices: applyToAll ? "all" : deviceIds,
+            label_name: labelName,
+          });
+        }
+      })
     }
     this.setState({ applyToAll: false });
 

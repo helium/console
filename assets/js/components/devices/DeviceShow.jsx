@@ -552,7 +552,6 @@ export default (props) => {
 
         <DeviceShowLabelsTable
           deviceId={deviceId}
-          history={props.history}
           openRemoveLabelFromDeviceModal={openDeviceRemoveLabelModal}
           openDevicesAddLabelModal={openDevicesAddLabelModal}
         />
