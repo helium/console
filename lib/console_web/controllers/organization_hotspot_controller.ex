@@ -80,21 +80,21 @@ defmodule ConsoleWeb.OrganizationHotspotController do
     end
   end
 
-  def update_organization_hotspots(conn, params = %{"hotspot_addresses" => hotspot_addresses, "claimed" => claimed}) do
+  def update_organization_hotspots(conn, %{"hotspot_addresses" => hotspot_addresses, "claimed" => claimed}) do
     current_organization = conn.assigns.current_organization
 
     if length(hotspot_addresses) == 0 do
       {:error, :bad_request, "Please select at least one hotspot"}
     else
       if claimed do
-        with {:ok, count, _organization_hotspots} <- OrganizationHotspots.claim_org_hotspots(hotspot_addresses, current_organization) do
+        with {:ok, _count, _organization_hotspots} <- OrganizationHotspots.claim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
           conn
             |> put_resp_header("message", "Hotspots claimed successfully")
             |> send_resp(:ok, "")
         end
       else
-        with {count, nil} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
+        with {_count, nil} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
           conn
             |> put_resp_header("message", "Hotspots removed from My Hotspots tab successfully")
