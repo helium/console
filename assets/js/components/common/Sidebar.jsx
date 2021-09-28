@@ -30,16 +30,16 @@ class Sidebar extends Component {
         topPercentage = '50';
         break;
       default:
-        topPercentage = '56';
+        topPercentage = '50';
     }
     return (
       <div
         style={{
           background: debugSidebarBackgroundColor,
-          position: 'absolute',
-          top: from === 'hotspotShow' ? 0 : 55,
-          width: show ? (from === 'hotspotShow' ? 550 : 650) : 0,
-          height: from === 'hotspotShow' ? '100%' : 'calc(100vh - 55px)',
+          position: 'fixed',
+          top: 55,
+          width: show ? 650 : 0,
+          height: 'calc(100vh - 55px)',
           right: 0,
           zIndex: show ? 10 : 1,
           padding: 0,
@@ -53,7 +53,7 @@ class Sidebar extends Component {
               left: '-60px',
               width: 50,
               height: 50,
-              top: from === 'hotspotShow' ? "200px" : `calc(${topPercentage}% - 25px)`,
+              top: `calc(${topPercentage}% - 25px)`,
               backgroundColor: disabled ? 'grey' : iconBackground,
               borderRadius: '9999px',
               cursor: disabled ? 'not-allowed' : 'pointer',
