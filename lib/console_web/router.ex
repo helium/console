@@ -66,6 +66,7 @@ defmodule ConsoleWeb.Router do
     delete "/mfa_enrollments", Auth0Controller, :disable_mfa
     post "/devices_labels", LabelController, :add_devices_to_label
     post "/devices_labels/delete", LabelController, :delete_devices_from_labels
+    resources "/config_profiles", ConfigProfileController, only: [:create, :delete, :update]
 
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]

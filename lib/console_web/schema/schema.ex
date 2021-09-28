@@ -37,6 +37,7 @@ defmodule ConsoleWeb.Schema do
     field :cf_list_enabled, :boolean
     field :in_xor_filter, :boolean
     field :updated_at, :naive_datetime
+    field :config_profile_id, :id
   end
 
   paginated object :hotspot do
@@ -135,6 +136,13 @@ defmodule ConsoleWeb.Schema do
     field :value, :integer
   end
 
+  object :config_profile do
+    field :id, :id
+    field :name, :string
+    field :adr_allowed, :boolean
+    field :cf_list_enabled, :boolean
+  end
+
   paginated object :label do
     field :id, :id
     field :name, :string
@@ -147,6 +155,7 @@ defmodule ConsoleWeb.Schema do
     field :alerts, list_of(:alert)
     field :cf_list_enabled, :boolean
     field :updated_at, :naive_datetime
+    field :config_profile_id, :id
   end
 
   paginated object :channel do
@@ -417,6 +426,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.MultiBuys.MultiBuyResolver.all/2
     end
 
+    field :all_config_profiles, list_of(:config_profile) do
+      resolve &Console.ConfigProfiles.ConfigProfileResolver.all/2
+    end
+
     field :alerts_per_type, list_of(:alert) do
       arg :type, non_null(:string)
       resolve &Console.Alerts.AlertResolver.get_per_type/2
@@ -533,6 +546,12 @@ defmodule ConsoleWeb.Schema do
     field :multi_buy, :multi_buy do
       arg :id, non_null(:id)
       resolve &Console.MultiBuys.MultiBuyResolver.find/2
+    end
+
+     @desc "Get a single config_profile"
+    field :config_profile, :config_profile do
+      arg :id, non_null(:id)
+      resolve &Console.ConfigProfiles.ConfigProfileResolver.find/2
     end
 
     paginated field :dc_purchases, :paginated_dc_purchases do
