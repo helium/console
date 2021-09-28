@@ -89,6 +89,9 @@ const createApolloClient = (link) => (
       typePolicies: {
         Query: {
           fields: {
+            organization: {
+              merge: false
+            },
             allOrganizations: {
               merge: false
             },

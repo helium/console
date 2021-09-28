@@ -52,8 +52,7 @@ export const addDevicesToLabel = (devices, toLabel) => {
     if (devices) {
       Object.assign(params, { devices });
     }
-    rest.post(`/api/devices_labels`, params)
-    .then(response => {})
+    return rest.post(`/api/devices_labels`, params)
   }
 }
 
@@ -64,8 +63,7 @@ export const addDevicesToNewLabel = (devices, labelName) => {
     if (devices) {
       Object.assign(params, { devices });
     }
-    rest.post(`/api/devices_labels`, params)
-    .then(response => {})
+    return rest.post(`/api/devices_labels`, params)
   }
 }
 
@@ -80,11 +78,10 @@ export const removeDevicesFromLabel = (devices, label_id) => {
 
 export const removeLabelsFromDevice = (labels, device_id) => {
   return (dispatch) => {
-    rest.post(`/api/devices_labels/delete`, {
+    return rest.post(`/api/devices_labels/delete`, {
       labels: labels.map(l => l.id),
       device_id,
     })
-    .then(response => {})
   }
 }
 

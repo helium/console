@@ -10,9 +10,18 @@ import { bindActionCreators } from "redux";
 class DeviceRemoveLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { onClose, removeLabelsFromDevice, labels, device } = this.props;
+    const { onClose, removeLabelsFromDevice, labels, device, onLabelSidebarDevicesUpdate } = this.props;
 
-    removeLabelsFromDevice(labels, device.id);
+    removeLabelsFromDevice(labels, device.id)
+    .then(response => {
+      if (response.status === 204) {
+        analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {
+          id: device.id,
+          labels: labels.map((l) => l.id),
+        });
+        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + labels[0].id, -1)
+      }
+    })
     analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {
       labels: labels.map((l) => l.id),
       device: device.id,

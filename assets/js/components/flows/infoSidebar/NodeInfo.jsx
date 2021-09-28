@@ -63,6 +63,7 @@ export default ({
           <DeviceContent
             id={id}
             type={type}
+            onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
             onAdrUpdate={onAdrUpdate}
             onMultiBuyUpdate={onMultiBuyUpdate}
             onAlertUpdate={onAlertUpdate}
