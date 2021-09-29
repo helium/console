@@ -6,6 +6,7 @@ defmodule Console.Labels.Label do
   alias Console.Devices.Device
   alias Console.Labels.DevicesLabels
   alias Console.MultiBuys.MultiBuy
+  alias Console.ConfigProfiles.ConfigProfile
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -18,6 +19,7 @@ defmodule Console.Labels.Label do
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
+    belongs_to :config_profile, ConfigProfile
     many_to_many :devices, Device, join_through: DevicesLabels, on_delete: :delete_all
     timestamps()
   end
