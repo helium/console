@@ -1,6 +1,7 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Row, Col, Input, Typography, Switch } from "antd";
+import { useQuery } from "@apollo/client";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import MultiBuyIcon from "../../../img/multi_buy/multi-buy-index-add-icon.svg";
@@ -11,6 +12,11 @@ import UserCan, { userCan } from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
+import { CONFIG_PROFILE_SHOW } from "../../graphql/configProfiles";
+import {
+  createConfigProfile,
+  updateConfigProfile,
+} from "../../actions/configProfile";
 
 const adrText1 =
   "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. When ADR is disabled the channel mask is still transmitted via ADR command, but power output and data rates are not impacted. ";
@@ -29,13 +35,55 @@ const cfListText2 =
 const cfListText3 =
   "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command.";
 
-export default ({ show, id }) => {
+export default ({ show, id, openDeleteConfigProfileModal }) => {
   const history = useHistory();
   const currentRole = useSelector((state) => state.organization.currentRole);
   const [name, setName] = useState("");
+  const [adrAllowed, setAdrAllowed] = useState(false);
+  const [cfListEnabled, setCfListEnabled] = useState(false);
+  const [configProfileData, setConfigProfileData] = useState({});
   const dispatch = useDispatch();
-  const error = false; // TODO remove
-  const loading = false; // TODO remove
+
+  const { loading, error, data, refetch } = useQuery(CONFIG_PROFILE_SHOW, {
+    variables: { id },
+    skip: !id,
+  });
+
+  const socket = useSelector((state) => state.apollo.socket);
+  useEffect(() => {
+    if (show) {
+      const configProfileShowChannel = socket.channel(
+        "graphql:config_profile_show",
+        {}
+      );
+
+      // executed when mounted
+      configProfileShowChannel.join();
+      configProfileShowChannel.on(
+        `graphql:config_profile_show:${id}:config_profile_update`,
+        (_message) => {
+          refetch();
+        }
+      );
+
+      // executed when unmounted
+      return () => {
+        configProfileShowChannel.leave();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!loading && !error && data) {
+      setConfigProfileData({
+        name: data.configProfile.name,
+        adr_allowed: data.configProfile.adr_allowed,
+        cf_list_enabled: data.configProfile.cf_list_enabled,
+      });
+      setAdrAllowed(data.configProfile.adr_allowed);
+      setCfListEnabled(data.configProfile.cf_list_enabled);
+    }
+  }, [data]);
 
   return (
     <div style={{ padding: "30px 30px 20px 30px" }}>
@@ -52,10 +100,10 @@ export default ({ show, id }) => {
               size="middle"
               type="danger"
               style={{ borderRadius: 5, marginRight: 50 }}
-              onClick={() => console.log("deleting")}
+              onClick={() => openDeleteConfigProfileModal(data.configProfile)}
               icon={<DeleteOutlined />}
             >
-              Delete Config Profile
+              Delete Profile
             </Button>
           </div>
         </UserCan>
@@ -64,11 +112,15 @@ export default ({ show, id }) => {
         <Col span={10} style={{ padding: "70px 80px" }}>
           <img src={MultiBuyIcon} />
           <h1 style={{ marginTop: 10, fontSize: "23px", fontWeight: 600 }}>
-            Config Profiles
+            Profiles
           </h1>
           <div>
             <p style={{ fontSize: "16px" }}>
-              You can configure different profiles for devices and labels.
+              Configuration Profiles can be added to device/label nodes.
+              Profiles assigned to labels take priority over profiles assigned
+              to individual devices. For example, if a device has Profile A, and
+              a label has Profile B, if that label is applied to the device then
+              Profile B overrides Profile A.
             </p>
             <p>
               <a
@@ -76,7 +128,7 @@ export default ({ show, id }) => {
                 href="https://docs.helium.com/use-the-network/console/config-profiles"
                 target="_blank"
               >
-                Learn more about Config Profiles
+                Learn more about Profiles
               </a>
             </p>
           </div>
@@ -91,16 +143,14 @@ export default ({ show, id }) => {
           {!error && !loading && (
             <Fragment>
               <Text style={{ fontSize: "16px" }} strong>
-                Config Profile Name
+                Profile Name
               </Text>
               <Input
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
                 value={name}
-                placeholder={
-                  show ? multiBuyData.name : "e.g. My Config Profile"
-                }
+                placeholder={show ? configProfileData.name : "e.g. My Profile"}
                 suffix={`${name.length}/25`}
                 maxLength={25}
                 disabled={!userCan({ role: currentRole })}
@@ -108,17 +158,17 @@ export default ({ show, id }) => {
 
               <div
                 style={{
-                  margin: "20px 0",
+                  margin: "25px 0",
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
                 }}
               >
                 <Switch
-                  onChange={() => {
-                    console.log("updating");
+                  onChange={(checked) => {
+                    setAdrAllowed(checked);
                   }}
-                  checked={false} // TODO fix
+                  checked={adrAllowed}
                   style={{ marginRight: 8 }}
                   disabled={!userCan({ role: currentRole })}
                 />
@@ -147,10 +197,10 @@ export default ({ show, id }) => {
                 }}
               >
                 <Switch
-                  onChange={() => {
-                    console.log("updating");
+                  onChange={(checked) => {
+                    setCfListEnabled(checked);
                   }}
-                  checked={false} // TODO fix
+                  checked={cfListEnabled}
                   style={{ marginRight: 8 }}
                   disabled={!userCan({ role: currentRole })}
                 />
@@ -182,21 +232,41 @@ export default ({ show, id }) => {
                     backgroundColor: "#2C79EE",
                     borderRadius: 50,
                     text: "white",
-                    marginTop: 40,
+                    marginTop: 15,
                   }}
                   onClick={() => {
                     if (show) {
                       analyticsLogger.logEvent("ACTION_UPDATE_CONFIG_PROFILE", {
                         id,
+                        adrAllowed,
+                        cfListEnabled,
                       });
+                      dispatch(
+                        updateConfigProfile(id, {
+                          ...(name && { name }),
+                          adr_allowed: adrAllowed,
+                          cf_list_enabled: cfListEnabled,
+                        })
+                      );
                     } else {
                       analyticsLogger.logEvent("ACTION_CREATE_CONFIG_PROFILE", {
                         id,
+                        adrAllowed,
+                        cfListEnabled,
+                      });
+                      dispatch(
+                        createConfigProfile({
+                          name,
+                          adr_allowed: adrAllowed,
+                          cf_list_enabled: cfListEnabled,
+                        })
+                      ).then(() => {
+                        history.push("/config_profiles");
                       });
                     }
                   }}
                 >
-                  {show ? "Update" : "Create"} Config Profile
+                  {show ? "Update" : "Create"} Profile
                 </Button>
               </UserCan>
             </Fragment>

@@ -19,7 +19,7 @@ defmodule ConsoleWeb.ConfigProfileController do
 
       conn
       |> put_status(:created)
-      |> put_resp_header("message",  "Config Profile #{config_profile.name} added successfully")
+      |> put_resp_header("message",  "Profile #{config_profile.name} added successfully")
       |> render("show.json", config_profile: config_profile)
     end
   end
@@ -35,7 +35,7 @@ defmodule ConsoleWeb.ConfigProfileController do
       broadcast_router_update_devices(affected_device_ids)
 
       conn
-      |> put_resp_header("message", "Config Profile #{config_profile.name} deleted successfully")
+      |> put_resp_header("message", "Profile #{config_profile.name} deleted successfully")
       |> send_resp(:no_content, "")
     end
   end
@@ -53,8 +53,8 @@ defmodule ConsoleWeb.ConfigProfileController do
 
       msg =
         cond do
-          config_profile.name == name -> "Config profile updated successfully"
-          true -> "Config Profile #{name} was successfully updated to #{config_profile.name}"
+          config_profile.name == name -> "Profile updated successfully"
+          true -> "Profile #{name} was successfully updated to #{config_profile.name}"
         end
 
       conn

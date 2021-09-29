@@ -135,7 +135,7 @@ class NavDrawer extends Component {
           >
             Alerts
           </NavLink>
-          {history.location.pathname === "/alerts" && (
+          {history.location.pathname.indexOf("/alerts") !== -1 && (
             <img
               draggable="false"
               src={Caret}
@@ -152,7 +152,7 @@ class NavDrawer extends Component {
           >
             Profiles
           </NavLink>
-          {history.location.pathname === "/config_profiles" && (
+          {history.location.pathname.indexOf("/config_profiles") !== -1 && (
             <img
               draggable="false"
               src={Caret}
@@ -169,7 +169,7 @@ class NavDrawer extends Component {
           >
             Multiple Packets
           </NavLink>
-          {history.location.pathname === "/multi_buys" && (
+          {history.location.pathname.indexOf("/multi_buys") !== -1 && (
             <img
               draggable="false"
               src={Caret}

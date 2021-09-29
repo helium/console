@@ -13,16 +13,30 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
 import ConfigProfileIndexTable from "./ConfigProfileIndexTable";
+import DeleteConfigProfileModal from "./DeleteConfigProfileModal";
 
 export default (props) => {
   const history = useHistory();
 
   const [showPage, setShowPage] = useState("allConfigProfiles");
+  const [showDeleteConfigProfileModal, setShowDeleteConfigProfileModal] =
+    useState(false);
+  const [selectedConfigProfile, setSelectedConfigProfile] = useState(null);
 
   const { loading, error, data, refetch } = useQuery(ALL_CONFIG_PROFILES, {
     fetchPolicy: "cache-first",
   });
   const configProfileData = data ? data.allConfigProfiles : [];
+
+  const openDeleteConfigProfileModal = (config_profile) => {
+    setShowDeleteConfigProfileModal(true);
+    setSelectedConfigProfile(config_profile);
+  };
+
+  const closeDeleteConfigProfileModal = () => {
+    setShowDeleteConfigProfileModal(false);
+    setSelectedConfigProfile(null);
+  };
 
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
@@ -107,7 +121,11 @@ export default (props) => {
           </div>
         )}
         {showPage === "allConfigProfiles" && !loading && (
-          <ConfigProfileIndexTable data={configProfileData} history={history} />
+          <ConfigProfileIndexTable
+            data={configProfileData}
+            history={history}
+            openDeleteConfigProfileModal={openDeleteConfigProfileModal}
+          />
         )}
         {showPage === "new" && (
           <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
@@ -116,7 +134,24 @@ export default (props) => {
             </div>
           </div>
         )}
+        {props.match.params.id && showPage === "showConfigProfile" && (
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+            <div style={{ minWidth }}>
+              <ConfigProfileForm
+                id={props.match.params.id}
+                show
+                openDeleteConfigProfileModal={openDeleteConfigProfileModal}
+              />
+            </div>
+          </div>
+        )}
       </TableHeader>
+
+      <DeleteConfigProfileModal
+        open={showDeleteConfigProfileModal}
+        selected={selectedConfigProfile}
+        close={closeDeleteConfigProfileModal}
+      />
     </DashboardLayout>
   );
 };

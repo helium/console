@@ -1,12 +1,16 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { Table, Button, Tooltip } from "antd";
+import { Table, Button, Tooltip, Switch } from "antd";
 import Text from "antd/lib/typography/Text";
 import { minWidth } from "../../util/constants";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
+import { updateConfigProfile } from "../../actions/configProfile";
 
 export default (props) => {
+  const dispatch = useDispatch();
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const columns = [
     {
       title: "Name",
@@ -18,15 +22,37 @@ export default (props) => {
     {
       title: "ADR Allowed",
       dataIndex: "adr_allowed",
+      render: (data, record) => (
+        <Switch
+          onChange={(checked) => {
+            dispatch(updateConfigProfile(record.id, { adr_allowed: checked }));
+          }}
+          checked={record.adr_allowed}
+          style={{ marginRight: 8 }}
+          disabled={!userCan({ role: currentRole })}
+        />
+      ),
     },
     {
       title: "CF List Enabled",
       dataIndex: "cf_list_enabled",
+      render: (data, record) => (
+        <Switch
+          onChange={(checked) => {
+            dispatch(
+              updateConfigProfile(record.id, { cf_list_enabled: checked })
+            );
+          }}
+          checked={record.cf_list_enabled}
+          style={{ marginRight: 8 }}
+          disabled={!userCan({ role: currentRole })}
+        />
+      ),
     },
     {
       title: "",
       dataIndex: "",
-      render: () => (
+      render: (_text, record) => (
         <UserCan>
           <div
             style={{
@@ -44,7 +70,7 @@ export default (props) => {
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  // props.openDeleteMultiplePacketModal(record);
+                  props.openDeleteConfigProfileModal(record);
                 }}
               />
             </Tooltip>
@@ -57,9 +83,7 @@ export default (props) => {
   return (
     <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
       <div style={{ padding: "30px 20px 20px 30px", minWidth }}>
-        <Text style={{ fontSize: 22, fontWeight: 600 }}>
-          All Config Profiles
-        </Text>
+        <Text style={{ fontSize: 22, fontWeight: 600 }}>All Profiles</Text>
       </div>
       <Table
         dataSource={props.data}

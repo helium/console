@@ -35,7 +35,7 @@ const ConfigProfileButton = ({ id, name, selected }) => (
             {name}
           </Text>
         </div>
-        <Text style={{ color: "white", fontSize: 12 }}>Config Profile</Text>
+        <Text style={{ color: "white", fontSize: 12 }}>Profile</Text>
         {selected && <NavPointTriangle />}
       </div>
     </Link>
