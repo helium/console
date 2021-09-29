@@ -27,6 +27,7 @@ export default (props) => {
   const [name, setName] = useState("");
   const [showAliasInput, toggleAliasInput] = useState(false);
   const [showDebugSidebar, setShowDebugSidebar] = useState(false);
+  const [activeTab, setActiveTab] = useState("stats")
 
   useEffect(() => {
     getHotspot({
@@ -164,12 +165,16 @@ export default (props) => {
       </div>
 
       <Tabs
-        defaultActiveKey="stats"
+        activeKey={activeTab}
         size="large"
         tabBarStyle={{
           paddingLeft: 20,
           paddingRight: 20,
           height: 40,
+        }}
+        onTabClick={tab => {
+          if (tab !== 'debug') setActiveTab(tab)
+          else handleToggleDebug()
         }}
       >
         <TabPane tab="Statistics" key="stats">
@@ -178,6 +183,7 @@ export default (props) => {
         <TabPane tab="My Devices Heard" key="devicesTable">
           <CoverageHotspotShowDevicesTab hotspot={hotspot}/>
         </TabPane>
+        <TabPane tab="Debug" key="debug" />
       </Tabs>
 
       <Sidebar
@@ -188,7 +194,7 @@ export default (props) => {
         from="hotspotShow"
         message="Access Debug mode to view hotspot packet transfer"
       >
-        <Debug hotspotAddress={hotspot.hotspot_address} entryWidth={500} />
+        <Debug hotspotAddress={hotspot.hotspot_address} entryWidth={600} />
       </Sidebar>
     </Fragment>
   );
