@@ -17,7 +17,6 @@ class LabelAddDeviceModal extends Component {
 
   handleSubmit = () => {
     const { checkedDevices, checkedLabels } = this.state;
-    const { onLabelSidebarDevicesUpdate } = this.props;
 
     this.props.addDevicesToLabels(
       checkedDevices,
@@ -35,8 +34,6 @@ class LabelAddDeviceModal extends Component {
           checkedDevices: {},
           checkedLabels: {},
         })
-        
-        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + this.props.label.id, response.data.devicesAdded)
       }
     })
 

@@ -334,7 +334,6 @@ class ChannelContent extends Component {
             <AlertNodeSettings
               type="integration"
               nodeId={channel.id}
-              onAlertUpdate={this.props.onAlertUpdate}
             />
           </TabPane>
         </Tabs>

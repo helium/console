@@ -10,7 +10,7 @@ import { bindActionCreators } from "redux";
 class DeviceRemoveLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { onClose, removeLabelsFromDevice, labels, device, onLabelSidebarDevicesUpdate } = this.props;
+    const { onClose, removeLabelsFromDevice, labels, device } = this.props;
 
     removeLabelsFromDevice(labels, device.id)
     .then(response => {
@@ -19,7 +19,6 @@ class DeviceRemoveLabelModal extends Component {
           id: device.id,
           labels: labels.map((l) => l.id),
         });
-        if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + labels[0].id, -1)
       }
     })
     analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {

@@ -186,17 +186,13 @@ class LabelContent extends Component {
   handleUpdateAdrSetting = (adrValue) => {
     const labelId = this.props.id;
     const attrs = { adr_allowed: adrValue };
-    this.props.updateLabel(labelId, attrs).then(() => {
-      this.props.onAdrUpdate("label-" + labelId, adrValue);
-    });
+    this.props.updateLabel(labelId, attrs)
   };
 
   handleUpdateCFListSetting = (cfListValue) => {
     const labelId = this.props.id;
     const attrs = { cf_list_enabled: cfListValue };
-    this.props.updateLabel(labelId, attrs).then(() => {
-      this.props.onCFListUpdate("label-" + labelId, cfListValue);
-    });
+    this.props.updateLabel(labelId, attrs)
   };
 
   openDeleteLabelModal = () => {
@@ -461,7 +457,6 @@ class LabelContent extends Component {
             <AlertNodeSettings
               type="label"
               nodeId={label.id}
-              onAlertUpdate={this.props.onAlertUpdate}
             />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: "20px 40px 0px 40px" }}>
@@ -474,7 +469,6 @@ class LabelContent extends Component {
           <TabPane tab="Packets" key="5">
             <MultiBuyNodeSettings
               currentNode={label}
-              onMultiBuyUpdate={this.props.onMultiBuyUpdate}
             />
           </TabPane>
           <TabPane
@@ -495,7 +489,6 @@ class LabelContent extends Component {
           open={this.state.showRemoveDevicesFromLabelModal}
           onClose={this.closeRemoveDevicesFromLabelModal}
           devicesToRemove={this.state.selectedDevices}
-          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
         <LabelAddDeviceModal
           label={label}
@@ -503,7 +496,6 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
-          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
         <DeleteLabelModal
           open={this.state.showDeleteLabelModal}

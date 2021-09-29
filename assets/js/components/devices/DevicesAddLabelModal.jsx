@@ -25,7 +25,6 @@ class DevicesAddLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { labelName, labelId, applyToAll } = this.state;
-    const { onLabelSidebarDevicesUpdate } = this.props;
     const deviceIds = applyToAll
       ? []
       : this.props.devicesToUpdate.map((d) => d.id);
@@ -38,8 +37,6 @@ class DevicesAddLabelModal extends Component {
             devices: applyToAll ? "all" : deviceIds,
             label: labelId,
           });
-
-          if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + labelId, 1)
         }
       })
     } else if (labelName) {
