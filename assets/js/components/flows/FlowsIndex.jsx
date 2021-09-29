@@ -279,6 +279,7 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         hasAlerts: device.alerts.length > 0,
         cfListEnabled: device.cf_list_enabled,
         inXORFilter: device.in_xor_filter,
+        config_profile_id: device.config_profile_id,
       },
       position: [0, 0],
     };
@@ -302,6 +303,7 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         hasAlerts: label.alerts.length > 0,
         cfListEnabled: label.cf_list_enabled,
         devicesNotInFilter: checkIfDevicesNotInFilter(label),
+        config_profile_id: label.config_profile_id,
       },
       position: [0, 0],
     };

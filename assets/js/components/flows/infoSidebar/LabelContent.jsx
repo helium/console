@@ -44,6 +44,7 @@ import CFListNodeSettings from "./CFListNodeSettings";
 import DeviceNotInFilterTableBadge from "../../common/DeviceNotInFilterTableBadge";
 import Warning from "../Warning";
 import WarningItem from "../WarningItem";
+import ConfigProfileSettings from "./ConfigProfileSettings";
 
 class LabelContent extends Component {
   state = {
@@ -186,13 +187,13 @@ class LabelContent extends Component {
   handleUpdateAdrSetting = (adrValue) => {
     const labelId = this.props.id;
     const attrs = { adr_allowed: adrValue };
-    this.props.updateLabel(labelId, attrs)
+    this.props.updateLabel(labelId, attrs);
   };
 
   handleUpdateCFListSetting = (cfListValue) => {
     const labelId = this.props.id;
     const attrs = { cf_list_enabled: cfListValue };
-    this.props.updateLabel(labelId, attrs)
+    this.props.updateLabel(labelId, attrs);
   };
 
   openDeleteLabelModal = () => {
@@ -454,33 +455,13 @@ class LabelContent extends Component {
             </React.Fragment>
           </TabPane>
           <TabPane tab="Alerts" key="3">
-            <AlertNodeSettings
-              type="label"
-              nodeId={label.id}
-            />
+            <AlertNodeSettings type="label" nodeId={label.id} />
           </TabPane>
-          <TabPane tab="ADR" key="4" style={{ padding: "20px 40px 0px 40px" }}>
-            <AdrNodeSettings
-              from="label"
-              checked={label.adr_allowed}
-              updateAdr={this.handleUpdateAdrSetting}
-            />
+          <TabPane tab="Profile" key="4">
+            <ConfigProfileSettings currentNode={label} nodeType="label" />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiBuyNodeSettings
-              currentNode={label}
-            />
-          </TabPane>
-          <TabPane
-            tab="CF List"
-            key="6"
-            style={{ padding: "0px 40px 0px 40px" }}
-          >
-            <CFListNodeSettings
-              from="label"
-              checked={label.cf_list_enabled}
-              updateCFList={this.handleUpdateCFListSetting}
-            />
+            <MultiBuyNodeSettings currentNode={label} />
           </TabPane>
         </Tabs>
 
@@ -512,7 +493,7 @@ class LabelContent extends Component {
 function mapStateToProps(state) {
   return {
     socket: state.apollo.socket,
-    currentRole: state.organization.currentRole
+    currentRole: state.organization.currentRole,
   };
 }
 

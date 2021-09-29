@@ -8,6 +8,7 @@ export const LABEL_FRAGMENT = gql`
     creator
     adr_allowed
     multi_buy_id
+    config_profile_id
     devices {
       name
       id

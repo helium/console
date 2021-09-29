@@ -17,6 +17,7 @@ export const DEVICE_FRAGMENT = gql`
     cf_list_enabled
     in_xor_filter
     updated_at
+    config_profile_id
   }
 `;
 
