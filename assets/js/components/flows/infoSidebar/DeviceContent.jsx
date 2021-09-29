@@ -135,7 +135,6 @@ class DeviceContent extends Component {
         id: deviceId,
         adr: adrValue,
       });
-      this.props.onAdrUpdate("device-" + deviceId, adrValue);
     });
   };
 
@@ -147,7 +146,6 @@ class DeviceContent extends Component {
         id: deviceId,
         cf_list_enabled: cfListValue,
       });
-      this.props.onCFListUpdate("device-" + deviceId, cfListValue);
     });
   };
 
@@ -446,7 +444,6 @@ class DeviceContent extends Component {
             <AlertNodeSettings
               type="device"
               nodeId={device.id}
-              onAlertUpdate={this.props.onAlertUpdate}
             />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: "0px 40px 0px 40px" }}>
@@ -459,7 +456,6 @@ class DeviceContent extends Component {
           <TabPane tab="Packets" key="5">
             <MultiBuyNodeSettings
               currentNode={device}
-              onMultiBuyUpdate={this.props.onMultiBuyUpdate}
             />
           </TabPane>
           <TabPane
@@ -491,14 +487,12 @@ class DeviceContent extends Component {
           onClose={this.closeDeviceRemoveLabelModal}
           labels={labelsSelected}
           device={device}
-          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
 
         <DevicesAddLabelModal
           open={showDevicesAddLabelModal}
           onClose={this.closeDevicesAddLabelModal}
           devicesToUpdate={[device]}
-          onLabelSidebarDevicesUpdate={this.props.onLabelSidebarDevicesUpdate}
         />
       </div>
     );

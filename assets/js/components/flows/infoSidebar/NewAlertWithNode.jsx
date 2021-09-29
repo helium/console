@@ -43,15 +43,6 @@ export default (props) => {
               addAlertToNode(data.data.id, props.nodeId, props.nodeType)
             );
           }).then(() => {
-            let prefix = `${
-              props.nodeType === "integration" ? "channel" : props.nodeType
-            }-`;
-            props.onAlertUpdate(
-              prefix + props.nodeId,
-              props.nodeType,
-              true
-            );
-
             props.back()
           });
         }}
