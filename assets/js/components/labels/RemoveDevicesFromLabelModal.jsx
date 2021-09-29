@@ -11,7 +11,7 @@ import analyticsLogger from "../../util/analyticsLogger";
 class RemoveDevicesFromLabelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { devicesToRemove, removeDevicesFromLabel, label, onClose, onLabelSidebarDevicesUpdate } =
+    const { devicesToRemove, removeDevicesFromLabel, label, onClose } =
       this.props;
 
     if (devicesToRemove.length === 0)
@@ -24,7 +24,6 @@ class RemoveDevicesFromLabelModal extends Component {
             id: label.id,
             devices: devicesToRemove.map((d) => d.id),
           });
-          if (onLabelSidebarDevicesUpdate) onLabelSidebarDevicesUpdate("label-" + label.id, -1 * devicesToRemove.length)
         }
       })
     }

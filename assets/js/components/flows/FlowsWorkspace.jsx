@@ -12,6 +12,7 @@ import ReactFlow, {
   useStoreActions,
 } from "react-flow-renderer";
 import omit from "lodash/omit";
+import isEqual from "lodash/isEqual";
 import FlowsNodesMenu from "./FlowsNodesMenu";
 import FlowsSaveBar from "./FlowsSaveBar";
 import LabelNode from "./nodes/LabelNode";
@@ -63,7 +64,6 @@ export default ({
     setReactFlowInstance(_reactFlowInstance);
 
   const [elementsMap, setElements] = useState(initialElementsMap);
-  const [latestElems, setLatestElems] = useState(initialElementsMap);
   const debouncedSubmit = useCallback(debounce(submitChanges, 2000), []);
 
   useEffect(() => {
@@ -74,8 +74,32 @@ export default ({
     debouncedSubmit(elementsMap);
   }, [elementsMap]);
 
-  useEffect(() => {
-    setLatestElems(initialElementsMap);
+  useEffect(() => { // This is meant to only run when node settings (adr, alerts, device counts) change
+    const shouldRenderNodeSidebarChanges =
+      Object.keys(elementsMap).reduce((acc, key) => {
+        if (acc === true) return true
+        if (initialElementsMap[key]) {
+          if (!isEqual(omit(initialElementsMap[key], "position"), omit(elementsMap[key], "position"))) {
+            return true
+          }
+        }
+        return false
+      }, false)
+
+    if (shouldRenderNodeSidebarChanges) {
+      const newEls = Object.keys(elementsMap).reduce((acc, key) => {
+        if (initialElementsMap[key]) {
+          const updatedElement =
+            Object.assign(elementsMap[key], omit(initialElementsMap[key], "position"))
+
+          return Object.assign(acc, { [key]: updatedElement })
+        } else {
+          return Object.assign(acc, { [key]: elementsMap[key] })
+        }
+      }, {})
+
+      setElements(newEls)
+    }
   }, [initialElementsMap]);
 
   const onElementDragStop = (event, node) => {
@@ -206,70 +230,6 @@ export default ({
     setChangesState(true);
   };
 
-  const onAdrUpdate = (id, adrAllowed) => {
-    const newNodeData = Object.assign({}, elementsMap[id].data, { adrAllowed });
-    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [newNode.id]: newNode })
-    );
-  };
-
-  const onCFListUpdate = (id, cfListEnabled) => {
-    const newNodeData = Object.assign({}, elementsMap[id].data, {
-      cfListEnabled,
-    });
-    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [newNode.id]: newNode })
-    );
-  };
-
-  const onMultiBuyUpdate = (id, multi_buy_id) => {
-    const newNodeData = Object.assign({}, elementsMap[id].data, {
-      multi_buy_id,
-    });
-    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [newNode.id]: newNode })
-    );
-  };
-
-  const onAlertUpdate = (id, type, hasAlerts) => {
-    // FOR FUNCTION ALERTS LATER IF NEEDED
-    // if (type === "function") {
-    //   let functionNodes = {};
-    //   for (const [key, _value] of Object.entries(elementsMap)) {
-    //     if (key.split("_copy")[0] === id) {
-    //       const newNodeData = Object.assign({}, elementsMap[key].data, {
-    //         hasAlerts,
-    //       });
-    //       const newNode = Object.assign({}, elementsMap[key], {
-    //         data: newNodeData,
-    //       });
-    //       Object.assign(functionNodes, { [newNode.id]: newNode });
-    //     }
-    //   }
-    //   setElements((elsMap) => Object.assign({}, elsMap, functionNodes));
-    // }
-    const newNodeData = Object.assign({}, elementsMap[id].data, {
-      hasAlerts,
-    });
-    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [newNode.id]: newNode })
-    );
-  };
-
-  const onLabelSidebarDevicesUpdate = (id, count) => {
-    const newNodeData = Object.assign({}, elementsMap[id].data, {
-      deviceCount: elementsMap[id].data.deviceCount + count,
-    });
-    const newNode = Object.assign({}, elementsMap[id], { data: newNodeData });
-    setElements((elsMap) =>
-      Object.assign({}, elsMap, { [newNode.id]: newNode })
-    );
-  };
-
   const handleToggleSidebar = () => {
     if (!showInfoSidebar) {
       analyticsLogger.logEvent("ACTION_OPEN_NODE_INFO_SIDEBAR", {
@@ -318,13 +278,7 @@ export default ({
             </div>
           )}
         <ReactFlow
-          elements={
-            hasChanges
-              ? Object.values(elementsMap) !== Object.values(latestElems)
-                ? Object.values(latestElems)
-                : Object.values(elementsMap)
-              : Object.values(latestElems)
-          }
+          elements={Object.values(elementsMap)}
           nodeTypes={nodeTypes}
           onLoad={onLoad}
           onElementsRemove={onElementsRemove}
@@ -393,11 +347,6 @@ export default ({
           }
           elementsMap={elementsMap}
           hasChanges={hasChanges}
-          onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
-          onAdrUpdate={onAdrUpdate}
-          onCFListUpdate={onCFListUpdate}
-          onMultiBuyUpdate={onMultiBuyUpdate}
-          onAlertUpdate={onAlertUpdate}
           hasConnectedEdges={
             Object.values(elementsMap).filter(
               (el) =>

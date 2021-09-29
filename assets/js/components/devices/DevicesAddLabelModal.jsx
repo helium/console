@@ -30,17 +30,25 @@ class DevicesAddLabelModal extends Component {
       : this.props.devicesToUpdate.map((d) => d.id);
 
     if (labelId) {
-      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-        devices: applyToAll ? "all" : deviceIds,
-        label: labelId,
-      });
+      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId)
+      .then(response => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+            devices: applyToAll ? "all" : deviceIds,
+            label: labelId,
+          });
+        }
+      })
     } else if (labelName) {
-      this.props.addDevicesToNewLabel(!applyToAll && deviceIds, labelName);
-      analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-        devices: applyToAll ? "all" : deviceIds,
-        label_name: labelName,
-      });
+      this.props.addDevicesToNewLabel(!applyToAll && deviceIds, labelName)
+      .then(response => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+            devices: applyToAll ? "all" : deviceIds,
+            label_name: labelName,
+          });
+        }
+      })
     }
     this.setState({ applyToAll: false });
 

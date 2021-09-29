@@ -13,14 +13,9 @@ import EdgeContent from "./EdgeContent";
 export default ({
   id,
   type,
-  onAdrUpdate,
-  onLabelSidebarDevicesUpdate,
-  onMultiBuyUpdate,
-  onAlertUpdate,
   deleteNode,
   hasConnectedEdges,
   elementsMap,
-  onCFListUpdate,
   orgId,
   hasChanges
 }) => {
@@ -63,11 +58,7 @@ export default ({
           <DeviceContent
             id={id}
             type={type}
-            onAdrUpdate={onAdrUpdate}
-            onMultiBuyUpdate={onMultiBuyUpdate}
-            onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
-            onCFListUpdate={onCFListUpdate}
             hasChanges={hasChanges}
             deleteResource={deleteNode}
           />
@@ -80,12 +71,7 @@ export default ({
             id={id}
             orgId={orgId}
             type={type}
-            onLabelSidebarDevicesUpdate={onLabelSidebarDevicesUpdate}
-            onAdrUpdate={onAdrUpdate}
-            onMultiBuyUpdate={onMultiBuyUpdate}
-            onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
-            onCFListUpdate={onCFListUpdate}
             hasChanges={hasChanges}
             deleteResource={deleteNode}
           />
@@ -95,7 +81,6 @@ export default ({
           <ChannelContent
             id={id}
             type={type}
-            onAlertUpdate={onAlertUpdate}
             onNodeDelete={onNodeDelete}
             hasChanges={hasChanges}
             deleteResource={deleteNode}

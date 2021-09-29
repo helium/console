@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import LabelTag from "../common/LabelTag";
 import UserCan from "../common/UserCan";
+import { history } from '../../store/configureStore'
 import { minWidth } from "../../util/constants";
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
 import { Card, Button, Typography, Table, Pagination, Tooltip } from "antd";
@@ -125,15 +126,17 @@ class DeviceShowLabelsTable extends Component {
       >
         <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
           <Table
-            columns={columns}
+            columns={
+              this.props.from === 'deviceFlowsSidebar' ? columns.filter(c => c.dataIndex !== 'inserted_at') : columns
+            }
             dataSource={labels_by_device.entries}
             rowKey={(record) => record.id}
             pagination={false}
-            style={{ minWidth }}
+            style={{ minWidth: this.props.from === 'deviceFlowsSidebar' ? 150 : minWidth }}
             onRow={(record, rowIndex) => ({
               onClick: (e) => {
                 if (e.target.tagName === "TD") {
-                  this.props.history.push(`/labels/${record.id}`);
+                  history.push(`/labels/${record.id}`);
                 }
               },
             })}
@@ -143,7 +146,7 @@ class DeviceShowLabelsTable extends Component {
               display: "flex",
               justifyContent: "flex-end",
               paddingBottom: 0,
-              minWidth,
+              minWidth: this.props.from === 'deviceFlowsSidebar' ? 150 : minWidth
             }}
           >
             <Pagination
@@ -172,7 +175,7 @@ export default connect(
   null
 )(
   withGql(DeviceShowLabelsTable, PAGINATED_LABELS_BY_DEVICE, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: {
       page: 1,
       pageSize: 10,

@@ -12,7 +12,15 @@ class DeviceRemoveLabelModal extends Component {
     e.preventDefault();
     const { onClose, removeLabelsFromDevice, labels, device } = this.props;
 
-    removeLabelsFromDevice(labels, device.id);
+    removeLabelsFromDevice(labels, device.id)
+    .then(response => {
+      if (response.status === 204) {
+        analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {
+          id: device.id,
+          labels: labels.map((l) => l.id),
+        });
+      }
+    })
     analyticsLogger.logEvent("ACTION_REMOVE_LABELS_FROM_DEVICE", {
       labels: labels.map((l) => l.id),
       device: device.id,

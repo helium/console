@@ -131,16 +131,7 @@ export default (props) => {
                       });
                       dispatch(
                         addAlertToNode(record.id, props.nodeId, props.type)
-                      ).then(() => {
-                        let prefix = `${
-                          props.type === "integration" ? "channel" : props.type
-                        }-`;
-                        props.onAlertUpdate(
-                          prefix + props.nodeId,
-                          props.type,
-                          nodeAlerts.length + 1 > 0
-                        );
-                      });
+                      )
                     } else {
                       analyticsLogger.logEvent(
                         "ACTION_REMOVE_ALERT_FROM_NODE",
@@ -152,16 +143,7 @@ export default (props) => {
                       );
                       dispatch(
                         removeAlertFromNode(record.id, props.nodeId, props.type)
-                      ).then(() => {
-                        let prefix = `${
-                          props.type === "integration" ? "channel" : props.type
-                        }-`;
-                        props.onAlertUpdate(
-                          prefix + props.nodeId,
-                          props.type,
-                          nodeAlerts.length - 1 > 0
-                        );
-                      });
+                      )
                     }
                   }}
                 />
@@ -191,7 +173,6 @@ export default (props) => {
         <NewAlertWithNode
           nodeId={props.nodeId}
           nodeType={props.type}
-          onAlertUpdate={props.onAlertUpdate}
           back={() => {
             setShowNew(false);
           }}

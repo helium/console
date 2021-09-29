@@ -9,6 +9,9 @@ import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
 import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
+import DeviceShowLabelsTable from "../../devices/DeviceShowLabelsTable";
+import DeviceRemoveLabelModal from "../../devices/DeviceRemoveLabelModal";
+import DevicesAddLabelModal from "../../devices/DevicesAddLabelModal";
 import { updateDevice } from "../../../actions/device";
 import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
@@ -36,6 +39,9 @@ class DeviceContent extends Component {
     showAppKey: false,
     showDeleteDeviceModal: false,
     deviceToDelete: null,
+    showDeviceRemoveLabelModal: false,
+    showDevicesAddLabelModal: false,
+    labelsSelected: null,
   };
 
   componentDidMount() {
@@ -129,7 +135,6 @@ class DeviceContent extends Component {
         id: deviceId,
         adr: adrValue,
       });
-      this.props.onAdrUpdate("device-" + deviceId, adrValue);
     });
   };
 
@@ -141,7 +146,6 @@ class DeviceContent extends Component {
         id: deviceId,
         cf_list_enabled: cfListValue,
       });
-      this.props.onCFListUpdate("device-" + deviceId, cfListValue);
     });
   };
 
@@ -172,6 +176,23 @@ class DeviceContent extends Component {
     this.setState({ showDeleteDeviceModal: false });
   };
 
+  openDeviceRemoveLabelModal = (labelsSelected) => {
+    this.setState({ showDeviceRemoveLabelModal: true });
+    this.setState({ labelsSelected });
+  };
+
+  closeDeviceRemoveLabelModal = () => {
+    this.setState({ showDeviceRemoveLabelModal: false });
+  };
+
+  openDevicesAddLabelModal = () => {
+    this.setState({ showDevicesAddLabelModal: true });
+  };
+
+  closeDevicesAddLabelModal = () => {
+    this.setState({ showDevicesAddLabelModal: false });
+  };
+
   render() {
     const {
       showDevEUIInput,
@@ -179,6 +200,9 @@ class DeviceContent extends Component {
       showAppKeyInput,
       showAppKey,
       showDeleteDeviceModal,
+      labelsSelected,
+      showDeviceRemoveLabelModal,
+      showDevicesAddLabelModal,
     } = this.state;
     const { loading, error, device } = this.props.deviceShowQuery;
 
@@ -408,12 +432,18 @@ class DeviceContent extends Component {
                 </Tag>
               </Paragraph>
             </Card>
+
+            <DeviceShowLabelsTable
+              deviceId={device.id}
+              openRemoveLabelFromDeviceModal={this.openDeviceRemoveLabelModal}
+              openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+              from="deviceFlowsSidebar"
+            />
           </TabPane>
           <TabPane tab="Alerts" key="3">
             <AlertNodeSettings
               type="device"
               nodeId={device.id}
-              onAlertUpdate={this.props.onAlertUpdate}
             />
           </TabPane>
           <TabPane tab="ADR" key="4" style={{ padding: "0px 40px 0px 40px" }}>
@@ -426,7 +456,6 @@ class DeviceContent extends Component {
           <TabPane tab="Packets" key="5">
             <MultiBuyNodeSettings
               currentNode={device}
-              onMultiBuyUpdate={this.props.onMultiBuyUpdate}
             />
           </TabPane>
           <TabPane
@@ -451,6 +480,19 @@ class DeviceContent extends Component {
           from="deviceShow"
           doNotRedirect
           deleteResource={this.props.deleteResource}
+        />
+
+        <DeviceRemoveLabelModal
+          open={showDeviceRemoveLabelModal}
+          onClose={this.closeDeviceRemoveLabelModal}
+          labels={labelsSelected}
+          device={device}
+        />
+
+        <DevicesAddLabelModal
+          open={showDevicesAddLabelModal}
+          onClose={this.closeDevicesAddLabelModal}
+          devicesToUpdate={[device]}
         />
       </div>
     );

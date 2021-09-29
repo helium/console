@@ -13,7 +13,7 @@ import { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
 const { Text } = Typography;
 
-export default ({ currentNode, onMultiBuyUpdate }) => {
+export default ({ currentNode }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
   const dispatch = useDispatch();
 
@@ -75,15 +75,7 @@ export default ({ currentNode, onMultiBuyUpdate }) => {
                           currentNode.id,
                           currentNode.__typename
                         )
-                      ).then(() => {
-                        let prefix = "";
-                        if (currentNode.__typename === "Label") {
-                          prefix = "label-";
-                        } else if (currentNode.__typename === "Device") {
-                          prefix = "device-";
-                        }
-                        onMultiBuyUpdate(prefix + currentNode.id, record.id);
-                      });
+                      )
                     } else {
                       analyticsLogger.logEvent(
                         "ACTION_REMOVE_MULTIBUY_FROM_NODE",
@@ -98,15 +90,7 @@ export default ({ currentNode, onMultiBuyUpdate }) => {
                           currentNode.id,
                           currentNode.__typename
                         )
-                      ).then(() => {
-                        let prefix = "";
-                        if (currentNode.__typename === "Label") {
-                          prefix = "label-";
-                        } else if (currentNode.__typename === "Device") {
-                          prefix = "device-";
-                        }
-                        onMultiBuyUpdate(prefix + currentNode.id, null);
-                      });
+                      )
                     }
                   }}
                 />
