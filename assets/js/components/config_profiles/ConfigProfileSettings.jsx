@@ -131,17 +131,19 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
         <Text style={{ fontSize: 14, display: "block" }}>{cfListText3}</Text>
       </div>
 
-      {renderButton()}
-      {cancel && (
-        <Button
-          style={{ marginLeft: 10, borderRadius: 50 }}
-          onClick={() => {
-            back();
-          }}
-        >
-          Cancel
-        </Button>
-      )}
+      <div style={{ marginBottom: 20 }}>
+        {renderButton()}
+        {cancel && (
+          <Button
+            style={{ marginLeft: 10, borderRadius: 50 }}
+            onClick={() => {
+              back();
+            }}
+          >
+            Cancel
+          </Button>
+        )}
+      </div>
     </Fragment>
   );
 };

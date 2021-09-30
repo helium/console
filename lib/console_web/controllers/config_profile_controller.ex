@@ -104,7 +104,7 @@ defmodule ConsoleWeb.ConfigProfileController do
     current_organization = conn.assigns.current_organization
 
     case node_type do
-      "Device" ->
+      "device" ->
         device = Devices.get_device!(current_organization, node_id)
         with {:ok, %Device{} = device} <- Devices.update_device(device, %{ "config_profile_id" => nil }) do
           ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
@@ -114,7 +114,7 @@ defmodule ConsoleWeb.ConfigProfileController do
             |> put_resp_header("message", "Config profile successfully removed from device")
             |> send_resp(:no_content, "")
         end
-      "Label" ->
+      "label" ->
         label = Labels.get_label!(current_organization, node_id) |> Labels.fetch_assoc([:devices])
         device_ids = label.devices |> Enum.map(fn d -> d.id end)
         

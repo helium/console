@@ -1,6 +1,6 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Row, Col, Input, Typography, Switch } from "antd";
+import { Button, Row, Col, Typography } from "antd";
 import { useQuery } from "@apollo/client";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
@@ -8,7 +8,7 @@ import MultiBuyIcon from "../../../img/multi_buy/multi-buy-index-add-icon.svg";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import UserCan, { userCan } from "../common/UserCan";
+import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
@@ -78,7 +78,7 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
       )}
       <Row style={{ marginTop: "10px" }}>
         <Col span={10} style={{ padding: "70px 80px" }}>
-          <img src={MultiBuyIcon} />
+          <img src={MultiBuyIcon} /* TODO update icon */ />
           <h1 style={{ marginTop: 10, fontSize: "23px", fontWeight: 600 }}>
             Profiles
           </h1>

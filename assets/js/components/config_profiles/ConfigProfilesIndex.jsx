@@ -87,13 +87,13 @@ export default (props) => {
           setShowPage("allConfigProfiles");
           history.push("/config_profiles");
         }}
-        allIcon={AllIcon}
+        allIcon={AllIcon} // TODO update icon
         textColor="#3C6B95"
         allText="All Profiles"
         onHomePage={showPage === "home"}
         onAllPage={showPage === "allConfigProfiles"}
         onNewPage={showPage === "new"}
-        addIcon={PlusIcon}
+        addIcon={PlusIcon} // TODO update icon
         goToNew={() => {
           setShowPage("new");
           history.push("/config_profiles/new");
