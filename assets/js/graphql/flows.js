@@ -5,8 +5,6 @@ export const ALL_RESOURCES = gql`
     allDevices {
       id
       name
-      adr_allowed
-      cf_list_enabled
       in_xor_filter
       multi_buy_id
       config_profile_id
@@ -20,9 +18,7 @@ export const ALL_RESOURCES = gql`
       id
       name
       device_count
-      adr_allowed
       config_profile_id
-      cf_list_enabled
       multi_buy_id
       alerts {
         id

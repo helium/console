@@ -140,6 +140,7 @@ export default ({ currentNode, nodeType }) => {
           onClick={() => {
             setShowNew(true);
           }}
+          /* TODO add icon */
         >
           Create New Profile
         </Button>

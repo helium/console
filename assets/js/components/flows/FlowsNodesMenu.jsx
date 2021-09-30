@@ -27,42 +27,40 @@ export default ({ devices, labels, functions, channels }) => {
     event.dataTransfer.setData("node/type", node.type);
     event.dataTransfer.setData("node/name", node.data.label);
 
-    if (node.type == "channelNode") {
+    if (node.type === "channelNode") {
       event.dataTransfer.setData("node/channel_type_name", node.data.type_name);
       event.dataTransfer.setData("node/channel_type", node.data.type);
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
     }
 
-    if (node.type == "labelNode") {
+    if (node.type === "labelNode") {
       event.dataTransfer.setData(
         "node/label_device_count",
         node.data.deviceCount
       );
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
-      event.dataTransfer.setData("node/adr_allowed", node.data.adrAllowed);
-      event.dataTransfer.setData(
-        "node/cf_list_enabled",
-        node.data.cfListEnabled
-      );
       event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData(
+        "node/config_profile_id",
+        node.data.config_profile_id
+      );
       event.dataTransfer.setData(
         "node/devices_not_in_filter",
         node.data.devicesNotInFilter
       );
     }
 
-    if (node.type == "deviceNode") {
+    if (node.type === "deviceNode") {
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
-      event.dataTransfer.setData("node/adr_allowed", node.data.adrAllowed);
-      event.dataTransfer.setData(
-        "node/cf_list_enabled",
-        node.data.cfListEnabled
-      );
       event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData(
+        "node/config_profile_id",
+        node.data.config_profile_id
+      );
       event.dataTransfer.setData("node/in_xor_filter", node.data.inXORFilter);
     }
 
-    if (node.type == "functionNode") {
+    if (node.type === "functionNode") {
       event.dataTransfer.setData("node/function_format", node.data.format);
     }
 

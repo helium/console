@@ -8,7 +8,6 @@ import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
 import DeleteLabelModal from "../../labels/DeleteLabelModal";
 import AlertNodeSettings from "./AlertNodeSettings";
-import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import { redForTablesDeleteText } from "../../../util/colors";
 import { updateDevice, setDevicesActive } from "../../../actions/device";
@@ -40,7 +39,6 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
-import CFListNodeSettings from "./CFListNodeSettings";
 import DeviceNotInFilterTableBadge from "../../common/DeviceNotInFilterTableBadge";
 import Warning from "../Warning";
 import WarningItem from "../WarningItem";
@@ -182,18 +180,6 @@ class LabelContent extends Component {
 
   closeLabelAddDeviceModal = () => {
     this.setState({ showLabelAddDeviceModal: false });
-  };
-
-  handleUpdateAdrSetting = (adrValue) => {
-    const labelId = this.props.id;
-    const attrs = { adr_allowed: adrValue };
-    this.props.updateLabel(labelId, attrs);
-  };
-
-  handleUpdateCFListSetting = (cfListValue) => {
-    const labelId = this.props.id;
-    const attrs = { cf_list_enabled: cfListValue };
-    this.props.updateLabel(labelId, attrs);
   };
 
   openDeleteLabelModal = () => {

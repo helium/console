@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import UserCan, { userCan } from "../../common/UserCan";
 import AlertNodeSettings from "./AlertNodeSettings";
-import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
 import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
@@ -26,7 +25,6 @@ const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import CFListNodeSettings from "./CFListNodeSettings";
 import ConfigProfileSettings from "./ConfigProfileSettings";
 
 class DeviceContent extends Component {
@@ -126,28 +124,6 @@ class DeviceContent extends Component {
     } else {
       displayError(`App Key must be exactly 16 bytes long`);
     }
-  };
-
-  handleUpdateAdrSetting = (adrValue) => {
-    const deviceId = this.props.id;
-    const attrs = { adr_allowed: adrValue };
-    this.props.updateDevice(deviceId, attrs).then(() => {
-      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_ADR", {
-        id: deviceId,
-        adr: adrValue,
-      });
-    });
-  };
-
-  handleUpdateCfListSetting = (cfListValue) => {
-    const deviceId = this.props.id;
-    const attrs = { cf_list_enabled: cfListValue };
-    this.props.updateDevice(deviceId, attrs).then(() => {
-      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_CF_LIST_ENABLED", {
-        id: deviceId,
-        cf_list_enabled: cfListValue,
-      });
-    });
   };
 
   toggleDevEUIInput = () => {
