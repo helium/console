@@ -26,8 +26,8 @@ defmodule Console.ConfigProfiles.ConfigProfile do
 
     config_profile
     |> cast(attrs, [:name, :adr_allowed, :cf_list_enabled, :organization_id])
-    |> validate_required([:organization_id, :name, :adr_allowed, :cf_list_enabled])
     |> validate_required(:name, message: "Name cannot be blank")
+    |> validate_required([:organization_id, :name, :adr_allowed, :cf_list_enabled])
     |> validate_length(:name, min: 3, message: "Name must be at least 3 characters")
     |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters")
     |> unique_constraint(:name, name: :config_profiles_name_organization_id_index, message: "This name has already been used in this organization")

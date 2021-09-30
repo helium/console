@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   def show(conn, %{"id" => id}) do
     case Devices.get_device(id) |> Repo.preload([:multi_buy, labels: [:multi_buy]]) do
       %Device{} = device ->
+        # TODO replace adr_allowed and cf_list_enabled values with those coming from config profile
         adr_allowed =
           case length(device.labels) do
             0 -> device.adr_allowed

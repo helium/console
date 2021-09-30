@@ -19,9 +19,7 @@ defmodule ConsoleWeb.PageController do
         "datacredits",
         "flows",
         "alerts",
-        "adr",
         "multi_buys",
-        "cf_list",
         "profile",
         "coverage",
         "config_profiles"
