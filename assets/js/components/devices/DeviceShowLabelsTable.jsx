@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import LabelTag from "../common/LabelTag";
 import UserCan from "../common/UserCan";
-import { history } from '../../store/configureStore'
+import { history } from "../../store/configureStore";
 import { minWidth } from "../../util/constants";
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
 import { Card, Button, Typography, Table, Pagination, Tooltip } from "antd";
@@ -124,41 +124,49 @@ class DeviceShowLabelsTable extends Component {
           </UserCan>
         }
       >
-        <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-          <Table
-            columns={
-              this.props.from === 'deviceFlowsSidebar' ? columns.filter(c => c.dataIndex !== 'inserted_at') : columns
-            }
-            dataSource={labels_by_device.entries}
-            rowKey={(record) => record.id}
-            pagination={false}
-            style={{ minWidth: this.props.from === 'deviceFlowsSidebar' ? 150 : minWidth }}
-            onRow={(record, rowIndex) => ({
-              onClick: (e) => {
-                if (e.target.tagName === "TD") {
-                  history.push(`/labels/${record.id}`);
-                }
-              },
-            })}
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              paddingBottom: 0,
-              minWidth: this.props.from === 'deviceFlowsSidebar' ? 150 : minWidth
-            }}
-          >
-            <Pagination
-              current={labels_by_device.pageNumber}
-              pageSize={labels_by_device.pageSize}
-              total={labels_by_device.totalEntries}
-              onChange={(page) => this.handleChangePage(page)}
-              style={{ marginBottom: 20 }}
-              showSizeChanger={false}
+        {labels_by_device && labels_by_device.entries.length > 0 && (
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+            <Table
+              columns={
+                this.props.from === "deviceFlowsSidebar"
+                  ? columns.filter((c) => c.dataIndex !== "inserted_at")
+                  : columns
+              }
+              dataSource={labels_by_device.entries}
+              rowKey={(record) => record.id}
+              pagination={false}
+              style={{
+                minWidth:
+                  this.props.from === "deviceFlowsSidebar" ? 150 : minWidth,
+              }}
+              onRow={(record, rowIndex) => ({
+                onClick: (e) => {
+                  if (e.target.tagName === "TD") {
+                    history.push(`/labels/${record.id}`);
+                  }
+                },
+              })}
             />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingBottom: 0,
+                minWidth:
+                  this.props.from === "deviceFlowsSidebar" ? 150 : minWidth,
+              }}
+            >
+              <Pagination
+                current={labels_by_device.pageNumber}
+                pageSize={labels_by_device.pageSize}
+                total={labels_by_device.totalEntries}
+                onChange={(page) => this.handleChangePage(page)}
+                style={{ marginBottom: 20 }}
+                showSizeChanger={false}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </Card>
     );
   }
