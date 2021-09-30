@@ -53,6 +53,7 @@ defmodule ConsoleWeb.ConfigProfileController do
 
     with {:ok, %ConfigProfile{} = config_profile} <- ConfigProfiles.update_config_profile(config_profile, config_profile_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:config_profile_show", "graphql:config_profile_show:#{config_profile.id}:config_profile_update", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:config_profiles_index_table", "graphql:config_profiles_index_table:#{current_organization.id}:config_profile_list_update", %{})
       broadcast_router_update_devices(affected_device_ids)
 
       msg =

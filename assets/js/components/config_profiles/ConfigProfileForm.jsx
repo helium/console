@@ -17,31 +17,11 @@ import {
   createConfigProfile,
   updateConfigProfile,
 } from "../../actions/configProfile";
-
-const adrText1 =
-  "ADR allows devices to use an optimal data rate which reduces power consumption and airtime on the network based on RF conditions. When ADR is disabled the channel mask is still transmitted via ADR command, but power output and data rates are not impacted. ";
-const adrText2 =
-  "Recommended: only use ADR for fixed or non-mobile devices to ensure reliable connectivity.";
-
-const cfListText1 = `
-  The Join-Accept CF List configures channels according to
-  the LoRaWAN spec to use sub-band 2. Devices that have not correctly implemented the
-  LoRaWAN spec may experience transfer issues when this setting is enabled.
-`;
-
-const cfListText2 =
-  "- Enabled, the server will send a CF List with every other join.";
-
-const cfListText3 =
-  "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command.";
+import ConfigProfileSettings from "./ConfigProfileSettings";
 
 export default ({ show, id, openDeleteConfigProfileModal }) => {
   const history = useHistory();
   const currentRole = useSelector((state) => state.organization.currentRole);
-  const [name, setName] = useState("");
-  const [adrAllowed, setAdrAllowed] = useState(false);
-  const [cfListEnabled, setCfListEnabled] = useState(false);
-  const [configProfileData, setConfigProfileData] = useState({});
   const dispatch = useDispatch();
 
   const { loading, error, data, refetch } = useQuery(CONFIG_PROFILE_SHOW, {
@@ -72,18 +52,6 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
       };
     }
   }, []);
-
-  useEffect(() => {
-    if (!loading && !error && data) {
-      setConfigProfileData({
-        name: data.configProfile.name,
-        adr_allowed: data.configProfile.adr_allowed,
-        cf_list_enabled: data.configProfile.cf_list_enabled,
-      });
-      setAdrAllowed(data.configProfile.adr_allowed);
-      setCfListEnabled(data.configProfile.cf_list_enabled);
-    }
-  }, [data]);
 
   return (
     <div style={{ padding: "30px 30px 20px 30px" }}>
@@ -141,135 +109,42 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
           )}
           {loading && <SkeletonLayout />}
           {!error && !loading && (
-            <Fragment>
-              <Text style={{ fontSize: "16px" }} strong>
-                Profile Name
-              </Text>
-              <Input
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                value={name}
-                placeholder={show ? configProfileData.name : "e.g. My Profile"}
-                suffix={`${name.length}/25`}
-                maxLength={25}
-                disabled={!userCan({ role: currentRole })}
-              />
-
-              <div
-                style={{
-                  margin: "25px 0",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Switch
-                  onChange={(checked) => {
-                    setAdrAllowed(checked);
-                  }}
-                  checked={adrAllowed}
-                  style={{ marginRight: 8 }}
-                  disabled={!userCan({ role: currentRole })}
-                />
-                <Text strong style={{ fontSize: 16 }}>
-                  Allow ADR (recommended for stationary devices)
-                </Text>
-              </div>
-
-              <div style={{ marginBottom: 20 }}>
-                <Text
-                  style={{ fontSize: 14, display: "block", marginBottom: 4 }}
-                >
-                  {adrText1}
-                </Text>
-                <Text style={{ fontSize: 14, display: "block" }}>
-                  {adrText2}
-                </Text>
-              </div>
-
-              <div
-                style={{
-                  marginBottom: 20,
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Switch
-                  onChange={(checked) => {
-                    setCfListEnabled(checked);
-                  }}
-                  checked={cfListEnabled}
-                  style={{ marginRight: 8 }}
-                  disabled={!userCan({ role: currentRole })}
-                />
-                <Text strong style={{ fontSize: 16 }}>
-                  Enable Join-Accept CF List (applicable to US915 devices only)
-                </Text>
-              </div>
-
-              <div style={{ marginBottom: 20 }}>
-                <Text
-                  style={{ fontSize: 14, display: "block", marginBottom: 4 }}
-                >
-                  {cfListText1}
-                </Text>
-                <Text style={{ fontSize: 14, display: "block" }}>
-                  {cfListText2}
-                </Text>
-                <Text style={{ fontSize: 14, display: "block" }}>
-                  {cfListText3}
-                </Text>
-              </div>
-
-              <UserCan>
-                <Button
-                  icon={show ? <EditOutlined /> : <PlusOutlined />}
-                  type="primary"
-                  style={{
-                    borderColor: "#2C79EE",
-                    backgroundColor: "#2C79EE",
-                    borderRadius: 50,
-                    text: "white",
-                    marginTop: 15,
-                  }}
-                  onClick={() => {
-                    if (show) {
-                      analyticsLogger.logEvent("ACTION_UPDATE_CONFIG_PROFILE", {
-                        id,
-                        adrAllowed,
-                        cfListEnabled,
-                      });
-                      dispatch(
-                        updateConfigProfile(id, {
-                          ...(name && { name }),
-                          adr_allowed: adrAllowed,
-                          cf_list_enabled: cfListEnabled,
-                        })
-                      );
-                    } else {
-                      analyticsLogger.logEvent("ACTION_CREATE_CONFIG_PROFILE", {
-                        id,
-                        adrAllowed,
-                        cfListEnabled,
-                      });
-                      dispatch(
-                        createConfigProfile({
-                          name,
-                          adr_allowed: adrAllowed,
-                          cf_list_enabled: cfListEnabled,
-                        })
-                      ).then(() => {
-                        history.push("/config_profiles");
-                      });
-                    }
-                  }}
-                >
-                  {show ? "Update" : "Create"} Profile
-                </Button>
-              </UserCan>
-            </Fragment>
+            <ConfigProfileSettings
+              save={({ adrAllowed, cfListEnabled, name }) => {
+                if (show) {
+                  analyticsLogger.logEvent("ACTION_UPDATE_CONFIG_PROFILE", {
+                    id,
+                    adrAllowed,
+                    cfListEnabled,
+                  });
+                  dispatch(
+                    updateConfigProfile(id, {
+                      ...(name && { name }),
+                      adr_allowed: adrAllowed,
+                      cf_list_enabled: cfListEnabled,
+                    })
+                  );
+                } else {
+                  analyticsLogger.logEvent("ACTION_CREATE_CONFIG_PROFILE", {
+                    id,
+                    adrAllowed,
+                    cfListEnabled,
+                  });
+                  dispatch(
+                    createConfigProfile({
+                      name,
+                      adr_allowed: adrAllowed,
+                      cf_list_enabled: cfListEnabled,
+                    })
+                  ).then(() => {
+                    history.push("/config_profiles");
+                  });
+                }
+              }}
+              saveIcon={show ? <EditOutlined /> : <PlusOutlined />}
+              data={data}
+              show={show}
+            />
           )}
         </Col>
       </Row>
