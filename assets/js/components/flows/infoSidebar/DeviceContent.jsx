@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import UserCan, { userCan } from "../../common/UserCan";
 import AlertNodeSettings from "./AlertNodeSettings";
-import AdrNodeSettings from "./AdrNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
 import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
@@ -26,7 +25,7 @@ const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import CFListNodeSettings from "./CFListNodeSettings";
+import ConfigProfileSettings from "./ConfigProfileSettings";
 
 class DeviceContent extends Component {
   state = {
@@ -125,28 +124,6 @@ class DeviceContent extends Component {
     } else {
       displayError(`App Key must be exactly 16 bytes long`);
     }
-  };
-
-  handleUpdateAdrSetting = (adrValue) => {
-    const deviceId = this.props.id;
-    const attrs = { adr_allowed: adrValue };
-    this.props.updateDevice(deviceId, attrs).then(() => {
-      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_ADR", {
-        id: deviceId,
-        adr: adrValue,
-      });
-    });
-  };
-
-  handleUpdateCfListSetting = (cfListValue) => {
-    const deviceId = this.props.id;
-    const attrs = { cf_list_enabled: cfListValue };
-    this.props.updateDevice(deviceId, attrs).then(() => {
-      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE_CF_LIST_ENABLED", {
-        id: deviceId,
-        cf_list_enabled: cfListValue,
-      });
-    });
   };
 
   toggleDevEUIInput = () => {
@@ -255,35 +232,33 @@ class DeviceContent extends Component {
               </Button>
             </Link>
             <UserCan>
-              {
-                this.props.hasChanges ? (
-                  <Tooltip
-                    title="Undo or save your workspace changes before deleting this device"
-                    overlayStyle={{ width: 230 }}
-                  >
-                    <Button
-                      style={{ borderRadius: 4, marginRight: 5 }}
-                      type="danger"
-                      icon={<DeleteOutlined />}
-                      disabled
-                    >
-                      Delete
-                    </Button>
-                  </Tooltip>
-                ) : (
+              {this.props.hasChanges ? (
+                <Tooltip
+                  title="Undo or save your workspace changes before deleting this device"
+                  overlayStyle={{ width: 230 }}
+                >
                   <Button
                     style={{ borderRadius: 4, marginRight: 5 }}
                     type="danger"
                     icon={<DeleteOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      this.openDeleteDeviceModal(device);
-                    }}
+                    disabled
                   >
                     Delete
                   </Button>
-                )
-              }
+                </Tooltip>
+              ) : (
+                <Button
+                  style={{ borderRadius: 4, marginRight: 5 }}
+                  type="danger"
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    this.openDeleteDeviceModal(device);
+                  }}
+                >
+                  Delete
+                </Button>
+              )}
             </UserCan>
           </div>
         </div>
@@ -441,33 +416,13 @@ class DeviceContent extends Component {
             />
           </TabPane>
           <TabPane tab="Alerts" key="3">
-            <AlertNodeSettings
-              type="device"
-              nodeId={device.id}
-            />
+            <AlertNodeSettings type="device" nodeId={device.id} />
           </TabPane>
-          <TabPane tab="ADR" key="4" style={{ padding: "0px 40px 0px 40px" }}>
-            <AdrNodeSettings
-              from="device"
-              checked={device.adr_allowed}
-              updateAdr={this.handleUpdateAdrSetting}
-            />
+          <TabPane tab="Profile" key="4">
+            <ConfigProfileSettings currentNode={device} nodeType="device" />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiBuyNodeSettings
-              currentNode={device}
-            />
-          </TabPane>
-          <TabPane
-            tab="CF List"
-            key="6"
-            style={{ padding: "0px 40px 0px 40px" }}
-          >
-            <CFListNodeSettings
-              from="device"
-              checked={device.cf_list_enabled}
-              updateCFList={this.handleUpdateCfListSetting}
-            />
+            <MultiBuyNodeSettings currentNode={device} />
           </TabPane>
         </Tabs>
 

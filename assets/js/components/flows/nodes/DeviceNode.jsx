@@ -4,7 +4,6 @@ import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import DeviceIcon from "../../../../img/device-node-icon.svg";
 import AdrTag from "../../../../img/adr/adr-node-tag.svg";
-import CFListTag from "../../../../img/cf-list/cf-list-node-tag.svg";
 import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
@@ -73,28 +72,6 @@ export default ({ data, fromSidebar, selected }) => {
             </div>
           </span>
           <div>
-            {data.adrAllowed && (
-              <img
-                draggable="false"
-                src={AdrTag}
-                style={{
-                  height: 20,
-                  marginLeft: 20,
-                  position: "relative",
-                }}
-              />
-            )}
-            {data.cfListEnabled && (
-              <img
-                draggable="false"
-                src={CFListTag}
-                style={{
-                  height: 20,
-                  marginLeft: 4,
-                  position: "relative",
-                }}
-              />
-            )}
             {data.multi_buy_id && (
               <img
                 draggable="false"
@@ -110,6 +87,17 @@ export default ({ data, fromSidebar, selected }) => {
               <img
                 draggable="false"
                 src={AlertTag}
+                style={{
+                  height: 20,
+                  marginLeft: 4,
+                  position: "relative",
+                }}
+              />
+            )}
+            {data.config_profile_id && (
+              <img
+                draggable="false"
+                src={AdrTag} // TODO update icon
                 style={{
                   height: 20,
                   marginLeft: 4,

@@ -35,13 +35,12 @@ import FunctionHome from "./components/functions/FunctionHome";
 import FunctionShow from "./components/functions/FunctionShow";
 import FlowsIndex from "./components/flows/FlowsIndex";
 import AlertsIndex from "./components/alerts/AlertsIndex";
-import AdrIndex from "./components/adr/AdrIndex";
 import CoverageIndex from "./components/coverage/CoverageIndex";
-import CFListIndex from "./components/cf_list/CFListIndex";
 import MultiBuyIndex from "./components/multi_buy/MultiBuyIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import Welcome from "./components/Welcome";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
+import ConfigProfilesIndex from "./components/config_profiles/ConfigProfilesIndex";
 
 const Router = (props) => {
   const {
@@ -297,13 +296,6 @@ const Router = (props) => {
                             />
                             <Route
                               exact
-                              path="/adr"
-                              component={(props) => (
-                                <AdrIndex user={user} {...props} />
-                              )}
-                            />
-                            <Route
-                              exact
                               path="/multi_buys"
                               component={(props) => (
                                 <MultiBuyIndex user={user} {...props} />
@@ -324,13 +316,6 @@ const Router = (props) => {
                               )}
                             />
                             <Route
-                              exact
-                              path="/cf_list"
-                              component={(props) => (
-                                <CFListIndex user={user} {...props} />
-                              )}
-                            />
-                            <Route
                               path="/profile"
                               component={(props) => (
                                 <Profile user={user} {...props} />
@@ -341,6 +326,27 @@ const Router = (props) => {
                               path="/coverage"
                               component={(props) => (
                                 <CoverageIndex user={user} {...props} />
+                              )}
+                            />
+                            <Route
+                              exact
+                              path="/config_profiles"
+                              component={(props) => (
+                                <ConfigProfilesIndex user={user} {...props} />
+                              )}
+                            />
+                            <Route
+                              exact
+                              path="/config_profiles/new"
+                              component={(props) => (
+                                <ConfigProfilesIndex user={user} {...props} />
+                              )}
+                            />
+                            <Route
+                              exact
+                              path="/config_profiles/:id"
+                              component={(props) => (
+                                <ConfigProfilesIndex user={user} {...props} />
                               )}
                             />
                           </Switch>

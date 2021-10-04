@@ -74,31 +74,41 @@ export default ({
     debouncedSubmit(elementsMap);
   }, [elementsMap]);
 
-  useEffect(() => { // This is meant to only run when node settings (adr, alerts, device counts) change
-    const shouldRenderNodeSidebarChanges =
-      Object.keys(elementsMap).reduce((acc, key) => {
-        if (acc === true) return true
+  useEffect(() => {
+    // This is meant to only run when node settings (adr, alerts, device counts) change
+    const shouldRenderNodeSidebarChanges = Object.keys(elementsMap).reduce(
+      (acc, key) => {
+        if (acc === true) return true;
         if (initialElementsMap[key]) {
-          if (!isEqual(omit(initialElementsMap[key], "position"), omit(elementsMap[key], "position"))) {
-            return true
+          if (
+            !isEqual(
+              omit(initialElementsMap[key], "position"),
+              omit(elementsMap[key], "position")
+            )
+          ) {
+            return true;
           }
         }
-        return false
-      }, false)
+        return false;
+      },
+      false
+    );
 
     if (shouldRenderNodeSidebarChanges) {
       const newEls = Object.keys(elementsMap).reduce((acc, key) => {
         if (initialElementsMap[key]) {
-          const updatedElement =
-            Object.assign(elementsMap[key], omit(initialElementsMap[key], "position"))
+          const updatedElement = Object.assign(
+            elementsMap[key],
+            omit(initialElementsMap[key], "position")
+          );
 
-          return Object.assign(acc, { [key]: updatedElement })
+          return Object.assign(acc, { [key]: updatedElement });
         } else {
-          return Object.assign(acc, { [key]: elementsMap[key] })
+          return Object.assign(acc, { [key]: elementsMap[key] });
         }
-      }, {})
+      }, {});
 
-      setElements(newEls)
+      setElements(newEls);
     }
   }, [initialElementsMap]);
 
@@ -190,11 +200,10 @@ export default ({
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
-        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
-        cfListEnabled:
-          event.dataTransfer.getData("node/cf_list_enabled") === "true",
         multi_buy_id:
           event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        config_profile_id:
+          event.dataTransfer.getData("node/config_profile_id") !== "null",
         devicesNotInFilter:
           event.dataTransfer.getData("node/devices_not_in_filter") === "true",
       });
@@ -204,11 +213,10 @@ export default ({
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
-        adrAllowed: event.dataTransfer.getData("node/adr_allowed") === "true",
-        cfListEnabled:
-          event.dataTransfer.getData("node/cf_list_enabled") === "true",
         multi_buy_id:
           event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        config_profile_id:
+          event.dataTransfer.getData("node/config_profile_id") !== "null",
         inXORFilter:
           event.dataTransfer.getData("node/in_xor_filter") === "true",
       });

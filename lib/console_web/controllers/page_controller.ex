@@ -19,11 +19,10 @@ defmodule ConsoleWeb.PageController do
         "datacredits",
         "flows",
         "alerts",
-        "adr",
         "multi_buys",
-        "cf_list",
         "profile",
-        "coverage"
+        "coverage",
+        "config_profiles"
       ]
 
     if conn.request_path == "/" or Enum.member?(valid_page_paths, main_path) do

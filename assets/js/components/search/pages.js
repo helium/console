@@ -1,5 +1,5 @@
-import Fuse from "fuse.js"
-import take from 'lodash/take'
+import Fuse from "fuse.js";
+import take from "lodash/take";
 
 const pages = [
   {
@@ -8,7 +8,7 @@ const pages = [
     url: "/devices",
     id: "/devices",
     category: "devices",
-    synonyms: ""
+    synonyms: "",
   },
   {
     title: "Integrations",
@@ -16,7 +16,7 @@ const pages = [
     url: "/integrations",
     id: "/integrations",
     category: "integrations",
-    synonyms: ""
+    synonyms: "",
   },
   {
     title: "Functions",
@@ -24,7 +24,7 @@ const pages = [
     url: "/functions",
     id: "/functions",
     category: "functions",
-    synonyms: ""
+    synonyms: "",
   },
   {
     title: "Organizations",
@@ -32,7 +32,7 @@ const pages = [
     url: "/organizations",
     id: "/organizations",
     category: "organizations",
-    synonyms: ""
+    synonyms: "",
   },
   {
     title: "Users",
@@ -40,7 +40,7 @@ const pages = [
     url: "/users",
     id: "/users",
     category: "users",
-    synonyms: ""
+    synonyms: "",
   },
   {
     title: "Data Credits",
@@ -48,7 +48,7 @@ const pages = [
     url: "/datacredits",
     id: "/datacredits",
     category: "datacredits",
-    synonyms: "billing"
+    synonyms: "billing",
   },
   {
     title: "Profile",
@@ -56,7 +56,7 @@ const pages = [
     url: "/profile",
     id: "/profile",
     category: "profile",
-    synonyms: "account"
+    synonyms: "account",
   },
   {
     title: "Alerts",
@@ -64,15 +64,7 @@ const pages = [
     url: "/alerts",
     id: "/alerts",
     category: "alerts",
-    synonyms: "notifications"
-  },
-  {
-    title: "ADR",
-    description: "Configure your ADR settings",
-    url: "/adr",
-    id: "/adr",
-    category: "adr",
-    synonyms: ""
+    synonyms: "notifications",
   },
   {
     title: "Multiple Packets",
@@ -80,7 +72,15 @@ const pages = [
     url: "/multi_buys",
     id: "/multi_buys",
     category: "multibuys",
-    synonyms: "packets"
+    synonyms: "packets",
+  },
+  {
+    title: "Configuration Profiles",
+    description: "Set up your configuration profiles",
+    url: "/config_profiles",
+    id: "/config_profiles",
+    category: "configprofiles",
+    synonyms: "profiles",
   },
   {
     title: "Flows",
@@ -88,9 +88,9 @@ const pages = [
     url: "/flows",
     id: "/flows",
     category: "flows",
-    synonyms: ""
+    synonyms: "",
   },
-]
+];
 
 const fuseOpts = {
   shouldSort: true,
@@ -99,14 +99,11 @@ const fuseOpts = {
   distance: 100,
   maxPatternLength: 32,
   minMatchCharLength: 1,
-  keys: [
-    "title",
-    "synonyms"
-  ]
-}
+  keys: ["title", "synonyms"],
+};
 
-const fuse = new Fuse(pages, fuseOpts)
+const fuse = new Fuse(pages, fuseOpts);
 
-const searchPages = (query) => take(fuse.search(query), 5)
+const searchPages = (query) => take(fuse.search(query), 5);
 
-export default searchPages
+export default searchPages;

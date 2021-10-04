@@ -7,6 +7,7 @@ defmodule Console.Devices.Device do
   alias Console.Labels.DevicesLabels
   alias Console.Labels.Label
   alias Console.MultiBuys.MultiBuy
+  alias Console.ConfigProfiles.ConfigProfile
   alias Console.Helpers
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -30,6 +31,7 @@ defmodule Console.Devices.Device do
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
+    belongs_to :config_profile, ConfigProfile
     has_many :events, Event, on_delete: :delete_all
     many_to_many :labels, Label, join_through: DevicesLabels, on_delete: :delete_all
 
@@ -73,7 +75,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :adr_allowed, :multi_buy_id, :cf_list_enabled, :config_profile_id])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)

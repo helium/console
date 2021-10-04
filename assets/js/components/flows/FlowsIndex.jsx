@@ -274,11 +274,10 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
       data: {
         label: device.name,
         id: `device-${device.id}`,
-        adrAllowed: device.adr_allowed,
         multi_buy_id: device.multi_buy_id,
         hasAlerts: device.alerts.length > 0,
-        cfListEnabled: device.cf_list_enabled,
         inXORFilter: device.in_xor_filter,
+        config_profile_id: device.config_profile_id,
       },
       position: [0, 0],
     };
@@ -297,11 +296,10 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         label: label.name,
         id: `label-${label.id}`,
         deviceCount: label.device_count,
-        adrAllowed: label.adr_allowed,
         multi_buy_id: label.multi_buy_id,
         hasAlerts: label.alerts.length > 0,
-        cfListEnabled: label.cf_list_enabled,
         devicesNotInFilter: checkIfDevicesNotInFilter(label),
+        config_profile_id: label.config_profile_id,
       },
       position: [0, 0],
     };

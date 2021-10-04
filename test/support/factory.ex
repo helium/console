@@ -14,6 +14,7 @@ defmodule Console.Factory do
   alias Console.Alerts.Alert
   alias Console.Alerts.AlertNode
   alias Console.Flows.Flow
+  alias Console.ConfigProfiles.ConfigProfile
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -101,5 +102,9 @@ defmodule Console.Factory do
 
   def alert_node_factory do
     %AlertNode{}
+  end
+
+  def config_profile_factory do
+    %ConfigProfile{}
   end
 end

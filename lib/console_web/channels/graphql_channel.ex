@@ -152,4 +152,12 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:coverage_hotspot_show_debug", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:config_profiles_index_table", _message, socket) do
+    {:ok, socket}
+  end
+
+  def join("graphql:config_profile_show", _message, socket) do
+    {:ok, socket}
+  end
 end
