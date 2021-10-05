@@ -4,7 +4,7 @@ import { Button, Row, Col, Typography } from "antd";
 import { useQuery } from "@apollo/client";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import MultiBuyIcon from "../../../img/multi_buy/multi-buy-index-add-icon.svg";
+import ConfigProfileIcon from "../../../img/config_profile/profile_icon_blue.svg";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -78,7 +78,7 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
       )}
       <Row style={{ marginTop: "10px" }}>
         <Col span={10} style={{ padding: "70px 80px" }}>
-          <img src={MultiBuyIcon} /* TODO update icon */ />
+          <img src={ConfigProfileIcon} />
           <h1 style={{ marginTop: 10, fontSize: "23px", fontWeight: 600 }}>
             Profiles
           </h1>

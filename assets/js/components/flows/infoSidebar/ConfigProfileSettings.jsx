@@ -13,6 +13,7 @@ import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
 const { Text } = Typography;
 import NewConfigProfileWithNode from "./NewConfigProfileWithNode";
+import SlidersOutlined from "@ant-design/icons/SlidersOutlined";
 
 export default ({ currentNode, nodeType }) => {
   const [showNew, setShowNew] = useState(false);
@@ -140,7 +141,7 @@ export default ({ currentNode, nodeType }) => {
           onClick={() => {
             setShowNew(true);
           }}
-          /* TODO add icon */
+          icon={<SlidersOutlined />}
         >
           Create New Profile
         </Button>

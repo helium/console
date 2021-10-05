@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import DashboardLayout from "../common/DashboardLayout";
 import TableHeader from "../common/TableHeader";
-import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
-import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
+import AllIcon from "../../../img/config_profile/profile_blue.svg";
+import PlusIcon from "../../../img/config_profile/plus.svg";
 import ConfigProfileBar from "./ConfigProfileBar";
 import ConfigProfileForm from "./ConfigProfileForm";
 import { ALL_CONFIG_PROFILES } from "../../graphql/configProfiles";
@@ -87,13 +87,13 @@ export default (props) => {
           setShowPage("allConfigProfiles");
           history.push("/config_profiles");
         }}
-        allIcon={AllIcon} // TODO update icon
+        allIcon={AllIcon}
         textColor="#3C6B95"
         allText="All Profiles"
         onHomePage={showPage === "home"}
         onAllPage={showPage === "allConfigProfiles"}
         onNewPage={showPage === "new"}
-        addIcon={PlusIcon} // TODO update icon
+        addIcon={PlusIcon}
         goToNew={() => {
           setShowPage("new");
           history.push("/config_profiles/new");
