@@ -6,13 +6,30 @@ defmodule ConsoleWeb.Router.OrganizationController do
   alias Console.Memos.Memo
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
+  alias ConsoleWeb.Router.OrganizationView
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def index(conn, _) do
-    organizations = Organizations.get_all()
+  def index(conn, params) do
+    organizations = Organizations.paginate_all(params["after"])
+    parsed_orgs = OrganizationView.render("index.json", organizations: organizations)
 
-    render(conn, "index.json", organizations: organizations)
+    last_org = List.last(parsed_orgs)
+    response =
+      case last_org do
+        nil ->
+          %{
+            data: parsed_orgs
+          }
+        _ ->
+          %{
+            data: parsed_orgs,
+            after: last_org.id
+          }
+      end
+
+    conn
+    |> send_resp(:ok, Poison.encode!(response))
   end
 
   def show(conn, %{"id" => id}) do
