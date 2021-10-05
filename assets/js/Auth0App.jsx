@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import Router from './Router'
+import Auth0Router from './Auth0Router'
 import { displayInfo, displayError } from './util/messages'
 import AppCss from "../css/app.css"; // used!
 
-class App extends Component {
+class Auth0App extends Component {
   render() {
     if (window.flashInfo !== '') displayInfo(window.flashInfo)
     if (window.flashError !== '') displayError(window.flashError)
 
     return (
-      <Router />
+      <Auth0Router />
     )
   }
 }
 
-export default App
+export default Auth0App
