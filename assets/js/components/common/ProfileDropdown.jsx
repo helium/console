@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { Dropdown, Menu, Button } from "antd";
 import { useQuery } from "@apollo/client";
@@ -7,7 +8,7 @@ import { ALL_CONFIG_PROFILES } from "../../graphql/configProfiles";
 export default (props) => {
   const [profileId, setProfileId] = useState(null);
 
-  const { data } = useQuery(ALL_CONFIG_PROFILES, {
+  const { data, refetch } = useQuery(ALL_CONFIG_PROFILES, {
     fetchPolicy: "cache-first",
   });
   const profiles = data ? data.allConfigProfiles : [];
@@ -15,6 +16,30 @@ export default (props) => {
     map[profile.id] = profile;
     return map;
   }, {});
+
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+  const configProfilesChannel = socket.channel(
+    "graphql:config_profiles_index_table",
+    {}
+  );
+  useEffect(() => {
+    // executed when mounted
+    configProfilesChannel.join();
+    configProfilesChannel.on(
+      `graphql:config_profiles_index_table:${currentOrganizationId}:config_profile_list_update`,
+      (_message) => {
+        refetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      configProfilesChannel.leave();
+    };
+  }, []);
 
   useEffect(() => {
     if (props.profileId) setProfileId(props.profileId);
