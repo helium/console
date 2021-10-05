@@ -43,7 +43,7 @@ defmodule Console.Devices.Device do
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
     device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id])
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :config_profile_id])
       |> put_change(:oui, Application.fetch_env!(:console, :oui))
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])

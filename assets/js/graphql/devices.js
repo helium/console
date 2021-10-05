@@ -29,6 +29,9 @@ export const DEVICE_SHOW = gql`
         name
         id
       }
+      config_profile {
+        name
+      }
     }
   }
   ${DEVICE_FRAGMENT}

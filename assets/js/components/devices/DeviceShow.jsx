@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
+import { Link } from "react-router-dom";
 import OutsideClick from "react-outside-click-handler";
 import EventsDashboard from "../events/EventsDashboard";
 import UserCan, { userCan } from "../common/UserCan";
@@ -45,6 +46,7 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
+import ProfileDropdown from "../common/ProfileDropdown";
 
 export default (props) => {
   const deviceId = props.match.params.id;
@@ -52,14 +54,13 @@ export default (props) => {
   const currentOrgId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
-  const currentRole = useSelector(
-    (state) => state.organization.currentRole
-  );
+  const currentRole = useSelector((state) => state.organization.currentRole);
 
   const [name, setName] = useState("");
   const [devEUI, setDevEUI] = useState("");
   const [appEUI, setAppEUI] = useState("");
   const [appKey, setAppKey] = useState("");
+  const [profileId, setProfileId] = useState(null);
   const [showNameInput, setShowNameInput] = useState(false);
   const [showDevEUIInput, setShowDevEUIInput] = useState(false);
   const [showAppEUIInput, setShowAppEUIInput] = useState(false);
@@ -74,6 +75,7 @@ export default (props) => {
   const [showDownlinkSidebar, setShowDownlinkSidebar] = useState(false);
   const [deviceToDelete, setDeviceToDelete] = useState(null);
   const [showAppKey, setShowAppKey] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   const socket = useSelector((state) => state.apollo.socket);
   const channel = socket.channel("graphql:device_show", {});
@@ -115,6 +117,7 @@ export default (props) => {
       setAppEUI(device.app_eui);
       setAppKey(device.app_key);
       setDevEUI(device.dev_eui);
+      setProfileId(device.config_profile_id);
     }
   }, [device]);
 
@@ -182,6 +185,19 @@ export default (props) => {
     }
   };
 
+  const handleProfileUpdate = (id) => {
+    dispatch(
+      updateDevice(id, {
+        config_profile_id: profileId,
+      })
+    );
+    analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
+      id: id,
+      config_profile_id: profileId,
+    });
+    setShowProfileDropdown(false);
+  };
+
   const handleToggleDownlink = () => {
     setShowDownlinkSidebar(!showDownlinkSidebar);
   };
@@ -217,6 +233,10 @@ export default (props) => {
   const toggleAppKeyInput = () => {
     setAppKey(device.app_key);
     setShowAppKeyInput(!showAppKeyInput);
+  };
+
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown(!showProfileDropdown);
   };
 
   const openDeviceRemoveLabelModal = (labelsSelected) => {
@@ -294,7 +314,11 @@ export default (props) => {
               placement="top"
               overlayStyle={{ width: 140 }}
             >
-              <Switch checked={device.active} onChange={toggleDeviceActive} disabled={!userCan({ role: currentRole })} />
+              <Switch
+                checked={device.active}
+                onChange={toggleDeviceActive}
+                disabled={!userCan({ role: currentRole })}
+              />
             </Popover>
             <UserCan>
               <Button
@@ -310,14 +334,13 @@ export default (props) => {
               </Button>
             </UserCan>
           </div>
-
         </div>
 
         <Row gutter={20} type="flex">
           <Col span={15}>
             <Card
               title="Device Details"
-              bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 272 }}
+              bodyStyle={{ paddingRight: 0, paddingLeft: 0, height: 300 }}
             >
               <div
                 style={{
@@ -537,6 +560,59 @@ export default (props) => {
                         >
                           OTAA
                         </Tag>
+                      </td>
+                    </tr>
+                    <tr style={{ height: "30px" }}>
+                      <td style={{ width: "150px" }}>
+                        <Text strong>Profile </Text>
+                      </td>
+                      <td>
+                        {!showProfileDropdown && (
+                          <React.Fragment>
+                            {device.config_profile ? (
+                              <Link
+                                to={`/config_profiles/${device.config_profile_id}`}
+                              >
+                                {device.config_profile.name}
+                              </Link>
+                            ) : (
+                              <Text>
+                                <i>None selected</i>
+                              </Text>
+                            )}
+                            <Button
+                              size="small"
+                              style={{ marginLeft: 5 }}
+                              onClick={toggleProfileDropdown}
+                            >
+                              <EditOutlined />
+                            </Button>
+                          </React.Fragment>
+                        )}
+                        {showProfileDropdown && (
+                          <>
+                            <ProfileDropdown
+                              selectProfile={(id) => {
+                                setProfileId(id);
+                              }}
+                              profileId={profileId}
+                            />
+                            <Button
+                              style={{ marginRight: 5 }}
+                              type="primary"
+                              name="profile"
+                              onClick={() => handleProfileUpdate(device.id)}
+                            >
+                              Update
+                            </Button>
+                            <Button
+                              name="cancel"
+                              onClick={toggleProfileDropdown}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   </tbody>
