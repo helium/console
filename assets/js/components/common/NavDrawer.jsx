@@ -160,7 +160,7 @@ class NavDrawer extends Component {
             />
           )}
         </div>
-        <div style={{ position: "relative" }}>
+        <div style={{ marginBottom: 30, position: "relative" }}>
           <NavLink
             draggable="false"
             to={"/multi_buys"}
