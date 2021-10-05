@@ -30,6 +30,11 @@ defmodule Console.Labels do
      |> Repo.all()
   end
 
+  def get_labels_of_device_in_order_of_attachment(device) do
+     from(dl in DevicesLabels, where: dl.device_id == ^device.id, order_by: [desc: dl.inserted_at])
+     |> Repo.all()
+  end
+
   def get_label(organization, id) do
      Repo.get_by(Label, [id: id, organization_id: organization.id])
   end
