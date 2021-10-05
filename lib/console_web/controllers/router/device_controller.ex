@@ -50,7 +50,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               if first_device_label_with_config_profile do
                 first_device_label_with_config_profile.label.config_profile
               else
-                if device.config_profile do [device.config_profile] else nil end
+                if device.config_profile do device.config_profile else nil end
               end
           end
         
