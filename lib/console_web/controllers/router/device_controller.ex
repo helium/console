@@ -187,10 +187,13 @@ defmodule ConsoleWeb.Router.DeviceController do
             event = case event["data"]["req"]["body"] do
               nil -> event
               _ ->
-                if String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") do
-                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
-                else
-                  event
+                cond do
+                  String.length(event["data"]["req"]["body"]) > 2500 ->
+                    Kernel.put_in(event["data"]["req"]["body"], "Request body is too long and cannot be displayed properly.")
+                  String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") ->
+                    Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                  true ->
+                    event
                 end
             end
 

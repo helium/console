@@ -180,7 +180,7 @@ defmodule Console.Devices do
   end
 
   def get_events(device_id) do
-    from(e in Event, where: e.device_id == ^device_id, order_by: [desc: :reported_at])
+    from(e in Event, where: e.device_id == ^device_id, order_by: [desc: :reported_at_naive])
     |> limit(1440)
     |> Repo.all()
   end
