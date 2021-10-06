@@ -88,7 +88,6 @@ export const joinOrganization = (token) => {
       rest.post("/api/users", params).then((response) => {
         dispatch(fetchedOrganization(response.data[0]));
         localStorage.setItem("organization", JSON.stringify(response.data[0]));
-        dispatch(push("/"));
         window.location.replace("/organizations");
       });
     };

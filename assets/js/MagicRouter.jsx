@@ -12,7 +12,6 @@ import { connect } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
 import { Redirect } from "react-router";
 import { Route, Switch } from "react-router-dom";
-import PublicRoute from "./components/routes/PublicRoute.jsx";
 import JoinOrganizationPrompt from "./components/auth/JoinOrganizationPrompt.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import DeviceIndex from "./components/devices/DeviceIndex";
@@ -86,7 +85,7 @@ const MagicRouter = (props) => {
     <ConnectedRouter history={history}>
       <Switch>
         <Redirect exact from="/" to={redirectPath} />
-        <PublicRoute
+        <Route
           path="/join_organization"
           loaded={loadedOrganization}
           component={JoinOrganizationPrompt}
