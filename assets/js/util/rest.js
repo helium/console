@@ -4,6 +4,7 @@ import { displayError } from "./messages";
 import { getIdTokenClaims } from "../components/auth/Auth0Provider";
 import { getMagicSessionToken } from "../actions/magic"
 import { logOut } from '../actions/auth'
+import { config } from '../config/magic'
 
 export const get = async (path, params = {}, extraHeaders = {}) => {
   return axios({
@@ -62,7 +63,7 @@ const headers = async () => {
 
   let tokenClaims = store.getState().apollo.tokenClaims;
 
-  if (true) {
+  if (config.useMagicAuth) {
     if (!tokenClaims) {
       tokenClaims = await getMagicSessionToken()
     } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {

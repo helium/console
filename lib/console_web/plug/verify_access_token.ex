@@ -59,7 +59,7 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
           )
           |> halt()
       _ ->
-        if true do
+        if Application.get_env(:console, :use_magic_auth) do
           token =
             conn
             |> get_req_header("authorization")

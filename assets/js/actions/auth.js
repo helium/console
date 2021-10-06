@@ -2,6 +2,7 @@ import * as rest from '../util/rest';
 import { logout } from '../components/auth/Auth0Provider';
 import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
+import { config } from '../config/magic'
 
 export const getMfaStatus = () => {
   return (dispatch) => {
@@ -26,8 +27,8 @@ export const logOut = () => {
   window.Intercom('shutdown')
 
   return async (dispatch) => {
-    if (true) {
-      localStorage.removeItem("organization");
+    localStorage.removeItem("organization");
+    if (config.useMagicAuth) {  
       await logoutUser()
       window.location.replace("/")
     } else {

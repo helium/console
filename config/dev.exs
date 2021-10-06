@@ -85,6 +85,9 @@ config :console,
   magic_secret_key: "sk_live_2EA0025F88821B36"
 
 config :console,
+  use_magic_auth: true
+
+config :console,
   allowed_ip_range: ["127.0.0.1"]
 
 config :logger, level: :debug

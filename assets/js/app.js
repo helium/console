@@ -30,6 +30,7 @@ import { Auth0Provider } from './components/auth/Auth0Provider';
 import Terms from './components/auth/Terms';
 import { history, store } from './store/configureStore'
 import { config } from './config/auth0'
+import { config as magicConfig } from './config/magic'
 
 const onRedirectCallback = appState => {
   // This uses replace instead of push because the Auth0 SDK
@@ -41,7 +42,7 @@ const onRedirectCallback = appState => {
   )
 }
 
-if (true) {
+if (magicConfig.useMagicAuth) {
   ReactDOM.render(
     <Router history={history}>
       <Switch>

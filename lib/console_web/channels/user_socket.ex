@@ -21,7 +21,7 @@ defmodule ConsoleWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"token" => token, "organization_id" => organization_id}, socket) do
-    if true do
+    if Application.get_env(:console, :use_magic_auth) do
       case ConsoleWeb.Guardian.decode_and_verify(token) do
         {:ok, %{ "typ" => "magic-auth-session", "sub" => user_id, "email" => email }} ->
           case Auth.get_user_by_id_and_email(user_id, email)
