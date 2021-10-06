@@ -5,10 +5,8 @@ export const checkUser = async (cb) => {
   const isLoggedIn = await magic.user.isLoggedIn();
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
-    const idToken = await magic.user.getIdToken();
-    console.log(idToken)
 
-    return cb({ isLoggedIn: true, email: user.email });
+    return cb({ isLoggedIn: true, email: user.email, user_id: user.issuer });
   }
   return cb({ isLoggedIn: false });
 };

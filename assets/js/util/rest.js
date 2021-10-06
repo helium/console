@@ -59,10 +59,15 @@ const headers = async () => {
   }
 
   let tokenClaims = store.getState().apollo.tokenClaims;
-  if (!tokenClaims) {
-    tokenClaims = await getIdTokenClaims();
-  } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
-    return logout();
+
+  if (true) {
+    // generate a jwt token
+  } else {
+    if (!tokenClaims) {
+      tokenClaims = await getIdTokenClaims();
+    } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
+      return logout();
+    }
   }
 
   const apikey = tokenClaims.__raw;

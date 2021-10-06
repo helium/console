@@ -41,7 +41,7 @@ const onRedirectCallback = appState => {
   )
 }
 
-if (false) {
+if (true) {
   ReactDOM.render(
     <Router history={history}>
       <Provider store={store}>

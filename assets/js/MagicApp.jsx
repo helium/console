@@ -8,11 +8,10 @@ import {
 import { checkUser } from './actions/magic';
 import { UserContext } from './context/magicUserContext'
 import MagicAuthenticate from './components/auth/MagicAuthenticate';
-import Dashboard from './components/auth/Dashboard';
-import PrivateRoute from './components/routes/PrivateRoute';
+import MagicRouter from './MagicRouter'
 
 const MagicApp = () => {
-  const [user, setUser] = useState({ isLoggedIn: null, email: '' });
+  const [user, setUser] = useState({ isLoggedIn: null, email: '', user_id: '' });
   const [loading, setLoading] = useState();
 
   useEffect(() => {
@@ -27,6 +26,7 @@ const MagicApp = () => {
     };
     validateUser();
   }, [user.isLoggedIn]);
+
   if (loading) {
     return (
       <div
@@ -39,11 +39,17 @@ const MagicApp = () => {
   return (
     <UserContext.Provider value={user}>
       <Router>
-        {user.isLoggedIn && <Redirect to={{ pathname: '/dashboard' }} />}
-        <Switch>
-          <Route exact path="/" component={MagicAuthenticate} />
-          <PrivateRoute path="/dashboard" component={Dashboard} />
-        </Switch>
+        {!user.isLoggedIn && (
+          <React.Fragment>
+            <Redirect to={{ pathname: '/' }} />
+            <Switch>
+              <Route exact path="/" component={MagicAuthenticate} />
+            </Switch>
+          </React.Fragment>
+        )}
+        {user.isLoggedIn && (
+          <MagicRouter user={user} />
+        )}
       </Router>
     </UserContext.Provider>
   );
