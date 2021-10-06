@@ -5,6 +5,7 @@ import { ApolloProvider } from "@apollo/client";
 import { history } from "./store/configureStore";
 import { fetchOrganization } from "./actions/organization";
 import { setupApolloClient } from "./actions/apollo";
+import { getMagicSessionToken } from "./actions/magic"
 
 // Routes
 import { connect } from "react-redux";
@@ -60,7 +61,7 @@ const MagicRouter = (props) => {
       fetchOrganization()
       return
     } else if (!apolloClient && currentOrganizationId) {
-      setupApolloClient(getIdTokenClaims, currentOrganizationId)
+      setupApolloClient(getMagicSessionToken, currentOrganizationId)
       return
     }
 

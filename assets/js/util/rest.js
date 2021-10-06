@@ -2,6 +2,7 @@ import { store } from "../store/configureStore";
 import axios from "../config/axios.js";
 import { displayError } from "./messages";
 import { getIdTokenClaims, logout } from "../components/auth/Auth0Provider";
+import { getMagicSessionToken } from "../actions/magic"
 
 export const get = async (path, params = {}, extraHeaders = {}) => {
   return axios({
@@ -61,7 +62,11 @@ const headers = async () => {
   let tokenClaims = store.getState().apollo.tokenClaims;
 
   if (true) {
-    // generate a jwt token
+    if (!tokenClaims) {
+      tokenClaims = await getMagicSessionToken()
+    } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
+      // magic logout
+    }
   } else {
     if (!tokenClaims) {
       tokenClaims = await getIdTokenClaims();

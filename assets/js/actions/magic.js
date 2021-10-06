@@ -1,5 +1,6 @@
 import { Magic } from 'magic-sdk';
 const magic = new Magic('pk_live_2D8497C8B0909EC7');
+import { displayError } from '../util/messages'
 
 export const checkUser = async (cb) => {
   const isLoggedIn = await magic.user.isLoggedIn();
@@ -18,3 +19,22 @@ export const loginUser = async (email) => {
 export const logoutUser = async () => {
   await magic.user.logout();
 };
+
+export const getMagicSessionToken = async () => {
+  const didToken = await magic.user.getIdToken()
+  const res =
+    await fetch('/api/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + didToken,
+      },
+    });
+
+  if (res.status === 201) {
+    const data = await res.json();
+    return data
+  }
+  displayError()
+  return null
+}

@@ -82,6 +82,9 @@ config :console,
   stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"
 
 config :console,
+  magic_secret_key: "sk_live_2EA0025F88821B36"
+
+config :console,
   allowed_ip_range: ["127.0.0.1"]
 
 config :logger, level: :debug

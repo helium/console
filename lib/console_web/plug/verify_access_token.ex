@@ -60,7 +60,28 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
           |> halt()
       _ ->
         if true do
-          # verify the jwt token
+          token =
+            conn
+            |> get_req_header("authorization")
+            |> List.first()
+            |> String.replace("Bearer ", "")
+
+          case ConsoleWeb.Guardian.decode_and_verify(token) do
+            {:ok, %{ "typ" => "magic-auth-session", "sub" => user_id, "email" => email }} ->
+              conn
+                |> assign(:user_id, user_id)
+                |> assign(:email, email)
+            _ ->
+              conn
+              |> send_resp(
+                :forbidden,
+                Poison.encode!(%{
+                  type: "forbidden",
+                  errors: ["Could not validate your credentials"]
+                })
+              )
+              |> halt()
+          end
         else
           try do
             token = conn
