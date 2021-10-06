@@ -44,9 +44,12 @@ const onRedirectCallback = appState => {
 if (true) {
   ReactDOM.render(
     <Router history={history}>
-      <Provider store={store}>
-        <MagicApp />
-      </Provider>
+      <Switch>
+        <Route exact path="/terms"><Terms/></Route>
+        <Provider store={store}>
+          <MagicApp />
+        </Provider>
+      </Switch>
     </Router>,
     document.getElementById("react-root")
   )

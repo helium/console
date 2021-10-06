@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Button, Typography, Input } from 'antd';
+import { Button, Card, Typography, Input, Form } from 'antd';
 import { loginUser } from '../../actions/magic';
+import AuthLayout from '../common/AuthLayout'
+import Logo from '../../../img/symbol.svg'
+const { Text, Title } = Typography
 
 const MagicAuthenticate = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState(null);
-  const history = useHistory();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,8 +20,8 @@ const MagicAuthenticate = () => {
     }
     try {
       await loginUser(email);
+      window.location.reload()
       setLoading(false);
-      history.replace('/dashboard');
     } catch (error) {
       setError('Unable to log in');
       console.error(error);
@@ -32,21 +33,39 @@ const MagicAuthenticate = () => {
   };
 
   return (
-    <div>
-      <h1>Login to Helium Console</h1>
-      <Input
-        placeholder="Email Address"
-        name="email"
-        value={email}
-        onChange={handleChange}
-      />
-      <Button
-        type="submit"
-        onClick={handleSubmit}
-      >
-        {loading ? 'Loading...' : 'Send'}
-      </Button>
-    </div>
-  );
+    <AuthLayout>
+      <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
+        <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+        <div style={{textAlign: 'center', marginBottom: 30}}>
+          <Title>
+            Helium Console
+          </Title>
+          <Text style={{color:'#38A2FF'}}>Submit your email address to receive a login link</Text>
+        </div>
+
+        <Form onSubmit={handleSubmit}>
+          <Form.Item style={{marginBottom: 10}}>
+            <Input
+              autoFocus
+              placeholder="Email"
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+            />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: '100%' }}
+            onClick={handleSubmit}
+          >
+            {loading ? 'Loading...' : 'Submit'}
+          </Button>
+        </Form>
+      </Card>
+    </AuthLayout>
+  )
 };
 export default MagicAuthenticate;

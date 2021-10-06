@@ -76,6 +76,12 @@ const MagicRouter = (props) => {
       ? "/flows"
       : "/welcome";
 
+  if (loadingOrganization) return (
+    <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+      <Spin size="large" />
+    </div>
+  )
+
   return (
     <ConnectedRouter history={history}>
       <Switch>

@@ -9,7 +9,7 @@ export const checkUser = async (cb) => {
 
     return cb({ isLoggedIn: true, email: user.email, sub: user.issuer });
   }
-  return cb({ isLoggedIn: false });
+  return cb({ isLoggedIn: null, email: '', sub: '' });
 };
 
 export const loginUser = async (email) => {

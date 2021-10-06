@@ -5,9 +5,11 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import { Spin } from "antd";
 import { checkUser } from './actions/magic';
 import { UserContext } from './context/magicUserContext'
 import MagicAuthenticate from './components/auth/MagicAuthenticate';
+import AuthLayout from './components/common/AuthLayout';
 import MagicRouter from './MagicRouter'
 
 const MagicApp = () => {
@@ -29,10 +31,8 @@ const MagicApp = () => {
 
   if (loading) {
     return (
-      <div
-        style={{ height: '100vh' }}
-      >
-        Loading...
+      <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        <Spin size="large" />
       </div>
     );
   }
