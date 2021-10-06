@@ -59,7 +59,7 @@ class LabelAddDeviceSelect extends Component {
             allDevices.map((d) => (
               <div style={{ marginTop: 5 }} key={d.id}>
                 <Checkbox
-                  onChange={() => checkSingleDevice(d.id)}
+                  onChange={() => checkSingleDevice(d.id, d.config_profile_id)}
                   checked={checkedDevices[d.id]}
                 >
                   {d.name}
