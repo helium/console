@@ -1,5 +1,6 @@
 import * as rest from '../util/rest';
 import { logout } from '../components/auth/Auth0Provider';
+import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
 
 export const getMfaStatus = () => {
@@ -22,8 +23,15 @@ export const disableMfa = () => {
 
 export const logOut = () => {
   analyticsLogger.setUserId(null)
+  window.Intercom('shutdown')
+
   return async (dispatch) => {
-    await logout({returnTo: window.location.origin});
+    if (true) {
+      await logoutUser()
+      window.location.reload()
+    } else {
+      await logout({returnTo: window.location.origin});
+    }
   }
 }
 

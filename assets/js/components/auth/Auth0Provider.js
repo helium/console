@@ -29,8 +29,6 @@ export const getIdTokenClaims = async () => {
 }
 
 export const logout = async (...p) => {
-  window.Intercom('shutdown')
-
   return await auth0Client.logout(...p);
 }
 
