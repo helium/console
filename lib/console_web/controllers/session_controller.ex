@@ -37,12 +37,4 @@ defmodule ConsoleWeb.SessionController do
       end
     end
   end
-
-  def refresh(conn, %{"jwt" => jwt}) do
-    with {:ok, _, {newToken, _}} = ConsoleWeb.Guardian.refresh(jwt, ttl: { 1, :day }) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", jwt: newToken)
-    end
-  end
 end

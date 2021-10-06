@@ -65,7 +65,7 @@ const headers = async () => {
     if (!tokenClaims) {
       tokenClaims = await getMagicSessionToken()
     } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
-      // magic logout
+      return logout();
     }
   } else {
     if (!tokenClaims) {

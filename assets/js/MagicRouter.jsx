@@ -64,14 +64,6 @@ const MagicRouter = (props) => {
       setupApolloClient(getMagicSessionToken, currentOrganizationId)
       return
     }
-
-    const fn = async () => {
-      localStorage.removeItem("organization");
-      window.location.reload()
-    };
-    if (!user.isLoggedIn) {
-      fn()
-    }
   }, [
     currentOrganizationId,
     loadingOrganization,
