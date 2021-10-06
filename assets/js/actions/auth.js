@@ -27,6 +27,7 @@ export const logOut = () => {
 
   return async (dispatch) => {
     if (true) {
+      localStorage.removeItem("organization");
       await logoutUser()
       window.location.replace("/")
     } else {

@@ -76,7 +76,7 @@ const MagicRouter = (props) => {
       ? "/flows"
       : "/welcome";
 
-  if (loadingOrganization || !apolloClient) return (
+  if (loadingOrganization || (loadedOrganization && currentOrganizationId && !apolloClient)) return (
     <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
       <Spin size="large" />
     </div>
