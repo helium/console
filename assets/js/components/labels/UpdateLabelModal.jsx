@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { Modal, Button, Typography, Input } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
+import ProfileDropdown from "../common/ProfileDropdown";
 
 class UpdateLabelModal extends Component {
   state = {
     labelName: "",
+    configProfileId: null,
   };
 
   handleInputUpdate = (e) => {
@@ -14,12 +16,16 @@ class UpdateLabelModal extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { labelName } = this.state;
+    const { labelName, configProfileId } = this.state;
 
-    this.props.handleUpdateLabel(labelName);
+    this.props.handleUpdateLabel({
+      ...(labelName && { name: labelName }),
+      config_profile_id: configProfileId,
+    });
     analyticsLogger.logEvent("ACTION_UPDATE_LABEL", {
       id: this.props.label.id,
       name: labelName,
+      configProfileId,
     });
     this.props.onClose();
   };
@@ -30,6 +36,7 @@ class UpdateLabelModal extends Component {
         () =>
           this.setState({
             labelName: null,
+            configProfileId: null,
           }),
         200
       );
@@ -70,6 +77,15 @@ class UpdateLabelModal extends Component {
               this.state.labelName ? this.state.labelName.length : "0"
             }/50`}
             maxLength={50}
+          />
+          <Text style={{ marginTop: 15, display: "block" }} strong>
+            Profile (Optional)
+          </Text>
+          <ProfileDropdown
+            selectProfile={(id) => {
+              this.setState({ configProfileId: id });
+            }}
+            profileId={label.config_profile_id}
           />
         </div>
       </Modal>

@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Schema do
     field :in_xor_filter, :boolean
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
+    field :config_profile, :config_profile
   end
 
   paginated object :hotspot do

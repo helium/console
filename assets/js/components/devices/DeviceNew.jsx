@@ -19,6 +19,7 @@ import SaveOutlined from "@ant-design/icons/SaveOutlined";
 import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
+import ProfileDropdown from "../common/ProfileDropdown";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -39,7 +40,8 @@ class DeviceNew extends Component {
     importType: "",
     page: 1,
     pageSize: 10,
-    import_status: { failed_devices: [] }
+    import_status: { failed_devices: [] },
+    configProfileId: null,
   };
 
   componentDidMount() {
@@ -73,8 +75,8 @@ class DeviceNew extends Component {
             import_status: {
               failed_devices: message.failed_devices,
               successful_count: message.successful_devices,
-            }
-          })
+            },
+          });
         }
         if (user_id === message.user_id && message.status === "failed") {
           displayError(
@@ -85,8 +87,8 @@ class DeviceNew extends Component {
           this.setState({
             import_status: {
               failed_devices: message.failed_devices || [],
-            }
-          })
+            },
+          });
         }
       }
     );
@@ -102,13 +104,15 @@ class DeviceNew extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { name, devEUI, appEUI, appKey, labelName } = this.state;
+    const { name, devEUI, appEUI, appKey, labelName, configProfileId } =
+      this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32) {
       analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {
         name: name,
         devEUI: devEUI,
         appEUI: appEUI,
         appKey: appKey,
+        configProfileId: configProfileId,
       });
       let foundLabel = find(this.props.allLabelsQuery.allLabels, {
         name: labelName,
@@ -123,6 +127,7 @@ class DeviceNew extends Component {
             dev_eui: devEUI.toUpperCase(),
             app_eui: appEUI.toUpperCase(),
             app_key: appKey.toUpperCase(),
+            config_profile_id: configProfileId,
           },
           label
         )
@@ -141,7 +146,11 @@ class DeviceNew extends Component {
   };
 
   closeImportDevicesModal = () => {
-    this.setState({ showImportDevicesModal: false, importComplete: false, import_status: { failed_devices: [] } });
+    this.setState({
+      showImportDevicesModal: false,
+      importComplete: false,
+      import_status: { failed_devices: [] },
+    });
   };
 
   render() {
@@ -266,8 +275,16 @@ class DeviceNew extends Component {
                       </Text>
                     }
                   />
+                  <Text style={{ marginTop: 25, display: "block" }} strong>
+                    Profile (Optional)
+                  </Text>
+                  <ProfileDropdown
+                    selectProfile={(id) => {
+                      this.setState({ configProfileId: id });
+                    }}
+                  />
 
-                  <Text style={{ marginTop: 30, display: "block" }} strong>
+                  <Text style={{ marginTop: 25, display: "block" }} strong>
                     Attach a Label (Optional)
                   </Text>
                   <LabelAppliedNew

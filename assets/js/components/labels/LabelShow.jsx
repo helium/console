@@ -100,9 +100,8 @@ class LabelShow extends Component {
     this.setState({ selectedDevices });
   };
 
-  handleUpdateLabel = (name) => {
+  handleUpdateLabel = (attrs) => {
     const labelId = this.props.match.params.id;
-    const attrs = { name };
     this.props.updateLabel(labelId, attrs);
   };
 
