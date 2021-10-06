@@ -70,7 +70,17 @@ class LabelAddLabelSelect extends Component {
               return (
                 <div style={{ marginTop: 5 }} key={l.id}>
                   <Checkbox
-                    onChange={() => checkSingleLabel(l.id)}
+                    onChange={() =>
+                      checkSingleLabel(
+                        l.id,
+                        l.devices.reduce((result, device) => {
+                          if (device.config_profile_id) {
+                            result.push(device.config_profile_id);
+                          }
+                          return result;
+                        }, [])
+                      )
+                    }
                     checked={checkedLabels[l.id]}
                   >
                     {l.name}
