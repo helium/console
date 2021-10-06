@@ -28,7 +28,7 @@ export const logOut = () => {
   return async (dispatch) => {
     if (true) {
       await logoutUser()
-      window.location.reload()
+      window.location.replace("/")
     } else {
       await logout({returnTo: window.location.origin});
     }

@@ -3,7 +3,6 @@ import {
   Switch,
   BrowserRouter as Router,
   Route,
-  Redirect,
 } from 'react-router-dom';
 import { Spin } from "antd";
 import { checkUser } from './actions/magic';
@@ -15,7 +14,6 @@ import MagicRouter from './MagicRouter'
 const MagicApp = () => {
   const [user, setUser] = useState({ isLoggedIn: null, email: '', sub: '' });
   const [loading, setLoading] = useState();
-
   useEffect(() => {
     const validateUser = async () => {
       setLoading(true);
@@ -41,9 +39,8 @@ const MagicApp = () => {
       <Router>
         {!user.isLoggedIn && (
           <React.Fragment>
-            <Redirect to={{ pathname: '/' }} />
             <Switch>
-              <Route exact path="/" component={MagicAuthenticate} />
+              <Route path="/" component={MagicAuthenticate} />
             </Switch>
           </React.Fragment>
         )}
