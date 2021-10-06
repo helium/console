@@ -11,7 +11,7 @@ import MagicAuthenticate from './components/auth/MagicAuthenticate';
 import MagicRouter from './MagicRouter'
 
 const MagicApp = () => {
-  const [user, setUser] = useState({ isLoggedIn: null, email: '', user_id: '' });
+  const [user, setUser] = useState({ isLoggedIn: null, email: '', sub: '' });
   const [loading, setLoading] = useState();
 
   useEffect(() => {
