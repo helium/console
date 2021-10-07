@@ -14,17 +14,20 @@ class JoinOrganizationPrompt extends Component {
   state = {
     organizationName: "",
     email: "",
-    showOrgCreation: false,
-    acceptedTerms: false,
+    firstRender: true
   }
 
   componentDidMount() {
-    const { invitationToken, getInvitation } = this.props
+    this.setState({ firstRender: false })
+  }
 
-    setTimeout(() => {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.firstRender && !this.state.firstRender) {
+      const { invitationToken, getInvitation } = this.props
+
       getInvitation(invitationToken)
       .then(invite => this.setState({ email: invite.email, invite }))
-    }, 500)
+    }
   }
 
   acceptInvitation = (e) => {
