@@ -1,6 +1,10 @@
 import { Magic } from 'magic-sdk';
-const magic = new Magic('pk_live_2D8497C8B0909EC7');
+import { OAuthExtension } from '@magic-ext/oauth';
 import { displayError } from '../util/messages'
+
+export const magic = new Magic('pk_live_2D8497C8B0909EC7', {
+  extensions: [new OAuthExtension()],
+});
 
 export const checkUser = async (cb) => {
   const isLoggedIn = await magic.user.isLoggedIn();
@@ -14,7 +18,20 @@ export const checkUser = async (cb) => {
 
 export const loginUser = async (email) => {
   await magic.auth.loginWithMagicLink({ email });
+  window.location.reload()
 };
+
+export const loginGoogleUser = async () => {
+  await magic.oauth.loginWithRedirect({
+    provider: 'google',
+    redirectURI: new URL('/callback', window.location.origin).href,
+  });
+}
+
+export const getRedirectResult = async () => {
+  await magic.oauth.getRedirectResult();
+  window.location.replace("/")
+}
 
 export const logoutUser = async () => {
   await magic.user.logout();

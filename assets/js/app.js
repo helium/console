@@ -26,6 +26,7 @@ import { Provider } from 'react-redux';
 import { Route, Switch, Router } from 'react-router-dom';
 import Auth0App from './Auth0App.jsx';
 import MagicApp from './MagicApp.jsx';
+import MagicSocialCallback from './components/auth/MagicSocialCallback';
 import { Auth0Provider } from './components/auth/Auth0Provider';
 import Terms from './components/auth/Terms';
 import { history, store } from './store/configureStore'
@@ -47,8 +48,11 @@ if (magicConfig.useMagicAuth) {
     <Router history={history}>
       <Switch>
         <Route exact path="/terms"><Terms/></Route>
+        <Route path="/callback" component={MagicSocialCallback} />
         <Provider store={store}>
-          <MagicApp />
+          {
+            history.location.pathname !== "/callback" && <MagicApp />
+          }
         </Provider>
       </Switch>
     </Router>,

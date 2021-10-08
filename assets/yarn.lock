@@ -1132,6 +1132,14 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
   integrity sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==
 
+"@magic-ext/oauth@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@magic-ext/oauth/-/oauth-0.10.0.tgz#cc88a89e15bca3dcb6c955e45a8be7b0550b2325"
+  integrity sha512-YTessj1VB3FjOP8SiBL7Fh+Wid7JAKZzZ7r5QkgyIVjGyag3ap9vmLIYmEtFH9LStAqeKnB6Xs3gVntbW57jsQ==
+  dependencies:
+    "@magic-sdk/types" "^5.1.0"
+    crypto-js "^3.3.0"
+
 "@magic-sdk/commons@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@magic-sdk/commons/-/commons-2.1.0.tgz#4c2223ddcd75713689ba5e421bf4403880cdec06"
@@ -2848,6 +2856,11 @@ crypto-browserify@^3.12.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
+
+crypto-js@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
+  integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==
 
 css-loader@^6.3.0:
   version "6.3.0"

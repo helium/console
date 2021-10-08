@@ -25,7 +25,7 @@ const MagicApp = () => {
       }
     };
     validateUser();
-  }, [user.isLoggedIn]);
+  }, []);
 
   if (loading) {
     return (

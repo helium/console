@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Typography, Input, Form } from 'antd';
-import { loginUser } from '../../actions/magic';
+import GoogleOutlined from "@ant-design/icons/GoogleOutlined";
+import { loginUser, loginGoogleUser } from '../../actions/magic';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
 const { Text, Title } = Typography
@@ -19,13 +20,16 @@ const MagicAuthenticate = () => {
       return;
     }
     try {
-      await loginUser(email);
-      window.location.reload()
-      setLoading(false);
+      loginUser(email);
     } catch (error) {
       setError('Unable to log in');
       console.error(error);
     }
+  };
+
+  const handleGoogleSubmit = async (event) => {
+    event.preventDefault();
+    loginGoogleUser()
   };
 
   const handleChange = (event) => {
@@ -44,7 +48,7 @@ const MagicAuthenticate = () => {
         </div>
 
         <Form onSubmit={handleSubmit}>
-          <Form.Item style={{marginBottom: 10}}>
+          <Form.Item style={{marginBottom: 4}}>
             <Input
               autoFocus
               placeholder="Email"
@@ -64,6 +68,15 @@ const MagicAuthenticate = () => {
             {loading ? 'Loading...' : 'Submit'}
           </Button>
         </Form>
+
+        <Button
+          htmlType="submit"
+          style={{ width: '100%', marginTop: 12 }}
+          onClick={handleGoogleSubmit}
+        >
+          <GoogleOutlined />
+          <span style={{ marginLeft: 6 }}>Continue with Google</span>
+        </Button>
       </Card>
     </AuthLayout>
   )
