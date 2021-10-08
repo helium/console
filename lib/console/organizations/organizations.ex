@@ -307,4 +307,15 @@ defmodule Console.Organizations do
       {:ok, from_org_updated, to_org_updated}
     end)
   end
+
+  def get_all_memberships(email) do
+    query = from m in Membership,
+      where: m.email == ^email
+    Repo.all(query)
+  end
+
+  def update_all_memberships(user_ids, user_id) do
+    from(m in Membership, where: m.user_id in ^user_ids)
+    |> Repo.update_all(set: [user_id: user_id])
+  end
 end

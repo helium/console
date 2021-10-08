@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.SessionController do
   use ConsoleWeb, :controller
   import ConsoleWeb.AuthErrorHandler
+  alias Console.Organizations
 
   def create(conn, _) do
     did_token =
@@ -30,9 +31,29 @@ defmodule ConsoleWeb.SessionController do
             ttl: {1, :day}
           )
         do
-          conn
-          |> put_status(:created)
-          |> render("show.json", jwt: token, claims: claims)
+          all_non_magic_memberships =
+            user_metadata["email"]
+            |> Organizations.get_all_memberships()
+            |> Enum.filter(fn m -> String.slice(m.user_id, 0, 9) != "did:ethr:" end)
+
+          case length(all_non_magic_memberships) do
+            0 ->
+              conn
+              |> put_status(:created)
+              |> render("show.json", jwt: token, claims: claims)
+            _ ->
+              old_user_ids = Enum.map(all_non_magic_memberships, fn m -> m.user_id end)
+              {count, nil} = Organizations.update_all_memberships(old_user_ids, user_metadata["issuer"])
+
+              cond do
+                count == length(all_non_magic_memberships) ->
+                  conn
+                  |> put_status(:created)
+                  |> render("show.json", jwt: token, claims: claims)
+                true ->
+                  {:error, :internal_server_error, "Failed to migrate organizations to new login, please try again or contact support."}
+              end
+          end
         end
       end
     end
