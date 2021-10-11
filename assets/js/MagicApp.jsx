@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from "react-redux";
 import {
   Switch,
   BrowserRouter as Router,
@@ -11,14 +12,13 @@ import MagicAuthenticate from './components/auth/MagicAuthenticate';
 import AuthLayout from './components/common/AuthLayout';
 import MagicRouter from './MagicRouter'
 
-const MagicApp = () => {
-  const [user, setUser] = useState({ isLoggedIn: null, email: '', sub: '' });
+const MagicApp = ({ user }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     const validateUser = async () => {
       setLoading(true);
       try {
-        await checkUser(setUser);
+        await checkUser();
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -51,4 +51,11 @@ const MagicApp = () => {
     </UserContext.Provider>
   );
 };
-export default MagicApp;
+
+function mapStateToProps(state, ownProps) {
+  return {
+    user: state.magicUser
+  };
+}
+
+export default connect(mapStateToProps, null)(MagicApp);

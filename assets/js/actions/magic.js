@@ -1,24 +1,27 @@
 import { Magic } from 'magic-sdk';
 import { OAuthExtension } from '@magic-ext/oauth';
 import { displayError } from '../util/messages'
+import { store } from '../store/configureStore';
+import { magicLogIn, magicLogOut } from './auth'
 
 export const magic = new Magic('pk_live_2D8497C8B0909EC7', {
   extensions: [new OAuthExtension()],
 });
 
-export const checkUser = async (cb) => {
+export const checkUser = async () => {
   const isLoggedIn = await magic.user.isLoggedIn();
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
 
-    return cb({ isLoggedIn: true, email: user.email, sub: user.issuer });
+    store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer }))
   }
-  return cb({ isLoggedIn: null, email: '', sub: '' });
 };
 
 export const loginUser = async (email) => {
   await magic.auth.loginWithMagicLink({ email });
-  window.location.reload()
+  const user = await magic.user.getMetadata();
+
+  store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer }))
 };
 
 export const loginGoogleUser = async () => {
