@@ -2,7 +2,7 @@ import { Magic } from 'magic-sdk';
 import { OAuthExtension } from '@magic-ext/oauth';
 import { displayError } from '../util/messages'
 import { store } from '../store/configureStore';
-import { magicLogIn, magicLogOut } from './auth'
+import { magicLogIn } from './auth'
 
 export const magic = new Magic('pk_live_2D8497C8B0909EC7', {
   extensions: [new OAuthExtension()],

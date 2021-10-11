@@ -33,7 +33,6 @@ export const logOut = () => {
     localStorage.removeItem("organization");
     if (config.useMagicAuth) {
       await logoutUser()
-      dispatch(magicLogOut())
       window.location.replace("/")
     } else {
       await logout({returnTo: window.location.origin});
@@ -52,11 +51,5 @@ export const magicLogIn = (user) => {
   return {
     type: SET_MAGIC_USER,
     payload: user
-  }
-}
-
-export const magicLogOut = () => {
-  return {
-    type: CLEAR_MAGIC_USER
   }
 }
