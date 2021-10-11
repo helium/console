@@ -246,4 +246,9 @@ defmodule Console.Labels do
     labels = from(d in Label, where: d.organization_id == ^organization.id) |> Repo.all()
     length(labels)
   end
+
+  def update_config_profile_for_labels(label_ids, config_profile_id, organization_id) do
+    from(l in Label, where: l.id in ^label_ids and l.organization_id == ^organization_id)
+    |> Repo.update_all(set: [config_profile_id: config_profile_id])
+  end
 end
