@@ -106,37 +106,65 @@ defmodule Console.Repo.Migrations.ConfigProfilesMigration do
           label_id
         end)
 
-      if length(labels_config_profile_1) > 0 do
-        {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
-          name: "Profile 1",
-          organization_id: organization_id,
-          adr_allowed: true,
-          cf_list_enabled: true
-        })
+      org_config_profiles = Ecto.Adapters.SQL.query!(Console.Repo, """
+        SELECT id, organization_id, adr_allowed, cf_list_enabled FROM config_profiles WHERE organization_id = $1;
+      """, [org_id]).rows |> Enum.map(fn p -> cast(p) end)
 
-        Labels.update_config_profile_for_labels(labels_config_profile_1, config_profile.id, organization_id)
+      if length(labels_config_profile_1) > 0 do
+        config_profile_1 = Enum.find(org_config_profiles, fn p -> p.adr_allowed and p.cf_list_enabled end)
+        config_profile_id = case config_profile_1 do
+          nil ->
+            {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
+              name: "Profile 1",
+              organization_id: organization_id,
+              adr_allowed: true,
+              cf_list_enabled: true
+            })
+            config_profile.id
+          _ ->
+            {:ok, id} = Ecto.UUID.load(config_profile_1.id)
+            id
+        end
+
+        Labels.update_config_profile_for_labels(labels_config_profile_1, config_profile_id, organization_id)
       end
 
       if length(labels_config_profile_2) > 0 do
-        {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
-          name: "Profile 2",
-          organization_id: organization_id,
-          adr_allowed: true,
-          cf_list_enabled: false
-        })
+        config_profile_2 = Enum.find(org_config_profiles, fn p -> p.adr_allowed and not p.cf_list_enabled end)
+        config_profile_id = case config_profile_2 do
+          nil ->
+            {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
+              name: "Profile 2",
+              organization_id: organization_id,
+              adr_allowed: true,
+              cf_list_enabled: false
+            })
+            config_profile.id
+          _ ->
+            {:ok, id} = Ecto.UUID.load(config_profile_2.id)
+            id
+        end
 
-        Labels.update_config_profile_for_labels(labels_config_profile_2, config_profile.id, organization_id)
+        Labels.update_config_profile_for_labels(labels_config_profile_2, config_profile_id, organization_id)
       end
 
       if length(labels_config_profile_3) > 0 do
-        {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
-          name: "Profile 3",
-          organization_id: organization_id,
-          adr_allowed: false,
-          cf_list_enabled: true
-        })
+        config_profile_3 = Enum.find(org_config_profiles, fn p -> not p.adr_allowed and p.cf_list_enabled end)
+        config_profile_id = case config_profile_3 do
+          nil ->
+            {:ok, config_profile} = ConfigProfiles.create_config_profile(%{
+              name: "Profile 3",
+              organization_id: organization_id,
+              adr_allowed: false,
+              cf_list_enabled: true
+            })
+            config_profile.id
+          _ ->
+            {:ok, id} = Ecto.UUID.load(config_profile_3.id)
+            id
+        end
 
-        Labels.update_config_profile_for_labels(labels_config_profile_3, config_profile.id, organization_id)
+        Labels.update_config_profile_for_labels(labels_config_profile_3, config_profile_id, organization_id)
       end
     end)
   end
