@@ -2,6 +2,7 @@ defmodule Console.Repo.Migrations.ConfigProfilesMigration do
   use Ecto.Migration
   alias Console.ConfigProfiles
   alias Console.Devices
+  alias Console.Labels
 
   def cast(record) do
     %{
