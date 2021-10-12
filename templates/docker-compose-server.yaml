@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: postgres
+    image: postgres:13.4
     container_name: helium_postgres
     restart: always
     volumes:
