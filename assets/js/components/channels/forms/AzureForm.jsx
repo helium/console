@@ -97,7 +97,7 @@ class AzureForm extends Component {
         ) : (
           <>
             <br />
-            <Text code>{"*".repeat(this.state.primaryKey.length)}</Text>
+            <Text code>{Array(this.state.primaryKey.length).join("*")}</Text>
           </>
         )}
         <div style={{ marginTop: 20 }}>
