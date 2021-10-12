@@ -3,12 +3,15 @@ import { Typography, Input, Tooltip } from "antd";
 import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
 const { Text } = Typography;
 import { WarningTwoTone } from "@ant-design/icons";
+import EyeOutlined from "@ant-design/icons/EyeOutlined";
+import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 
 class AzureForm extends Component {
   state = {
     hubName: "",
     policyName: "",
     primaryKey: "",
+    showKey: false,
   };
 
   componentDidMount() {
@@ -72,12 +75,31 @@ class AzureForm extends Component {
         <br />
         <br />
         <Text>Primary Key</Text>
-        <Input
-          placeholder="Primary Key"
-          name="primaryKey"
-          value={this.state.primaryKey}
-          onChange={this.handleInputUpdate}
-        />
+        {this.props.channel && this.state.showKey && (
+          <EyeOutlined
+            onClick={() => this.setState({ showKey: !this.state.showKey })}
+            style={{ marginLeft: 5 }}
+          />
+        )}{" "}
+        {this.props.channel && !this.state.showKey && (
+          <EyeInvisibleOutlined
+            onClick={() => this.setState({ showKey: !this.state.showKey })}
+            style={{ marginLeft: 5 }}
+          />
+        )}
+        {!this.props.channel || (this.props.channel && this.state.showKey) ? (
+          <Input
+            placeholder="Primary Key"
+            name="primaryKey"
+            value={this.state.primaryKey}
+            onChange={this.handleInputUpdate}
+          />
+        ) : (
+          <>
+            <br />
+            <Text code>{Array(this.state.primaryKey.length).join("*")}</Text>
+          </>
+        )}
         <div style={{ marginTop: 20 }}>
           <WarningTwoTone
             twoToneColor="#FFA500"
