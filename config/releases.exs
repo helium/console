@@ -71,6 +71,15 @@ config :console,
 config :console,
   disable_user_burn: System.get_env("DISABLE_USER_BURN")
 
+config :console,
+  use_magic_auth: if System.get_env("USE_MAGIC_AUTH") == "true", do: true, else: false
+
+config :console,
+  magic_secret_key: System.get_env("MAGIC_SECRET_KEY")
+
+config :console,
+  magic_public_key: System.get_env("MAGIC_PUBLIC_KEY")
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),
