@@ -57,7 +57,7 @@ config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
 
 config :console,
-  use_magic_auth: System.get_env("USE_MAGIC_AUTH")
+  use_magic_auth: if System.get_env("USE_MAGIC_AUTH") == "true", do: true, else: false
 
 config :console,
   magic_secret_key: System.get_env("MAGIC_SECRET_KEY")
