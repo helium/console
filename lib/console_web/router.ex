@@ -36,6 +36,7 @@ defmodule ConsoleWeb.Router do
 
     get "/invitations/:token", InvitationController, :get_by_token
     post "/subscribe_new_user", Auth0Controller, :subscribe_new_user
+    post "/sessions", SessionController, :create
   end
 
   scope "/api", ConsoleWeb do

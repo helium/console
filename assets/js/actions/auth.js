@@ -1,8 +1,11 @@
 import * as rest from '../util/rest';
 import { logout } from '../components/auth/Auth0Provider';
+import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
+import { config } from '../config/magic'
 
-export const LOGGED_OUT = 'LOGGED_OUT';
+export const SET_MAGIC_USER = 'SET_MAGIC_USER';
+export const CLEAR_MAGIC_USER = 'CLEAR_MAGIC_USER';
 
 export const getMfaStatus = () => {
   return (dispatch) => {
@@ -24,9 +27,16 @@ export const disableMfa = () => {
 
 export const logOut = () => {
   analyticsLogger.setUserId(null)
+  window.Intercom('shutdown')
+
   return async (dispatch) => {
-    await logout({returnTo: window.location.origin});
-    dispatch(loggedOut())
+    localStorage.removeItem("organization");
+    if (config.useMagicAuth) {
+      await logoutUser()
+      window.location.replace("/")
+    } else {
+      await logout({returnTo: window.location.origin});
+    }
   }
 }
 
@@ -37,8 +47,9 @@ export const subscribeNewUser = (email) => {
   }
 }
 
-const loggedOut = () => {
+export const magicLogIn = (user) => {
   return {
-    type: LOGGED_OUT
+    type: SET_MAGIC_USER,
+    payload: user
   }
 }

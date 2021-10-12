@@ -54,4 +54,11 @@ defmodule ConsoleWeb.FallbackController do
     |> put_view(ConsoleWeb.ErrorView)
     |> render("error.json", error: error)
   end
+
+  def call(conn, {:error, :internal_server_error, error}) do
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(ConsoleWeb.ErrorView)
+    |> render("error.json", error: error)
+  end
 end

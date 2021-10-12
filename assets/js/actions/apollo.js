@@ -4,7 +4,7 @@ import { onError } from "@apollo/client/link/error";
 import { setContext } from "@apollo/client/link/context";
 import { store } from '../store/configureStore';
 import { replace } from 'connected-react-router';
-import { getIdTokenClaims, logout } from '../components/auth/Auth0Provider'
+import { logOut } from '../actions/auth'
 import createSocket from '../socket'
 
 export const CREATED_APOLLO_CLIENT='CREATED_APOLLO_CLIENT';
@@ -55,11 +55,11 @@ export const setupApolloClient = (getAuthToken, organizationId) => {
 
     store.subscribe(async () => {
       if (Math.ceil(Date.now() / 1000) > store.getState().apollo.tokenClaims.exp) {
-        logout()
+        dispatch(logOut())
       }
 
       if (store.getState().apollo.tokenClaims.exp - Math.ceil(Date.now() / 1000) < 3600) {
-        const newTokenClaims = await getIdTokenClaims()
+        const newTokenClaims = await getAuthToken()
         const newAuthLink = setContext((_, { headers }) => {
           return {
             headers: {

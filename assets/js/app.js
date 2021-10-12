@@ -24,11 +24,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Route, Switch, Router } from 'react-router-dom';
-import App from './App.jsx';
+import Auth0App from './Auth0App.jsx';
+import MagicApp from './MagicApp.jsx';
+import MagicSocialCallback from './components/auth/MagicSocialCallback';
 import { Auth0Provider } from './components/auth/Auth0Provider';
 import Terms from './components/auth/Terms';
 import { history, store } from './store/configureStore'
 import { config } from './config/auth0'
+import { config as magicConfig } from './config/magic'
 
 const onRedirectCallback = appState => {
   // This uses replace instead of push because the Auth0 SDK
@@ -40,23 +43,40 @@ const onRedirectCallback = appState => {
   )
 }
 
-ReactDOM.render(
-  <Router history={history}>
-    <Switch>
-      <Route exact path="/terms"><Terms/></Route>
-      <Route>
-        <Auth0Provider
-          domain={config.domain}
-          client_id={config.clientId}
-          redirect_uri={window.location.origin}
-          onRedirectCallback={onRedirectCallback}
-        >
-          <Provider store={store}>
-            <App/>
-          </Provider>
-        </Auth0Provider>
-      </Route>
-    </Switch>
-  </Router>,
-  document.getElementById("react-root")
-)
+if (magicConfig.useMagicAuth) {
+  ReactDOM.render(
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/terms"><Terms/></Route>
+        <Route path="/callback" component={MagicSocialCallback} />
+        <Provider store={store}>
+          {
+            history.location.pathname !== "/callback" && <MagicApp />
+          }
+        </Provider>
+      </Switch>
+    </Router>,
+    document.getElementById("react-root")
+  )
+} else {
+  ReactDOM.render(
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/terms"><Terms/></Route>
+        <Route>
+          <Auth0Provider
+            domain={config.domain}
+            client_id={config.clientId}
+            redirect_uri={window.location.origin}
+            onRedirectCallback={onRedirectCallback}
+          >
+            <Provider store={store}>
+              <Auth0App/>
+            </Provider>
+          </Auth0Provider>
+        </Route>
+      </Switch>
+    </Router>,
+    document.getElementById("react-root")
+  )
+}

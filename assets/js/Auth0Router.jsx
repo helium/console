@@ -42,7 +42,7 @@ import Welcome from "./components/Welcome";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
 import ConfigProfilesIndex from "./components/config_profiles/ConfigProfilesIndex";
 
-const Router = (props) => {
+const Auth0Router = (props) => {
   const {
     loading,
     isAuthenticated,
@@ -381,4 +381,4 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Router);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth0Router);

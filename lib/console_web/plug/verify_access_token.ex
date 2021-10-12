@@ -59,19 +59,19 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
           )
           |> halt()
       _ ->
-        try do
-          token = conn
-          |> get_req_header("authorization")
-          |> List.first()
-          |> String.replace("Bearer ", "")
+        if Application.get_env(:console, :use_magic_auth) do
+          token =
+            conn
+            |> get_req_header("authorization")
+            |> List.first()
+            |> String.replace("Bearer ", "")
 
-          case @access_token_decoder.decode_conn_access_token(token) do
-            %{user_id: user_id, email: email, auth0_id: auth0_id} ->
+          case ConsoleWeb.Guardian.decode_and_verify(token) do
+            {:ok, %{ "typ" => "magic-auth-session", "sub" => user_id, "email" => email }} ->
               conn
                 |> assign(:user_id, user_id)
                 |> assign(:email, email)
-                |> assign(:auth0_id, auth0_id)
-            :error ->
+            _ ->
               conn
               |> send_resp(
                 :forbidden,
@@ -82,10 +82,35 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
               )
               |> halt()
           end
-        rescue
-          _ ->
-            auth_header = conn |> get_req_header("authorization") |> List.first()
-            Appsignal.send_error(%RuntimeError{ message: auth_header }, "Failed to verify access token", ["plug/verify_access_token.ex/call"])
+        else
+          try do
+            token = conn
+            |> get_req_header("authorization")
+            |> List.first()
+            |> String.replace("Bearer ", "")
+
+            case @access_token_decoder.decode_conn_access_token(token) do
+              %{user_id: user_id, email: email, auth0_id: auth0_id} ->
+                conn
+                  |> assign(:user_id, user_id)
+                  |> assign(:email, email)
+                  |> assign(:auth0_id, auth0_id)
+              :error ->
+                conn
+                |> send_resp(
+                  :forbidden,
+                  Poison.encode!(%{
+                    type: "forbidden",
+                    errors: ["Could not validate your credentials"]
+                  })
+                )
+                |> halt()
+            end
+          rescue
+            _ ->
+              auth_header = conn |> get_req_header("authorization") |> List.first()
+              Appsignal.send_error(%RuntimeError{ message: auth_header }, "Failed to verify access token", ["plug/verify_access_token.ex/call"])
+          end
         end
     end
   end

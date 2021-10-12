@@ -1,11 +1,11 @@
-import auth from './auth'
 import organization from './organization'
 import apollo from './apollo'
 import devices from './device';
+import magicUser from './magicUser'
 
 const reducers = {
-  auth,
   organization,
+  magicUser,
   apollo,
   devices
 };

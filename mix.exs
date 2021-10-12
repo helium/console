@@ -57,7 +57,7 @@ defmodule Console.Mixfile do
       {:bcrypt_elixir, "~> 2.3.0"},
       {:guardian, "~> 2.1"},
       {:bamboo, "~> 1.6.0"},
-      {:httpoison, "~> 1.7.0"},
+      {:httpoison, "~> 1.8.0"},
       {:httpoison_retry, "~> 1.0.0"},
       {:html_sanitize_ex, "~> 1.4.1"},
       {:cors_plug, "~> 2.0.2"},
@@ -67,7 +67,8 @@ defmodule Console.Mixfile do
       {:appsignal, "~> 1.0"},
       {:inet_cidr, "~> 1.0.4"},
       {:quantum, "~> 3.3.0"},
-      {:timex, "~> 3.6.3"}
+      {:timex, "~> 3.6.3"},
+      {:magic_admin, "~> 0.4.0"}
     ]
   end
 

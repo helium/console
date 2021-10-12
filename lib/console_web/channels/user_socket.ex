@@ -21,21 +21,40 @@ defmodule ConsoleWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"token" => token, "organization_id" => organization_id}, socket) do
-    case @access_token_decoder.decode_conn_access_token(token) do
-      %{email: email, user_id: user_id} ->
-        case Auth.get_user_by_id_and_email(user_id, email)
-          |> Organizations.get_current_organization(organization_id) do
-          %{organization: current_organization} ->
-            authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
-              current_organization_id: current_organization.id,
-              current_user_id: user_id
-            })
-            {:ok, authed_socket}
-          _ ->
-            {:error}
-        end
-      :error ->
-        {:error}
+    if Application.get_env(:console, :use_magic_auth) do
+      case ConsoleWeb.Guardian.decode_and_verify(token) do
+        {:ok, %{ "typ" => "magic-auth-session", "sub" => user_id, "email" => email }} ->
+          case Auth.get_user_by_id_and_email(user_id, email)
+            |> Organizations.get_current_organization(organization_id) do
+            %{organization: current_organization} ->
+              authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
+                current_organization_id: current_organization.id,
+                current_user_id: user_id
+              })
+              {:ok, authed_socket}
+            _ ->
+              :error
+          end
+        _ ->
+          :error
+      end
+    else
+      case @access_token_decoder.decode_conn_access_token(token) do
+        %{email: email, user_id: user_id} ->
+          case Auth.get_user_by_id_and_email(user_id, email)
+            |> Organizations.get_current_organization(organization_id) do
+            %{organization: current_organization} ->
+              authed_socket = Absinthe.Phoenix.Socket.put_options(socket, context: %{
+                current_organization_id: current_organization.id,
+                current_user_id: user_id
+              })
+              {:ok, authed_socket}
+            _ ->
+              :error
+          end
+        :error ->
+          :error
+      end
     end
   end
 
