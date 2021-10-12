@@ -75,12 +75,13 @@ class AzureForm extends Component {
         <br />
         <br />
         <Text>Primary Key</Text>
-        {this.state.showKey ? (
+        {this.props.channel && this.state.showKey && (
           <EyeOutlined
             onClick={() => this.setState({ showKey: !this.state.showKey })}
             style={{ marginLeft: 5 }}
           />
-        ) : (
+        )}{" "}
+        {this.props.channel && !this.state.showKey && (
           <EyeInvisibleOutlined
             onClick={() => this.setState({ showKey: !this.state.showKey })}
             style={{ marginLeft: 5 }}
