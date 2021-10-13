@@ -48,9 +48,9 @@ defmodule ConsoleWeb.Plug.VerifyAccessToken do
 
   def call(conn, _default) do
     auth_header = conn |> get_req_header("authorization")
-
+    
     cond do
-      auth_header != nil and List.first(auth_header) != nil ->
+      auth_header == nil or List.first(auth_header) == nil ->
         conn
           |> send_resp(
             :forbidden,
