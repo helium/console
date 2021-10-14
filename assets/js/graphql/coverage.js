@@ -15,6 +15,7 @@ const HOTSPOT_FRAGMENT = gql`
     longitude
     latitude
     alias
+    avg_rssi
     total_entries
   }
 `;
@@ -26,7 +27,12 @@ export const HOTSPOT_STATS = gql`
     $page: Int
     $pageSize: Int
   ) {
-    hotspotStats(column: $column, order: $order, page: $page, pageSize: $pageSize) {
+    hotspotStats(
+      column: $column
+      order: $order
+      page: $page
+      pageSize: $pageSize
+    ) {
       ...HotspotFragment
     }
   }
@@ -40,7 +46,12 @@ export const FOLLOWED_HOTSPOT_STATS = gql`
     $page: Int
     $pageSize: Int
   ) {
-    followedHotspotStats(column: $column, order: $order, page: $page, pageSize: $pageSize) {
+    followedHotspotStats(
+      column: $column
+      order: $order
+      page: $page
+      pageSize: $pageSize
+    ) {
       ...HotspotFragment
     }
   }
@@ -76,7 +87,7 @@ export const HOTSPOT_SHOW = gql`
     }
   }
   ${HOTSPOT_FRAGMENT}
-`
+`;
 
 export const HOTSPOT_SHOW_PACKETS = gql`
   query HotspotShowPacketsQuery($address: String) {
@@ -85,7 +96,7 @@ export const HOTSPOT_SHOW_PACKETS = gql`
       reported_at_epoch
     }
   }
-`
+`;
 
 export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
   query HotspotShowDevicesHeardQuery(
@@ -95,7 +106,13 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
     $page: Int
     $pageSize: Int
   ) {
-    hotspotDevicesHeard(address: $address, column: $column, order: $order, page: $page, pageSize: $pageSize) {
+    hotspotDevicesHeard(
+      address: $address
+      column: $column
+      order: $order
+      page: $page
+      pageSize: $pageSize
+    ) {
       device_id
       device_name
       packet_count
@@ -105,4 +122,4 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
       snr
     }
   }
-`
+`;

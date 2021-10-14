@@ -108,7 +108,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/router", ConsoleWeb.Router do
-    pipe_through ConsoleWeb.RouterApiPipeline
+    # pipe_through ConsoleWeb.RouterApiPipeline
 
     resources "/devices", DeviceController, only: [:index, :show] do
       post "/event", DeviceController, :add_device_event
