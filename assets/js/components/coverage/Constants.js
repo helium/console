@@ -136,32 +136,6 @@ export const getColumns = (
       sorter: true,
       render: (data) => <SignalIcon rssi={data} />,
     },
-    // {
-    //   title: "Location",
-    //   sorter: true,
-    //   dataIndex: "location",
-    //   render: (_data, record) => {
-    //     if (record.long_city && record.short_country && record.short_state) {
-    //       return (
-    //         record.long_city +
-    //         ", " +
-    //         record.short_state +
-    //         ", " +
-    //         record.short_country
-    //       );
-    //     }
-    //     if (record.long_city && record.short_country) {
-    //       return record.long_city + ", " + record.short_country;
-    //     }
-    //     if (record.short_country) {
-    //       return record.short_country;
-    //     }
-    //     if (record.long_city) {
-    //       return record.long_city;
-    //     }
-    //     return "";
-    //   },
-    // },
     {
       title: "Packets",
       sorter: true,
