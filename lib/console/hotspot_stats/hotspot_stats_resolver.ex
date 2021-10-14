@@ -114,8 +114,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     sql_1d = """
       SELECT
         DISTINCT(device_id),
-        COUNT(device_id) AS packet_count,
-        AVG(rssi) AS avg_rssi
+        COUNT(device_id) AS packet_count
       FROM hotspot_stats
       WHERE organization_id = $1 and hotspot_address = $2 and reported_at_epoch > $3
       GROUP BY device_id
@@ -162,7 +161,6 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       hotspot_address: hotspot.address,
       latitude: hotspot.lat,
       longitude: hotspot.lng,
-      avg_rssi: past_1d_result.rows |> Enum.reduce(0, fn row, acc -> Enum.at(row, 2, 0) + acc end),
     }
 
     {:ok, Map.merge(hotspot, attrs) }
