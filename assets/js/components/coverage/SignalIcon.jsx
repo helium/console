@@ -9,15 +9,16 @@ export default ({ rssi }) => {
   let icon;
   let strength;
 
-  if (rssi <= -100 && rssi >= -120) {
-    icon = WeakSignalIcon;
-    strength = "Weak";
+  if (rssi <= -30.0 && rssi >= -50.0) {
+    icon = StrongSignalIcon;
+    strength = "Strong";
   } else if (rssi <= 50.01 && rssi >= -99.99) {
     icon = MediumSignalIcon;
     strength = "Medium";
-  } else if (rssi <= -30.0 && rssi >= -50.0) {
-    icon = StrongSignalIcon;
-    strength = "Strong";
+  } else if (rssi <= -100 && rssi >= -120) {
+    icon = WeakSignalIcon;
+    strength = "Weak";
+    console.log(`rssi: ${rssi} - weak`);
   } else {
     icon = UnknownSignalIcon;
     strength = "Unknown";
