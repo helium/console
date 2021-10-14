@@ -18,7 +18,6 @@ export default ({ rssi }) => {
   } else if (rssi <= -100 && rssi >= -120) {
     icon = WeakSignalIcon;
     strength = "Weak";
-    console.log(`rssi: ${rssi} - weak`);
   } else {
     icon = UnknownSignalIcon;
     strength = "Unknown";
