@@ -46,6 +46,9 @@ export default (props) => {
       case "status":
         column = "status";
         break;
+      case "avg_rssi":
+        column = "signal";
+        break;
       default:
         column = "packet_count";
     }
