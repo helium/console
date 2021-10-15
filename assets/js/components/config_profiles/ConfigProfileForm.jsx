@@ -93,7 +93,7 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
             <p>
               <a
                 className="help-link"
-                href="https://docs.helium.com/use-the-network/console/config-profiles"
+                href="https://docs.helium.com/use-the-network/console/profiles"
                 target="_blank"
               >
                 Learn more about Profiles
