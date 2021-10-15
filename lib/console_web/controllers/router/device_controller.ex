@@ -53,7 +53,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                 if device.config_profile do device.config_profile else nil end
               end
           end
-        
+
         adr_allowed =
           case config_profile do
             nil -> false
@@ -220,8 +220,6 @@ defmodule ConsoleWeb.Router.DeviceController do
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
           |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
-            locked_device = Devices.get_device_and_lock_for_add_device_event(device.id)
-
             dc_used =
               case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
                 true -> event.data["dc"]["used"]
@@ -231,8 +229,8 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             device_updates = %{
               "last_connected" => event.reported_at_naive,
-              "total_packets" => locked_device.total_packets + packet_count,
-              "dc_usage" => locked_device.dc_usage + dc_used,
+              "total_packets" => device.total_packets + packet_count,
+              "dc_usage" => device.dc_usage + dc_used,
               "in_xor_filter" => true
             }
 
@@ -242,7 +240,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               true -> device_updates
             end
 
-            Devices.update_device(locked_device, device_updates, "router")
+            Devices.update_device(device, device_updates, "router")
           end)
           |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
             if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
