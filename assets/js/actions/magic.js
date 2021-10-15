@@ -13,7 +13,7 @@ export const checkUser = async () => {
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
 
-    store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer }))
+    store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration: true }))
   }
 };
 
@@ -21,7 +21,7 @@ export const loginUser = async (email) => {
   await magic.auth.loginWithMagicLink({ email });
   const user = await magic.user.getMetadata();
 
-  store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer }))
+  store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration: true }))
 };
 
 export const loginGoogleUser = async () => {

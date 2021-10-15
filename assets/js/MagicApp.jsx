@@ -9,6 +9,7 @@ import { Spin } from "antd";
 import { checkUser } from './actions/magic';
 import { UserContext } from './context/magicUserContext'
 import MagicAuthenticate from './components/auth/MagicAuthenticate';
+import MagicRegisterPrompt from './components/auth/MagicRegisterPrompt';
 import AuthLayout from './components/common/AuthLayout';
 import MagicRouter from './MagicRouter'
 
@@ -44,7 +45,12 @@ const MagicApp = ({ user }) => {
             </Switch>
           </React.Fragment>
         )}
-        {user.isLoggedIn && (
+        {
+          user.isLoggedIn && user.needRegistration && (
+            <MagicRegisterPrompt />
+          )
+        }
+        {user.isLoggedIn && !user.needRegistration && (
           <MagicRouter user={user} />
         )}
       </Router>
