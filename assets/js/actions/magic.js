@@ -12,16 +12,24 @@ export const checkUser = async () => {
   const isLoggedIn = await magic.user.isLoggedIn();
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
+    let needRegistration = false
+    if (process.env.USER_INVITE_ONLY) {
+      needRegistration = await checkRegisteredUser(user.email)
+    }
 
-    store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration: true }))
+    store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration }))
   }
 };
 
 export const loginUser = async (email) => {
   await magic.auth.loginWithMagicLink({ email });
   const user = await magic.user.getMetadata();
+  let needRegistration = false
+  if (process.env.USER_INVITE_ONLY) {
+    needRegistration = await checkRegisteredUser(user.email)
+  }
 
-  store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration: true }))
+  store.dispatch(magicLogIn({ isLoggedIn: true, email: user.email, sub: user.issuer, needRegistration }))
 };
 
 export const loginGoogleUser = async () => {
@@ -57,6 +65,29 @@ export const getMagicSessionToken = async () => {
   } else {
     displayError()
     store.dispatch(logOut())
+    return null
+  }
+}
+
+const checkRegisteredUser = async (email) => {
+  const didToken = await magic.user.getIdToken()
+  const res =
+    await fetch('/api/sessions/check_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + didToken,
+      },
+      body: `{"email":"${email}"}`
+    });
+
+  if (res.status === 204) {
+    return false
+  } else if (res.status === 404) {
+    return true
+  } else {
+    displayError()
+    setTimeout(() => store.dispatch(logOut()), 2000)
     return null
   }
 }
