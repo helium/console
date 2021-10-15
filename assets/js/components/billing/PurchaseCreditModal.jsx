@@ -345,6 +345,11 @@ class PurchaseCreditModal extends Component {
         {!process.env.SELF_HOSTED && (
           <Text>(Credit Card purchases: minimum $10)</Text>
         )}
+        <br />
+        <Text strong>
+          Data Credits purchased on Console can only be used <br /> for device
+          packet transfer and are non-transferrable.
+        </Text>
         <div style={styles.countBlueBox}>
           <div>
             <Input
