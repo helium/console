@@ -188,7 +188,9 @@ export default (props) => {
               }}
               onTabClick={(tab) => {
                 setCurrentTab(tab);
-                analyticsLogger.logEvent(`ACTION_NAV_COVERAGE_${tab.toUpperCase()}`);
+                analyticsLogger.logEvent(
+                  `ACTION_NAV_COVERAGE_${tab.toUpperCase()}`
+                );
                 selectHotspotAddress(null);
               }}
             >

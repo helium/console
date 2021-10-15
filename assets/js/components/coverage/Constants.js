@@ -6,6 +6,7 @@ import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
+import SignalIcon from "./SignalIcon";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -130,30 +131,10 @@ export const getColumns = (
       dataIndex: "alias",
     },
     {
-      title: "Location",
+      title: "Signal",
+      dataIndex: "avg_rssi",
       sorter: true,
-      dataIndex: "location",
-      render: (_data, record) => {
-        if (record.long_city && record.short_country && record.short_state) {
-          return (
-            record.long_city +
-            ", " +
-            record.short_state +
-            ", " +
-            record.short_country
-          );
-        }
-        if (record.long_city && record.short_country) {
-          return record.long_city + ", " + record.short_country;
-        }
-        if (record.short_country) {
-          return record.short_country;
-        }
-        if (record.long_city) {
-          return record.long_city;
-        }
-        return "";
-      },
+      render: (data) => <SignalIcon rssi={data} />,
     },
     {
       title: "Packets",

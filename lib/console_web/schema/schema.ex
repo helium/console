@@ -58,6 +58,7 @@ defmodule ConsoleWeb.Schema do
     field :longitude, :decimal
     field :latitude, :decimal
     field :alias, :string
+    field :avg_rssi, :float
     field :total_entries, :integer
   end
 

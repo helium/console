@@ -16,6 +16,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       case column do
         "packet_count" -> HotspotStats.get_all_query_for_integer_sort()
         "device_count" -> HotspotStats.get_all_query_for_integer_sort()
+        "signal" -> HotspotStats.get_all_query_for_integer_sort()
         _ -> HotspotStats.get_all_query_for_string_sort()
       end
 
@@ -56,6 +57,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       case column do
         "packet_count" -> HotspotStats.get_followed_query_for_integer_sort()
         "device_count" -> HotspotStats.get_followed_query_for_integer_sort()
+        "signal" -> HotspotStats.get_all_query_for_integer_sort()
         _ -> HotspotStats.get_followed_query_for_string_sort()
       end
 
@@ -158,7 +160,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       hotspot_name: hotspot.name,
       hotspot_address: hotspot.address,
       latitude: hotspot.lat,
-      longitude: hotspot.lng
+      longitude: hotspot.lng,
     }
 
     {:ok, Map.merge(hotspot, attrs) }
@@ -257,7 +259,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           latitude: Enum.at(r, 8),
           longitude: Enum.at(r, 9),
           alias: Enum.at(r,10),
-          total_entries: Enum.at(r, 11)
+          avg_rssi: Enum.at(r, 11),
+          total_entries: Enum.at(r, 12)
         }
         |> Map.merge(past_2d_stat)
       end)

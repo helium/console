@@ -28,12 +28,14 @@ defmodule Console.HotspotStats do
         h.lat,
         h.lng,
         os.alias,
+        stats.avg_rssi,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
           DISTINCT(hotspot_address),
           COUNT(hotspot_address) AS packet_count,
-          COUNT(DISTINCT(device_id)) AS device_count
+          COUNT(DISTINCT(device_id)) AS device_count,
+          AVG(rssi) AS avg_rssi
         FROM hotspot_stats
         WHERE organization_id = $1 and reported_at_epoch > $2
         GROUP BY hotspot_address
@@ -76,12 +78,14 @@ defmodule Console.HotspotStats do
         h.lat,
         h.lng,
         os.alias,
+        stats.avg_rssi,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
           DISTINCT(hotspot_address),
           COUNT(hotspot_address) AS packet_count,
-          COUNT(DISTINCT(device_id)) AS device_count
+          COUNT(DISTINCT(device_id)) AS device_count,
+          AVG(rssi) AS avg_rssi
         FROM hotspot_stats
         WHERE organization_id = $1 and reported_at_epoch > $2
         GROUP BY hotspot_address
@@ -93,12 +97,14 @@ defmodule Console.HotspotStats do
           CASE $3
             WHEN 'packet_count' THEN stats.packet_count
             WHEN 'device_count' THEN stats.device_count
+            WHEN 'signal' THEN stats.avg_rssi
           END
         END ASC NULLS FIRST,
         CASE $4 WHEN 'desc' THEN
           CASE $3
             WHEN 'packet_count' THEN stats.packet_count
             WHEN 'device_count' THEN stats.device_count
+            WHEN 'signal' THEN stats.avg_rssi
           END
         END DESC NULLS LAST
       LIMIT $5
@@ -120,6 +126,7 @@ defmodule Console.HotspotStats do
         h.lat,
         h.lng,
         oh.alias,
+        parsed_stats.avg_rssi,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -128,14 +135,16 @@ defmodule Console.HotspotStats do
            WHEN device_count = 0 THEN 0
            ELSE packet_count
          END AS packet_count,
-         device_count
+         device_count,
+         avg_rssi
         FROM (
           SELECT
             DISTINCT(stats.hotspot_address),
             COUNT(stats.hotspot_address) AS packet_count,
-            COUNT(DISTINCT(stats.device_id)) AS device_count
+            COUNT(DISTINCT(stats.device_id)) AS device_count,
+            AVG(stats.rssi) AS avg_rssi
           FROM (
-            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
+            SELECT oh.hotspot_address, hs.device_id, hs.rssi, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
               SELECT * FROM organization_hotspots
               WHERE organization_id = $1 and claimed = true
             ) oh
@@ -185,6 +194,7 @@ defmodule Console.HotspotStats do
         h.lat,
         h.lng,
         oh.alias,
+        parsed_stats.avg_rssi,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -193,14 +203,16 @@ defmodule Console.HotspotStats do
            WHEN device_count = 0 THEN 0
            ELSE packet_count
          END AS packet_count,
-         device_count
+         device_count,
+         avg_rssi
         FROM (
           SELECT
             DISTINCT(stats.hotspot_address),
             COUNT(stats.hotspot_address) AS packet_count,
-            COUNT(DISTINCT(stats.device_id)) AS device_count
+            COUNT(DISTINCT(stats.device_id)) AS device_count,
+            AVG(stats.rssi) AS avg_rssi
           FROM (
-            SELECT oh.hotspot_address, hs.device_id, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
+            SELECT oh.hotspot_address, hs.device_id, hs.rssi, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
               SELECT * FROM organization_hotspots
               WHERE organization_id = $1 and claimed = true
             ) oh
