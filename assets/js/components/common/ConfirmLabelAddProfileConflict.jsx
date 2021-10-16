@@ -10,7 +10,7 @@ export default ({ open, close, submit, multipleDevices }) => {
 
   return (
     <Modal
-      title="Confirm Label Attachment"
+      title="Confirm Profile Override"
       visible={open}
       onCancel={close}
       centered
@@ -20,20 +20,15 @@ export default ({ open, close, submit, multipleDevices }) => {
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Add Label
+          Continue
         </Button>,
       ]}
     >
       <div style={{ textAlign: "center" }}>
         <Text>
-          {`The label you are trying to add has a different profile than ${
-            multipleDevices ? "one or more of the devices" : "the device"
-          }. Label profiles override device profiles.`}
-          <br />
-          <br />
-          {`Are you sure you want to add this label to ${
-            multipleDevices ? "these devices" : "the device"
-          }?`}
+          {`${
+            multipleDevices ? "One or more of the devices" : "The device"
+          } already has a Profile applied to it. To override the existing Profile, click Continue, or click Cancel to keep the existing one.`}
         </Text>
       </div>
     </Modal>

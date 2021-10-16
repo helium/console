@@ -12,7 +12,7 @@ import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import ImportDevicesModal from "./import/ImportDevicesModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
-import { Card, Button, Typography, Input, Row, Col } from "antd";
+import { Card, Button, Typography, Input, Row, Col, Tooltip } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
@@ -20,6 +20,7 @@ import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
+import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -127,7 +128,10 @@ class DeviceNew extends Component {
             dev_eui: devEUI.toUpperCase(),
             app_eui: appEUI.toUpperCase(),
             app_key: appKey.toUpperCase(),
-            config_profile_id: configProfileId,
+            config_profile_id:
+              foundLabel && foundLabel.config_profile_id
+                ? foundLabel.config_profile_id
+                : configProfileId,
           },
           label
         )
@@ -277,6 +281,11 @@ class DeviceNew extends Component {
                   />
                   <Text style={{ marginTop: 25, display: "block" }} strong>
                     Profile (Optional)
+                    <Tooltip title="If a label is also selected, the label's profile will override the selected profile (if different).">
+                      <QuestionCircleFilled
+                        style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
+                      />
+                    </Tooltip>
                   </Text>
                   <ProfileDropdown
                     selectProfile={(id) => {

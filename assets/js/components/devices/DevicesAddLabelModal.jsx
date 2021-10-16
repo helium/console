@@ -6,6 +6,7 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { ALL_LABELS } from "../../graphql/labels";
 import { grayForModalCaptions } from "../../util/colors";
 import { addDevicesToLabel, addDevicesToNewLabel } from "../../actions/label";
+import { updateDevicesConfigProfile } from "../../actions/device";
 import LabelTag from "../common/LabelTag";
 import { Modal, Button, Typography, Input, Select, Checkbox } from "antd";
 const { Text } = Typography;
@@ -18,6 +19,7 @@ class DevicesAddLabelModal extends Component {
     labelName: undefined,
     applyToAll: false,
     showConfirmModal: false,
+    configProfileId: null,
   };
 
   handleInputUpdate = (e) => {
@@ -45,11 +47,26 @@ class DevicesAddLabelModal extends Component {
       const labelToApply = this.props.allLabelsQuery.allLabels.find(
         (l) => l.id === labelId
       );
+      this.setState({ configProfileId: labelToApply.config_profile_id });
       if (
         labelToApply.config_profile_id &&
         devicesProfiles.some((p) => p !== labelToApply.config_profile_id)
       ) {
-        this.setState({ showConfirmModal: true });
+        const { applyToAll } = this.state;
+        const deviceIds = applyToAll
+          ? []
+          : this.props.devicesToUpdate.map((d) => d.id);
+        this.props
+          .addDevicesToLabel(!applyToAll && deviceIds, labelId)
+          .then((response) => {
+            if (response.status === 204) {
+              this.setState({ showConfirmModal: true });
+              analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+                devices: applyToAll ? "all" : deviceIds,
+                label: labelId,
+              });
+            }
+          });
       } else {
         this.props
           .addDevicesToLabel(!applyToAll && deviceIds, labelId)
@@ -165,20 +182,10 @@ class DevicesAddLabelModal extends Component {
             this.setState({ showConfirmModal: false });
           }}
           submit={() => {
-            const { applyToAll } = this.state;
-            const deviceIds = applyToAll
-              ? []
-              : this.props.devicesToUpdate.map((d) => d.id);
-            this.props
-              .addDevicesToLabel(!applyToAll && deviceIds, labelId)
-              .then((response) => {
-                if (response.status === 204) {
-                  analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-                    devices: applyToAll ? "all" : deviceIds,
-                    label: labelId,
-                  });
-                }
-              });
+            this.props.updateDevicesConfigProfile(
+              this.props.devicesToUpdate.map((d) => d.id),
+              this.state.configProfileId
+            );
           }}
           multipleDevices={
             this.props.devicesToUpdate && this.props.devicesToUpdate.length > 1
@@ -191,7 +198,7 @@ class DevicesAddLabelModal extends Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { addDevicesToLabel, addDevicesToNewLabel },
+    { addDevicesToLabel, addDevicesToNewLabel, updateDevicesConfigProfile },
     dispatch
   );
 }
