@@ -281,7 +281,10 @@ class DeviceNew extends Component {
                   />
                   <Text style={{ marginTop: 25, display: "block" }} strong>
                     Profile (Optional)
-                    <Tooltip title="If a label is also selected, the label's profile will override the selected profile (if different).">
+                    <Tooltip
+                      title="If a label is also selected, the label's profile will override the selected profile (if different)."
+                      placement="right"
+                    >
                       <QuestionCircleFilled
                         style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
                       />
