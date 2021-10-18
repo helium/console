@@ -118,6 +118,7 @@ module.exports = function (env) {
         "MAPBOX_STYLE_URL",
         "USE_MAGIC_AUTH",
         "MAGIC_PUBLIC_KEY",
+        "USER_INVITE_ONLY"
       ]),
       new NodePolyfillPlugin()
     ],
