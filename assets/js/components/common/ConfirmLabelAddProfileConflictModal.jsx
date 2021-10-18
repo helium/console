@@ -28,14 +28,22 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
         {newDevice ? (
           <Text>
             The Label you selected has a different Profile than the Profile you
-            selected for this new device. To override the selected Profile,
-            click Continue, or click Cancel to keep the selected profile.
+            selected for the new Device. To override the selected Profile, click
+            Continue, or click Cancel to keep the selected Profile.
           </Text>
         ) : (
           <Text>
             {`${
-              multipleDevices ? "One or more of the Devices" : "The Device"
-            } already has a Profile applied to it. To override the existing Profile, click Continue, or click Cancel to keep the existing one.`}
+              multipleDevices
+                ? "One or more of the Devices already have"
+                : "The Device has"
+            } a Profile applied to ${
+              multipleDevices ? "them" : "it"
+            }. To override the existing Profile${
+              multipleDevices && "(s)"
+            }, click Continue, or click Cancel to keep the existing one${
+              multipleDevices && "(s)"
+            }.`}
           </Text>
         )}
       </div>
