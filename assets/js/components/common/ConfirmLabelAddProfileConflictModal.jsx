@@ -36,7 +36,7 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
             {`${
               multipleDevices
                 ? "One or more of the Devices already have"
-                : "The Device has"
+                : "The Device already has"
             } a Profile applied to ${
               multipleDevices ? "them" : "it"
             }. To override the existing Profile${
