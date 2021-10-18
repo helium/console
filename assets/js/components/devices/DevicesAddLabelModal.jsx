@@ -76,6 +76,11 @@ class DevicesAddLabelModal extends Component {
                 devices: applyToAll ? "all" : deviceIds,
                 label: labelId,
               });
+              labelToApply.config_profile_id &&
+                this.props.updateDevicesConfigProfile(
+                  this.props.devicesToUpdate.map((d) => d.id),
+                  labelToApply.config_profile_id
+                );
             }
           });
       }

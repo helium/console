@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import withGql from "../../graphql/withGql";
 import omit from "lodash/omit";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -9,6 +11,7 @@ import LabelAddLabelSelect from "./LabelAddLabelSelect";
 import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 const { Text } = Typography;
 const { TabPane } = Tabs;
+import { updateDevicesConfigProfile } from "../../actions/device";
 
 class LabelAddDeviceModal extends Component {
   state = {
@@ -40,7 +43,22 @@ class LabelAddDeviceModal extends Component {
         (p) => p !== this.props.label.config_profile_id
       )
     ) {
-      this.setState({ showConfirmModal: true });
+      const { checkedDevices, checkedLabels } = this.state;
+      this.props
+        .addDevicesToLabels(checkedDevices, checkedLabels, this.props.label.id)
+        .then((response) => {
+          if (response.status === 200) {
+            analyticsLogger.logEvent("ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL", {
+              id: this.props.label.id,
+              devices: Object.keys(checkedDevices),
+              labels: Object.keys(checkedLabels),
+            });
+
+            this.setState({
+              showConfirmModal: true,
+            });
+          }
+        });
     } else {
       this.props
         .addDevicesToLabels(checkedDevices, checkedLabels, this.props.label.id)
@@ -51,6 +69,19 @@ class LabelAddDeviceModal extends Component {
               devices: Object.keys(checkedDevices),
               labels: Object.keys(checkedLabels),
             });
+
+            const deviceIdsFromCheckedLabels = Object.values(checkedLabels)
+              ? Object.values(checkedLabels).reduce((result, l) => {
+                  if (l.deviceIds) {
+                    result.push(...l.deviceIds);
+                  }
+                  return result;
+                }, [])
+              : [];
+            this.props.updateDevicesConfigProfile(
+              [...Object.keys(checkedDevices), ...deviceIdsFromCheckedLabels],
+              this.props.label.config_profile_id
+            );
 
             this.setState({
               checkedDevices: {},
@@ -104,6 +135,7 @@ class LabelAddDeviceModal extends Component {
       search.forEach((l) => {
         if (this.props.label.id !== l.id)
           labels[l.id] = {
+            deviceIds: l.devices.map((d) => d.id),
             configProfileIds: l.devices.reduce((result, device) => {
               if (device.config_profile_id) {
                 result.push(device.config_profile_id);
@@ -118,6 +150,7 @@ class LabelAddDeviceModal extends Component {
       this.props.allResourcesQuery.allLabels.forEach((l) => {
         if (this.props.label.id !== l.id)
           labels[l.id] = {
+            deviceIds: l.devices.map((d) => d.id),
             configProfileIds: l.devices.reduce((result, device) => {
               if (device.config_profile_id) {
                 result.push(device.config_profile_id);
@@ -130,14 +163,16 @@ class LabelAddDeviceModal extends Component {
     }
   };
 
-  checkSingleLabel = (id, configProfileIds) => {
+  checkSingleLabel = (id, configProfileIds, deviceIds) => {
     const { checkedLabels } = this.state;
     let labels;
 
     if (checkedLabels[id]) {
       labels = omit(checkedLabels, id);
     } else {
-      labels = Object.assign({}, checkedLabels, { [id]: { configProfileIds } });
+      labels = Object.assign({}, checkedLabels, {
+        [id]: { configProfileIds, deviceIds },
+      });
     }
     this.setState({ checkedLabels: labels });
   };
@@ -224,30 +259,20 @@ class LabelAddDeviceModal extends Component {
             Object.keys(checkedLabels).length > 0
           }
           submit={() => {
-            const { checkedDevices, checkedLabels } = this.state;
-            this.props
-              .addDevicesToLabels(
-                checkedDevices,
-                checkedLabels,
-                this.props.label.id
-              )
-              .then((response) => {
-                if (response.status === 200) {
-                  analyticsLogger.logEvent(
-                    "ACTION_ADD_DEVICES_AND_LABELS_TO_LABEL",
-                    {
-                      id: this.props.label.id,
-                      devices: Object.keys(checkedDevices),
-                      labels: Object.keys(checkedLabels),
-                    }
-                  );
+            const deviceIdsFromCheckedLabels = Object.values(checkedLabels)
+              ? Object.values(checkedLabels).reduce((result, l) => {
+                  if (l.deviceIds) {
+                    result.push(...l.deviceIds);
+                  }
+                  return result;
+                }, [])
+              : [];
+            this.props.updateDevicesConfigProfile(
+              [...Object.keys(checkedDevices), ...deviceIdsFromCheckedLabels],
+              this.props.label.config_profile_id
+            );
 
-                  this.setState({
-                    checkedDevices: {},
-                    checkedLabels: {},
-                  });
-                }
-              });
+            this.setState({ checkedDevices: {}, checkedLabels: {} });
           }}
         />
       </>
@@ -255,8 +280,17 @@ class LabelAddDeviceModal extends Component {
   }
 }
 
-export default withGql(LabelAddDeviceModal, ALL_LABELS_DEVICES, (props) => ({
-  fetchPolicy: "network-only",
-  variables: {},
-  name: "allResourcesQuery",
-}));
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateDevicesConfigProfile }, dispatch);
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(
+  withGql(LabelAddDeviceModal, ALL_LABELS_DEVICES, (props) => ({
+    fetchPolicy: "network-only",
+    variables: {},
+    name: "allResourcesQuery",
+  }))
+);
