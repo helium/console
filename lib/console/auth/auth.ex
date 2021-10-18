@@ -11,6 +11,10 @@ defmodule Console.Auth do
     Repo.get(User, id)
   end
 
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+  end
+
   def get_user_by_id_and_email(user_id, email) do
     case get_user_by_id(user_id) do
       %{super: is_super} -> get_user_data_map(user_id, email, is_super)

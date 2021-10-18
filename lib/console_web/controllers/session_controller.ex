@@ -2,6 +2,7 @@ defmodule ConsoleWeb.SessionController do
   use ConsoleWeb, :controller
   import ConsoleWeb.AuthErrorHandler
   alias Console.Organizations
+  alias Console.Auth
 
   def create(conn, _) do
     did_token =
@@ -55,6 +56,25 @@ defmodule ConsoleWeb.SessionController do
               end
           end
         end
+      end
+    end
+  end
+
+  def check_user(conn, %{"email" => email}) do
+    did_token =
+      conn
+      |> get_req_header("authorization")
+      |> List.first()
+      |> String.replace("Bearer ", "")
+
+    with true <- Magic.Token.validate!(did_token) do
+      case Auth.get_user_by_email(email) do
+        nil ->
+          conn
+          |> send_resp(:not_found, "")
+        _ ->
+          conn
+          |> send_resp(:no_content, "")
       end
     end
   end
