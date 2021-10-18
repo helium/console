@@ -24,7 +24,7 @@ export const createDevice = (params, label) => {
         device: deviceParams,
         label: label,
       })
-      .then((response) => {});
+      .then((response) => response);
   };
 };
 

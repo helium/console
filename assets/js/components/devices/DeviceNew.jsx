@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChooseImportType from "./import/ChooseImportType";
-import { createDevice } from "../../actions/device";
+import { createDevice, updateDevicesConfigProfile } from "../../actions/device";
 import { displayInfo, displayError } from "../../util/messages";
 import withGql from "../../graphql/withGql";
 import { ALL_IMPORTS } from "../../graphql/devices";
@@ -12,7 +12,7 @@ import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import ImportDevicesModal from "./import/ImportDevicesModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
-import { Card, Button, Typography, Input, Row, Col, Tooltip } from "antd";
+import { Card, Button, Typography, Input, Row, Col } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
@@ -20,7 +20,7 @@ import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
-import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
+import ConfirmLabelAddProfileConflict from "../common/ConfirmLabelAddProfileConflict";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -42,7 +42,10 @@ class DeviceNew extends Component {
     page: 1,
     pageSize: 10,
     import_status: { failed_devices: [] },
+    selectedLabel: {},
     configProfileId: null,
+    newDeviceId: null,
+    showConfirmModal: false,
   };
 
   componentDidMount() {
@@ -128,15 +131,24 @@ class DeviceNew extends Component {
             dev_eui: devEUI.toUpperCase(),
             app_eui: appEUI.toUpperCase(),
             app_key: appKey.toUpperCase(),
-            config_profile_id:
-              foundLabel && foundLabel.config_profile_id
-                ? foundLabel.config_profile_id
-                : configProfileId,
+            config_profile_id: configProfileId,
           },
           label
         )
-        .then(() => {
-          this.props.history.push("/devices");
+        .then((response) => {
+          if (
+            response.status === 201 &&
+            foundLabel &&
+            configProfileId &&
+            foundLabel.config_profile_id !== configProfileId
+          ) {
+            const newDeviceId = response.data.id;
+            this.setState({ newDeviceId, selectedLabel: foundLabel }, () => {
+              this.setState({ showConfirmModal: true });
+            });
+          } else {
+            this.props.history.push("/devices");
+          }
         });
     } else {
       displayError(
@@ -281,14 +293,6 @@ class DeviceNew extends Component {
                   />
                   <Text style={{ marginTop: 25, display: "block" }} strong>
                     Profile (Optional)
-                    <Tooltip
-                      title="If a label is also selected, the label's profile will override the selected profile (if different)."
-                      placement="right"
-                    >
-                      <QuestionCircleFilled
-                        style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
-                      />
-                    </Tooltip>
                   </Text>
                   <ProfileDropdown
                     selectProfile={(id) => {
@@ -350,6 +354,21 @@ class DeviceNew extends Component {
           importType={importType}
           import_status={this.state.import_status}
         />
+        <ConfirmLabelAddProfileConflict
+          open={this.state.showConfirmModal}
+          close={() => {
+            this.setState({ showConfirmModal: false });
+            this.props.history.push("/devices");
+          }}
+          submit={() => {
+            this.props.updateDevicesConfigProfile(
+              [this.state.newDeviceId],
+              this.state.selectedLabel.config_profile_id
+            );
+          }}
+          multipleDevices={false}
+          newDevice={true}
+        />
       </DeviceDashboardLayout>
     );
   }
@@ -372,7 +391,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createDevice }, dispatch);
+  return bindActionCreators(
+    { createDevice, updateDevicesConfigProfile },
+    dispatch
+  );
 }
 
 export default connect(
