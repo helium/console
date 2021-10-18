@@ -13,7 +13,7 @@ export const checkUser = async () => {
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
     let needRegistration = false
-    if (true) {
+    if (process.env.USER_INVITE_ONLY === 'true') {
       needRegistration = await checkRegisteredUser(user.email)
     }
 
@@ -25,7 +25,7 @@ export const loginUser = async (email) => {
   await magic.auth.loginWithMagicLink({ email });
   const user = await magic.user.getMetadata();
   let needRegistration = false
-  if (process.env.USER_INVITE_ONLY) {
+  if (process.env.USER_INVITE_ONLY === 'true') {
     needRegistration = await checkRegisteredUser(user.email)
   }
 
