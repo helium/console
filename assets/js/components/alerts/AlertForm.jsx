@@ -138,7 +138,7 @@ export default (props) => {
               <p>
                 <a
                   className="help-link"
-                  href="https://docs.helium.com/use-the-network/console/adr#alerts"
+                  href="https://docs.helium.com/use-the-network/console/alerts"
                   target="_blank"
                 >
                   Learn more about alerts
