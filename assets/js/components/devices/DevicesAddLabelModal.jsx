@@ -11,7 +11,7 @@ import LabelTag from "../common/LabelTag";
 import { Modal, Button, Typography, Input, Select, Checkbox } from "antd";
 const { Text } = Typography;
 const { Option } = Select;
-import ConfirmLabelAddProfileConflict from "../common/ConfirmLabelAddProfileConflict";
+import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 
 class DevicesAddLabelModal extends Component {
   state = {
@@ -176,7 +176,7 @@ class DevicesAddLabelModal extends Component {
             </Checkbox>
           )}
         </Modal>
-        <ConfirmLabelAddProfileConflict
+        <ConfirmLabelAddProfileConflictModal
           open={this.state.showConfirmModal}
           close={() => {
             this.setState({ showConfirmModal: false });

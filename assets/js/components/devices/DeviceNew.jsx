@@ -20,7 +20,7 @@ import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
-import ConfirmLabelAddProfileConflict from "../common/ConfirmLabelAddProfileConflict";
+import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -354,7 +354,7 @@ class DeviceNew extends Component {
           importType={importType}
           import_status={this.state.import_status}
         />
-        <ConfirmLabelAddProfileConflict
+        <ConfirmLabelAddProfileConflictModal
           open={this.state.showConfirmModal}
           close={() => {
             this.setState({ showConfirmModal: false });
