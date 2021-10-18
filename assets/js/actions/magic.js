@@ -13,7 +13,7 @@ export const checkUser = async () => {
   if (isLoggedIn) {
     const user = await magic.user.getMetadata();
     let needRegistration = false
-    if (process.env.USER_INVITE_ONLY) {
+    if (true) {
       needRegistration = await checkRegisteredUser(user.email)
     }
 

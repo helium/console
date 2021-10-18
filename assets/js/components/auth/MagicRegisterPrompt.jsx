@@ -20,9 +20,9 @@ const MagicRegisterPrompt = () => {
         <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
         <div style={{textAlign: 'center', marginBottom: 30}}>
           <Title>
-            Helium VIP Console
+            Helium Dedicated Console
           </Title>
-          <Text>VIP Console is by invite only. Please contact our sales team to complete your registration.</Text>
+          <Text>Helium Dedicated Console is by invite only. Please contact our sales team to complete your registration.</Text>
         </div>
 
         <Button
