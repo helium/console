@@ -84,11 +84,8 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
           </h1>
           <div>
             <p style={{ fontSize: "16px" }}>
-              Configuration Profiles can be added to device/label nodes.
-              Profiles assigned to labels take priority over profiles assigned
-              to individual devices. For example, if a device has Profile A, and
-              a label has Profile B, if that label is applied to the device then
-              Profile B overrides Profile A.
+              Configuration Profiles can be added to device/label nodes. Devices
+              and labels can only have one profile applied to them.
             </p>
             <p>
               <a
