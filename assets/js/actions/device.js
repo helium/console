@@ -24,7 +24,7 @@ export const createDevice = (params, label) => {
         device: deviceParams,
         label: label,
       })
-      .then((response) => {});
+      .then((response) => response);
   };
 };
 
@@ -42,11 +42,10 @@ export const updateDevice = (id, params) => {
 
 export const deleteDevice = (id, redirect = true) => {
   return (dispatch) => {
-    return rest.destroy(`/api/devices/${id}`)
-      .then((response) => {
-        if (redirect) dispatch(replace("/devices"));
-        return response
-      });
+    return rest.destroy(`/api/devices/${id}`).then((response) => {
+      if (redirect) dispatch(replace("/devices"));
+      return response;
+    });
   };
 };
 
@@ -72,6 +71,17 @@ export const setDevicesActive = (device_ids, active, label_id = "none") => {
         device_ids,
         active,
         label_id,
+      })
+      .then((response) => {});
+  };
+};
+
+export const updateDevicesConfigProfile = (device_ids, config_profile_id) => {
+  return (dispatch) => {
+    rest
+      .post(`/api/devices/set_config_profile`, {
+        device_ids,
+        config_profile_id,
       })
       .then((response) => {});
   };

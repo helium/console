@@ -6,7 +6,7 @@ import { ALL_LABELS_DEVICES } from "../../graphql/labels";
 import { Modal, Button, Typography, Tabs } from "antd";
 import LabelAddDeviceSelect from "./LabelAddDeviceSelect";
 import LabelAddLabelSelect from "./LabelAddLabelSelect";
-import ConfirmLabelAddProfileConflict from "../common/ConfirmLabelAddProfileConflict";
+import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 const { Text } = Typography;
 const { TabPane } = Tabs;
 
@@ -214,7 +214,7 @@ class LabelAddDeviceModal extends Component {
             </Text>
           )}
         </Modal>
-        <ConfirmLabelAddProfileConflict
+        <ConfirmLabelAddProfileConflictModal
           open={this.state.showConfirmModal}
           close={() => {
             this.setState({ showConfirmModal: false });
