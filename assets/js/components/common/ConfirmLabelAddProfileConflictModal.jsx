@@ -35,7 +35,7 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
           <Text>
             {`${
               multipleDevices
-                ? "One or more of the Devices already have"
+                ? "One or more of the Devices already has"
                 : "The Device already has"
             } a Profile applied to ${
               multipleDevices ? "them" : "it"
