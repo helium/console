@@ -35,6 +35,7 @@ export const ALL_LABELS_DEVICES = gql`
       name
       device_count
       devices {
+        id
         config_profile_id
       }
     }
