@@ -4,19 +4,19 @@ const { Text } = Typography;
 
 class AkenzaForm extends Component {
   state = {
-    token: "",
+    secret: "",
   };
 
-  handleTokenUpdate = (e) => {
-    this.setState({ token: e.target.value }, this.validateInput);
+  handleSecretUpdate = (e) => {
+    this.setState({ secret: e.target.value }, this.validateInput);
   };
 
   validateInput = () => {
-    const { token } = this.state;
-    if (token.length > 0) {
+    const { secret } = this.state;
+    if (secret.length > 0) {
       this.props.onValidInput({
         method: "post",
-        endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${token}`,
+        endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${secret}`,
       });
     }
   };
@@ -25,14 +25,12 @@ class AkenzaForm extends Component {
     return (
       <div>
         <div>
-          <Text style={{ display: "block" }}>
-            Enter Akenza Authorization Token:
-          </Text>
+          <Text style={{ display: "block" }}>Enter Akenza Uplink Secret:</Text>
         </div>
         <div>
           <Input
-            value={this.state.token}
-            onChange={this.handleTokenUpdate}
+            value={this.state.secret}
+            onChange={this.handleSecretUpdate}
             style={{ width: "50%" }}
           />
         </div>
