@@ -37,10 +37,12 @@ defmodule Console.Events do
       |> Repo.all()
   end
 
-  def get_events_since_last_stat_run(epoch) do
+  def get_events_since_last_stat_run(id) do
+    last_event = Event |> Repo.get!(id)
+
     Event
-      |> where([e], e.reported_at_epoch >= ^epoch)
-      |> order_by(desc: :reported_at_epoch)
+      |> where([e], e.serial > ^last_event.serial)
+      |> order_by(desc: :serial)
       |> Repo.all()
   end
 

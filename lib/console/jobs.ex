@@ -177,9 +177,7 @@ defmodule Console.Jobs do
 
   def run_events_stat_job do
     last_stat_run = %EventsStatRun{} = EventsStatRuns.get_latest()
-    all_events_since = Events.get_events_since_last_stat_run(last_stat_run.reported_at_epoch)
-    latest_event_index = Enum.find_index(all_events_since, fn e -> e.id == last_stat_run.last_event_id end)
-    events_after_last_run = all_events_since |> Enum.slice(0, latest_event_index)
+    events_after_last_run = Events.get_events_since_last_stat_run(last_stat_run.last_event_id)
 
     if length(events_after_last_run) > 0 do
       device_updates_map =
@@ -274,7 +272,7 @@ defmodule Console.Jobs do
           })
         end)
 
-        latest_event = all_events_since |> List.first()
+        latest_event = events_after_last_run |> List.first()
         EventsStatRuns.create_events_stat_run!(%{ last_event_id: latest_event.id, reported_at_epoch: latest_event.reported_at_epoch })
       end)
     end

@@ -11,6 +11,6 @@ defmodule Console.Repo.Migrations.AddDeviceEventWorkerRelatedTables do
     end
 
     create index(:events_stat_runs, [:reported_at_epoch])
-    create_if_not_exists index(:events, [:reported_at_epoch])
+    drop_if_exists index(:events, [:reported_at_epoch])
   end
 end
