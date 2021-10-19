@@ -10,6 +10,7 @@ import Ubidots from "../../img/ubidots.png";
 import Datacake from "../../img/datacake.png";
 import Tago from "../../img/tago.png";
 import Microshare from "../../img/microshare.png";
+import Akenza from "../../img/akenza.png";
 
 export const NEW_CHANNEL_TYPES = [
   {
@@ -111,5 +112,13 @@ export const PREMADE_CHANNEL_TYPES = [
     info: "This Integration simplifies sending data to the Microshare IoT Platform",
     docLink:
       "https://docs.helium.com/use-the-network/console/integrations/microshare",
+  },
+  {
+    name: "Akenza",
+    type: "akenza",
+    img: `${Akenza}`,
+    info: "This Integration simplifies sending data to the Akenza platform.",
+    docLink:
+      "https://docs.helium.com/use-the-network/console/integrations/akenza",
   },
 ];

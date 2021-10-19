@@ -9,7 +9,8 @@ import MqttIcon from "../../img/channels/mqtt.png";
 import TagoIcon from "../../img/channels/tago.png";
 import UbidotsIcon from "../../img/channels/ubidots.png";
 import GoogleSheetIcon from "../../img/channels/google-sheet.svg";
-import Microshare from "../../img/channels/microshare.png";
+import MicroshareIcon from "../../img/channels/microshare.png";
+import AkenzaIcon from "../../img/channels/akenza.png";
 
 export const integrationImgMap = {
   adafruit: AdafruitIcon,
@@ -23,7 +24,8 @@ export const integrationImgMap = {
   tago: TagoIcon,
   ubidots: UbidotsIcon,
   googlesheets: GoogleSheetIcon,
-  microshare: Microshare,
+  microshare: MicroshareIcon,
+  akenza: AkenzaIcon,
 };
 
 export const getIntegrationTypeForFlows = (endpoint, type) => {
@@ -39,5 +41,6 @@ export const getIntegrationTypeForFlows = (endpoint, type) => {
   if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1)
     return "googlesheets";
   if (endpoint.indexOf("microshare.io") !== -1) return "microshare";
+  if (endpoint.indexOf("data-gateway.akenza.io" !== -1)) return "akenza";
   return type;
 };
