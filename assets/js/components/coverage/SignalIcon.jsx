@@ -12,7 +12,7 @@ export default ({ rssi }) => {
   if (rssi <= -30.0 && rssi >= -50.0) {
     icon = StrongSignalIcon;
     strength = "Strong";
-  } else if (rssi <= 50.01 && rssi >= -99.99) {
+  } else if (rssi <= -50.01 && rssi >= -99.99) {
     icon = MediumSignalIcon;
     strength = "Medium";
   } else if (rssi <= -100 && rssi >= -120) {
