@@ -80,7 +80,7 @@ config :console, Console.Scheduler,
       task: {Console.Jobs, :sync_hotspots, []}
     ],
     run_events_stat_job: [
-      schedule: {:extended, "*/10"},
+      schedule: {:extended, "*/5"}, # every 5 seconds
       task: {Console.Jobs, :run_events_stat_job, []}
     ],
   ]
