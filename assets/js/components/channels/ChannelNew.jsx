@@ -24,6 +24,7 @@ import ChannelCreateRow from "./ChannelCreateRow";
 import ChannelPremadeRow from "./ChannelPremadeRow";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import AdafruitFunctionForm from "./AdafruitFunctionForm";
+import AkenzaForm from "./forms/AkenzaForm";
 import { createChannel } from "../../actions/channel";
 import analyticsLogger from "../../util/analyticsLogger";
 import kebabCase from "lodash/kebabCase";
@@ -111,6 +112,7 @@ class ChannelNew extends Component {
       case "datacake":
       case "tago":
       case "googlesheet":
+      case "akenza":
       case "microshare":
         return "http";
       case "adafruit":
@@ -214,6 +216,8 @@ class ChannelNew extends Component {
         return <DatacakeForm onValidInput={this.handleStep2Input} />;
       case "tago":
         return <TagoForm onValidInput={this.handleStep2Input} />;
+      case "akenza":
+        return <AkenzaForm onValidInput={this.handleStep2Input} />;
       case "googlesheet":
         return (
           <GoogleSheetForm
@@ -296,9 +300,9 @@ class ChannelNew extends Component {
                 <IntegrationTypeTileSimple type={type} />
                 <Link
                   to="#"
-                  onClick={e => {
-                    e.preventDefault()
-                    this.setState({ type: null, showNextSteps: false })
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.setState({ type: null, showNextSteps: false });
                   }}
                 >
                   <Button size="small">Change</Button>
