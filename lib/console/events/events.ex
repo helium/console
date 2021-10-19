@@ -37,6 +37,13 @@ defmodule Console.Events do
       |> Repo.all()
   end
 
+  def get_events_since_last_stat_run(epoch) do
+    Event
+      |> where([e], e.reported_at_epoch >= ^epoch)
+      |> order_by(desc: :reported_at_epoch)
+      |> Repo.all()
+  end
+
   def create_event(attrs \\ %{}) do
     reported_at_naive =
       attrs["reported_at"]
