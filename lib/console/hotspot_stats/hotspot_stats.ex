@@ -8,10 +8,10 @@ defmodule Console.HotspotStats do
      |> Repo.all()
   end
 
-  def create_stat(attrs \\ %{}) do
+  def create_stat!(attrs \\ %{}) do
     %HotspotStat{}
     |> HotspotStat.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
   end
 
   def get_all_query_for_string_sort() do

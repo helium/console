@@ -4,9 +4,9 @@ defmodule Console.DeviceStats do
 
   alias Console.DeviceStats.DeviceStat
 
-  def create_stat(attrs \\ %{}) do
+  def create_stat!(attrs \\ %{}) do
     %DeviceStat{}
     |> DeviceStat.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
   end
 end

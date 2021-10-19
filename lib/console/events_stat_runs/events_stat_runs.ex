@@ -11,9 +11,9 @@ defmodule Console.EventsStatRuns do
       |> Repo.one()
   end
 
-  def create_events_stat_run(attrs \\ %{}) do
+  def create_events_stat_run!(attrs \\ %{}) do
     %EventsStatRun{}
     |> EventsStatRun.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert!()
   end
 end
