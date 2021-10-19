@@ -143,6 +143,8 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :adr_allowed, :boolean
     field :cf_list_enabled, :boolean
+    field :devices, list_of(:device)
+    field :labels, list_of(:label)
   end
 
   paginated object :label do
@@ -550,7 +552,7 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.MultiBuys.MultiBuyResolver.find/2
     end
 
-     @desc "Get a single config_profile"
+    @desc "Get a single config_profile"
     field :config_profile, :config_profile do
       arg :id, non_null(:id)
       resolve &Console.ConfigProfiles.ConfigProfileResolver.find/2

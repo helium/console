@@ -6,6 +6,7 @@ defmodule Console.ConfigProfiles.ConfigProfileResolver do
   def all(_, %{context: %{current_organization: current_organization}}) do
     config_profiles = ConfigProfile
       |> where([a], a.organization_id == ^current_organization.id)
+      |> preload([:devices, :labels])
       |> Repo.all()
 
     {:ok, config_profiles}
@@ -14,6 +15,7 @@ defmodule Console.ConfigProfiles.ConfigProfileResolver do
   def find(%{id: id}, %{context: %{current_organization: current_organization}}) do
     config_profile = ConfigProfile
       |> where([a], a.id == ^id and a.organization_id == ^current_organization.id)
+      |> preload([:devices, :labels])
       |> Repo.one!()
 
     {:ok, config_profile}
