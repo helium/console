@@ -178,19 +178,12 @@ defmodule Console.Jobs do
   def run_events_stat_job do
     last_stat_run = %EventsStatRun{} = EventsStatRuns.get_latest()
     all_events_since = Events.get_events_since_last_stat_run(last_stat_run.reported_at_epoch)
+    latest_event_index = Enum.find_index(all_events_since, fn e -> e.id == last_stat_run.last_event_id end)
+    events_after_last_run = all_events_since |> Enum.slice(0, latest_event_index)
 
-    if length(all_events_since) > 0 do
-      latest_event_index = Enum.find_index(all_events_since, fn e -> e.id == last_stat_run.last_event_id end)
-      events_to_run =
-        all_events_since
-        |> Enum.slice(0, latest_event_index)
-        |> Enum.filter(fn event ->
-          event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request"
-        end)
-
+    if length(events_after_last_run) > 0 do
       device_updates_map =
-        all_events_since
-        |> Enum.slice(0, latest_event_index)
+        events_after_last_run
         |> Enum.reduce(%{}, fn event, acc ->
           dc_used =
             case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
@@ -237,6 +230,12 @@ defmodule Console.Jobs do
         |> Map.keys()
         |> Devices.get_devices_in_list()
 
+      events_to_run_stats =
+        events_after_last_run
+        |> Enum.filter(fn event ->
+          event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request"
+        end)
+
       Repo.transaction(fn ->
         Enum.each(devices_to_update, fn device ->
           new_total_packets = device.total_packets + device_updates_map[device.id]["total_packets"]
@@ -250,7 +249,7 @@ defmodule Console.Jobs do
           Devices.update_device!(device, device_attrs, "router")
         end)
 
-        Enum.each(events_to_run, fn event ->
+        Enum.each(events_to_run_stats, fn event ->
           DeviceStats.create_stat!(%{
             "router_uuid" => event.router_uuid,
             "payload_size" => event.data["payload_size"],

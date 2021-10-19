@@ -6,7 +6,7 @@ defmodule Console.EventsStatRuns do
 
   def get_latest() do
     EventsStatRun
-      |> order_by(desc: :reported_at_epoch)
+      |> order_by(desc: :inserted_at)
       |> limit(1)
       |> Repo.one()
   end
