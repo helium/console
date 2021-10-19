@@ -200,13 +200,11 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
                     marginRight: 10,
                   }}
                 />
-                <Text style={{ fontSize: 16, fontWeight: 600 }}>
-                  Claim to Follow
-                </Text>
+                <Text style={{ fontSize: 16, fontWeight: 600 }}>Follow</Text>
               </div>
               <Text>
-                Any Hotspot in the network can be claimed, which adds it to your
-                Organization's 'My Hotspots' tab.
+                Any Hotspot in the network can be followed, which adds it to
+                your Organization's 'My Hotspots' tab.
               </Text>
             </Col>
           </Row>

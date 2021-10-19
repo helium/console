@@ -124,14 +124,14 @@ export default (props) => {
                 <Text
                   style={{ fontWeight: 400, fontSize: 16, color: "#2C79EE" }}
                 >
-                  Claim to Follow
+                  Follow
                 </Text>
               </div>
               <div>
                 <Text style={{ color: "#2C79EE" }}>
-                  Claiming a Hotspot allows you to mark which Hotspots to follow
-                  in your Organization, which adds it to your Organization's 'My
-                  Hotspots' tab.
+                  Following a Hotspot allows you to mark which Hotspots to
+                  monitor in your Organization, which adds it to your
+                  Organization’s ‘My Hotspots’ Tab.
                 </Text>
               </div>
             </div>

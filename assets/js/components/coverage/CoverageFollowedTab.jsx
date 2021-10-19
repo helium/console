@@ -73,7 +73,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col sm={12}>
             <Text style={{ fontSize: 15 }}>
-              Hotspots that have been 'claimed' appear in the list below.
+              Followed Hotspots appear in the list below.
             </Text>
           </Col>
         </Row>
