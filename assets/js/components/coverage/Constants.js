@@ -237,7 +237,7 @@ export const ClaimButton = ({ onClick }) => (
         marginRight: 10,
       }}
     />
-    Claim Selected Hotspots
+    Follow Selected Hotspots
   </Button>
 );
 
@@ -251,6 +251,6 @@ export const UnclaimButton = ({ onClick }) => (
         marginRight: 10,
       }}
     />
-    Unclaim Selected Hotspots
+    Unfollow Selected Hotspots
   </Button>
 );
