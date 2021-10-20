@@ -19,15 +19,15 @@ defmodule ConsoleWeb.OrganizationHotspotController do
             ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
 
             conn
-            |> put_resp_header("message", "Hotspot claimed successfully")
+            |> put_resp_header("message", "Hotspot followed successfully")
             |> send_resp(:ok, "")
           end
         else
-          {:error, :not_found, "Hotspot doesn't seem to be claimed, please refresh the page and check again"}
+          {:error, :not_found, "Hotspot doesn't seem to be followed, please refresh the page and check again"}
         end
       _ ->
         if claimed do
-          {:error, :bad_request, "Hotspot has already been claimed, please refresh the page and check again"}
+          {:error, :bad_request, "Hotspot has already been followed, please refresh the page and check again"}
         else
           with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
             ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
@@ -90,7 +90,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         with {:ok, _count, _organization_hotspots} <- OrganizationHotspots.claim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
           conn
-            |> put_resp_header("message", "Hotspots claimed successfully")
+            |> put_resp_header("message", "Hotspots followed successfully")
             |> send_resp(:ok, "")
         end
       else
