@@ -16,6 +16,10 @@ const HOTSPOT_FRAGMENT = gql`
     latitude
     alias
     avg_rssi
+    groups {
+      id
+      name
+    }
     total_entries
   }
 `;

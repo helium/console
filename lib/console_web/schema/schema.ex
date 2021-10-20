@@ -59,6 +59,7 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
     field :alias, :string
     field :avg_rssi, :float
+    field :groups, list_of(:group)
     field :total_entries, :integer
   end
 
@@ -145,6 +146,11 @@ defmodule ConsoleWeb.Schema do
     field :cf_list_enabled, :boolean
     field :devices, list_of(:device)
     field :labels, list_of(:label)
+  end
+
+  object :group do
+    field :id, :id
+    field :name, :string
   end
 
   paginated object :label do

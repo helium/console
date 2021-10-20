@@ -2,6 +2,8 @@ defmodule Console.Hotspots.Hotspot do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
+  alias Console.Groups.HotspotsGroups
+  alias Console.Groups.Group
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -17,6 +19,8 @@ defmodule Console.Hotspots.Hotspot do
     field :long_city, :string
     field :address, :string
     field :owner, :string
+
+    many_to_many :groups, Group, join_through: HotspotsGroups, on_delete: :delete_all
 
     timestamps()
   end
