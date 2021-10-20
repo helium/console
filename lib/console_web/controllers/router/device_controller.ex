@@ -8,8 +8,6 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
-  alias Console.DeviceStats
-  alias Console.HotspotStats
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
