@@ -21,6 +21,12 @@ defmodule Console.Application do
       Console.Scheduler
     ]
 
+    App.PhoenixInstrumenter.setup()
+    App.PipelineInstrumenter.setup()
+    App.RepoInstrumenter.setup()
+    Prometheus.Registry.register_collector(:prometheus_process_collector)
+    App.PrometheusExporter.setup()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Console.Supervisor]
