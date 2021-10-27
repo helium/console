@@ -37,6 +37,15 @@ defmodule Console.Events do
       |> Repo.all()
   end
 
+  def get_events_since_last_stat_run(id) do
+    last_event = Event |> Repo.get!(id)
+
+    Event
+      |> where([e], e.serial > ^last_event.serial)
+      |> order_by(desc: :serial)
+      |> Repo.all()
+  end
+
   def create_event(attrs \\ %{}) do
     reported_at_naive =
       attrs["reported_at"]

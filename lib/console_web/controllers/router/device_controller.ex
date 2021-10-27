@@ -8,8 +8,6 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
-  alias Console.DeviceStats
-  alias Console.HotspotStats
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
@@ -161,8 +159,8 @@ defmodule ConsoleWeb.Router.DeviceController do
       nil ->
         conn
         |> send_resp(404, "")
-      %Device{} = device ->
-        organization = Organizations.get_organization!(device.organization_id)
+      %Device{} ->
+        organization = Organizations.get_organization!(event_device.organization_id)
         prev_dc_balance = organization.dc_balance
 
         result =
@@ -203,63 +201,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
-          |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
-            dc_used =
-              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-                true -> event.data["dc"]["used"]
-                false -> 0
-              end
-            packet_count = if dc_used == 0, do: 0, else: 1
-
-            device_updates = %{
-              "last_connected" => event.reported_at_naive,
-              "total_packets" => device.total_packets + packet_count,
-              "dc_usage" => device.dc_usage + dc_used,
-              "in_xor_filter" => true
-            }
-
-            device_updates = cond do
-              is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
-              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
-              true -> device_updates
-            end
-
-            Devices.update_device(device, device_updates, "router")
-          end)
-          |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
-            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-              DeviceStats.create_stat(%{
-                "router_uuid" => event.router_uuid,
-                "payload_size" => event.data["payload_size"],
-                "dc_used" => event.data["dc"]["used"],
-                "reported_at_epoch" => event.reported_at_epoch,
-                "device_id" => device.id,
-                "organization_id" => device.organization_id
-              })
-            else
-              {:ok, %{}}
-            end
-          end)
-          |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ event: event, device: device } ->
-            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-              HotspotStats.create_stat(%{
-                "router_uuid" => event.router_uuid,
-                "hotspot_address" => event.data["hotspot"]["id"],
-                "rssi" => event.data["hotspot"]["rssi"],
-                "snr" => event.data["hotspot"]["snr"],
-                "channel" => event.data["hotspot"]["channel"],
-                "spreading" => event.data["hotspot"]["spreading"],
-                "category" => event.category,
-                "sub_category" => event.sub_category,
-                "reported_at_epoch" => event.reported_at_epoch,
-                "device_id" => device.id,
-                "organization_id" => device.organization_id
-              })
-            else
-              {:ok, %{}}
-            end
-          end)
-          |> Ecto.Multi.run(:organization, fn _repo, %{ device: _device, event: created_event } ->
+          |> Ecto.Multi.run(:organization, fn _repo, %{ event: created_event } ->
             if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
               cond do
                 organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
@@ -278,8 +220,8 @@ defmodule ConsoleWeb.Router.DeviceController do
           end)
           |> Repo.transaction()
 
-        with {:ok, %{ event: event, device: device, organization: organization }} <- result do
-          publish_created_event(event, device)
+        with {:ok, %{ event: event, organization: organization }} <- result do
+          publish_created_event(event, event_device)
 
           if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
             check_org_dc_balance(organization, prev_dc_balance)
@@ -323,7 +265,9 @@ defmodule ConsoleWeb.Router.DeviceController do
                     AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
                     Channels.update_channel(event_integration, organization, %{ last_errored: true })
                   else
-                    Channels.update_channel(event_integration, organization, %{ last_errored: false })
+                    if event_integration.last_errored do
+                      Channels.update_channel(event_integration, organization, %{ last_errored: false })
+                    end
                   end
                 end
               end

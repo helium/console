@@ -78,7 +78,11 @@ config :console, Console.Scheduler,
     sync_hotspots: [
       schedule: "0 * * * *", # every hour @ 0 mins
       task: {Console.Jobs, :sync_hotspots, []}
-    ]
+    ],
+    run_events_stat_job: [
+      schedule: {:extended, "*/5"}, # every 5 seconds
+      task: {Console.Jobs, :run_events_stat_job, []}
+    ],
   ]
 
 # Import environment specific config. This must remain at the bottom
