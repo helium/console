@@ -18,7 +18,16 @@ import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
 import analyticsLogger from "../../util/analyticsLogger";
 import withGql from "../../graphql/withGql";
-import { Typography, Button, Input, Card, Divider, Row, Col, Switch } from "antd";
+import {
+  Typography,
+  Button,
+  Input,
+  Card,
+  Divider,
+  Row,
+  Col,
+  Switch,
+} from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import MqttDetails from "./MqttDetails";
@@ -304,19 +313,15 @@ class ChannelShow extends Component {
                       <Text strong>ID: </Text>
                       <Text code>{channel.id}</Text>
                     </Paragraph>
-                    {
-                      false && (
-                        <Paragraph>
-                          <Text strong>Receive Device Joins: </Text>
-                          <Switch
-                            style={{ marginLeft: 2 }}
-                            checked={channel.receive_joins}
-                            onChange={this.handleReceiveJoinsChange}
-                            disabled={!userCan({ role: this.props.currentRole })}
-                          />
-                        </Paragraph>
-                      )
-                    }
+                    <Paragraph>
+                      <Text strong>Receive Device Joins: </Text>
+                      <Switch
+                        style={{ marginLeft: 2 }}
+                        checked={channel.receive_joins}
+                        onChange={this.handleReceiveJoinsChange}
+                        disabled={!userCan({ role: this.props.currentRole })}
+                      />
+                    </Paragraph>
                     <Paragraph>
                       <Text strong># Piped Devices: </Text>
                       <Text>{channel.number_devices}</Text>
@@ -464,7 +469,7 @@ function mapStateToProps(state, ownProps) {
   return {
     socket: state.apollo.socket,
     currentOrganizationId: state.organization.currentOrganizationId,
-    currentRole: state.organization.currentRole
+    currentRole: state.organization.currentRole,
   };
 }
 

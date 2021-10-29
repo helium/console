@@ -61,7 +61,7 @@ defmodule ConsoleWeb.Router do
     post "/multi_buys/add_to_node", MultiBuyController, :add_multi_buy_to_node
     post "/multi_buys/remove_from_node", MultiBuyController, :remove_multi_buy_from_node
     resources "/channels", ChannelController, except: [:index, :new, :edit]
-    resources "/organizations", OrganizationController, except: [:new, :edit]
+    resources "/organizations", OrganizationController, except: [:new, :edit, :show]
     post "/channels/ubidots", ChannelController, :get_ubidots_url
     post "/channels/google_sheets", ChannelController, :get_google_form_data
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
