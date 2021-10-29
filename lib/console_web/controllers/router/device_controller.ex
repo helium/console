@@ -278,6 +278,19 @@ defmodule ConsoleWeb.Router.DeviceController do
                 limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
                 AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
               end
+            "misc" ->
+              if event.sub_category == "misc_integration_error" do
+                event_integration = Channels.get_channel(event.data["integration"]["id"])
+                { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                details = %{
+                  channel_name: event_integration.name,
+                  channel_id: event_integration.id,
+                  time: time
+                }
+                limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+                Channels.update_channel(event_integration, organization, %{ last_errored: true })
+              end
             _ -> nil
           end
 
