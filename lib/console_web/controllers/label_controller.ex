@@ -190,7 +190,7 @@ defmodule ConsoleWeb.LabelController do
   def delete_devices_from_labels(conn, %{"devices" => devices}) do
     # device index dropdown - remove all labels from selected devices
     current_organization = conn.assigns.current_organization
-    with {:ok, devices} <- Labels.delete_all_labels_from_devices(devices, current_organization) do
+    with {:ok, _} <- Labels.delete_all_labels_from_devices(devices, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
