@@ -114,10 +114,10 @@ h1 {
 
 #searchBar {
   background: #3e4347;
-  border-radius: 4px;
+  border-radius: 30px;
   padding: 4px 16px 4px 16px;
   display: flex;
-  margin-right: 4px;
+  margin-right: 10px;
   position: relative;
   top: -1px;
   margin-left: 10px;
