@@ -124,7 +124,7 @@ class TopBar extends Component {
               </MediaQuery>
             )
           }
-          <img draggable="false" src={QuestionIcon} style={{ height: 32, position: 'relative', top: '-1px', cursor: 'pointer' }}/>
+          { false && <img draggable="false" src={QuestionIcon} style={{ height: 32, position: 'relative', top: '-1px', cursor: 'pointer' }}/>}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
