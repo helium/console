@@ -107,10 +107,10 @@ defmodule Console.Devices do
     |> Repo.update()
   end
 
-  def update_device(%Device{} = device, attrs, "router") do
+  def update_device!(%Device{} = device, attrs, "router") do
     device
     |> Device.router_update_changeset(attrs)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   def delete_devices(device_ids, organization_id) do

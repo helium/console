@@ -41,6 +41,6 @@ export const getIntegrationTypeForFlows = (endpoint, type) => {
   if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1)
     return "googlesheets";
   if (endpoint.indexOf("microshare.io") !== -1) return "microshare";
-  if (endpoint.indexOf("data-gateway.akenza.io" !== -1)) return "akenza";
+  if (endpoint.indexOf("data-gateway.akenza.io") !== -1) return "akenza";
   return type;
 };

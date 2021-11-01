@@ -31,7 +31,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Running Console+Router with Docker locally
 
 - Clone the repo and `cd console`
-- Sign up with Auth0 (https://auth0.com/)
+- Sign up with Auth0 (https://auth0.com/) or Magic Link (https://magic.link/) for auth
 - Sign up with Mapbox (https://mapbox.com/)
 - In root directory, copy environment templates
 

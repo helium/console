@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import moment from "moment";
 import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/auth";
 import { generateKey } from "../../actions/apiKeys";
+import { config } from '../../config/magic'
 import DashboardLayout from "../common/DashboardLayout";
 import UserCan from "../common/UserCan";
 import ProfileNewKeyModal from "./ProfileNewKeyModal";
@@ -51,9 +52,11 @@ class Profile extends Component {
       }
     );
 
-    this.props.getMfaStatus().then(({ data }) => {
-      this.setState({ enrolledIn2FA: data.enrollment_status });
-    });
+    if (!config.useMagicAuth) {
+      this.props.getMfaStatus().then(({ data }) => {
+        this.setState({ enrolledIn2FA: data.enrollment_status });
+      });
+    }
   }
 
   componentWillUnmount() {

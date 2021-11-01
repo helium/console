@@ -29,6 +29,6 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
       :organization_id
     ])
     |> validate_length(:alias, max: 50)
-    |> unique_constraint(:address, name: :organization_hotspots_organization_id_hotspot_address_index, message: "This hotspot has already been claimed for this organization")
+    |> unique_constraint(:address, name: :organization_hotspots_organization_id_hotspot_address_index, message: "This hotspot has already been followed for this organization")
   end
 end

@@ -18,6 +18,7 @@ defmodule Console.Events.Event do
     field :reported_at_naive, :naive_datetime
     field :data, :map
     field :router_uuid, :string
+    field :serial, :integer
 
     belongs_to :device, Device
     belongs_to :organization, Organization

@@ -40,9 +40,9 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
             } a Profile applied to ${
               multipleDevices ? "them" : "it"
             }. To override the existing Profile${
-              multipleDevices && "(s)"
+              multipleDevices ? "(s)" : ""
             }, click Continue, or click Cancel to keep the existing one${
-              multipleDevices && "(s)"
+              multipleDevices ? "(s)" : ""
             }.`}
           </Text>
         )}
