@@ -153,6 +153,21 @@ const renderPageLinks = pathname => {
     </Col>
   )
 
+  if (pathname.startsWith('/config_profiles')) return (
+    <Col span={12} style={{ paddingLeft: 20, borderLeft: '1px solid #C4D2DF' }}>
+      <div className="pod" id="right">
+        <Text style={styles.header1}>FOR THIS PAGE</Text>
+        <Text style={styles.header2}>Configuration Profiles</Text>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/" target="_blank">Configuration Profiles<CaretRightOutlined className="caret" /></a>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/#adr" target="_blank">ADR<CaretRightOutlined className="caret" /></a>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/#cf-list" target="_blank">CF List<CaretRightOutlined className="caret" /></a>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/#creating-profiles" target="_blank">Creating Profiles<CaretRightOutlined className="caret" /></a>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/#applying-profiles" target="_blank">Applying Profiles<CaretRightOutlined className="caret" /></a>
+        <a style={styles.link} href="https://docs.helium.com/use-the-network/console/profiles/#editing-or-deleting-profiles" target="_blank">Editing or Deleting Profiles<CaretRightOutlined className="caret" /></a>
+      </div>
+    </Col>
+  )
+
   if (pathname.startsWith('/multi_buys')) return (
     <Col span={12} style={{ paddingLeft: 20, borderLeft: '1px solid #C4D2DF' }}>
       <div className="pod" id="right">
