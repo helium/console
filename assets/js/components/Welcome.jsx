@@ -41,8 +41,8 @@ class Welcome extends Component {
           <div style={{ padding: '60px 30px 30px 30px', minWidth }}>
             <Row style={{ justifyContent: 'space-between'}}>
               <span>
-                <Text style={{ fontSize: 26, display: 'block' }}>Welcome to</Text>
-                <Text style={{ fontSize: 30, display: 'block', fontWeight: 600, position: 'relative', top: -12 }}>Helium Console</Text>
+                <Text style={{ fontSize: 30, display: 'block' }}>Welcome to</Text>
+                <Text style={{ fontSize: 36, display: 'block', fontWeight: 600, position: 'relative', top: -16 }}>Helium Console</Text>
               </span>
 
               <img src={WelcomeImg} style={{ height: 68 }} />

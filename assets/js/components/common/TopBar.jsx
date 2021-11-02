@@ -204,7 +204,7 @@ class TopBar extends Component {
 
         {
           this.state.showHelpLinks && (
-            <HelpLinks toggleHelpLinks={this.toggleHelpLinks} />
+            <HelpLinks toggleHelpLinks={this.toggleHelpLinks} pathname={this.props.pathname} />
           )
         }
       </div>
@@ -232,6 +232,7 @@ function mapStateToProps(state, ownProps) {
     currentOrganizationName: state.organization.currentOrganizationName,
     currentOrganizationId: state.organization.currentOrganizationId,
     socket: state.apollo.socket,
+    pathname: state.router.location.pathname
   }
 }
 
