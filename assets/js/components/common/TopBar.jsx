@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { push } from 'connected-react-router';
 import MediaQuery from 'react-responsive'
 import numeral from 'numeral'
+import HelpLinks from './HelpLinks'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
@@ -20,6 +21,7 @@ import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined';
 const { Text } = Typography
 import Logo from '../../../img/logo-horizontalwhite-symbol.svg'
 import QuestionIcon from '../../../img/topbar-question.svg'
+import QuestionSelectedIcon from '../../../img/topbar-question-selected.svg'
 import ProfileActive from '../../../img/topbar-pf-active.png'
 import ProfileInactive from '../../../img/topbar-pf-inactive.svg'
 import { switchOrganization } from '../../actions/organization';
@@ -30,7 +32,8 @@ class TopBar extends Component {
   state = {
     userMenuVisible: false,
     orgMenuVisible: false,
-    showOrganizationModal: false
+    showOrganizationModal: false,
+    showHelpLinks: false,
   }
 
   componentDidMount() {
@@ -66,6 +69,10 @@ class TopBar extends Component {
 
   closeOrganizationModal = () => {
     this.setState({ showOrganizationModal: false })
+  }
+
+  toggleHelpLinks = () => {
+    this.setState({ showHelpLinks: !this.state.showHelpLinks })
   }
 
   handleOrgMenuClick = (e, orgs) => {
@@ -124,7 +131,14 @@ class TopBar extends Component {
               </MediaQuery>
             )
           }
-          { false && <img draggable="false" src={QuestionIcon} style={{ height: 32, position: 'relative', top: '-1px', cursor: 'pointer' }}/>}
+          <MediaQuery minWidth={720}>
+            <img
+              draggable="false"
+              src={this.state.showHelpLinks ? QuestionSelectedIcon : QuestionIcon}
+              style={{ height: 32, position: 'relative', top: '-1px', cursor: 'pointer' }}
+              onClick={this.toggleHelpLinks}
+            />
+          </MediaQuery>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -187,6 +201,12 @@ class TopBar extends Component {
           open={showOrganizationModal}
           onClose={this.closeOrganizationModal}
         />
+
+        {
+          this.state.showHelpLinks && (
+            <HelpLinks toggleHelpLinks={this.toggleHelpLinks} />
+          )
+        }
       </div>
     )
   }
