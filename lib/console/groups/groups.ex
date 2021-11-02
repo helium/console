@@ -5,6 +5,7 @@ defmodule Console.Groups do
   alias Console.Groups.Group
   alias Console.Groups.HotspotsGroups
   alias Console.Hotspots.Hotspot
+  alias Console.Hotspots
   alias Console.Organizations.Organization
 
   def get_group!(id), do: Repo.get!(Group, id)
@@ -16,6 +17,14 @@ defmodule Console.Groups do
   def get_groups(organization, ids) do
      from(g in Group, where: g.id in ^ids and g.organization_id == ^organization.id)
      |> Repo.all()
+  end
+
+  def get_groups_by_hotspot_addresses(organization, hotspot_addresses) do
+    query = from hg in HotspotsGroups,
+      join: g in Group, on: g.id == hg.group_id,
+      where: hg.hotspot_address in ^hotspot_addresses and g.organization_id == ^organization.id,
+      select: %{group_id: g.id, group_name: g.name, hotspot_address: hg.hotspot_address}
+    Repo.all(query)
   end
 
   def get_groups_and_attached_hotspots(ids) do

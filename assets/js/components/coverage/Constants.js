@@ -7,6 +7,7 @@ import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import SignalIcon from "./SignalIcon";
+import HotspotGroupDropdown from "./HotspotGroupDropdown";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -60,7 +61,7 @@ export const getColumns = (
   props,
   updateOrganizationHotspot,
   selectHotspotAddress,
-  fromSearch = false
+  tab
 ) => {
   const columns = [
     {
@@ -191,6 +192,12 @@ export const getColumns = (
       },
     },
     {
+      title: "Groups",
+      sorter: false,
+      dataIndex: "group_ids",
+      render: (data) => <HotspotGroupDropdown appliedGroups={data} />,
+    },
+    {
       title: "Status",
       sorter: true,
       dataIndex: "status",
@@ -223,8 +230,16 @@ export const getColumns = (
     },
   ];
 
-  if (fromSearch) return columns.filter((c) => c.dataIndex !== "alias");
-  return columns;
+  switch (tab) {
+    case "search":
+      return columns.filter(
+        (c) => c.dataIndex !== "alias" || c.dataIndex !== "group_ids"
+      );
+    case "main":
+      return columns.filter((c) => c.dataIndex !== "group_ids");
+    default:
+      return columns;
+  }
 };
 
 export const ClaimButton = ({ onClick }) => (

@@ -42,6 +42,7 @@ defmodule ConsoleWeb.Schema do
   end
 
   paginated object :hotspot do
+    field :id, :id
     field :hotspot_name, :string
     field :hotspot_address, :string
     field :status, :string
@@ -59,7 +60,7 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
     field :alias, :string
     field :avg_rssi, :float
-    field :groups, list_of(:group)
+    field :group_ids, list_of(:id)
     field :total_entries, :integer
   end
 
@@ -151,6 +152,7 @@ defmodule ConsoleWeb.Schema do
   object :group do
     field :id, :id
     field :name, :string
+    field :hotspots, list_of(:hotspot)
   end
 
   paginated object :label do
@@ -438,6 +440,10 @@ defmodule ConsoleWeb.Schema do
 
     field :all_config_profiles, list_of(:config_profile) do
       resolve &Console.ConfigProfiles.ConfigProfileResolver.all/2
+    end
+
+    field :all_groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.all/2
     end
 
     field :alerts_per_type, list_of(:alert) do

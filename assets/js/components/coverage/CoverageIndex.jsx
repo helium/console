@@ -207,6 +207,7 @@ export default (props) => {
                     orgHotspotsMap={orgHotspotsMap}
                     selectHotspotAddress={selectHotspotAddress}
                     refetch={hotspotStatsRefetch}
+                    tab="main"
                   />
                 ) : (
                   <CoverageHotspotShow
@@ -226,6 +227,7 @@ export default (props) => {
                     orgHotspotsMap={orgHotspotsMap}
                     selectHotspotAddress={selectHotspotAddress}
                     refetch={followedHotspotStatsRefetch}
+                    tab="followed"
                   />
                 ) : (
                   <CoverageHotspotShow
@@ -244,6 +246,7 @@ export default (props) => {
                     loading={searchHotspotsLoading}
                     error={searchHotspotsError}
                     searchHotspots={searchHotspots}
+                    tab="search"
                   />
                 ) : (
                   <CoverageHotspotShow

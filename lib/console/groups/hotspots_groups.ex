@@ -6,6 +6,7 @@ defmodule Console.Groups.HotspotsGroups do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "hotspots_groups" do
+    field :hotspot_address, :string
     belongs_to :group, Console.Groups.Group
     belongs_to :hotspot, Console.Hotspots.Hotspot
 
@@ -15,8 +16,8 @@ defmodule Console.Groups.HotspotsGroups do
   @doc false
   def changeset(hotspots_group, attrs) do
     hotspots_group
-    |> cast(attrs, [:group_id, :hotspot_address])
-    |> validate_required([:group_id, :hotspot_address])
-    |> unique_constraint(:hotspot_address, name: :hotspots_groups_hotspot_address_group_id_index, message: "Hotspot already added to Group")
+    |> cast(attrs, [:group_id, :hotspot_id])
+    |> validate_required([:group_id, :hotspot_id])
+    |> unique_constraint(:hotspot_id, name: :hotspots_groups_hotspot_id_group_id_index, message: "Hotspot already added to Group")
   end
 end

@@ -2,6 +2,7 @@ defmodule Console.Groups.GroupResolver do
   alias Console.Repo
   alias Console.Groups.Group
   alias Console.Groups.HotspotsGroups
+  alias Console.Hotspots.Hotspot
   import Ecto.Query
   alias Console.Alerts
 
@@ -31,28 +32,11 @@ defmodule Console.Groups.GroupResolver do
   end
 
   def all(_, %{context: %{current_organization: current_organization}}) do
-    hotspot_count_query = from g in Group,
-      left_join: h in assoc(g, :hotspots),
-      where: g.organization_id == ^current_organization.id,
-      group_by: g.id,
-      select: %{group_id: g.id, hotspot_count: count(h.id)}
-
-    hotspot_counts = Repo.all(hotspot_count_query)
-
+    hotspot_query = from h in Hotspot, select: %{ id: h.id, hotspot_name: h.name, hotspot_address: h.address }
     groups = Group
       |> where([g], g.organization_id == ^current_organization.id)
-      |> preload([:hotspots])
+      |> preload([hotspots: ^hotspot_query])
       |> Repo.all()
-      |> Enum.map(
-        fn group ->
-          %{hotspot_count: hotspot_count} = hotspot_counts
-            |> Enum.find(
-              fn rec ->
-                rec.group_id == group.id
-              end)
-
-          group |> Map.put(:hotspot_count, hotspot_count) |> Map.put(:alerts, Alerts.get_alerts_by_node(group.id, "group"))
-      end)
 
     {:ok, groups}
   end

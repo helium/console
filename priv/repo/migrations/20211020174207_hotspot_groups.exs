@@ -12,12 +12,12 @@ defmodule Console.Repo.Migrations.HotspotGroups do
 
     create table(:hotspots_groups) do
       add :group_id, references(:groups)
-      add :hotspot_address, references(:hotspots, column: :address, type: :string)
+      add :hotspot_id, references(:hotspots)
 
       timestamps()
     end
 
-    create unique_index(:hotspots_groups, [:group_id, :hotspot_address])
+    create unique_index(:hotspots_groups, [:group_id, :hotspot_id])
     create unique_index(:groups, [:name, :organization_id])
   end
 end

@@ -16,10 +16,7 @@ const HOTSPOT_FRAGMENT = gql`
     latitude
     alias
     avg_rssi
-    groups {
-      id
-      name
-    }
+    group_ids
     total_entries
   }
 `;
@@ -124,6 +121,20 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
       total_entries
       rssi
       snr
+    }
+  }
+`;
+
+export const ALL_HOTSPOT_GROUPS = gql`
+  query HotspotGroupsQuery {
+    allGroups {
+      id
+      name
+      hotspots {
+        id
+        hotspot_name
+        hotspot_address
+      }
     }
   }
 `;

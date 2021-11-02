@@ -2,6 +2,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Hotspots
   alias Console.Devices
   alias Console.HotspotStats
+  alias Console.Groups
 
   def all(
     %{ column: column, order: order, page: page, page_size: page_size },
@@ -39,6 +40,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
+    # updated_results = append_groups(results, current_organization)
 
     {:ok, results}
   end
@@ -80,8 +82,9 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_claimed_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-
-    {:ok, results}
+    updated_results = split_groups(results)
+    
+    {:ok, updated_results}
   end
 
   def device_count(_, %{context: %{current_organization: current_organization}}) do
@@ -260,11 +263,38 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           longitude: Enum.at(r, 9),
           alias: Enum.at(r,10),
           avg_rssi: Enum.at(r, 11),
-          total_entries: Enum.at(r, 12)
+          group_ids: Enum.at(r, 12),
+          total_entries: Enum.at(r, 13)
         }
         |> Map.merge(past_2d_stat)
       end)
 
     hotspot_stats
+  end
+
+  # defp append_groups(results, current_organization) do
+  #   hotspot_addresses = results |> Enum.map(fn (x) -> x.hotspot_address end)
+  #   groups_map =
+  #     Groups.get_groups_by_hotspot_addresses(current_organization, hotspot_addresses)
+  #     |> Enum.group_by(fn x -> x.hotspot_address end, fn x ->
+  #       %{ id: x.group_id, name: x.group_name }
+  #     end)
+    
+  #   results
+  #     |> Enum.map(fn r ->
+  #       Map.put(r, :groups, case groups_map[r.hotspot_address] do
+  #         nil -> []
+  #         _ -> groups_map[r.hotspot_address]
+  #       end)
+  #     end)
+  # end
+
+  defp split_groups(results) do
+    results |> Enum.map(fn r ->
+      Map.put(r, :group_ids, case r.group_ids do
+        nil -> []
+        _ -> String.split(r.group_ids, ",")
+      end)
+    end)
   end
 end

@@ -127,6 +127,7 @@ defmodule Console.HotspotStats do
         h.lng,
         oh.alias,
         parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -158,6 +159,8 @@ defmodule Console.HotspotStats do
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4
@@ -195,6 +198,7 @@ defmodule Console.HotspotStats do
         h.lng,
         oh.alias,
         parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -226,6 +230,8 @@ defmodule Console.HotspotStats do
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4
