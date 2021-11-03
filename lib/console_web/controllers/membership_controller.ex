@@ -2,7 +2,7 @@ defmodule ConsoleWeb.MembershipController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
-  alias Console.Organizations
+  alias Console.Organizations.Invitation
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -36,6 +36,11 @@ defmodule ConsoleWeb.MembershipController do
     else
       with {:ok, _} <- Organizations.delete_membership(membership) do
         ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
+
+        case Organizations.get_invitation(current_organization, membership.email) do
+          nil -> nil
+          invitation -> Organizations.delete_invitation(invitation)
+        end
 
         conn
         |> put_resp_header("message", "User removed from organization")

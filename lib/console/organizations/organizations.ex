@@ -120,6 +120,10 @@ defmodule Console.Organizations do
     Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
   end
 
+  def get_invitation(%Organization{} = organization, email) do
+    Repo.get_by(Invitation, [email: email, organization_id: organization.id])
+  end
+
   def get_last_viewed_org_membership(%User{id: user_id}) do
     query = from m in Membership,
       where: m.user_id == ^user_id,
