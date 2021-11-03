@@ -693,3 +693,20 @@ a.version-link {
 .hotspot-claim {
   padding: 0 25px 15px;
 }
+
+.hotspot-group-menu > div > div > .ant-popover-inner-content {
+  padding: 10px 0;
+}
+
+.hotspot-group-menu > div > .ant-popover-inner {
+  border-radius: 10px;
+}
+
+.hotspot-group-menu > div > .ant-popover-arrow {
+  display: none;
+}
+
+.hotspot-group-option:hover {
+  background-color: #f5f7f9;
+  cursor: pointer;
+}

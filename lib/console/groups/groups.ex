@@ -34,8 +34,13 @@ defmodule Console.Groups do
   end
 
   def get_groups_of_hotspot(hotspot) do
-     from(hg in HotspotsGroups, where: hg.hotspot_address == ^hotspot.address)
-     |> Repo.all()
+    from(hg in HotspotsGroups, where: hg.hotspot_address == ^hotspot.address)
+    |> Repo.all()
+  end
+
+  def get_hotspot_group!(hotspot_id, group_id) do
+    from(hg in HotspotsGroups, where: hg.hotspot_id == ^hotspot_id and hg.group_id == ^group_id)
+    |> Repo.one!()
   end
 
   def get_group(organization, id) do
@@ -118,6 +123,15 @@ defmodule Console.Groups do
     do
       {:ok, length(hotspots_groups), hotspots_groups}
     end
+  end
+
+  def add_hotspot_to_group(%{ "group_id" => group_id, "hotspot_id" => hotspot_id } = attrs) do
+    Repo.insert(HotspotsGroups.changeset(%HotspotsGroups{}, attrs))
+  end
+
+  def remove_hotspot_from_group(%{ "group_id" => group_id, "hotspot_id" => hotspot_id }) do
+    hotspot_group = get_hotspot_group!(hotspot_id, group_id)
+    Repo.delete(hotspot_group)
   end
 
   def get_hotspot_groups(hotspot_id) do

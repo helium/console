@@ -3,6 +3,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Devices
   alias Console.HotspotStats
   alias Console.Groups
+  import Ecto.Query
 
   def all(
     %{ column: column, order: order, page: page, page_size: page_size },
@@ -244,6 +245,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     hotspot_stats =
       past_1d_result.rows
       |> Enum.map(fn r ->
+        {:ok, id} = Ecto.UUID.load(Enum.at(r, 13))
         past_2d_stat =
           case Map.get(past_2d_hotspot_map, Enum.at(r, 0)) do
             nil -> %{ packet_count_2d: 0, device_count_2d: 0 }
@@ -264,7 +266,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
           alias: Enum.at(r,10),
           avg_rssi: Enum.at(r, 11),
           group_ids: Enum.at(r, 12),
-          total_entries: Enum.at(r, 13)
+          id: id,
+          total_entries: Enum.at(r, 14)
         }
         |> Map.merge(past_2d_stat)
       end)

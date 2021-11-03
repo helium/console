@@ -6,7 +6,6 @@ defmodule Console.Groups.HotspotsGroups do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "hotspots_groups" do
-    field :hotspot_address, :string
     belongs_to :group, Console.Groups.Group
     belongs_to :hotspot, Console.Hotspots.Hotspot
 

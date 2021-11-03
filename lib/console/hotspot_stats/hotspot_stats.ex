@@ -29,6 +29,7 @@ defmodule Console.HotspotStats do
         h.lng,
         os.alias,
         stats.avg_rssi,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -79,6 +80,7 @@ defmodule Console.HotspotStats do
         h.lng,
         os.alias,
         stats.avg_rssi,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -128,6 +130,7 @@ defmodule Console.HotspotStats do
         oh.alias,
         parsed_stats.avg_rssi,
         string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -199,6 +202,7 @@ defmodule Console.HotspotStats do
         oh.alias,
         parsed_stats.avg_rssi,
         string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT

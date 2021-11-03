@@ -72,6 +72,9 @@ defmodule ConsoleWeb.Router do
     resources "/config_profiles", ConfigProfileController, only: [:create, :delete, :update]
     post "/config_profiles/add_to_node", ConfigProfileController, :add_config_profile_to_node
     post "/config_profiles/remove_from_node", ConfigProfileController, :remove_config_profile_from_node
+    post "/hotspot_group", GroupController, :add_hotspot_to_group
+    post "/delete_hotspot_group", GroupController, :remove_hotspot_from_group
+    resources "/groups", GroupController, only: [:create, :delete, :update]
 
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]

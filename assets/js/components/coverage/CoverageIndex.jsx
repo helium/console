@@ -108,6 +108,26 @@ export default (props) => {
     };
   }, []);
 
+  const followedHotspotsChannel = socket.channel(
+    "graphql:followed_hotspot_table",
+    {}
+  );
+  useEffect(() => {
+    // executed when mounted
+    followedHotspotsChannel.join();
+    followedHotspotsChannel.on(
+      `graphql:followed_hotspot_table:${currentOrganizationId}:hotspot_group_update`,
+      (_message) => {
+        followedHotspotStatsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      followedHotspotsChannel.leave();
+    };
+  }, []);
+
   useEffect(() => {
     switch (currentTab) {
       case "main":

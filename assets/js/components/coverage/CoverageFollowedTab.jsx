@@ -94,7 +94,9 @@ export default (props) => {
                 props.orgHotspotsMap[hs.hotspot_address].claimed
             )}
             columns={columns}
-            rowKey={(record) => record.hotspot_address}
+            rowKey={(record) => {
+              return record.hotspot_address;
+            }}
             pagination={false}
             style={{ overflowY: "hidden" }}
             className="no-scroll-bar"

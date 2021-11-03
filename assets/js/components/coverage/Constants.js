@@ -195,7 +195,9 @@ export const getColumns = (
       title: "Groups",
       sorter: false,
       dataIndex: "group_ids",
-      render: (data) => <HotspotGroupDropdown appliedGroups={data} />,
+      render: (data, record) => (
+        <HotspotGroupDropdown appliedGroups={data} hotspotId={record.id} />
+      ),
     },
     {
       title: "Status",
