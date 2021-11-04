@@ -8,6 +8,12 @@ defmodule Console.HotspotStats do
      |> Repo.all()
   end
 
+  def create_stat(attrs \\ %{}) do
+    %HotspotStat{}
+    |> HotspotStat.changeset(attrs)
+    |> Repo.insert()
+  end
+
   def create_stat!(attrs \\ %{}) do
     %HotspotStat{}
     |> HotspotStat.changeset(attrs)

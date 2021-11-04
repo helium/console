@@ -17,6 +17,7 @@ class AkenzaForm extends Component {
       this.props.onValidInput({
         method: "post",
         endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${secret}`,
+        headers: {},
       });
     }
   };
