@@ -13,6 +13,7 @@ import CoverageMainTab from "./CoverageMainTab";
 import CoverageFollowedTab from "./CoverageFollowedTab";
 import CoverageSearchTab from "./CoverageSearchTab";
 import CoverageHotspotShow from "./CoverageHotspotShow";
+import GroupsTab from "./GroupsTab";
 import { Typography, Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
 const { Text } = Typography;
@@ -179,6 +180,89 @@ export default (props) => {
     hotspotStatsData,
   ]);
 
+  const tabs = () => (
+    <Tabs
+      defaultActiveKey="main"
+      size="large"
+      tabBarStyle={{
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: 40,
+        marginTop: 20,
+      }}
+      onTabClick={(tab) => {
+        setCurrentTab(tab);
+        analyticsLogger.logEvent(`ACTION_NAV_COVERAGE_${tab.toUpperCase()}`);
+        selectHotspotAddress(null);
+      }}
+      activeKey={currentTab}
+    >
+      <TabPane tab="Coverage Breakdown" key="main">
+        {!hotspotAddressSelected ? (
+          <CoverageMainTab
+            hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+            deviceCount={
+              hotspotStatsDeviceCountData &&
+              hotspotStatsDeviceCountData.hotspotStatsDeviceCount
+            }
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            refetch={hotspotStatsRefetch}
+            tab="main"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+      <TabPane tab="My Hotspots" key="followed">
+        {!hotspotAddressSelected ? (
+          <CoverageFollowedTab
+            hotspotStats={
+              followedHotspotStatsData &&
+              followedHotspotStatsData.followedHotspotStats
+            }
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            refetch={followedHotspotStatsRefetch}
+            tab="followed"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+      <TabPane tab="My Hotspot Groups" key="groups">
+        <GroupsTab />
+      </TabPane>
+      <TabPane tab="Hotspot Search" key="search">
+        {!hotspotAddressSelected ? (
+          <CoverageSearchTab
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            data={searchHotspotsData}
+            loading={searchHotspotsLoading}
+            error={searchHotspotsError}
+            searchHotspots={searchHotspots}
+            tab="search"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+    </Tabs>
+  );
+
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton full>
       <div
@@ -191,97 +275,27 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <Row style={{ height: "100%" }}>
-          <Col
-            sm={14}
+        {currentTab === "groups" ? (
+          <div
             style={{ height: "100%", overflow: "scroll" }}
             className="no-scroll-bar"
           >
-            <Tabs
-              defaultActiveKey="main"
-              size="large"
-              tabBarStyle={{
-                paddingLeft: 20,
-                paddingRight: 20,
-                height: 40,
-                marginTop: 20,
-              }}
-              onTabClick={(tab) => {
-                setCurrentTab(tab);
-                analyticsLogger.logEvent(
-                  `ACTION_NAV_COVERAGE_${tab.toUpperCase()}`
-                );
-                selectHotspotAddress(null);
-              }}
+            {tabs()}
+          </div>
+        ) : (
+          <Row style={{ height: "100%" }}>
+            <Col
+              sm={14}
+              style={{ height: "100%", overflow: "scroll" }}
+              className="no-scroll-bar"
             >
-              <TabPane tab="Coverage Breakdown" key="main">
-                {!hotspotAddressSelected ? (
-                  <CoverageMainTab
-                    hotspotStats={
-                      hotspotStatsData && hotspotStatsData.hotspotStats
-                    }
-                    deviceCount={
-                      hotspotStatsDeviceCountData &&
-                      hotspotStatsDeviceCountData.hotspotStatsDeviceCount
-                    }
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    refetch={hotspotStatsRefetch}
-                    tab="main"
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-              <TabPane tab="My Hotspots" key="followed">
-                {!hotspotAddressSelected ? (
-                  <CoverageFollowedTab
-                    hotspotStats={
-                      followedHotspotStatsData &&
-                      followedHotspotStatsData.followedHotspotStats
-                    }
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    refetch={followedHotspotStatsRefetch}
-                    tab="followed"
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-              <TabPane tab="Hotspot Search" key="search">
-                {!hotspotAddressSelected ? (
-                  <CoverageSearchTab
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    data={searchHotspotsData}
-                    loading={searchHotspotsLoading}
-                    error={searchHotspotsError}
-                    searchHotspots={searchHotspots}
-                    tab="search"
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-            </Tabs>
-          </Col>
-          <Col sm={10}>
-            <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
-          </Col>
-        </Row>
+              {tabs()}
+            </Col>
+            <Col sm={10}>
+              <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
+            </Col>
+          </Row>
+        )}
       </div>
     </DashboardLayout>
   );

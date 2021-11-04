@@ -126,8 +126,8 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
   }
 `;
 
-export const ALL_HOTSPOT_GROUPS = gql`
-  query HotspotGroupsQuery {
+export const ALL_GROUPS = gql`
+  query GroupsQuery {
     allGroups {
       id
       name

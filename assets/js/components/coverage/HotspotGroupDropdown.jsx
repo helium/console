@@ -6,7 +6,7 @@ import {
   addHotspotToGroup,
   removeHotspotFromGroup,
 } from "../../actions/coverage";
-import { ALL_HOTSPOT_GROUPS } from "../../graphql/coverage";
+import { ALL_GROUPS } from "../../graphql/coverage";
 import Text from "antd/lib/typography/Text";
 import GroupMenuItem from "./GroupMenuItem";
 import DeleteGroupModal from "./DeleteGroupModal";
@@ -16,7 +16,7 @@ export default ({ appliedGroups, hotspotId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState(null);
   const dispatch = useDispatch();
-  const { loading, error, data, refetch } = useQuery(ALL_HOTSPOT_GROUPS, {
+  const { loading, error, data, refetch } = useQuery(ALL_GROUPS, {
     fetchPolicy: "cache-first",
   });
 
