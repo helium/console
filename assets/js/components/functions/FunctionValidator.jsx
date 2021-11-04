@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { codeEditorLineColor, codeEditorBgColor } from '../../util/colors'
-import { Typography, Card, Input, InputNumber, Row, Col } from 'antd';
+import { Typography, Card, Input, InputNumber, Row, Col, Checkbox } from 'antd';
 import PlayCircleFilled from '@ant-design/icons/PlayCircleFilled';
 const { Text } = Typography
 import range from 'lodash/range'
@@ -14,6 +14,7 @@ class FunctionValidator extends Component {
   state = {
     input: "",
     port: 1,
+    useUplinkInfo: false,
   }
 
   componentDidMount() {
@@ -32,20 +33,21 @@ class FunctionValidator extends Component {
 
   runValidator = () => {
     const frame = document.getElementById('myFrame')
-    const { port, input } = this.state
-    const code = this.props.body + `
-      \nlet parsedInput = "${input}".trim().split(" ").join("");
-      if (parsedInput.length == 0) {
-        "Payload input must not be blank"
-      } else {
-        if (parsedInput.length % 2 == 1) parsedInput = "0" + parsedInput;
-        parsedInput = parsedInput.match(/.{1,2}/g).map(x => parseInt(x, 16));
-        if (parsedInput.filter(x => x !== 0 && !x).length > 0) {
-          "Payload input could not be validly parsed"
+    const { port, input, useUplinkInfo } = this.state
+    const code =
+      this.props.body + `
+        \nlet parsedInput = "${input}".trim().split(" ").join("");
+        if (parsedInput.length == 0) {
+          "Payload input must not be blank"
         } else {
-          JSON.stringify(Decoder(parsedInput, ${port}), null, 4)
-        }
-      }`
+          if (parsedInput.length % 2 == 1) parsedInput = "0" + parsedInput;
+          parsedInput = parsedInput.match(/.{1,2}/g).map(x => parseInt(x, 16));
+          if (parsedInput.filter(x => x !== 0 && !x).length > 0) {
+            "Payload input could not be validly parsed"
+          } else {
+            JSON.stringify(Decoder(parsedInput, ${port}${useUplinkInfo ? ', {dev_eui: "AAAAAAAAAAAAAAAA", app_eui: "BBBBBBBBBBBBBBBB", fcnt: 10, devaddr: "0000FFFF" }' : ''}), null, 4)
+          }
+        }`
     frame.contentWindow.postMessage(code, '*')
   }
 
@@ -123,8 +125,32 @@ class FunctionValidator extends Component {
                   onChange={port => this.setState({ port })}
                 />
               </Col>
+              <Col span={24} style={{ marginTop: 12}}>
+                <Checkbox
+                  checked={this.state.useUplinkInfo}
+                  onChange={(e) => this.setState({ useUplinkInfo: e.target.checked })}
+                >
+                  Use Sample Uplink Info
+                </Checkbox>
+                {
+                  this.state.useUplinkInfo && (
+                    <pre style={{ fontSize: 12 }}>
+                      {JSON.stringify(
+                        {
+                          dev_eui: "AAAAAAAAAAAAAAAA",
+                          app_eui: "BBBBBBBBBBBBBBBB",
+                          fcnt: 10,
+                          devaddr: "0000FFFF",
+                        },
+                        null,
+                        2
+                      )}
+                    </pre>
+                  )
+                }
+              </Col>
             </Row>
-            <div style={{ marginTop: 24 }}>
+            <div style={{ marginTop: 12 }}>
               <Text>Payload Output</Text>
               <textarea
                 id="validatorOutput"
