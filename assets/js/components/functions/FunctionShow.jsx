@@ -17,6 +17,7 @@ import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import FunctionDetailsCard from "./FunctionDetailsCard";
+import { customFunctionBody } from './FunctionNew'
 
 export default (props) => {
   const functionId = props.match.params.id;
@@ -71,7 +72,7 @@ export default (props) => {
   const handleSelectFormat = (format) => {
     setFormat(format);
     if (format === "custom") {
-      setBody("function Decoder(bytes, port) { \n\n  return decoded; \n}");
+      setBody(customFunctionBody);
     }
   };
 

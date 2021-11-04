@@ -11,13 +11,42 @@ import { Button, Input, Select, Card } from "antd";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Option } = Select;
 
+export const customFunctionBody = `function Decoder(bytes, port, uplink_info) {
+/*
+  The uplink_info variable is an OPTIONAL third parameter that provides the following:
+
+  uplink_info = {
+    type: "join",
+    uuid: <UUIDv4>,
+    id: <device id>,
+    name: <device name>,
+    dev_eui: <dev_eui>,
+    app_eui: <app_eui>,
+    metadata: {...},
+    fcnt: <integer>,
+    reported_at: <timestamp>,
+    port: <integer>,
+    devaddr: <devaddr>,
+    hotspots: {...},
+    hold_time: <integer>
+  }
+*/
+
+  if (uplink_info) {
+    // do something with uplink_info fields
+  }
+
+  return decoded;
+}
+`
+
 @connect(null, mapDispatchToProps)
 class FunctionNew extends Component {
   state = {
     name: "",
     type: null,
     format: null,
-    body: "function Decoder(bytes, port) { \n\n  return decoded; \n}",
+    body: customFunctionBody,
   };
 
   componentDidMount() {
