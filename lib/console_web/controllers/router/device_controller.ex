@@ -270,7 +270,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
                   {:ok, updated_org}
                 true ->
-                  {:error, "DC balance nonce inconsistent between router and console"}
+                  {:error, "DC balance nonce inconsistent between router: #{event["data"]["dc"]["nonce"]} and console: #{organization.dc_balance_nonce}"}
               end
             else
               {:ok, organization}
