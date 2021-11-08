@@ -55,7 +55,7 @@ export const createGroup = (group) => {
       .post("/api/groups", {
         group,
       })
-      .then((res) => res.status);
+      .then((res) => res);
   };
 };
 

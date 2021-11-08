@@ -139,3 +139,24 @@ export const ALL_GROUPS = gql`
     }
   }
 `;
+
+export const GROUPED_HOTSPOT_STATS = gql`
+  query GroupedHotspotStatsQuery(
+    $column: String
+    $order: String
+    $page: Int
+    $pageSize: Int
+    $groupId: ID!
+  ) {
+    groupedHotspotStats(
+      column: $column
+      order: $order
+      page: $page
+      pageSize: $pageSize
+      groupId: $groupId
+    ) {
+      ...HotspotFragment
+    }
+  }
+  ${HOTSPOT_FRAGMENT}
+`;

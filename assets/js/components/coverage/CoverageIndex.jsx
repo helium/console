@@ -7,23 +7,27 @@ import {
   FOLLOWED_HOTSPOT_STATS,
   ALL_ORGANIZATION_HOTSPOTS,
   HOTSPOT_STATS_DEVICE_COUNT,
+  GROUPED_HOTSPOT_STATS,
+  ALL_GROUPS,
 } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab";
 import CoverageFollowedTab from "./CoverageFollowedTab";
 import CoverageSearchTab from "./CoverageSearchTab";
 import CoverageHotspotShow from "./CoverageHotspotShow";
-import GroupsTab from "./GroupsTab";
-import { Typography, Tabs, Row, Col } from "antd";
+import GroupsTabIndex from "./GroupsTabIndex";
+import { Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
-const { Text } = Typography;
 const { TabPane } = Tabs;
 import { SEARCH_HOTSPOTS } from "../../graphql/search";
+import GroupNew from "./GroupNew";
+import GroupShow from "./GroupShow";
 
 export default (props) => {
   const [hotspotAddressSelected, selectHotspotAddress] = useState(null);
   const [currentTab, setCurrentTab] = useState("main");
   const [mapData, setMapData] = useState([]);
+  const [groupIdSelected, selectGroupId] = useState(null);
 
   const {
     loading: hotspotStatsLoading,
@@ -74,14 +78,25 @@ export default (props) => {
     fetchPolicy: "cache-and-network",
   });
 
-  const socket = useSelector((state) => state.apollo.socket);
-  const currentOrganizationId = useSelector(
-    (state) => state.organization.currentOrganizationId
-  );
-  const orgHotspotsChannel = socket.channel(
-    "graphql:coverage_index_org_hotspots",
-    {}
-  );
+  const [
+    getGroupedHotspotStats,
+    {
+      loading: groupedHotspotStatsLoading,
+      error: groupedHotspotsError,
+      data: groupedHotspotsData,
+    },
+  ] = useLazyQuery(GROUPED_HOTSPOT_STATS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const {
+    loading: allGroupsLoading,
+    error: allGroupsError,
+    data: allGroupsData,
+    refetch: allGroupsRefetch,
+  } = useQuery(ALL_GROUPS, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const orgHotspotsMap = allOrganizationHotspotsData
     ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
@@ -90,6 +105,15 @@ export default (props) => {
       }, {})
     : null;
 
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+
+  const orgHotspotsChannel = socket.channel(
+    "graphql:coverage_index_org_hotspots",
+    {}
+  );
   useEffect(() => {
     // executed when mounted
     orgHotspotsChannel.join();
@@ -126,6 +150,23 @@ export default (props) => {
     // executed when unmounted
     return () => {
       followedHotspotsChannel.leave();
+    };
+  }, []);
+
+  const groupsChannel = socket.channel("graphql:groups_index", {});
+  useEffect(() => {
+    // executed when mounted
+    groupsChannel.join();
+    groupsChannel.on(
+      `graphql:groups_index:${currentOrganizationId}:org_groups_update`,
+      (_message) => {
+        allGroupsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      groupsChannel.leave();
     };
   }, []);
 
@@ -169,6 +210,11 @@ export default (props) => {
           }
         }
         break;
+      case "groups":
+        if (hotspotAddressSelected) setCurrentTab("main");
+        if (groupedHotspotsData && groupIdSelected) {
+          setMapData(groupedHotspotsData.groupedHotspotStats);
+        }
       default:
         return;
     }
@@ -178,6 +224,8 @@ export default (props) => {
     searchHotspotsData,
     followedHotspotStatsData,
     hotspotStatsData,
+    groupedHotspotsData,
+    groupIdSelected,
   ]);
 
   const tabs = () => (
@@ -194,6 +242,7 @@ export default (props) => {
         setCurrentTab(tab);
         analyticsLogger.logEvent(`ACTION_NAV_COVERAGE_${tab.toUpperCase()}`);
         selectHotspotAddress(null);
+        selectGroupId(null);
       }}
       activeKey={currentTab}
     >
@@ -239,7 +288,35 @@ export default (props) => {
         )}
       </TabPane>
       <TabPane tab="My Hotspot Groups" key="groups">
-        <GroupsTab />
+        {!groupIdSelected ? (
+          <GroupsTabIndex
+            selectGroupId={(id) => {
+              selectGroupId(id);
+            }}
+            data={allGroupsData}
+          />
+        ) : groupIdSelected === "new" ? (
+          <GroupNew
+            back={() => {
+              selectGroupId(null);
+            }}
+          />
+        ) : (
+          <GroupShow
+            back={() => {
+              selectGroupId(null);
+            }}
+            groupSelected={
+              allGroupsData &&
+              allGroupsData.allGroups.find((g) => g.id === groupIdSelected)
+            }
+            getGroupedHotspotStats={getGroupedHotspotStats}
+            data={groupedHotspotsData}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            tab="groups"
+          />
+        )}
       </TabPane>
       <TabPane tab="Hotspot Search" key="search">
         {!hotspotAddressSelected ? (
@@ -275,7 +352,8 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        {currentTab === "groups" ? (
+        {currentTab === "groups" &&
+        (!groupIdSelected || groupIdSelected === "new") ? (
           <div
             style={{ height: "100%", overflow: "scroll" }}
             className="no-scroll-bar"

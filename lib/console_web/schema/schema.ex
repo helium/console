@@ -378,6 +378,15 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
     end
 
+    field :grouped_hotspot_stats, list_of(:hotspot) do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
+      arg :page, non_null(:integer)
+      arg :page_size, non_null(:integer)
+      arg :group_id, non_null(:id)
+      resolve &Console.HotspotStats.HotspotStatsResolver.grouped/2
+    end
+
     field :hotspot_stats_device_count, :hotspot_stats_device_count do
       resolve &Console.HotspotStats.HotspotStatsResolver.device_count/2
     end

@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Tag, Tooltip, Button } from "antd";
+import { Tooltip, Button } from "antd";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import SignalIcon from "./SignalIcon";
-import HotspotGroupDropdown from "./HotspotGroupDropdown";
+import GroupColumnDropdown from "./GroupColumnDropdown";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -195,9 +195,14 @@ export const getColumns = (
       title: "Groups",
       sorter: false,
       dataIndex: "group_ids",
-      render: (data, record) => (
-        <HotspotGroupDropdown appliedGroups={data} hotspotId={record.id} />
-      ),
+      render: (data, record) =>
+        data && (
+          <GroupColumnDropdown
+            appliedGroups={data}
+            hotspotId={record.id}
+            allGroups={props.allGroups}
+          />
+        ),
     },
     {
       title: "Status",

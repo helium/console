@@ -3,11 +3,12 @@ import { Button, Input } from "antd";
 import { useDispatch } from "react-redux";
 import { updateGroup } from "../../actions/coverage";
 import CheckCircleFilled from "@ant-design/icons/CheckCircleFilled";
-import DeleteFilled from "@ant-design/icons/DeleteFilled";
-import EditFilled from "@ant-design/icons/EditFilled";
+import DeleteGroupIcon from "../../../img/coverage/delete-group-icon.svg";
+import EditGroupIcon from "../../../img/coverage/edit-group-icon.svg";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import Text from "antd/lib/typography/Text";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default ({
   group,
@@ -47,6 +48,12 @@ export default ({
               onClick={() => {
                 dispatch(updateGroup(group.id, { name })).then(() => {
                   setEditable(false);
+                  analyticsLogger.logEvent(
+                    "ACTION_UPDATE_HOTSPOT_GROUP_VIA_MENU",
+                    {
+                      group_id: group.id,
+                    }
+                  );
                 });
               }}
             />
@@ -102,7 +109,7 @@ export default ({
           <span>
             <Button
               type="primary"
-              icon={<EditFilled style={{ fontSize: 16, color: "gray" }} />}
+              icon={<img src={EditGroupIcon} style={{ height: 14 }} />}
               style={{
                 background: "none",
                 border: "none",
@@ -115,7 +122,7 @@ export default ({
             />
             <Button
               type="primary"
-              icon={<DeleteFilled style={{ fontSize: 16, color: "red" }} />}
+              icon={<img src={DeleteGroupIcon} style={{ height: 14 }} />}
               style={{
                 background: "none",
                 border: "none",

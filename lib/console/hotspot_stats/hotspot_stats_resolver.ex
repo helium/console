@@ -2,8 +2,6 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
   alias Console.Hotspots
   alias Console.Devices
   alias Console.HotspotStats
-  alias Console.Groups
-  import Ecto.Query
 
   def all(
     %{ column: column, order: order, page: page, page_size: page_size },
@@ -41,7 +39,6 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-    # updated_results = append_groups(results, current_organization)
 
     {:ok, results}
   end
@@ -81,6 +78,48 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       GROUP BY hotspot_address
     """
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_claimed_hotspot_addresses, unix1d, unix2d])
+
+    results = generateStats(past_1d_result, past_2d_result)
+    updated_results = split_groups(results)
+    
+    {:ok, updated_results}
+  end
+
+  def grouped(
+    %{  column: column, order: order, page: page, page_size: page_size, group_id: group_id },
+    %{context: %{current_organization: current_organization}}
+  ) do
+    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    unix1d = current_unix - 86400000
+    unix2d = current_unix - 86400000 * 2
+
+    {:ok, organization_id} = Ecto.UUID.dump(current_organization.id)
+
+    sql_1d =
+      case "" do
+        "packet_count" -> HotspotStats.get_grouped_query_for_integer_sort(group_id)
+        "device_count" -> HotspotStats.get_grouped_query_for_integer_sort(group_id)
+        "signal" -> HotspotStats.get_grouped_query_for_integer_sort(group_id)
+        _ -> HotspotStats.get_grouped_query_for_string_sort(group_id)
+      end
+
+    offset = page_size * (page - 1)
+    past_1d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_1d, [organization_id, current_unix, unix1d, column, order, page_size, offset])
+
+    all_grouped_hotspot_addresses =
+      past_1d_result.rows
+      |> Enum.map(fn r -> Enum.at(r, 0) end)
+
+    sql_2d = """
+      SELECT
+        DISTINCT(hotspot_address),
+        COUNT(hotspot_address) AS packet_count,
+        COUNT(DISTINCT(device_id)) AS device_count
+      FROM hotspot_stats
+      WHERE organization_id = $1 and hotspot_address = ANY($2) and reported_at_epoch < $3 and reported_at_epoch > $4
+      GROUP BY hotspot_address
+    """
+    past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_grouped_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
     updated_results = split_groups(results)
@@ -274,23 +313,6 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
 
     hotspot_stats
   end
-
-  # defp append_groups(results, current_organization) do
-  #   hotspot_addresses = results |> Enum.map(fn (x) -> x.hotspot_address end)
-  #   groups_map =
-  #     Groups.get_groups_by_hotspot_addresses(current_organization, hotspot_addresses)
-  #     |> Enum.group_by(fn x -> x.hotspot_address end, fn x ->
-  #       %{ id: x.group_id, name: x.group_name }
-  #     end)
-    
-  #   results
-  #     |> Enum.map(fn r ->
-  #       Map.put(r, :groups, case groups_map[r.hotspot_address] do
-  #         nil -> []
-  #         _ -> groups_map[r.hotspot_address]
-  #       end)
-  #     end)
-  # end
 
   defp split_groups(results) do
     results |> Enum.map(fn r ->

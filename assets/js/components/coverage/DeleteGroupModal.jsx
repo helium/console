@@ -3,16 +3,18 @@ import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 import { useDispatch } from "react-redux";
 import { deleteGroup } from "../../actions/coverage";
-import { useHistory } from "react-router-dom";
+import analyticsLogger from "../../util/analyticsLogger";
 
-export default ({ show, group, close }) => {
+export default ({ show, group, close, back }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const handleSubmit = () => {
     dispatch(deleteGroup(group.id)).then(() => {
       close();
-      // history.push("/coverage/groups");
+      if (back) back();
+      analyticsLogger.logEvent("ACTION_DELETE_HOTSPOT_GROUP", {
+        group_id: group.id,
+      });
     });
   };
 

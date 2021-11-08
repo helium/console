@@ -706,7 +706,8 @@ a.version-link {
   display: none;
 }
 
-.hotspot-group-option:hover {
+.hotspot-group-option:hover,
+.group-actions:hover {
   background-color: #f5f7f9;
   cursor: pointer;
 }

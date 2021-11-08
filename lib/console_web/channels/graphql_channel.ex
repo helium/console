@@ -168,4 +168,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:groups_index", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:followed_hotspots_groups", _message, socket) do
+    {:ok, socket}
+  end
 end

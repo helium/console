@@ -11,6 +11,7 @@ import Text from "antd/lib/typography/Text";
 import GroupMenuItem from "./GroupMenuItem";
 import DeleteGroupModal from "./DeleteGroupModal";
 import NewGroupMenuItem from "./NewGroupMenuItem";
+import analyticsLogger from "../../util/analyticsLogger";
 
 export default ({ appliedGroups, hotspotId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,13 +27,13 @@ export default ({ appliedGroups, hotspotId }) => {
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
-  const groupsChannel = socket.channel("graphql:groups_index", {});
+  const groupsChannel = socket.channel("graphql:followed_hotspots_groups", {});
 
   useEffect(() => {
     // executed when mounted
     groupsChannel.join();
     groupsChannel.on(
-      `graphql:groups_index:${currentOrganizationId}:org_groups_update`,
+      `graphql:followed_hotspots_groups:${currentOrganizationId}:org_groups_update`,
       (_message) => {
         refetch();
       }
@@ -46,16 +47,26 @@ export default ({ appliedGroups, hotspotId }) => {
 
   const handleClick = (hotspotId, groupId, currentlySelected) => {
     if (currentlySelected) {
-      dispatch(removeHotspotFromGroup(hotspotId, groupId));
+      dispatch(removeHotspotFromGroup(hotspotId, groupId)).then(() => {
+        analyticsLogger.logEvent("ACTION_REMOVE_HOTSPOT_FROM_GROUP", {
+          group_id: groupId,
+          hotspot_id: hotspotId,
+        });
+      });
     } else {
-      dispatch(addHotspotToGroup(hotspotId, groupId));
+      dispatch(addHotspotToGroup(hotspotId, groupId)).then(() => {
+        analyticsLogger.logEvent("ACTION_ADD_HOTSPOT_TO_GROUP", {
+          group_id: groupId,
+          hotspot_id: hotspotId,
+        });
+      });
     }
   };
 
   const content = (
     <div>
       {groups.map((group) => {
-        const isGroupSelected = !!appliedGroups.find(
+        const isGroupSelected = !!(appliedGroups || []).find(
           (groupId) => groupId === group.id
         );
         return (
@@ -82,12 +93,11 @@ export default ({ appliedGroups, hotspotId }) => {
         <Popover
           destroyTooltipOnHide={true}
           content={content}
-          // visible={true}
           overlayClassName="hotspot-group-menu"
           placement="right"
           key={`group-popover-${hotspotId}`}
         >
-          <Button type="text" style={{ background: "none" }}>
+          <Button type="text" style={{ padding: 0, background: "none" }}>
             <Space>
               {appliedGroups.length > 0 ? (
                 appliedGroups.map((groupId, index) => {
