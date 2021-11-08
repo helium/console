@@ -33,8 +33,9 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        os.alias,
+        oh.alias,
         stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
         h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
@@ -48,7 +49,9 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
+      LEFT JOIN organization_hotspots oh ON stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, stats.hotspot_address, stats.packet_count, stats.device_count, stats.avg_rssi
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
@@ -84,8 +87,9 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        os.alias,
+        oh.alias,
         stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
         h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
@@ -99,7 +103,9 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
+      LEFT JOIN organization_hotspots oh ON stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, stats.hotspot_address, stats.packet_count, stats.device_count, stats.avg_rssi
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
