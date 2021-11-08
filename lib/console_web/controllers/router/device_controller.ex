@@ -395,7 +395,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   defp check_org_dc_balance(organization, prev_dc_balance) do
     if organization.automatic_charge_amount == nil do
       cond do
-        prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
+        prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->
           # DC Balance has dipped below 500,000. Send a notice.
           Organizations.get_administrators(organization)
           |> Enum.each(fn administrator ->
