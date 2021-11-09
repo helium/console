@@ -64,7 +64,7 @@ export default ({ appliedGroups, hotspotId }) => {
   };
 
   const content = (
-    <div>
+    <div style={{ maxHeight: 300, overflowY: "scroll" }}>
       {groups.map((group) => {
         const isGroupSelected = !!(appliedGroups || []).find(
           (groupId) => groupId === group.id
