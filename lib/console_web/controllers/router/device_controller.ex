@@ -16,6 +16,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Email
   alias Console.Mailer
   alias Console.AlertEvents
+  alias ConsoleWeb.Router.DeviceView
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -23,10 +24,26 @@ defmodule ConsoleWeb.Router.DeviceController do
     {"Content-Type", "application/x-www-form-urlencoded"}
   ]
 
-  def index(conn, _) do
-    devices = Devices.list_devices_no_disco_mode()
+  def index(conn, params) do
+    devices = Devices.paginate_devices_no_disco_mode(params["after"])
+    parsed_devices = DeviceView.render("index.json", devices: devices)
 
-    render(conn, "index.json", devices: devices)
+    last_device = List.last(parsed_devices)
+    response =
+      case last_device do
+        nil ->
+          %{
+            data: parsed_devices
+          }
+        _ ->
+          %{
+            data: parsed_devices,
+            after: last_device.id
+          }
+      end
+
+    conn
+    |> send_resp(:ok, Poison.encode!(response))
   end
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do

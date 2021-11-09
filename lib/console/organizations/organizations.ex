@@ -9,8 +9,25 @@ defmodule Console.Organizations do
   alias Console.Auth.User
   alias Console.ApiKeys.ApiKey
 
-  def get_all do
-    Repo.all(Organization)
+  def paginate_all(cursor) do
+    query =
+      case cursor do
+        nil ->
+          from(
+            o in Organization,
+            order_by: o.id,
+            limit: 1000
+          )
+        _ ->
+          from(
+            o in Organization,
+            where: o.id > ^cursor,
+            order_by: o.id,
+            limit: 1000
+          )
+      end
+
+    query |> Repo.all()
   end
 
   def list_organizations do
