@@ -12,7 +12,7 @@ import EditGroupModal from "./EditGroupModal";
 export default (props) => {
   const { back, groupSelected, data, getGroupedHotspotStats } = props;
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25); // TODO use actual page size changer
+  const PAGE_SIZE = 25;
   const [column, setColumn] = useState("packet_count");
   const [order, setOrder] = useState("desc");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -21,7 +21,13 @@ export default (props) => {
   useEffect(() => {
     if (groupSelected) {
       getGroupedHotspotStats({
-        variables: { page, pageSize, column, order, groupId: groupSelected.id },
+        variables: {
+          page,
+          pageSize: PAGE_SIZE,
+          column,
+          order,
+          groupId: groupSelected.id,
+        },
       });
     }
   }, [groupSelected]);
@@ -37,14 +43,14 @@ export default (props) => {
     setColumn(column);
     setOrder(order);
     getGroupedHotspotStats({
-      variables: { page, pageSize, column, order, groupId },
+      variables: { page, pageSize: PAGE_SIZE, column, order, groupId },
     });
   };
 
   const handleChangePage = (page) => {
     setPage(page);
     getGroupedHotspotStats({
-      variables: { page, pageSize, column, order, groupId },
+      variables: { page, pageSize: PAGE_SIZE, column, order, groupId },
     });
   };
 
@@ -146,7 +152,7 @@ export default (props) => {
         >
           <Pagination
             current={page}
-            pageSize={pageSize}
+            PAGE_SIZE={PAGE_SIZE}
             total={
               data && data.groupedHotspotStats.length > 0
                 ? data.groupedHotspotStats[0].total_entries
