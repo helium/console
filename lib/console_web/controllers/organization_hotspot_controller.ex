@@ -29,11 +29,16 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         if claimed do
           {:error, :bad_request, "Hotspot has already been followed, please refresh the page and check again"}
         else
-          with {:ok, _} <- OrganizationHotspots.delete_org_hotspot(org_hotspot) do
+          with {:ok, hotspot_groups_count} <- OrganizationHotspots.unclaim_org_hotspot(org_hotspot, hotspot_address, current_organization) do
             ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
 
+            msg = cond do
+              hotspot_groups_count > 0 -> "Hotspot removed from My Hotspots tab and Hotspot Groups successfully"
+              true -> "Hotspot removed from My Hotspots tab successfully"
+            end
+
             conn
-            |> put_resp_header("message", "Hotspot removed from My Hotspots tab successfully")
+            |> put_resp_header("message", msg)
             |> send_resp(:ok, "")
           end
         end
@@ -94,10 +99,14 @@ defmodule ConsoleWeb.OrganizationHotspotController do
             |> send_resp(:ok, "")
         end
       else
-        with {_count, nil} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
+        with {:ok, hotspot_groups_count} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          msg = cond do
+            hotspot_groups_count > 0 -> "Hotspots removed from My Hotspots tab and Hotspot Groups successfully"
+            true -> "Hotspots removed from My Hotspots tab successfully"
+          end
           conn
-            |> put_resp_header("message", "Hotspots removed from My Hotspots tab successfully")
+            |> put_resp_header("message", msg)
             |> send_resp(:ok, "")
         end
       end

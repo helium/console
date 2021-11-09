@@ -41,6 +41,7 @@ export default () => {
               onClick={() => {
                 dispatch(createGroup({ name })).then((res) => {
                   setEditable(false);
+                  setName("");
                   analyticsLogger.logEvent(
                     "ACTION_CREATE_HOTSPOT_GROUP_VIA_MENU",
                     {

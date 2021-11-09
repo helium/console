@@ -2,6 +2,7 @@ defmodule Console.OrganizationHotspots do
   import Ecto.Query, warn: false
   alias Console.Repo
   alias Console.OrganizationHotspots.OrganizationHotspot
+  alias Console.Groups
 
   def all(organization) do
     OrganizationHotspot
@@ -60,8 +61,20 @@ defmodule Console.OrganizationHotspots do
     end
   end
 
+  def unclaim_org_hotspot(%OrganizationHotspot{} = org_hotspot, hotspot_address, organization) do
+    Repo.transaction(fn ->
+      delete_org_hotspot(org_hotspot)
+
+      Groups.delete_hotspot_groups([hotspot_address], organization)
+    end)
+  end
+
   def unclaim_org_hotspots(hotspot_addresses, organization) do
-    query = from(oh in OrganizationHotspot, where: oh.hotspot_address in ^hotspot_addresses and oh.organization_id == ^organization.id)
-    Repo.delete_all(query)
+    Repo.transaction(fn ->
+      query = from(oh in OrganizationHotspot, where: oh.hotspot_address in ^hotspot_addresses and oh.organization_id == ^organization.id)
+      Repo.delete_all(query)
+
+      Groups.delete_hotspot_groups(hotspot_addresses, organization)
+    end)
   end
 end

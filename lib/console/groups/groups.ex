@@ -84,6 +84,15 @@ defmodule Console.Groups do
     Repo.delete(hotspot_group)
   end
 
+  def delete_hotspot_groups(hotspot_addresses, organization) do
+    hotspot_groups_query = from hg in HotspotGroup,
+      join: h in Hotspot, on: hg.hotspot_id == h.id,
+      join: g in Group, on: hg.group_id == g.id,
+      where: h.address in ^hotspot_addresses and g.organization_id == ^organization.id
+
+    Repo.delete_all(hotspot_groups_query)
+  end
+
   def add_groups_to_hotspot(groups, hotspot, organization) do
     groups_query = from(g in Group, where: g.id in ^groups and g.organization_id == ^organization.id, select: g)
     all_groups = Repo.all(groups_query)
