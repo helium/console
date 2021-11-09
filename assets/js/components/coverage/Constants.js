@@ -195,13 +195,15 @@ export const getColumns = (
       title: "Groups",
       sorter: false,
       dataIndex: "group_ids",
-      render: (data, record) => (
-        <GroupColumnDropdown
-          appliedGroups={data}
-          hotspotId={record.id}
-          allGroups={props.allGroups}
-        />
-      ),
+      render: (data, record) => {
+        return (
+          <GroupColumnDropdown
+            appliedGroups={data ? data.split(",") : []}
+            hotspotId={record.id}
+            allGroups={props.allGroups}
+          />
+        );
+      },
     },
     {
       title: "Status",

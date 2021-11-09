@@ -60,7 +60,7 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
     field :alias, :string
     field :avg_rssi, :float
-    field :group_ids, list_of(:id)
+    field :group_ids, :string
     field :total_entries, :integer
   end
 

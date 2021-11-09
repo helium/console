@@ -80,9 +80,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_claimed_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-    updated_results = split_groups(results)
     
-    {:ok, updated_results}
+    {:ok, results}
   end
 
   def grouped(
@@ -122,9 +121,8 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_grouped_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-    updated_results = split_groups(results)
     
-    {:ok, updated_results}
+    {:ok, results}
   end
 
   def device_count(_, %{context: %{current_organization: current_organization}}) do
@@ -312,14 +310,5 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
       end)
 
     hotspot_stats
-  end
-
-  defp split_groups(results) do
-    results |> Enum.map(fn r ->
-      Map.put(r, :group_ids, case r.group_ids do
-        nil -> []
-        _ -> String.split(r.group_ids, ",")
-      end)
-    end)
   end
 end

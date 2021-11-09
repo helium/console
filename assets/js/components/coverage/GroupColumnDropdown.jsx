@@ -102,12 +102,18 @@ export default ({ appliedGroups, hotspotId }) => {
               {appliedGroups && appliedGroups.length > 0 ? (
                 appliedGroups.map((groupId, index) => {
                   let group = groups.find((g) => g.id === groupId);
-                  if (index + 1 === appliedGroups.length) {
-                    return <Text key={`group-${group.id}`}>{group.name}</Text>;
-                  } else {
-                    return (
-                      <Text key={`group-${group.id}`}>{group.name + ","}</Text>
-                    );
+                  if (group) {
+                    if (index + 1 === appliedGroups.length) {
+                      return (
+                        <Text key={`group-${group.id}`}>{group.name}</Text>
+                      );
+                    } else {
+                      return (
+                        <Text key={`group-${group.id}`}>
+                          {group.name + ","}
+                        </Text>
+                      );
+                    }
                   }
                 })
               ) : (

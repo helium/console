@@ -4,7 +4,7 @@ defmodule ConsoleWeb.GroupController do
   alias Console.Groups
   alias Console.Groups.Group
   alias Console.Hotspots
-  alias Console.Groups.HotspotsGroups
+  alias Console.Groups.HotspotGroup
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -20,7 +20,8 @@ defmodule ConsoleWeb.GroupController do
     with {:ok, %Group{} = group} <- Groups.create_group(group_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:groups_index", "graphql:groups_index:#{current_organization.id}:org_groups_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:followed_hotspots_groups", "graphql:followed_hotspots_groups:#{current_organization.id}:org_groups_update", %{})
-      
+      ConsoleWeb.Endpoint.broadcast("graphql:followed_hotspot_table", "graphql:followed_hotspot_table:#{current_organization.id}:hotspot_group_update", %{})
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "Group #{group.name} added successfully")
@@ -68,9 +69,8 @@ defmodule ConsoleWeb.GroupController do
     current_organization = conn.assigns.current_organization
     Groups.get_group!(current_organization, group_id)
     Hotspots.get_hotspot_by_id!(hotspot_id)
-    # TODO grab the hotspot group relationship to catch error early 
 
-    with {:ok, %HotspotsGroups{}} <- Groups.add_hotspot_to_group(attrs) do
+    with {:ok, %HotspotGroup{}} <- Groups.add_hotspot_to_group(attrs) do
       ConsoleWeb.Endpoint.broadcast("graphql:followed_hotspot_table", "graphql:followed_hotspot_table:#{current_organization.id}:hotspot_group_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:groups_index", "graphql:groups_index:#{current_organization.id}:org_groups_update", %{})
       conn
@@ -82,10 +82,9 @@ defmodule ConsoleWeb.GroupController do
   def remove_hotspot_from_group(conn, %{ "group_id" => group_id, "hotspot_id" => hotspot_id } = attrs) do
     current_organization = conn.assigns.current_organization
     Groups.get_group!(current_organization, group_id)
-    Hotspots.get_hotspot_by_id!(hotspot_id)
-    # TODO grab the hotspot group relationship to catch error early 
+    Hotspots.get_hotspot_by_id!(hotspot_id) 
 
-    with {:ok, %HotspotsGroups{}} <- Groups.remove_hotspot_from_group(attrs) do
+    with {:ok, %HotspotGroup{}} <- Groups.remove_hotspot_from_group(attrs) do
       ConsoleWeb.Endpoint.broadcast("graphql:followed_hotspot_table", "graphql:followed_hotspot_table:#{current_organization.id}:hotspot_group_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:groups_index", "graphql:groups_index:#{current_organization.id}:org_groups_update", %{})
       conn

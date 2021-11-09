@@ -3,7 +3,7 @@ defmodule Console.Groups do
   alias Console.Repo
 
   alias Console.Groups.Group
-  alias Console.Groups.HotspotsGroups
+  alias Console.Groups.HotspotGroup
   alias Console.Hotspots.Hotspot
 
   def get_group!(id), do: Repo.get!(Group, id)
@@ -22,7 +22,7 @@ defmodule Console.Groups do
   end
 
   def get_hotspot_group!(hotspot_id, group_id) do
-    from(hg in HotspotsGroups, where: hg.hotspot_id == ^hotspot_id and hg.group_id == ^group_id)
+    from(hg in HotspotGroup, where: hg.hotspot_id == ^hotspot_id and hg.group_id == ^group_id)
     |> Repo.one!()
   end
 
@@ -58,7 +58,7 @@ defmodule Console.Groups do
     all_hotspots = Enum.concat(group_hotspots, other_hotspots) |> Enum.uniq()
 
     hotspots_groups = Enum.reduce(all_hotspots, [], fn hotspot, acc ->
-      if Repo.get_by(HotspotsGroups, hotspot_id: hotspot.id, group_id: to_group) == nil do
+      if Repo.get_by(HotspotGroup, hotspot_id: hotspot.id, group_id: to_group) == nil do
         acc ++ [%{ hotspot_id: hotspot.id, group_id: to_group }]
       else
         acc
@@ -67,7 +67,7 @@ defmodule Console.Groups do
 
     with {:ok, :ok} <- Repo.transaction(fn ->
         Enum.each(hotspots_groups, fn attrs ->
-          Repo.insert!(HotspotsGroups.changeset(%HotspotsGroups{}, attrs))
+          Repo.insert!(HotspotGroup.changeset(%HotspotGroup{}, attrs))
         end)
       end)
     do
@@ -76,7 +76,7 @@ defmodule Console.Groups do
   end
 
   def add_hotspot_to_group(%{ "group_id" => _group_id, "hotspot_id" => _hotspot_id } = attrs) do
-    Repo.insert(HotspotsGroups.changeset(%HotspotsGroups{}, attrs))
+    Repo.insert(HotspotGroup.changeset(%HotspotGroup{}, attrs))
   end
 
   def remove_hotspot_from_group(%{ "group_id" => group_id, "hotspot_id" => hotspot_id }) do
@@ -89,7 +89,7 @@ defmodule Console.Groups do
     all_groups = Repo.all(groups_query)
 
     hotspots_groups = Enum.reduce(all_groups, [], fn group, acc ->
-      if Repo.get_by(HotspotsGroups, hotspot_id: hotspot.id, group_id: group.id) == nil do
+      if Repo.get_by(HotspotGroup, hotspot_id: hotspot.id, group_id: group.id) == nil do
         acc ++ [%{ hotspot_id: hotspot.id, group_id: group.id }]
       else
         acc
@@ -98,7 +98,7 @@ defmodule Console.Groups do
 
     with {:ok, :ok} <- Repo.transaction(fn ->
         Enum.each(hotspots_groups, fn attrs ->
-          Repo.insert!(HotspotsGroups.changeset(%HotspotsGroups{}, attrs))
+          Repo.insert!(HotspotGroup.changeset(%HotspotGroup{}, attrs))
         end)
       end)
     do

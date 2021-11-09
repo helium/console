@@ -105,6 +105,7 @@ export default ({ selectGroupId, data }) => {
                   </span>
                   <span>
                     <Popover
+                      destroyTooltipOnHide={true}
                       placement="bottomRight"
                       content={
                         <GroupIndexActionsMenu

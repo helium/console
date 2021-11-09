@@ -1,16 +1,15 @@
 defmodule Console.Groups.GroupResolver do
   alias Console.Repo
   alias Console.Groups.Group
-  alias Console.Groups.HotspotsGroups
+  alias Console.Groups.HotspotGroup
   alias Console.Hotspots.Hotspot
   import Ecto.Query
-  alias Console.Alerts
 
   def paginate_by_hotspot(%{page: page, page_size: page_size, hotspot_id: hotspot_id, column: column, order: order}, %{context: %{current_organization: current_organization}}) do
     order_by = {String.to_existing_atom(order), String.to_existing_atom(column)}
 
     query = from g in Group,
-      join: hg in HotspotsGroups,
+      join: hg in HotspotGroup,
       on: hg.group_id == g.id,
       where: g.organization_id == ^current_organization.id and hg.hotspot_id == ^hotspot_id,
       order_by: ^order_by

@@ -30,8 +30,8 @@ export default ({ back }) => {
             setName(e.target.value);
           }}
           style={{ marginTop: 10 }}
-          suffix={`${name.length}/50`}
-          maxLength={50}
+          suffix={`${name.length}/25`}
+          maxLength={25}
         />
       </Card>
       <div

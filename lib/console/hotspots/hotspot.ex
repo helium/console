@@ -2,7 +2,7 @@ defmodule Console.Hotspots.Hotspot do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias Console.Groups.HotspotsGroups
+  alias Console.Groups.HotspotGroup
   alias Console.Groups.Group
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -20,7 +20,7 @@ defmodule Console.Hotspots.Hotspot do
     field :address, :string
     field :owner, :string
 
-    many_to_many :groups, Group, join_through: HotspotsGroups, on_delete: :delete_all
+    many_to_many :groups, Group, join_through: HotspotGroup, on_delete: :delete_all
 
     timestamps()
   end

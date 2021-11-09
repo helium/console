@@ -1,4 +1,4 @@
-defmodule Console.Groups.HotspotsGroups do
+defmodule Console.Groups.HotspotGroup do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
@@ -13,10 +13,10 @@ defmodule Console.Groups.HotspotsGroups do
   end
 
   @doc false
-  def changeset(hotspots_group, attrs) do
-    hotspots_group
+  def changeset(hotspot_group, attrs) do
+    hotspot_group
     |> cast(attrs, [:group_id, :hotspot_id])
     |> validate_required([:group_id, :hotspot_id])
-    |> unique_constraint(:hotspot_id, name: :hotspots_groups_hotspot_id_group_id_index, message: "Hotspot already added to Group")
+    |> unique_constraint(:hotspot_id, name: :hotspots_groups_hotspot_id_group_id_index, message: "Hotspot already in Group")
   end
 end

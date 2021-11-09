@@ -39,6 +39,7 @@ export default ({
               onChange={(e) => {
                 setName(e.target.value);
               }}
+              maxLength={25}
             />
           </span>
           <span>
