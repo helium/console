@@ -19,7 +19,7 @@ export default ({ show, group, close }) => {
 
   return (
     <Modal
-      title="Update Group"
+      title="Rename Hotspot Group"
       visible={show}
       onCancel={close}
       centered

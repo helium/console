@@ -211,9 +211,16 @@ export default (props) => {
         }
         break;
       case "groups":
-        if (hotspotAddressSelected) setCurrentTab("main");
         if (groupedHotspotsData && groupIdSelected) {
-          setMapData(groupedHotspotsData.groupedHotspotStats);
+          if (hotspotAddressSelected) {
+            const selectedHotspot =
+              groupedHotspotsData.groupedHotspotStats.filter(
+                (h) => h.hotspot_address === hotspotAddressSelected
+              );
+            setMapData(selectedHotspot);
+          } else {
+            setMapData(groupedHotspotsData.groupedHotspotStats);
+          }
         }
       default:
         return;
@@ -288,33 +295,41 @@ export default (props) => {
         )}
       </TabPane>
       <TabPane tab="My Hotspot Groups" key="groups">
-        {!groupIdSelected ? (
-          <GroupsTabIndex
-            selectGroupId={(id) => {
-              selectGroupId(id);
-            }}
-            data={allGroupsData}
-          />
-        ) : groupIdSelected === "new" ? (
-          <GroupNew
-            back={() => {
-              selectGroupId(null);
-            }}
-          />
-        ) : (
-          <GroupShow
-            back={() => {
-              selectGroupId(null);
-            }}
-            groupSelected={
-              allGroupsData &&
-              allGroupsData.allGroups.find((g) => g.id === groupIdSelected)
-            }
-            getGroupedHotspotStats={getGroupedHotspotStats}
-            data={groupedHotspotsData}
+        {!hotspotAddressSelected &&
+          (!groupIdSelected ? (
+            <GroupsTabIndex
+              selectGroupId={(id) => {
+                selectGroupId(id);
+              }}
+              data={allGroupsData}
+            />
+          ) : groupIdSelected === "new" ? (
+            <GroupNew
+              back={() => {
+                selectGroupId(null);
+              }}
+            />
+          ) : (
+            <GroupShow
+              back={() => {
+                selectGroupId(null);
+              }}
+              groupSelected={
+                allGroupsData &&
+                allGroupsData.allGroups.find((g) => g.id === groupIdSelected)
+              }
+              getGroupedHotspotStats={getGroupedHotspotStats}
+              data={groupedHotspotsData}
+              orgHotspotsMap={orgHotspotsMap}
+              selectHotspotAddress={selectHotspotAddress}
+              tab="groups"
+            />
+          ))}
+        {hotspotAddressSelected && (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
             orgHotspotsMap={orgHotspotsMap}
             selectHotspotAddress={selectHotspotAddress}
-            tab="groups"
           />
         )}
       </TabPane>

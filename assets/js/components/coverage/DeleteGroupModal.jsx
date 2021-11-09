@@ -20,7 +20,7 @@ export default ({ show, group, close, back }) => {
 
   return (
     <Modal
-      title="Delete Group"
+      title="Delete Hotspot Group"
       visible={show}
       onCancel={close}
       centered
@@ -36,10 +36,11 @@ export default ({ show, group, close, back }) => {
     >
       {group && (
         <div style={{ textAlign: "center" }}>
+          Group{" "}
           {group.hotspots.length + group.hotspots.length > 5 && (
-            <Text>{group.name} is currently has more than 5.</Text>
+            <Text>{group.name} currently has more than 5 hotspots.</Text>
           )}
-          {group.hotspots.length > 0 && group.hotspots.length < 4 && (
+          {group.hotspots.length > 0 && group.hotspots.length <= 5 && (
             <Text>
               {group.name} currently has: <br />
               <ul style={{ textAlign: "center", listStylePosition: "inside" }}>

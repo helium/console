@@ -99,7 +99,7 @@ export default ({ appliedGroups, hotspotId }) => {
         >
           <Button type="text" style={{ padding: 0, background: "none" }}>
             <Space>
-              {appliedGroups.length > 0 ? (
+              {appliedGroups && appliedGroups.length > 0 ? (
                 appliedGroups.map((groupId, index) => {
                   let group = groups.find((g) => g.id === groupId);
                   if (index + 1 === appliedGroups.length) {
