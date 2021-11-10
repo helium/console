@@ -203,54 +203,12 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
-          |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
-            dc_used =
-              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-                true -> event.data["dc"]["used"]
-                false -> 0
-              end
-            packet_count = if dc_used == 0, do: 0, else: 1
-
-            device_updates = %{
-              "last_connected" => event.reported_at_naive,
-              "total_packets" => device.total_packets + packet_count,
-              "dc_usage" => device.dc_usage + dc_used,
-              "in_xor_filter" => true
-            }
-
-            device_updates = cond do
-              is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
-              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
-              true -> device_updates
-            end
-
-            Devices.update_device(device, device_updates, "router")
-          end)
-          |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
+          |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event } ->
             if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
               DeviceStats.create_stat(%{
                 "router_uuid" => event.router_uuid,
                 "payload_size" => event.data["payload_size"],
                 "dc_used" => event.data["dc"]["used"],
-                "reported_at_epoch" => event.reported_at_epoch,
-                "device_id" => device.id,
-                "organization_id" => device.organization_id
-              })
-            else
-              {:ok, %{}}
-            end
-          end)
-          |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ event: event, device: device } ->
-            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-              HotspotStats.create_stat(%{
-                "router_uuid" => event.router_uuid,
-                "hotspot_address" => event.data["hotspot"]["id"],
-                "rssi" => event.data["hotspot"]["rssi"],
-                "snr" => event.data["hotspot"]["snr"],
-                "channel" => event.data["hotspot"]["channel"],
-                "spreading" => event.data["hotspot"]["spreading"],
-                "category" => event.category,
-                "sub_category" => event.sub_category,
                 "reported_at_epoch" => event.reported_at_epoch,
                 "device_id" => device.id,
                 "organization_id" => device.organization_id
@@ -283,77 +241,6 @@ defmodule ConsoleWeb.Router.DeviceController do
 
           if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
             check_org_dc_balance(organization, prev_dc_balance)
-          end
-
-          if event_device.last_connected == nil do
-            { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-            details = %{
-              device_name: event_device.name,
-              time: time,
-              hotspot: case event.data["hotspot"] != nil do
-                false -> nil
-                true -> event.data["hotspot"]
-              end
-            }
-            device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-            AlertEvents.notify_alert_event(event_device.id, "device", "device_join_otaa_first_time", details, device_labels)
-          end
-
-          case event.category do
-            "uplink" ->
-              if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
-                event_integration = Channels.get_channel(event.data["integration"]["id"])
-
-                if event_integration != nil do
-                  if event_integration.time_first_uplink == nil do
-                    Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
-                  end
-
-                  if event.data["integration"]["status"] != "success" do
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{
-                      channel_name: event_integration.name,
-                      channel_id: event_integration.id,
-                      time: time
-                    }
-                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
-                  else
-                    if event_integration.last_errored do
-                      Channels.update_channel(event_integration, organization, %{ last_errored: false })
-                    end
-                  end
-                end
-              end
-            "downlink" ->
-              if event.sub_category == "downlink_dropped" do
-                details = %{ device_id: event_device.id, device_name: event_device.name }
-                device_labels = Enum.map(event_device.labels, fn l -> l.id end)
-                limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
-              end
-            "misc" ->
-              if event.sub_category == "misc_integration_error" do
-                event_integration = Channels.get_channel(event.data["integration"]["id"])
-                case event_integration do
-                  nil -> nil
-                  _ ->
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{
-                      channel_name: event_integration.name,
-                      channel_id: event_integration.id,
-                      time: time
-                    }
-                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
-                end
-              end
-            _ -> nil
           end
 
           conn

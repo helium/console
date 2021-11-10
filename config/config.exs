@@ -63,22 +63,22 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
-    trigger_device_stops_transmitting: [
-      schedule: "*/15 * * * *", # every 15th min
-      task: {Console.Jobs, :trigger_device_stops_transmitting, []}
-    ],
-    send_alerts: [
-      schedule: "*/5 * * * *", # every 5th min
-      task: {Console.Jobs, :send_alerts, []}
-    ],
+    # trigger_device_stops_transmitting: [
+    #   schedule: "*/15 * * * *", # every 15th min
+    #   task: {Console.Jobs, :trigger_device_stops_transmitting, []}
+    # ],
+    # send_alerts: [
+    #   schedule: "*/5 * * * *", # every 5th min
+    #   task: {Console.Jobs, :send_alerts, []}
+    # ],
     delete_sent_alerts: [
       schedule: "0 0 * * *", # every day @ 00:00
       task: {Console.Jobs, :delete_sent_alerts, []}
     ],
-    sync_hotspots: [
-      schedule: "0 * * * *", # every hour @ 0 mins
-      task: {Console.Jobs, :sync_hotspots, []}
-    ],
+    # sync_hotspots: [
+    #   schedule: "0 * * * *", # every hour @ 0 mins
+    #   task: {Console.Jobs, :sync_hotspots, []}
+    # ],
     # run_events_stat_job: [
     #   schedule: {:extended, "*/5"}, # every 5 seconds
     #   task: {Console.Jobs, :run_events_stat_job, []}
