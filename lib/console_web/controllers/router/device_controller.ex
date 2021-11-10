@@ -8,12 +8,15 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
   alias Console.Organizations
+  alias Console.DeviceStats
+  alias Console.HotspotStats
   alias Console.Events
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
   alias Console.Email
   alias Console.Mailer
   alias Console.AlertEvents
+  alias ConsoleWeb.Router.DeviceView
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -21,10 +24,26 @@ defmodule ConsoleWeb.Router.DeviceController do
     {"Content-Type", "application/x-www-form-urlencoded"}
   ]
 
-  def index(conn, _) do
-    devices = Devices.list_devices_no_disco_mode()
+  def index(conn, params) do
+    devices = Devices.paginate_devices_no_disco_mode(params["after"])
+    parsed_devices = DeviceView.render("index.json", devices: devices)
 
-    render(conn, "index.json", devices: devices)
+    last_device = List.last(parsed_devices)
+    response =
+      case last_device do
+        nil ->
+          %{
+            data: parsed_devices
+          }
+        _ ->
+          %{
+            data: parsed_devices,
+            after: last_device.id
+          }
+      end
+
+    conn
+    |> send_resp(:ok, Poison.encode!(response))
   end
 
   def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
@@ -159,7 +178,7 @@ defmodule ConsoleWeb.Router.DeviceController do
       nil ->
         conn
         |> send_resp(404, "")
-      %Device{} ->
+      %Device{} = device ->
         organization = Organizations.get_organization!(event_device.organization_id)
         prev_dc_balance = organization.dc_balance
 
@@ -201,6 +220,62 @@ defmodule ConsoleWeb.Router.DeviceController do
 
             Events.create_event(Map.put(event, "organization_id", organization.id))
           end)
+          |> Ecto.Multi.run(:device, fn _repo, %{ event: event } ->
+            dc_used =
+              case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
+                true -> event.data["dc"]["used"]
+                false -> 0
+              end
+            packet_count = if dc_used == 0, do: 0, else: 1
+
+            device_updates = %{
+              "last_connected" => event.reported_at_naive,
+              "total_packets" => device.total_packets + packet_count,
+              "dc_usage" => device.dc_usage + dc_used,
+              "in_xor_filter" => true
+            }
+
+            device_updates = cond do
+              is_integer(event.frame_up) -> device_updates |> Map.put("frame_up", event.frame_up)
+              is_integer(event.frame_down) -> device_updates |> Map.put("frame_down", event.frame_down)
+              true -> device_updates
+            end
+
+            Devices.update_device(device, device_updates, "router")
+          end)
+          |> Ecto.Multi.run(:device_stat, fn _repo, %{ event: event, device: device } ->
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
+              DeviceStats.create_stat(%{
+                "router_uuid" => event.router_uuid,
+                "payload_size" => event.data["payload_size"],
+                "dc_used" => event.data["dc"]["used"],
+                "reported_at_epoch" => event.reported_at_epoch,
+                "device_id" => device.id,
+                "organization_id" => device.organization_id
+              })
+            else
+              {:ok, %{}}
+            end
+          end)
+          |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ event: event, device: device } ->
+            if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
+              HotspotStats.create_stat(%{
+                "router_uuid" => event.router_uuid,
+                "hotspot_address" => event.data["hotspot"]["id"],
+                "rssi" => event.data["hotspot"]["rssi"],
+                "snr" => event.data["hotspot"]["snr"],
+                "channel" => event.data["hotspot"]["channel"],
+                "spreading" => event.data["hotspot"]["spreading"],
+                "category" => event.category,
+                "sub_category" => event.sub_category,
+                "reported_at_epoch" => event.reported_at_epoch,
+                "device_id" => device.id,
+                "organization_id" => device.organization_id
+              })
+            else
+              {:ok, %{}}
+            end
+          end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ event: created_event } ->
             if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
               cond do
@@ -212,7 +287,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
                   {:ok, updated_org}
                 true ->
-                  {:error, "DC balance nonce inconsistent between router and console"}
+                  {:error, "DC balance nonce inconsistent between router: #{event["data"]["dc"]["nonce"]} and console: #{organization.dc_balance_nonce}"}
               end
             else
               {:ok, organization}
@@ -281,15 +356,19 @@ defmodule ConsoleWeb.Router.DeviceController do
             "misc" ->
               if event.sub_category == "misc_integration_error" do
                 event_integration = Channels.get_channel(event.data["integration"]["id"])
-                { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                details = %{
-                  channel_name: event_integration.name,
-                  channel_id: event_integration.id,
-                  time: time
-                }
-                limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                Channels.update_channel(event_integration, organization, %{ last_errored: true })
+                case event_integration do
+                  nil -> nil
+                  _ ->
+                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
+                    details = %{
+                      channel_name: event_integration.name,
+                      channel_id: event_integration.id,
+                      time: time
+                    }
+                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
+                end
               end
             _ -> nil
           end
@@ -333,7 +412,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   defp check_org_dc_balance(organization, prev_dc_balance) do
     if organization.automatic_charge_amount == nil do
       cond do
-        prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 ->
+        prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->
           # DC Balance has dipped below 500,000. Send a notice.
           Organizations.get_administrators(organization)
           |> Enum.each(fn administrator ->

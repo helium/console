@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import DashboardLayout from './common/DashboardLayout'
 import analyticsLogger from '../util/analyticsLogger'
-import { Checkbox } from 'antd';
+import { minWidth } from '../util/constants'
+import { Checkbox, Row, Card, Col, Typography } from 'antd';
 import RocketFilled from '@ant-design/icons/RocketFilled';
 import CalendarFilled from '@ant-design/icons/CalendarFilled';
 import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
 import WelcomeImg from '../../img/welcome-image.png'
-import PlusCircle from '../../img/pluscircle.svg'
 import _JSXStyle from "styled-jsx/style"
+const { Text } = Typography
 
 class Welcome extends Component {
   state = {
@@ -32,247 +33,77 @@ class Welcome extends Component {
   render() {
     return(
       <DashboardLayout
-        title={undefined}
+        title=""
         user={this.props.user}
-        noHeaderPadding
       >
-        <div className="welcomewrapper">
-          <div className="flexwrapper" id="introwrapper">
-            <div className="welcometext" id="left">
+        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+          <div style={{ overflowX: 'scroll'}} className="no-scroll-bar">
+          <div style={{ padding: '60px 30px 30px 30px', minWidth }}>
+            <Row style={{ justifyContent: 'space-between'}}>
+              <span>
+                <Text style={{ fontSize: 30, display: 'block' }}>Welcome to</Text>
+                <Text style={{ fontSize: 36, display: 'block', fontWeight: 600, position: 'relative', top: -16 }}>Helium Console</Text>
+              </span>
 
-              <h1><span>Welcome to</span><br/>Helium Console</h1>
-              <p className="introp">Harness the power of the world's first peer-to-peer wireless network</p>
+              <img src={WelcomeImg} style={{ height: 68 }} />
+            </Row>
 
-              <div className="checkboxWrapper">
+            <Checkbox
+              checked={this.state.hideWelcomeScreen ? false : true}
+              style={{ color: '#556B8C' }}
+              onChange={this.onChangeCheckbox}
+            >
+              Show this Welcome Screen every time I log in
+            </Checkbox>
 
-               <Checkbox
-                  checked={this.state.hideWelcomeScreen ? false : true}
-                  style={{ color: '#556B8C' }}
-                  onChange={this.onChangeCheckbox}
-                >
-                  Show this Welcome Screen every time I log in
-                </Checkbox>
-
-              </div>
+            <div
+              style={{
+                backgroundColor: '#F5F7F9',
+                padding: '15px 20px 15px 20px',
+                borderRadius: 10,
+                marginTop: 50,
+                marginBottom: 16,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <span>
+                <Text strong style={{ fontSize: 16 }}>Developer Docs are Live!</Text>
+                <Text style={{ fontSize: 16, color: '#6A81A4', paddingLeft: 20 }}>Looking for some guidance to get started?</Text>
+              </span>
+              <a href="https://docs.helium.com/" target="_blank">
+                <Text style={{ fontSize: 16, fontWeight: 500, color: '#2C79EE' }}>Click Here</Text>
+              </a>
             </div>
-            <div id="right">
-              <img src={PlusCircle} className="pluscircle" />
-              <img src={WelcomeImg} className="welcomeimg" />
-            </div>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <div className="pod" id="left" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
+                  <Row>
+                    <RocketFilled className="bigicon" />
+                    <h2>Get Started with Console</h2>
+                  </Row>
+                  {getStartedLinks()}
+                </div>
+              </Col>
+              <Col span={12}>
+                <div className="pod" id="right" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
+                  <Row>
+                    <CalendarFilled className="bigicon" id="purple" />
+                    <h2>Developer Resources</h2>
+                  </Row>
+                  <a href="https://docs.helium.com/use-the-network/console/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
+                  <a href="https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo" target="_blank"><p><span>Watch our</span> How-to Videos<CaretRightOutlined className="caret" /></p></a>
+                  <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Discord Channel<CaretRightOutlined className="caret" /></p></a>
+                  <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<CaretRightOutlined className="caret" /></p></a>
+                </div>
+              </Col>
+            </Row>
           </div>
-
-          <div className="flexwrapper">
-            <div className="pod" id="left">
-              <RocketFilled className="bigicon" />
-                <h2>Get Started with Console</h2>
-              {getStartedLinks()}
-            </div>
-
-            <div className="pod" id="right">
-              <CalendarFilled className="bigicon" id="purple" />
-              <h2>Developer Resources</h2>
-              <a href="https://docs.helium.com/use-the-network/console/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
-              <a href="https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo" target="_blank"><p><span>Watch our</span> How-to Videos<CaretRightOutlined className="caret" /></p></a>
-              <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Discord Channel<CaretRightOutlined className="caret" /></p></a>
-              <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<CaretRightOutlined className="caret" /></p></a>
-            </div>
           </div>
         </div>
-
-            <style jsx>{`
-
-              .welcomewrapper {
-                max-width: 1100px;
-                margin: 0 auto;
-                margin-top: 40px
-              }
-
-              .bulb {
-                background: #B4C4DE;
-                width:110px;
-                position: relative;
-                border-radius: 10px 0 0 10px;
-                margin: 0;
-                text-align: center;
-                padding-top: 10px;
-              }
-
-              #tip {
-                margin-top: 30px;
-              }
-
-              .bulb p {
-                font-size: 20px;
-                margin: 0;
-                margin-top: -5px;
-                color: white;
-                font-weight: 500;
-              }
-
-              img.pluscircle {
-                position: absolute;
-                left: -100px;
-              }
-
-             .tiptextwrapper {
-                padding: 30px;
-                background: #DCE5F2;
-                border-radius: 0 10px 10px 0;
-                width: calc(100% - 110px);
-              }
-
-              .tiptextwrapper p {
-                font-weight: 300;
-                color: #556B8C;
-                font-size: 20px;
-                margin-bottom: 6px;
-              }
-
-              .tiptextwrapper a {
-                color: #096DD9;
-
-              }
-
-              .welcomewrapper a:hover {
-                text-decoration: underline;
-              }
-
-              .welcomewrapper a:hover i {
-                margin-left: 12px;
-              }
-
-              .caret {
-                margin-left: 6px;
-                font-size: 14px;
-
-              }
-
-              h1 {
-                font-size: 46px;
-                color: #242425;
-                line-height: 1;
-                margin-top: 70px;
-                font-weight: 600;
-              }
-
-              .pod {
-                background: #F6F8FA;
-                border-radius: 20px;
-                padding: 30px 40px;
-                box-sizing: border-box;
-                width: 100%;
-margin-top: 30px;
-              }
-
-              .pod h2 {
-                color: #262626;
-                display:inline-block;
-                margin-bottom: 26px;
-
-              }
-
-
-
-              h1 span {
-                font-weight: 300;
-              }
-
-              p.introp {
-
-                font-size: 20px;
-                color: #556B8C;
-                font-weight: 300;
-                line-height: 1.3;
-                max-width: 370px;
-              }
-
-              .checkboxWrapper {
-                padding: 12px 20px 13px;
-                border-radius: 10px;
-                background: #F6F8FA;
-                display: inline-block;
-                margin-top: 10px;
-              }
-
-              #left, #right {
-                max-width: calc(50% - 15px);
-                position:relative;
-              }
-
-              #introwrapper {
-                text-align: left;
-              }
-
-              .welcometext {
-                text-align: left;
-              }
-
-
-
-              .flexwrapper {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 60px;
-                align-items: stretch;
-                flex-wrap: wrap;
-                width: 100%;
-              }
-
-              img.welcomeimg {
-                width: 100%;
-position: relative;
-right: -37px;
-top: 70px;
-
-              }
-
-
-                @media only screen and (max-width: 991px) {
-
-                    #left, #right {
-                      max-width: 100%;
-
-
-                    }
-
-                    #introwrapper {
-                      flex-direction: column-reverse;
-                      text-align: center;
-                    }
-
-
-
-              .welcometext {
-                text-align: center;
-              }
-
-              img.welcomeimg {
-                width: 100%;
-                max-width: 450px;
-                margin: 0 auto;
-                margin-bottom: 20px;
-            position: initial;
-                          }
-
-
-img.pluscircle {
-  display: none;
-}
-
-                    .welcometext {
-                      text-align: center;
-                      margin: 0 auto;
-                    }
-
-                    .welcometext p, .welcometext h1 {
-                      margin: 0;
-                      margin-bottom: 20px;
-                    }
-
-                }
-
-
-                `}</style>
       </DashboardLayout>
     )
   }

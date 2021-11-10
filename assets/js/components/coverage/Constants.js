@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Tag, Tooltip, Button } from "antd";
+import { Tooltip, Button } from "antd";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import SignalIcon from "./SignalIcon";
+import GroupColumnDropdown from "./GroupColumnDropdown";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -60,7 +61,7 @@ export const getColumns = (
   props,
   updateOrganizationHotspot,
   selectHotspotAddress,
-  fromSearch = false
+  tab
 ) => {
   const columns = [
     {
@@ -191,6 +192,20 @@ export const getColumns = (
       },
     },
     {
+      title: "Groups",
+      sorter: false,
+      dataIndex: "group_ids",
+      render: (data, record) => {
+        return (
+          <GroupColumnDropdown
+            appliedGroups={data ? data.split(",") : []}
+            hotspotId={record.id}
+            allGroups={props.allGroups}
+          />
+        );
+      },
+    },
+    {
       title: "Status",
       sorter: true,
       dataIndex: "status",
@@ -223,8 +238,16 @@ export const getColumns = (
     },
   ];
 
-  if (fromSearch) return columns.filter((c) => c.dataIndex !== "alias");
-  return columns;
+  switch (tab) {
+    case "search":
+      return columns.filter(
+        (c) => c.dataIndex !== "alias" || c.dataIndex !== "group_ids"
+      );
+    case "main":
+      return columns.filter((c) => c.dataIndex !== "group_ids");
+    default:
+      return columns;
+  }
 };
 
 export const ClaimButton = ({ onClick }) => (

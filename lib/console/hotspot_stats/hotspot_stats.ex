@@ -8,6 +8,12 @@ defmodule Console.HotspotStats do
      |> Repo.all()
   end
 
+  def create_stat(attrs \\ %{}) do
+    %HotspotStat{}
+    |> HotspotStat.changeset(attrs)
+    |> Repo.insert()
+  end
+
   def create_stat!(attrs \\ %{}) do
     %HotspotStat{}
     |> HotspotStat.changeset(attrs)
@@ -27,8 +33,10 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        os.alias,
+        oh.alias,
         stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -41,7 +49,9 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
+      LEFT JOIN organization_hotspots oh ON stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, stats.hotspot_address, stats.packet_count, stats.device_count, stats.avg_rssi
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
@@ -77,8 +87,10 @@ defmodule Console.HotspotStats do
         h.short_state,
         h.lat,
         h.lng,
-        os.alias,
+        oh.alias,
         stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -91,7 +103,9 @@ defmodule Console.HotspotStats do
         GROUP BY hotspot_address
       ) stats
       LEFT JOIN hotspots h ON stats.hotspot_address = h.address
-      LEFT JOIN organization_hotspots os ON stats.hotspot_address = os.hotspot_address and os.organization_id = $1
+      LEFT JOIN organization_hotspots oh ON stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, stats.hotspot_address, stats.packet_count, stats.device_count, stats.avg_rssi
       ORDER BY
         CASE $4 WHEN 'asc' THEN
           CASE $3
@@ -127,6 +141,8 @@ defmodule Console.HotspotStats do
         h.lng,
         oh.alias,
         parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -158,6 +174,8 @@ defmodule Console.HotspotStats do
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4
@@ -195,6 +213,8 @@ defmodule Console.HotspotStats do
         h.lng,
         oh.alias,
         parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
         COUNT(*) OVER() AS total_entries
       FROM (
         SELECT
@@ -226,6 +246,150 @@ defmodule Console.HotspotStats do
       ) parsed_stats
       LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
       LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
+      ORDER BY
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
+            WHEN 'packet_count' THEN parsed_stats.packet_count
+            WHEN 'device_count' THEN parsed_stats.device_count
+          END
+        END ASC NULLS FIRST,
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
+            WHEN 'packet_count' THEN parsed_stats.packet_count
+            WHEN 'device_count' THEN parsed_stats.device_count
+          END
+        END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
+    """
+  end
+
+  def get_grouped_query_for_string_sort(group_id) do
+    """
+      SELECT
+        parsed_stats.hotspot_address,
+        parsed_stats.packet_count,
+        parsed_stats.device_count,
+        h.name,
+        h.status,
+        h.long_city,
+        h.short_country,
+        h.short_state,
+        h.lat,
+        h.lng,
+        oh.alias,
+        parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
+        COUNT(*) OVER() AS total_entries
+      FROM (
+        SELECT
+         hotspot_address,
+         CASE
+           WHEN device_count = 0 THEN 0
+           ELSE packet_count
+         END AS packet_count,
+         device_count,
+         avg_rssi
+        FROM (
+          SELECT
+            DISTINCT(stats.hotspot_address),
+            COUNT(stats.hotspot_address) AS packet_count,
+            COUNT(DISTINCT(stats.device_id)) AS device_count,
+            AVG(stats.rssi) AS avg_rssi
+          FROM (
+            SELECT oh.hotspot_address, hs.device_id, hs.rssi, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
+              SELECT * FROM organization_hotspots
+              WHERE organization_id = $1 and claimed = true
+            ) oh
+            LEFT JOIN (
+              SELECT * FROM hotspot_stats
+              WHERE organization_id = $1 and reported_at_epoch > $3
+            ) hs ON oh.hotspot_address = hs.hotspot_address
+          ) stats
+          GROUP BY stats.hotspot_address
+        ) grouped_stats
+      ) parsed_stats
+      LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
+      HAVING string_agg(hg.group_id::text, ',') LIKE '%#{group_id}%'
+      ORDER BY
+        CASE $5 WHEN 'asc' THEN
+          CASE $4
+            WHEN 'hotspot_name' THEN h.name
+            WHEN 'long_city' THEN h.long_city
+            WHEN 'status' THEN h.status
+            WHEN 'alias' THEN oh.alias
+          END
+        END ASC NULLS FIRST,
+        CASE $5 WHEN 'desc' THEN
+          CASE $4
+            WHEN 'hotspot_name' THEN h.name
+            WHEN 'long_city' THEN h.long_city
+            WHEN 'status' THEN h.status
+            WHEN 'alias' THEN oh.alias
+          END
+        END DESC NULLS LAST
+      LIMIT $6
+      OFFSET $7
+    """
+  end
+
+  def get_grouped_query_for_integer_sort(group_id) do
+    """
+      SELECT
+        parsed_stats.hotspot_address,
+        parsed_stats.packet_count,
+        parsed_stats.device_count,
+        h.name,
+        h.status,
+        h.long_city,
+        h.short_country,
+        h.short_state,
+        h.lat,
+        h.lng,
+        oh.alias,
+        parsed_stats.avg_rssi,
+        string_agg(hg.group_id::text, ',') as group_ids,
+        h.id,
+        COUNT(*) OVER() AS total_entries
+      FROM (
+        SELECT
+         hotspot_address,
+         CASE
+           WHEN device_count = 0 THEN 0
+           ELSE packet_count
+         END AS packet_count,
+         device_count,
+         avg_rssi
+        FROM (
+          SELECT
+            DISTINCT(stats.hotspot_address),
+            COUNT(stats.hotspot_address) AS packet_count,
+            COUNT(DISTINCT(stats.device_id)) AS device_count,
+            AVG(stats.rssi) AS avg_rssi
+          FROM (
+            SELECT oh.hotspot_address, hs.device_id, hs.rssi, COALESCE(hs.reported_at_epoch, $2) AS reported_at_epoch FROM (
+              SELECT * FROM organization_hotspots
+              WHERE organization_id = $1 and claimed = true
+            ) oh
+            LEFT JOIN (
+              SELECT * FROM hotspot_stats
+              WHERE organization_id = $1 and reported_at_epoch > $3
+            ) hs ON oh.hotspot_address = hs.hotspot_address
+          ) stats
+          GROUP BY stats.hotspot_address
+        ) grouped_stats
+      ) parsed_stats
+      LEFT JOIN hotspots h ON parsed_stats.hotspot_address = h.address
+      LEFT JOIN organization_hotspots oh ON parsed_stats.hotspot_address = oh.hotspot_address and oh.organization_id = $1
+      LEFT JOIN hotspots_groups hg ON h.id = hg.hotspot_id
+      GROUP BY h.id, oh.alias, parsed_stats.hotspot_address, parsed_stats.packet_count, parsed_stats.device_count, parsed_stats.avg_rssi
+      HAVING string_agg(hg.group_id::text, ',') LIKE '%#{group_id}%'
       ORDER BY
         CASE $5 WHEN 'asc' THEN
           CASE $4

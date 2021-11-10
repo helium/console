@@ -24,7 +24,7 @@ config :console, Console.Repo,
   password: System.get_env("DATABASE_PASSWORD") || "postgres",
   database: System.get_env("DATABASE_DB") || "console_dev",
   hostname: db_host,
-  pool_size: 10
+  pool_size: String.to_integer(System.get_env("DATABASE_POOL_SIZE") || "20")
 
 config :console, oui: String.to_integer(System.get_env("OUI"))
 
@@ -79,6 +79,9 @@ config :console,
 
 config :console,
   magic_public_key: System.get_env("MAGIC_PUBLIC_KEY")
+
+config :console,
+  user_invite_only: System.get_env("USER_INVITE_ONLY")
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,

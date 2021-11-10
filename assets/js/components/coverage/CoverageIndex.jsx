@@ -7,22 +7,27 @@ import {
   FOLLOWED_HOTSPOT_STATS,
   ALL_ORGANIZATION_HOTSPOTS,
   HOTSPOT_STATS_DEVICE_COUNT,
+  GROUPED_HOTSPOT_STATS,
+  ALL_GROUPS,
 } from "../../graphql/coverage";
 import Mapbox from "../common/Mapbox";
 import CoverageMainTab from "./CoverageMainTab";
 import CoverageFollowedTab from "./CoverageFollowedTab";
 import CoverageSearchTab from "./CoverageSearchTab";
 import CoverageHotspotShow from "./CoverageHotspotShow";
-import { Typography, Tabs, Row, Col } from "antd";
+import GroupsTabIndex from "./GroupsTabIndex";
+import { Tabs, Row, Col } from "antd";
 import analyticsLogger from "../../util/analyticsLogger";
-const { Text } = Typography;
 const { TabPane } = Tabs;
 import { SEARCH_HOTSPOTS } from "../../graphql/search";
+import GroupNew from "./GroupNew";
+import GroupShow from "./GroupShow";
 
 export default (props) => {
   const [hotspotAddressSelected, selectHotspotAddress] = useState(null);
   const [currentTab, setCurrentTab] = useState("main");
   const [mapData, setMapData] = useState([]);
+  const [groupIdSelected, selectGroupId] = useState(null);
 
   const {
     loading: hotspotStatsLoading,
@@ -73,14 +78,25 @@ export default (props) => {
     fetchPolicy: "cache-and-network",
   });
 
-  const socket = useSelector((state) => state.apollo.socket);
-  const currentOrganizationId = useSelector(
-    (state) => state.organization.currentOrganizationId
-  );
-  const orgHotspotsChannel = socket.channel(
-    "graphql:coverage_index_org_hotspots",
-    {}
-  );
+  const [
+    getGroupedHotspotStats,
+    {
+      loading: groupedHotspotStatsLoading,
+      error: groupedHotspotsError,
+      data: groupedHotspotsData,
+    },
+  ] = useLazyQuery(GROUPED_HOTSPOT_STATS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  const {
+    loading: allGroupsLoading,
+    error: allGroupsError,
+    data: allGroupsData,
+    refetch: allGroupsRefetch,
+  } = useQuery(ALL_GROUPS, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const orgHotspotsMap = allOrganizationHotspotsData
     ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
@@ -89,6 +105,15 @@ export default (props) => {
       }, {})
     : null;
 
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+
+  const orgHotspotsChannel = socket.channel(
+    "graphql:coverage_index_org_hotspots",
+    {}
+  );
   useEffect(() => {
     // executed when mounted
     orgHotspotsChannel.join();
@@ -105,6 +130,43 @@ export default (props) => {
     // executed when unmounted
     return () => {
       orgHotspotsChannel.leave();
+    };
+  }, []);
+
+  const followedHotspotsChannel = socket.channel(
+    "graphql:followed_hotspot_table",
+    {}
+  );
+  useEffect(() => {
+    // executed when mounted
+    followedHotspotsChannel.join();
+    followedHotspotsChannel.on(
+      `graphql:followed_hotspot_table:${currentOrganizationId}:hotspot_group_update`,
+      (_message) => {
+        followedHotspotStatsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      followedHotspotsChannel.leave();
+    };
+  }, []);
+
+  const groupsChannel = socket.channel("graphql:groups_index", {});
+  useEffect(() => {
+    // executed when mounted
+    groupsChannel.join();
+    groupsChannel.on(
+      `graphql:groups_index:${currentOrganizationId}:org_groups_update`,
+      (_message) => {
+        allGroupsRefetch();
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      groupsChannel.leave();
     };
   }, []);
 
@@ -148,6 +210,18 @@ export default (props) => {
           }
         }
         break;
+      case "groups":
+        if (groupedHotspotsData && groupIdSelected) {
+          if (hotspotAddressSelected) {
+            const selectedHotspot =
+              groupedHotspotsData.groupedHotspotStats.filter(
+                (h) => h.hotspot_address === hotspotAddressSelected
+              );
+            setMapData(selectedHotspot);
+          } else {
+            setMapData(groupedHotspotsData.groupedHotspotStats);
+          }
+        }
       default:
         return;
     }
@@ -157,7 +231,129 @@ export default (props) => {
     searchHotspotsData,
     followedHotspotStatsData,
     hotspotStatsData,
+    groupedHotspotsData,
+    groupIdSelected,
   ]);
+
+  const tabs = () => (
+    <Tabs
+      defaultActiveKey="main"
+      size="large"
+      tabBarStyle={{
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: 40,
+        marginTop: 20,
+      }}
+      onTabClick={(tab) => {
+        setCurrentTab(tab);
+        analyticsLogger.logEvent(`ACTION_NAV_COVERAGE_${tab.toUpperCase()}`);
+        selectHotspotAddress(null);
+        selectGroupId(null);
+      }}
+      activeKey={currentTab}
+    >
+      <TabPane tab="Coverage Breakdown" key="main">
+        {!hotspotAddressSelected ? (
+          <CoverageMainTab
+            hotspotStats={hotspotStatsData && hotspotStatsData.hotspotStats}
+            deviceCount={
+              hotspotStatsDeviceCountData &&
+              hotspotStatsDeviceCountData.hotspotStatsDeviceCount
+            }
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            refetch={hotspotStatsRefetch}
+            tab="main"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+      <TabPane tab="My Hotspots" key="followed">
+        {!hotspotAddressSelected ? (
+          <CoverageFollowedTab
+            hotspotStats={
+              followedHotspotStatsData &&
+              followedHotspotStatsData.followedHotspotStats
+            }
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            refetch={followedHotspotStatsRefetch}
+            tab="followed"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+      <TabPane tab="My Hotspot Groups" key="groups">
+        {!hotspotAddressSelected &&
+          (!groupIdSelected ? (
+            <GroupsTabIndex
+              selectGroupId={(id) => {
+                selectGroupId(id);
+              }}
+              data={allGroupsData}
+            />
+          ) : groupIdSelected === "new" ? (
+            <GroupNew
+              back={() => {
+                selectGroupId(null);
+              }}
+            />
+          ) : (
+            <GroupShow
+              back={() => {
+                selectGroupId(null);
+              }}
+              groupSelected={
+                allGroupsData &&
+                allGroupsData.allGroups.find((g) => g.id === groupIdSelected)
+              }
+              getGroupedHotspotStats={getGroupedHotspotStats}
+              data={groupedHotspotsData}
+              orgHotspotsMap={orgHotspotsMap}
+              selectHotspotAddress={selectHotspotAddress}
+              tab="groups"
+            />
+          ))}
+        {hotspotAddressSelected && (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+      <TabPane tab="Hotspot Search" key="search">
+        {!hotspotAddressSelected ? (
+          <CoverageSearchTab
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+            data={searchHotspotsData}
+            loading={searchHotspotsLoading}
+            error={searchHotspotsError}
+            searchHotspots={searchHotspots}
+            tab="search"
+          />
+        ) : (
+          <CoverageHotspotShow
+            hotspotAddress={hotspotAddressSelected}
+            orgHotspotsMap={orgHotspotsMap}
+            selectHotspotAddress={selectHotspotAddress}
+          />
+        )}
+      </TabPane>
+    </Tabs>
+  );
 
   return (
     <DashboardLayout title="Coverage" user={props.user} noAddButton full>
@@ -171,94 +367,28 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <Row style={{ height: "100%" }}>
-          <Col
-            sm={14}
+        {currentTab === "groups" &&
+        (!groupIdSelected || groupIdSelected === "new") ? (
+          <div
             style={{ height: "100%", overflow: "scroll" }}
             className="no-scroll-bar"
           >
-            <Tabs
-              defaultActiveKey="main"
-              size="large"
-              tabBarStyle={{
-                paddingLeft: 20,
-                paddingRight: 20,
-                height: 40,
-                marginTop: 20,
-              }}
-              onTabClick={(tab) => {
-                setCurrentTab(tab);
-                analyticsLogger.logEvent(
-                  `ACTION_NAV_COVERAGE_${tab.toUpperCase()}`
-                );
-                selectHotspotAddress(null);
-              }}
+            {tabs()}
+          </div>
+        ) : (
+          <Row style={{ height: "100%" }}>
+            <Col
+              sm={14}
+              style={{ height: "100%", overflow: "scroll" }}
+              className="no-scroll-bar"
             >
-              <TabPane tab="Coverage Breakdown" key="main">
-                {!hotspotAddressSelected ? (
-                  <CoverageMainTab
-                    hotspotStats={
-                      hotspotStatsData && hotspotStatsData.hotspotStats
-                    }
-                    deviceCount={
-                      hotspotStatsDeviceCountData &&
-                      hotspotStatsDeviceCountData.hotspotStatsDeviceCount
-                    }
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    refetch={hotspotStatsRefetch}
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-              <TabPane tab="My Hotspots" key="followed">
-                {!hotspotAddressSelected ? (
-                  <CoverageFollowedTab
-                    hotspotStats={
-                      followedHotspotStatsData &&
-                      followedHotspotStatsData.followedHotspotStats
-                    }
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    refetch={followedHotspotStatsRefetch}
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-              <TabPane tab="Hotspot Search" key="search">
-                {!hotspotAddressSelected ? (
-                  <CoverageSearchTab
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                    data={searchHotspotsData}
-                    loading={searchHotspotsLoading}
-                    error={searchHotspotsError}
-                    searchHotspots={searchHotspots}
-                  />
-                ) : (
-                  <CoverageHotspotShow
-                    hotspotAddress={hotspotAddressSelected}
-                    orgHotspotsMap={orgHotspotsMap}
-                    selectHotspotAddress={selectHotspotAddress}
-                  />
-                )}
-              </TabPane>
-            </Tabs>
-          </Col>
-          <Col sm={10}>
-            <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
-          </Col>
-        </Row>
+              {tabs()}
+            </Col>
+            <Col sm={10}>
+              <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
+            </Col>
+          </Row>
+        )}
       </div>
     </DashboardLayout>
   );

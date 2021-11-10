@@ -13,9 +13,26 @@ defmodule Console.Devices do
     Repo.all(Device)
   end
 
-  def list_devices_no_disco_mode do
-    from(d in Device, where: is_nil(d.hotspot_address))
-    |> Repo.all()
+  def paginate_devices_no_disco_mode(cursor) do
+    query =
+      case cursor do
+        nil ->
+          from(
+            d in Device,
+            where: is_nil(d.hotspot_address),
+            order_by: d.id,
+            limit: 1000
+          )
+        _ ->
+          from(
+            d in Device,
+            where: is_nil(d.hotspot_address) and d.id > ^cursor,
+            order_by: d.id,
+            limit: 1000
+          )
+      end
+
+    query |> Repo.all()
   end
 
   def get_device(id), do: Repo.get(Device, id)
@@ -104,6 +121,12 @@ defmodule Console.Devices do
   def update_device(%Device{} = device, attrs) do
     device
     |> Device.update_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_device(%Device{} = device, attrs, "router") do
+    device
+    |> Device.router_update_changeset(attrs)
     |> Repo.update()
   end
 
