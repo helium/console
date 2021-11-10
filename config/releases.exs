@@ -80,6 +80,9 @@ config :console,
 config :console,
   magic_public_key: System.get_env("MAGIC_PUBLIC_KEY")
 
+config :console,
+  user_invite_only: System.get_env("USER_INVITE_ONLY")
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

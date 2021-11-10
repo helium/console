@@ -27,6 +27,7 @@
       window.disable_user_burn = "<%= Application.get_env(:console, :disable_user_burn) %>"
       window.use_magic_auth = "<%= Application.get_env(:console, :use_magic_auth) %>"
       window.magic_public_key = "<%= Application.get_env(:console, :magic_public_key) %>"
+      window.user_invite_only = "<%= Application.get_env(:console, :user_invite_only) %>"
     </script>
     <div class="mainContainer">
       <main role="main">

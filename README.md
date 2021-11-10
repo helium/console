@@ -71,6 +71,11 @@ cp templates/nginx-default.conf nginx.conf
 - If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
 - If needed, you can manually migrate the db with `docker exec -it helium_console /bin/bash`, then `_build/prod/rel/console/bin/console eval "Console.Release.migrate"`
 
+## Keep your Console invite only
+
+- Set `USER_INVTE_ONLY` to true in your .env file
+- Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
+
 ## Upgrading your v1 Console to v2 (originally released 07/29/2021)
 
 - Prior to upgrading, we recommend making a backup of your database as a precaution. This will only be used if something unexpected happens during the db migration process.
