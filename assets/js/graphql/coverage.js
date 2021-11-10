@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 
 const HOTSPOT_FRAGMENT = gql`
   fragment HotspotFragment on Hotspot {
+    id
     hotspot_address
     hotspot_name
     packet_count
@@ -16,6 +17,7 @@ const HOTSPOT_FRAGMENT = gql`
     latitude
     alias
     avg_rssi
+    group_ids
     total_entries
   }
 `;
@@ -122,4 +124,39 @@ export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
       snr
     }
   }
+`;
+
+export const ALL_GROUPS = gql`
+  query GroupsQuery {
+    allGroups {
+      id
+      name
+      hotspots {
+        id
+        hotspot_name
+        hotspot_address
+      }
+    }
+  }
+`;
+
+export const GROUPED_HOTSPOT_STATS = gql`
+  query GroupedHotspotStatsQuery(
+    $column: String
+    $order: String
+    $page: Int
+    $pageSize: Int
+    $groupId: ID!
+  ) {
+    groupedHotspotStats(
+      column: $column
+      order: $order
+      page: $page
+      pageSize: $pageSize
+      groupId: $groupId
+    ) {
+      ...HotspotFragment
+    }
+  }
+  ${HOTSPOT_FRAGMENT}
 `;

@@ -14,7 +14,8 @@ export default (props) => {
   const columns = getColumns(
     props,
     updateOrganizationHotspot,
-    props.selectHotspotAddress
+    props.selectHotspotAddress,
+    props.tab
   );
 
   const handleSort = (pagi, filter, sorter) => {
@@ -93,7 +94,9 @@ export default (props) => {
                 props.orgHotspotsMap[hs.hotspot_address].claimed
             )}
             columns={columns}
-            rowKey={(record) => record.hotspot_address}
+            rowKey={(record) => {
+              return record.hotspot_address;
+            }}
             pagination={false}
             style={{ overflowY: "hidden" }}
             className="no-scroll-bar"

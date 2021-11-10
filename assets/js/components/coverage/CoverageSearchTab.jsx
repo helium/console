@@ -38,7 +38,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
     props,
     updateOrganizationHotspot,
     props.selectHotspotAddress,
-    true
+    props.tab
   );
 
   const handleChangePageSize = (pageSize) => {

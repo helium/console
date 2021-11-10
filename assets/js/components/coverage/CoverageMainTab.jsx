@@ -21,7 +21,8 @@ export default (props) => {
   const columns = getColumns(
     props,
     updateOrganizationHotspot,
-    props.selectHotspotAddress
+    props.selectHotspotAddress,
+    props.tab
   );
 
   const handleSort = (pagi, filter, sorter) => {

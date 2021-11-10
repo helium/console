@@ -42,6 +42,7 @@ defmodule ConsoleWeb.Schema do
   end
 
   paginated object :hotspot do
+    field :id, :id
     field :hotspot_name, :string
     field :hotspot_address, :string
     field :status, :string
@@ -59,6 +60,7 @@ defmodule ConsoleWeb.Schema do
     field :latitude, :decimal
     field :alias, :string
     field :avg_rssi, :float
+    field :group_ids, :string
     field :total_entries, :integer
   end
 
@@ -145,6 +147,12 @@ defmodule ConsoleWeb.Schema do
     field :cf_list_enabled, :boolean
     field :devices, list_of(:device)
     field :labels, list_of(:label)
+  end
+
+  object :group do
+    field :id, :id
+    field :name, :string
+    field :hotspots, list_of(:hotspot)
   end
 
   paginated object :label do
@@ -370,6 +378,15 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.HotspotStats.HotspotStatsResolver.followed/2
     end
 
+    field :grouped_hotspot_stats, list_of(:hotspot) do
+      arg :column, non_null(:string)
+      arg :order, non_null(:string)
+      arg :page, non_null(:integer)
+      arg :page_size, non_null(:integer)
+      arg :group_id, non_null(:id)
+      resolve &Console.HotspotStats.HotspotStatsResolver.grouped/2
+    end
+
     field :hotspot_stats_device_count, :hotspot_stats_device_count do
       resolve &Console.HotspotStats.HotspotStatsResolver.device_count/2
     end
@@ -432,6 +449,10 @@ defmodule ConsoleWeb.Schema do
 
     field :all_config_profiles, list_of(:config_profile) do
       resolve &Console.ConfigProfiles.ConfigProfileResolver.all/2
+    end
+
+    field :all_groups, list_of(:group) do
+      resolve &Console.Groups.GroupResolver.all/2
     end
 
     field :alerts_per_type, list_of(:alert) do
