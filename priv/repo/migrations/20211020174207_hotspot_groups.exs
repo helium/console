@@ -19,5 +19,6 @@ defmodule Console.Repo.Migrations.HotspotGroups do
 
     create unique_index(:hotspots_groups, [:group_id, :hotspot_id])
     create unique_index(:groups, [:name, :organization_id])
+    create index(:groups, [:organization_id])
   end
 end
