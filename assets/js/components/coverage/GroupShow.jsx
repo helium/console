@@ -8,6 +8,7 @@ import { updateOrganizationHotspot } from "../../actions/coverage";
 import { getColumns } from "./Constants";
 import DeleteGroupModal from "./DeleteGroupModal";
 import EditGroupModal from "./EditGroupModal";
+import UserCan from "../common/UserCan";
 
 export default (props) => {
   const { back, groupSelected, data, getGroupedHotspotStats } = props;
@@ -76,40 +77,45 @@ export default (props) => {
             </Button>
           </Col>
           <Col sm={12}>
-            <Button
-              style={{
-                float: "right",
-                border: "none",
-                padding: 0,
-                fontSize: 14,
-                color: "#2C79EE",
-                height: 24,
-              }}
-              onClick={() => {
-                setShowEditModal(true);
-              }}
-            >
-              Rename Hotspot Group <EditFilled />
-            </Button>
+            <UserCan>
+              {" "}
+              <Button
+                style={{
+                  float: "right",
+                  border: "none",
+                  padding: 0,
+                  fontSize: 14,
+                  color: "#2C79EE",
+                  height: 24,
+                }}
+                onClick={() => {
+                  setShowEditModal(true);
+                }}
+              >
+                Rename Hotspot Group <EditFilled />
+              </Button>
+            </UserCan>
           </Col>
         </Row>
         <Row>
-          <Button
-            style={{
-              border: "none",
-              padding: 0,
-              fontSize: 14,
-              color: "red",
-              height: 24,
-              marginLeft: "auto",
-              marginRight: 0,
-            }}
-            onClick={() => {
-              setShowDeleteModal(true);
-            }}
-          >
-            Delete Hotspot Group <DeleteFilled />
-          </Button>
+          <UserCan>
+            <Button
+              style={{
+                border: "none",
+                padding: 0,
+                fontSize: 14,
+                color: "red",
+                height: 24,
+                marginLeft: "auto",
+                marginRight: 0,
+              }}
+              onClick={() => {
+                setShowDeleteModal(true);
+              }}
+            >
+              Delete Hotspot Group <DeleteFilled />
+            </Button>
+          </UserCan>
         </Row>
         <Row>
           <Text style={{ fontSize: 22, fontWeight: 600, marginRight: 10 }}>
