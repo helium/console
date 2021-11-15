@@ -7,6 +7,7 @@ import CaretDown from "../../../img/caret-down.svg";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import DeleteGroupModal from "./DeleteGroupModal";
 import GroupIndexActionsMenu from "./GroupIndexActionsMenu";
+import UserCan from "../common/UserCan";
 
 export default ({ selectGroupId, data }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -38,22 +39,24 @@ export default ({ selectGroupId, data }) => {
             </Text>
           </Col>
           <Col sm={12}>
-            <Button
-              icon={<PlusOutlined />}
-              type="primary"
-              style={{
-                borderColor: "#2C79EE",
-                backgroundColor: "#2C79EE",
-                borderRadius: 50,
-                text: "white",
-                float: "right",
-              }}
-              onClick={() => {
-                selectGroupId("new");
-              }}
-            >
-              Create Hotspot Group
-            </Button>
+            <UserCan>
+              <Button
+                icon={<PlusOutlined />}
+                type="primary"
+                style={{
+                  borderColor: "#2C79EE",
+                  backgroundColor: "#2C79EE",
+                  borderRadius: 50,
+                  text: "white",
+                  float: "right",
+                }}
+                onClick={() => {
+                  selectGroupId("new");
+                }}
+              >
+                Create Hotspot Group
+              </Button>
+            </UserCan>
           </Col>
         </Row>
         <div
@@ -103,27 +106,29 @@ export default ({ selectGroupId, data }) => {
                       {g.name}
                     </Text>
                   </span>
-                  <span>
-                    <Popover
-                      destroyTooltipOnHide={true}
-                      placement="bottomRight"
-                      content={
-                        <GroupIndexActionsMenu
-                          showDeleteModal={() => {
-                            setShowDeleteModal(true);
-                            setGroupToDelete(g);
-                          }}
-                          group={g}
+                  <UserCan>
+                    <span>
+                      <Popover
+                        destroyTooltipOnHide={true}
+                        placement="bottomRight"
+                        content={
+                          <GroupIndexActionsMenu
+                            showDeleteModal={() => {
+                              setShowDeleteModal(true);
+                              setGroupToDelete(g);
+                            }}
+                            group={g}
+                          />
+                        }
+                        overlayClassName="hotspot-group-menu"
+                      >
+                        <img
+                          src={CaretDown}
+                          style={{ marginLeft: 5, padding: 5 }}
                         />
-                      }
-                      overlayClassName="hotspot-group-menu"
-                    >
-                      <img
-                        src={CaretDown}
-                        style={{ marginLeft: 5, padding: 5 }}
-                      />
-                    </Popover>
-                  </span>
+                      </Popover>
+                    </span>
+                  </UserCan>
                 </div>
                 <>
                   <Text

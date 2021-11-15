@@ -12,6 +12,7 @@ import GroupMenuItem from "./GroupMenuItem";
 import DeleteGroupModal from "./DeleteGroupModal";
 import NewGroupMenuItem from "./NewGroupMenuItem";
 import analyticsLogger from "../../util/analyticsLogger";
+import UserCan from "../common/UserCan";
 
 export default ({ appliedGroups, hotspotId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -83,7 +84,9 @@ export default ({ appliedGroups, hotspotId }) => {
           />
         );
       })}
-      <NewGroupMenuItem />
+      <UserCan>
+        <NewGroupMenuItem />
+      </UserCan>
     </div>
   );
 
