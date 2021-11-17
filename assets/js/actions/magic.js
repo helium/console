@@ -4,7 +4,7 @@ import { displayError } from '../util/messages'
 import { store } from '../store/configureStore';
 import { magicLogIn, logOut } from './auth'
 
-export const magic = new Magic(window.magic_public_key || process.env.MAGIC_PUBLIC_KEY || 'pk_live_2D8497C8B0909EC7', {
+export const magic = new Magic(window.magic_public_key || process.env.MAGIC_PUBLIC_KEY || 'pk_live_3EE671255ACEC2E5', {
   extensions: [new OAuthExtension()],
 });
 
