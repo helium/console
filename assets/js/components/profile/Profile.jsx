@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
 import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/auth";
+import { magic } from "../../actions/magic";
 import { generateKey } from "../../actions/apiKeys";
 import { config } from '../../config/magic'
 import DashboardLayout from "../common/DashboardLayout";
@@ -199,6 +200,17 @@ class Profile extends Component {
                     marginTop: 10,
                   }}
                 >
+                  {config.useMagicAuth && (
+                    <UserCan>
+                      <Button
+                        type="primary"
+                        onClick={() => magic.user.showSettings()}
+                        style={{ marginRight: 10 }}
+                      >
+                        MFA Settings
+                      </Button>
+                    </UserCan>
+                  )}
                   {this.state.enrolledIn2FA === false && (
                     <UserCan noManager>
                       <Button
