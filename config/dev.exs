@@ -82,7 +82,7 @@ config :console,
   stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"
 
 config :console,
-  magic_secret_key: "sk_live_2EA0025F88821B36"
+  magic_secret_key: "sk_live_0AA176BA66E3CA27"
 
 config :console,
   use_magic_auth: true
