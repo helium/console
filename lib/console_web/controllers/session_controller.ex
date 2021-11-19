@@ -28,6 +28,7 @@ defmodule ConsoleWeb.SessionController do
             %{
               email: user_metadata["email"],
               typ: "magic-auth-session",
+              oauth_provider: user_metadata["oauth_provider"]
             },
             ttl: {1, :day}
           )
