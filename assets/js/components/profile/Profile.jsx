@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
 import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/auth";
+import { magic } from "../../actions/magic";
 import { generateKey } from "../../actions/apiKeys";
 import { config } from '../../config/magic'
 import DashboardLayout from "../common/DashboardLayout";
@@ -38,6 +39,7 @@ class Profile extends Component {
     showDisableMFAModal: false,
     showDeleteApiKeyModal: false,
     selectedKey: null,
+    fromOAuth: false
   };
 
   componentDidMount() {
@@ -56,6 +58,11 @@ class Profile extends Component {
       this.props.getMfaStatus().then(({ data }) => {
         this.setState({ enrolledIn2FA: data.enrollment_status });
       });
+    }
+
+    if (config.useMagicAuth) {
+      const userFromClaims = parseJwt(this.props.token)
+      if (userFromClaims.oauth_provider) this.setState({ fromOAuth: true })
     }
   }
 
@@ -199,6 +206,17 @@ class Profile extends Component {
                     marginTop: 10,
                   }}
                 >
+                  {config.useMagicAuth && !this.state.fromOAuth && (
+                    <UserCan>
+                      <Button
+                        type="primary"
+                        onClick={() => magic.user.showSettings()}
+                        style={{ marginRight: 10 }}
+                      >
+                        MFA Settings
+                      </Button>
+                    </UserCan>
+                  )}
                   {this.state.enrolledIn2FA === false && (
                     <UserCan noManager>
                       <Button
@@ -306,11 +324,22 @@ class Profile extends Component {
   }
 }
 
+function parseJwt (token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};
+
 function mapStateToProps(state) {
   return {
     role: state.organization.currentRole,
     socket: state.apollo.socket,
     currentOrganizationId: state.organization.currentOrganizationId,
+    token: state.apollo.tokenClaims.__raw
   };
 }
 
