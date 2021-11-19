@@ -13,7 +13,7 @@ config :console,
 config :console,
   Console.Repo,
   migration_primary_key: [id: :uuid, type: :binary_id],
-  loggers: [App.RepoInstrumenter] 
+  loggers: [App.Repo.Instrumenter, Ecto.LogEntry]
 
 # Configures the endpoint
 config :console, ConsoleWeb.Endpoint,

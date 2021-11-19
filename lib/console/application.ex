@@ -21,9 +21,17 @@ defmodule Console.Application do
       Console.Scheduler
     ]
 
+    :ok =
+      :telemetry.attach(
+        "prometheus-ecto",
+        [:console, :repo, :query],
+        &App.Repo.Instrumenter.handle_event/4,
+        %{}
+      )
+
     App.PhoenixInstrumenter.setup()
     App.PipelineInstrumenter.setup()
-    App.RepoInstrumenter.setup()
+    App.Repo.Instrumenter.setup()
     Prometheus.Registry.register_collector(:prometheus_process_collector)
     App.PrometheusExporter.setup()
 
