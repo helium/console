@@ -241,7 +241,7 @@ export const getColumns = (
   switch (tab) {
     case "search":
       return columns.filter(
-        (c) => c.dataIndex !== "alias" || c.dataIndex !== "group_ids"
+        (c) => c.dataIndex !== "alias" && c.dataIndex !== "group_ids" && c.dataIndex !== "avg_rssi"
       );
     case "main":
       return columns.filter((c) => c.dataIndex !== "group_ids");

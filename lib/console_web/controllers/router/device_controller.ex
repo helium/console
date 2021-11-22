@@ -185,6 +185,19 @@ defmodule ConsoleWeb.Router.DeviceController do
         result =
           Ecto.Multi.new()
           |> Ecto.Multi.run(:event, fn _repo, _ ->
+            event = case event["data"]["res"]["body"] do
+              nil -> event
+              _ ->
+                cond do
+                  String.length(event["data"]["res"]["body"]) > 2500 ->
+                    Kernel.put_in(event["data"]["res"]["body"], "Response body is too long and cannot be displayed properly.")
+                  String.contains?(event["data"]["res"]["body"], <<0>>) or String.contains?(event["data"]["res"]["body"], <<1>>) or String.contains?(event["data"]["res"]["body"], "\\u0000") ->
+                    Kernel.put_in(event["data"]["res"]["body"], "Response body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                  true ->
+                    event
+                end
+            end
+
             event = case event["data"]["req"]["body"] do
               nil -> event
               _ ->

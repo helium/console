@@ -58,7 +58,7 @@ defmodule Console.HotspotStats do
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
-            WHEN 'alias' THEN os.alias
+            WHEN 'alias' THEN oh.alias
           END
         END ASC NULLS FIRST,
         CASE $4 WHEN 'desc' THEN
@@ -66,7 +66,7 @@ defmodule Console.HotspotStats do
             WHEN 'hotspot_name' THEN h.name
             WHEN 'long_city' THEN h.long_city
             WHEN 'status' THEN h.status
-            WHEN 'alias' THEN os.alias
+            WHEN 'alias' THEN oh.alias
           END
         END DESC NULLS LAST
       LIMIT $5
