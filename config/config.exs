@@ -12,7 +12,8 @@ config :console,
 
 config :console,
   Console.Repo,
-  migration_primary_key: [id: :uuid, type: :binary_id]
+  migration_primary_key: [id: :uuid, type: :binary_id],
+  loggers: [App.Repo.Instrumenter, Ecto.LogEntry]
 
 # Configures the endpoint
 config :console, ConsoleWeb.Endpoint,
@@ -84,6 +85,22 @@ config :console, Console.Scheduler,
     #   task: {Console.Jobs, :run_events_stat_job, []}
     # ],
   ]
+
+config :prometheus, App.PhoenixInstrumenter,
+  controller_call_labels: [:controller, :action],
+  duration_buckets: [10, 25, 50, 100, 250, 500, 1000, 2500, 5000,
+                     10_000, 25_000, 50_000, 100_000, 250_000, 500_000,
+                     1_000_000, 2_500_000, 5_000_000, 10_000_000],
+  registry: :default,
+  duration_unit: :microseconds
+
+config :prometheus, App.PipelineInstrumenter,
+  labels: [:status_class, :method, :host, :scheme, :request_path],
+  duration_buckets: [10, 100, 1_000, 10_000, 100_000,
+                     300_000, 500_000, 750_000, 1_000_000,
+                     1_500_000, 2_000_000, 3_000_000],
+  registry: :default,
+  duration_unit: :microseconds
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
