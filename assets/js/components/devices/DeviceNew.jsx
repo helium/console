@@ -35,7 +35,7 @@ class DeviceNew extends Component {
       : this.props.currentOrganizationAppEui,
     appKey: randomString(32),
     labelName: null,
-    showAppKey: false,
+    showAppKey: true,
     showImportDevicesModal: false,
     importComplete: false,
     importType: "",

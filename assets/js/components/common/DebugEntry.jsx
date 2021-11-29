@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import moment from "moment";
+import omit from "lodash/omit";
 import { debugTextColor } from "../../util/colors";
 import { displayInfo } from "../../util/messages";
 import { Typography, Menu, Dropdown, Tag } from "antd";
@@ -217,24 +218,24 @@ class DebugEntry extends Component {
           <div style={{ marginBottom: 20 }}>
             <pre style={{ color: debugTextColor }}>
               {JSON.stringify(
-                {
-                  id: event.id,
-                  router_uuid: event.router_uuid,
-                  category: event.category,
-                  sub_category: event.sub_category,
-                  description: event.description,
-                  ...(event.category === "uplink" && {
-                    fcnt_up: event.data.fcnt,
-                  }),
-                  ...(event.category === "downlink" && {
-                    fcnt_down: event.data.fcnt,
-                  }),
-                  payload: event.data.payload,
-                  payload_size: event.data.payload_size,
-                  port: event.data.port,
-                  reported_at: event.reported_at,
-                  ...(event.hold_time && { hold_time: event.hold_time })
-                },
+                Object.assign(
+                  {},
+                  omit(event, "data"),
+                  {
+                    ...(event.category === "uplink" && {
+                      fcnt_up: event.data.fcnt,
+                    }),
+                    ...(event.category === "downlink" && {
+                      fcnt_down: event.data.fcnt,
+                    }),
+                    ...(event.data.raw_payload && {
+                      raw_payload: event.data.raw_payload,
+                    }),
+                    payload: event.data.payload,
+                    payload_size: event.data.payload_size,
+                    port: event.data.port,
+                  }
+                ),
                 null,
                 2
               )}

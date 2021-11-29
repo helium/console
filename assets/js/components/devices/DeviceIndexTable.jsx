@@ -370,7 +370,6 @@ class DeviceIndexTable extends Component {
             rowSelection={rowSelection}
             onChange={this.handleSort}
             style={{ minWidth, overflowX: "scroll", overflowY: "hidden" }}
-            className="no-scroll-bar"
             onRow={(record, rowIndex) => ({
               onClick: (e) => {
                 if (e.target.tagName === "TD") {
