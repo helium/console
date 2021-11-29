@@ -233,7 +233,8 @@ class DebugEntry extends Component {
                   payload_size: event.data.payload_size,
                   port: event.data.port,
                   reported_at: event.reported_at,
-                  ...(event.hold_time && { hold_time: event.hold_time })
+                  ...(event.hold_time && { hold_time: event.hold_time }),
+                  ...(event.raw_payload && { raw_payload: event.raw_payload })
                 },
                 null,
                 2
