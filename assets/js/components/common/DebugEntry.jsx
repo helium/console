@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import moment from "moment";
+import omit from "lodash/omit";
 import { debugTextColor } from "../../util/colors";
 import { displayInfo } from "../../util/messages";
 import { Typography, Menu, Dropdown, Tag } from "antd";
@@ -227,7 +228,10 @@ class DebugEntry extends Component {
                     ...(event.category === "downlink" && {
                       fcnt_down: event.data.fcnt,
                     }),
-                    port: event.data.port,
+                    ...(event.data.raw_payload && {
+                      raw_payload: event.data.raw_payload,
+                    }),
+                    payload: event.data.payload,
                     payload_size: event.data.payload_size,
                     port: event.data.port,
                   }
