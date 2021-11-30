@@ -20,7 +20,7 @@ defmodule Console.Mixfile do
   def application do
     [
       mod: {Console.Application, []},
-      extra_applications: [:logger, :runtime_tools, :prometheus_ex, :prometheus_ecto, :prometheus_phoenix, :prometheus_plugs, :prometheus_process_collector]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -68,12 +68,7 @@ defmodule Console.Mixfile do
       {:inet_cidr, "~> 1.0.4"},
       {:quantum, "~> 3.3.0"},
       {:timex, "~> 3.6.3"},
-      {:magic_admin, "~> 0.4.0"},
-      {:prometheus_ex, "~> 3.0"},
-      {:prometheus_ecto, "~> 1.0"},
-      {:prometheus_phoenix, "~> 1.0"},
-      {:prometheus_plugs, "~> 1.0"},
-      {:prometheus_process_collector, "~> 1.0"},
+      {:magic_admin, "~> 0.4.0"}
     ]
   end
 
