@@ -42,6 +42,9 @@ defmodule ConsoleWeb.Endpoint do
     store: :cookie,
     key: "_console_key",
     signing_salt: "ECVJikn/"
+  
+  plug App.PrometheusExporter     # makes the /metrics URL happen
+  plug App.PipelineInstrumenter   # measures pipeline exec times
 
   plug ConsoleWeb.Router
 
