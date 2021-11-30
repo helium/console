@@ -91,3 +91,9 @@ config :console,
   allowed_ip_range: ["127.0.0.1"]
 
 config :logger, level: :debug
+
+config :prometheus, App.PrometheusExporter,
+  path: "/metrics",
+  format: :auto,
+  registry: :default,
+  auth: {:basic, "username", "password"}

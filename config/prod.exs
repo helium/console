@@ -82,3 +82,9 @@ config :console,
     "172.64.0.0",
     "131.0.72.0"
   ]
+
+config :prometheus, App.PrometheusExporter,
+  path: "/metrics",
+  format: :auto,
+  registry: :default,
+  auth: {:basic, System.get_env("PROMETHEUS_USERNAME"), System.get_env("PROMETHEUS_PASSWORD")}
