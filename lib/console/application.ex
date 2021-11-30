@@ -21,20 +21,6 @@ defmodule Console.Application do
       Console.Scheduler
     ]
 
-    :ok =
-      :telemetry.attach(
-        "prometheus-ecto",
-        [:console, :repo, :query],
-        &App.Repo.Instrumenter.handle_event/4,
-        %{}
-      )
-
-    App.PhoenixInstrumenter.setup()
-    App.PipelineInstrumenter.setup()
-    App.Repo.Instrumenter.setup()
-    Prometheus.Registry.register_collector(:prometheus_process_collector)
-    App.PrometheusExporter.setup()
-
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Console.Supervisor]
