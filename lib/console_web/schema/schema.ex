@@ -31,10 +31,8 @@ defmodule ConsoleWeb.Schema do
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
-    field :adr_allowed, :boolean
     field :multi_buy_id, :id
     field :alerts, list_of(:alert)
-    field :cf_list_enabled, :boolean
     field :in_xor_filter, :boolean
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
@@ -162,10 +160,8 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
     field :device_count, :integer
-    field :adr_allowed, :boolean
     field :multi_buy_id, :id
     field :alerts, list_of(:alert)
-    field :cf_list_enabled, :boolean
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
   end

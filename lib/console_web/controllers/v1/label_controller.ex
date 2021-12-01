@@ -1,5 +1,6 @@
 defmodule ConsoleWeb.V1.LabelController do
   use ConsoleWeb, :controller
+  alias Console.Repo
 
   alias Console.Organizations
   alias Console.Devices
@@ -12,29 +13,34 @@ defmodule ConsoleWeb.V1.LabelController do
   def index(conn, %{ "name" => name }) do
     current_organization = conn.assigns.current_organization
 
-    case Labels.get_label_by_name(name, current_organization.id) do
+    case Labels.get_label_by_name(name, current_organization.id)
+      |> Repo.preload([:config_profile])
+    do
       nil ->
         {:error, :not_found, "Label not found"}
       %Label{} = label ->
-        render(conn, "show.json", label: label)
+        render(conn, "show.json", label: put_config_settings_on_label(label))
     end
   end
 
   def index(conn, _params) do
     current_organization =
-      conn.assigns.current_organization |> Organizations.fetch_assoc([:labels])
+      conn.assigns.current_organization |> Organizations.fetch_assoc(labels: [:config_profile])
+    labels = Enum.map(current_organization.labels, fn l -> put_config_settings_on_label(l) end)
 
-    render(conn, "index.json", labels: current_organization.labels)
+    render(conn, "index.json", labels: labels)
   end
 
   def show(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
-    case Labels.get_label(current_organization, id) do
+    case Labels.get_label(current_organization, id)
+      |> Repo.preload([:config_profile])
+    do
       nil ->
         {:error, :not_found, "Label not found"}
       %Label{} = label ->
-        render(conn, "show.json", label: label)
+        render(conn, "show.json", label: put_config_settings_on_label(label))
     end
   end
 
@@ -50,7 +56,7 @@ defmodule ConsoleWeb.V1.LabelController do
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       conn
       |> put_status(:created)
-      |> render("show.json", label: label)
+      |> render("show.json", label: Map.merge(label, %{ cf_list_enabled: false, adr_allowed: false }))
     end
   end
 
@@ -120,5 +126,21 @@ defmodule ConsoleWeb.V1.LabelController do
     if length(assoc_device_ids) > 0 do
       ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => assoc_device_ids })
     end
+  end
+
+  defp put_config_settings_on_label(label) do
+    adr_allowed =
+      case label.config_profile do
+        nil -> false
+        _ -> label.config_profile.adr_allowed
+      end
+
+    cf_list_enabled =
+      case label.config_profile do
+        nil -> false
+        _ -> label.config_profile.cf_list_enabled
+      end
+
+    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
   end
 end

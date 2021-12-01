@@ -26,9 +26,8 @@ defmodule ConsoleWeb.V1AlertControllerTest do
         active: true
       })
 
-      assert_error_sent 500, fn ->
-        build_conn() |> post("/api/v1/alerts")
-      end # no api key attached
+      conn = build_conn() |> post("/api/v1/alerts")
+      assert response(conn, 401) # no api key
 
       assert_error_sent 400, fn ->
         build_conn()
