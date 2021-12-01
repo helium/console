@@ -96,13 +96,18 @@ defmodule Console.Email do
   end
 
   defp base_email do
+    url =
+      case System.get_env("ENV_DOMAIN") do
+        nil -> "http://localhost:4000"
+        domain -> "https://" <> domain
+      end
     # This will use the "email.html.eex" file as a layout when rendering html emails.
     # Plain text emails will not use a layout unless you use `put_text_layout`
     new_email()
     |> from(System.get_env("MAIL_FROM") || "Helium <console@helium.com>")
     |> put_header("Reply-To", System.get_env("MAIL_REPLY_TO") || "console@helium.com")
     |> put_html_layout({ConsoleWeb.LayoutView, "email.html"})
-    |> assign(:url, System.get_env("SOCKET_CHECK_ORIGIN") || "http://localhost:4000")
+    |> assign(:url, url)
   end
 
   defp current_time do
