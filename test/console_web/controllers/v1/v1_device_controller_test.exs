@@ -28,9 +28,8 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
         active: true
       })
 
-      assert_error_sent 500, fn ->
-        build_conn() |> get("/api/v1/devices")
-      end # no api key attached
+      conn = build_conn() |> get("/api/v1/devices")
+      assert response(conn, 401) # no api key
 
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/devices")
       assert json_response(resp_conn, 200) == [] # returns no devices when no devices created in org

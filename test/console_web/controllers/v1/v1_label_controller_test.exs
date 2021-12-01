@@ -28,9 +28,8 @@ defmodule ConsoleWeb.V1LabelControllerTest do
         active: true
       })
 
-      assert_error_sent 500, fn ->
-        build_conn() |> get("/api/v1/labels")
-      end # no api key attached
+      conn = build_conn() |> get("/api/v1/labels")
+      assert response(conn, 401) # no api key
 
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/labels")
       assert json_response(resp_conn, 200) == [] # returns no labels when no labels created in org
