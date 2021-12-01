@@ -20,7 +20,24 @@ defmodule ConsoleWeb.V1.LabelView do
   end
 
   def append_labels(json, labels) do
+    labels = Enum.map(labels, fn l -> put_config_settings_on_label(l) end)
     labels_json = render_many(labels, LabelView, "label.json")
     Map.put(json, :labels, labels_json)
+  end
+
+  defp put_config_settings_on_label(label) do
+    adr_allowed =
+      case label.config_profile do
+        nil -> false
+        _ -> label.config_profile.adr_allowed
+      end
+
+    cf_list_enabled =
+      case label.config_profile do
+        nil -> false
+        _ -> label.config_profile.cf_list_enabled
+      end
+
+    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
   end
 end

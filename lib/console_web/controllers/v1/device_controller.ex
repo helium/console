@@ -23,7 +23,8 @@ defmodule ConsoleWeb.V1.DeviceController do
       0 ->
         {:error, :not_found, "Device not found"}
       _ ->
-        render(conn, "show.json", device: List.first(devices) |> Repo.preload([:labels]))
+        device = List.first(devices) |> Repo.preload([[labels: :config_profile], :config_profile])
+        render(conn, "show.json", device: put_config_settings_on_device(device))
     end
   end
 
@@ -34,7 +35,11 @@ defmodule ConsoleWeb.V1.DeviceController do
       0 ->
         {:error, :not_found, "Devices not found"}
       _ ->
-        render(conn, "index.json", devices: devices |> Repo.preload([:labels]))
+        parsed_devices =
+          devices
+          |> Repo.preload([[labels: :config_profile], :config_profile])
+          |> Enum.map(fn d -> put_config_settings_on_device(d) end)
+        render(conn, "index.json", devices: parsed_devices)
     end
   end
 
@@ -45,7 +50,11 @@ defmodule ConsoleWeb.V1.DeviceController do
       0 ->
         {:error, :not_found, "Devices not found"}
       _ ->
-        render(conn, "index.json", devices: devices |> Repo.preload([:labels]))
+        parsed_devices =
+          devices
+          |> Repo.preload([[labels: :config_profile], :config_profile])
+          |> Enum.map(fn d -> put_config_settings_on_device(d) end)
+        render(conn, "index.json", devices: parsed_devices)
     end
   end
 
@@ -53,17 +62,24 @@ defmodule ConsoleWeb.V1.DeviceController do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:devices])
 
-    render(conn, "index.json", devices: current_organization.devices |> Repo.preload([:labels]))
+    parsed_devices =
+      current_organization.devices
+      |> Repo.preload([[labels: :config_profile], :config_profile])
+      |> Enum.map(fn d -> put_config_settings_on_device(d) end)
+
+    render(conn, "index.json", devices: parsed_devices)
   end
 
   def show(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
+    case Devices.get_device(current_organization, id)
+      |> Repo.preload([[labels: :config_profile], :config_profile])
+    do
       nil ->
         {:error, :not_found, "Device not found"}
       %Device{} = device ->
-        render(conn, "show.json", device: device)
+        render(conn, "show.json", device: put_config_settings_on_device(device))
     end
   end
 
@@ -109,9 +125,10 @@ defmodule ConsoleWeb.V1.DeviceController do
     with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
       broadcast_router_update_devices(device)
 
+      device = device |> Repo.preload([[labels: :config_profile], :config_profile])
       conn
       |> put_status(:created)
-      |> render("show.json", device: device |> Repo.preload([:labels]))
+      |> render("show.json", device: put_config_settings_on_device(device))
     end
   end
 
@@ -158,5 +175,21 @@ defmodule ConsoleWeb.V1.DeviceController do
 
   defp broadcast_router_update_devices(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
+  end
+
+  defp put_config_settings_on_device(device) do
+    adr_allowed =
+      case device.config_profile do
+        nil -> false
+        _ -> device.config_profile.adr_allowed
+      end
+
+    cf_list_enabled =
+      case device.config_profile do
+        nil -> false
+        _ -> device.config_profile.cf_list_enabled
+      end
+
+    Map.merge(device, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
   end
 end
