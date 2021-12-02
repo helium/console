@@ -203,21 +203,6 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def set_config_profile(conn, %{ "device_ids" => device_ids, "config_profile_id" => config_profile_id }) do
-    current_organization = conn.assigns.current_organization
-
-    with {_count, nil} <- Devices.update_config_profile_for_devices(device_ids, config_profile_id, current_organization.id) do
-      ConsoleWeb.Endpoint.broadcast("graphql:config_profiles_index_table", "graphql:config_profiles_index_table:#{current_organization.id}:config_profile_list_update", %{})
-      if length(device_ids) == 1 do
-        ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{List.first(device_ids)}:device_update", %{})
-      end
-
-      conn
-      |> put_resp_header("message", "Devices updated successfully")
-      |> send_resp(:no_content, "")
-    end
-  end
-
   def get_ttn(conn, _params) do
     ttn_code = conn
       |> get_req_header("ttn-ctl-code")

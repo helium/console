@@ -47,7 +47,6 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/set_active", DeviceController, :set_active
-    post "/devices/set_config_profile", DeviceController, :set_config_profile
     get "/devices/:device_id/events", DeviceController, :get_events
     get "/ttn/devices", DeviceController, :get_ttn
     post "/ttn/devices/import", DeviceController, :import_ttn

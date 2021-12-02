@@ -6,20 +6,16 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { ALL_LABELS } from "../../graphql/labels";
 import { grayForModalCaptions } from "../../util/colors";
 import { addDevicesToLabel, addDevicesToNewLabel } from "../../actions/label";
-import { updateDevicesConfigProfile } from "../../actions/device";
 import LabelTag from "../common/LabelTag";
 import { Modal, Button, Typography, Input, Select, Checkbox } from "antd";
 const { Text } = Typography;
 const { Option } = Select;
-import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 
 class DevicesAddLabelModal extends Component {
   state = {
     labelId: undefined,
     labelName: undefined,
     applyToAll: false,
-    showConfirmModal: false,
-    configProfileId: null,
   };
 
   handleInputUpdate = (e) => {
@@ -35,55 +31,15 @@ class DevicesAddLabelModal extends Component {
       : this.props.devicesToUpdate.map((d) => d.id);
 
     if (labelId) {
-      const devicesProfiles = this.props.devicesToUpdate.reduce(
-        (result, device) => {
-          if (device.config_profile_id) {
-            result.push(device.config_profile_id);
-          }
-          return result;
-        },
-        []
-      );
-      const labelToApply = this.props.allLabelsQuery.allLabels.find(
-        (l) => l.id === labelId
-      );
-      this.setState({ configProfileId: labelToApply.config_profile_id });
-      if (
-        labelToApply.config_profile_id &&
-        devicesProfiles.some((p) => p !== labelToApply.config_profile_id)
-      ) {
-        const { applyToAll } = this.state;
-        const deviceIds = applyToAll
-          ? []
-          : this.props.devicesToUpdate.map((d) => d.id);
-        this.props
-          .addDevicesToLabel(!applyToAll && deviceIds, labelId)
-          .then((response) => {
-            if (response.status === 204) {
-              this.setState({ showConfirmModal: true });
-              analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-                devices: applyToAll ? "all" : deviceIds,
-                label: labelId,
-              });
-            }
+      this.props.addDevicesToLabel(!applyToAll && deviceIds, labelId)
+      .then((response) => {
+        if (response.status === 204) {
+          analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
+            devices: applyToAll ? "all" : deviceIds,
+            label: labelId,
           });
-      } else {
-        this.props
-          .addDevicesToLabel(!applyToAll && deviceIds, labelId)
-          .then((response) => {
-            if (response.status === 204) {
-              analyticsLogger.logEvent("ACTION_ADD_LABEL_TO_DEVICES", {
-                devices: applyToAll ? "all" : deviceIds,
-                label: labelId,
-              });
-              labelToApply.config_profile_id &&
-                this.props.updateDevicesConfigProfile(
-                  this.props.devicesToUpdate.map((d) => d.id),
-                  labelToApply.config_profile_id
-                );
-            }
-          });
-      }
+        }
+      });
     } else if (labelName) {
       this.props
         .addDevicesToNewLabel(!applyToAll && deviceIds, labelName)
@@ -181,21 +137,6 @@ class DevicesAddLabelModal extends Component {
             </Checkbox>
           )}
         </Modal>
-        <ConfirmLabelAddProfileConflictModal
-          open={this.state.showConfirmModal}
-          close={() => {
-            this.setState({ showConfirmModal: false });
-          }}
-          submit={() => {
-            this.props.updateDevicesConfigProfile(
-              this.props.devicesToUpdate.map((d) => d.id),
-              this.state.configProfileId
-            );
-          }}
-          multipleDevices={
-            this.props.devicesToUpdate && this.props.devicesToUpdate.length > 1
-          }
-        />
       </>
     );
   }
@@ -203,7 +144,7 @@ class DevicesAddLabelModal extends Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { addDevicesToLabel, addDevicesToNewLabel, updateDevicesConfigProfile },
+    { addDevicesToLabel, addDevicesToNewLabel },
     dispatch
   );
 }

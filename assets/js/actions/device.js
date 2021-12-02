@@ -76,17 +76,6 @@ export const setDevicesActive = (device_ids, active, label_id = "none") => {
   };
 };
 
-export const updateDevicesConfigProfile = (device_ids, config_profile_id) => {
-  return (dispatch) => {
-    rest
-      .post(`/api/devices/set_config_profile`, {
-        device_ids,
-        config_profile_id,
-      })
-      .then((response) => {});
-  };
-};
-
 export const fetchTtnDevices = (ttnCtlCode) => {
   return async (dispatch) => {
     dispatch(fetchingApplications());

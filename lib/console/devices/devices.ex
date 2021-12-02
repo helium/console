@@ -225,6 +225,7 @@ defmodule Console.Devices do
     end
   end
 
+  # DO NOT DELETE: used for migration
   def update_config_profile_for_devices(device_ids, config_profile_id, organization_id) do
     from(d in Device, where: d.id in ^device_ids and d.organization_id == ^organization_id)
     |> Repo.update_all(set: [config_profile_id: config_profile_id])
