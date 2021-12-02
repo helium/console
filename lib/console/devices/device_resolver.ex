@@ -110,6 +110,7 @@ defmodule Console.Devices.DeviceResolver do
   def all(_, %{context: %{current_organization: current_organization}}) do
     devices = Device
       |> where([d], d.organization_id == ^current_organization.id)
+      |> preload([:labels])
       |> Repo.all()
       |> Enum.map(fn d ->
         Map.drop(d, [:app_key])
