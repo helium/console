@@ -7,10 +7,12 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { ALL_LABELS } from "../../graphql/labels";
 import { grayForModalCaptions } from "../../util/colors";
 import { addDevicesToLabel, addDevicesToNewLabel } from "../../actions/label";
+import { removeDevicesConfigProfiles } from "../../actions/device";
 import LabelTag from "../common/LabelTag";
 import { Modal, Button, Typography, Input, Select, Checkbox } from "antd";
 const { Text } = Typography;
 const { Option } = Select;
+import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 
 class DevicesAddLabelModal extends Component {
   state = {
@@ -18,6 +20,7 @@ class DevicesAddLabelModal extends Component {
     labelName: undefined,
     applyToAll: false,
     showLabelConfigProfileConflicts: false,
+    showDeviceProfileConflictModal: false,
   };
 
   handleInputUpdate = (e) => {
@@ -51,9 +54,13 @@ class DevicesAddLabelModal extends Component {
               devices: applyToAll ? "all" : deviceIds,
               label: labelId,
             });
-            // const devicesHaveConflictingProfiles =
-            //   this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
-            // Check if user has device specific conflicts and new modal
+
+            const devicesHaveConflictingProfiles =
+              this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+
+            if (devicesHaveConflictingProfiles) {
+              this.setState({ showDeviceProfileConflictModal: true })
+            }
           }
         });
         this.setState({ applyToAll: false });
@@ -89,9 +96,13 @@ class DevicesAddLabelModal extends Component {
           devices: applyToAll ? "all" : deviceIds,
           label: labelId,
         });
-        // const devicesHaveConflictingProfiles =
-        //   this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
-        // Check if user has device specific conflicts and new modal
+
+        const devicesHaveConflictingProfiles =
+          this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+
+        if (devicesHaveConflictingProfiles) {
+          this.setState({ showDeviceProfileConflictModal: true })
+        }
       }
     });
     this.setState({ applyToAll: false });
@@ -215,6 +226,28 @@ class DevicesAddLabelModal extends Component {
             </Modal>
           )
         }
+        <ConfirmLabelAddProfileConflictModal
+          open={this.state.showDeviceProfileConflictModal}
+          close={() => {
+            this.setState({ showDeviceProfileConflictModal: false });
+          }}
+          submit={() => {
+            const labelToApply = this.props.allLabelsQuery.allLabels.find(
+              (l) => l.id === this.state.labelId
+            );
+
+            const deviceIdsWithConflictingProfiles =
+              this.props.devicesToUpdate.reduce((result, device) => {
+                if (device.config_profile_id && device.config_profile_id !== labelToApply.config_profile_id) {
+                  result.push(device);
+                }
+                return result;
+              },
+              []).map(d => d.id)
+
+            this.props.removeDevicesConfigProfiles(deviceIdsWithConflictingProfiles)
+          }}
+        />
       </>
     );
   }
@@ -222,7 +255,7 @@ class DevicesAddLabelModal extends Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { addDevicesToLabel, addDevicesToNewLabel },
+    { addDevicesToLabel, addDevicesToNewLabel, removeDevicesConfigProfiles },
     dispatch
   );
 }
