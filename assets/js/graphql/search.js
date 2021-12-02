@@ -18,6 +18,7 @@ export const SEARCH_DEVICES = gql`
     searchDevices(query: $query) {
       id
       name
+      config_profile_id
     }
   }
 `;
@@ -27,6 +28,7 @@ export const SEARCH_LABELS = gql`
     searchLabels(query: $query) {
       id
       name
+      config_profile_id
     }
   }
 `;

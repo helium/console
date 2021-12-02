@@ -56,6 +56,7 @@ export const ALL_LABELS = gql`
       devices {
         id
         in_xor_filter
+        config_profile_id
       }
       config_profile_id
     }

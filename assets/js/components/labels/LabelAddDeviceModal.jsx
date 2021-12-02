@@ -46,26 +46,26 @@ class LabelAddDeviceModal extends Component {
     } else if (search.length > 0) {
       const devices = {};
       search.forEach((d) => {
-        devices[d.id] = { configProfileId: d.config_profile_id };
+        devices[d.id] = d;
       });
       this.setState({ checkedDevices: devices });
     } else {
       const devices = {};
       this.props.allResourcesQuery.allDevices.forEach((d) => {
-        devices[d.id] = { configProfileId: d.config_profile_id };
+        devices[d.id] = d;
       });
       this.setState({ checkedDevices: devices });
     }
   };
 
-  checkSingleDevice = (id, configProfileId) => {
+  checkSingleDevice = (id, device) => {
     const { checkedDevices } = this.state;
     let devices;
     if (checkedDevices[id]) {
       devices = omit(checkedDevices, id);
     } else {
       devices = Object.assign({}, checkedDevices, {
-        [id]: { configProfileId },
+        [id]: device,
       });
     }
     this.setState({ checkedDevices: devices });
@@ -78,37 +78,19 @@ class LabelAddDeviceModal extends Component {
     } else if (search.length > 0) {
       const labels = {};
       search.forEach((l) => {
-        if (this.props.label.id !== l.id)
-          labels[l.id] = {
-            deviceIds: l.devices.map((d) => d.id),
-            configProfileIds: l.devices.reduce((result, device) => {
-              if (device.config_profile_id) {
-                result.push(device.config_profile_id);
-              }
-              return result;
-            }, []),
-          };
+        labels[l.id] = l
       });
       this.setState({ checkedLabels: labels });
     } else {
       const labels = {};
       this.props.allResourcesQuery.allLabels.forEach((l) => {
-        if (this.props.label.id !== l.id)
-          labels[l.id] = {
-            deviceIds: l.devices.map((d) => d.id),
-            configProfileIds: l.devices.reduce((result, device) => {
-              if (device.config_profile_id) {
-                result.push(device.config_profile_id);
-              }
-              return result;
-            }, []),
-          };
+        labels[l.id] = l
       });
       this.setState({ checkedLabels: labels });
     }
   };
 
-  checkSingleLabel = (id, configProfileIds, deviceIds) => {
+  checkSingleLabel = (id, label) => {
     const { checkedLabels } = this.state;
     let labels;
 
@@ -116,7 +98,7 @@ class LabelAddDeviceModal extends Component {
       labels = omit(checkedLabels, id);
     } else {
       labels = Object.assign({}, checkedLabels, {
-        [id]: { configProfileIds, deviceIds },
+        [id]: label,
       });
     }
     this.setState({ checkedLabels: labels });
