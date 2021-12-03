@@ -140,7 +140,17 @@ defmodule Console.Labels do
 
   def get_device_labels(device_id) do
     from(dl in DevicesLabels, where: dl.device_id == ^device_id)
-     |> Repo.all()
+      |> Repo.all()
+  end
+
+  def get_latest_applied_device_label(device_id, label_ids) do
+    from(
+      dl in DevicesLabels,
+      where: dl.device_id == ^device_id and dl.label_id in ^label_ids,
+      order_by: [desc: :inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
   end
 
   def add_devices_to_label(devices, to_label, organization) do
@@ -164,7 +174,7 @@ defmodule Console.Labels do
         Enum.each(devices_labels_that_exist, fn dl ->
           Repo.delete!(dl)
         end)
-        
+
         Enum.each(devices_labels, fn attrs ->
           Repo.insert!(DevicesLabels.changeset(%DevicesLabels{}, attrs))
         end)
