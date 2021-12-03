@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 
-export default ({ open, close, submit, multipleDevices, newDevice }) => {
+export default ({ open, close, submit, multipleDevices }) => {
   const handleSubmit = () => {
     submit();
     close();
@@ -10,7 +10,7 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
 
   return (
     <Modal
-      title="Do you want this label's configuration profile to apply to its devices by default?"
+      title={`Do you want this label's configuration profile to apply to ${multipleDevices ? "its devices" : "this device"} by default?`}
       visible={open}
       onCancel={close}
       centered
@@ -24,9 +24,9 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
         </Button>,
       ]}
     >
-      <Text style={{ display: 'block', marginBottom: 8 }}>Some devices in this label have a different configuration profile than the label's configuration profile setting.</Text>
-      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - Devices will remove their individual configuration profiles and default to the configuration profile of this label.</Text>
-      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Cancel</Text> - Devices will retain their individual configuration profiles.</Text>
+      <Text style={{ display: 'block', marginBottom: 8 }}>{multipleDevices ? "Some devices" : "This device"} in this label ha{multipleDevices ? "ve" : "s"} a different configuration profile than the label's configuration profile setting.</Text>
+      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - {multipleDevices ? "Devices" : "This device"} will remove individual configuration profiles and default to the configuration profile of this label.</Text>
+      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Cancel</Text> - {multipleDevices ? "Devices" : "This device"} will retain individual configuration profiles.</Text>
     </Modal>
   );
 };

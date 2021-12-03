@@ -160,13 +160,22 @@ class LabelAddDeviceModal extends Component {
     const { allDevices, allLabels, loading, error } =
       this.props.allResourcesQuery;
     const { checkedDevices, checkedLabels, showLabelConfigProfileConflicts } = this.state;
+    const allAffectedDevices = uniq(
+      Object.values(this.state.checkedDevices)
+      .concat(flatten(Object.values(checkedLabels).map(l => l.devices)))
+      .map(d => d.id)
+    )
 
     return (
       <>
         {
           showLabelConfigProfileConflicts ? (
             <Modal
-              title="Do you want the new label & config profile to apply to these devices?"
+              title={
+                `Do you want the new label & config profile to apply to ${
+                  allAffectedDevices.length > 1 ? "these devices?" : "this device?"
+                }`
+              }
               visible={open}
               centered
               onCancel={() => {
@@ -193,9 +202,9 @@ class LabelAddDeviceModal extends Component {
                 </Button>,
               ]}
             >
-              <Text style={{ display: 'block', marginBottom: 8 }}>The label you are trying to apply has a configuration profile that is different from labels previously attached to these devices.</Text>
-              <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - These devices will follow the configuration profile settings of this new label.</Text>
-              <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Cancel</Text> - These devices will retain configuration profile settings of preexisting labels. This new label will not be applied to these devices.</Text>
+              <Text style={{ display: 'block', marginBottom: 8 }}>The label you are trying to apply has a configuration profile that is different from label(s) previously attached to {allAffectedDevices.length > 1 ? "these devices" : "this device"}.</Text>
+              <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - {allAffectedDevices.length > 1 ? "These devices" : "This device"} will follow the configuration profile settings of this new label.</Text>
+              <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Cancel</Text> - {allAffectedDevices.length > 1 ? "These devices" : "This device"} will retain configuration profile settings of preexisting labels. This new label will not be applied.</Text>
             </Modal>
           ) : (
             <Modal
@@ -269,6 +278,9 @@ class LabelAddDeviceModal extends Component {
           close={() => {
             this.setState({ showDeviceProfileConflictModal: false });
           }}
+          multipleDevices={
+            allAffectedDevices.length > 1
+          }
           submit={() => {
             const labelToApply = this.props.allResourcesQuery.allLabels.find(
               (l) => l.id === this.props.label.id
