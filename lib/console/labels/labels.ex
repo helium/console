@@ -111,15 +111,24 @@ defmodule Console.Labels do
 
     all_devices = Enum.concat(label_devices, other_devices) |> Enum.uniq()
 
-    devices_labels = Enum.reduce(all_devices, [], fn device, acc ->
-      if Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label) == nil do
-        acc ++ [%{ device_id: device.id, label_id: to_label }]
+    devices_labels_that_exist = Enum.reduce(all_devices, [], fn device, acc ->
+      device_label = Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label)
+      if device_label != nil do
+        acc ++ [device_label]
       else
         acc
       end
     end)
 
+    devices_labels = Enum.map(all_devices, fn device ->
+      %{ device_id: device.id, label_id: to_label }
+    end)
+
     with {:ok, :ok} <- Repo.transaction(fn ->
+        Enum.each(devices_labels_that_exist, fn dl ->
+          Repo.delete!(dl)
+        end)
+
         Enum.each(devices_labels, fn attrs ->
           Repo.insert!(DevicesLabels.changeset(%DevicesLabels{}, attrs))
         end)
@@ -138,15 +147,24 @@ defmodule Console.Labels do
     devices_query = from(d in Device, where: d.id in ^devices and d.organization_id == ^organization.id, select: d)
     all_devices = Repo.all(devices_query)
 
-    devices_labels = Enum.reduce(all_devices, [], fn device, acc ->
-      if Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label) == nil do
-        acc ++ [%{ device_id: device.id, label_id: to_label }]
+    devices_labels_that_exist = Enum.reduce(all_devices, [], fn device, acc ->
+      device_label = Repo.get_by(DevicesLabels, device_id: device.id, label_id: to_label)
+      if device_label != nil do
+        acc ++ [device_label]
       else
         acc
       end
     end)
 
+    devices_labels = Enum.map(all_devices, fn device ->
+      %{ device_id: device.id, label_id: to_label }
+    end)
+
     with {:ok, :ok} <- Repo.transaction(fn ->
+        Enum.each(devices_labels_that_exist, fn dl ->
+          Repo.delete!(dl)
+        end)
+        
         Enum.each(devices_labels, fn attrs ->
           Repo.insert!(DevicesLabels.changeset(%DevicesLabels{}, attrs))
         end)
