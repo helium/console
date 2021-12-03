@@ -203,14 +203,15 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def set_config_profile(conn, %{ "device_ids" => device_ids, "config_profile_id" => config_profile_id }) do
+  def remove_config_profiles(conn, %{ "device_ids" => device_ids }) do
     current_organization = conn.assigns.current_organization
 
-    with {_count, nil} <- Devices.update_config_profile_for_devices(device_ids, config_profile_id, current_organization.id) do
+    with {_count, nil} <- Devices.update_config_profile_for_devices(device_ids, nil, current_organization.id) do
       ConsoleWeb.Endpoint.broadcast("graphql:config_profiles_index_table", "graphql:config_profiles_index_table:#{current_organization.id}:config_profile_list_update", %{})
       if length(device_ids) == 1 do
         ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{List.first(device_ids)}:device_update", %{})
       end
+      broadcast_router_update_devices(device_ids)
 
       conn
       |> put_resp_header("message", "Devices updated successfully")

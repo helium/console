@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 
-export default ({ open, close, submit, multipleDevices, newDevice }) => {
+export default ({ open, close, submit, multipleDevices }) => {
   const handleSubmit = () => {
     submit();
     close();
@@ -10,7 +10,7 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
 
   return (
     <Modal
-      title="Confirm Profile Override"
+      title={`Do you want this label's configuration profile to apply to ${multipleDevices ? "its devices" : "this device"} by default?`}
       visible={open}
       onCancel={close}
       centered
@@ -20,33 +20,13 @@ export default ({ open, close, submit, multipleDevices, newDevice }) => {
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Continue
+          Confirm
         </Button>,
       ]}
     >
-      <div style={{ textAlign: "center" }}>
-        {newDevice ? (
-          <Text>
-            The Label you selected has a different Profile than the Profile you
-            selected for the new Device. To override the selected Profile, click
-            Continue, or click Cancel to keep the selected Profile.
-          </Text>
-        ) : (
-          <Text>
-            {`${
-              multipleDevices
-                ? "One or more of the Devices already has"
-                : "The Device already has"
-            } a Profile applied to ${
-              multipleDevices ? "them" : "it"
-            }. To override the existing Profile${
-              multipleDevices ? "(s)" : ""
-            }, click Continue, or click Cancel to keep the existing one${
-              multipleDevices ? "(s)" : ""
-            }.`}
-          </Text>
-        )}
-      </div>
+      <Text style={{ display: 'block', marginBottom: 8 }}>{multipleDevices ? "Some devices" : "This device"} in this label ha{multipleDevices ? "ve" : "s"} a different configuration profile than the label's configuration profile setting.</Text>
+      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - {multipleDevices ? "Devices" : "This device"} will remove individual configuration profiles and default to the configuration profile of this label.</Text>
+      <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Cancel</Text> - {multipleDevices ? "Devices" : "This device"} will retain individual configuration profiles.</Text>
     </Modal>
   );
 };

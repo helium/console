@@ -47,11 +47,11 @@ defmodule ConsoleWeb.Router do
     resources "/devices", DeviceController, except: [:index, :new, :edit]
     post "/devices/delete", DeviceController, :delete
     post "/devices/set_active", DeviceController, :set_active
-    post "/devices/set_config_profile", DeviceController, :set_config_profile
     get "/devices/:device_id/events", DeviceController, :get_events
     get "/ttn/devices", DeviceController, :get_ttn
     post "/ttn/devices/import", DeviceController, :import_ttn
     post "/generic/devices/import", DeviceController, :import_generic
+    post "/devices/remove_config_profiles", DeviceController, :remove_config_profiles
     resources "/labels", LabelController, only: [:create, :update, :delete]
     post "/labels/swap_label", LabelController, :swap_label
     resources "/alerts", AlertController, only: [:create, :delete, :update]

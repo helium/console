@@ -28,6 +28,7 @@ export const DEVICE_SHOW = gql`
       labels {
         name
         id
+        config_profile_id
       }
       config_profile {
         name
@@ -92,6 +93,7 @@ export const PAGINATED_DEVICES = gql`
         labels {
           name
           id
+          config_profile_id
         }
       }
       totalEntries

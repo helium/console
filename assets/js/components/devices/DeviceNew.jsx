@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChooseImportType from "./import/ChooseImportType";
-import { createDevice, updateDevicesConfigProfile } from "../../actions/device";
+import { createDevice } from "../../actions/device";
 import { displayInfo, displayError } from "../../util/messages";
 import withGql from "../../graphql/withGql";
 import { ALL_IMPORTS } from "../../graphql/devices";
@@ -20,7 +20,6 @@ import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
-import ConfirmLabelAddProfileConflictModal from "../common/ConfirmLabelAddProfileConflictModal";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -45,7 +44,6 @@ class DeviceNew extends Component {
     selectedLabel: {},
     configProfileId: null,
     newDeviceId: null,
-    showConfirmModal: false,
   };
 
   componentDidMount() {
@@ -135,20 +133,8 @@ class DeviceNew extends Component {
           },
           label
         )
-        .then((response) => {
-          if (
-            response.status === 201 &&
-            foundLabel &&
-            configProfileId &&
-            foundLabel.config_profile_id !== configProfileId
-          ) {
-            const newDeviceId = response.data.id;
-            this.setState({ newDeviceId, selectedLabel: foundLabel }, () => {
-              this.setState({ showConfirmModal: true });
-            });
-          } else {
-            this.props.history.push("/devices");
-          }
+        .then(() => {
+          this.props.history.push("/devices");
         });
     } else {
       displayError(
@@ -354,21 +340,6 @@ class DeviceNew extends Component {
           importType={importType}
           import_status={this.state.import_status}
         />
-        <ConfirmLabelAddProfileConflictModal
-          open={this.state.showConfirmModal}
-          close={() => {
-            this.setState({ showConfirmModal: false });
-            this.props.history.push("/devices");
-          }}
-          submit={() => {
-            this.props.updateDevicesConfigProfile(
-              [this.state.newDeviceId],
-              this.state.selectedLabel.config_profile_id
-            );
-          }}
-          multipleDevices={false}
-          newDevice={true}
-        />
       </DeviceDashboardLayout>
     );
   }
@@ -392,7 +363,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { createDevice, updateDevicesConfigProfile },
+    { createDevice },
     dispatch
   );
 }

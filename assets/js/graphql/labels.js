@@ -34,6 +34,7 @@ export const ALL_LABELS_DEVICES = gql`
       id
       name
       device_count
+      config_profile_id
       devices {
         id
         config_profile_id
@@ -43,6 +44,10 @@ export const ALL_LABELS_DEVICES = gql`
       id
       name
       config_profile_id
+      labels {
+        id
+        config_profile_id
+      }
     }
   }
 `;
@@ -56,6 +61,7 @@ export const ALL_LABELS = gql`
       devices {
         id
         in_xor_filter
+        config_profile_id
       }
       config_profile_id
     }
