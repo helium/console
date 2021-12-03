@@ -42,7 +42,7 @@ class DevicesAddLabelModal extends Component {
 
       const devicesLabelsHaveConflicts =
         flatten(this.props.devicesToUpdate.map(d => d.labels))
-        .find(l => l.config_profile_id !== null && l.config_profile_id !== labelToApply.config_profile_id)
+        .find(l => l.config_profile_id !== null && l.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
       if (devicesLabelsHaveConflicts) {
         this.setState({ showLabelConfigProfileConflicts: true })
@@ -56,7 +56,7 @@ class DevicesAddLabelModal extends Component {
             });
 
             const devicesHaveConflictingProfiles =
-              this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+              this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
             if (devicesHaveConflictingProfiles) {
               this.setState({ showDeviceProfileConflictModal: true })
@@ -102,7 +102,7 @@ class DevicesAddLabelModal extends Component {
         });
 
         const devicesHaveConflictingProfiles =
-          this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+          this.props.devicesToUpdate.find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
         if (devicesHaveConflictingProfiles) {
           this.setState({ showDeviceProfileConflictModal: true })

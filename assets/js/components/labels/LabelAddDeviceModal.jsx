@@ -31,7 +31,8 @@ class LabelAddDeviceModal extends Component {
 
     const devicesLabelsHaveConflicts =
       flatten(Object.values(checkedDevices).map(d => d.labels))
-      .find(l => l.config_profile_id !== null && l.config_profile_id !== labelToApply.config_profile_id)
+      .concat(Object.values(checkedLabels))
+      .find(l => l.config_profile_id !== null && l.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
     if (devicesLabelsHaveConflicts) {
       this.setState({ showLabelConfigProfileConflicts: true })
@@ -48,7 +49,7 @@ class LabelAddDeviceModal extends Component {
           const devicesHaveConflictingProfiles =
             Object.values(checkedDevices)
             .concat(flatten(Object.values(checkedLabels).map(l => l.devices)))
-            .find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+            .find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
           if (devicesHaveConflictingProfiles) {
             this.setState({ showDeviceProfileConflictModal: true })
@@ -79,7 +80,7 @@ class LabelAddDeviceModal extends Component {
         const devicesHaveConflictingProfiles =
           Object.values(checkedDevices)
           .concat(flatten(Object.values(checkedLabels).map(l => l.devices)))
-          .find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id)
+          .find(d => d.config_profile_id !== null && d.config_profile_id !== labelToApply.config_profile_id && labelToApply.config_profile_id !== null)
 
         if (devicesHaveConflictingProfiles) {
           this.setState({ showDeviceProfileConflictModal: true })
