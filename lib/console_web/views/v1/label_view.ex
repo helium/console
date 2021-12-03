@@ -15,7 +15,8 @@ defmodule ConsoleWeb.V1.LabelView do
       id: label.id,
       name: label.name,
       adr_allowed: label.adr_allowed,
-      cf_list_enabled: label.cf_list_enabled
+      cf_list_enabled: label.cf_list_enabled,
+      config_profile_id: label.config_profile_id
     }
   end
 
@@ -28,13 +29,13 @@ defmodule ConsoleWeb.V1.LabelView do
   defp put_config_settings_on_label(label) do
     adr_allowed =
       case label.config_profile do
-        nil -> false
+        nil -> nil
         _ -> label.config_profile.adr_allowed
       end
 
     cf_list_enabled =
       case label.config_profile do
-        nil -> false
+        nil -> nil
         _ -> label.config_profile.cf_list_enabled
       end
 
