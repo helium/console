@@ -180,13 +180,13 @@ defmodule ConsoleWeb.V1.DeviceController do
   defp put_config_settings_on_device(device) do
     adr_allowed =
       case device.config_profile do
-        nil -> false
+        nil -> nil
         _ -> device.config_profile.adr_allowed
       end
 
     cf_list_enabled =
       case device.config_profile do
-        nil -> false
+        nil -> nil
         _ -> device.config_profile.cf_list_enabled
       end
 

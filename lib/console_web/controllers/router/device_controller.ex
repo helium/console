@@ -53,19 +53,29 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    case Devices.get_device(id) |> Repo.preload([:multi_buy, :config_profile, labels: [:multi_buy]]) do
+    case Devices.get_device(id) |> Repo.preload([:multi_buy, :config_profile, labels: [:multi_buy, :config_profile]]) do
       %Device{} = device ->
-        adr_allowed =
+        config_profile_to_use =
           case device.config_profile do
-            nil -> false
-            _ -> device.config_profile.adr_allowed
+            nil ->
+              labels_with_config_profiles = Enum.filter(device.labels, fn l -> l.config_profile_id != nil end)
+              case length(labels_with_config_profiles) do
+                0 ->
+                  %{
+                    adr_allowed: false,
+                    cf_list_enabled: false
+                  }
+                _ ->
+                  device_label = Labels.get_latest_applied_device_label(device.id, Enum.map(labels_with_config_profiles, fn l -> l.id end))
+                  label = Enum.find(labels_with_config_profiles, fn l -> l.id == device_label.label_id end)
+                  label.config_profile
+              end
+            _ ->
+              device.config_profile
           end
 
-        cf_list_enabled =
-          case device.config_profile do
-            nil -> false
-            _ -> device.config_profile.cf_list_enabled
-          end
+        adr_allowed = config_profile_to_use.adr_allowed
+        cf_list_enabled = config_profile_to_use.cf_list_enabled
 
         multi_buy_value =
           case length(device.labels) do

@@ -26,7 +26,8 @@ defmodule ConsoleWeb.V1.DeviceView do
       in_xor_filter: device.in_xor_filter,
       dc_usage: device.dc_usage,
       total_packets: device.total_packets,
-      last_connected: device.last_connected
+      last_connected: device.last_connected,
+      config_profile_id: device.config_profile_id
     }
 
     if Ecto.assoc_loaded?(device.labels) do
