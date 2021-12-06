@@ -30,6 +30,9 @@ export const DEVICE_SHOW = gql`
         name
         id
         config_profile_id
+        config_profile {
+          name
+        }
       }
       config_profile {
         name

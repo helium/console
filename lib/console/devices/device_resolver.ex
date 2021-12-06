@@ -28,7 +28,7 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([:labels, :config_profile])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([[labels: :config_profile], :config_profile])
 
     labels_with_config_profiles =
       device.labels

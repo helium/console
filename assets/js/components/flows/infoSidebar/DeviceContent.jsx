@@ -417,7 +417,15 @@ class DeviceContent extends Component {
                     {
                       device.inherited_profile_label && (
                         <Text>
-                          {" (Inheriting profile from "}
+                          {" (Inheriting profile "}
+                          {
+                            find(device.labels, { id: device.inherited_profile_label }) ? (
+                              <Link to={`/config_profiles/${find(device.labels, { id: device.inherited_profile_label }).config_profile_id}`}>
+                               {find(device.labels, { id: device.inherited_profile_label }).config_profile.name}
+                              </Link>
+                            ) : ""
+                          }
+                          {" from "}
                           <Link to={`/labels/${device.inherited_profile_label}`}>
                             {
                               find(device.labels, { id: device.inherited_profile_label }) ?

@@ -165,6 +165,7 @@ defmodule ConsoleWeb.Schema do
     field :alerts, list_of(:alert)
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
+    field :config_profile, :config_profile
   end
 
   paginated object :channel do
