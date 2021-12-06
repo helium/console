@@ -23,6 +23,7 @@ defmodule ConsoleWeb.V1.DeviceView do
       organization_id: device.organization_id,
       adr_allowed: device.adr_allowed,
       cf_list_enabled: device.cf_list_enabled,
+      rx_delay: device.rx_delay,
       in_xor_filter: device.in_xor_filter,
       dc_usage: device.dc_usage,
       total_packets: device.total_packets,
