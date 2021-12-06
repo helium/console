@@ -24,6 +24,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
+import find from "lodash/find";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import ConfigProfileSettings from "./ConfigProfileSettings";
 
@@ -405,6 +406,31 @@ class DeviceContent extends Component {
                 <Tag style={{ fontWeight: 500, fontSize: 14 }} color="#9254DE">
                   OTAA
                 </Tag>
+              </Paragraph>
+              <Paragraph>
+                <Text strong>Profile: </Text>
+                { device.config_profile_id ? (
+                  <Text>{device.config_profile.name}</Text>
+                ) : (
+                  <Text>
+                    None
+                    {
+                      device.inherited_profile_label && (
+                        <Text>
+                          {" (Inheriting profile from "}
+                          <Link to={`/labels/${device.inherited_profile_label}`}>
+                            {
+                              find(device.labels, { id: device.inherited_profile_label }) ?
+                              find(device.labels, { id: device.inherited_profile_label }).name :
+                              "label"
+                            }
+                          </Link>
+                          {")"}
+                        </Text>
+                      )
+                    }
+                  </Text>
+                )}
               </Paragraph>
             </Card>
 
