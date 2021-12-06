@@ -25,6 +25,7 @@ export const DEVICE_SHOW = gql`
       ...DeviceFragment
       app_eui
       app_key
+      inherited_profile_label
       labels {
         name
         id

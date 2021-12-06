@@ -37,6 +37,7 @@ defmodule ConsoleWeb.Schema do
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
     field :config_profile, :config_profile
+    field :inherited_profile_label, :id
   end
 
   paginated object :hotspot do

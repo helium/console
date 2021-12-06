@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
+import find from "lodash/find";
 import OutsideClick from "react-outside-click-handler";
 import EventsDashboard from "../events/EventsDashboard";
 import UserCan, { userCan } from "../common/UserCan";
@@ -577,7 +578,24 @@ export default (props) => {
                               </Link>
                             ) : (
                               <Text>
-                                <i>None selected</i>
+                                <i>None </i>
+                                {
+                                  device.inherited_profile_label && (
+                                    <Text>
+                                      <i>
+                                        {"(Inheriting profile from "}
+                                        <Link to={`/labels/${device.inherited_profile_label}`}>
+                                          {
+                                            find(device.labels, { id: device.inherited_profile_label }) ?
+                                            find(device.labels, { id: device.inherited_profile_label }).name :
+                                            "label"
+                                          }
+                                        </Link>
+                                        {")"}
+                                      </i>
+                                    </Text>
+                                  )
+                                }
                               </Text>
                             )}
                             <Button
