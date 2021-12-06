@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Switch, Input, Button } from "antd";
+import { Switch, Input, Button, Slider } from "antd";
 import Text from "antd/lib/typography/Text";
 import UserCan, { userCan } from "../common/UserCan";
 import {
@@ -9,6 +9,9 @@ import {
   cfListText1,
   cfListText2,
   cfListText3,
+  rxDelayText1,
+  rxDelayText2,
+  rxDelayText3,
 } from "./constants";
 
 export default ({ show, data, save, saveIcon, back, cancel }) => {
@@ -17,6 +20,7 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
   const [name, setName] = useState("");
   const [adrAllowed, setAdrAllowed] = useState(false);
   const [cfListEnabled, setCfListEnabled] = useState(false);
+  const [rxDelay, setRxDelay] = useState(1);
 
   useEffect(() => {
     if (show && data) {
@@ -24,10 +28,12 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
         name: data.configProfile.name,
         adr_allowed: data.configProfile.adr_allowed,
         cf_list_enabled: data.configProfile.cf_list_enabled,
+        rx_delay: data.configProfile.rx_delay,
       });
       setName(data.configProfile.name);
       setAdrAllowed(data.configProfile.adr_allowed);
       setCfListEnabled(data.configProfile.cf_list_enabled);
+      setRxDelay(data.configProfile.rx_delay);
     }
   }, [data]);
 
@@ -49,6 +55,7 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
               name,
               adrAllowed,
               cfListEnabled,
+              rxDelay
             });
           }}
         >
@@ -129,6 +136,35 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
         </Text>
         <Text style={{ fontSize: 14, display: "block" }}>{cfListText2}</Text>
         <Text style={{ fontSize: 14, display: "block" }}>{cfListText3}</Text>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <Text strong style={{ fontSize: 16 }}>
+          Set Delay Before Rx1 Window (Default: 1)
+        </Text>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <div style={{ width: 150, marginRight: 12 }}>
+            <Slider
+              value={rxDelay}
+              min={1}
+              max={5}
+              tooltipVisible={false}
+              onChange={(value) => setRxDelay(value)}
+              disabled={!userCan({ role: currentRole })}
+            />
+          </div>
+          <Text strong>
+            {rxDelay} Second{rxDelay !== 1 && "s"}
+          </Text>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <Text style={{ fontSize: 14, display: "block", marginBottom: 4 }}>
+          {rxDelayText1}
+        </Text>
+        <Text style={{ fontSize: 14, display: "block" }}>{rxDelayText2}</Text>
+        <Text style={{ fontSize: 14, display: "block" }}>{rxDelayText3}</Text>
       </div>
 
       <div style={{ marginBottom: 20 }}>

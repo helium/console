@@ -144,6 +144,7 @@ defmodule ConsoleWeb.Schema do
     field :name, :string
     field :adr_allowed, :boolean
     field :cf_list_enabled, :boolean
+    field :rx_delay, :integer
     field :devices, list_of(:device)
     field :labels, list_of(:label)
   end

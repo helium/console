@@ -50,6 +50,10 @@ export default (props) => {
       ),
     },
     {
+      title: "Rx Delay (Seconds)",
+      dataIndex: "rx_delay",
+    },
+    {
       title: "",
       dataIndex: "",
       render: (_text, record) => (
