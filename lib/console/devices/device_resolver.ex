@@ -4,6 +4,7 @@ defmodule Console.Devices.DeviceResolver do
   alias Console.Helpers
   alias Console.Devices.DeviceImports
   alias Console.Events.Event
+  alias Console.Labels
   alias Console.Labels.DevicesLabels
   import Ecto.Query
   alias Console.Alerts
@@ -27,7 +28,21 @@ defmodule Console.Devices.DeviceResolver do
   end
 
   def find(%{id: id}, %{context: %{current_organization: current_organization, current_membership: current_membership }}) do
-    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([:labels, :config_profile])
+    device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id) |> Repo.preload([[labels: :config_profile], :config_profile])
+
+    labels_with_config_profiles =
+      device.labels
+      |> Enum.filter(fn l -> l.config_profile_id != nil end)
+      |> Enum.map(fn l -> l.id end)
+
+    inherited_profile_label =
+      case length(labels_with_config_profiles) do
+        0 ->
+          nil
+        _ ->
+          Labels.get_latest_applied_device_label(id, labels_with_config_profiles)
+          |> Map.get(:label_id)
+      end
 
     device =
       case current_membership.role do
@@ -37,7 +52,7 @@ defmodule Console.Devices.DeviceResolver do
         _ -> device
       end
 
-    {:ok, device}
+    {:ok, Map.put(device, :inherited_profile_label, inherited_profile_label)}
   end
 
   def get_device_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
