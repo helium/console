@@ -7,6 +7,7 @@ defmodule Console.Organizations do
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth.User
+  alias Console.Auth
   alias Console.ApiKeys.ApiKey
 
   def paginate_all(cursor) do
@@ -245,13 +246,18 @@ defmodule Console.Organizations do
       |> Repo.insert()
     end)
     |> Ecto.Multi.run(:user, fn _repo, %{ invitation: invitation} ->
-      %User{}
-      |> User.create_changeset(%{
-        id: invitation.email <> " - " <> inviter.email,
-        email: invitation.email,
-        password_hash: "none"
-      })
-      |> Repo.insert()
+      case Auth.get_user_by_email(invitation.email) do
+        nil ->
+          %User{}
+          |> User.create_changeset(%{
+            id: invitation.email <> " - " <> inviter.email,
+            email: invitation.email,
+            password_hash: "none"
+          })
+          |> Repo.insert()
+        user ->
+          {:ok, user}
+      end
     end)
     |> Repo.transaction()
   end
