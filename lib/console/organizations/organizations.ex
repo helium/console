@@ -7,6 +7,7 @@ defmodule Console.Organizations do
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth.User
+  alias Console.Auth
   alias Console.ApiKeys.ApiKey
 
   def paginate_all(cursor) do
@@ -238,9 +239,27 @@ defmodule Console.Organizations do
   def create_invitation(%User{} = inviter, %Organization{} = organization, attrs) do
     attrs = Map.merge(attrs, %{"inviter_id" => inviter.id, "organization_id" => organization.id})
 
-    %Invitation{}
-    |> Invitation.create_changeset(attrs)
-    |> Repo.insert()
+    Ecto.Multi.new()
+    |> Ecto.Multi.run(:invitation, fn _repo, _ ->
+      %Invitation{}
+      |> Invitation.create_changeset(attrs)
+      |> Repo.insert()
+    end)
+    |> Ecto.Multi.run(:user, fn _repo, %{ invitation: invitation} ->
+      case Auth.get_user_by_email(invitation.email) do
+        nil ->
+          %User{}
+          |> User.create_changeset(%{
+            id: invitation.email <> " - " <> inviter.email,
+            email: invitation.email,
+            password_hash: "none"
+          })
+          |> Repo.insert()
+        user ->
+          {:ok, user}
+      end
+    end)
+    |> Repo.transaction()
   end
 
   def mark_invitation_used(%Invitation{} = invitation) do

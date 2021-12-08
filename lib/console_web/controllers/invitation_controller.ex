@@ -18,7 +18,7 @@ defmodule ConsoleWeb.InvitationController do
     organization = Organizations.get_organization!(current_user, attrs["organization"])
 
     if current_organization.id == organization.id and current_user.email != attrs["email"] do
-      with {:ok, %Invitation{} = invitation} <-
+      with {:ok, %{ invitation: invitation, user: _ }} <-
         Organizations.create_invitation(current_user, organization, attrs) do
         Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
         ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
