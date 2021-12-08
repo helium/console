@@ -2,7 +2,6 @@ defmodule ConsoleWeb.MembershipController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
-  alias Console.Organizations.Invitation
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
