@@ -2,13 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../../graphql/withGql";
-import { Button, Typography, Card, Divider, Input, Tabs, Tooltip } from "antd";
+import { Button, Typography, Card, Divider, Input, Tabs } from "antd";
 const { TabPane } = Tabs;
 const { Text, Paragraph } = Typography;
 import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
-import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import analyticsLogger from "../../../util/analyticsLogger";
 import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
@@ -18,7 +17,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { Link } from "react-router-dom";
 import AlertNodeSettings from "./AlertNodeSettings";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
@@ -29,7 +27,6 @@ class ChannelContent extends Component {
   state = {
     newName: "",
     showDownlinkToken: false,
-    showDeleteChannelModal: false,
   };
 
   componentDidMount() {
@@ -104,14 +101,6 @@ class ChannelContent extends Component {
     this.setState({ newName: "" });
   };
 
-  openDeleteChannelModal = () => {
-    this.setState({ showDeleteChannelModal: true });
-  };
-
-  closeDeleteChannelModal = () => {
-    this.setState({ showDeleteChannelModal: false });
-  };
-
   render() {
     const { loading, error, channel } = this.props.channelShowQuery;
     const { showDownlinkToken } = this.state;
@@ -174,35 +163,6 @@ class ChannelContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <UserCan>
-              {this.props.hasChanges ? (
-                <Tooltip
-                  title="Undo or save your workspace changes before deleting this integration"
-                  overlayStyle={{ width: 230 }}
-                >
-                  <Button
-                    style={{ borderRadius: 4, marginRight: 5 }}
-                    type="danger"
-                    icon={<DeleteOutlined />}
-                    disabled
-                  >
-                    Delete
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  style={{ borderRadius: 4, marginRight: 5 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.openDeleteChannelModal();
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
-            </UserCan>
           </div>
         </div>
 
@@ -337,14 +297,6 @@ class ChannelContent extends Component {
             />
           </TabPane>
         </Tabs>
-
-        <DeleteChannelModal
-          open={this.state.showDeleteChannelModal}
-          onClose={this.closeDeleteChannelModal}
-          channel={channel}
-          doNotRedirect
-          deleteResource={this.props.deleteResource}
-        />
       </div>
     );
   }
