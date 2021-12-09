@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import TableHeader from "../common/TableHeader";
 import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
 import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
@@ -70,149 +71,154 @@ export default (props) => {
   };
 
   return (
-    <DashboardLayout title="My Alerts" user={props.user}>
-      <TableHeader
-        backgroundColor="#D3E0EE"
-        otherColor="#ACC6DD"
-        homeIcon={null}
-        goToAll={() => {
-          setShowPage("allAlerts");
-          history.push("/alerts");
-        }}
-        allIcon={AllIcon}
-        textColor="#3C6B95"
-        allText="All Alerts"
-        onHomePage={showPage === "home"}
-        onAllPage={showPage === "allAlerts"}
-        onNewPage={showPage === "new"}
-        addIcon={PlusIcon}
-        goToNew={() => {
-          setShowPage("new");
-          setAlertType(null);
-          history.push("/alerts/new");
-        }}
-        noHome
-        borderRadius="25px"
-        extraContent={
-          <AlertsBar shownAlertId={props.match.params.id} alerts={alertsData} />
-        }
-        newText="Add New Alert"
-      >
-        {props.match.params.id && showPage === "showAlert" && (
-          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-            <div style={{ minWidth }}>
-              <AlertForm
-                key={props.match.params.id}
-                show
-                id={props.match.params.id}
-                back={() => {
-                  history.push("/alerts");
-                }}
-              />
-            </div>
-          </div>
-        )}
-        {showPage === "new" && alertType === null && (
-          <div
-            className="blankstateWrapper no-scroll-bar"
-            style={{
-              height: "600px",
-              paddingTop: "100px",
-              overflowX: "scroll",
+    <>
+      <MobileDisplay />
+      <DesktopDisplay>
+        <DashboardLayout title="My Alerts" user={props.user}>
+          <TableHeader
+            backgroundColor="#D3E0EE"
+            otherColor="#ACC6DD"
+            homeIcon={null}
+            goToAll={() => {
+              setShowPage("allAlerts");
+              history.push("/alerts");
             }}
+            allIcon={AllIcon}
+            textColor="#3C6B95"
+            allText="All Alerts"
+            onHomePage={showPage === "home"}
+            onAllPage={showPage === "allAlerts"}
+            onNewPage={showPage === "new"}
+            addIcon={PlusIcon}
+            goToNew={() => {
+              setShowPage("new");
+              setAlertType(null);
+              history.push("/alerts/new");
+            }}
+            noHome
+            borderRadius="25px"
+            extraContent={
+              <AlertsBar shownAlertId={props.match.params.id} alerts={alertsData} />
+            }
+            newText="Add New Alert"
           >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: 500,
-                minWidth: 500,
-                margin: "0 auto",
-                textAlign: "center",
-              }}
-            >
-              <img src={AlertIcon} />
-              <h1>Choose Type of Alert</h1>
-              <div
-                style={{ padding: "10px 60px 1px 60px", margin: "10px 0px" }}
-              >
-                <p style={{ fontSize: "16px", color: "#565656" }}>
-                  Alerts can be created for
-                  <br />
-                  Device/Label Nodes or Integration Nodes.
-                </p>
+            {props.match.params.id && showPage === "showAlert" && (
+              <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+                <div style={{ minWidth }}>
+                  <AlertForm
+                    key={props.match.params.id}
+                    show
+                    id={props.match.params.id}
+                    back={() => {
+                      history.push("/alerts");
+                    }}
+                  />
+                </div>
               </div>
+            )}
+            {showPage === "new" && alertType === null && (
               <div
+                className="blankstateWrapper no-scroll-bar"
                 style={{
-                  flexDirection: "row",
-                  display: "flex",
-                  justifyContent: "center",
+                  height: "600px",
+                  paddingTop: "100px",
+                  overflowX: "scroll",
                 }}
               >
-                <AlertTypeButton
-                  backgroundColor="#2C79EE"
-                  onClick={() => {
-                    setAlertType("device/label");
-                  }}
-                  margin={12}
-                >
-                  Device/Label Alert
-                </AlertTypeButton>
-                <AlertTypeButton
-                  backgroundColor="#12CB9E"
-                  onClick={() => {
-                    setAlertType("integration");
+                <div
+                  style={{
+                    width: "100%",
+                    maxWidth: 500,
+                    minWidth: 500,
+                    margin: "0 auto",
+                    textAlign: "center",
                   }}
                 >
-                  Integration Alert
-                </AlertTypeButton>
+                  <img src={AlertIcon} />
+                  <h1>Choose Type of Alert</h1>
+                  <div
+                    style={{ padding: "10px 60px 1px 60px", margin: "10px 0px" }}
+                  >
+                    <p style={{ fontSize: "16px", color: "#565656" }}>
+                      Alerts can be created for
+                      <br />
+                      Device/Label Nodes or Integration Nodes.
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      flexDirection: "row",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AlertTypeButton
+                      backgroundColor="#2C79EE"
+                      onClick={() => {
+                        setAlertType("device/label");
+                      }}
+                      margin={12}
+                    >
+                      Device/Label Alert
+                    </AlertTypeButton>
+                    <AlertTypeButton
+                      backgroundColor="#12CB9E"
+                      onClick={() => {
+                        setAlertType("integration");
+                      }}
+                    >
+                      Integration Alert
+                    </AlertTypeButton>
+                  </div>
+                </div>
+                <style jsx>{`
+                  h1 {
+                    font-size: 30px;
+                    margin: 10px 0px;
+                    font-weight: 600;
+                  }
+                  p {
+                    font-weight: 300;
+                    margin-bottom: 10px;
+                  }
+                `}</style>
               </div>
-            </div>
-            <style jsx>{`
-              h1 {
-                font-size: 30px;
-                margin: 10px 0px;
-                font-weight: 600;
-              }
-              p {
-                font-weight: 300;
-                margin-bottom: 10px;
-              }
-            `}</style>
-          </div>
-        )}
-        {showPage === "new" && alertType && (
-          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-            <div style={{ minWidth }}>
-              <AlertForm
-                alertType={alertType}
-                back={() => {
-                  setAlertType(null);
-                }}
+            )}
+            {showPage === "new" && alertType && (
+              <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+                <div style={{ minWidth }}>
+                  <AlertForm
+                    alertType={alertType}
+                    back={() => {
+                      setAlertType(null);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {showPage === "allAlerts" && error && (
+              <Text>Data failed to load, please reload the page and try again</Text>
+            )}
+            {showPage === "allAlerts" && loading && (
+              <div style={{ padding: 40 }}>
+                <SkeletonLayout />
+              </div>
+            )}
+            {showPage === "allAlerts" && !loading && (
+              <AlertIndexTable
+                data={alertsData}
+                openDeleteAlertModal={openDeleteAlertModal}
+                history={history}
               />
-            </div>
-          </div>
-        )}
-        {showPage === "allAlerts" && error && (
-          <Text>Data failed to load, please reload the page and try again</Text>
-        )}
-        {showPage === "allAlerts" && loading && (
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        )}
-        {showPage === "allAlerts" && !loading && (
-          <AlertIndexTable
-            data={alertsData}
-            openDeleteAlertModal={openDeleteAlertModal}
-            history={history}
+            )}
+          </TableHeader>
+          <DeleteAlertModal
+            open={showDeleteAlertModal}
+            alert={selectedAlert}
+            close={closeDeleteAlertModal}
           />
-        )}
-      </TableHeader>
-      <DeleteAlertModal
-        open={showDeleteAlertModal}
-        alert={selectedAlert}
-        close={closeDeleteAlertModal}
-      />
-    </DashboardLayout>
+        </DashboardLayout>
+      </DesktopDisplay>
+    </>
   );
 };

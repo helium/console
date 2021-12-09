@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import DashboardLayout from './common/DashboardLayout'
+import { MobileDisplay, DesktopDisplay } from './mobile/MediaQuery'
 import analyticsLogger from '../util/analyticsLogger'
 import { minWidth } from '../util/constants'
 import { Checkbox, Row, Card, Col, Typography } from 'antd';
@@ -32,79 +33,84 @@ class Welcome extends Component {
 
   render() {
     return(
-      <DashboardLayout
-        title=""
-        user={this.props.user}
-      >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ overflowX: 'scroll'}} className="no-scroll-bar">
-          <div style={{ padding: '60px 30px 30px 30px', minWidth }}>
-            <Row style={{ justifyContent: 'space-between'}}>
-              <span>
-                <Text style={{ fontSize: 30, display: 'block' }}>Welcome to</Text>
-                <Text style={{ fontSize: 36, display: 'block', fontWeight: 600, position: 'relative', top: -16 }}>Helium Console</Text>
-              </span>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout
+            title=""
+            user={this.props.user}
+          >
+            <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+              <div style={{ overflowX: 'scroll'}} className="no-scroll-bar">
+              <div style={{ padding: '60px 30px 30px 30px', minWidth }}>
+                <Row style={{ justifyContent: 'space-between'}}>
+                  <span>
+                    <Text style={{ fontSize: 30, display: 'block' }}>Welcome to</Text>
+                    <Text style={{ fontSize: 36, display: 'block', fontWeight: 600, position: 'relative', top: -16 }}>Helium Console</Text>
+                  </span>
 
-              <img src={WelcomeImg} style={{ height: 68 }} />
-            </Row>
+                  <img src={WelcomeImg} style={{ height: 68 }} />
+                </Row>
 
-            <Checkbox
-              checked={this.state.hideWelcomeScreen ? false : true}
-              style={{ color: '#556B8C' }}
-              onChange={this.onChangeCheckbox}
-            >
-              Show this Welcome Screen every time I log in
-            </Checkbox>
+                <Checkbox
+                  checked={this.state.hideWelcomeScreen ? false : true}
+                  style={{ color: '#556B8C' }}
+                  onChange={this.onChangeCheckbox}
+                >
+                  Show this Welcome Screen every time I log in
+                </Checkbox>
 
-            <div
-              style={{
-                backgroundColor: '#F5F7F9',
-                padding: '15px 20px 15px 20px',
-                borderRadius: 10,
-                marginTop: 50,
-                marginBottom: 16,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <span>
-                <Text strong style={{ fontSize: 16 }}>Developer Docs are Live!</Text>
-                <Text style={{ fontSize: 16, color: '#6A81A4', paddingLeft: 20 }}>Looking for some guidance to get started?</Text>
-              </span>
-              <a href="https://docs.helium.com/" target="_blank">
-                <Text style={{ fontSize: 16, fontWeight: 500, color: '#2C79EE' }}>Click Here</Text>
-              </a>
+                <div
+                  style={{
+                    backgroundColor: '#F5F7F9',
+                    padding: '15px 20px 15px 20px',
+                    borderRadius: 10,
+                    marginTop: 50,
+                    marginBottom: 16,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <span>
+                    <Text strong style={{ fontSize: 16 }}>Developer Docs are Live!</Text>
+                    <Text style={{ fontSize: 16, color: '#6A81A4', paddingLeft: 20 }}>Looking for some guidance to get started?</Text>
+                  </span>
+                  <a href="https://docs.helium.com/" target="_blank">
+                    <Text style={{ fontSize: 16, fontWeight: 500, color: '#2C79EE' }}>Click Here</Text>
+                  </a>
+                </div>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <div className="pod" id="left" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
+                      <Row>
+                        <RocketFilled className="bigicon" />
+                        <h2>Get Started with Console</h2>
+                      </Row>
+                      {getStartedLinks()}
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div className="pod" id="right" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
+                      <Row>
+                        <CalendarFilled className="bigicon" id="purple" />
+                        <h2>Developer Resources</h2>
+                      </Row>
+                      <a href="https://docs.helium.com/use-the-network/console/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
+                      <a href="https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo" target="_blank"><p><span>Watch our</span> How-to Videos<CaretRightOutlined className="caret" /></p></a>
+                      <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Discord Channel<CaretRightOutlined className="caret" /></p></a>
+                      <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<CaretRightOutlined className="caret" /></p></a>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              </div>
             </div>
-
-            <Row gutter={16}>
-              <Col span={12}>
-                <div className="pod" id="left" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
-                  <Row>
-                    <RocketFilled className="bigicon" />
-                    <h2>Get Started with Console</h2>
-                  </Row>
-                  {getStartedLinks()}
-                </div>
-              </Col>
-              <Col span={12}>
-                <div className="pod" id="right" style={{ backgroundColor: '#F5F7F9', padding: '20px 20px 10px 20px', borderRadius: 10 }}>
-                  <Row>
-                    <CalendarFilled className="bigicon" id="purple" />
-                    <h2>Developer Resources</h2>
-                  </Row>
-                  <a href="https://docs.helium.com/use-the-network/console/" target="_blank"><p><span>View</span> Documentation and Tutorials<CaretRightOutlined className="caret" /></p></a>
-                  <a href="https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo" target="_blank"><p><span>Watch our</span> How-to Videos<CaretRightOutlined className="caret" /></p></a>
-                  <a href="http://chat.helium.com/" target="_blank"><p><span>Join our</span> Community Discord Channel<CaretRightOutlined className="caret" /></p></a>
-                  <a href="https://engineering.helium.com/" target="_blank"><p><span>Read our</span> Engineering Update Blog<CaretRightOutlined className="caret" /></p></a>
-                </div>
-              </Col>
-            </Row>
-          </div>
-          </div>
-        </div>
-      </DashboardLayout>
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     )
   }
 }

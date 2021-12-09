@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import { useQuery, useLazyQuery } from "@apollo/client";
 import {
   HOTSPOT_STATS,
@@ -356,40 +357,45 @@ export default (props) => {
   );
 
   return (
-    <DashboardLayout title="Coverage" user={props.user} noAddButton full>
-      <div
-        style={{
-          height: "90%",
-          width: "100%",
-          backgroundColor: "#ffffff",
-          borderRadius: 6,
-          overflow: "hidden",
-          boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-        }}
-      >
-        {currentTab === "groups" &&
-        (!groupIdSelected || groupIdSelected === "new") ? (
+    <>
+      <MobileDisplay />
+      <DesktopDisplay>
+        <DashboardLayout title="Coverage" user={props.user} noAddButton full>
           <div
-            style={{ height: "100%", overflow: "scroll" }}
-            className="no-scroll-bar"
+            style={{
+              height: "90%",
+              width: "100%",
+              backgroundColor: "#ffffff",
+              borderRadius: 6,
+              overflow: "hidden",
+              boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+            }}
           >
-            {tabs()}
+            {currentTab === "groups" &&
+            (!groupIdSelected || groupIdSelected === "new") ? (
+              <div
+                style={{ height: "100%", overflow: "scroll" }}
+                className="no-scroll-bar"
+              >
+                {tabs()}
+              </div>
+            ) : (
+              <Row style={{ height: "100%" }}>
+                <Col
+                  sm={14}
+                  style={{ height: "100%", overflow: "scroll" }}
+                  className="no-scroll-bar"
+                >
+                  {tabs()}
+                </Col>
+                <Col sm={10}>
+                  <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
+                </Col>
+              </Row>
+            )}
           </div>
-        ) : (
-          <Row style={{ height: "100%" }}>
-            <Col
-              sm={14}
-              style={{ height: "100%", overflow: "scroll" }}
-              className="no-scroll-bar"
-            >
-              {tabs()}
-            </Col>
-            <Col sm={10}>
-              <Mapbox data={mapData} orgHotspotsMap={orgHotspotsMap} />
-            </Col>
-          </Row>
-        )}
-      </div>
-    </DashboardLayout>
+        </DashboardLayout>
+      </DesktopDisplay>
+    </>
   );
 };

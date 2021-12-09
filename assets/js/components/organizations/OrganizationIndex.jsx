@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import OrganizationsTable from '../organizations/OrganizationsTable'
 import NewOrganizationModal from '../organizations/NewOrganizationModal'
 import DeleteOrganizationModal from '../organizations/DeleteOrganizationModal'
@@ -40,47 +41,52 @@ class OrganizationIndex extends Component {
   render() {
     const { showOrganizationModal, showDeleteOrganizationModal, selectedOrgForDelete } = this.state
     return (
-      <DashboardLayout
-        title="Organizations"
-        user={this.props.user}
-        noAddButton
-      >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ overflowX: 'scroll'}} className="no-scroll-bar">
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth }}>
-              <Text style={{ fontSize: 22, fontWeight: 600 }}>All Organizations</Text>
-              <UserCan noManager>
-                <Button
-                  icon={<PlusOutlined />}
-                  style={{ borderRadius: 4 }}
-                  onClick={() => {
-                    analyticsLogger.logEvent("ACTION_NEW_ORG")
-                    this.openOrganizationModal()
-                  }}
-                  type="primary"
-                >
-                  Add Organization
-                </Button>
-              </UserCan>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout
+            title="Organizations"
+            user={this.props.user}
+            noAddButton
+          >
+            <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+              <div style={{ overflowX: 'scroll'}} className="no-scroll-bar">
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth }}>
+                  <Text style={{ fontSize: 22, fontWeight: 600 }}>All Organizations</Text>
+                  <UserCan noManager>
+                    <Button
+                      icon={<PlusOutlined />}
+                      style={{ borderRadius: 4 }}
+                      onClick={() => {
+                        analyticsLogger.logEvent("ACTION_NEW_ORG")
+                        this.openOrganizationModal()
+                      }}
+                      type="primary"
+                    >
+                      Add Organization
+                    </Button>
+                  </UserCan>
+                </div>
+                <OrganizationsTable
+                  openDeleteOrganizationModal={this.openDeleteOrganizationModal}
+                  user={this.props.user}
+                />
+              </div>
             </div>
-            <OrganizationsTable
-              openDeleteOrganizationModal={this.openDeleteOrganizationModal}
-              user={this.props.user}
+
+            <NewOrganizationModal
+              open={showOrganizationModal}
+              onClose={this.closeOrganizationModal}
             />
-          </div>
-        </div>
 
-        <NewOrganizationModal
-          open={showOrganizationModal}
-          onClose={this.closeOrganizationModal}
-        />
-
-        <DeleteOrganizationModal
-          open={showDeleteOrganizationModal}
-          onClose={this.closeDeleteOrganizationModal}
-          selectedOrgId={selectedOrgForDelete}
-        />
-      </DashboardLayout>
+            <DeleteOrganizationModal
+              open={showDeleteOrganizationModal}
+              onClose={this.closeDeleteOrganizationModal}
+              selectedOrgId={selectedOrgForDelete}
+            />
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     )
   }
 }

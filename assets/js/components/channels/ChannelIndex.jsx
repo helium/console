@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import withGql from "../../graphql/withGql";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import ChannelIndexTable from "./ChannelIndexTable";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import DeleteChannelModal from "./DeleteChannelModal";
@@ -86,30 +87,35 @@ class ChannelIndex extends Component {
     const { showDeleteChannelModal, channelSelected } = this.state;
 
     return (
-      <ChannelDashboardLayout {...this.props}>
-        {error && (
-          <Text>Data failed to load, please reload the page and try again</Text>
-        )}
-        {loading && (
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        )}
-        {!loading && (
-          <ChannelIndexTable
-            history={this.props.history}
-            channels={channels}
-            openDeleteChannelModal={this.openDeleteChannelModal}
-            handleChangePage={this.handleChangePage}
-          />
-        )}
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <ChannelDashboardLayout {...this.props}>
+            {error && (
+              <Text>Data failed to load, please reload the page and try again</Text>
+            )}
+            {loading && (
+              <div style={{ padding: 40 }}>
+                <SkeletonLayout />
+              </div>
+            )}
+            {!loading && (
+              <ChannelIndexTable
+                history={this.props.history}
+                channels={channels}
+                openDeleteChannelModal={this.openDeleteChannelModal}
+                handleChangePage={this.handleChangePage}
+              />
+            )}
 
-        <DeleteChannelModal
-          open={showDeleteChannelModal}
-          onClose={this.closeDeleteChannelModal}
-          channel={channelSelected}
-        />
-      </ChannelDashboardLayout>
+            <DeleteChannelModal
+              open={showDeleteChannelModal}
+              onClose={this.closeDeleteChannelModal}
+              channel={channelSelected}
+            />
+          </ChannelDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

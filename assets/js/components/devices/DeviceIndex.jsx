@@ -10,6 +10,7 @@ import { PAGINATED_DEVICES } from '../../graphql/devices';
 import withGql from '../../graphql/withGql'
 import analyticsLogger from '../../util/analyticsLogger';
 import { Typography } from 'antd';
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
 const DEFAULT_COLUMN = "name"
@@ -141,65 +142,70 @@ class DeviceIndex extends Component {
     const { devices, loading, error } = this.props.devicesQuery;
 
     return(
-      <DeviceDashboardLayout {...this.props}>
-        {
-          error && <Text>Data failed to load, please reload the page and try again</Text>
-        }
-        {
-          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
-        }
-        {
-          !loading &&  (
-            <DeviceIndexTable
-              openDeleteDeviceModal={this.openDeleteDeviceModal}
-              openDevicesAddLabelModal={this.openDevicesAddLabelModal}
-              openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
-              openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
-              onChangePageSize={this.handleChangePageSize}
-              handleChangePage={this.handleChangePage}
-              devices={devices}
-              history={this.props.history}
-              handleChangePage={this.handleChangePage}
-              handleSortChange={this.handleSortChange}
-              pageSize={this.state.pageSize}
-              column={this.state.column}
-              order={this.state.order}
-              userEmail={this.props.user.email}
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DeviceDashboardLayout {...this.props}>
+            {
+              error && <Text>Data failed to load, please reload the page and try again</Text>
+            }
+            {
+              loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+            }
+            {
+              !loading &&  (
+                <DeviceIndexTable
+                  openDeleteDeviceModal={this.openDeleteDeviceModal}
+                  openDevicesAddLabelModal={this.openDevicesAddLabelModal}
+                  openDevicesRemoveLabelModal={this.openDevicesRemoveLabelModal}
+                  openDeviceRemoveAllLabelsModal={this.openDeviceRemoveAllLabelsModal}
+                  onChangePageSize={this.handleChangePageSize}
+                  handleChangePage={this.handleChangePage}
+                  devices={devices}
+                  history={this.props.history}
+                  handleChangePage={this.handleChangePage}
+                  handleSortChange={this.handleSortChange}
+                  pageSize={this.state.pageSize}
+                  column={this.state.column}
+                  order={this.state.order}
+                  userEmail={this.props.user.email}
+                />
+              )
+            }
+
+            <DevicesAddLabelModal
+              open={showDevicesAddLabelModal}
+              onClose={this.closeDevicesAddLabelModal}
+              devicesToUpdate={this.state.devicesSelected}
+              totalDevices={devices && devices.totalEntries}
+              allDevicesSelected={this.state.allDevicesSelected}
             />
-          )
-        }
 
-        <DevicesAddLabelModal
-          open={showDevicesAddLabelModal}
-          onClose={this.closeDevicesAddLabelModal}
-          devicesToUpdate={this.state.devicesSelected}
-          totalDevices={devices && devices.totalEntries}
-          allDevicesSelected={this.state.allDevicesSelected}
-        />
+            <DeviceRemoveLabelModal
+              open={showDevicesRemoveLabelModal}
+              onClose={this.closeDevicesRemoveLabelModal}
+              labels={labelsSelected}
+              device={deviceToRemoveLabel}
+            />
 
-        <DeviceRemoveLabelModal
-          open={showDevicesRemoveLabelModal}
-          onClose={this.closeDevicesRemoveLabelModal}
-          labels={labelsSelected}
-          device={deviceToRemoveLabel}
-        />
+            <DeviceRemoveAllLabelsModal
+              open={showDeviceRemoveAllLabelsModal}
+              onClose={this.closeDeviceRemoveAllLabelsModal}
+              devices={this.state.devicesSelected}
+              totalDevices={devices && devices.totalEntries}
+              allDevicesSelected={this.state.allDevicesSelected}
+            />
 
-        <DeviceRemoveAllLabelsModal
-          open={showDeviceRemoveAllLabelsModal}
-          onClose={this.closeDeviceRemoveAllLabelsModal}
-          devices={this.state.devicesSelected}
-          totalDevices={devices && devices.totalEntries}
-          allDevicesSelected={this.state.allDevicesSelected}
-        />
-
-        <DeleteDeviceModal
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={this.state.allDevicesSelected}
-          devicesToDelete={this.state.devicesSelected}
-          totalDevices={devices && devices.totalEntries}
-        />
-      </DeviceDashboardLayout>
+            <DeleteDeviceModal
+              open={showDeleteDeviceModal}
+              onClose={this.closeDeleteDeviceModal}
+              allDevicesSelected={this.state.allDevicesSelected}
+              devicesToDelete={this.state.devicesSelected}
+              totalDevices={devices && devices.totalEntries}
+            />
+          </DeviceDashboardLayout>
+        </DesktopDisplay>
+      </>
     )
   }
 }

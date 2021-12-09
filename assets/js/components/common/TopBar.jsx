@@ -126,7 +126,7 @@ class TopBar extends Component {
           </MediaQuery>
           {
             currentOrganizationName && (
-              <MediaQuery minWidth={400}>
+              <MediaQuery minWidth={601}>
                 <SearchBar />
               </MediaQuery>
             )
@@ -156,40 +156,38 @@ class TopBar extends Component {
           </MediaQuery>
           {
             organization && (
-              <MediaQuery minWidth={720}>
-                <Tooltip
-                  title={
-                    <span
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
-                      onClick={() => this.props.push("/datacredits")}
-                      className="noselect"
-                    >
-                      <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
-                      <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
-                    </span>
-                  }
-                  onVisibleChange={this.refreshDC}
-                >
-                  <div
-                    style={{
-                      height: 31,
-                      backgroundColor: organization.dc_balance > 1000 ? '#565C64' : '#FF4D4F',
-                      borderRadius: 30,
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      marginLeft: 10
-                    }}
+              <Tooltip
+                title={
+                  <span
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                    onClick={() => this.props.push("/datacredits")}
+                    className="noselect"
                   >
-                    <img draggable="false" style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
-                    <Text
-                      className="noselect"
-                      style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -11, cursor: 'default' }}
-                    >
-                      {numeral(organization.dc_balance).format('0,0')}
-                    </Text>
-                  </div>
-                </Tooltip>
-              </MediaQuery>
+                    <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
+                    <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
+                  </span>
+                }
+                onVisibleChange={this.refreshDC}
+              >
+                <div
+                  style={{
+                    height: 31,
+                    backgroundColor: organization.dc_balance > 1000 ? '#565C64' : '#FF4D4F',
+                    borderRadius: 30,
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    marginLeft: 10
+                  }}
+                >
+                  <img draggable="false" style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
+                  <Text
+                    className="noselect"
+                    style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -11, cursor: 'default' }}
+                  >
+                    {numeral(organization.dc_balance).format('0,0')}
+                  </Text>
+                </div>
+              </Tooltip>
             )
           }
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>

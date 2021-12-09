@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
 import FunctionDashboardLayout from "./FunctionDashboardLayout";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import DeleteFunctionModal from "./DeleteFunctionModal";
@@ -118,107 +119,122 @@ export default (props) => {
 
   if (loading) {
     return (
-      <FunctionDashboardLayout {...props}>
-        <div style={{ padding: 40 }}>
-          <SkeletonLayout />
-        </div>
-      </FunctionDashboardLayout>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <FunctionDashboardLayout {...props}>
+            <div style={{ padding: 40 }}>
+              <SkeletonLayout />
+            </div>
+          </FunctionDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
   if (error) {
     return (
-      <FunctionDashboardLayout {...props}>
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      </FunctionDashboardLayout>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <FunctionDashboardLayout {...props}>
+            <div style={{ padding: 40 }}>
+              <Text>Data failed to load, please reload the page and try again</Text>
+            </div>
+          </FunctionDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 
   return (
-    <FunctionDashboardLayout {...props}>
-      <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-        <div
-          className="show-page"
-          style={{
-            minWidth,
-          }}
-        >
-          <div className="show-header">
-            <Text style={{ fontSize: 24, fontWeight: 600 }}>{fxn.name}</Text>
-            <UserCan>
-              <div className="show-buttons">
-                <Button
-                  style={{ borderRadius: 4, marginRight: 12 }}
-                  type="default"
-                  icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
-                  onClick={() => {
-                    dispatch(
-                      updateFunction(fxn.id, {
-                        active: !fxn.active,
-                      })
-                    );
-                    analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
-                      id: fxn.id,
-                      active: !fxn.active,
-                    });
-                  }}
-                >
-                  {fxn.active ? "Pause" : "Start"} Function
-                </Button>
-                <Button
-                  style={{ borderRadius: 4 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openDeleteFunctionModal();
-                  }}
-                >
-                  Delete Function
-                </Button>
+    <>
+      <MobileDisplay />
+      <DesktopDisplay>
+        <FunctionDashboardLayout {...props}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+            <div
+              className="show-page"
+              style={{
+                minWidth,
+              }}
+            >
+              <div className="show-header">
+                <Text style={{ fontSize: 24, fontWeight: 600 }}>{fxn.name}</Text>
+                <UserCan>
+                  <div className="show-buttons">
+                    <Button
+                      style={{ borderRadius: 4, marginRight: 12 }}
+                      type="default"
+                      icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
+                      onClick={() => {
+                        dispatch(
+                          updateFunction(fxn.id, {
+                            active: !fxn.active,
+                          })
+                        );
+                        analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
+                          id: fxn.id,
+                          active: !fxn.active,
+                        });
+                      }}
+                    >
+                      {fxn.active ? "Pause" : "Start"} Function
+                    </Button>
+                    <Button
+                      style={{ borderRadius: 4 }}
+                      type="danger"
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDeleteFunctionModal();
+                      }}
+                    >
+                      Delete Function
+                    </Button>
+                  </div>
+                </UserCan>
               </div>
-            </UserCan>
+
+              <FunctionDetailsCard
+                fxn={fxn}
+                name={name}
+                type={type}
+                format={format}
+                body={body}
+                handleSelectFunctionType={handleSelectFunctionType}
+                handleInputUpdate={handleInputUpdate}
+                handleSelectFormat={handleSelectFormat}
+                clearInputs={clearInputs}
+                handleSubmit={handleSubmit}
+                horizontal={true}
+              />
+
+              <UserCan>
+                {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
+                  <Card title="Google Form Fields">
+                    <GoogleSheetForm />
+                  </Card>
+                )}
+              </UserCan>
+
+              {(format === "custom" || (fxn.format === "custom" && !format)) && (
+                <FunctionValidator
+                  handleFunctionUpdate={handleFunctionUpdate}
+                  body={body && body.length > 0 ? body : ""}
+                  title="Custom Script"
+                />
+              )}
+
+              <DeleteFunctionModal
+                open={showDeleteFunctionModal}
+                onClose={closeDeleteFunctionModal}
+                functionToDelete={fxn}
+                redirect
+              />
+            </div>
           </div>
-
-          <FunctionDetailsCard
-            fxn={fxn}
-            name={name}
-            type={type}
-            format={format}
-            body={body}
-            handleSelectFunctionType={handleSelectFunctionType}
-            handleInputUpdate={handleInputUpdate}
-            handleSelectFormat={handleSelectFormat}
-            clearInputs={clearInputs}
-            handleSubmit={handleSubmit}
-            horizontal={true}
-          />
-
-          <UserCan>
-            {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
-              <Card title="Google Form Fields">
-                <GoogleSheetForm />
-              </Card>
-            )}
-          </UserCan>
-
-          {(format === "custom" || (fxn.format === "custom" && !format)) && (
-            <FunctionValidator
-              handleFunctionUpdate={handleFunctionUpdate}
-              body={body && body.length > 0 ? body : ""}
-              title="Custom Script"
-            />
-          )}
-
-          <DeleteFunctionModal
-            open={showDeleteFunctionModal}
-            onClose={closeDeleteFunctionModal}
-            functionToDelete={fxn}
-            redirect
-          />
-        </div>
-      </div>
-    </FunctionDashboardLayout>
+        </FunctionDashboardLayout>
+      </DesktopDisplay>
+    </>
   );
 };

@@ -7,6 +7,7 @@ import { Prompt } from "react-router";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
 import { getIntegrationTypeForFlows } from "../../util/flows";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin, message } from "antd";
@@ -110,29 +111,39 @@ class FlowsIndex extends Component {
     const { loading, error } = this.props.allResourcesQuery;
     if (loading)
       return (
-        <DashboardLayout fullHeightWidth user={this.props.user}>
-          <div
-            style={{
-              height: "100%",
-              width: "100%",
-              padding: 300,
-              textAlign: "center",
-            }}
-          >
-            <Spin size="large" />
-          </div>
-        </DashboardLayout>
+        <>
+          <MobileDisplay />
+          <DesktopDisplay>
+            <DashboardLayout fullHeightWidth user={this.props.user}>
+              <div
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  padding: 300,
+                  textAlign: "center",
+                }}
+              >
+                <Spin size="large" />
+              </div>
+            </DashboardLayout>
+          </DesktopDisplay>
+        </>
       );
     if (error)
       return (
-        <DashboardLayout fullHeightWidth user={this.props.user}>
-          <div style={{ padding: 20 }}>
-            <Text>
-              Workspace data failed to load, please reload the page and try
-              again
-            </Text>
-          </div>
-        </DashboardLayout>
+        <>
+          <MobileDisplay />
+          <DesktopDisplay>
+            <DashboardLayout fullHeightWidth user={this.props.user}>
+              <div style={{ padding: 20 }}>
+                <Text>
+                  Workspace data failed to load, please reload the page and try
+                  again
+                </Text>
+              </div>
+            </DashboardLayout>
+          </DesktopDisplay>
+        </>
       );
 
     const { organization } = this.props.allResourcesQuery.data;
@@ -151,37 +162,42 @@ class FlowsIndex extends Component {
     );
 
     return (
-      <DashboardLayout fullHeightWidth user={this.props.user} noFooter>
-        <UserCan>
-          <Prompt
-            when={this.state.hasChanges}
-            message="You have unsaved changes, are you sure you want to leave this page?"
-          />
-        </UserCan>
-        <ReactFlowProvider>
-          <FlowsWorkspace
-            initialElementsMap={initialElementsMap}
-            submitChanges={this.submitChanges}
-            setChangesState={this.setChangesState}
-            hasChanges={this.state.hasChanges}
-            labels={nodesByType.labels}
-            channels={nodesByType.channels}
-            functions={nodesByType.functions}
-            devices={nodesByType.devices}
-            organization={organization}
-            checkEdgeAnimation={(source) => {
-              return checkEdgeAnimation(
-                {
-                  activeLabels,
-                  activeDevices,
-                },
-                flowPositions.edges,
-                source
-              );
-            }}
-          />
-        </ReactFlowProvider>
-      </DashboardLayout>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout fullHeightWidth user={this.props.user} noFooter>
+            <UserCan>
+              <Prompt
+                when={this.state.hasChanges}
+                message="You have unsaved changes, are you sure you want to leave this page?"
+              />
+            </UserCan>
+            <ReactFlowProvider>
+              <FlowsWorkspace
+                initialElementsMap={initialElementsMap}
+                submitChanges={this.submitChanges}
+                setChangesState={this.setChangesState}
+                hasChanges={this.state.hasChanges}
+                labels={nodesByType.labels}
+                channels={nodesByType.channels}
+                functions={nodesByType.functions}
+                devices={nodesByType.devices}
+                organization={organization}
+                checkEdgeAnimation={(source) => {
+                  return checkEdgeAnimation(
+                    {
+                      activeLabels,
+                      activeDevices,
+                    },
+                    flowPositions.edges,
+                    source
+                  );
+                }}
+              />
+            </ReactFlowProvider>
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

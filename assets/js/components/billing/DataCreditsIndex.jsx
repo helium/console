@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import analyticsLogger from "../../util/analyticsLogger";
 import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
@@ -365,114 +366,119 @@ class DataCreditsIndex extends Component {
     );
 
     return (
-      <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              padding: "0px 0px 20px 0px",
-              overflowX: 'scroll'
-            }}
-            className="no-scroll-bar"
-          >
-            <UserCan noManager>
-              {organization && organization.dc_balance_nonce != 0 ? (
-                <React.Fragment>
-                  {(!organization.received_free_dc ||
-                    organization.dc_balance > 10000) && (
-                    <Button
-                      style={{ borderRadius: 4, marginRight: 20 }}
-                      icon={<RightCircleOutlined />}
-                      onClick={() =>
-                        this.openModal("showOrganizationTransferDCModal")
-                      }
-                    >
-                      Transfer DC to Org
-                    </Button>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
+            <div
+              style={{
+                padding: "30px 30px 10px 30px",
+                height: "100%",
+                width: "100%",
+                backgroundColor: "#ffffff",
+                borderRadius: 6,
+                overflow: "hidden",
+                boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  padding: "0px 0px 20px 0px",
+                  overflowX: 'scroll'
+                }}
+                className="no-scroll-bar"
+              >
+                <UserCan noManager>
+                  {organization && organization.dc_balance_nonce != 0 ? (
+                    <React.Fragment>
+                      {(!organization.received_free_dc ||
+                        organization.dc_balance > 10000) && (
+                        <Button
+                          style={{ borderRadius: 4, marginRight: 20 }}
+                          icon={<RightCircleOutlined />}
+                          onClick={() =>
+                            this.openModal("showOrganizationTransferDCModal")
+                          }
+                        >
+                          Transfer DC to Org
+                        </Button>
+                      )}
+                      <Button
+                        icon={<SyncOutlined />}
+                        onClick={() => this.openModal("showAutomaticRenewalModal")}
+                        style={{
+                          borderRadius: 4,
+                          marginRight: 20,
+                          display: !process.env.SELF_HOSTED ? "inline" : "none",
+                        }}
+                      >
+                        Automatic Renewals{" "}
+                        {organization.automatic_charge_amount ? "On" : "Off"}
+                      </Button>
+                      <Button
+                        type="primary"
+                        icon={<WalletOutlined />}
+                        onClick={() => this.openModal("showPurchaseCreditModal")}
+                        style={{
+                          borderRadius: 4,
+                          display: window.disable_user_burn !== "true" ? "inline" : "none"
+                        }}
+                      >
+                        Purchase Data Credits
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    <div />
                   )}
-                  <Button
-                    icon={<SyncOutlined />}
-                    onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{
-                      borderRadius: 4,
-                      marginRight: 20,
-                      display: !process.env.SELF_HOSTED ? "inline" : "none",
-                    }}
-                  >
-                    Automatic Renewals{" "}
-                    {organization.automatic_charge_amount ? "On" : "Off"}
-                  </Button>
-                  <Button
-                    type="primary"
-                    icon={<WalletOutlined />}
-                    onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{
-                      borderRadius: 4,
-                      display: window.disable_user_burn !== "true" ? "inline" : "none"
-                    }}
-                  >
-                    Purchase Data Credits
-                  </Button>
-                </React.Fragment>
-              ) : (
-                <div />
+                </UserCan>
+              </div>
+              {error && (
+                <Text>
+                  Data failed to load, please reload the page and try again
+                </Text>
               )}
-            </UserCan>
-          </div>
-          {error && (
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          )}
-          {organization &&
-            organization.dc_balance_nonce == 0 &&
-            this.renderBlankState()}
-          {organization &&
-            organization.dc_balance_nonce != 0 &&
-            this.renderContent()}
-        </div>
+              {organization &&
+                organization.dc_balance_nonce == 0 &&
+                this.renderBlankState()}
+              {organization &&
+                organization.dc_balance_nonce != 0 &&
+                this.renderContent()}
+            </div>
 
-        <DefaultPaymentModal
-          open={showDefaultPaymentModal}
-          onClose={() => this.closeModal("showDefaultPaymentModal")}
-          organization={organization}
-          paymentMethods={this.state.paymentMethods}
-          fetchPaymentMethods={this.fetchPaymentMethods}
-        />
+            <DefaultPaymentModal
+              open={showDefaultPaymentModal}
+              onClose={() => this.closeModal("showDefaultPaymentModal")}
+              organization={organization}
+              paymentMethods={this.state.paymentMethods}
+              fetchPaymentMethods={this.fetchPaymentMethods}
+            />
 
-        <PurchaseCreditModal
-          open={showPurchaseCreditModal}
-          onClose={() => this.closeModal("showPurchaseCreditModal")}
-          organization={organization}
-          fetchPaymentMethods={this.fetchPaymentMethods}
-          paymentMethods={this.state.paymentMethods}
-        />
+            <PurchaseCreditModal
+              open={showPurchaseCreditModal}
+              onClose={() => this.closeModal("showPurchaseCreditModal")}
+              organization={organization}
+              fetchPaymentMethods={this.fetchPaymentMethods}
+              paymentMethods={this.state.paymentMethods}
+            />
 
-        <AutomaticRenewalModal
-          open={showAutomaticRenewalModal}
-          onClose={() => this.closeModal("showAutomaticRenewalModal")}
-          paymentMethods={this.state.paymentMethods}
-          organization={organization}
-        />
+            <AutomaticRenewalModal
+              open={showAutomaticRenewalModal}
+              onClose={() => this.closeModal("showAutomaticRenewalModal")}
+              paymentMethods={this.state.paymentMethods}
+              organization={organization}
+            />
 
-        <OrganizationTransferDCModal
-          open={showOrganizationTransferDCModal}
-          onClose={() => this.closeModal("showOrganizationTransferDCModal")}
-          organization={organization}
-        />
-      </DashboardLayout>
+            <OrganizationTransferDCModal
+              open={showOrganizationTransferDCModal}
+              onClose={() => this.closeModal("showOrganizationTransferDCModal")}
+              organization={organization}
+            />
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

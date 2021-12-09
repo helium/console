@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { updateMembership, deleteMembership } from '../../actions/membership'
 import { deleteInvitation } from '../../actions/invitation'
 import DashboardLayout from '../common/DashboardLayout'
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import MembersTable from './MembersTable'
 import InvitationsTable from './InvitationsTable'
 import NewUserModal from './NewUserModal'
@@ -58,59 +59,64 @@ class UserIndex extends Component {
   render() {
     const { updateMembership, deleteMembership, deleteInvitation, user } = this.props
     return (
-      <DashboardLayout
-        title="Users"
-        user={this.props.user}
-        noAddButton
-      >
-        <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth: 320 }}>
-            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Members</Text>
-            <UserCan noManager>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                style={{ borderRadius: 4 }}
-                onClick={() => {
-                  analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
-                  this.openNewUserModal()
-                }}
-              >
-                Add User
-              </Button>
-            </UserCan>
-          </div>
-          <MembersTable
-            openEditMembershipModal={this.openEditMembershipModal}
-            openDeleteUserModal={this.openDeleteUserModal}
-            user={user}
-          />
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
-            <Text style={{ fontSize: 22, fontWeight: 600 }}>All Invitations</Text>
-          </div>
-          <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} user={user} />
-        </div>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout
+            title="Users"
+            user={this.props.user}
+            noAddButton
+          >
+            <div style={{ height: '100%', width: '100%', backgroundColor: '#ffffff', borderRadius: 6, overflow: 'hidden', boxShadow: '0px 20px 20px -7px rgba(17, 24, 31, 0.19)' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px', minWidth: 320 }}>
+                <Text style={{ fontSize: 22, fontWeight: 600 }}>All Members</Text>
+                <UserCan noManager>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    style={{ borderRadius: 4 }}
+                    onClick={() => {
+                      analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP")
+                      this.openNewUserModal()
+                    }}
+                  >
+                    Add User
+                  </Button>
+                </UserCan>
+              </div>
+              <MembersTable
+                openEditMembershipModal={this.openEditMembershipModal}
+                openDeleteUserModal={this.openDeleteUserModal}
+                user={user}
+              />
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '30px 20px 20px 30px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 600 }}>All Invitations</Text>
+              </div>
+              <InvitationsTable openDeleteUserModal={this.openDeleteUserModal} user={user} />
+            </div>
 
-        <NewUserModal
-          open={this.state.newUserOpen}
-          onClose={this.closeNewUserModal}
-        />
+            <NewUserModal
+              open={this.state.newUserOpen}
+              onClose={this.closeNewUserModal}
+            />
 
-        <EditMembershipModal
-          open={this.state.editMembershipOpen}
-          onClose={this.closeEditMembershipModal}
-          membership={this.state.editingMembership}
-          updateMembership={updateMembership}
-        />
+            <EditMembershipModal
+              open={this.state.editMembershipOpen}
+              onClose={this.closeEditMembershipModal}
+              membership={this.state.editingMembership}
+              updateMembership={updateMembership}
+            />
 
-        <DeleteUserModal
-          open={this.state.deleteUserOpen}
-          onClose={this.closeDeleteUserModal}
-          membership={this.state.editingMembership}
-          deleteMembership={deleteMembership}
-          deleteInvitation={deleteInvitation}
-        />
-      </DashboardLayout>
+            <DeleteUserModal
+              open={this.state.deleteUserOpen}
+              onClose={this.closeDeleteUserModal}
+              membership={this.state.editingMembership}
+              deleteMembership={deleteMembership}
+              deleteInvitation={deleteInvitation}
+            />
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     )
   }
 }

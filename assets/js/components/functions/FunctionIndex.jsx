@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import withGql from '../../graphql/withGql'
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import { PAGINATED_FUNCTIONS } from '../../graphql/functions'
 import FunctionDashboardLayout from './FunctionDashboardLayout'
 import FunctionIndexTable from './FunctionIndexTable'
@@ -62,29 +63,34 @@ class FunctionIndex extends Component {
     const { showDeleteFunctionModal } = this.state
 
     return (
-      <FunctionDashboardLayout {...this.props}>
-        {
-          error && <Text>Data failed to load, please reload the page and try again</Text>
-        }
-        {
-          loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
-        }
-        {
-          !loading && (
-            <FunctionIndexTable
-              history={this.props.history}
-              functions={functions}
-              openDeleteFunctionModal={this.openDeleteFunctionModal}
-              handleChangePage={this.handleChangePage}
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <FunctionDashboardLayout {...this.props}>
+            {
+              error && <Text>Data failed to load, please reload the page and try again</Text>
+            }
+            {
+              loading && <div style={{ padding: 40 }}><SkeletonLayout /></div>
+            }
+            {
+              !loading && (
+                <FunctionIndexTable
+                  history={this.props.history}
+                  functions={functions}
+                  openDeleteFunctionModal={this.openDeleteFunctionModal}
+                  handleChangePage={this.handleChangePage}
+                />
+              )
+            }
+            <DeleteFunctionModal
+              open={showDeleteFunctionModal}
+              onClose={this.closeDeleteFunctionModal}
+              functionToDelete={this.state.functionSelected}
             />
-          )
-        }
-        <DeleteFunctionModal
-          open={showDeleteFunctionModal}
-          onClose={this.closeDeleteFunctionModal}
-          functionToDelete={this.state.functionSelected}
-        />
-      </FunctionDashboardLayout>
+          </FunctionDashboardLayout>
+        </DesktopDisplay>
+      </>
     )
   }
 }
