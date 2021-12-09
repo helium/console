@@ -30,7 +30,6 @@ class DeleteDeviceModal extends Component {
       from,
       label,
       doNotRedirect,
-      deleteResource
     } = this.props;
     const { applyToAll } = this.state;
 
@@ -39,11 +38,6 @@ class DeleteDeviceModal extends Component {
     });
     if (from == "deviceShow") {
       deleteDevice(devicesToDelete[0].id, doNotRedirect === true ? false : true)
-      .then(response => {
-        if (response.status === 204) {
-          deleteResource(true)
-        }
-      })
     } else {
       deleteDevices(!applyToAll && devicesToDelete, label ? label.id : "none");
     }
