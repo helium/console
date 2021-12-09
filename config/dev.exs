@@ -92,8 +92,8 @@ config :console,
 
 config :logger, level: :debug
 
-config :prometheus, App.PrometheusExporter,
-  path: "/metrics",
-  format: :auto,
-  registry: :default,
-  auth: {:basic, "username", "password"}
+# config :prometheus, App.PrometheusExporter,
+#   path: "/metrics",
+#   format: :auto,
+#   registry: :default,
+#   auth: {:basic, "username", "password"}

@@ -20,7 +20,8 @@ defmodule Console.Mixfile do
   def application do
     [
       mod: {Console.Application, []},
-      extra_applications: [:logger, :runtime_tools, :prometheus_ex, :prometheus_ecto, :prometheus_phoenix, :prometheus_plugs, :prometheus_process_collector]
+      extra_applications: [:logger, :runtime_tools]
+      # extra_applications: [:logger, :runtime_tools, :prometheus_ex, :prometheus_ecto, :prometheus_phoenix, :prometheus_plugs, :prometheus_process_collector]
     ]
   end
 
