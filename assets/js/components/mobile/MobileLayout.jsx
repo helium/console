@@ -6,7 +6,7 @@ import Dropdown from "../../../img/mobile/nav-drawer-dropdown.svg";
 
 class MobileLayout extends Component {
   state = {
-    showNav: true,
+    showNav: false,
   };
 
   toggleNav = (e) => {
@@ -19,7 +19,13 @@ class MobileLayout extends Component {
       <Layout style={{ height: "100%", width: "100%", backgroundColor: "#F5F7F9", }}>
         {
           this.state.showNav && (
-            <div style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', height: '100%', width: '100%' }}>
+            <div
+              style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', height: '100%', width: '100%' }}
+              onClick={(e) => {
+                if (e.target.id === 'navdrawer-opaque-bg') this.toggleNav(e)
+              }}
+              id="navdrawer-opaque-bg"
+            >
               <img
                 draggable="false"
                 src={Close}

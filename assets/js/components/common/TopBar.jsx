@@ -7,6 +7,7 @@ import { push } from 'connected-react-router';
 import MediaQuery from 'react-responsive'
 import numeral from 'numeral'
 import HelpLinks from './HelpLinks'
+import { updateDisplay } from '../../actions/display'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
@@ -16,6 +17,7 @@ import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizat
 import { redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Typography, Tooltip } from 'antd';
 import DownOutlined from '@ant-design/icons/DownOutlined';
+import MobileOutlined from '@ant-design/icons/MobileOutlined';
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
 import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined';
 const { Text } = Typography
@@ -98,6 +100,14 @@ class TopBar extends Component {
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {
+            this.props.desktopOnly && (
+              <MobileOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginRight: 10, position: 'relative', top: 1}}
+                onClick={() => this.props.updateDisplay(false)}
+              />
+            )
+          }
+          {
             this.props.showNav ? (
               <MenuFoldOutlined
                 style={{ color: '#ffffff', fontSize: 18, marginRight: 10, position: 'relative', top: 1}}
@@ -119,7 +129,7 @@ class TopBar extends Component {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <MediaQuery minWidth={720}>
+          <MediaQuery minWidth={769}>
             <Link to="/welcome" draggable="false">
               <img draggable="false" src={Logo} style={{ height: 30, position: 'relative', top: '-1px', display: 'inline-block'}}/>
             </Link>
@@ -131,7 +141,7 @@ class TopBar extends Component {
               </MediaQuery>
             )
           }
-          <MediaQuery minWidth={720}>
+          <MediaQuery minWidth={769}>
             <img
               draggable="false"
               src={this.state.showHelpLinks ? QuestionSelectedIcon : QuestionIcon}
@@ -230,12 +240,13 @@ function mapStateToProps(state, ownProps) {
     currentOrganizationName: state.organization.currentOrganizationName,
     currentOrganizationId: state.organization.currentOrganizationId,
     socket: state.apollo.socket,
-    pathname: state.router.location.pathname
+    pathname: state.router.location.pathname,
+    desktopOnly: state.display.desktopOnly,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, push, switchOrganization }, dispatch);
+  return bindActionCreators({ logOut, push, switchOrganization, updateDisplay }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -1,11 +1,15 @@
 import React from "react";
 import { withRouter, NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Typography } from 'antd';
 const { Text } = Typography
 import Logo from "../../../img/mobile/logo.svg";
 import NavArrow from "../../../img/mobile/nav-drawer-arrow.svg";
+import { updateDisplay } from '../../actions/display'
 
 const NavDrawer = (props) => {
+  const dispatch = useDispatch();
+
   return (
     <div
       style={{
@@ -114,7 +118,7 @@ const NavDrawer = (props) => {
           <Text style={{ fontSize: 14, fontWeight: 600, display: 'block' }}>Need to do something else?</Text>
           <Text
             style={{ fontSize: 14, fontWeight: 600, display: 'block', color: '#2C79EE', cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={() => dispatch(updateDisplay(true))}
           >
             Switch to Desktop View
           </Text>

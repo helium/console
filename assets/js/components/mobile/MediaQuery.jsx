@@ -1,30 +1,48 @@
 import React from 'react'
+import { useSelector, useDispatch } from "react-redux";
 import MediaQuery from 'react-responsive'
+import MobileLayout from './MobileLayout'
 import { Typography } from 'antd';
 const { Text } = Typography
+import { updateDisplay } from '../../actions/display'
 
 export const MobileDisplay = (props) => {
-  if (props.children) {
+  const dispatch = useDispatch();
+  const desktopOnly = useSelector((state) => state.display.desktopOnly);
+  if (!desktopOnly && props.children) {
     return (
       <MediaQuery maxWidth={719}>
         {props.children}
       </MediaQuery>
     )
-  } else {
+  } else if (!desktopOnly) {
     return (
       <MediaQuery maxWidth={719}>
-        <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 15, textAlign: 'center' }}>
-          <Text strong style={{ fontSize: 18 }}>This page is currently unavailable in Mobile View. Please switch to Desktop View to access this page.</Text>
-        </div>
+        <MobileLayout>
+          <div style={{ backgroundColor: "#F5F7F9", height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 15, textAlign: 'center' }}>
+            <Text strong style={{ fontSize: 18 }}>
+              This page is currently unavailable in Mobile View. To access this page, please click to <Text style={{ color: '#2C79EE', fontWeight: 600, cursor: 'pointer' }} onClick={() => dispatch(updateDisplay(true))}>Switch to Desktop View</Text>.
+            </Text>
+          </div>
+        </MobileLayout>
       </MediaQuery>
     )
+  } else {
+    return <React.Fragment />
   }
 }
 
 export const DesktopDisplay = (props) => {
-  return (
-    <MediaQuery minWidth={720}>
-      {props.children}
-    </MediaQuery>
-  )
+  const desktopOnly = useSelector((state) => state.display.desktopOnly);
+  if (desktopOnly) {
+    return (
+      <React.Fragment>{props.children}</React.Fragment>
+    )
+  } else {
+    return (
+      <MediaQuery minWidth={720}>
+        {props.children}
+      </MediaQuery>
+    )
+  }
 }

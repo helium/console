@@ -32,7 +32,9 @@ class NavDrawer extends Component {
           justifyContent: "center",
           alignItems: "flex-end",
           paddingRight: 40,
+          overflowY: 'scroll',
         }}
+        className="no-scroll-bar"
       >
         <div style={{ marginBottom: 30, position: "relative" }}>
           <NavLink
