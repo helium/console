@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 import DashboardLayout from './common/DashboardLayout'
+import MobileLayout from './mobile/MobileLayout'
 import { MobileDisplay, DesktopDisplay } from './mobile/MediaQuery'
 import analyticsLogger from '../util/analyticsLogger'
 import { minWidth } from '../util/constants'
@@ -34,7 +35,11 @@ class Welcome extends Component {
   render() {
     return(
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            TSETINGG
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <DashboardLayout
             title=""

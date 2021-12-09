@@ -372,6 +372,17 @@ tr.ant-table-expanded-row:hover {
   height: 0;
 }
 
+.menu-link-mobile {
+  color: #000000;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.menu-link-mobile:hover,
+.menu-link-mobile.is-active {
+  color: #236AD4;
+}
+
 .menu-link {
   color: #242528;
   font-size: 18px;

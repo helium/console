@@ -13,7 +13,7 @@ export const MobileDisplay = (props) => {
   } else {
     return (
       <MediaQuery maxWidth={719}>
-        <div style={{ backgroundColor: "#F5F7F9", height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 15, textAlign: 'center' }}>
+        <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 15, textAlign: 'center' }}>
           <Text strong style={{ fontSize: 18 }}>This page is currently unavailable in Mobile View. Please switch to Desktop View to access this page.</Text>
         </div>
       </MediaQuery>
