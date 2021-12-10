@@ -17,6 +17,17 @@ class MobileLayout extends Component {
   render() {
     return (
       <Layout style={{ height: "100%", width: "100%", backgroundColor: "#F5F7F9", }}>
+        <div style={{ height: 50, display: 'flex', flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
+          <img
+            draggable="false"
+            src={Dropdown}
+            style={{ height: 17, cursor: 'pointer' }}
+            onClick={this.toggleNav}
+          />
+        </div>
+        <div style={{ height: 'calc(100% - 50px)', overflowY: 'scroll' }}>
+          {this.props.children}
+        </div>
         {
           this.state.showNav && (
             <div
@@ -36,17 +47,6 @@ class MobileLayout extends Component {
             </div>
           )
         }
-        <div style={{ height: 50, display: 'flex', flexDirection: 'row', alignItems: 'center', paddingLeft: 15 }}>
-          <img
-            draggable="false"
-            src={Dropdown}
-            style={{ height: 17, cursor: 'pointer' }}
-            onClick={this.toggleNav}
-          />
-        </div>
-        <div style={{ height: 'calc(100% - 50px)'}}>
-          {this.props.children}
-        </div>
       </Layout>
     );
   }

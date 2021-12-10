@@ -16,7 +16,7 @@ const NavDrawer = (props) => {
         height: "100%",
         width: 300,
         paddingLeft: 25,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
