@@ -46,7 +46,7 @@ class OrganizationIndex extends Component {
       <>
         <MobileDisplay>
           <MobileLayout>
-            <MobileOrganizationIndex />
+            <MobileOrganizationIndex user={this.props.user} />
           </MobileLayout>
         </MobileDisplay>
 
