@@ -5,6 +5,8 @@ import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
+import MobileLayout from '../mobile/MobileLayout'
+import MobileDataCreditsIndex from '../mobile/data_credits/MobileDataCreditsIndex'
 import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import analyticsLogger from "../../util/analyticsLogger";
 import DefaultPaymentModal from "./DefaultPaymentModal";
@@ -35,6 +37,8 @@ const styles = {
   image: {
     width: 33,
     marginRight: 8,
+    top: -4,
+    position: 'relative'
   },
   numberCount: {
     fontSize: 40,
@@ -367,7 +371,12 @@ class DataCreditsIndex extends Component {
 
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileDataCreditsIndex organization={organization} styles={styles} />
+          </MobileLayout>
+        </MobileDisplay>
+
         <DesktopDisplay>
           <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
             <div
