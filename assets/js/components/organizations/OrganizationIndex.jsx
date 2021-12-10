@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import DashboardLayout from '../common/DashboardLayout'
 import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import MobileLayout from '../mobile/MobileLayout'
+import MobileOrganizationIndex from '../mobile/organizations/MobileOrganizationIndex'
 import OrganizationsTable from '../organizations/OrganizationsTable'
 import NewOrganizationModal from '../organizations/NewOrganizationModal'
 import DeleteOrganizationModal from '../organizations/DeleteOrganizationModal'
@@ -42,7 +44,12 @@ class OrganizationIndex extends Component {
     const { showOrganizationModal, showDeleteOrganizationModal, selectedOrgForDelete } = this.state
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileOrganizationIndex />
+          </MobileLayout>
+        </MobileDisplay>
+
         <DesktopDisplay>
           <DashboardLayout
             title="Organizations"
