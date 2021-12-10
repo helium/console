@@ -85,8 +85,6 @@ const MagicRouter = (props) => {
       </div>
     );
 
-  console.log({ userFromMagicRouter: user });
-
   return (
     <ConnectedRouter history={history}>
       <Switch>
