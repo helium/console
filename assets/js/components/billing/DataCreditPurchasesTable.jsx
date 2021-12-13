@@ -129,10 +129,10 @@ class DataCreditPurchasesTable extends Component {
             dataSource={dcPurchases.entries}
             rowKey={record => record.id}
             pagination={false}
-            style={{ minWidth, overflowX: 'scroll' }}
+            style={{ overflowX: 'scroll' }}
             className="no-scroll-bar"
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0, minWidth }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0 }}>
             <Pagination
               current={dcPurchases.pageNumber}
               pageSize={dcPurchases.pageSize}

@@ -373,7 +373,14 @@ class DataCreditsIndex extends Component {
       <>
         <MobileDisplay>
           <MobileLayout>
-            <MobileDataCreditsIndex organization={organization} styles={styles} />
+            <MobileDataCreditsIndex
+              organization={organization}
+              paymentMethods={this.state.paymentMethods}
+              defaultPayment={defaultPayment}
+              triedFetchingPayments={this.state.triedFetchingPayments}
+              styles={styles}
+              user={this.props.user}
+            />
           </MobileLayout>
         </MobileDisplay>
 
