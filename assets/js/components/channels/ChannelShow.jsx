@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import UserCan, { userCan } from "../common/UserCan";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { displayError } from "../../util/messages";
 import { minWidth } from "../../util/constants";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -36,6 +36,8 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text, Paragraph } = Typography;
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import DeleteChannelModal from "./DeleteChannelModal";
+import MobileLayout from "../mobile/MobileLayout";
+import MobileChannelShow from "./MobileChannelShow";
 
 class ChannelShow extends Component {
   state = {
@@ -231,7 +233,9 @@ class ChannelShow extends Component {
     if (loading)
       return (
         <>
-          <MobileDisplay />
+          <MobileDisplay>
+            <MobileLayout />
+          </MobileDisplay>
           <DesktopDisplay>
             <ChannelDashboardLayout {...this.props}>
               <div style={{ padding: 40 }}>
@@ -271,7 +275,11 @@ class ChannelShow extends Component {
 
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileChannelShow channel={channel} loading={loading} />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <ChannelDashboardLayout {...this.props}>
             <div className="show-page">
@@ -333,7 +341,9 @@ class ChannelShow extends Component {
                             style={{ marginLeft: 2 }}
                             checked={channel.receive_joins}
                             onChange={this.handleReceiveJoinsChange}
-                            disabled={!userCan({ role: this.props.currentRole })}
+                            disabled={
+                              !userCan({ role: this.props.currentRole })
+                            }
                           />
                         </Paragraph>
                         <Paragraph>
@@ -370,7 +380,10 @@ class ChannelShow extends Component {
                             marginBottom: 16,
                           }}
                         >
-                          <Input value={downlinkUrl} style={{ marginRight: 10 }} />
+                          <Input
+                            value={downlinkUrl}
+                            style={{ marginRight: 10 }}
+                          />
                           <CopyToClipboard text={downlinkUrl}>
                             <Button
                               onClick={() => {}}
@@ -441,7 +454,10 @@ class ChannelShow extends Component {
                   title="Update your Connection Details"
                   bodyStyle={{ padding: 0 }}
                 >
-                  <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+                  <div
+                    className="no-scroll-bar"
+                    style={{ overflowX: "scroll" }}
+                  >
                     <div style={{ padding: 24, minWidth }}>
                       {this.renderForm()}
                       <Divider />
