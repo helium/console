@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import withGql from "../../graphql/withGql";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
+import MobileLayout from "../mobile/MobileLayout";
 import ChannelIndexTable from "./ChannelIndexTable";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import DeleteChannelModal from "./DeleteChannelModal";
@@ -9,6 +10,7 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { PAGINATED_CHANNELS } from "../../graphql/channels";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { Typography } from "antd";
+import MobileChannelIndex from "./MobileChannelIndex";
 const { Text } = Typography;
 
 class ChannelIndex extends Component {
@@ -88,11 +90,17 @@ class ChannelIndex extends Component {
 
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileChannelIndex loading={loading} channels={channels} />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <ChannelDashboardLayout {...this.props}>
             {error && (
-              <Text>Data failed to load, please reload the page and try again</Text>
+              <Text>
+                Data failed to load, please reload the page and try again
+              </Text>
             )}
             {loading && (
               <div style={{ padding: 40 }}>
