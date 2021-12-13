@@ -5,6 +5,7 @@ import PaymentCard from "../../billing/PaymentCard";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import UpOutlined from "@ant-design/icons/UpOutlined";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
+import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
 import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
@@ -16,12 +17,17 @@ const MobileDataCreditsIndex = ({ organization, paymentMethods, defaultPayment, 
   const [showBytes, setShowBytes] = useState(true);
   const [showDefaultPayment, setShowDefaultPayment] = useState(true);
 
-  return (
-    <div style={{ height: '100%', overflowY: 'hidden', backgroundColor: '#ffffff' }}>
-      <div style={{ padding: 15, boxShadow: '0px 3px 7px 0px #ccc', backgroundColor: "#F5F7F9", height: 80, position: 'relative', zIndex: 10 }}>
-        <Text style={{ fontSize: 32, fontWeight: 600 }}>Data Credits</Text>
+  const renderBlankSlate = () => {
+    return (
+      <div style={{ margin: 15 }}>
+        <IndexBlankSlate organization={organization} onClick={() => {}} />
       </div>
-      <div style={{ height: 'calc(100% - 80px)', overflowY: 'scroll' }}>
+    )
+  }
+
+  const renderContent = () => {
+    return (
+      <React.Fragment>
         <div
           style={{
             display: "flex",
@@ -33,35 +39,31 @@ const MobileDataCreditsIndex = ({ organization, paymentMethods, defaultPayment, 
           className="no-scroll-bar"
         >
           <UserCan noManager>
-            {organization && organization.dc_balance_nonce != 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={() => {}}
-                  style={{
-                    borderRadius: 4,
-                    marginRight: 8,
-                    display: window.disable_user_burn !== "true" ? "inline" : "none"
-                  }}
-                >
-                  Purchase DC
-                </Button>
-                <Button
-                  onClick={() => {}}
-                  size="large"
-                  style={{
-                    borderRadius: 4,
-                    display: !process.env.SELF_HOSTED ? "inline" : "none",
-                  }}
-                >
-                  Automatic Renewals{" "}
-                  {organization.automatic_charge_amount ? "On" : "Off"}
-                </Button>
-              </div>
-            ) : (
-              <React.Fragment />
-            )}
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => {}}
+                style={{
+                  borderRadius: 4,
+                  marginRight: 8,
+                  display: window.disable_user_burn !== "true" ? "inline" : "none"
+                }}
+              >
+                Purchase DC
+              </Button>
+              <Button
+                onClick={() => {}}
+                size="large"
+                style={{
+                  borderRadius: 4,
+                  display: !process.env.SELF_HOSTED ? "inline" : "none",
+                }}
+              >
+                Automatic Renewals{" "}
+                {organization.automatic_charge_amount ? "On" : "Off"}
+              </Button>
+            </div>
           </UserCan>
         </div>
 
@@ -187,6 +189,26 @@ const MobileDataCreditsIndex = ({ organization, paymentMethods, defaultPayment, 
             <DataCreditPurchasesTable user={user} />
           </div>
         </UserCan>
+      </React.Fragment>
+    )
+  }
+
+  return (
+    <div style={{ height: '100%', overflowY: 'hidden', backgroundColor: '#ffffff' }}>
+      <div style={{ padding: 15, boxShadow: '0px 3px 7px 0px #ccc', backgroundColor: "#F5F7F9", height: 80, position: 'relative', zIndex: 10 }}>
+        <Text style={{ fontSize: 32, fontWeight: 600 }}>Data Credits</Text>
+      </div>
+      <div style={{ height: 'calc(100% - 80px)', overflowY: 'scroll' }}>
+        {
+          organization && organization.dc_balance_nonce == 0 && (
+            renderBlankSlate()
+          )
+        }
+        {
+          organization && organization.dc_balance_nonce != 0 && (
+            renderContent()
+          )
+        }
       </div>
     </div>
   )
