@@ -262,7 +262,7 @@ class DataCreditsIndex extends Component {
       showAutomaticRenewalModal,
       showOrganizationTransferDCModal,
     } = this.state;
-    const { organization, error } = this.props.orgShowDCQuery;
+    const { organization, error, loading } = this.props.orgShowDCQuery;
 
     const defaultPayment = find(
       this.state.paymentMethods,
@@ -280,6 +280,8 @@ class DataCreditsIndex extends Component {
               triedFetchingPayments={this.state.triedFetchingPayments}
               styles={styles}
               user={this.props.user}
+              loading={loading}
+              error={error}
             />
           </MobileLayout>
         </MobileDisplay>

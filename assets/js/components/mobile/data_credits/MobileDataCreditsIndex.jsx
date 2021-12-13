@@ -5,6 +5,7 @@ import PaymentCard from "../../billing/PaymentCard";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import UpOutlined from "@ant-design/icons/UpOutlined";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
+import { SkeletonLayout } from '../../common/SkeletonLayout'
 import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
@@ -12,7 +13,7 @@ import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
 import { Typography, Button, Card, Row, Col } from 'antd';
 const { Text } = Typography
 
-const MobileDataCreditsIndex = ({ organization, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
+const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
   const [showDCs, setShowDCs] = useState(true);
   const [showBytes, setShowBytes] = useState(true);
   const [showDefaultPayment, setShowDefaultPayment] = useState(true);
@@ -199,6 +200,20 @@ const MobileDataCreditsIndex = ({ organization, paymentMethods, defaultPayment, 
         <Text style={{ fontSize: 32, fontWeight: 600 }}>Data Credits</Text>
       </div>
       <div style={{ height: 'calc(100% - 80px)', overflowY: 'scroll' }}>
+        {
+          loading && (
+            <div style={{ marginTop: 15 }}>
+              <SkeletonLayout />
+            </div>
+          )
+        }
+        {error && (
+          <div style={{ margin: 15 }}>
+            <Text>
+              Data failed to load, please reload the page and try again
+            </Text>
+          </div>
+        )}
         {
           organization && organization.dc_balance_nonce == 0 && (
             renderBlankSlate()
