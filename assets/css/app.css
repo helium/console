@@ -380,7 +380,7 @@ tr.ant-table-expanded-row:hover {
 
 .menu-link-mobile:hover,
 .menu-link-mobile.is-active {
-  color: #236AD4;
+  color: #236ad4;
 }
 
 .menu-link {
@@ -725,4 +725,9 @@ a.version-link {
 
 #payment-history-panel .ant-collapse-content-box {
   padding: 0px;
+}
+
+.desktop-form {
+  width: 125px;
+  text-align: left;
 }
