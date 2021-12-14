@@ -211,6 +211,7 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
         organization={organization}
         fetchPaymentMethods={fetchPaymentMethods}
         paymentMethods={paymentMethods}
+        mobile={true}
       />
 
       <AutomaticRenewalModal
@@ -218,12 +219,14 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
         onClose={() => setShowAutomaticRenewalModal(false)}
         paymentMethods={paymentMethods}
         organization={organization}
+        mobile={true}
       />
 
       <OrganizationTransferDCModal
         open={showOrganizationTransferDCModal}
         onClose={() => setShowOrganizationTransferDCModal(false)}
         organization={organization}
+        mobile={true}
       />
     </div>
   )

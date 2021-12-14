@@ -26,7 +26,7 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
     <div style={{ ...styles.container, marginTop: 12 }}>
       <Row gutter={24} style={{ marginBottom: 12 }}>
         <Col span={14}>
-          <Text style={styles.inputHeader}>Amount in USD$</Text>
+          <Text style={styles.inputHeader}>Amount in USD</Text>
           <Input
             placeholder="Enter Quantity"
             name="countUSD"

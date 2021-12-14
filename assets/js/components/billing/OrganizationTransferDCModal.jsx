@@ -193,7 +193,7 @@ class OrganizationTransferDCModal extends Component {
   }
 
   render() {
-    const { open, onClose, organization } = this.props
+    const { open, onClose, organization, mobile } = this.props
 
     return(
       <Modal
@@ -216,6 +216,7 @@ class OrganizationTransferDCModal extends Component {
             </Button>,
           ]
         }
+        bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px"}}
       >
         {this.renderOrgEntry()}
       </Modal>
