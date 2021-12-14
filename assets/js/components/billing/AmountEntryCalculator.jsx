@@ -20,7 +20,7 @@ const styles = {
   }
 }
 
-const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate, disabled }) => (
+const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate, disabled, mobile }) => (
   <div>
     <Text strong>Enter the quantity to purchase (minimum $10)</Text>
     <div style={{ ...styles.container, marginTop: 12 }}>
@@ -48,7 +48,7 @@ const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpda
           {
             countB > 0 && (
               <div style={{ marginTop: -4 }}>
-                <Text style={styles.blueText}>{convertToText(countB)}</Text>
+                <Text style={styles.blueText}>{mobile ? convertToTextShort(countB) : convertToText(countB)}</Text>
               </div>
             )
           }

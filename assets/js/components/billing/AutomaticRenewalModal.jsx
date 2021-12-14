@@ -143,10 +143,11 @@ class AutomaticRenewalModal extends Component {
             countB={this.state.countB}
             countUSD={this.state.countUSD}
             handleCountInputUpdate={this.handleCountInputUpdate}
+            mobile={mobile}
           />
         </div>
-        <Row gutter={12}>
-          <Col span={12}>
+        <Row gutter={mobile ? 0 : 12}>
+          <Col span={mobile ? 24 : 12}>
             <Text strong>Payment Method</Text>
             <Select
               value={this.state.paymentMethod}
@@ -163,7 +164,7 @@ class AutomaticRenewalModal extends Component {
               }
             </Select>
           </Col>
-          <Col span={12}>
+          <Col span={mobile ? 24 : 12} style={{ marginTop: mobile ? 8 : 0 }}>
             <Text strong>When to Charge</Text>
             {
               organization && (
