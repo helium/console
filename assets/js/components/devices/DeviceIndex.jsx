@@ -6,6 +6,8 @@ import DevicesAddLabelModal from './DevicesAddLabelModal';
 import DeleteDeviceModal from './DeleteDeviceModal';
 import DeviceRemoveLabelModal from './DeviceRemoveLabelModal';
 import DeviceRemoveAllLabelsModal from './DeviceRemoveAllLabelsModal';
+import MobileLayout from "../mobile/MobileLayout";
+import MobileDeviceIndex from "../mobile/devices/MobileDeviceIndex";
 import { PAGINATED_DEVICES } from '../../graphql/devices';
 import withGql from '../../graphql/withGql'
 import analyticsLogger from '../../util/analyticsLogger';
@@ -143,7 +145,11 @@ class DeviceIndex extends Component {
 
     return(
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileDeviceIndex loading={loading} devices={devices} />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <DeviceDashboardLayout {...this.props}>
             {
