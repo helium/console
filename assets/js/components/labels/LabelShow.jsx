@@ -8,6 +8,8 @@ import LabelAddDeviceModal from "./LabelAddDeviceModal";
 import DeleteDeviceModal from "../devices/DeleteDeviceModal";
 import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
 import RemoveDevicesFromLabelModal from "./RemoveDevicesFromLabelModal";
+import MobileLayout from "../mobile/MobileLayout";
+import MobileLabelShow from "../mobile/labels/MobileLabelShow";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import LabelShowTable from "./LabelShowTable";
 import UserCan from "../common/UserCan";
@@ -130,10 +132,23 @@ class LabelShow extends Component {
     const { loading, error, label } = this.props.labelShowQuery;
     const { showDeleteDeviceModal, selectedDevices } = this.state;
 
+    const errorMessage = () => (
+      <div style={{ padding: 40 }}>
+        <Text>Data failed to load, please reload the page and try again</Text>
+      </div>
+    );
+
     if (loading)
       return (
         <>
-          <MobileDisplay />
+          <MobileDisplay>
+            <MobileLayout>
+              <div style={{ padding: 15 }}>
+                <Text style={{ fontSize: 32, fontWeight: 600 }}>...</Text>
+              </div>
+              <SkeletonLayout />
+            </MobileLayout>
+          </MobileDisplay>
           <DesktopDisplay>
             <DeviceDashboardLayout {...this.props}>
               <div style={{ padding: 40 }}>
@@ -146,14 +161,14 @@ class LabelShow extends Component {
     if (error)
       return (
         <>
-          <MobileDisplay />
+          <MobileDisplay>
+            <MobileLayout>
+              {errorMessage()}
+            </MobileLayout>
+          </MobileDisplay>
           <DesktopDisplay>
             <DeviceDashboardLayout {...this.props}>
-              <div style={{ padding: 40 }}>
-                <Text>
-                  Data failed to load, please reload the page and try again
-                </Text>
-              </div>
+              {errorMessage()}
             </DeviceDashboardLayout>
           </DesktopDisplay>
         </>
@@ -166,7 +181,11 @@ class LabelShow extends Component {
 
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileLabelShow label={label} />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <DeviceDashboardLayout {...this.props}>
             <div>

@@ -1,22 +1,21 @@
 import React from "react";
-import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
-import MobileDeviceTableRow from "./MobileDeviceTableRow";
-import MobileDeviceIndexLabelsBar from "./MobileDeviceIndexLabelsBar";
+import MobileDeviceTableRow from "../devices/MobileDeviceTableRow";
+import MobileDeviceIndexLabelsBar from "../devices/MobileDeviceIndexLabelsBar";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 
-export default ({ loading, devices }) => {
+export default ({ label }) => {
   const history = useHistory();
+  const devices = label.devices
+
   return (
     <div>
       <div style={{ padding: 15 }}>
-        <Text style={{ fontSize: 32, fontWeight: 600 }}>My Devices</Text>
+        <Text style={{ fontSize: 32, fontWeight: 600 }}>{label.name}</Text>
       </div>
 
       <MobileDeviceIndexLabelsBar push={history.push} pathname={history.location.pathname} />
-
-      {loading && <SkeletonLayout />}
       {devices && (
         <div>
           <Text
@@ -28,9 +27,9 @@ export default ({ loading, devices }) => {
               display: "block",
             }}
           >
-            {devices.entries.length} Devices
+            {devices.length} Devices
           </Text>
-          {devices.entries.map(device => <MobileDeviceTableRow device={device} push={history.push} />)}
+          {devices.map(device => <MobileDeviceTableRow device={device} push={history.push} />)}
         </div>
       )}
     </div>

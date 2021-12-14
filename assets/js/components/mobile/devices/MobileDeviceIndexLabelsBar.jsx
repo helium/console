@@ -35,13 +35,36 @@ class MobileDeviceIndexLabelsBar extends Component {
 
   render() {
     const { loading, error, allLabels } = this.props.allLabelsQuery;
-    const { pathname } = this.props.history.location
+    const { pathname, push } = this.props
 
     if (loading) return <div />;
     if (error)
       return (
         <Text>Data failed to load, please reload the page and try again</Text>
       );
+
+    const renderLabelBarItem = (l) => {
+      return (
+        <div
+          key={l.id}
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            if (pathname === "/labels/" + l.id) return
+            push("/labels/" + l.id)
+          }}
+        >
+          <Text
+            style={{
+              ...styles.labelButton,
+              color: pathname === "/labels/" + l.id ? '#2C79EE' : '#88A8C6',
+              borderBottom: pathname === "/labels/" + l.id ? '3px solid #2C79EE' : 'none'
+            }}
+          >
+            {l.name}
+          </Text>
+        </div>
+      );
+    }
 
     return (
       <div
@@ -61,25 +84,21 @@ class MobileDeviceIndexLabelsBar extends Component {
           style={{ cursor: 'pointer' }}
           onClick={() => {
             if (pathname === '/devices') return
-            this.props.history.push('/devices')
+            push('/devices')
           }}
         >
-          <Text style={{ ...styles.labelButton, color: pathname == '/devices' ? '#2C79EE' : '#88A8C6', borderBottom: '3px solid #2C79EE' }}>All Devices</Text>
+          <Text
+            style={{
+              ...styles.labelButton,
+              color: pathname == '/devices' ? '#2C79EE' : '#88A8C6',
+              borderBottom: pathname == '/devices' ? '3px solid #2C79EE' : 'none'
+            }}
+          >
+            All Devices
+          </Text>
         </div>
-        {allLabels.map((l) => {
-          return (
-            <div
-              key={l.id}
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (pathname === "/labels/" + l.id) return
-                this.props.history.push("/labels/" + l.id)
-              }}
-            >
-              <Text style={{ ...styles.labelButton, color: '#88A8C6' }}>{l.name}</Text>
-            </div>
-          );
-        })}
+        {allLabels.filter(l => "/labels/" + l.id === pathname).map(renderLabelBarItem)}
+        {allLabels.filter(l => "/labels/" + l.id !== pathname).map(renderLabelBarItem)}
       </div>
     );
   }
