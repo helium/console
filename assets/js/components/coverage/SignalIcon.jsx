@@ -26,7 +26,7 @@ export default ({ rssi }) => {
   const content = (
     <>
       <b>{strength} Signal</b>
-      {rssi && <div>Avg {rssi}dBm</div>}
+      {rssi && <div>Avg {(Math.round(rssi * 100) / 100).toFixed(2)}dBm</div>}
     </>
   );
 
