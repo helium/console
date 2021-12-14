@@ -5,6 +5,9 @@ import PaymentCard from "../../billing/PaymentCard";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import UpOutlined from "@ant-design/icons/UpOutlined";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
+import PurchaseCreditModal from "../../billing/PurchaseCreditModal";
+import OrganizationTransferDCModal from "../../billing/OrganizationTransferDCModal";
+import AutomaticRenewalModal from "../../billing/AutomaticRenewalModal";
 import { SkeletonLayout } from '../../common/SkeletonLayout'
 import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
@@ -14,11 +17,15 @@ import { Typography, Button, Row, Col, Collapse } from 'antd';
 const { Text } = Typography
 const { Panel } = Collapse
 
-const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
+const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMethods, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
+  const [showPurchaseCreditModal, setShowPurchaseCreditModal] = useState(false);
+  const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] = useState(false);
+  const [showOrganizationTransferDCModal, setShowOrganizationTransferDCModal] = useState(false);
+
   const renderBlankSlate = () => {
     return (
       <div style={{ margin: 15 }}>
-        <IndexBlankSlate organization={organization} onClick={() => {}} />
+        <IndexBlankSlate organization={organization} onClick={() => setShowPurchaseCreditModal(true)} />
       </div>
     )
   }
@@ -41,7 +48,7 @@ const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, 
               <Button
                 type="primary"
                 size="large"
-                onClick={() => {}}
+                onClick={() => setShowPurchaseCreditModal(true)}
                 style={{
                   borderRadius: 4,
                   marginRight: 8,
@@ -51,16 +58,27 @@ const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, 
                 Purchase DC
               </Button>
               <Button
-                onClick={() => {}}
+                onClick={() => setShowAutomaticRenewalModal(true)}
                 size="large"
                 style={{
                   borderRadius: 4,
+                  marginRight: 8,
                   display: !process.env.SELF_HOSTED ? "inline" : "none",
                 }}
               >
                 Automatic Renewals{" "}
                 {organization.automatic_charge_amount ? "On" : "Off"}
               </Button>
+              {(!organization.received_free_dc ||
+                organization.dc_balance > 10000) && (
+                <Button
+                  style={{ borderRadius: 4 }}
+                  size="large"
+                  onClick={() => setShowOrganizationTransferDCModal(true)}
+                >
+                  Transfer DC to Org
+                </Button>
+              )}
             </div>
           </UserCan>
         </div>
@@ -186,6 +204,27 @@ const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, 
           )
         }
       </div>
+
+      <PurchaseCreditModal
+        open={showPurchaseCreditModal}
+        onClose={() => setShowPurchaseCreditModal(false)}
+        organization={organization}
+        fetchPaymentMethods={fetchPaymentMethods}
+        paymentMethods={paymentMethods}
+      />
+
+      <AutomaticRenewalModal
+        open={showAutomaticRenewalModal}
+        onClose={() => setShowAutomaticRenewalModal(false)}
+        paymentMethods={paymentMethods}
+        organization={organization}
+      />
+
+      <OrganizationTransferDCModal
+        open={showOrganizationTransferDCModal}
+        onClose={() => setShowOrganizationTransferDCModal(false)}
+        organization={organization}
+      />
     </div>
   )
 }
