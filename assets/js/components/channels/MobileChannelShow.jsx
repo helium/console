@@ -16,7 +16,11 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { updateChannel } from "../../actions/channel";
 import CopyIcon from "../../../img/channels/mobile/copy.svg";
 import DeleteChannelModal from "./DeleteChannelModal";
-import { renderConnectionDetails } from "./constants";
+import {
+  renderConnectionDetails,
+  getDownlinkKey,
+  getDownlinkUrl,
+} from "./constants";
 import { displayError } from "../../util/messages";
 
 export default ({ channel }) => {
@@ -29,15 +33,8 @@ export default ({ channel }) => {
   const [credentials, setCredentials] = useState({});
   const [validInput, setValidInput] = useState(true);
 
-  // TODO extract into its own thing
-  const downlinkKey = channel.downlink_token || `{:downlink_key}`;
-  let downlinkUrl = `http://localhost:4000/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-  if (process.env.SELF_HOSTED && window.env_domain !== "localhost:4000") {
-    downlinkUrl = `https://${window.env_domain}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-  }
-  if (!process.env.SELF_HOSTED) {
-    downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-  }
+  const downlinkKey = getDownlinkKey(channel);
+  const downlinkUrl = getDownlinkUrl(channel, downlinkKey);
 
   const handleReceiveJoinsChange = (value) => {
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_RECEIVE_JOINS", {
@@ -191,21 +188,17 @@ export default ({ channel }) => {
                     }
                   />
                   <CopyToClipboard text={channel.downlink_token}>
-                    <Button
-                      onClick={() => {}}
-                      style={{ marginRight: 10 }}
-                      type="primary"
-                    >
+                    <Button onClick={() => {}} type="primary">
                       <img src={CopyIcon}></img>
                     </Button>
                   </CopyToClipboard>
-                  <Button
-                    onClick={handleChangeDownlinkToken}
-                    style={{ marginRight: 0 }}
-                  >
-                    Generate New Key
-                  </Button>
                 </div>
+                <Button
+                  onClick={handleChangeDownlinkToken}
+                  style={{ marginTop: 10 }}
+                >
+                  Generate New Key
+                </Button>
               </UserCan>
             )}
           </Panel>

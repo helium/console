@@ -33,7 +33,11 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import DeleteChannelModal from "./DeleteChannelModal";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileChannelShow from "./MobileChannelShow";
-import { renderConnectionDetails } from "./constants";
+import {
+  renderConnectionDetails,
+  getDownlinkKey,
+  getDownlinkUrl,
+} from "./constants";
 
 class ChannelShow extends Component {
   state = {
@@ -183,7 +187,9 @@ class ChannelShow extends Component {
       return (
         <>
           <MobileDisplay>
-            <MobileLayout />
+            <MobileLayout>
+              <SkeletonLayout />
+            </MobileLayout>
           </MobileDisplay>
           <DesktopDisplay>
             <ChannelDashboardLayout {...this.props}>
@@ -194,31 +200,28 @@ class ChannelShow extends Component {
           </DesktopDisplay>
         </>
       );
+
+    const errorMessage = () => (
+      <div style={{ padding: 40 }}>
+        <Text>Data failed to load, please reload the page and try again</Text>
+      </div>
+    );
     if (error)
       return (
         <>
-          <MobileDisplay />
+          <MobileDisplay>
+            <MobileLayout>{errorMessage()}</MobileLayout>
+          </MobileDisplay>
           <DesktopDisplay>
             <ChannelDashboardLayout {...this.props}>
-              <div style={{ padding: 40 }}>
-                <Text>
-                  Data failed to load, please reload the page and try again
-                </Text>
-              </div>
+              {errorMessage()}
             </ChannelDashboardLayout>
           </DesktopDisplay>
         </>
       );
-    const downlinkKey = channel.downlink_token || `{:downlink_key}`;
 
-    let downlinkUrl = `http://localhost:4000/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-
-    if (process.env.SELF_HOSTED && window.env_domain !== "localhost:4000") {
-      downlinkUrl = `https://${window.env_domain}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-    }
-    if (!process.env.SELF_HOSTED) {
-      downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
-    }
+    const downlinkKey = getDownlinkKey(channel);
+    const downlinkUrl = getDownlinkUrl(channel, downlinkKey);
 
     const { showDownlinkToken, showDeleteChannelModal } = this.state;
 
@@ -226,7 +229,7 @@ class ChannelShow extends Component {
       <>
         <MobileDisplay>
           <MobileLayout>
-            <MobileChannelShow channel={channel} loading={loading} />
+            <MobileChannelShow channel={channel} />
           </MobileLayout>
         </MobileDisplay>
         <DesktopDisplay>
