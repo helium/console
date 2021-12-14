@@ -6,11 +6,12 @@ import numeral from 'numeral'
 import PaymentCard from './PaymentCard'
 import { minWidth } from '../../util/constants'
 import { PAGINATED_DC_PURCHASES } from '../../graphql/dcPurchases'
-import { Card, Typography, Table, Pagination } from 'antd';
+import { Card, Typography, Table, Pagination, Collapse } from 'antd';
 import CaretLeftOutlined from '@ant-design/icons/CaretLeftOutlined';
 import CaretRightOutlined from '@ant-design/icons/CaretRightOutlined';
 import { SkeletonLayout } from '../common/SkeletonLayout';
 const { Text } = Typography
+const { Panel } = Collapse
 
 const styles = {
   greenIcon: {
@@ -57,7 +58,7 @@ class DataCreditPurchasesTable extends Component {
     refetch({ page, pageSize })
   }
 
-  render() {
+  renderTable = () => {
     const columns = [
       {
         title: 'Data Credits',
@@ -109,8 +110,34 @@ class DataCreditPurchasesTable extends Component {
         align: 'left',
       },
     ]
+    const { dcPurchases } = this.props.dcPurchasesQuery
 
-    const { loading, error, dcPurchases } = this.props.dcPurchasesQuery
+    return (
+      <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
+        <Table
+          columns={columns}
+          dataSource={dcPurchases.entries}
+          rowKey={record => record.id}
+          pagination={false}
+          style={{ overflowX: 'scroll' }}
+          className="no-scroll-bar"
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0 }}>
+          <Pagination
+            current={dcPurchases.pageNumber}
+            pageSize={dcPurchases.pageSize}
+            total={dcPurchases.totalEntries}
+            onChange={page => this.handleChangePage(page)}
+            style={{marginBottom: 20}}
+            showSizeChanger={false}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  render() {
+    const { loading, error } = this.props.dcPurchasesQuery
     const title = "Payment History";
 
     if (loading) return <SkeletonLayout />;
@@ -118,31 +145,22 @@ class DataCreditPurchasesTable extends Component {
       <Text>Data failed to load, please reload the page and try again</Text>
     )
 
+    if (this.props.mobile) {
+      return (
+        <Collapse expandIconPosition="right" defaultActiveKey="1">
+          <Panel header={<b>PAYMENT HISTORY</b>} key="1" id="payment-history-panel">
+            {this.renderTable()}
+          </Panel>
+        </Collapse>
+      )
+    }
+
     return (
       <Card
         title={title}
         bodyStyle={{ padding: 0, paddingTop: 1 }}
       >
-        <div className="no-scroll-bar" style={{ overflowX: 'scroll' }}>
-          <Table
-            columns={columns}
-            dataSource={dcPurchases.entries}
-            rowKey={record => record.id}
-            pagination={false}
-            style={{ minWidth, overflowX: 'scroll' }}
-            className="no-scroll-bar"
-          />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingBottom: 0, minWidth }}>
-            <Pagination
-              current={dcPurchases.pageNumber}
-              pageSize={dcPurchases.pageSize}
-              total={dcPurchases.totalEntries}
-              onChange={page => this.handleChangePage(page)}
-              style={{marginBottom: 20}}
-              showSizeChanger={false}
-            />
-          </div>
-        </div>
+        {this.renderTable()}
       </Card>
     )
   }

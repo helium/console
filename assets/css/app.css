@@ -722,3 +722,7 @@ a.version-link {
   background-color: #f5f7f9;
   cursor: pointer;
 }
+
+#payment-history-panel .ant-collapse-content-box {
+  padding: 0px;
+}
