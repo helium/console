@@ -31,7 +31,7 @@ class MobileLayout extends Component {
         {
           this.state.showNav && (
             <div
-              style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', height: '100%', width: '100%' }}
+              style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', height: '100%', width: '100%', zIndex: 100 }}
               onClick={(e) => {
                 if (e.target.id === 'navdrawer-opaque-bg') this.toggleNav(e)
               }}
