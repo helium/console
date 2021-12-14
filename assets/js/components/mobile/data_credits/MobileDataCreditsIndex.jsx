@@ -10,14 +10,11 @@ import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
 import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
-import { Typography, Button, Card, Row, Col } from 'antd';
+import { Typography, Button, Row, Col, Collapse } from 'antd';
 const { Text } = Typography
+const { Panel } = Collapse
 
 const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
-  const [showDCs, setShowDCs] = useState(true);
-  const [showBytes, setShowBytes] = useState(true);
-  const [showDefaultPayment, setShowDefaultPayment] = useState(true);
-
   const renderBlankSlate = () => {
     return (
       <div style={{ margin: 15 }}>
@@ -69,76 +66,41 @@ const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, 
         </div>
 
         <div style={{ margin: 15 }}>
-          <Card
-            title="Remaining DC"
-            bodyStyle={{ height: showDCs ? 90 : 0, padding: 0 }}
-            extra={
-              showDCs ? (
-                <UpOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowDCs(false)} />
-              ) : (
-                <DownOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowDCs(true)} />
-              )
-            }
-          >
-            {
-              showDCs && (
-                <div style={{ overflowX: 'scroll', padding: 20 }} className="no-scroll-bar">
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
-                    <img style={styles.image} src={DCIMg} />
-                    <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                      {organization && numeral(organization.dc_balance).format("0,0")}
-                    </Text>
-                  </div>
+          <Collapse expandIconPosition="right" defaultActiveKey="1">
+            <Panel header={<b>REMAINING DATA CREDITS</b>} key="1">
+              <div style={{ overflowX: 'scroll', padding: 10 }} className="no-scroll-bar">
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
+                  <img style={styles.image} src={DCIMg} />
+                  <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                    {organization && numeral(organization.dc_balance).format("0,0")}
+                  </Text>
                 </div>
-              )
-            }
-          </Card>
+              </div>
+            </Panel>
+          </Collapse>
         </div>
 
         <div style={{ margin: 15 }}>
-          <Card
-            title="Remaining Bytes"
-            bodyStyle={{ height: showBytes ? 90 : 0, padding: 0 }}
-            extra={
-              showBytes ? (
-                <UpOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowBytes(false)} />
-              ) : (
-                <DownOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowBytes(true)} />
-              )
-            }
-          >
-            {
-              showBytes && (
-                <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
-                    <img style={styles.image} src={BytesIMg} />
-                    <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                      {organization && numeral(organization.dc_balance * 24).format("0,0")}
-                    </Text>
-                  </div>
+          <Collapse expandIconPosition="right" defaultActiveKey="1">
+            <Panel header={<b>REMAINING PACKETS</b>} key="1">
+              <div style={{ overflowX: 'scroll', padding: 14 }} className="no-scroll-bar">
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
+                  <img style={styles.image} src={BytesIMg} />
+                  <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
+                    {organization && numeral(organization.dc_balance * 24).format("0,0")}
+                  </Text>
                 </div>
-              )
-            }
-          </Card>
+              </div>
+            </Panel>
+          </Collapse>
         </div>
 
         {!process.env.SELF_HOSTED && (
           <UserCan noManager>
             <div style={{ margin: 15 }}>
-              <Card
-                title="Default Payment Method"
-                bodyStyle={{ height: showDefaultPayment ? 90 : 0, padding: 0 }}
-                extra={
-                  showDefaultPayment ? (
-                    <UpOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowDefaultPayment(false)} />
-                  ) : (
-                    <DownOutlined style={{ color: '#C8D6E4' }} onClick={() => setShowDefaultPayment(true)} />
-                  )
-                }
-              >
-                {
-                  showDefaultPayment && (
-                    <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
+              <Collapse expandIconPosition="right" defaultActiveKey="1">
+                <Panel header={<b>DEFAULT PAYMENT METHOD</b>} key="1">
+                  <div style={{ overflowX: 'scroll', padding: 10 }} className="no-scroll-bar">
                     {paymentMethods.length > 0 && defaultPayment && (
                       <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
                         <Col span={16}>
@@ -178,16 +140,15 @@ const MobileDataCreditsIndex = ({ loading, error, organization, paymentMethods, 
                         <Text style={styles.numberCount}>N/A</Text>
                       </Row>
                     )}
-                    </div>
-                  )
-                }
-              </Card>
+                  </div>
+                </Panel>
+              </Collapse>
             </div>
           </UserCan>
         )}
         <UserCan noManager>
           <div style={{ margin: 15 }}>
-            <DataCreditPurchasesTable user={user} />
+            <DataCreditPurchasesTable user={user} mobile={true} />
           </div>
         </UserCan>
       </React.Fragment>
