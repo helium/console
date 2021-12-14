@@ -15,6 +15,9 @@ import UserCan, { userCan } from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import { updateChannel } from "../../actions/channel";
 import CopyIcon from "../../../img/channels/mobile/copy.svg";
+import DeleteChannelModal from "./DeleteChannelModal";
+import { renderConnectionDetails } from "./constants";
+import { displayError } from "../../util/messages";
 
 export default ({ channel }) => {
   const history = useHistory();
@@ -22,6 +25,9 @@ export default ({ channel }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
 
   const [showDownlinkToken, setShowDownlinkToken] = useState(false);
+  const [showDeleteChannelModal, setShowDeleteChannelModal] = useState(false);
+  const [credentials, setCredentials] = useState({});
+  const [validInput, setValidInput] = useState(true);
 
   // TODO extract into its own thing
   const downlinkKey = channel.downlink_token || `{:downlink_key}`;
@@ -46,6 +52,35 @@ export default ({ channel }) => {
       id: channel.id,
     });
     dispatch(updateChannel(channel.id, { downlink_token: "new" }));
+  };
+
+  const closeDeleteChannelModal = () => {
+    setShowDeleteChannelModal(false);
+  };
+
+  const handleUpdateDetailsInput = (credentials, validInput = true) => {
+    setCredentials(credentials);
+    setValidInput(validInput);
+  };
+
+  const handleUpdateDetailsChange = () => {
+    if (Object.keys(credentials).length > 0) {
+      analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", {
+        id: channel.id,
+      });
+      dispatch(updateChannel(channel.id, { credentials }));
+      setCredentials({});
+    } else {
+      if (channel.type !== "aws") {
+        displayError(
+          "Integration details have not been updated, please update details before submitting"
+        );
+      } else {
+        displayError(
+          "Please make sure all form details are filled in properly"
+        );
+      }
+    }
   };
 
   return (
@@ -104,69 +139,75 @@ export default ({ channel }) => {
               <Text strong># Piped Devices: </Text>
               <Text>{channel.number_devices}</Text>
             </Paragraph>
-            <UserCan>
-              <Divider />
-              <Text>Downlink URL</Text>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  marginBottom: 16,
-                }}
-              >
-                <Input value={downlinkUrl} style={{ marginRight: 10 }} />
-                <CopyToClipboard text={downlinkUrl}>
-                  <Button
-                    onClick={() => {}}
-                    style={{ marginRight: 0 }}
-                    type="primary"
-                  >
-                    <img src={CopyIcon} />
-                  </Button>
-                </CopyToClipboard>
-              </div>
-              <Text>Downlink Key</Text>
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <Input
-                  value={
-                    showDownlinkToken
-                      ? channel.downlink_token
-                      : "************************"
-                  }
+            {channel.type === "http" && (
+              <UserCan>
+                <Divider />
+                <Text>Downlink URL</Text>
+                <div
                   style={{
-                    marginRight: 10,
-                    color: "#38A2FF",
-                    fontFamily: "monospace",
+                    display: "flex",
+                    flexDirection: "row",
+                    marginBottom: 16,
                   }}
-                  suffix={
-                    showDownlinkToken ? (
-                      <EyeOutlined
-                        onClick={() => setShowDownlinkToken(!showDownlinkToken)}
-                      />
-                    ) : (
-                      <EyeInvisibleOutlined
-                        onClick={() => setShowDownlinkToken(!showDownlinkToken)}
-                      />
-                    )
-                  }
-                />
-                <CopyToClipboard text={channel.downlink_token}>
-                  <Button
-                    onClick={() => {}}
-                    style={{ marginRight: 10 }}
-                    type="primary"
-                  >
-                    <img src={CopyIcon}></img>
-                  </Button>
-                </CopyToClipboard>
-                <Button
-                  onClick={handleChangeDownlinkToken}
-                  style={{ marginRight: 0 }}
                 >
-                  Generate New Key
-                </Button>
-              </div>
-            </UserCan>
+                  <Input value={downlinkUrl} style={{ marginRight: 10 }} />
+                  <CopyToClipboard text={downlinkUrl}>
+                    <Button
+                      onClick={() => {}}
+                      style={{ marginRight: 0 }}
+                      type="primary"
+                    >
+                      <img src={CopyIcon} />
+                    </Button>
+                  </CopyToClipboard>
+                </div>
+                <Text>Downlink Key</Text>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <Input
+                    value={
+                      showDownlinkToken
+                        ? channel.downlink_token
+                        : "************************"
+                    }
+                    style={{
+                      marginRight: 10,
+                      color: "#38A2FF",
+                      fontFamily: "monospace",
+                    }}
+                    suffix={
+                      showDownlinkToken ? (
+                        <EyeOutlined
+                          onClick={() =>
+                            setShowDownlinkToken(!showDownlinkToken)
+                          }
+                        />
+                      ) : (
+                        <EyeInvisibleOutlined
+                          onClick={() =>
+                            setShowDownlinkToken(!showDownlinkToken)
+                          }
+                        />
+                      )
+                    }
+                  />
+                  <CopyToClipboard text={channel.downlink_token}>
+                    <Button
+                      onClick={() => {}}
+                      style={{ marginRight: 10 }}
+                      type="primary"
+                    >
+                      <img src={CopyIcon}></img>
+                    </Button>
+                  </CopyToClipboard>
+                  <Button
+                    onClick={handleChangeDownlinkToken}
+                    style={{ marginRight: 0 }}
+                  >
+                    Generate New Key
+                  </Button>
+                </div>
+              </UserCan>
+            )}
           </Panel>
           {channel.type === "http" && (
             <Panel header={<b>HTTP DETAILS</b>} key="2">
@@ -174,23 +215,46 @@ export default ({ channel }) => {
             </Panel>
           )}
           {channel.type === "aws" && (
-            <Panel header="AWS Details">
+            <Panel header={<b>AWS DETAILS</b>}>
               <AwsDetails channel={channel} key="2" />
             </Panel>
           )}
           {channel.type === "mqtt" && (
-            <Panel header="MQTT Details" key="2">
+            <Panel header={<b>MQTT DETAILS</b>} key="2">
               <MqttDetails channel={channel} />
             </Panel>
           )}
         </Collapse>
         <Collapse expandIconPosition="right" style={{ margin: "25px 0" }}>
-          <Panel header={<b>UPDATE YOUR CONNECTION DETAILS</b>} key="1"></Panel>
+          <Panel header={<b>UPDATE YOUR CONNECTION DETAILS</b>} key="1">
+            {renderConnectionDetails(channel, handleUpdateDetailsInput, true)}
+            <Button
+              type="primary"
+              style={{ marginTop: 10 }}
+              onClick={handleUpdateDetailsChange}
+              disabled={!validInput}
+            >
+              Update Details
+            </Button>
+          </Panel>
         </Collapse>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button type="danger">Delete Integration</Button>
+          <Button
+            type="danger"
+            onClick={() => {
+              setShowDeleteChannelModal(true);
+            }}
+          >
+            Delete Integration
+          </Button>
         </div>
       </div>
+      <DeleteChannelModal
+        mobile
+        open={showDeleteChannelModal}
+        onClose={closeDeleteChannelModal}
+        channel={channel}
+      />
     </>
   );
 };

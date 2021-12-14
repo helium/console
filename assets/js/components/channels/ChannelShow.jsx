@@ -10,11 +10,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
 import AwsDetails from "./AwsDetails";
-import AzureForm from "./forms/AzureForm.jsx";
-import AWSForm from "./forms/AWSForm.jsx";
-import GoogleForm from "./forms/GoogleForm.jsx";
-import MQTTForm from "./forms/MQTTForm.jsx";
-import HTTPForm from "./forms/HTTPForm.jsx";
 import { updateChannel } from "../../actions/channel";
 import { CHANNEL_SHOW } from "../../graphql/channels";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -38,6 +33,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import DeleteChannelModal from "./DeleteChannelModal";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileChannelShow from "./MobileChannelShow";
+import { renderConnectionDetails } from "./constants";
 
 class ChannelShow extends Component {
   state = {
@@ -170,53 +166,6 @@ class ChannelShow extends Component {
     this.props.updateChannel(channel.id, {
       payload_template: this.state.templateBody,
     });
-  };
-
-  renderForm = () => {
-    const { channel } = this.props.channelShowQuery;
-
-    switch (channel.type) {
-      case "aws":
-        return (
-          <AWSForm
-            onValidInput={this.handleUpdateDetailsInput}
-            type="update"
-            channel={channel}
-          />
-        );
-      case "google":
-        return (
-          <GoogleForm
-            onValidInput={this.handleUpdateDetailsInput}
-            type="update"
-            channel={channel}
-          />
-        );
-      case "mqtt":
-        return (
-          <MQTTForm
-            onValidInput={this.handleUpdateDetailsInput}
-            type="update"
-            channel={channel}
-          />
-        );
-      case "http":
-        return (
-          <HTTPForm
-            onValidInput={this.handleUpdateDetailsInput}
-            type="update"
-            channel={channel}
-          />
-        );
-      default:
-        return (
-          <AzureForm
-            onValidInput={this.handleUpdateDetailsInput}
-            type="update"
-            channel={channel}
-          />
-        );
-    }
   };
 
   openDeleteChannelModal = () => {
@@ -459,7 +408,10 @@ class ChannelShow extends Component {
                     style={{ overflowX: "scroll" }}
                   >
                     <div style={{ padding: 24, minWidth }}>
-                      {this.renderForm()}
+                      {renderConnectionDetails(
+                        channel,
+                        this.handleUpdateDetailsInput
+                      )}
                       <Divider />
                       <Button
                         type="primary"

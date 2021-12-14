@@ -205,148 +205,295 @@ class HTTPForm extends Component {
 
     return (
       <div>
-        <Row gutter={16} style={{ marginBottom: 16 }}>
-          <Col sm={12}>
-            <Radio.Group
-              defaultValue="post"
-              onChange={this.handleMethodUpdate}
-              value={this.state.method}
-              buttonStyle="solid"
-              style={{ paddingTop: "10px" }}
-            >
-              {METHOD_TYPES.map((method) => (
-                <Radio.Button
-                  key={`radio_${method.value}`}
-                  value={method.value}
+        {!this.props.mobile && (
+          <>
+            <Row gutter={16} style={{ marginBottom: 16 }}>
+              <Col sm={12}>
+                <Radio.Group
+                  defaultValue="post"
+                  onChange={this.handleMethodUpdate}
+                  value={this.state.method}
+                  buttonStyle="solid"
+                  style={{ paddingTop: "10px" }}
                 >
-                  {method.label}
-                </Radio.Button>
+                  {METHOD_TYPES.map((method) => (
+                    <Radio.Button
+                      key={`radio_${method.value}`}
+                      value={method.value}
+                    >
+                      {method.label}
+                    </Radio.Button>
+                  ))}
+                </Radio.Group>
+              </Col>
+              <Col sm={12}>
+                <Text strong style={{ marginTop: "50px" }}>
+                  Endpoint URL (Required)
+                </Text>
+                <br />
+                <Input
+                  placeholder="Endpoint URL"
+                  name="endpoint"
+                  value={this.state.endpoint}
+                  onChange={this.handleInputUpdate}
+                  style={{ width: "100%" }}
+                  suffix={
+                    <Tooltip title="The URL should start with either 'http://' or 'https://' and contain no spaces">
+                      <InfoCircleOutlined
+                        style={{ color: "rgba(0,0,0,.45)" }}
+                      />
+                    </Tooltip>
+                  }
+                />
+                {!this.state.validEndpoint && (
+                  <Text style={{ color: "#F5222D", marginTop: 8 }}>
+                    {"Endpoint URL should not have spaces or {} brackets"}
+                  </Text>
+                )}
+              </Col>
+            </Row>
+            <div
+              style={{
+                background: "#E6F7FF",
+                borderRadius: "10px",
+                padding: 20,
+              }}
+            >
+              <Text strong>HTTP Headers (Optional)</Text>
+              <br />
+              {this.state.headers.map((obj, i) => (
+                <Row gutter={16} style={{ marginBottom: 16 }} key={`${i}-key`}>
+                  <Col sm={12}>
+                    <Input
+                      placeholder="Key"
+                      name={`${i}-header`}
+                      value={obj.header}
+                      onChange={this.handleHttpHeaderUpdate}
+                      style={{ width: "100%" }}
+                    />
+                  </Col>
+                  <Col sm={12}>
+                    <Input
+                      placeholder="Value"
+                      name={`${i}-value`}
+                      value={obj.value}
+                      onChange={this.handleHttpHeaderUpdate}
+                      style={{ width: "100%" }}
+                    />
+                  </Col>
+                </Row>
               ))}
-            </Radio.Group>
-          </Col>
-          <Col sm={12}>
-            <Text strong style={{ marginTop: "50px" }}>
-              Endpoint URL (Required)
-            </Text>
-            <br />
-            <Input
-              placeholder="Endpoint URL"
-              name="endpoint"
-              value={this.state.endpoint}
-              onChange={this.handleInputUpdate}
-              style={{ width: "100%" }}
-              suffix={
-                <Tooltip title="The URL should start with either 'http://' or 'https://' and contain no spaces">
-                  <InfoCircleOutlined style={{ color: "rgba(0,0,0,.45)" }} />
-                </Tooltip>
-              }
-            />
-            {!this.state.validEndpoint && (
-              <Text style={{ color: "#F5222D", marginTop: 8 }}>
-                {"Endpoint URL should not have spaces or {} brackets"}
-              </Text>
-            )}
-          </Col>
-        </Row>
-        <div
-          style={{ background: "#E6F7FF", borderRadius: "10px", padding: 20 }}
-        >
-          <Text strong>HTTP Headers (Optional)</Text>
-          <br />
-          {this.state.headers.map((obj, i) => (
-            <Row gutter={16} style={{ marginBottom: 16 }} key={`${i}-key`}>
-              <Col sm={12}>
-                <Input
-                  placeholder="Key"
-                  name={`${i}-header`}
-                  value={obj.header}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: "100%" }}
-                />
-              </Col>
-              <Col sm={12}>
-                <Input
-                  placeholder="Value"
-                  name={`${i}-value`}
-                  value={obj.value}
-                  onChange={this.handleHttpHeaderUpdate}
-                  style={{ width: "100%" }}
-                />
-              </Col>
-            </Row>
-          ))}
-          <Row>
-            <Button
-              style={{
-                borderColor: "#40A9FF",
-                background: "none",
-                color: "#096DD9",
-              }}
-              icon={<PlusOutlined />}
-              type="default"
-              onClick={this.addHeaderRow}
-            >
-              Add Header
-            </Button>
-          </Row>
-        </div>
+              <Row>
+                <Button
+                  style={{
+                    borderColor: "#40A9FF",
+                    background: "none",
+                    color: "#096DD9",
+                  }}
+                  icon={<PlusOutlined />}
+                  type="default"
+                  onClick={this.addHeaderRow}
+                >
+                  Add Header
+                </Button>
+              </Row>
+            </div>
 
-        <div
-          style={{
-            background: "#E6F7FF",
-            borderRadius: "10px",
-            padding: 20,
-            marginTop: 10,
-          }}
-        >
-          <Text strong>
-            URL Params (Optional usage for payload interpolation)
-          </Text>
-          <br />
-          {this.state.url_params.map((obj, i) => (
-            <Row gutter={16} style={{ marginBottom: 16 }} key={`${i}-key`}>
-              <Col sm={12}>
-                <Input
-                  placeholder="Key"
-                  name={`${i}-key`}
-                  value={obj.key}
-                  onChange={this.handleUrlParamUpdate}
-                  style={{ width: "100%" }}
-                />
-              </Col>
-              <Col sm={12}>
-                <Input
-                  placeholder="Value"
-                  name={`${i}-value`}
-                  value={obj.value}
-                  onChange={this.handleUrlParamUpdate}
-                  style={{ width: "100%" }}
-                />
-              </Col>
-            </Row>
-          ))}
-          {!this.state.validUrlParam && (
-            <Text style={{ color: "#F5222D" }}>
-              {
-                "For valid interpolation, URL params must use {{ or {{{ and have corresponding closing }} or }}}"
-              }
-            </Text>
-          )}
-          <Row>
-            <Button
+            <div
               style={{
-                borderColor: "#40A9FF",
-                background: "none",
-                color: "#096DD9",
+                background: "#E6F7FF",
+                borderRadius: "10px",
+                padding: 20,
+                marginTop: 10,
               }}
-              icon={<PlusOutlined />}
-              type="default"
-              onClick={this.addUrlParamRow}
             >
-              Add Param
-            </Button>
-          </Row>
-        </div>
+              <Text strong>
+                URL Params (Optional usage for payload interpolation)
+              </Text>
+              <br />
+              {this.state.url_params.map((obj, i) => (
+                <Row gutter={16} style={{ marginBottom: 16 }} key={`${i}-key`}>
+                  <Col sm={12}>
+                    <Input
+                      placeholder="Key"
+                      name={`${i}-key`}
+                      value={obj.key}
+                      onChange={this.handleUrlParamUpdate}
+                      style={{ width: "100%" }}
+                    />
+                  </Col>
+                  <Col sm={12}>
+                    <Input
+                      placeholder="Value"
+                      name={`${i}-value`}
+                      value={obj.value}
+                      onChange={this.handleUrlParamUpdate}
+                      style={{ width: "100%" }}
+                    />
+                  </Col>
+                </Row>
+              ))}
+              {!this.state.validUrlParam && (
+                <Text style={{ color: "#F5222D" }}>
+                  {
+                    "For valid interpolation, URL params must use {{ or {{{ and have corresponding closing }} or }}}"
+                  }
+                </Text>
+              )}
+              <Row>
+                <Button
+                  style={{
+                    borderColor: "#40A9FF",
+                    background: "none",
+                    color: "#096DD9",
+                  }}
+                  icon={<PlusOutlined />}
+                  type="default"
+                  onClick={this.addUrlParamRow}
+                >
+                  Add Param
+                </Button>
+              </Row>
+            </div>
+          </>
+        )}
+        {this.props.mobile && (
+          <>
+            <Row style={{ marginBottom: 10 }}>
+              <Radio.Group
+                defaultValue="post"
+                onChange={this.handleMethodUpdate}
+                value={this.state.method}
+                buttonStyle="solid"
+                style={{ paddingTop: "10px" }}
+              >
+                {METHOD_TYPES.map((method) => (
+                  <Radio.Button
+                    key={`radio_${method.value}`}
+                    value={method.value}
+                  >
+                    {method.label}
+                  </Radio.Button>
+                ))}
+              </Radio.Group>
+            </Row>
+            <Row>
+              <Text strong>Endpoint URL (Required)</Text>
+              <br />
+              <Input
+                placeholder="Endpoint URL"
+                name="endpoint"
+                value={this.state.endpoint}
+                onChange={this.handleInputUpdate}
+                style={{ width: "100%" }}
+                suffix={
+                  <Tooltip title="The URL should start with either 'http://' or 'https://' and contain no spaces">
+                    <InfoCircleOutlined style={{ color: "rgba(0,0,0,.45)" }} />
+                  </Tooltip>
+                }
+              />
+              {!this.state.validEndpoint && (
+                <Text style={{ color: "#F5222D", marginTop: 8 }}>
+                  {"Endpoint URL should not have spaces or {} brackets"}
+                </Text>
+              )}
+            </Row>
+            <div
+              style={{
+                background: "#E6F7FF",
+                borderRadius: "10px",
+                padding: 10,
+                marginTop: 20,
+              }}
+            >
+              <Text strong>HTTP Headers (Optional)</Text>
+
+              {this.state.headers.map((obj, i) => (
+                <>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-header`}
+                    value={obj.header}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ margin: "10px 0" }}
+                  />
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleHttpHeaderUpdate}
+                    style={{ marginBottom: "20px" }}
+                  />
+                </>
+              ))}
+
+              <Button
+                style={{
+                  borderColor: "#40A9FF",
+                  background: "none",
+                  color: "#096DD9",
+                }}
+                icon={<PlusOutlined />}
+                type="default"
+                onClick={this.addHeaderRow}
+              >
+                Add Header
+              </Button>
+            </div>
+            <div
+              style={{
+                background: "#E6F7FF",
+                borderRadius: "10px",
+                padding: 10,
+                marginTop: 10,
+              }}
+            >
+              <Text strong>
+                URL Params (Optional usage for payload interpolation)
+              </Text>
+              <br />
+              {this.state.url_params.map((obj, i) => (
+                <>
+                  <Input
+                    placeholder="Key"
+                    name={`${i}-key`}
+                    value={obj.key}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ margin: "10px 0" }}
+                  />
+                  <Input
+                    placeholder="Value"
+                    name={`${i}-value`}
+                    value={obj.value}
+                    onChange={this.handleUrlParamUpdate}
+                    style={{ marginBottom: "20px" }}
+                  />
+                </>
+              ))}
+              {!this.state.validUrlParam && (
+                <Text style={{ color: "#F5222D" }}>
+                  {
+                    "For valid interpolation, URL params must use {{ or {{{ and have corresponding closing }} or }}}"
+                  }
+                </Text>
+              )}
+              <Row>
+                <Button
+                  style={{
+                    borderColor: "#40A9FF",
+                    background: "none",
+                    color: "#096DD9",
+                  }}
+                  icon={<PlusOutlined />}
+                  type="default"
+                  onClick={this.addUrlParamRow}
+                >
+                  Add Param
+                </Button>
+              </Row>
+            </div>
+          </>
+        )}
       </div>
     );
   }
