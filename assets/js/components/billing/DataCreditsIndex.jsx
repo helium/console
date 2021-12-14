@@ -276,6 +276,7 @@ class DataCreditsIndex extends Component {
             <MobileDataCreditsIndex
               organization={organization}
               paymentMethods={this.state.paymentMethods}
+              fetchPaymentMethods={this.fetchPaymentMethods}
               defaultPayment={defaultPayment}
               triedFetchingPayments={this.state.triedFetchingPayments}
               styles={styles}
