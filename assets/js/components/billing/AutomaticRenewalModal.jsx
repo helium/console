@@ -36,7 +36,7 @@ class AutomaticRenewalModal extends Component {
     if (!prevProps.open && this.props.open) {
       this.setState({ checked: false })
     }
-    
+
     if (!prevProps.open && this.props.open) {
       analyticsLogger.logEvent("ACTION_OPEN_AUTO_RENEW_MODAL")
       this.setState({
@@ -105,7 +105,7 @@ class AutomaticRenewalModal extends Component {
   }
 
   render() {
-    const { open, onClose, paymentMethods, organization } = this.props
+    const { open, onClose, paymentMethods, organization, mobile } = this.props
 
     return(
       <Modal
@@ -113,6 +113,7 @@ class AutomaticRenewalModal extends Component {
         visible={open}
         onCancel={onClose}
         centered
+        bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px"}}
         footer={
           [
             <Button key="back" onClick={this.props.onClose}>
@@ -142,10 +143,11 @@ class AutomaticRenewalModal extends Component {
             countB={this.state.countB}
             countUSD={this.state.countUSD}
             handleCountInputUpdate={this.handleCountInputUpdate}
+            mobile={mobile}
           />
         </div>
-        <Row gutter={12}>
-          <Col span={12}>
+        <Row gutter={mobile ? 0 : 12}>
+          <Col span={mobile ? 24 : 12}>
             <Text strong>Payment Method</Text>
             <Select
               value={this.state.paymentMethod}
@@ -162,7 +164,7 @@ class AutomaticRenewalModal extends Component {
               }
             </Select>
           </Col>
-          <Col span={12}>
+          <Col span={mobile ? 24 : 12} style={{ marginTop: mobile ? 8 : 0 }}>
             <Text strong>When to Charge</Text>
             {
               organization && (
