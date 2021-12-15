@@ -51,6 +51,13 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/devices"}
+            isActive={(_match, location) => {
+              if (
+                location.pathname.indexOf("/labels") !== -1 ||
+                location.pathname.indexOf("/devices") !== -1
+              )
+                return true;
+            }}
           >
             My Devices
           </NavLink>
