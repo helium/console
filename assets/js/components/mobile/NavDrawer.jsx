@@ -52,7 +52,7 @@ const NavDrawer = (props) => {
             activeClassName="is-active"
             to={"/devices"}
           >
-            Devices
+            My Devices
           </NavLink>
           {(props.history.location.pathname.indexOf("/devices") !== -1 ||
             props.history.location.pathname.indexOf("/labels") !== -1) && (

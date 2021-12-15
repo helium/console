@@ -30,7 +30,7 @@ export default ({ loading, devices }) => {
           >
             {devices.entries.length} Devices
           </Text>
-          {devices.entries.map(device => <MobileDeviceTableRow device={device} push={history.push} />)}
+          {devices.entries.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
         </div>
       )}
     </div>
