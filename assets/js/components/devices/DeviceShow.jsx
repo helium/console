@@ -17,6 +17,8 @@ import DeviceCredentials from "./DeviceCredentials";
 import DeviceShowStats from "./DeviceShowStats";
 import DeleteDeviceModal from "./DeleteDeviceModal";
 import DeviceFlows from "./DeviceFlows";
+import MobileLayout from "../mobile/MobileLayout";
+import MobileDeviceShow from "../mobile/devices/MobileDeviceShow";
 import { updateDevice } from "../../actions/device";
 import {
   sendClearDownlinkQueue,
@@ -274,7 +276,11 @@ export default (props) => {
   if (loading) {
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <SkeletonLayout />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <DeviceDashboardLayout {...props}>
             <div style={{ padding: 40 }}>
@@ -285,15 +291,23 @@ export default (props) => {
       </>
     );
   }
+
+  const errorMessage = () => (
+    <div style={{ padding: 40 }}>
+      <Text>Data failed to load, please reload the page and try again</Text>
+    </div>
+  );
   if (error) {
     return (
       <>
-        <MobileDisplay />
+      <MobileDisplay>
+        <MobileLayout>
+          <MobileLayout>{errorMessage()}</MobileLayout>
+        </MobileLayout>
+      </MobileDisplay>
         <DesktopDisplay>
           <DeviceDashboardLayout {...props}>
-            <div style={{ padding: 40 }}>
-              <Text>Data failed to load, please reload the page and try again</Text>
-            </div>
+            {errorMessage()}
           </DeviceDashboardLayout>
         </DesktopDisplay>
       </>
@@ -303,7 +317,11 @@ export default (props) => {
 
   return (
     <>
-      <MobileDisplay />
+      <MobileDisplay>
+        <MobileLayout>
+          <MobileDeviceShow device={device} />
+        </MobileLayout>
+      </MobileDisplay>
       <DesktopDisplay>
         <DeviceDashboardLayout {...props}>
           <div className="show-page">
