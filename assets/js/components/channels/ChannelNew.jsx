@@ -25,15 +25,19 @@ import ChannelPremadeRow from "./ChannelPremadeRow";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import AdafruitFunctionForm from "./AdafruitFunctionForm";
 import AkenzaForm from "./forms/AkenzaForm";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { createChannel } from "../../actions/channel";
 import analyticsLogger from "../../util/analyticsLogger";
 import kebabCase from "lodash/kebabCase";
 import range from "lodash/range";
-import { Card, Button } from "antd";
+import { Card, Button, Collapse, Typography } from "antd";
+const { Panel } = Collapse;
+const { Text } = Typography;
 import { IntegrationTypeTileSimple } from "./IntegrationTypeTileSimple";
 import _JSXStyle from "styled-jsx/style";
 import { adafruitTemplate } from "../../util/integrationTemplates";
+import MobileLayout from "../mobile/MobileLayout";
+import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 
 const slugify = (text) => kebabCase(text.replace(/&/g, "-and-"));
 const makeTemplate = (definition) => {
@@ -249,7 +253,209 @@ class ChannelNew extends Component {
 
     return (
       <>
-        <MobileDisplay />
+        <MobileDisplay>
+          <MobileLayout>
+            <div
+              style={{
+                padding: "10px 15px",
+                boxShadow: "0px 3px 7px 0px #ccc",
+                backgroundColor: "#F5F7F9",
+                height: 100,
+              }}
+            >
+              <Button
+                icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
+                style={{
+                  border: "none",
+                  padding: 0,
+                  fontSize: 14,
+                  color: "#2C79EE",
+                  height: 24,
+                  boxShadow: "none",
+                  background: "none",
+                  fontWeight: 600,
+                }}
+                onClick={() => {
+                  this.props.history.push("/integrations");
+                }}
+              >
+                Back to Integrations
+              </Button>
+              <div>
+                <Text style={{ fontSize: 27, fontWeight: 600 }}>
+                  Add New Integration
+                </Text>
+              </div>
+            </div>
+            <div style={{ padding: "30px 30px 20px 30px" }}>
+              {!type && (
+                <div style={{ display: "block" }}>
+                  <Collapse
+                    expandIconPosition="right"
+                    defaultActiveKey={["1"]}
+                    className="channel-new-panels-mobile"
+                  >
+                    <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
+                      <ChannelPremadeRow
+                        selectType={this.handleSelectType}
+                        mobile
+                      />
+                    </Panel>
+                  </Collapse>
+                  <Collapse
+                    expandIconPosition="right"
+                    style={{ marginTop: 20 }}
+                  >
+                    <Panel
+                      header={<b>ADD A CUSTOM INTEGRATION</b>}
+                      key="1"
+                      style={{ padding: 0 }}
+                    >
+                      <ChannelCreateRow
+                        selectType={this.handleSelectType}
+                        mobile
+                      />
+                    </Panel>
+                  </Collapse>
+                </div>
+              )}
+
+              {type && (
+                <Card title="Step 1 – Choose an Integration Type">
+                  <div
+                    className="flexwrapper"
+                    style={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <IntegrationTypeTileSimple type={type} />
+                    <Link
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.setState({ type: null, showNextSteps: false });
+                      }}
+                    >
+                      <Button size="small">Change</Button>
+                    </Link>
+                  </div>
+                </Card>
+              )}
+
+              {type && (
+                <Card title="Step 2 - Endpoint Details">
+                  {this.renderForm()}
+                </Card>
+              )}
+              {showNextSteps && (
+                <ChannelNameForm
+                  channelName={this.state.channelName}
+                  onInputUpdate={this.handleStep3Input}
+                  validInput={this.state.validInput}
+                  submit={this.handleStep3Submit}
+                  noName={type === "adafruit" || type === "googlesheet"}
+                />
+              )}
+              {showNextSteps && type === "adafruit" && (
+                <AdafruitFunctionForm
+                  handleFunctionUpdate={this.handleAdafruitFunctionSelect}
+                >
+                  <div style={{ marginTop: 20 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={this.handleStep3Submit}
+                      disabled={!this.state.validInput}
+                    >
+                      Add Integration
+                    </Button>
+                  </div>
+                </AdafruitFunctionForm>
+              )}
+              {showNextSteps && type === "googlesheet" && (
+                <Card
+                  title={"Step 4 - Update Function Body"}
+                  bodyStyle={{ padding: 0 }}
+                  extra={
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={this.handleStep3Submit}
+                    >
+                      Add Integration
+                    </Button>
+                  }
+                >
+                  <div style={{ height: 303, overflowY: "scroll" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        cursor: "text",
+                      }}
+                      onClick={this.onClickEditor}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: codeEditorBgColor,
+                          paddingTop: 9,
+                          marginTop: 1,
+                          paddingBottom: 9,
+                        }}
+                      >
+                        {range(301).map((i) => (
+                          <p
+                            key={i}
+                            style={{
+                              textAlign: "right",
+                              fontFamily: "monospace",
+                              color: codeEditorLineColor,
+                              fontSize: 14,
+                              marginBottom: 0,
+                              paddingLeft: 10,
+                              paddingRight: 10,
+                              backgroundColor: codeEditorBgColor,
+                            }}
+                          >
+                            {i}
+                          </p>
+                        ))}
+                      </div>
+
+                      <Editor
+                        value={this.state.googleFunctionBody}
+                        onValueChange={this.handleGoogleFunctionBodyUpdate}
+                        highlight={(code) => highlight(code, languages.js)}
+                        padding={10}
+                        style={{
+                          fontFamily: "monospace",
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              )}
+              {showNextSteps && (type === "http" || type === "mqtt") && (
+                <ChannelPayloadTemplate
+                  templateBody={this.state.templateBody}
+                  handleTemplateUpdate={this.handleTemplateUpdate}
+                  from="channelNew"
+                />
+              )}
+              <style jsx>{`
+                .flexwrapper {
+                  display: flex;
+                  flex-wrap: wrap;
+                }
+                .integrationcard {
+                  flex-grow: 1;
+                }
+              `}</style>
+            </div>
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <ChannelDashboardLayout {...this.props}>
             <div style={{ padding: "30px 30px 20px 30px" }}>
@@ -316,7 +522,9 @@ class ChannelNew extends Component {
               )}
 
               {type && (
-                <Card title="Step 2 - Endpoint Details">{this.renderForm()}</Card>
+                <Card title="Step 2 - Endpoint Details">
+                  {this.renderForm()}
+                </Card>
               )}
               {showNextSteps && (
                 <ChannelNameForm
