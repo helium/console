@@ -168,12 +168,19 @@ class DeviceNew extends Component {
               Add New Device
             </Text>
             <div>
+              <p>
+                Console is designed for adding and monitoring sensor devices,
+                not Hotspots.
+                <br />
+                Refer to the Hotspot manufacturer instructions for guidance on
+                registering Hotspots.
+              </p>
               <p style={{ fontSize: 16 }}>
                 <b>Important:</b> The first time a device joins the Network
                 could take up to 20 mins.{" "}
                 <a
                   className="help-link"
-                  href="https://docs.helium.com/use-the-network/console/adding-devices/#important-information-when-adding-devices"
+                  href="https://docs.helium.com/use-the-network/console/adding-devices/#when-adding-devices-for-the-first-time"
                   target="_blank"
                 >
                   Learn more about adding devices
@@ -362,10 +369,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { createDevice },
-    dispatch
-  );
+  return bindActionCreators({ createDevice }, dispatch);
 }
 
 export default connect(
