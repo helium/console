@@ -199,16 +199,20 @@ class ChannelNew extends Component {
     editor.focus();
   };
 
-  renderForm = () => {
+  renderForm = (mobile) => {
     switch (this.state.type) {
       case "aws":
-        return <AWSForm onValidInput={this.handleStep2Input} />;
+        return <AWSForm onValidInput={this.handleStep2Input} mobile={mobile} />;
       case "google":
         return <GoogleForm onValidInput={this.handleStep2Input} />;
       case "mqtt":
-        return <MQTTForm onValidInput={this.handleStep2Input} />;
+        return (
+          <MQTTForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "http":
-        return <HTTPForm onValidInput={this.handleStep2Input} />;
+        return (
+          <HTTPForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "azure":
         return <AzureForm onValidInput={this.handleStep2Input} />;
       case "mydevices":
@@ -216,23 +220,37 @@ class ChannelNew extends Component {
       case "adafruit":
         return <AdafruitForm onValidInput={this.handleStep2Input} />;
       case "ubidots":
-        return <UbidotsForm onValidInput={this.handleStep2Input} />;
+        return (
+          <UbidotsForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "datacake":
-        return <DatacakeForm onValidInput={this.handleStep2Input} />;
+        return (
+          <DatacakeForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "tago":
-        return <TagoForm onValidInput={this.handleStep2Input} />;
+        return (
+          <TagoForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "akenza":
-        return <AkenzaForm onValidInput={this.handleStep2Input} />;
+        return (
+          <AkenzaForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "googlesheet":
         return (
           <GoogleSheetForm
             onValidInput={this.handleStep2Input}
             updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate}
             from="ChannelNew"
+            mobile={mobile}
           />
         );
       case "microshare":
-        return <MicroshareForm onValidInput={this.handleStep2Input} />;
+        return (
+          <MicroshareForm
+            onValidInput={this.handleStep2Input}
+            mobile={mobile}
+          />
+        );
       default:
         return <CargoForm onValidInput={this.handleStep2Input} />;
     }
@@ -322,13 +340,7 @@ class ChannelNew extends Component {
 
               {type && (
                 <Card title="Step 1 – Choose an Integration Type">
-                  <div
-                    className="flexwrapper"
-                    style={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                  <div>
                     <IntegrationTypeTileSimple type={type} />
                     <Link
                       to="#"
@@ -337,7 +349,7 @@ class ChannelNew extends Component {
                         this.setState({ type: null, showNextSteps: false });
                       }}
                     >
-                      <Button size="small">Change</Button>
+                      <Button style={{ marginTop: 15 }}>Change</Button>
                     </Link>
                   </div>
                 </Card>
@@ -345,7 +357,7 @@ class ChannelNew extends Component {
 
               {type && (
                 <Card title="Step 2 - Endpoint Details">
-                  {this.renderForm()}
+                  {this.renderForm(true)}
                 </Card>
               )}
               {showNextSteps && (
@@ -355,6 +367,7 @@ class ChannelNew extends Component {
                   validInput={this.state.validInput}
                   submit={this.handleStep3Submit}
                   noName={type === "adafruit" || type === "googlesheet"}
+                  mobile
                 />
               )}
               {showNextSteps && type === "adafruit" && (
@@ -377,15 +390,6 @@ class ChannelNew extends Component {
                 <Card
                   title={"Step 4 - Update Function Body"}
                   bodyStyle={{ padding: 0 }}
-                  extra={
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={this.handleStep3Submit}
-                    >
-                      Add Integration
-                    </Button>
-                  }
                 >
                   <div style={{ height: 303, overflowY: "scroll" }}>
                     <div
@@ -435,6 +439,13 @@ class ChannelNew extends Component {
                       />
                     </div>
                   </div>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={this.handleStep3Submit}
+                  >
+                    Add Integration
+                  </Button>
                 </Card>
               )}
               {showNextSteps && (type === "http" || type === "mqtt") && (
