@@ -29,7 +29,7 @@ export default ({ label }) => {
           >
             {devices.length} Devices
           </Text>
-          {devices.map(device => <MobileDeviceTableRow device={device} push={history.push} />)}
+          {devices.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
         </div>
       )}
     </div>
