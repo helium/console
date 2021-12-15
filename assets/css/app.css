@@ -727,6 +727,20 @@ a.version-link {
   padding: 0px;
 }
 
+#device-stats-panel .ant-collapse-content-box {
+  padding: 0px;
+}
+
+#device-flows-panel .ant-collapse-content-box {
+  overflow-x: scroll;
+}
+
+#event-dashboard-panel .ant-collapse-content-box {
+  padding: 0px;
+  padding-bottom: 10px;
+  overflow-x: scroll;
+}
+
 .desktop-form {
   width: 125px;
   text-align: left;
