@@ -731,3 +731,7 @@ a.version-link {
   width: 125px;
   text-align: left;
 }
+
+.channel-new-panels-mobile > div > div > div.ant-collapse-content-box {
+  padding: 0px;
+}

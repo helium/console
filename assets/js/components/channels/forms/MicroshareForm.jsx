@@ -34,7 +34,7 @@ class MicroshareForm extends Component {
           <Input
             value={this.state.token}
             onChange={this.handleTokenUpdate}
-            style={{ width: "50%" }}
+            style={{ ...(!this.props.mobile && { width: "50%" }) }}
           />
         </div>
       </div>
