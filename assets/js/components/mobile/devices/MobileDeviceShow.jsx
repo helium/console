@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import EventsDashboard from "../../events/EventsDashboard";
 import DeviceShowStats from "../../devices/DeviceShowStats";
+import DevicesAddLabelModal from "../../devices/DevicesAddLabelModal"
 import DeviceFlows from "../../devices/DeviceFlows";
 import MobileDeviceLabelsModal from "./MobileDeviceLabelsModal";
 import UserCan from "../../common/UserCan";
@@ -24,6 +25,7 @@ export default ({ device }) => {
   const [showAppKey, setShowAppKey] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [showDeviceLabelsModal, setShowDeviceLabelsModal] = useState(false);
+  const [showDevicesAddLabelModal, setShowDevicesAddLabelModal] = useState(false);
 
   return (
     <>
@@ -174,6 +176,14 @@ export default ({ device }) => {
         open={showDeviceLabelsModal}
         onClose={() => setShowDeviceLabelsModal(false)}
         device={device}
+        openDevicesAddLabelModal={() => setShowDevicesAddLabelModal(true)}
+      />
+
+      <DevicesAddLabelModal
+        open={showDevicesAddLabelModal}
+        onClose={() => setShowDevicesAddLabelModal(false)}
+        devicesToUpdate={[device]}
+        mobile={true}
       />
     </>
   );
