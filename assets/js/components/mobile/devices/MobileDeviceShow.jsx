@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import EventsDashboard from "../../events/EventsDashboard";
 import DeviceShowStats from "../../devices/DeviceShowStats";
 import DeviceFlows from "../../devices/DeviceFlows";
+import MobileDeviceLabelsModal from "./MobileDeviceLabelsModal";
 import UserCan from "../../common/UserCan";
 import Debug from "../../common/Debug";
 import { updateDevice } from "../../../actions/device";
@@ -22,6 +23,7 @@ export default ({ device }) => {
   const dispatch = useDispatch();
   const [showAppKey, setShowAppKey] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
+  const [showDeviceLabelsModal, setShowDeviceLabelsModal] = useState(false);
 
   return (
     <>
@@ -140,7 +142,7 @@ export default ({ device }) => {
           <Button
             icon={<img src={LabelsIcon} style={{ height: 12, top: -2, position: 'relative', marginRight: 8 }} />}
             type="primary"
-            onClick={() => {}}
+            onClick={() => setShowDeviceLabelsModal(true)}
             size="large"
             style={{ borderRadius: 4 }}
           >
@@ -168,6 +170,11 @@ export default ({ device }) => {
           </div>
         )
       }
+      <MobileDeviceLabelsModal
+        open={showDeviceLabelsModal}
+        onClose={() => setShowDeviceLabelsModal(false)}
+        device={device}
+      />
     </>
   );
 };
