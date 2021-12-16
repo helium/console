@@ -157,7 +157,7 @@ class Debug extends Component {
     return (
       <div
         style={{
-          height: "calc(100% - 55px)",
+          height: this.props.mobile ? "100%" : "calc(100% - 55px)",
           width: "100%",
           overflow: "scroll",
         }}
@@ -200,17 +200,21 @@ class Debug extends Component {
           )}
           <Text style={{ color: "white" }}>
             <span style={{ fontWeight: "500" }}>Displaying</span>{" "}
-            <span style={{ fontWeight: "300" }}>{data.length} / 40 Events</span>
+            <span style={{ fontWeight: "300" }}>{data.length} / 40{this.props.mobile ? "" : " Events"}</span>
           </Text>
-          <Popover
-            content="Debug mode only shows a limited amount of events at once. Click refresh to see more."
-            placement="bottom"
-            overlayStyle={{ width: 220 }}
-          >
-            <InfoCircleOutlined
-              style={{ color: "white", fontSize: 18, marginLeft: 10 }}
-            />
-          </Popover>
+          {
+            !this.props.mobile && (
+              <Popover
+                content="Debug mode only shows a limited amount of events at once. Click refresh to see more."
+                placement="bottom"
+                overlayStyle={{ width: 220 }}
+              >
+                <InfoCircleOutlined
+                  style={{ color: "white", fontSize: 18, marginLeft: 10 }}
+                />
+              </Popover>
+            )
+          }
           <div style={{ flexGrow: 1 }} />
           <Checkbox
             onChange={() => this.toggleExpandAll()}
@@ -230,7 +234,7 @@ class Debug extends Component {
             />
           </Tooltip>
         </div>
-        <div style={{ width: "100%", marginTop: 50 }}>
+        <div style={{ width: "100%", marginTop: this.props.mobile ? 90 : 50 }}>
           {data.map((d) => (
             <span key={d.id}>
               <DebugEntry
@@ -238,6 +242,7 @@ class Debug extends Component {
                 clearSingleEntry={this.clearSingleEntry}
                 expandAll={expandAll}
                 width={this.props.entryWidth || 600}
+                mobile={this.props.mobile}
               />
             </span>
           ))}

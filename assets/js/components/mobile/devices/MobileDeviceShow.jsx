@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import EventsDashboard from "../../events/EventsDashboard";
 import DeviceShowStats from "../../devices/DeviceShowStats";
 import DeviceFlows from "../../devices/DeviceFlows";
 import UserCan from "../../common/UserCan";
 import Debug from "../../common/Debug";
+import { updateDevice } from "../../../actions/device";
 import LabelsIcon from "../../../../img/label-node-icon.svg";
 import DebugIcon from "../../../../img/mobile/mobile-debug.svg";
 import DebugCloseIcon from "../../../../img/mobile/mobile-debug-close.svg";
@@ -17,6 +19,7 @@ import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 
 export default ({ device }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [showAppKey, setShowAppKey] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
 
@@ -133,7 +136,7 @@ export default ({ device }) => {
           </Panel>
         </Collapse>
 
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 60 }}>
           <Button
             icon={<img src={LabelsIcon} style={{ height: 12, top: -2, position: 'relative', marginRight: 8 }} />}
             type="primary"
@@ -144,15 +147,15 @@ export default ({ device }) => {
             Labels
           </Button>
           <Button
-            onClick={() => {}}
+            onClick={() => dispatch(updateDevice(device.id, { active: !device.active }))}
             size="large"
             style={{ borderRadius: 4 }}
           >
-            Pause Data
+            {device.active ? "Pause" : "Resume"} Data
           </Button>
         </div>
         <div style={{ position: 'fixed', bottom: 15 }}>
-          <img src={DebugIcon} style={{ height: 40 }} onClick={() => setShowDebug(true)} />
+          <img src={DebugIcon} style={{ height: 50 }} onClick={() => setShowDebug(true)} />
         </div>
       </div>
       {
@@ -160,7 +163,7 @@ export default ({ device }) => {
           <div style={{ position: 'fixed', top: 0, left: 0, height: '100%', width: '100%', backgroundColor: '#222222', zIndex: 1000 }}>
             <Debug deviceId={device.id} mobile={true} />
             <div style={{ position: 'fixed', left: 15, bottom: 15 }}>
-              <img src={DebugCloseIcon} style={{ height: 40 }} onClick={() => setShowDebug(false)} />
+              <img src={DebugCloseIcon} style={{ height: 50 }} onClick={() => setShowDebug(false)} />
             </div>
           </div>
         )
