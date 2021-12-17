@@ -9,8 +9,8 @@ class MobileLayout extends Component {
     showNav: false,
   };
 
-  toggleNav = (e) => {
-    e.preventDefault()
+  toggleNav = () => {
+    window.Intercom('update', { "hide_default_launcher": this.state.showNav });
     this.setState({ showNav: !this.state.showNav });
   };
 
@@ -33,7 +33,7 @@ class MobileLayout extends Component {
             <div
               style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.4)', height: '100%', width: '100%', zIndex: 100 }}
               onClick={(e) => {
-                if (e.target.id === 'navdrawer-opaque-bg') this.toggleNav(e)
+                if (e.target.id === 'navdrawer-opaque-bg') this.toggleNav()
               }}
               id="navdrawer-opaque-bg"
             >
@@ -43,7 +43,7 @@ class MobileLayout extends Component {
                 style={{ position: 'absolute', top: 15, left: 269, height: 16, width: 16, cursor: 'pointer' }}
                 onClick={this.toggleNav}
               />
-              <NavDrawer />
+              <NavDrawer toggleNav={this.toggleNav} />
             </div>
           )
         }

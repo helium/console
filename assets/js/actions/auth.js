@@ -1,4 +1,5 @@
 import * as rest from '../util/rest';
+import { intercomResizeListen } from '../util/intercom'
 import { logout } from '../components/auth/Auth0Provider';
 import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
@@ -56,6 +57,7 @@ export const magicLogIn = (user) => {
     email: user.email,
     user_hash: hash
   })
+  intercomResizeListen()
 
   return {
     type: SET_MAGIC_USER,
