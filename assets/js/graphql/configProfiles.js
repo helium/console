@@ -6,6 +6,7 @@ const CONFIG_PROFILE_FRAGMENT = gql`
     name
     adr_allowed
     cf_list_enabled
+    rx_delay
     devices {
       id
       name

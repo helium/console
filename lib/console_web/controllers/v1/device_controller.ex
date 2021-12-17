@@ -190,6 +190,12 @@ defmodule ConsoleWeb.V1.DeviceController do
         _ -> device.config_profile.cf_list_enabled
       end
 
-    Map.merge(device, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
+    rx_delay =
+      case device.config_profile do
+        nil -> 1
+        _ -> device.config_profile.rx_delay
+      end
+
+    Map.merge(device, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed, rx_delay: rx_delay })
   end
 end

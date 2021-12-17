@@ -16,6 +16,7 @@ defmodule ConsoleWeb.V1.LabelView do
       name: label.name,
       adr_allowed: label.adr_allowed,
       cf_list_enabled: label.cf_list_enabled,
+      rx_delay: label.rx_delay,
       config_profile_id: label.config_profile_id
     }
   end
@@ -39,6 +40,12 @@ defmodule ConsoleWeb.V1.LabelView do
         _ -> label.config_profile.cf_list_enabled
       end
 
-    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
+    rx_delay =
+      case label.config_profile do
+        nil -> nil
+        _ -> label.config_profile.rx_delay
+      end
+
+    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed, rx_delay: rx_delay })
   end
 end

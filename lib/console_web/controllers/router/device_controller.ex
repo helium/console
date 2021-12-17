@@ -63,7 +63,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                 0 ->
                   %{
                     adr_allowed: false,
-                    cf_list_enabled: false
+                    cf_list_enabled: false,
+                    rx_delay: 1
                   }
                 _ ->
                   device_label = Labels.get_latest_applied_device_label(device.id, Enum.map(labels_with_config_profiles, fn l -> l.id end))
@@ -76,6 +77,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
         adr_allowed = config_profile_to_use.adr_allowed
         cf_list_enabled = config_profile_to_use.cf_list_enabled
+        rx_delay = config_profile_to_use.rx_delay
 
         multi_buy_value =
           case length(device.labels) do
@@ -149,6 +151,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           device
           |> Map.put(:adr_allowed, adr_allowed)
           |> Map.put(:cf_list_enabled, cf_list_enabled)
+          |> Map.put(:rx_delay, rx_delay)
           |> Map.put(:multi_buy, multi_buy_value)
           |> Map.put(:channels, channels)
 
