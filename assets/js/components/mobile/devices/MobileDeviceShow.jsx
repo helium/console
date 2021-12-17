@@ -18,6 +18,8 @@ import { useHistory } from "react-router-dom";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
+import PlayCircleOutlined from "@ant-design/icons/PlayCircleOutlined";
+import PauseCircleOutlined from "@ant-design/icons/PauseCircleOutlined";
 
 export default ({ device }) => {
   const history = useHistory();
@@ -154,6 +156,7 @@ export default ({ device }) => {
             onClick={() => dispatch(updateDevice(device.id, { active: !device.active }))}
             size="large"
             style={{ borderRadius: 4 }}
+            icon={device.active ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
           >
             {device.active ? "Pause" : "Resume"} Data
           </Button>
