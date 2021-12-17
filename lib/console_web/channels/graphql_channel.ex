@@ -172,4 +172,8 @@ defmodule ConsoleWeb.GraphqlChannel do
   def join("graphql:followed_hotspots_groups", _message, socket) do
     {:ok, socket}
   end
+
+  def join("graphql:mobile_device_labels", _message, socket) do
+    {:ok, socket}
+  end
 end

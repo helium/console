@@ -118,7 +118,7 @@ class DevicesAddLabelModal extends Component {
   };
 
   render() {
-    const { open, onClose, devicesToUpdate, allDevicesSelected, totalDevices } =
+    const { open, onClose, devicesToUpdate, allDevicesSelected, totalDevices, mobile } =
       this.props;
     const { error, allLabels } = this.props.allLabelsQuery;
     const { labelName, labelId, showLabelConfigProfileConflicts } = this.state;
@@ -158,6 +158,7 @@ class DevicesAddLabelModal extends Component {
                   Confirm
                 </Button>,
               ]}
+              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px" }}
             >
               <Text style={{ display: 'block', marginBottom: 8 }}>The label you are trying to apply has a configuration profile that is different from label(s) previously attached to {devicesToUpdate && devicesToUpdate.length > 1 ? "these devices" : "this device"}.</Text>
               <Text style={{ display: 'block', marginBottom: 8 }}><Text strong>Confirm</Text> - {devicesToUpdate && devicesToUpdate.length > 1 ? "These devices" : "This device"} will follow the configuration profile settings of this new label.</Text>
@@ -189,6 +190,7 @@ class DevicesAddLabelModal extends Component {
                   Add Label
                 </Button>,
               ]}
+              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px" }}
             >
               <div>
                 <Select
