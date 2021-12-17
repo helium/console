@@ -51,7 +51,7 @@ export const subscribeNewUser = (email) => {
 }
 
 export const magicLogIn = (user) => {
-  const hash = crypto.createHmac('sha256', 'gCxKClL_Lf2KOha7dfL95GdcAaH-TYQofBAn1JHW').update(user.email).digest('hex')
+  const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
   window.Intercom('boot', {
     app_id: 'uj330shp',
     email: user.email,
