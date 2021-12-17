@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { history } from '../../store/configureStore'
+import { intercomResizeListen } from '../../util/intercom'
 import crypto from "crypto"
 import createAuth0Client from '@auth0/auth0-spa-js'
 
@@ -68,6 +69,7 @@ export const Auth0Provider = ({
               email: user.email,
               user_hash: hash
             })
+            intercomResizeListen()
           }
 
           setUser(user);

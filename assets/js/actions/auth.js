@@ -1,4 +1,5 @@
 import * as rest from '../util/rest';
+import { intercomResizeListen } from '../util/intercom'
 import { logout } from '../components/auth/Auth0Provider';
 import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
@@ -50,12 +51,13 @@ export const subscribeNewUser = (email) => {
 }
 
 export const magicLogIn = (user) => {
-  const hash = crypto.createHmac('sha256', process.env.INTERCOM_ID_SECRET || 'key').update(user.email).digest('hex')
+  const hash = crypto.createHmac('sha256', 'gCxKClL_Lf2KOha7dfL95GdcAaH-TYQofBAn1JHW').update(user.email).digest('hex')
   window.Intercom('boot', {
     app_id: 'uj330shp',
     email: user.email,
     user_hash: hash
   })
+  intercomResizeListen()
 
   return {
     type: SET_MAGIC_USER,

@@ -34,6 +34,11 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/welcome"}
+            onClick={e => {
+              e.preventDefault()
+              props.toggleNav()
+              props.history.push("/welcome")
+            }}
           >
             Home
           </NavLink>
@@ -51,6 +56,11 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/devices"}
+            onClick={e => {
+              e.preventDefault()
+              props.toggleNav()
+              props.history.push("/devices")
+            }}
             isActive={(_match, location) => {
               if (
                 location.pathname.indexOf("/labels") !== -1 ||
@@ -76,6 +86,11 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/integrations"}
+            onClick={e => {
+              e.preventDefault()
+              props.toggleNav()
+              props.history.push("/integrations")
+            }}
           >
             Integrations
           </NavLink>
@@ -93,6 +108,11 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/organizations"}
+            onClick={e => {
+              e.preventDefault()
+              props.toggleNav()
+              props.history.push("/organizations")
+            }}
           >
             Organizations
           </NavLink>
@@ -110,6 +130,11 @@ const NavDrawer = (props) => {
             className="menu-link-mobile"
             activeClassName="is-active"
             to={"/datacredits"}
+            onClick={e => {
+              e.preventDefault()
+              props.toggleNav()
+              props.history.push("/datacredits")
+            }}
           >
             Data Credits
           </NavLink>

@@ -11,13 +11,13 @@ export const MobileDisplay = (props) => {
   const desktopOnly = useSelector((state) => state.display.desktopOnly);
   if (!desktopOnly && props.children) {
     return (
-      <MediaQuery maxWidth={719}>
+      <MediaQuery maxWidth={720}>
         {props.children}
       </MediaQuery>
     )
   } else if (!desktopOnly) {
     return (
-      <MediaQuery maxWidth={719}>
+      <MediaQuery maxWidth={720}>
         <MobileLayout>
           <div style={{ backgroundColor: "#F5F7F9", height: '100%', width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 15, textAlign: 'center' }}>
             <Text strong style={{ fontSize: 18 }}>
