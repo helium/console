@@ -3,8 +3,7 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
 import MobileDeviceTableRow from "./MobileDeviceTableRow";
 import MobileDeviceIndexLabelsBar from "./MobileDeviceIndexLabelsBar";
-import UserCan from "../../common/UserCan";
-import PlusCircleFilled from "@ant-design/icons/PlusCircleFilled";
+import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 
@@ -36,19 +35,7 @@ export default ({ loading, devices }) => {
         </div>
       )}
 
-      <UserCan>
-        <PlusCircleFilled
-          style={{
-            position: "absolute",
-            fontSize: 40,
-            cursor: "pointer",
-            zIndex: 100,
-            bottom: 15,
-            right: 15,
-          }}
-          onClick={() => history.push('/devices/new')}
-        />
-      </UserCan>
+      <MobileAddResourceButton />
     </div>
   );
 };

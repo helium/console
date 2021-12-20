@@ -116,7 +116,7 @@ export default connect(
   null
 )(
   withGql(MobileDeviceIndexLabelsBar, ALL_LABELS, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: {},
     name: "allLabelsQuery",
   }))

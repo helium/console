@@ -2,6 +2,7 @@ import React from "react";
 import { Typography } from "antd";
 import MobileDeviceTableRow from "../devices/MobileDeviceTableRow";
 import MobileDeviceIndexLabelsBar from "../devices/MobileDeviceIndexLabelsBar";
+import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 
@@ -32,6 +33,8 @@ export default ({ label }) => {
           {devices.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
         </div>
       )}
+
+      <MobileAddResourceButton />
     </div>
   );
 };
