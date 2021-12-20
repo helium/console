@@ -305,7 +305,7 @@ class ChannelNew extends Component {
                 </Text>
               </div>
             </div>
-            <div style={{ padding: "30px 30px 20px 30px" }}>
+            <div style={{ padding: "15px" }}>
               {!type && (
                 <div style={{ display: "block" }}>
                   <Collapse

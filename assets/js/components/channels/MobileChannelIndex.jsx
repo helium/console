@@ -4,6 +4,8 @@ import { Typography } from "antd";
 import MobileTableRow from "../common/MobileTableRow";
 const { Text } = Typography;
 import MenuCaret from "../../../img/channels/mobile/menu-caret.svg";
+import UserCan from "../common/UserCan";
+import PlusCircleFilled from "@ant-design/icons/PlusCircleFilled";
 import { useHistory } from "react-router-dom";
 
 export default ({ loading, channels }) => {
@@ -30,6 +32,7 @@ export default ({ loading, channels }) => {
           {channels.entries.map((channel) => (
             <MobileTableRow
               id={channel.id}
+              key={channel.id}
               mainTitle={channel.name}
               subtext={channel.type_name}
               onClick={() => {
@@ -50,6 +53,20 @@ export default ({ loading, channels }) => {
           ))}
         </div>
       )}
+
+      <UserCan>
+        <PlusCircleFilled
+          style={{
+            position: "absolute",
+            fontSize: 40,
+            cursor: "pointer",
+            zIndex: 100,
+            bottom: 15,
+            right: 15,
+          }}
+          onClick={() => history.push('/integrations/new')}
+        />
+      </UserCan>
     </div>
   );
 };

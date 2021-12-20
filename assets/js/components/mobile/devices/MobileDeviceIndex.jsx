@@ -3,6 +3,8 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
 import MobileDeviceTableRow from "./MobileDeviceTableRow";
 import MobileDeviceIndexLabelsBar from "./MobileDeviceIndexLabelsBar";
+import UserCan from "../../common/UserCan";
+import PlusCircleFilled from "@ant-design/icons/PlusCircleFilled";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 
@@ -33,6 +35,20 @@ export default ({ loading, devices }) => {
           {devices.entries.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
         </div>
       )}
+
+      <UserCan>
+        <PlusCircleFilled
+          style={{
+            position: "absolute",
+            fontSize: 40,
+            cursor: "pointer",
+            zIndex: 100,
+            bottom: 15,
+            right: 15,
+          }}
+          onClick={() => history.push('/devices/new')}
+        />
+      </UserCan>
     </div>
   );
 };
