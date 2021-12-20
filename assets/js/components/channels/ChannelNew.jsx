@@ -279,6 +279,8 @@ class ChannelNew extends Component {
                 boxShadow: "0px 3px 7px 0px #ccc",
                 backgroundColor: "#F5F7F9",
                 height: 100,
+                position: 'relative',
+                zIndex: 10,
               }}
             >
               <Button
@@ -305,7 +307,7 @@ class ChannelNew extends Component {
                 </Text>
               </div>
             </div>
-            <div style={{ padding: "15px" }}>
+            <div style={{ padding: "25px 15px", backgroundColor: '#ffffff', height: "calc(100% - 100px)", overflowY: 'scroll' }}>
               {!type && (
                 <div style={{ display: "block" }}>
                   <Collapse
