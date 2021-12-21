@@ -38,7 +38,7 @@ export default ({ channel }) => {
   const downlinkUrl = getDownlinkUrl(channel, downlinkKey);
 
   const handleReceiveJoinsChange = (value) => {
-    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_RECEIVE_JOINS", {
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_RECEIVE_JOINS_MOBILE", {
       id: channel.id,
       receive_joins: value,
     });
@@ -46,7 +46,7 @@ export default ({ channel }) => {
   };
 
   const handleChangeDownlinkToken = () => {
-    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DOWNLINK_TOKEN", {
+    analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DOWNLINK_TOKEN_MOBILE", {
       id: channel.id,
     });
     dispatch(updateChannel(channel.id, { downlink_token: "new" }));
@@ -63,7 +63,7 @@ export default ({ channel }) => {
 
   const handleUpdateDetailsChange = () => {
     if (Object.keys(credentials).length > 0) {
-      analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS", {
+      analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_DETAILS_MOBILE", {
         id: channel.id,
       });
       dispatch(updateChannel(channel.id, { credentials }));

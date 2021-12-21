@@ -52,6 +52,7 @@ import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 import ProfileDropdown from "../common/ProfileDropdown";
 import ErrorMessage from "../common/ErrorMessage";
+import { isMobile } from "../../util/constants";
 
 export default (props) => {
   const deviceId = props.match.params.id;
@@ -94,7 +95,10 @@ export default (props) => {
 
   useEffect(() => {
     // executed when mounted
-    analyticsLogger.logEvent("ACTION_NAV_DEVICE_SHOW", { id: deviceId });
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_DEVICE_SHOW_MOBILE" : "ACTION_NAV_DEVICE_SHOW",
+      { id: deviceId }
+    );
 
     channel.join();
     channel.on(`graphql:device_show:${deviceId}:device_update`, (_message) => {
