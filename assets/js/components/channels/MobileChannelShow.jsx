@@ -12,6 +12,7 @@ import HttpDetails from "./HttpDetails";
 import AwsDetails from "./AwsDetails";
 import MqttDetails from "./MqttDetails";
 import UserCan, { userCan } from "../common/UserCan";
+import MobileAddResourceButton from "../common/MobileAddResourceButton";
 import analyticsLogger from "../../util/analyticsLogger";
 import { updateChannel } from "../../actions/channel";
 import CopyIcon from "../../../img/channels/mobile/copy.svg";
@@ -88,6 +89,8 @@ export default ({ channel }) => {
           boxShadow: "0px 3px 7px 0px #ccc",
           backgroundColor: "#F5F7F9",
           height: 100,
+          position: 'relative',
+          zIndex: 10,
         }}
       >
         <Button
@@ -112,7 +115,7 @@ export default ({ channel }) => {
           <Text style={{ fontSize: 32, fontWeight: 600 }}>{channel.name}</Text>
         </div>
       </div>
-      <div style={{ padding: "25px 15px" }}>
+      <div style={{ padding: "25px 15px", backgroundColor: '#ffffff', height: "calc(100% - 100px)", overflowY: 'scroll' }}>
         <Collapse defaultActiveKey={["1", "2"]} expandIconPosition="right">
           <Panel header={<b>INTEGRATION DETAILS</b>} key="1">
             <Paragraph>
@@ -231,7 +234,7 @@ export default ({ channel }) => {
             </Button>
           </Panel>
         </Collapse>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 60 }}>
           <Button
             type="danger"
             onClick={() => {
@@ -242,6 +245,9 @@ export default ({ channel }) => {
           </Button>
         </div>
       </div>
+
+      <MobileAddResourceButton />
+
       <DeleteChannelModal
         mobile
         open={showDeleteChannelModal}

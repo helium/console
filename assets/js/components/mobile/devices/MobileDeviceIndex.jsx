@@ -3,6 +3,7 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
 import MobileDeviceTableRow from "./MobileDeviceTableRow";
 import MobileDeviceIndexLabelsBar from "./MobileDeviceIndexLabelsBar";
+import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 
@@ -33,6 +34,8 @@ export default ({ loading, devices }) => {
           {devices.entries.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
         </div>
       )}
+
+      <MobileAddResourceButton />
     </div>
   );
 };

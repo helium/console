@@ -409,7 +409,7 @@ class HTTPForm extends Component {
               <Text strong>HTTP Headers (Optional)</Text>
 
               {this.state.headers.map((obj, i) => (
-                <>
+                <span key={`${i}-header`}>
                   <Input
                     placeholder="Key"
                     name={`${i}-header`}
@@ -424,7 +424,7 @@ class HTTPForm extends Component {
                     onChange={this.handleHttpHeaderUpdate}
                     style={{ marginBottom: "20px" }}
                   />
-                </>
+                </span>
               ))}
 
               <Button
@@ -453,7 +453,7 @@ class HTTPForm extends Component {
               </Text>
               <br />
               {this.state.url_params.map((obj, i) => (
-                <>
+                <span key={`${i}-header`}>
                   <Input
                     placeholder="Key"
                     name={`${i}-key`}
@@ -468,7 +468,7 @@ class HTTPForm extends Component {
                     onChange={this.handleUrlParamUpdate}
                     style={{ marginBottom: "20px" }}
                   />
-                </>
+                </span>
               ))}
               {!this.state.validUrlParam && (
                 <Text style={{ color: "#F5222D" }}>

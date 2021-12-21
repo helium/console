@@ -34,7 +34,7 @@ class LabelAppliedNew extends Component {
 
     return(
       <AutoComplete
-        style={{ width: 300, marginBottom: 10 }}
+        style={{ width: 250, marginBottom: 10 }}
         options={searchLabels.map(l => (
           {
             label: (

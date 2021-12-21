@@ -4,6 +4,7 @@ import { Typography } from "antd";
 import MobileTableRow from "../common/MobileTableRow";
 const { Text } = Typography;
 import MenuCaret from "../../../img/channels/mobile/menu-caret.svg";
+import MobileAddResourceButton from "../common/MobileAddResourceButton";
 import { useHistory } from "react-router-dom";
 
 export default ({ loading, channels }) => {
@@ -30,6 +31,7 @@ export default ({ loading, channels }) => {
           {channels.entries.map((channel) => (
             <MobileTableRow
               id={channel.id}
+              key={channel.id}
               mainTitle={channel.name}
               subtext={channel.type_name}
               onClick={() => {
@@ -50,6 +52,8 @@ export default ({ loading, channels }) => {
           ))}
         </div>
       )}
+
+      <MobileAddResourceButton />
     </div>
   );
 };
