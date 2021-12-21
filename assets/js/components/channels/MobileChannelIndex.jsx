@@ -4,8 +4,7 @@ import { Typography } from "antd";
 import MobileTableRow from "../common/MobileTableRow";
 const { Text } = Typography;
 import MenuCaret from "../../../img/channels/mobile/menu-caret.svg";
-import UserCan from "../common/UserCan";
-import PlusCircleFilled from "@ant-design/icons/PlusCircleFilled";
+import MobileAddResourceButton from "../common/MobileAddResourceButton";
 import { useHistory } from "react-router-dom";
 
 export default ({ loading, channels }) => {
@@ -54,19 +53,7 @@ export default ({ loading, channels }) => {
         </div>
       )}
 
-      <UserCan>
-        <PlusCircleFilled
-          style={{
-            position: "absolute",
-            fontSize: 40,
-            cursor: "pointer",
-            zIndex: 100,
-            bottom: 15,
-            right: 15,
-          }}
-          onClick={() => history.push('/integrations/new')}
-        />
-      </UserCan>
+      <MobileAddResourceButton />
     </div>
   );
 };

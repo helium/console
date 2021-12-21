@@ -11,12 +11,13 @@ export default () => {
         overlayClassName="add-menu-popover"
         trigger="click"
         content={
-          <div style={{ width: 100 }}>
+          <div style={{ width: 150 }}>
             <NavLink
               draggable="false"
               className="add-menu-selection noselect"
               activeClassName="is-active"
               to={"/devices/new"}
+              style={{ fontSize: 18 }}
             >
               Add Device
             </NavLink>
@@ -25,8 +26,18 @@ export default () => {
               className="add-menu-selection noselect"
               activeClassName="is-active"
               to={"/devices/new_label"}
+              style={{ fontSize: 18 }}
             >
               Add Label
+            </NavLink>
+            <NavLink
+              draggable="false"
+              className="add-menu-selection noselect"
+              activeClassName="is-active"
+              to={"/integrations/new"}
+              style={{ fontSize: 18 }}
+            >
+              Add Integration
             </NavLink>
           </div>
         }

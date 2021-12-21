@@ -12,6 +12,7 @@ import HttpDetails from "./HttpDetails";
 import AwsDetails from "./AwsDetails";
 import MqttDetails from "./MqttDetails";
 import UserCan, { userCan } from "../common/UserCan";
+import MobileAddResourceButton from "../common/MobileAddResourceButton";
 import analyticsLogger from "../../util/analyticsLogger";
 import { updateChannel } from "../../actions/channel";
 import CopyIcon from "../../../img/channels/mobile/copy.svg";
@@ -233,7 +234,7 @@ export default ({ channel }) => {
             </Button>
           </Panel>
         </Collapse>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 60 }}>
           <Button
             type="danger"
             onClick={() => {
@@ -244,6 +245,9 @@ export default ({ channel }) => {
           </Button>
         </div>
       </div>
+
+      <MobileAddResourceButton />
+
       <DeleteChannelModal
         mobile
         open={showDeleteChannelModal}
