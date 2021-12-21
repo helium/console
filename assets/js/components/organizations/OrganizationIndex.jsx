@@ -12,6 +12,7 @@ import { minWidth } from "../../util/constants";
 import { Button, Typography } from "antd";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 const { Text } = Typography;
+import { isMobile } from "../../util/constants";
 
 class OrganizationIndex extends Component {
   state = {
@@ -21,7 +22,9 @@ class OrganizationIndex extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_DASHBOARD");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_DASHBOARD_MOBILE" : "ACTION_NAV_DASHBOARD"
+    );
   }
 
   openOrganizationModal = () => {

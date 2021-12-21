@@ -78,7 +78,7 @@ const MobileOrganizationIndex = ({ user }) => {
                     type="primary"
                     style={{ borderRadius: 4 }}
                     onClick={() => {
-                      analyticsLogger.logEvent("ACTION_SWITCH_ORG", {
+                      analyticsLogger.logEvent("ACTION_SWITCH_ORG_MOBILE", {
                         id: org.id,
                       });
                       dispatch(switchOrganization(org));

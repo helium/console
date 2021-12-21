@@ -5,7 +5,7 @@ import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import UserCan, { userCan } from "../common/UserCan";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { displayError } from "../../util/messages";
-import { minWidth } from "../../util/constants";
+import { minWidth, isMobile } from "../../util/constants";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
@@ -52,7 +52,10 @@ class ChannelShow extends Component {
 
   componentDidMount() {
     const channelId = this.props.match.params.id;
-    analyticsLogger.logEvent("ACTION_NAV_CHANNEL_SHOW", { id: channelId });
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_CHANNEL_SHOW_MOBILE" : "ACTION_NAV_CHANNEL_SHOW",
+      { id: channelId }
+    );
 
     const { socket } = this.props;
 

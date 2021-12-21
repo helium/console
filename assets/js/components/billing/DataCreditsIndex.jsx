@@ -29,6 +29,7 @@ const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import UserCan from "../common/UserCan";
 import ErrorMessage from "../common/ErrorMessage";
+import { isMobile } from "../../util/constants";
 
 const styles = {
   tipText: {
@@ -58,7 +59,9 @@ class DataCreditsIndex extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_DATA_CREDITS_MOBILE" : "ACTION_NAV_DATA_CREDITS"
+    );
 
     const { socket, currentOrganizationId } = this.props;
 
@@ -96,7 +99,9 @@ class DataCreditsIndex extends Component {
   fetchPaymentMethods = (callback, attempt = 0) => {
     if (attempt == 3) {
       return analyticsLogger.logEvent(
-        "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT",
+        isMobile
+          ? "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT_MOBILE"
+          : "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT",
         {
           organization_id: this.props.currentOrganizationId,
           step: "cannot get payment method info",

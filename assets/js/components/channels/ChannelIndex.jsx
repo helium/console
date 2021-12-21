@@ -11,6 +11,7 @@ import { PAGINATED_CHANNELS } from "../../graphql/channels";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import MobileChannelIndex from "../mobile/channels/MobileChannelIndex";
 import ErrorMessage from "../common/ErrorMessage";
+import { isMobile } from "../../util/constants";
 
 class ChannelIndex extends Component {
   state = {
@@ -22,7 +23,11 @@ class ChannelIndex extends Component {
 
   componentDidMount() {
     const { socket, currentOrganizationId } = this.props;
-    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX");
+    analyticsLogger.logEvent(
+      isMobile
+        ? "ACTION_NAV_CHANNELS_INDEX_MOBILE"
+        : "ACTION_NAV_CHANNELS_INDEX"
+    );
 
     this.channel = socket.channel("graphql:channels_index_table", {});
     this.channel.join();

@@ -38,6 +38,7 @@ import _JSXStyle from "styled-jsx/style";
 import { adafruitTemplate } from "../../util/integrationTemplates";
 import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import { isMobile } from "../../util/constants";
 
 const slugify = (text) => kebabCase(text.replace(/&/g, "-and-"));
 const makeTemplate = (definition) => {
@@ -98,7 +99,9 @@ class ChannelNew extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_NEW");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_CHANNELS_NEW_MOBILE" : "ACTION_NAV_CHANNELS_NEW"
+    );
   }
 
   handleStep2Input = (credentials, validInput = true) => {
@@ -140,10 +143,13 @@ class ChannelNew extends Component {
       googleFunctionBody,
     } = this.state;
 
-    analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", {
-      name: channelName,
-      type: type,
-    });
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
+      {
+        name: channelName,
+        type: type,
+      }
+    );
     let payload = {
       channel: {
         name: channelName,
@@ -279,7 +285,7 @@ class ChannelNew extends Component {
                 boxShadow: "0px 3px 7px 0px #ccc",
                 backgroundColor: "#F5F7F9",
                 height: 100,
-                position: 'relative',
+                position: "relative",
                 zIndex: 10,
               }}
             >
@@ -307,7 +313,14 @@ class ChannelNew extends Component {
                 </Text>
               </div>
             </div>
-            <div style={{ padding: "25px 15px", backgroundColor: '#ffffff', height: "calc(100% - 100px)", overflowY: 'scroll' }}>
+            <div
+              style={{
+                padding: "25px 15px",
+                backgroundColor: "#ffffff",
+                height: "calc(100% - 100px)",
+                overflowY: "scroll",
+              }}
+            >
               {!type && (
                 <div style={{ display: "block" }}>
                   <Collapse

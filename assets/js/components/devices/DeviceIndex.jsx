@@ -17,6 +17,7 @@ import ErrorMessage from "../common/ErrorMessage";
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 const PAGE_SIZE_KEY = "devicePageSize";
+import { isMobile } from "../../util/constants";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 class DeviceIndex extends Component {
@@ -36,7 +37,9 @@ class DeviceIndex extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_DEVICES_INDEX");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_DEVICES_INDEX_MOBILE" : "ACTION_NAV_DEVICES_INDEX"
+    );
     const { socket, currentOrganizationId, user } = this.props;
 
     this.channel = socket.channel("graphql:devices_index_table", {});

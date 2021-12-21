@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChooseImportType from "./import/ChooseImportType";
 import { createDevice } from "../../actions/device";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import MobileLayout from "../mobile/MobileLayout";
 import { displayInfo, displayError } from "../../util/messages";
 import withGql from "../../graphql/withGql";
@@ -23,6 +23,7 @@ import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
+import { isMobile } from "../../util/constants";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -112,13 +113,16 @@ class DeviceNew extends Component {
     const { name, devEUI, appEUI, appKey, labelName, configProfileId } =
       this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32) {
-      analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {
-        name: name,
-        devEUI: devEUI,
-        appEUI: appEUI,
-        appKey: appKey,
-        configProfileId: configProfileId,
-      });
+      analyticsLogger.logEvent(
+        isMobile ? "ACTION_CREATE_DEVICE_MOBILE" : "ACTION_CREATE_DEVICE",
+        {
+          name: name,
+          devEUI: devEUI,
+          appEUI: appEUI,
+          appKey: appKey,
+          configProfileId: configProfileId,
+        }
+      );
       let foundLabel = find(this.props.allLabelsQuery.allLabels, {
         name: labelName,
       });
@@ -160,18 +164,18 @@ class DeviceNew extends Component {
 
   renderHelpText = (mobile) => (
     <p style={{ fontSize: 16 }}>
-      <b>Important:</b> The first time a device joins the Network
-      could take up to 20 mins.{" "}
+      <b>Important:</b> The first time a device joins the Network could take up
+      to 20 mins.{" "}
       <a
         className="help-link"
         href="https://docs.helium.com/use-the-network/console/adding-devices/#important-information-when-adding-devices"
         target="_blank"
-        style={{ display: mobile ? 'block' : 'inline'}}
+        style={{ display: mobile ? "block" : "inline" }}
       >
         Learn more about adding devices
       </a>
     </p>
-  )
+  );
 
   renderDeviceDetails = () => {
     const { allLabels } = this.props.allLabelsQuery;
@@ -199,9 +203,7 @@ class DeviceNew extends Component {
           maxLength={16}
           addonBefore="Dev EUI"
           suffix={
-            <Text
-              type={this.state.devEUI.length !== 16 ? "danger" : ""}
-            >
+            <Text type={this.state.devEUI.length !== 16 ? "danger" : ""}>
               {Math.floor(this.state.devEUI.length / 2)} / 8 Bytes
             </Text>
           }
@@ -216,9 +218,7 @@ class DeviceNew extends Component {
           maxLength={16}
           addonBefore="App EUI"
           suffix={
-            <Text
-              type={this.state.appEUI.length !== 16 ? "danger" : ""}
-            >
+            <Text type={this.state.appEUI.length !== 16 ? "danger" : ""}>
               {Math.floor(this.state.appEUI.length / 2)} / 8 Bytes
             </Text>
           }
@@ -227,9 +227,7 @@ class DeviceNew extends Component {
         <Input
           placeholder="App Key"
           name="appKey"
-          value={
-            this.state.showAppKey ? this.state.appKey : "✱".repeat(28)
-          }
+          value={this.state.showAppKey ? this.state.appKey : "✱".repeat(28)}
           disabled={!this.state.showAppKey}
           onChange={this.handleInputUpdate}
           style={{ marginTop: 10 }}
@@ -265,9 +263,7 @@ class DeviceNew extends Component {
             </div>
           }
           suffix={
-            <Text
-              type={this.state.appKey.length !== 32 ? "danger" : ""}
-            >
+            <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>
               {Math.floor(this.state.appKey.length / 2)} / 16 Bytes
             </Text>
           }
@@ -290,8 +286,8 @@ class DeviceNew extends Component {
           select={(value) => this.setState({ labelName: value })}
         />
       </React.Fragment>
-    )
-  }
+    );
+  };
 
   render() {
     const { showImportDevicesModal, importComplete, importType } = this.state;
@@ -307,7 +303,7 @@ class DeviceNew extends Component {
                 boxShadow: "0px 3px 7px 0px #ccc",
                 backgroundColor: "#F5F7F9",
                 height: 100,
-                position: 'relative',
+                position: "relative",
                 zIndex: 10,
               }}
             >
@@ -335,10 +331,23 @@ class DeviceNew extends Component {
                 </Text>
               </div>
             </div>
-            <div style={{ padding: "25px 15px", backgroundColor: '#ffffff', height: "calc(100% - 100px)", overflowY: 'scroll' }}>
+            <div
+              style={{
+                padding: "25px 15px",
+                backgroundColor: "#ffffff",
+                height: "calc(100% - 100px)",
+                overflowY: "scroll",
+              }}
+            >
               {this.renderHelpText(true)}
               {this.renderDeviceDetails()}
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <UserCan>
                   <Button
                     key="submit"
@@ -361,9 +370,7 @@ class DeviceNew extends Component {
                 <Text style={{ fontSize: 22, fontWeight: 600 }}>
                   Add New Device
                 </Text>
-                <div>
-                  {this.renderHelpText()}
-                </div>
+                <div>{this.renderHelpText()}</div>
                 <Row gutter={30} style={{ marginTop: 10 }}>
                   <Col span={14}>
                     <Card title="Enter Device Details">
@@ -438,10 +445,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { createDevice },
-    dispatch
-  );
+  return bindActionCreators({ createDevice }, dispatch);
 }
 
 export default connect(
