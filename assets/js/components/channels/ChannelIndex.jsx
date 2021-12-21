@@ -113,7 +113,7 @@ class ChannelIndex extends Component {
       <>
         <MobileDisplay>
           <MobileLayout>
-            <MobileChannelIndex loading={loading} channels={channels} />
+            <MobileChannelIndex loading={loading} channels={channels} refetch={this.refetchPaginatedEntries} />
           </MobileLayout>
         </MobileDisplay>
         <DesktopDisplay>

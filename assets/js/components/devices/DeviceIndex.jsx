@@ -131,7 +131,7 @@ class DeviceIndex extends Component {
     this.refetchPaginatedEntries(page, pageSize, column, order);
   };
 
-  refetchPaginatedEntries = (page, pageSize, column, order) => {
+  refetchPaginatedEntries = (page, pageSize, column = DEFAULT_COLUMN, order = DEFAULT_ORDER) => {
     const { refetch } = this.props.devicesQuery;
     refetch({ page, pageSize, column, order });
   };
@@ -177,7 +177,7 @@ class DeviceIndex extends Component {
       <>
         <MobileDisplay>
           <MobileLayout>
-            <MobileDeviceIndex loading={loading} devices={devices} />
+            <MobileDeviceIndex loading={loading} devices={devices} refetch={this.refetchPaginatedEntries} />
           </MobileLayout>
         </MobileDisplay>
         <DesktopDisplay>
