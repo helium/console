@@ -8,20 +8,20 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
-import HttpDetails from "../channels/HttpDetails";
-import AwsDetails from "../channels/AwsDetails";
-import MqttDetails from "../channels//MqttDetails";
+import HttpDetails from "../../channels/HttpDetails";
+import AwsDetails from "../../channels/AwsDetails";
+import MqttDetails from "../../channels//MqttDetails";
 import UserCan, { userCan } from "../../common/UserCan";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import analyticsLogger from "../../../util/analyticsLogger";
 import { updateChannel } from "../../../actions/channel";
 import CopyIcon from "../../../../img/channels/mobile/copy.svg";
-import DeleteChannelModal from "../channels/DeleteChannelModal";
+import DeleteChannelModal from "../../channels/DeleteChannelModal";
 import {
   renderConnectionDetails,
   getDownlinkKey,
   getDownlinkUrl,
-} from "../channels/constants";
+} from "../../channels/constants";
 import { displayError } from "../../../util/messages";
 
 export default ({ channel }) => {

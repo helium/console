@@ -3,7 +3,7 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
 import MobileTableRow from "../../common/MobileTableRow";
 const { Text } = Typography;
-import MenuCaret from "../../../../img/mobile/menu-caret.svg";
+import MenuCaret from "../../../../img/menu-caret.svg";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import { useHistory } from "react-router-dom";
 
