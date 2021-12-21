@@ -10,7 +10,7 @@ import UserCan, { userCan } from "../common/UserCan";
 import { redForTablesDeleteText } from "../../util/colors";
 import { minWidth } from "../../util/constants";
 import { updateDevice, setDevicesActive } from "../../actions/device";
-import { deleteLabel } from '../../actions/label'
+import { deleteLabel } from "../../actions/label";
 import { PAGINATED_DEVICES_BY_LABEL } from "../../graphql/devices";
 import {
   Button,
@@ -33,6 +33,7 @@ const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
+import ErrorMessage from "../common/ErrorMessage";
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -294,10 +295,7 @@ class LabelShowTable extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     const rowSelection = {
       onChange: (keys, selectedRows) => {
@@ -342,7 +340,9 @@ class LabelShowTable extends Component {
                   </div>
                 }
               >
-                <Button style={{ borderRadius: 4, marginRight: 10 }}>Edit Columns</Button>
+                <Button style={{ borderRadius: 4, marginRight: 10 }}>
+                  Edit Columns
+                </Button>
               </Popover>
               <Button
                 icon={<SettingOutlined />}
@@ -355,8 +355,9 @@ class LabelShowTable extends Component {
                 icon={<DeleteOutlined />}
                 style={{ borderRadius: 4, marginRight: 10 }}
                 onClick={() => {
-                  if (label.devices.length > 0) this.setState({ showDeleteLabelModal: true })
-                  else this.props.deleteLabel(label.id)
+                  if (label.devices.length > 0)
+                    this.setState({ showDeleteLabelModal: true });
+                  else this.props.deleteLabel(label.id);
                 }}
                 type="danger"
               >
@@ -412,7 +413,7 @@ class LabelShowTable extends Component {
         </div>
         <Table
           showSorterTooltip={false}
-          sortDirections={['descend', 'ascend', 'descend']}
+          sortDirections={["descend", "ascend", "descend"]}
           columns={columns}
           dataSource={devices_by_label.entries}
           rowKey={(record) => record.id}
@@ -460,12 +461,15 @@ class LabelShowTable extends Component {
 function mapStateToProps(state) {
   return {
     socket: state.apollo.socket,
-    currentRole: state.organization.currentRole
+    currentRole: state.organization.currentRole,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ updateDevice, setDevicesActive, deleteLabel }, dispatch);
+  return bindActionCreators(
+    { updateDevice, setDevicesActive, deleteLabel },
+    dispatch
+  );
 }
 
 export default connect(

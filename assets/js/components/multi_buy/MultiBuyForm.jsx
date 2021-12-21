@@ -14,6 +14,7 @@ import UserCan, { userCan } from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default ({ show, id, openDeleteMultiplePacketModal }) => {
   const history = useHistory();
@@ -105,11 +106,7 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
           </div>
         </Col>
         <Col span={12} style={{ padding: "40px 20px" }}>
-          {error && (
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          )}
+          {error && <ErrorMessage />}
           {loading && <SkeletonLayout />}
           {!error && !loading && (
             <Fragment>

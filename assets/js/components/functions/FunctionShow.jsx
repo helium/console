@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
 import FunctionDashboardLayout from "./FunctionDashboardLayout";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import DeleteFunctionModal from "./DeleteFunctionModal";
@@ -18,7 +18,8 @@ import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import FunctionDetailsCard from "./FunctionDetailsCard";
-import { customFunctionBody } from './FunctionNew'
+import { customFunctionBody } from "./FunctionNew";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const functionId = props.match.params.id;
@@ -137,9 +138,7 @@ export default (props) => {
         <MobileDisplay />
         <DesktopDisplay>
           <FunctionDashboardLayout {...props}>
-            <div style={{ padding: 40 }}>
-              <Text>Data failed to load, please reload the page and try again</Text>
-            </div>
+            <ErrorMessage />
           </FunctionDashboardLayout>
         </DesktopDisplay>
       </>
@@ -159,23 +158,30 @@ export default (props) => {
               }}
             >
               <div className="show-header">
-                <Text style={{ fontSize: 24, fontWeight: 600 }}>{fxn.name}</Text>
+                <Text style={{ fontSize: 24, fontWeight: 600 }}>
+                  {fxn.name}
+                </Text>
                 <UserCan>
                   <div className="show-buttons">
                     <Button
                       style={{ borderRadius: 4, marginRight: 12 }}
                       type="default"
-                      icon={fxn.active ? <PauseOutlined /> : <CaretRightOutlined />}
+                      icon={
+                        fxn.active ? <PauseOutlined /> : <CaretRightOutlined />
+                      }
                       onClick={() => {
                         dispatch(
                           updateFunction(fxn.id, {
                             active: !fxn.active,
                           })
                         );
-                        analyticsLogger.logEvent("ACTION_UPDATE_FUNCTION_ACTIVE", {
-                          id: fxn.id,
-                          active: !fxn.active,
-                        });
+                        analyticsLogger.logEvent(
+                          "ACTION_UPDATE_FUNCTION_ACTIVE",
+                          {
+                            id: fxn.id,
+                            active: !fxn.active,
+                          }
+                        );
                       }}
                     >
                       {fxn.active ? "Pause" : "Start"} Function
@@ -210,14 +216,16 @@ export default (props) => {
               />
 
               <UserCan>
-                {fxn.format === "custom" && fxn.body.indexOf("Google Form") !== -1 && (
-                  <Card title="Google Form Fields">
-                    <GoogleSheetForm />
-                  </Card>
-                )}
+                {fxn.format === "custom" &&
+                  fxn.body.indexOf("Google Form") !== -1 && (
+                    <Card title="Google Form Fields">
+                      <GoogleSheetForm />
+                    </Card>
+                  )}
               </UserCan>
 
-              {(format === "custom" || (fxn.format === "custom" && !format)) && (
+              {(format === "custom" ||
+                (fxn.format === "custom" && !format)) && (
                 <FunctionValidator
                   handleFunctionUpdate={handleFunctionUpdate}
                   body={body && body.length > 0 ? body : ""}

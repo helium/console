@@ -24,6 +24,7 @@ import AlertNodeSettings from "./AlertNodeSettings";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import Warning from "../Warning";
 import WarningItem from "../WarningItem";
+import ErrorMessage from "../../common/ErrorMessage";
 
 class ChannelContent extends Component {
   state = {
@@ -122,12 +123,7 @@ class ChannelContent extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error)
-      return (
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      );
+    if (error) return <ErrorMessage />;
 
     const downlinkKey = channel.downlink_token || `{:downlink_key}`;
 
@@ -331,10 +327,7 @@ class ChannelContent extends Component {
             </React.Fragment>
           </TabPane>
           <TabPane tab="Alerts" key="2">
-            <AlertNodeSettings
-              type="integration"
-              nodeId={channel.id}
-            />
+            <AlertNodeSettings type="integration" nodeId={channel.id} />
           </TabPane>
         </Tabs>
 

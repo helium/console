@@ -4,16 +4,17 @@ import { connect } from "react-redux";
 import { ALL_LABELS } from "../../../graphql/labels";
 import { Typography } from "antd";
 const { Text } = Typography;
+import ErrorMessage from "../../common/ErrorMessage";
 
 const styles = {
   labelButton: {
     fontSize: 17,
     fontWeight: 700,
     marginRight: 10,
-    whiteSpace: 'nowrap',
-    cursor: 'pointer',
-  }
-}
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+  },
+};
 
 class MobileDeviceIndexLabelsBar extends Component {
   componentDidMount() {
@@ -35,70 +36,73 @@ class MobileDeviceIndexLabelsBar extends Component {
 
   render() {
     const { loading, error, allLabels } = this.props.allLabelsQuery;
-    const { pathname, push } = this.props
+    const { pathname, push } = this.props;
 
     if (loading) return <div />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     const renderLabelBarItem = (l) => {
       return (
         <div
           key={l.id}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
           onClick={() => {
-            if (pathname === "/labels/" + l.id) return
-            push("/labels/" + l.id)
+            if (pathname === "/labels/" + l.id) return;
+            push("/labels/" + l.id);
           }}
         >
           <Text
             style={{
               ...styles.labelButton,
-              color: pathname === "/labels/" + l.id ? '#2C79EE' : '#88A8C6',
-              borderBottom: pathname === "/labels/" + l.id ? '3px solid #2C79EE' : 'none'
+              color: pathname === "/labels/" + l.id ? "#2C79EE" : "#88A8C6",
+              borderBottom:
+                pathname === "/labels/" + l.id ? "3px solid #2C79EE" : "none",
             }}
           >
             {l.name}
           </Text>
         </div>
       );
-    }
+    };
 
     return (
       <div
         style={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: 'flex-start',
+          justifyContent: "flex-start",
           paddingLeft: 15,
           paddingRight: 15,
           marginBottom: 6,
-          width: '100%',
-          overflowX: 'scroll',
+          width: "100%",
+          overflowX: "scroll",
         }}
         className="no-scroll-bar"
       >
         <div
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
           onClick={() => {
-            if (pathname === '/devices') return
-            push('/devices')
+            if (pathname === "/devices") return;
+            push("/devices");
           }}
         >
           <Text
             style={{
               ...styles.labelButton,
-              color: pathname == '/devices' ? '#2C79EE' : '#88A8C6',
-              borderBottom: pathname == '/devices' ? '3px solid #2C79EE' : 'none'
+              color: pathname == "/devices" ? "#2C79EE" : "#88A8C6",
+              borderBottom:
+                pathname == "/devices" ? "3px solid #2C79EE" : "none",
             }}
           >
             All Devices
           </Text>
         </div>
-        {allLabels.filter(l => "/labels/" + l.id === pathname).map(renderLabelBarItem)}
-        {allLabels.filter(l => "/labels/" + l.id !== pathname).map(renderLabelBarItem)}
+        {allLabels
+          .filter((l) => "/labels/" + l.id === pathname)
+          .map(renderLabelBarItem)}
+        {allLabels
+          .filter((l) => "/labels/" + l.id !== pathname)
+          .map(renderLabelBarItem)}
       </div>
     );
   }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import DashboardLayout from "../common/DashboardLayout";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import TableHeader from "../common/TableHeader";
 import AllIcon from "../../../img/config_profile/profile_blue.svg";
 import PlusIcon from "../../../img/config_profile/plus.svg";
@@ -15,6 +15,7 @@ import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
 import ConfigProfileIndexTable from "./ConfigProfileIndexTable";
 import DeleteConfigProfileModal from "./DeleteConfigProfileModal";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const history = useHistory();
@@ -24,7 +25,7 @@ export default (props) => {
     useState(false);
   const [selectedConfigProfile, setSelectedConfigProfile] = useState(null);
 
-  const { loading, error, data, refetch } = useQuery(ALL_CONFIG_PROFILES, {
+  const { loading, data, error, refetch } = useQuery(ALL_CONFIG_PROFILES, {
     fetchPolicy: "cache-first",
   });
   const configProfileData = data ? data.allConfigProfiles : [];
@@ -112,19 +113,13 @@ export default (props) => {
             }
             newText="Add New Profile"
           >
-            {showPage === "allConfigProfiles" && error && (
-              <div style={{ padding: 40 }}>
-                <Text>
-                  Data failed to load, please reload the page and try again
-                </Text>
-              </div>
-            )}
+            {showPage === "allConfigProfiles" && error && <ErrorMessage />}
             {showPage === "allConfigProfiles" && loading && (
               <div style={{ padding: 40 }}>
                 <SkeletonLayout />
               </div>
             )}
-            {showPage === "allConfigProfiles" && !loading && (
+            {showPage === "allConfigProfiles" && !loading && !error && (
               <ConfigProfileIndexTable
                 data={configProfileData}
                 history={history}

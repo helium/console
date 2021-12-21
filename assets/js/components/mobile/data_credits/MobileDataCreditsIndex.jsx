@@ -2,33 +2,47 @@ import React, { useState } from "react";
 import numeral from "numeral";
 import UserCan from "../../common/UserCan";
 import PaymentCard from "../../billing/PaymentCard";
-import DownOutlined from "@ant-design/icons/DownOutlined";
-import UpOutlined from "@ant-design/icons/UpOutlined";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
 import PurchaseCreditModal from "../../billing/PurchaseCreditModal";
 import OrganizationTransferDCModal from "../../billing/OrganizationTransferDCModal";
 import AutomaticRenewalModal from "../../billing/AutomaticRenewalModal";
-import { SkeletonLayout } from '../../common/SkeletonLayout'
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
 import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
-import { Typography, Button, Row, Col, Collapse } from 'antd';
-const { Text } = Typography
-const { Panel } = Collapse
+import { Typography, Button, Row, Col, Collapse } from "antd";
+import ErrorMessage from "../../common/ErrorMessage";
+const { Text } = Typography;
+const { Panel } = Collapse;
 
-const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMethods, paymentMethods, defaultPayment, triedFetchingPayments, user, styles }) => {
+const MobileDataCreditsIndex = ({
+  loading,
+  error,
+  organization,
+  fetchPaymentMethods,
+  paymentMethods,
+  defaultPayment,
+  triedFetchingPayments,
+  user,
+  styles,
+}) => {
   const [showPurchaseCreditModal, setShowPurchaseCreditModal] = useState(false);
-  const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] = useState(false);
-  const [showOrganizationTransferDCModal, setShowOrganizationTransferDCModal] = useState(false);
+  const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] =
+    useState(false);
+  const [showOrganizationTransferDCModal, setShowOrganizationTransferDCModal] =
+    useState(false);
 
   const renderBlankSlate = () => {
     return (
       <div style={{ margin: 15 }}>
-        <IndexBlankSlate organization={organization} onClick={() => setShowPurchaseCreditModal(true)} />
+        <IndexBlankSlate
+          organization={organization}
+          onClick={() => setShowPurchaseCreditModal(true)}
+        />
       </div>
-    )
-  }
+    );
+  };
 
   const renderContent = () => {
     return (
@@ -38,13 +52,13 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-start",
-            overflowX: 'scroll',
+            overflowX: "scroll",
             padding: "15px 15px 0px 15px",
           }}
           className="no-scroll-bar"
         >
           <UserCan noManager>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
               <Button
                 type="primary"
                 size="large"
@@ -52,7 +66,8 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
                 style={{
                   borderRadius: 4,
                   marginRight: 8,
-                  display: window.disable_user_burn !== "true" ? "inline" : "none"
+                  display:
+                    window.disable_user_burn !== "true" ? "inline" : "none",
                 }}
               >
                 Purchase DC
@@ -86,11 +101,22 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
             <Panel header={<b>REMAINING DATA CREDITS</b>} key="1">
-              <div style={{ overflowX: 'scroll', padding: 10 }} className="no-scroll-bar">
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
+              <div
+                style={{ overflowX: "scroll", padding: 10 }}
+                className="no-scroll-bar"
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    minWidth: 300,
+                  }}
+                >
                   <img style={styles.image} src={DCIMg} />
                   <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                    {organization && numeral(organization.dc_balance).format("0,0")}
+                    {organization &&
+                      numeral(organization.dc_balance).format("0,0")}
                   </Text>
                 </div>
               </div>
@@ -101,11 +127,24 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
             <Panel header={<b>REMAINING PACKETS</b>} key="1">
-              <div style={{ overflowX: 'scroll', padding: 14 }} className="no-scroll-bar">
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center", minWidth: 300 }}>
+              <div
+                style={{ overflowX: "scroll", padding: 14 }}
+                className="no-scroll-bar"
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    minWidth: 300,
+                  }}
+                >
                   <img style={styles.image} src={BytesIMg} />
-                  <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                    {organization && numeral(organization.dc_balance * 24).format("0,0")}
+                  <Text
+                    style={{ ...styles.numberCount, color: tertiaryPurple }}
+                  >
+                    {organization &&
+                      numeral(organization.dc_balance * 24).format("0,0")}
                   </Text>
                 </div>
               </div>
@@ -118,9 +157,15 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
             <div style={{ margin: 15 }}>
               <Collapse expandIconPosition="right" defaultActiveKey="1">
                 <Panel header={<b>DEFAULT PAYMENT METHOD</b>} key="1">
-                  <div style={{ overflowX: 'scroll', padding: 10 }} className="no-scroll-bar">
+                  <div
+                    style={{ overflowX: "scroll", padding: 10 }}
+                    className="no-scroll-bar"
+                  >
                     {paymentMethods.length > 0 && defaultPayment && (
-                      <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
+                      <Row
+                        type="flex"
+                        style={{ alignItems: "center", minWidth: 200 }}
+                      >
                         <Col span={16}>
                           <PaymentCard
                             key={defaultPayment.id}
@@ -170,39 +215,40 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
           </div>
         </UserCan>
       </React.Fragment>
-    )
-  }
+    );
+  };
 
   return (
-    <div style={{ height: '100%', overflowY: 'hidden', backgroundColor: '#ffffff' }}>
-      <div style={{ padding: 15, boxShadow: '0px 3px 7px 0px #ccc', backgroundColor: "#F5F7F9", height: 80, position: 'relative', zIndex: 10 }}>
+    <div
+      style={{
+        height: "100%",
+        overflowY: "hidden",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <div
+        style={{
+          padding: 15,
+          boxShadow: "0px 3px 7px 0px #ccc",
+          backgroundColor: "#F5F7F9",
+          height: 80,
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
         <Text style={{ fontSize: 32, fontWeight: 600 }}>Data Credits</Text>
       </div>
-      <div style={{ height: 'calc(100% - 80px)', overflowY: 'scroll' }}>
-        {
-          loading && (
-            <div style={{ marginTop: 15 }}>
-              <SkeletonLayout />
-            </div>
-          )
-        }
-        {error && (
-          <div style={{ margin: 15 }}>
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
+      <div style={{ height: "calc(100% - 80px)", overflowY: "scroll" }}>
+        {loading && (
+          <div style={{ marginTop: 15 }}>
+            <SkeletonLayout />
           </div>
         )}
-        {
-          organization && organization.dc_balance_nonce == 0 && (
-            renderBlankSlate()
-          )
-        }
-        {
-          organization && organization.dc_balance_nonce != 0 && (
-            renderContent()
-          )
-        }
+        {error && <ErrorMessage />}
+        {organization &&
+          organization.dc_balance_nonce == 0 &&
+          renderBlankSlate()}
+        {organization && organization.dc_balance_nonce != 0 && renderContent()}
       </div>
 
       <PurchaseCreditModal
@@ -229,7 +275,7 @@ const MobileDataCreditsIndex = ({ loading, error, organization, fetchPaymentMeth
         mobile={true}
       />
     </div>
-  )
-}
+  );
+};
 
-export default MobileDataCreditsIndex
+export default MobileDataCreditsIndex;

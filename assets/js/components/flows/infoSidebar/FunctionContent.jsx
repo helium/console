@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { functionTypes, functionFormats } from "../../functions/constants";
+import ErrorMessage from "../../common/ErrorMessage";
 
 class FunctionContent extends Component {
   state = {
@@ -66,12 +67,7 @@ class FunctionContent extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error)
-      return (
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div>
@@ -125,7 +121,7 @@ class FunctionContent extends Component {
               </Button>
             </Link>
             <UserCan>
-            { this.props.hasChanges ? (
+              {this.props.hasChanges ? (
                 <Tooltip
                   title="Undo or save your workspace changes before deleting this function"
                   overlayStyle={{ width: 230 }}
@@ -151,8 +147,7 @@ class FunctionContent extends Component {
                 >
                   Delete
                 </Button>
-              )
-            }
+              )}
             </UserCan>
           </div>
         </div>

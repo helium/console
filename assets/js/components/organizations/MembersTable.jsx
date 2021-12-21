@@ -11,6 +11,7 @@ import { Table, Button, Pagination, Typography, Tooltip } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
+import ErrorMessage from "../common/ErrorMessage";
 
 class MembersTable extends Component {
   state = {
@@ -125,10 +126,7 @@ class MembersTable extends Component {
     const { loading, error, memberships } = this.props.paginatedMembersQuery;
 
     if (loading) return <SkeletonLayout />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>

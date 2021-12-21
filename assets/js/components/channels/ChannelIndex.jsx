@@ -9,9 +9,8 @@ import DeleteChannelModal from "./DeleteChannelModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { PAGINATED_CHANNELS } from "../../graphql/channels";
 import { SkeletonLayout } from "../common/SkeletonLayout";
-import { Typography } from "antd";
 import MobileChannelIndex from "./MobileChannelIndex";
-const { Text } = Typography;
+import ErrorMessage from "../common/ErrorMessage";
 
 class ChannelIndex extends Component {
   state = {
@@ -88,6 +87,23 @@ class ChannelIndex extends Component {
     const { channels, loading, error } = this.props.paginatedChannelsQuery;
     const { showDeleteChannelModal, channelSelected } = this.state;
 
+    if (error) {
+      return (
+        <>
+          <MobileDisplay>
+            <MobileLayout>
+              <ErrorMessage />
+            </MobileLayout>
+          </MobileDisplay>
+          <DesktopDisplay>
+            <ChannelDashboardLayout {...this.props}>
+              <ErrorMessage />
+            </ChannelDashboardLayout>
+          </DesktopDisplay>
+        </>
+      );
+    }
+
     return (
       <>
         <MobileDisplay>
@@ -97,11 +113,6 @@ class ChannelIndex extends Component {
         </MobileDisplay>
         <DesktopDisplay>
           <ChannelDashboardLayout {...this.props}>
-            {error && (
-              <Text>
-                Data failed to load, please reload the page and try again
-              </Text>
-            )}
             {loading && (
               <div style={{ padding: 40 }}>
                 <SkeletonLayout />

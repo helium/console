@@ -7,13 +7,13 @@ import {
 } from "../../../actions/configProfile";
 import { ALL_CONFIG_PROFILES } from "../../../graphql/configProfiles";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import { Switch, Typography, Table, Button } from "antd";
+import { Switch, Table, Button } from "antd";
 import { Link } from "react-router-dom";
 import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
-const { Text } = Typography;
 import NewConfigProfileWithNode from "./NewConfigProfileWithNode";
 import SlidersOutlined from "@ant-design/icons/SlidersOutlined";
+import ErrorMessage from "../../common/ErrorMessage";
 
 export default ({ currentNode, nodeType }) => {
   const [showNew, setShowNew] = useState(false);
@@ -54,12 +54,7 @@ export default ({ currentNode, nodeType }) => {
         <SkeletonLayout />
       </div>
     );
-  if (error)
-    return (
-      <div style={{ padding: "20px 40px 0px 40px" }}>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </div>
-    );
+  if (error) return <ErrorMessage />;
 
   return showNew ? (
     <NewConfigProfileWithNode

@@ -8,7 +8,6 @@ import AddDeviceAlertIcon from "../../../img/alerts/device-label-alert-add-icon.
 import AddIntegrationAlertIcon from "../../../img/alerts/channel-alert-add-icon.svg";
 import DeviceAlertIcon from "../../../img/alerts/alert-show-devices.svg";
 import IntegrationAlertIcon from "../../../img/alerts/alert-show-integrations.svg";
-import Text from "antd/lib/typography/Text";
 import { useDispatch } from "react-redux";
 import { createAlert, updateAlert } from "../../actions/alert";
 import AlertSettings from "./AlertSettings";
@@ -20,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const history = useHistory();
@@ -147,11 +147,7 @@ export default (props) => {
             </div>
           </Col>
           <Col span={12} style={{ padding: "40px 20px" }}>
-            {error && (
-              <Text>
-                Data failed to load, please reload the page and try again
-              </Text>
-            )}
+            {error && <ErrorMessage />}
             {loading && <SkeletonLayout />}
             {!error && !loading && (
               <AlertSettings

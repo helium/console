@@ -7,7 +7,7 @@ import { Prompt } from "react-router";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
 import { getIntegrationTypeForFlows } from "../../util/flows";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
 import { Typography, Spin, message } from "antd";
@@ -16,6 +16,7 @@ const { Text } = Typography;
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import { checkIfDevicesNotInFilter } from "../../util/constants";
+import ErrorMessage from "../common/ErrorMessage";
 
 class FlowsIndex extends Component {
   state = {
@@ -135,12 +136,7 @@ class FlowsIndex extends Component {
           <MobileDisplay />
           <DesktopDisplay>
             <DashboardLayout fullHeightWidth user={this.props.user}>
-              <div style={{ padding: 20 }}>
-                <Text>
-                  Workspace data failed to load, please reload the page and try
-                  again
-                </Text>
-              </div>
+              <ErrorMessage />
             </DashboardLayout>
           </DesktopDisplay>
         </>

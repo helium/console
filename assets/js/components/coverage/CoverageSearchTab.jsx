@@ -11,6 +11,7 @@ import {
 import CoverageSearchTable from "./CoverageSearchTable";
 import debounce from "lodash/debounce";
 import UserCan from "../common/UserCan";
+import ErrorMessage from "../common/ErrorMessage";
 
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
@@ -210,9 +211,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
           </Row>
         )}
       </div>
-      {error && (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      )}
+      {error && <ErrorMessage />}
       {searchTerm.length !== 0 && (
         <React.Fragment>
           <UserCan>

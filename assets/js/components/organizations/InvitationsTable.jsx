@@ -10,6 +10,7 @@ import { minWidth } from "../../util/constants";
 import { Table, Button, Pagination, Tooltip } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
+import ErrorMessage from "../common/ErrorMessage";
 
 class InvitationsTable extends Component {
   state = {
@@ -96,10 +97,7 @@ class InvitationsTable extends Component {
     const { loading, error, invitations } = this.props.paginatedInvitesQuery;
 
     if (loading) return <SkeletonLayout />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
