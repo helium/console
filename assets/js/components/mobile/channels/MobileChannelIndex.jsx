@@ -2,13 +2,21 @@ import React from "react";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
 import MobileTableRow from "../../common/MobileTableRow";
+import useElementOnScreen from "../ElementOnScreen.jsx"
 const { Text } = Typography;
 import MenuCaret from "../../../../img/menu-caret.svg";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import { useHistory } from "react-router-dom";
 
-export default ({ loading, channels }) => {
+export default ({ loading, channels, refetch }) => {
   const history = useHistory();
+
+  const [ containerRef ] = useElementOnScreen({
+    root: null,
+    rootMargin: "0px",
+    threshold: 1.0
+  }, refetch, channels)
+
   return (
     <div>
       <div style={{ padding: 15 }}>
@@ -16,7 +24,7 @@ export default ({ loading, channels }) => {
       </div>
       {loading && <SkeletonLayout />}
       {channels && (
-        <div>
+        <div style={{ marginBottom: 15 }}>
           <Text
             style={{
               marginLeft: 15,
@@ -26,7 +34,7 @@ export default ({ loading, channels }) => {
               display: "block",
             }}
           >
-            {channels.entries.length} Integrations
+            {channels.totalEntries} Integrations
           </Text>
           {channels.entries.map((channel) => (
             <MobileTableRow
@@ -50,6 +58,7 @@ export default ({ loading, channels }) => {
               }
             />
           ))}
+          <div style={{ height: 1 }} ref={containerRef}/>
         </div>
       )}
 
