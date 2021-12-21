@@ -11,6 +11,7 @@ import { addAlertToNode, removeAlertFromNode } from "../../../actions/alert";
 import { useDispatch } from "react-redux";
 import NewAlertWithNode from "./NewAlertWithNode";
 import analyticsLogger from "../../../util/analyticsLogger";
+import ErrorMessage from "../../common/ErrorMessage";
 
 export default (props) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
@@ -82,12 +83,7 @@ export default (props) => {
         <SkeletonLayout />
       </div>
     );
-  if (error || alertsForNodeError)
-    return (
-      <div>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </div>
-    );
+  if (error || alertsForNodeError) return <ErrorMessage />;
 
   const renderAllAlerts = () => (
     <div>
@@ -131,7 +127,7 @@ export default (props) => {
                       });
                       dispatch(
                         addAlertToNode(record.id, props.nodeId, props.type)
-                      )
+                      );
                     } else {
                       analyticsLogger.logEvent(
                         "ACTION_REMOVE_ALERT_FROM_NODE",
@@ -143,7 +139,7 @@ export default (props) => {
                       );
                       dispatch(
                         removeAlertFromNode(record.id, props.nodeId, props.type)
-                      )
+                      );
                     }
                   }}
                 />

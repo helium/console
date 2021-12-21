@@ -7,11 +7,11 @@ import {
 } from "../../../actions/multiBuy";
 import { ALL_MULTI_BUYS } from "../../../graphql/multiBuys";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import { Switch, Typography, Table } from "antd";
+import { Switch, Table } from "antd";
 import { Link } from "react-router-dom";
 import { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
-const { Text } = Typography;
+import ErrorMessage from "../../common/ErrorMessage";
 
 export default ({ currentNode }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
@@ -26,12 +26,7 @@ export default ({ currentNode }) => {
         <SkeletonLayout />
       </div>
     );
-  if (error)
-    return (
-      <div style={{ padding: "20px 40px 0px 40px" }}>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </div>
-    );
+  if (error) return <ErrorMessage />;
 
   return (
     <div>
@@ -75,7 +70,7 @@ export default ({ currentNode }) => {
                           currentNode.id,
                           currentNode.__typename
                         )
-                      )
+                      );
                     } else {
                       analyticsLogger.logEvent(
                         "ACTION_REMOVE_MULTIBUY_FROM_NODE",
@@ -90,7 +85,7 @@ export default ({ currentNode }) => {
                           currentNode.id,
                           currentNode.__typename
                         )
-                      )
+                      );
                     }
                   }}
                 />

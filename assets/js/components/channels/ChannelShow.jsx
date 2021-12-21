@@ -38,6 +38,7 @@ import {
   getDownlinkKey,
   getDownlinkUrl,
 } from "./constants";
+import ErrorMessage from "../common/ErrorMessage";
 
 class ChannelShow extends Component {
   state = {
@@ -201,20 +202,17 @@ class ChannelShow extends Component {
         </>
       );
 
-    const errorMessage = () => (
-      <div style={{ padding: 40 }}>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </div>
-    );
     if (error)
       return (
         <>
           <MobileDisplay>
-            <MobileLayout>{errorMessage()}</MobileLayout>
+            <MobileLayout>
+              <ErrorMessage />
+            </MobileLayout>
           </MobileDisplay>
           <DesktopDisplay>
             <ChannelDashboardLayout {...this.props}>
-              {errorMessage()}
+              <ErrorMessage />
             </ChannelDashboardLayout>
           </DesktopDisplay>
         </>

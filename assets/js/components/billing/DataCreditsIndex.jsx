@@ -5,9 +5,9 @@ import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
-import MobileLayout from '../mobile/MobileLayout'
-import MobileDataCreditsIndex from '../mobile/data_credits/MobileDataCreditsIndex'
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import MobileLayout from "../mobile/MobileLayout";
+import MobileDataCreditsIndex from "../mobile/data_credits/MobileDataCreditsIndex";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import analyticsLogger from "../../util/analyticsLogger";
 import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
@@ -28,6 +28,7 @@ import BytesIMg from "../../../img/datacredits-bytes-logo.svg";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import UserCan from "../common/UserCan";
+import ErrorMessage from "../common/ErrorMessage";
 
 const styles = {
   tipText: {
@@ -38,7 +39,7 @@ const styles = {
     width: 33,
     marginRight: 8,
     top: -4,
-    position: 'relative'
+    position: "relative",
   },
   numberCount: {
     fontSize: 40,
@@ -127,7 +128,10 @@ class DataCreditsIndex extends Component {
   renderBlankState = () => {
     const { organization } = this.props.orgShowDCQuery;
     return (
-      <IndexBlankSlate organization={organization} onClick={() => this.openModal("showPurchaseCreditModal")} />
+      <IndexBlankSlate
+        organization={organization}
+        onClick={() => this.openModal("showPurchaseCreditModal")}
+      />
     );
   };
 
@@ -147,13 +151,19 @@ class DataCreditsIndex extends Component {
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={DCIMg} />
-                <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                  {numeral(dc_balance).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <img style={styles.image} src={DCIMg} />
+                  <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                    {numeral(dc_balance).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -173,13 +183,21 @@ class DataCreditsIndex extends Component {
               }
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={BytesIMg} />
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                  {numeral(dc_balance * 24).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <img style={styles.image} src={BytesIMg} />
+                  <Text
+                    style={{ ...styles.numberCount, color: tertiaryPurple }}
+                  >
+                    {numeral(dc_balance * 24).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -202,46 +220,52 @@ class DataCreditsIndex extends Component {
                   }
                   bodyStyle={{ height: 90, padding: 0 }}
                 >
-                  <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-                  {this.state.paymentMethods.length > 0 && defaultPayment && (
-                    <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
-                      <Col span={16}>
-                        <PaymentCard
-                          key={defaultPayment.id}
-                          card={defaultPayment.card}
-                        />
-                      </Col>
-                      <Col
-                        span={8}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          marginTop: -2,
-                        }}
+                  <div
+                    style={{ overflowX: "scroll", padding: 24 }}
+                    className="no-scroll-bar"
+                  >
+                    {this.state.paymentMethods.length > 0 && defaultPayment && (
+                      <Row
+                        type="flex"
+                        style={{ alignItems: "center", minWidth: 200 }}
                       >
-                        <p
+                        <Col span={16}>
+                          <PaymentCard
+                            key={defaultPayment.id}
+                            card={defaultPayment.card}
+                          />
+                        </Col>
+                        <Col
+                          span={8}
                           style={{
-                            fontFamily: "monospace",
-                            color: "#777777",
-                            display: "inline",
-                            position: "relative",
-                            top: 6,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            marginTop: -2,
                           }}
                         >
-                          {defaultPayment.card.exp_month > 9
-                            ? defaultPayment.card.exp_month
-                            : "0" + defaultPayment.card.exp_month}
-                          /{defaultPayment.card.exp_year.toString().slice(2)}
-                        </p>
-                      </Col>
-                    </Row>
-                  )}
-                  {!defaultPayment && this.state.triedFetchingPayments && (
-                    <Row type="flex" style={{ alignItems: "center" }}>
-                      <Text style={styles.numberCount}>N/A</Text>
-                    </Row>
-                  )}
+                          <p
+                            style={{
+                              fontFamily: "monospace",
+                              color: "#777777",
+                              display: "inline",
+                              position: "relative",
+                              top: 6,
+                            }}
+                          >
+                            {defaultPayment.card.exp_month > 9
+                              ? defaultPayment.card.exp_month
+                              : "0" + defaultPayment.card.exp_month}
+                            /{defaultPayment.card.exp_year.toString().slice(2)}
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                    {!defaultPayment && this.state.triedFetchingPayments && (
+                      <Row type="flex" style={{ alignItems: "center" }}>
+                        <Text style={styles.numberCount}>N/A</Text>
+                      </Row>
+                    )}
                   </div>
                 </Card>
               </UserCan>
@@ -288,7 +312,11 @@ class DataCreditsIndex extends Component {
         </MobileDisplay>
 
         <DesktopDisplay>
-          <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
+          <DashboardLayout
+            title="Data Credits"
+            user={this.props.user}
+            noAddButton
+          >
             <div
               style={{
                 padding: "30px 30px 10px 30px",
@@ -306,7 +334,7 @@ class DataCreditsIndex extends Component {
                   flexDirection: "row",
                   justifyContent: "flex-start",
                   padding: "0px 0px 20px 0px",
-                  overflowX: 'scroll'
+                  overflowX: "scroll",
                 }}
                 className="no-scroll-bar"
               >
@@ -327,7 +355,9 @@ class DataCreditsIndex extends Component {
                       )}
                       <Button
                         icon={<SyncOutlined />}
-                        onClick={() => this.openModal("showAutomaticRenewalModal")}
+                        onClick={() =>
+                          this.openModal("showAutomaticRenewalModal")
+                        }
                         style={{
                           borderRadius: 4,
                           marginRight: 20,
@@ -340,10 +370,15 @@ class DataCreditsIndex extends Component {
                       <Button
                         type="primary"
                         icon={<WalletOutlined />}
-                        onClick={() => this.openModal("showPurchaseCreditModal")}
+                        onClick={() =>
+                          this.openModal("showPurchaseCreditModal")
+                        }
                         style={{
                           borderRadius: 4,
-                          display: window.disable_user_burn !== "true" ? "inline" : "none"
+                          display:
+                            window.disable_user_burn !== "true"
+                              ? "inline"
+                              : "none",
                         }}
                       >
                         Purchase Data Credits
@@ -354,11 +389,7 @@ class DataCreditsIndex extends Component {
                   )}
                 </UserCan>
               </div>
-              {error && (
-                <Text>
-                  Data failed to load, please reload the page and try again
-                </Text>
-              )}
+              {error && <ErrorMessage />}
               {organization &&
                 organization.dc_balance_nonce == 0 &&
                 this.renderBlankState()}

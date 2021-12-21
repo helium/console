@@ -43,6 +43,7 @@ import DeviceNotInFilterTableBadge from "../../common/DeviceNotInFilterTableBadg
 import Warning from "../Warning";
 import WarningItem from "../WarningItem";
 import ConfigProfileSettings from "./ConfigProfileSettings";
+import ErrorMessage from "../../common/ErrorMessage";
 
 class LabelContent extends Component {
   state = {
@@ -265,12 +266,7 @@ class LabelContent extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error || labelError)
-      return (
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      );
+    if (error || labelError) return <ErrorMessage />;
 
     const rowSelection = {
       onChange: (keys, selectedRows) => {

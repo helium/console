@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import numeral from "numeral";
-import UserCan from "../../common/UserCan";
 import { switchOrganization } from "../../../actions/organization";
 import analyticsLogger from "../../../util/analyticsLogger";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +9,7 @@ import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography, Button } from "antd";
 import MobileTableRow from "../../common/MobileTableRow";
 const { Text } = Typography;
+import ErrorMessage from "../../common/ErrorMessage";
 
 const MobileOrganizationIndex = ({ user }) => {
   const { loading, error, data, refetch } = useQuery(PAGINATED_ORGANIZATIONS, {
@@ -38,6 +38,10 @@ const MobileOrganizationIndex = ({ user }) => {
       channel.leave();
     };
   }, []);
+
+  if (error) {
+    return <ErrorMessage />;
+  }
 
   return (
     <div>

@@ -6,7 +6,7 @@ import find from "lodash/find";
 import OutsideClick from "react-outside-click-handler";
 import EventsDashboard from "../events/EventsDashboard";
 import UserCan, { userCan } from "../common/UserCan";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import Debug from "../common/Debug";
 import Downlink from "../common/Downlink";
@@ -51,6 +51,7 @@ const { Text } = Typography;
 import DeviceShowLabelsTable from "./DeviceShowLabelsTable";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 import ProfileDropdown from "../common/ProfileDropdown";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const deviceId = props.match.params.id;
@@ -292,22 +293,17 @@ export default (props) => {
     );
   }
 
-  const errorMessage = () => (
-    <div style={{ padding: 40 }}>
-      <Text>Data failed to load, please reload the page and try again</Text>
-    </div>
-  );
   if (error) {
     return (
       <>
-      <MobileDisplay>
-        <MobileLayout>
-          <MobileLayout>{errorMessage()}</MobileLayout>
-        </MobileLayout>
-      </MobileDisplay>
+        <MobileDisplay>
+          <MobileLayout>
+            <ErrorMessage />
+          </MobileLayout>
+        </MobileDisplay>
         <DesktopDisplay>
           <DeviceDashboardLayout {...props}>
-            {errorMessage()}
+            <ErrorMessage />
           </DeviceDashboardLayout>
         </DesktopDisplay>
       </>
@@ -336,7 +332,9 @@ export default (props) => {
                 >
                   {device.name}
                 </Text>
-                {device.in_xor_filter === false && <DeviceNotInFilterTableBadge />}
+                {device.in_xor_filter === false && (
+                  <DeviceNotInFilterTableBadge />
+                )}
               </div>
 
               <div className="show-buttons">
@@ -407,7 +405,9 @@ export default (props) => {
                                 <Button
                                   type="primary"
                                   name="name"
-                                  onClick={() => handleDeviceNameUpdate(device.id)}
+                                  onClick={() =>
+                                    handleDeviceNameUpdate(device.id)
+                                  }
                                 >
                                   Update
                                 </Button>
@@ -418,7 +418,10 @@ export default (props) => {
                                   {device.name}{" "}
                                 </Text>
                                 <UserCan>
-                                  <Button size="small" onClick={toggleNameInput}>
+                                  <Button
+                                    size="small"
+                                    onClick={toggleNameInput}
+                                  >
                                     <EditOutlined />
                                   </Button>
                                 </UserCan>
@@ -454,7 +457,9 @@ export default (props) => {
                                 <Button
                                   type="primary"
                                   name="devEUI"
-                                  onClick={() => handleDeviceEUIUpdate(device.id)}
+                                  onClick={() =>
+                                    handleDeviceEUIUpdate(device.id)
+                                  }
                                 >
                                   Update
                                 </Button>
@@ -462,7 +467,8 @@ export default (props) => {
                             )}
                             {!showDevEUIInput && (
                               <React.Fragment>
-                                {device.dev_eui && device.dev_eui.length === 16 ? (
+                                {device.dev_eui &&
+                                device.dev_eui.length === 16 ? (
                                   <DeviceCredentials data={device.dev_eui} />
                                 ) : (
                                   <Text style={{ marginRight: 5 }}>
@@ -470,7 +476,10 @@ export default (props) => {
                                   </Text>
                                 )}
                                 <UserCan>
-                                  <Button size="small" onClick={toggleDevEUIInput}>
+                                  <Button
+                                    size="small"
+                                    onClick={toggleDevEUIInput}
+                                  >
                                     <EditOutlined />
                                   </Button>
                                 </UserCan>
@@ -503,7 +512,8 @@ export default (props) => {
                             )}
                             {!showAppEUIInput && (
                               <React.Fragment>
-                                {device.app_eui && device.app_eui.length === 16 ? (
+                                {device.app_eui &&
+                                device.app_eui.length === 16 ? (
                                   <DeviceCredentials data={device.app_eui} />
                                 ) : (
                                   <Text style={{ marginRight: 5 }}>
@@ -511,7 +521,10 @@ export default (props) => {
                                   </Text>
                                 )}
                                 <UserCan>
-                                  <Button size="small" onClick={toggleAppEUIInput}>
+                                  <Button
+                                    size="small"
+                                    onClick={toggleAppEUIInput}
+                                  >
                                     <EditOutlined />
                                   </Button>
                                 </UserCan>
@@ -543,7 +556,9 @@ export default (props) => {
                             </td>
                             <td>
                               {showAppKeyInput && (
-                                <OutsideClick onOutsideClick={toggleAppKeyInput}>
+                                <OutsideClick
+                                  onOutsideClick={toggleAppKeyInput}
+                                >
                                   <Input
                                     name="appKey"
                                     value={appKey}
@@ -554,7 +569,9 @@ export default (props) => {
                                   <Button
                                     type="primary"
                                     name="appKey"
-                                    onClick={() => handleAppKeyUpdate(device.id)}
+                                    onClick={() =>
+                                      handleAppKeyUpdate(device.id)
+                                    }
                                   >
                                     Update
                                   </Button>
@@ -570,7 +587,10 @@ export default (props) => {
                                       Add a App Key
                                     </Text>
                                   )}
-                                  <Button size="small" onClick={toggleAppKeyInput}>
+                                  <Button
+                                    size="small"
+                                    onClick={toggleAppKeyInput}
+                                  >
                                     <EditOutlined />
                                   </Button>
                                 </React.Fragment>
@@ -611,31 +631,45 @@ export default (props) => {
                                 ) : (
                                   <Text>
                                     <i>None </i>
-                                    {
-                                      device.inherited_profile_label && (
-                                        <Text>
-                                          <i>
-                                            {"(Inheriting profile "}
-                                            {
-                                              find(device.labels, { id: device.inherited_profile_label }) ? (
-                                                <Link to={`/config_profiles/${find(device.labels, { id: device.inherited_profile_label }).config_profile_id}`}>
-                                                 {find(device.labels, { id: device.inherited_profile_label }).config_profile.name}
-                                                </Link>
-                                              ) : ""
-                                            }
-                                            {" from "}
-                                            <Link to={`/labels/${device.inherited_profile_label}`}>
+                                    {device.inherited_profile_label && (
+                                      <Text>
+                                        <i>
+                                          {"(Inheriting profile "}
+                                          {find(device.labels, {
+                                            id: device.inherited_profile_label,
+                                          }) ? (
+                                            <Link
+                                              to={`/config_profiles/${
+                                                find(device.labels, {
+                                                  id: device.inherited_profile_label,
+                                                }).config_profile_id
+                                              }`}
+                                            >
                                               {
-                                                find(device.labels, { id: device.inherited_profile_label }) ?
-                                                find(device.labels, { id: device.inherited_profile_label }).name :
-                                                "label"
+                                                find(device.labels, {
+                                                  id: device.inherited_profile_label,
+                                                }).config_profile.name
                                               }
                                             </Link>
-                                            {")"}
-                                          </i>
-                                        </Text>
-                                      )
-                                    }
+                                          ) : (
+                                            ""
+                                          )}
+                                          {" from "}
+                                          <Link
+                                            to={`/labels/${device.inherited_profile_label}`}
+                                          >
+                                            {find(device.labels, {
+                                              id: device.inherited_profile_label,
+                                            })
+                                              ? find(device.labels, {
+                                                  id: device.inherited_profile_label,
+                                                }).name
+                                              : "label"}
+                                          </Link>
+                                          {")"}
+                                        </i>
+                                      </Text>
+                                    )}
                                   </Text>
                                 )}
                                 <Button

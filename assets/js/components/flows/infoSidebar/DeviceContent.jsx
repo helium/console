@@ -27,6 +27,7 @@ import moment from "moment";
 import find from "lodash/find";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import ConfigProfileSettings from "./ConfigProfileSettings";
+import ErrorMessage from "../../common/ErrorMessage";
 
 class DeviceContent extends Component {
   state = {
@@ -190,12 +191,7 @@ class DeviceContent extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error)
-      return (
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div>
@@ -409,34 +405,46 @@ class DeviceContent extends Component {
               </Paragraph>
               <Paragraph>
                 <Text strong>Profile: </Text>
-                { device.config_profile_id ? (
+                {device.config_profile_id ? (
                   <Text>{device.config_profile.name}</Text>
                 ) : (
                   <Text>
                     None
-                    {
-                      device.inherited_profile_label && (
-                        <Text>
-                          {" (Inheriting profile "}
-                          {
-                            find(device.labels, { id: device.inherited_profile_label }) ? (
-                              <Link to={`/config_profiles/${find(device.labels, { id: device.inherited_profile_label }).config_profile_id}`}>
-                               {find(device.labels, { id: device.inherited_profile_label }).config_profile.name}
-                              </Link>
-                            ) : ""
-                          }
-                          {" from "}
-                          <Link to={`/labels/${device.inherited_profile_label}`}>
+                    {device.inherited_profile_label && (
+                      <Text>
+                        {" (Inheriting profile "}
+                        {find(device.labels, {
+                          id: device.inherited_profile_label,
+                        }) ? (
+                          <Link
+                            to={`/config_profiles/${
+                              find(device.labels, {
+                                id: device.inherited_profile_label,
+                              }).config_profile_id
+                            }`}
+                          >
                             {
-                              find(device.labels, { id: device.inherited_profile_label }) ?
-                              find(device.labels, { id: device.inherited_profile_label }).name :
-                              "label"
+                              find(device.labels, {
+                                id: device.inherited_profile_label,
+                              }).config_profile.name
                             }
                           </Link>
-                          {")"}
-                        </Text>
-                      )
-                    }
+                        ) : (
+                          ""
+                        )}
+                        {" from "}
+                        <Link to={`/labels/${device.inherited_profile_label}`}>
+                          {find(device.labels, {
+                            id: device.inherited_profile_label,
+                          })
+                            ? find(device.labels, {
+                                id: device.inherited_profile_label,
+                              }).name
+                            : "label"}
+                        </Link>
+                        {")"}
+                      </Text>
+                    )}
                   </Text>
                 )}
               </Paragraph>

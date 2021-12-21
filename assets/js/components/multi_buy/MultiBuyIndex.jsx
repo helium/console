@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import TableHeader from "../common/TableHeader";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import MultiBuyForm from "./MultiBuyForm";
 import MultiBuyBar from "./MultiBuyBar";
 import MultiBuyIndexTable from "./MultiBuyIndexTable";
@@ -15,6 +15,7 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 import { useHistory } from "react-router-dom";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const history = useHistory();
@@ -109,19 +110,13 @@ export default (props) => {
             }
             newText="Add New Multiple Packet Config"
           >
-            {showPage === "allMultiBuy" && error && (
-              <div style={{ padding: 40 }}>
-                <Text>
-                  Data failed to load, please reload the page and try again
-                </Text>
-              </div>
-            )}
+            {showPage === "allMultiBuy" && error && <ErrorMessage />}
             {showPage === "allMultiBuy" && loading && (
               <div style={{ padding: 40 }}>
                 <SkeletonLayout />
               </div>
             )}
-            {showPage === "allMultiBuy" && !loading && (
+            {showPage === "allMultiBuy" && !loading && !error && (
               <MultiBuyIndexTable
                 data={multiBuyData}
                 openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
@@ -141,7 +136,9 @@ export default (props) => {
                   <MultiBuyForm
                     id={props.match.params.id}
                     show
-                    openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
+                    openDeleteMultiplePacketModal={
+                      openDeleteMultiplePacketModal
+                    }
                   />
                 </div>
               </div>

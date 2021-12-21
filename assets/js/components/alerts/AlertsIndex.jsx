@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import TableHeader from "../common/TableHeader";
 import PlusIcon from "../../../img/alerts/alert-index-plus-icon.svg";
 import AllIcon from "../../../img/alerts/alert-index-all-icon.svg";
@@ -17,6 +17,7 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 import DeleteAlertModal from "./DeleteAlertModal";
 import { useHistory } from "react-router-dom";
 import analyticsLogger from "../../util/analyticsLogger";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const history = useHistory();
@@ -24,7 +25,7 @@ export default (props) => {
   const [alertType, setAlertType] = useState(null);
   const [showDeleteAlertModal, setShowDeleteAlertModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState(null);
-  const { loading, error, data, refetch } = useQuery(ALL_ALERTS, {
+  const { loading, data, error, refetch } = useQuery(ALL_ALERTS, {
     fetchPolicy: "cache-and-network",
   });
   const alertsData = data ? data.allAlerts : [];
@@ -98,7 +99,10 @@ export default (props) => {
             noHome
             borderRadius="25px"
             extraContent={
-              <AlertsBar shownAlertId={props.match.params.id} alerts={alertsData} />
+              <AlertsBar
+                shownAlertId={props.match.params.id}
+                alerts={alertsData}
+              />
             }
             newText="Add New Alert"
           >
@@ -137,7 +141,10 @@ export default (props) => {
                   <img src={AlertIcon} />
                   <h1>Choose Type of Alert</h1>
                   <div
-                    style={{ padding: "10px 60px 1px 60px", margin: "10px 0px" }}
+                    style={{
+                      padding: "10px 60px 1px 60px",
+                      margin: "10px 0px",
+                    }}
                   >
                     <p style={{ fontSize: "16px", color: "#565656" }}>
                       Alerts can be created for
@@ -196,15 +203,13 @@ export default (props) => {
                 </div>
               </div>
             )}
-            {showPage === "allAlerts" && error && (
-              <Text>Data failed to load, please reload the page and try again</Text>
-            )}
+            {showPage === "allAlerts" && error && <ErrorMessage />}
             {showPage === "allAlerts" && loading && (
               <div style={{ padding: 40 }}>
                 <SkeletonLayout />
               </div>
             )}
-            {showPage === "allAlerts" && !loading && (
+            {showPage === "allAlerts" && !loading && !error && (
               <AlertIndexTable
                 data={alertsData}
                 openDeleteAlertModal={openDeleteAlertModal}

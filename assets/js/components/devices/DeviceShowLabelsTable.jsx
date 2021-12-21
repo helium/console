@@ -8,11 +8,11 @@ import UserCan from "../common/UserCan";
 import { history } from "../../store/configureStore";
 import { minWidth } from "../../util/constants";
 import { PAGINATED_LABELS_BY_DEVICE } from "../../graphql/labels";
-import { Card, Button, Typography, Table, Pagination, Tooltip } from "antd";
+import { Card, Button, Table, Pagination, Tooltip } from "antd";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
-const { Text } = Typography;
+import ErrorMessage from "../common/ErrorMessage";
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
 
@@ -101,10 +101,7 @@ class DeviceShowLabelsTable extends Component {
     const numOfEntries = labels_by_device && labels_by_device.totalEntries;
 
     if (loading) return <SkeletonLayout />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <Card

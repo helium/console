@@ -5,6 +5,8 @@ import { Typography, Card, Col, Spin, Row } from "antd";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import withGql from "../../graphql/withGql";
 const { Text } = Typography;
+import ErrorMessage from "../common/ErrorMessage";
+
 const antLoader = (
   <LoadingOutlined style={{ fontSize: 50, color: "#38A2FF" }} spin />
 );
@@ -30,7 +32,7 @@ class DeviceShowStats extends Component {
           </div>
           {children}
         </div>
-      )
+      );
     } else {
       return (
         <Card
@@ -39,9 +41,9 @@ class DeviceShowStats extends Component {
         >
           {children}
         </Card>
-      )
+      );
     }
-  }
+  };
 
   renderTitle = () => (
     <span>
@@ -132,9 +134,7 @@ class DeviceShowStats extends Component {
             style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
             className="no-scroll-bar"
           >
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
+            <ErrorMessage />
           </div>
         );
       return this.renderContainer(
@@ -144,9 +144,7 @@ class DeviceShowStats extends Component {
         >
           <Row style={{ minWidth: 300 }}>
             <Col span={12}>
-              <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                All Time
-              </Text>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>All Time</Text>
               <br />
               <Text
                 style={{
@@ -251,9 +249,7 @@ class DeviceShowStats extends Component {
             style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
             className="no-scroll-bar"
           >
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
+            <ErrorMessage />
           </div>
         );
       return this.renderContainer(
@@ -263,9 +259,7 @@ class DeviceShowStats extends Component {
         >
           <Row style={{ minWidth: 300 }}>
             <Col span={12}>
-              <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                All Time
-              </Text>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>All Time</Text>
               <br />
               <Text
                 style={{

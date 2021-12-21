@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import analyticsLogger from "../../util/analyticsLogger";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import UpdateLabelModal from "./UpdateLabelModal";
 import LabelAddDeviceModal from "./LabelAddDeviceModal";
 import DeleteDeviceModal from "../devices/DeleteDeviceModal";
@@ -29,6 +29,7 @@ import withGql from "../../graphql/withGql";
 import { Typography } from "antd";
 const { Text } = Typography;
 import BugOutlined from "@ant-design/icons/BugOutlined";
+import ErrorMessage from "../common/ErrorMessage";
 
 class LabelShow extends Component {
   state = {
@@ -132,12 +133,6 @@ class LabelShow extends Component {
     const { loading, error, label } = this.props.labelShowQuery;
     const { showDeleteDeviceModal, selectedDevices } = this.state;
 
-    const errorMessage = () => (
-      <div style={{ padding: 40 }}>
-        <Text>Data failed to load, please reload the page and try again</Text>
-      </div>
-    );
-
     if (loading)
       return (
         <>
@@ -163,12 +158,12 @@ class LabelShow extends Component {
         <>
           <MobileDisplay>
             <MobileLayout>
-              {errorMessage()}
+              <ErrorMessage />
             </MobileLayout>
           </MobileDisplay>
           <DesktopDisplay>
             <DeviceDashboardLayout {...this.props}>
-              {errorMessage()}
+              <ErrorMessage />
             </DeviceDashboardLayout>
           </DesktopDisplay>
         </>

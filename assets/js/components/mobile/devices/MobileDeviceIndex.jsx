@@ -15,7 +15,10 @@ export default ({ loading, devices }) => {
         <Text style={{ fontSize: 32, fontWeight: 600 }}>My Devices</Text>
       </div>
 
-      <MobileDeviceIndexLabelsBar push={history.push} pathname={history.location.pathname} />
+      <MobileDeviceIndexLabelsBar
+        push={history.push}
+        pathname={history.location.pathname}
+      />
 
       {loading && <SkeletonLayout />}
       {devices && (
@@ -31,7 +34,13 @@ export default ({ loading, devices }) => {
           >
             {devices.entries.length} Devices
           </Text>
-          {devices.entries.map(device => <MobileDeviceTableRow key={device.id} device={device} push={history.push} />)}
+          {devices.entries.map((device) => (
+            <MobileDeviceTableRow
+              key={device.id}
+              device={device}
+              push={history.push}
+            />
+          ))}
         </div>
       )}
 

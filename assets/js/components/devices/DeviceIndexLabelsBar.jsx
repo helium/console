@@ -3,7 +3,7 @@ import NavPointTriangle from "../common/NavPointTriangle";
 import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
 import { ALL_LABELS } from "../../graphql/labels";
-import { Typography, Tooltip } from "antd";
+import { Typography } from "antd";
 const { Text } = Typography;
 import LabelsIcon from "../../../img/label-node-icon.svg";
 import LabelNotInFilterBadge from "../common/LabelNotInFilterBadge";
@@ -79,7 +79,7 @@ class DeviceIndexLabelsBar extends Component {
   }
 
   render() {
-    const { loading, error, allLabels } = this.props.allLabelsQuery;
+    const { loading, allLabels, error } = this.props.allLabelsQuery;
 
     if (loading) return <div />;
     if (error)
