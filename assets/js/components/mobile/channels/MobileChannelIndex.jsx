@@ -1,10 +1,10 @@
 import React from "react";
-import { SkeletonLayout } from "../common/SkeletonLayout";
+import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Typography } from "antd";
-import MobileTableRow from "../common/MobileTableRow";
+import MobileTableRow from "../../common/MobileTableRow";
 const { Text } = Typography;
-import MenuCaret from "../../../img/channels/mobile/menu-caret.svg";
-import MobileAddResourceButton from "../common/MobileAddResourceButton";
+import MenuCaret from "../../../../img/mobile/menu-caret.svg";
+import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import { useHistory } from "react-router-dom";
 
 export default ({ loading, channels }) => {

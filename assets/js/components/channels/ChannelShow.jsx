@@ -32,7 +32,7 @@ const { Text, Paragraph } = Typography;
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import DeleteChannelModal from "./DeleteChannelModal";
 import MobileLayout from "../mobile/MobileLayout";
-import MobileChannelShow from "./MobileChannelShow";
+import MobileChannelShow from "../mobile/channels/MobileChannelShow";
 import {
   renderConnectionDetails,
   getDownlinkKey,

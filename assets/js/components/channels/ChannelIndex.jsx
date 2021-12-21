@@ -9,7 +9,7 @@ import DeleteChannelModal from "./DeleteChannelModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { PAGINATED_CHANNELS } from "../../graphql/channels";
 import { SkeletonLayout } from "../common/SkeletonLayout";
-import MobileChannelIndex from "./MobileChannelIndex";
+import MobileChannelIndex from "../mobile/channels/MobileChannelIndex";
 import ErrorMessage from "../common/ErrorMessage";
 
 class ChannelIndex extends Component {
