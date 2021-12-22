@@ -90,3 +90,15 @@ export const SEARCH_CHANNELS_MOBILE = gql`
     }
   }
 `;
+
+export const SEARCH_DEVICES_MOBILE = gql`
+  query SearchDevicesMobileQuery($query: String) {
+    searchDevicesMobile(query: $query) {
+      name
+      id
+      dev_eui
+      frame_up
+      frame_down
+    }
+  }
+`;

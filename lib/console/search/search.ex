@@ -545,6 +545,61 @@ defmodule Console.Search do
     to_json(result, organization, "channel")
   end
 
+  def run_for_devices_mobile(query, %Organization{id: _organization_id}) when byte_size(query) == 0 do
+    []
+  end
+
+  def run_for_devices_mobile(query, %Organization{id: organization_id}) when byte_size(query) < 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+      SELECT * FROM
+      (
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name, dev_eui, frame_up, frame_down, 1.0::float AS score
+            FROM devices
+            WHERE organization_id = $3 AND ((name ILIKE $1) OR (dev_eui ILIKE $1))
+          )
+          UNION
+          (
+            SELECT id, name, dev_eui, frame_up, frame_down, 0.5::float AS score
+            FROM devices
+            WHERE organization_id = $3 AND ((name ~* $2) OR (dev_eui ~* $2))
+          )
+        ) d ORDER BY id, score DESC)
+      ) a
+      ORDER BY score DESC
+      LIMIT 25
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
+    to_json(result, "device")
+  end
+
+  def run_for_devices_mobile(query, %Organization{id: organization_id}) when byte_size(query) >= 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+    (
+      SELECT id, name, dev_eui, frame_up, frame_down, name_score, dev_eui_score
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS name_score, SIMILARITY(dev_eui || ' ', $1) AS dev_eui_score
+        FROM devices
+        WHERE organization_id = $2
+        ORDER BY name_score, dev_eui_score DESC
+      ) AS d
+      WHERE name_score > $3 OR dev_eui_score > $3
+    )
+    ORDER BY name_score, dev_eui_score DESC
+    LIMIT 25
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
+    to_json(result, "device")
+  end
+
   def to_json(%Postgrex.Result{rows: records}) do
     records |> Enum.map(&cast/1)
   end
@@ -560,6 +615,22 @@ defmodule Console.Search do
           type: Enum.at(r, 2),
           type_name: Enum.at(r, 3),
           number_devices: Flows.get_number_devices_in_flows_with_channel(current_organization, id)
+        }
+      end
+    )
+  end
+
+  def to_json(%Postgrex.Result{rows: records}, "device") do
+    records
+    |> Enum.map(
+      fn r ->
+        {:ok, id} = Ecto.UUID.cast(Enum.at(r, 0))
+        %{
+          id: id,
+          name: Enum.at(r, 1),
+          dev_eui: Enum.at(r, 2),
+          frame_up: Enum.at(r, 3),
+          frame_down: Enum.at(r, 4)
         }
       end
     )

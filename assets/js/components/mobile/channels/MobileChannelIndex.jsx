@@ -69,7 +69,7 @@ export default ({ loading, channels, refetch }) => {
             setSearchTerm(e.target.value);
           }}
           placeholder="Search Integrations..."
-          prefix={<SearchOutlined />}
+          prefix={<SearchOutlined style={{ color: "lightgray" }} />}
           maxLength={50}
           style={{ border: "none", borderRadius: 50, margin: "8px 0px" }}
         />

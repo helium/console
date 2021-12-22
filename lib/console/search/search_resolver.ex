@@ -24,4 +24,8 @@ defmodule Console.Search.SearchResolver do
   def search_channels_mobile(%{query: query}, %{context: %{current_organization: current_organization}}) do
     {:ok, Search.run_for_channels_mobile(query, current_organization)}
   end
+
+  def search_devices_mobile(%{query: query}, %{context: %{current_organization: current_organization}}) do
+    {:ok, Search.run_for_devices_mobile(query, current_organization)}
+  end
 end

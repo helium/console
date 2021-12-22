@@ -542,6 +542,12 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Search.SearchResolver.search_channels_mobile/2
     end
 
+    @desc "Search for devices (mobile)"
+    field :search_devices_mobile, list_of(:device) do
+      arg :query, :string
+      resolve &Console.Search.SearchResolver.search_devices_mobile/2
+    end
+
     @desc "Get paginated search results for hotspots"
     paginated field :search_hotspots, :paginated_hotspots do
       arg :query, :string
