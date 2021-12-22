@@ -51,8 +51,8 @@ export default ({ loading, channels, refetch }) => {
       rootMargin: "0px",
       threshold: 1.0,
     },
-    searchTerm ? runSearch : refetch,
-    searchTerm ? searchChannels : channels
+    refetch,
+    channels
   );
 
   useEffect(() => {
@@ -123,7 +123,7 @@ export default ({ loading, channels, refetch }) => {
             />
           ))}
           {searchChannelsMobileError && <ErrorMessage />}
-          <div style={{ height: 1 }} ref={containerRef} />
+          {!searchTerm && <div style={{ height: 1 }} ref={containerRef} />}
         </div>
       )}
 
