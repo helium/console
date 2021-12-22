@@ -76,11 +76,6 @@ cp templates/nginx-default.conf nginx.conf
 - Set `USER_INVTE_ONLY` to true in your .env file
 - Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
 
-## Upgrading your v1 Console to v2 (originally released 07/29/2021)
-
-- Prior to upgrading, we recommend making a backup of your database as a precaution. This will only be used if something unexpected happens during the db migration process.
-- Follow the update [instructions](https://github.com/helium/console/releases/tag/2021.07.29)
-
 ## Questions
 
 If you run into any issues or you have any questions about how to get started contributing, feel free to reach out on the `#console` channel in [the official Helium Community Discord server](http://discord.gg/helium)!
