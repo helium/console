@@ -78,3 +78,15 @@ export const SEARCH_HOTSPOTS = gql`
     }
   }
 `;
+
+export const SEARCH_CHANNELS_MOBILE = gql`
+  query SearchChannelsMobileQuery($query: String) {
+    searchChannelsMobile(query: $query) {
+      name
+      type
+      type_name
+      id
+      number_devices
+    }
+  }
+`;

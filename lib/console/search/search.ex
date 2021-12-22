@@ -4,6 +4,7 @@ defmodule Console.Search do
   import Ecto.Query
   alias Console.Organizations.Organization
   alias Console.Hotspots.Hotspot
+  alias Console.Flows
   @sim_limit 0.05
 
   # When query is empty, just return an array
@@ -489,8 +490,79 @@ defmodule Console.Search do
     query |> Repo.paginate(page: page, page_size: page_size)
   end
 
+  def run_for_channels_mobile(query, %Organization{id: _organization_id}) when byte_size(query) == 0 do
+    []
+  end
+
+  def run_for_channels_mobile(query, %Organization{id: organization_id} = organization) when byte_size(query) < 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+      SELECT * FROM
+      (
+        (SELECT DISTINCT on(id) * FROM
+        (
+          (
+            SELECT id, name, type, type_name, 1.0::float AS score
+            FROM channels
+            WHERE organization_id = $3 AND ((name ILIKE $1) OR (type_name ILIKE $1))
+          )
+          UNION
+          (
+            SELECT id, name, type, type_name, 0.5::float AS score
+            FROM channels
+            WHERE organization_id = $3 AND ((name ~* $2) OR (type_name ~* $2))
+          )
+        ) d ORDER BY id, score DESC)
+      ) a
+      ORDER BY score DESC
+      LIMIT 25
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, ["#{query}%", query, organization_id])
+    to_json(result, organization, "channel")
+  end
+
+  def run_for_channels_mobile(query, %Organization{id: organization_id} = organization) when byte_size(query) >= 3 do
+    {:ok, organization_id} = Ecto.UUID.dump(organization_id)
+
+    sql = """
+    (
+      SELECT id, name, type, type_name, name_score, type_score
+      FROM (
+        SELECT *, SIMILARITY(name || ' ', $1) AS name_score, SIMILARITY(type_name || ' ', $1) AS type_score
+        FROM channels
+        WHERE organization_id = $2
+        ORDER BY name_score, type_score DESC
+      ) AS d
+      WHERE name_score > $3 OR type_score > $3
+    )
+    ORDER BY name_score, type_score DESC
+    LIMIT 25
+    """
+
+    result = Ecto.Adapters.SQL.query!(Console.Repo, sql, [query, organization_id, @sim_limit])
+    to_json(result, organization, "channel")
+  end
+
   def to_json(%Postgrex.Result{rows: records}) do
     records |> Enum.map(&cast/1)
+  end
+
+  def to_json(%Postgrex.Result{rows: records}, current_organization, "channel") do
+    records
+    |> Enum.map(
+      fn r ->
+        {:ok, id} = Ecto.UUID.cast(Enum.at(r, 0))
+        %{
+          id: id,
+          name: Enum.at(r, 1),
+          type: Enum.at(r, 2),
+          type_name: Enum.at(r, 3),
+          number_devices: Flows.get_number_devices_in_flows_with_channel(current_organization, id)
+        }
+      end
+    )
   end
 
   def to_json(%Postgrex.Result{rows: records}, _) do
