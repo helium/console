@@ -57,13 +57,6 @@ config :console, Console.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :cloak, Cloak.AES.CTR,
-  tag: "AES",
-  default: true,
-  keys: [
-    %{tag: <<1>>, key: :base64.decode("/QCxhn/9t2SM8GiLXVDR1jFO/vENLGCnXADGAhGPM30="), default: true}
-  ]
-
 config :console,
   router_secrets: [
     "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"

@@ -11,6 +11,7 @@ defmodule Console.Application do
       {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
       {ConsoleWeb.Monitor, %{}},
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
+      Console.Vault,
       Console.Scheduler
     ]
 

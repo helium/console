@@ -49,7 +49,7 @@ defmodule Console.Mixfile do
       {:ex_machina, "~> 2.7.0", only: :test},
       {:poison, "~> 5.0.0"},
       {:jason, "~> 1.3.0"},
-      {:cloak, "~> 0.6.1"},
+      {:cloak_ecto, "~> 1.2.0"},
       {:postgrex, "~> 0.15.13"},
       {:phoenix_html, "~> 3.2.0"},
       {:phoenix_live_reload, "~> 1.3.3", only: :dev},
