@@ -87,7 +87,7 @@ defmodule Console.Jobs do
 
       payload = Poison.encode!(sanitized_events)
       headers = [
-        {"X-Helium-Hmac-SHA256", :crypto.hmac(:sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
+        {"X-Helium-Hmac-SHA256", :crypto.mac(:hmac, :sha256, organization.webhook_key, payload) |> Base.encode64(padding: true)},
         {"Content-Type", "application/json"}
       ]
       HTTPoison.post(alert_event_webhook_config["url"], payload, headers)

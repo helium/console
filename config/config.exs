@@ -20,7 +20,7 @@ config :console, ConsoleWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "qmS/z+jc4ZZNfmBN31tGhJbQ88aa0gD+NO8H/B5x+SCXC5XpXBAUsES7E4ubnxkJ",
   render_errors: [view: ConsoleWeb.ErrorView, accepts: ~w(html json)],
-  pubsub_server: MyApp.PubSub
+  pubsub_server: Console.PubSub
 
 config :console, :generators,
   migration: true,
