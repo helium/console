@@ -56,7 +56,7 @@ defmodule ConsoleWeb.V1.LabelController do
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       conn
       |> put_status(:created)
-      |> render("show.json", label: Map.merge(label, %{ cf_list_enabled: false, adr_allowed: false }))
+      |> render("show.json", label: Map.merge(label, %{ cf_list_enabled: false, adr_allowed: false, rx_delay: nil }))
     end
   end
 
@@ -141,6 +141,12 @@ defmodule ConsoleWeb.V1.LabelController do
         _ -> label.config_profile.cf_list_enabled
       end
 
-    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed })
+    rx_delay =
+      case label.config_profile do
+        nil -> nil
+        _ -> label.config_profile.rx_delay
+      end
+
+    Map.merge(label, %{ cf_list_enabled: cf_list_enabled, adr_allowed: adr_allowed, rx_delay: rx_delay })
   end
 end
