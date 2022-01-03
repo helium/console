@@ -80,7 +80,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_claimed_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-    
+
     {:ok, results}
   end
 
@@ -121,7 +121,7 @@ defmodule Console.HotspotStats.HotspotStatsResolver do
     past_2d_result = Ecto.Adapters.SQL.query!(Console.Repo, sql_2d, [organization_id, all_grouped_hotspot_addresses, unix1d, unix2d])
 
     results = generateStats(past_1d_result, past_2d_result)
-    
+
     {:ok, results}
   end
 
