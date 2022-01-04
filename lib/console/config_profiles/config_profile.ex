@@ -14,6 +14,7 @@ defmodule Console.ConfigProfiles.ConfigProfile do
     field :name, :string
     field :adr_allowed, :boolean
     field :cf_list_enabled, :boolean
+    field :rx_delay, :integer
 
     belongs_to :organization, Organization
     has_many :devices, Device
@@ -25,9 +26,9 @@ defmodule Console.ConfigProfiles.ConfigProfile do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
 
     config_profile
-    |> cast(attrs, [:name, :adr_allowed, :cf_list_enabled, :organization_id])
+    |> cast(attrs, [:name, :adr_allowed, :cf_list_enabled, :organization_id, :rx_delay])
     |> validate_required(:name, message: "Name cannot be blank")
-    |> validate_required([:organization_id, :name, :adr_allowed, :cf_list_enabled])
+    |> validate_required([:organization_id, :name, :adr_allowed, :cf_list_enabled, :rx_delay])
     |> validate_length(:name, min: 3, message: "Name must be at least 3 characters")
     |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters")
     |> unique_constraint(:name, name: :config_profiles_name_organization_id_index, message: "This name has already been used in this organization")

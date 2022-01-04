@@ -102,18 +102,20 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
           {loading && <SkeletonLayout />}
           {!error && !loading && (
             <ConfigProfileSettings
-              save={({ adrAllowed, cfListEnabled, name }) => {
+              save={({ adrAllowed, cfListEnabled, name, rxDelay }) => {
                 if (show) {
                   analyticsLogger.logEvent("ACTION_UPDATE_CONFIG_PROFILE", {
                     id,
                     adrAllowed,
                     cfListEnabled,
+                    rxDelay
                   });
                   dispatch(
                     updateConfigProfile(id, {
                       ...(name && { name }),
                       adr_allowed: adrAllowed,
                       cf_list_enabled: cfListEnabled,
+                      rx_delay: rxDelay,
                     })
                   );
                 } else {
@@ -121,12 +123,14 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
                     id,
                     adrAllowed,
                     cfListEnabled,
+                    rxDelay,
                   });
                   dispatch(
                     createConfigProfile({
                       name,
                       adr_allowed: adrAllowed,
                       cf_list_enabled: cfListEnabled,
+                      rx_delay: rxDelay,
                     })
                   ).then(() => {
                     history.push("/config_profiles");

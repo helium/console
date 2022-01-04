@@ -10,15 +10,9 @@ import { deleteChannel } from "../../actions/channel";
 class DeleteChannelModal extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
-    const { channel, onClose, doNotRedirect, deleteResource } = this.props;
+    const { channel, onClose, doNotRedirect } = this.props;
 
-    this.props
-      .deleteChannel(channel.id, doNotRedirect === true ? false : true)
-      .then((response) => {
-        if (response.status === 200) {
-          deleteResource(true);
-        }
-      });
+    this.props.deleteChannel(channel.id, doNotRedirect === true ? false : true)
 
     analyticsLogger.logEvent("ACTION_DELETE_CHANNEL", { channel: channel.id });
     onClose();

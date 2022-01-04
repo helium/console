@@ -17,7 +17,8 @@ defmodule ConsoleWeb.InvitationView do
   def render("invitation.json", %{invitation: invitation, organization_name: organization_name}) do
     %{
       email: invitation.email,
-      organizationName: organization_name
+      organizationName: organization_name,
+      inviter_id: invitation.inviter_id
     }
   end
 

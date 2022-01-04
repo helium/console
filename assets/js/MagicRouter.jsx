@@ -5,7 +5,7 @@ import { ApolloProvider } from "@apollo/client";
 import { history } from "./store/configureStore";
 import { fetchOrganization } from "./actions/organization";
 import { setupApolloClient } from "./actions/apollo";
-import { getMagicSessionToken } from "./actions/magic"
+import { getMagicSessionToken } from "./actions/magic";
 
 // Routes
 import { connect } from "react-redux";
@@ -48,38 +48,42 @@ const MagicRouter = (props) => {
     fetchOrganization,
     setupApolloClient,
     apolloClient,
-    user
+    user,
   } = props;
 
   useEffect(() => {
-    if (
-      !currentOrganizationId &&
-      !loadingOrganization &&
-      !loadedOrganization
-    ) {
-      fetchOrganization()
-      return
+    if (!currentOrganizationId && !loadingOrganization && !loadedOrganization) {
+      fetchOrganization();
+      return;
     } else if (!apolloClient && currentOrganizationId) {
-      setupApolloClient(getMagicSessionToken, currentOrganizationId)
-      return
+      setupApolloClient(getMagicSessionToken, currentOrganizationId);
+      return;
     }
-  }, [
-    currentOrganizationId,
-    loadingOrganization,
-    loadedOrganization,
-    user,
-  ]);
+  }, [currentOrganizationId, loadingOrganization, loadedOrganization, user]);
 
   const redirectPath =
     localStorage.getItem("hideWelcomeScreen") === "hidden"
       ? "/flows"
       : "/welcome";
 
-  if (loadingOrganization || (loadedOrganization && currentOrganizationId && !apolloClient)) return (
-    <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-      <Spin size="large" />
-    </div>
+  if (
+    loadingOrganization ||
+    (loadedOrganization && currentOrganizationId && !apolloClient)
   )
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <ConnectedRouter history={history}>
@@ -88,89 +92,69 @@ const MagicRouter = (props) => {
         <Route
           path="/join_organization"
           loaded={loadedOrganization}
-          component={JoinOrganizationPrompt}
+          component={(props) => (
+            <JoinOrganizationPrompt user={user} {...props} />
+          )}
         />
         <Route>
-          { loadedOrganization && !currentOrganizationId && (<NoOrganization />) }
-          { currentOrganizationId && apolloClient && (
+          {loadedOrganization && !currentOrganizationId && <NoOrganization />}
+          {currentOrganizationId && apolloClient && (
             <ApolloProvider client={apolloClient}>
               <Switch>
                 <Route
                   exact
                   path="/welcome"
-                  component={(props) => (
-                    <Welcome user={user} {...props} />
-                  )}
+                  component={(props) => <Welcome user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/devices"
-                  component={(props) => (
-                    <DeviceIndex user={user} {...props} />
-                  )}
+                  component={(props) => <DeviceIndex user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/devices/home"
-                  component={(props) => (
-                    <DeviceHome user={user} {...props} />
-                  )}
+                  component={(props) => <DeviceHome user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/devices/new"
-                  component={(props) => (
-                    <DeviceNew user={user} {...props} />
-                  )}
+                  component={(props) => <DeviceNew user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/devices/new_label"
-                  component={(props) => (
-                    <LabelNew user={user} {...props} />
-                  )}
+                  component={(props) => <LabelNew user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/devices/:id"
-                  component={(props) => (
-                    <DeviceShow user={user} {...props} />
-                  )}
+                  component={(props) => <DeviceShow user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/labels/:id"
-                  component={(props) => (
-                    <LabelShow user={user} {...props} />
-                  )}
+                  component={(props) => <LabelShow user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/integrations"
-                  component={(props) => (
-                    <ChannelIndex user={user} {...props} />
-                  )}
+                  component={(props) => <ChannelIndex user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/integrations/home"
-                  component={(props) => (
-                    <ChannelHome user={user} {...props} />
-                  )}
+                  component={(props) => <ChannelHome user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/integrations/new"
-                  component={(props) => (
-                    <ChannelNew user={user} {...props} />
-                  )}
+                  component={(props) => <ChannelNew user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/integrations/:id"
-                  component={(props) => (
-                    <ChannelShow user={user} {...props} />
-                  )}
+                  component={(props) => <ChannelShow user={user} {...props} />}
                 />
                 <Route
                   exact
@@ -182,23 +166,17 @@ const MagicRouter = (props) => {
                 <Route
                   exact
                   path="/functions/new"
-                  component={(props) => (
-                    <FunctionNew user={user} {...props} />
-                  )}
+                  component={(props) => <FunctionNew user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/functions/home"
-                  component={(props) => (
-                    <FunctionHome user={user} {...props} />
-                  )}
+                  component={(props) => <FunctionHome user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/functions/:id"
-                  component={(props) => (
-                    <FunctionShow user={user} {...props} />
-                  )}
+                  component={(props) => <FunctionShow user={user} {...props} />}
                 />
                 <Route
                   exact
@@ -210,9 +188,7 @@ const MagicRouter = (props) => {
                 <Route
                   exact
                   path="/users"
-                  component={(props) => (
-                    <UserIndex user={user} {...props} />
-                  )}
+                  component={(props) => <UserIndex user={user} {...props} />}
                 />
                 <Route
                   exact
@@ -224,30 +200,22 @@ const MagicRouter = (props) => {
                 <Route
                   exact
                   path="/flows"
-                  component={(props) => (
-                    <FlowsIndex user={user} {...props} />
-                  )}
+                  component={(props) => <FlowsIndex user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/alerts"
-                  component={(props) => (
-                    <AlertsIndex user={user} {...props} />
-                  )}
+                  component={(props) => <AlertsIndex user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/alerts/new"
-                  component={(props) => (
-                    <AlertsIndex user={user} {...props} />
-                  )}
+                  component={(props) => <AlertsIndex user={user} {...props} />}
                 />
                 <Route
                   exact
                   path="/alerts/:id"
-                  component={(props) => (
-                    <AlertsIndex user={user} {...props} />
-                  )}
+                  component={(props) => <AlertsIndex user={user} {...props} />}
                 />
                 <Route
                   exact
@@ -272,9 +240,7 @@ const MagicRouter = (props) => {
                 />
                 <Route
                   path="/profile"
-                  component={(props) => (
-                    <Profile user={user} {...props} />
-                  )}
+                  component={(props) => <Profile user={user} {...props} />}
                 />
                 <Route
                   exact

@@ -20,17 +20,19 @@ export default (props) => {
         Create New Profile
       </Text>
       <ConfigProfileSettings
-        save={({ adrAllowed, cfListEnabled, name }) => {
+        save={({ adrAllowed, cfListEnabled, name, rxDelay }) => {
           analyticsLogger.logEvent("ACTION_CREATE_CONFIG_PROFILE", {
             name: name,
             adr_allowed: adrAllowed,
             cf_list_enabled: cfListEnabled,
+            rx_delay: rxDelay,
           });
           dispatch(
             createConfigProfile({
               name: name,
               adr_allowed: adrAllowed,
               cf_list_enabled: cfListEnabled,
+              rx_delay: rxDelay,
             })
           )
             .then((data) => {

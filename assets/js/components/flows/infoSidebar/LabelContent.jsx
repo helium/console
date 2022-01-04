@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
-import DeleteLabelModal from "../../labels/DeleteLabelModal";
 import AlertNodeSettings from "./AlertNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import { redForTablesDeleteText } from "../../../util/colors";
@@ -29,7 +28,6 @@ import {
 import { StatusIcon } from "../../common/StatusIcon";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import CloseOutlined from "@ant-design/icons/CloseOutlined";
 import RemoveDevicesFromLabelModal from "../../labels/RemoveDevicesFromLabelModal";
 import { LABEL_SHOW } from "../../../graphql/labels";
@@ -54,9 +52,7 @@ class LabelContent extends Component {
     order: DEFAULT_ORDER,
     showRemoveDevicesFromLabelModal: false,
     selectedDevices: [],
-    showRemoveDevicesFromLabelModal: false,
     showLabelAddDeviceModal: false,
-    showDeleteLabelModal: false,
   };
 
   componentDidMount() {
@@ -183,14 +179,6 @@ class LabelContent extends Component {
     this.setState({ showLabelAddDeviceModal: false });
   };
 
-  openDeleteLabelModal = () => {
-    this.setState({ showDeleteLabelModal: true });
-  };
-
-  closeDeleteLabelModal = () => {
-    this.setState({ showDeleteLabelModal: false });
-  };
-
   render() {
     const columns = [
       {
@@ -315,35 +303,6 @@ class LabelContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <UserCan>
-              {this.props.hasChanges ? (
-                <Tooltip
-                  title="Undo or save your workspace changes before deleting this label"
-                  overlayStyle={{ width: 230 }}
-                >
-                  <Button
-                    style={{ borderRadius: 4, marginRight: 5 }}
-                    type="danger"
-                    icon={<DeleteOutlined />}
-                    disabled
-                  >
-                    Delete
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  style={{ borderRadius: 4, marginRight: 5 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.openDeleteLabelModal();
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
-            </UserCan>
           </div>
         </div>
 
@@ -459,13 +418,6 @@ class LabelContent extends Component {
           addDevicesToLabels={this.props.addDevicesToLabels}
           open={this.state.showLabelAddDeviceModal}
           onClose={this.closeLabelAddDeviceModal}
-        />
-        <DeleteLabelModal
-          open={this.state.showDeleteLabelModal}
-          onClose={this.closeDeleteLabelModal}
-          labelId={label.id}
-          doNotRedirect
-          deleteResource={this.props.deleteResource}
         />
       </div>
     );

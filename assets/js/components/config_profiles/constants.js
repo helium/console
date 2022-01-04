@@ -14,3 +14,13 @@ export const cfListText2 =
 
 export const cfListText3 =
   "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command.";
+
+export const rxDelayText1 = `
+  Specify the number of seconds the device's first receive window begins after the transmit ends.
+`;
+
+export const rxDelayText2 =
+  "A higher number increases the receive delay window and generally can increase downlink reliability as higher latencies between the LoRaWAN gateway and network server will be tolerated.";
+
+export const rxDelayText3 =
+  "However, devices that suffer from drift may not work as well and a longer delay reduces the theoretical maximum rate of communication since a subsequent transmit may only be accomplished after both receive windows. Note: The second receive window always begins one second after the first.";

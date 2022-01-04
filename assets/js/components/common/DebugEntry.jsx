@@ -220,7 +220,7 @@ class DebugEntry extends Component {
               {JSON.stringify(
                 Object.assign(
                   {},
-                  omit(event, "data"),
+                  omit(event, ["data", "frame_up", "frame_down", "reported_at_epoch", "serial"]),
                   {
                     ...(event.category === "uplink" && {
                       fcnt_up: event.data.fcnt,
@@ -228,8 +228,8 @@ class DebugEntry extends Component {
                     ...(event.category === "downlink" && {
                       fcnt_down: event.data.fcnt,
                     }),
-                    ...(event.data.raw_payload && {
-                      raw_payload: event.data.raw_payload,
+                    ...(event.data.raw_packet && {
+                      raw_packet: event.data.raw_packet,
                     }),
                     payload: event.data.payload,
                     payload_size: event.data.payload_size,

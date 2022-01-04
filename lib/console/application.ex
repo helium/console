@@ -4,36 +4,30 @@ defmodule Console.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
-    import Supervisor.Spec
-
-    # Define workers and child supervisors to be supervised
     children = [
-      {Phoenix.PubSub, name: MyApp.PubSub},
-      # Start the Ecto repository
-      supervisor(Console.Repo, []),
-      # Start the endpoint when the application starts
-      worker(ConsoleWeb.Monitor, [%{}]),
-      supervisor(ConsoleWeb.Endpoint, []),
-      supervisor(Absinthe.Subscription, [ConsoleWeb.Endpoint]),
-      # Start your own worker by calling: Console.Worker.start_link(arg1, arg2, arg3)
-      # worker(Console.Worker, [arg1, arg2, arg3]),
+      {Phoenix.PubSub, name: Console.PubSub},
+      {Console.Repo, []},
+      {ConsoleWeb.Endpoint, []},
+      {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
+      {ConsoleWeb.Monitor, %{}},
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
+      Console.Vault,
       Console.Scheduler
     ]
 
-    :ok =
-      :telemetry.attach(
-        "prometheus-ecto",
-        [:console, :repo, :query],
-        &App.Repo.Instrumenter.handle_event/4,
-        %{}
-      )
+    # :ok =
+    #   :telemetry.attach(
+    #     "prometheus-ecto",
+    #     [:console, :repo, :query],
+    #     &App.Repo.Instrumenter.handle_event/4,
+    #     %{}
+    #   )
 
-    App.PhoenixInstrumenter.setup()
-    App.PipelineInstrumenter.setup()
-    App.Repo.Instrumenter.setup()
-    Prometheus.Registry.register_collector(:prometheus_process_collector)
-    App.PrometheusExporter.setup()
+    # App.PhoenixInstrumenter.setup()
+    # App.PipelineInstrumenter.setup()
+    # App.Repo.Instrumenter.setup()
+    # Prometheus.Registry.register_collector(:prometheus_process_collector)
+    # App.PrometheusExporter.setup()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

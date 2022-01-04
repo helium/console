@@ -16,8 +16,8 @@ Any and all contributions from the community are encouraged.
 - Install postgres (postgres.app on mac)
 - Install yarn (`brew install yarn`)
 - Install libsodium (`brew install libsodium`)
-- Install erlang (https://thinkingelixir.com/install-elixir-using-asdf/) (asdf install erlang 21.1, asdf local erlang 21.1)
-- Install elixir (https://thinkingelixir.com/install-elixir-using-asdf/) (asdf install elixir 1.9.0, asdf local elixir 1.9.0)
+- Install erlang (https://thinkingelixir.com/install-elixir-using-asdf/) (asdf install erlang 23.3.4.10, asdf local erlang 23.3.4.10)
+- Install elixir (https://thinkingelixir.com/install-elixir-using-asdf/) (asdf install elixir 1.12.1-otp-23, asdf local elixir 1.12.1-otp-23)
 
 To start your Phoenix server:
 
@@ -75,11 +75,6 @@ cp templates/nginx-default.conf nginx.conf
 
 - Set `USER_INVTE_ONLY` to true in your .env file
 - Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
-
-## Upgrading your v1 Console to v2 (originally released 07/29/2021)
-
-- Prior to upgrading, we recommend making a backup of your database as a precaution. This will only be used if something unexpected happens during the db migration process.
-- Follow the update [instructions](https://github.com/helium/console/releases/tag/2021.07.29)
 
 ## Questions
 

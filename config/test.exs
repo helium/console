@@ -23,15 +23,6 @@ config :console, Console.Mailer,
 
 config :console, env: Mix.env
 
-config :cloak, Cloak.AES.CTR,
-  tag: "AES",
-  default: true,
-  keys: [
-    %{tag: <<1>>, key: :base64.decode("/QCxhn/9t2SM8GiLXVDR1jFO/vENLGCnXADGAhGPM30="), default: true}
-  ]
-
-config :comeonin, :bcrypt_log_rounds, 4
-config :comeonin, :pbkdf2_rounds, 1
 config :console, oui: 1
 
 config :console, :access_token_decoder, Console.AccessTokenDecoder.MockDecodeAccessToken

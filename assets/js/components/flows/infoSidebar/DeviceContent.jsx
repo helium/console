@@ -7,7 +7,6 @@ import UserCan, { userCan } from "../../common/UserCan";
 import AlertNodeSettings from "./AlertNodeSettings";
 import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
-import DeleteDeviceModal from "../../devices/DeleteDeviceModal";
 import DeviceShowLabelsTable from "../../devices/DeviceShowLabelsTable";
 import DeviceRemoveLabelModal from "../../devices/DeviceRemoveLabelModal";
 import DevicesAddLabelModal from "../../devices/DevicesAddLabelModal";
@@ -16,11 +15,10 @@ import { DEVICE_SHOW } from "../../../graphql/devices";
 import analyticsLogger from "../../../util/analyticsLogger";
 import { displayError } from "../../../util/messages";
 import withGql from "../../../graphql/withGql";
-import { Typography, Button, Input, Tag, Card, Tabs, Tooltip } from "antd";
+import { Typography, Button, Input, Tag, Card, Tabs } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 import moment from "moment";
@@ -38,8 +36,6 @@ class DeviceContent extends Component {
     showAppEUIInput: false,
     showAppKeyInput: false,
     showAppKey: false,
-    showDeleteDeviceModal: false,
-    deviceToDelete: null,
     showDeviceRemoveLabelModal: false,
     showDevicesAddLabelModal: false,
     labelsSelected: null,
@@ -147,14 +143,6 @@ class DeviceContent extends Component {
     this.props.updateDevice(this.props.match.params.id, { active });
   };
 
-  openDeleteDeviceModal = (device) => {
-    this.setState({ showDeleteDeviceModal: true, deviceToDelete: [device] });
-  };
-
-  closeDeleteDeviceModal = () => {
-    this.setState({ showDeleteDeviceModal: false });
-  };
-
   openDeviceRemoveLabelModal = (labelsSelected) => {
     this.setState({ showDeviceRemoveLabelModal: true });
     this.setState({ labelsSelected });
@@ -178,7 +166,6 @@ class DeviceContent extends Component {
       showAppEUIInput,
       showAppKeyInput,
       showAppKey,
-      showDeleteDeviceModal,
       labelsSelected,
       showDeviceRemoveLabelModal,
       showDevicesAddLabelModal,
@@ -228,35 +215,6 @@ class DeviceContent extends Component {
                 {userCan({ role: this.props.currentRole }) ? "Edit" : "View"}
               </Button>
             </Link>
-            <UserCan>
-              {this.props.hasChanges ? (
-                <Tooltip
-                  title="Undo or save your workspace changes before deleting this device"
-                  overlayStyle={{ width: 230 }}
-                >
-                  <Button
-                    style={{ borderRadius: 4, marginRight: 5 }}
-                    type="danger"
-                    icon={<DeleteOutlined />}
-                    disabled
-                  >
-                    Delete
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Button
-                  style={{ borderRadius: 4, marginRight: 5 }}
-                  type="danger"
-                  icon={<DeleteOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.openDeleteDeviceModal(device);
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
-            </UserCan>
           </div>
         </div>
 
@@ -467,17 +425,6 @@ class DeviceContent extends Component {
             <MultiBuyNodeSettings currentNode={device} />
           </TabPane>
         </Tabs>
-
-        <DeleteDeviceModal
-          open={showDeleteDeviceModal}
-          onClose={this.closeDeleteDeviceModal}
-          allDevicesSelected={false}
-          devicesToDelete={this.state.deviceToDelete}
-          totalDevices={1}
-          from="deviceShow"
-          doNotRedirect
-          deleteResource={this.props.deleteResource}
-        />
 
         <DeviceRemoveLabelModal
           open={showDeviceRemoveLabelModal}
