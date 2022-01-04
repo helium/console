@@ -11,6 +11,7 @@ export const LABEL_FRAGMENT = gql`
     devices {
       name
       id
+      dev_eui
       last_connected
       in_xor_filter
     }

@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import withGql from "../../graphql/withGql";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
+import MobileLayout from "../mobile/MobileLayout";
 import ChannelIndexTable from "./ChannelIndexTable";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import DeleteChannelModal from "./DeleteChannelModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { PAGINATED_CHANNELS } from "../../graphql/channels";
 import { SkeletonLayout } from "../common/SkeletonLayout";
-import { Typography } from "antd";
-const { Text } = Typography;
+import MobileChannelIndex from "../mobile/channels/MobileChannelIndex";
+import ErrorMessage from "../common/ErrorMessage";
+import { isMobile } from "../../util/constants";
 
 class ChannelIndex extends Component {
   state = {
@@ -20,7 +23,11 @@ class ChannelIndex extends Component {
 
   componentDidMount() {
     const { socket, currentOrganizationId } = this.props;
-    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_INDEX");
+    analyticsLogger.logEvent(
+      isMobile
+        ? "ACTION_NAV_CHANNELS_INDEX_MOBILE"
+        : "ACTION_NAV_CHANNELS_INDEX"
+    );
 
     this.channel = socket.channel("graphql:channels_index_table", {});
     this.channel.join();
@@ -85,31 +92,54 @@ class ChannelIndex extends Component {
     const { channels, loading, error } = this.props.paginatedChannelsQuery;
     const { showDeleteChannelModal, channelSelected } = this.state;
 
-    return (
-      <ChannelDashboardLayout {...this.props}>
-        {error && (
-          <Text>Data failed to load, please reload the page and try again</Text>
-        )}
-        {loading && (
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        )}
-        {!loading && (
-          <ChannelIndexTable
-            history={this.props.history}
-            channels={channels}
-            openDeleteChannelModal={this.openDeleteChannelModal}
-            handleChangePage={this.handleChangePage}
-          />
-        )}
+    if (error) {
+      return (
+        <>
+          <MobileDisplay>
+            <MobileLayout>
+              <ErrorMessage />
+            </MobileLayout>
+          </MobileDisplay>
+          <DesktopDisplay>
+            <ChannelDashboardLayout {...this.props}>
+              <ErrorMessage />
+            </ChannelDashboardLayout>
+          </DesktopDisplay>
+        </>
+      );
+    }
 
-        <DeleteChannelModal
-          open={showDeleteChannelModal}
-          onClose={this.closeDeleteChannelModal}
-          channel={channelSelected}
-        />
-      </ChannelDashboardLayout>
+    return (
+      <>
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileChannelIndex loading={loading} channels={channels} refetch={this.refetchPaginatedEntries} />
+          </MobileLayout>
+        </MobileDisplay>
+        <DesktopDisplay>
+          <ChannelDashboardLayout {...this.props}>
+            {loading && (
+              <div style={{ padding: 40 }}>
+                <SkeletonLayout />
+              </div>
+            )}
+            {!loading && (
+              <ChannelIndexTable
+                history={this.props.history}
+                channels={channels}
+                openDeleteChannelModal={this.openDeleteChannelModal}
+                handleChangePage={this.handleChangePage}
+              />
+            )}
+
+            <DeleteChannelModal
+              open={showDeleteChannelModal}
+              onClose={this.closeDeleteChannelModal}
+              channel={channelSelected}
+            />
+          </ChannelDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

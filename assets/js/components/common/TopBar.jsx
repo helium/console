@@ -7,6 +7,7 @@ import { push } from 'connected-react-router';
 import MediaQuery from 'react-responsive'
 import numeral from 'numeral'
 import HelpLinks from './HelpLinks'
+import { updateDisplay } from '../../actions/display'
 import DCIMg from '../../../img/datacredits.svg'
 import DCIMgDark from '../../../img/datacredits-dark.svg'
 import { logOut } from '../../actions/auth'
@@ -16,6 +17,7 @@ import { ORGANIZATION_SHOW_DC, ALL_ORGANIZATIONS } from '../../graphql/organizat
 import { redForTablesDeleteText } from '../../util/colors'
 import { Menu, Dropdown, Typography, Tooltip } from 'antd';
 import DownOutlined from '@ant-design/icons/DownOutlined';
+import MobileOutlined from '@ant-design/icons/MobileOutlined';
 import MenuFoldOutlined from '@ant-design/icons/MenuFoldOutlined';
 import MenuUnfoldOutlined from '@ant-design/icons/MenuUnfoldOutlined';
 const { Text } = Typography
@@ -98,6 +100,14 @@ class TopBar extends Component {
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           {
+            this.props.desktopOnly && (
+              <MobileOutlined
+                style={{ color: '#ffffff', fontSize: 18, marginRight: 10, position: 'relative', top: 1}}
+                onClick={() => this.props.updateDisplay(false)}
+              />
+            )
+          }
+          {
             this.props.showNav ? (
               <MenuFoldOutlined
                 style={{ color: '#ffffff', fontSize: 18, marginRight: 10, position: 'relative', top: 1}}
@@ -119,19 +129,19 @@ class TopBar extends Component {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <MediaQuery minWidth={720}>
+          <MediaQuery minWidth={769}>
             <Link to="/welcome" draggable="false">
               <img draggable="false" src={Logo} style={{ height: 30, position: 'relative', top: '-1px', display: 'inline-block'}}/>
             </Link>
           </MediaQuery>
           {
             currentOrganizationName && (
-              <MediaQuery minWidth={400}>
+              <MediaQuery minWidth={601}>
                 <SearchBar />
               </MediaQuery>
             )
           }
-          <MediaQuery minWidth={720}>
+          <MediaQuery minWidth={769}>
             <img
               draggable="false"
               src={this.state.showHelpLinks ? QuestionSelectedIcon : QuestionIcon}
@@ -156,40 +166,38 @@ class TopBar extends Component {
           </MediaQuery>
           {
             organization && (
-              <MediaQuery minWidth={720}>
-                <Tooltip
-                  title={
-                    <span
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
-                      onClick={() => this.props.push("/datacredits")}
-                      className="noselect"
-                    >
-                      <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
-                      <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
-                    </span>
-                  }
-                  onVisibleChange={this.refreshDC}
-                >
-                  <div
-                    style={{
-                      height: 31,
-                      backgroundColor: organization.dc_balance > 1000 ? '#565C64' : '#FF4D4F',
-                      borderRadius: 30,
-                      paddingLeft: 10,
-                      paddingRight: 10,
-                      marginLeft: 10
-                    }}
+              <Tooltip
+                title={
+                  <span
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                    onClick={() => this.props.push("/datacredits")}
+                    className="noselect"
                   >
-                    <img draggable="false" style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
-                    <Text
-                      className="noselect"
-                      style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -11, cursor: 'default' }}
-                    >
-                      {numeral(organization.dc_balance).format('0,0')}
-                    </Text>
-                  </div>
-                </Tooltip>
-              </MediaQuery>
+                    <Text style={{ color: organization.dc_balance > 1000 ? '#ffffff' : '#FF4D4F', fontWeight: 600, fontSize: 16 }}>{organization.dc_balance > 1000 ? "DC Balance" : "Your DC Balance is Low"}</Text>
+                    <Text style={{ color: '#ffffff' }}>{organization.dc_balance > 1000 ? "Click here to Manage" : "Click here to Top Up"}</Text>
+                  </span>
+                }
+                onVisibleChange={this.refreshDC}
+              >
+                <div
+                  style={{
+                    height: 31,
+                    backgroundColor: organization.dc_balance > 1000 ? '#565C64' : '#FF4D4F',
+                    borderRadius: 30,
+                    paddingLeft: 10,
+                    paddingRight: 10,
+                    marginLeft: 10
+                  }}
+                >
+                  <img draggable="false" style={{ width: 15, position: 'relative', top: -13, marginRight: 4 }} src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark} />
+                  <Text
+                    className="noselect"
+                    style={{ color: organization.dc_balance > 1000 ? 'white' : 'black', position: 'relative', top: -11, cursor: 'default' }}
+                  >
+                    {numeral(organization.dc_balance).format('0,0')}
+                  </Text>
+                </div>
+              </Tooltip>
             )
           }
           <Dropdown overlay={menu(this.handleClick, currentOrganizationName)} trigger={['click']} onVisibleChange={visible => this.setState({ userMenuVisible: visible })}>
@@ -232,12 +240,13 @@ function mapStateToProps(state, ownProps) {
     currentOrganizationName: state.organization.currentOrganizationName,
     currentOrganizationId: state.organization.currentOrganizationId,
     socket: state.apollo.socket,
-    pathname: state.router.location.pathname
+    pathname: state.router.location.pathname,
+    desktopOnly: state.display.desktopOnly,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ logOut, push, switchOrganization }, dispatch);
+  return bindActionCreators({ logOut, push, switchOrganization, updateDisplay }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(

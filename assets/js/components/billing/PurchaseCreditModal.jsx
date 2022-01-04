@@ -47,6 +47,16 @@ const styles = {
     width: "100%",
     marginTop: 30,
   },
+  countBlueBoxMobile: {
+    backgroundColor: "#E6F7FF",
+    paddingLeft: 40,
+    paddingRight: 40,
+    paddingTop: 30,
+    paddingBottom: 30,
+    height: "100%",
+    width: "100%",
+    marginTop: 20,
+  },
   costContainer: {
     display: "flex",
     flexDirection: "row",
@@ -346,11 +356,18 @@ class PurchaseCreditModal extends Component {
           <Text>(Credit Card purchases: minimum $10)</Text>
         )}
         <br />
-        <Text strong>
-          Data Credits purchased on Console can only be used <br /> for device
+        <Text
+          strong
+          style={{
+            padding: this.props.mobile ? "0px 15px" : 0,
+            width: this.props.mobile ? '100%' : '80%',
+            textAlign: 'center'
+          }}
+        >
+          Data Credits purchased on Console can only be used for device
           packet transfer and are non-transferrable.
         </Text>
-        <div style={styles.countBlueBox}>
+        <div style={this.props.mobile ? styles.countBlueBoxMobile : styles.countBlueBox}>
           <div>
             <Input
               placeholder="Enter Quantity"
@@ -370,7 +387,7 @@ class PurchaseCreditModal extends Component {
             <div style={styles.costContainer}>
               <Text style={{ color: "#4091F7", marginTop: -5 }}>Cost:</Text>
               <Text style={styles.costNumber}>
-                USD {countUSD && parseFloat(countUSD).toFixed(2)}
+                ${countUSD && parseFloat(countUSD).toFixed(2)}
               </Text>
             </div>
           )}
@@ -380,9 +397,9 @@ class PurchaseCreditModal extends Component {
   };
 
   renderPayment = () => {
-    const { paymentMethods } = this.props;
+    const { paymentMethods, mobile } = this.props;
     return (
-      <React.Fragment>
+      <div style={{ padding: mobile ? 15 : 0 }}>
         <div
           style={{
             ...styles.container,
@@ -419,7 +436,7 @@ class PurchaseCreditModal extends Component {
           <Text strong>{paymentMethods.length > 0 && "...or "}Add Card</Text>
           {open && <StripeCardElement id="card-element-purchase-flow" />}
         </div>
-      </React.Fragment>
+      </div>
     );
   };
 
@@ -437,8 +454,8 @@ class PurchaseCreditModal extends Component {
           style={{
             height: 30,
             width: "100%",
-            paddingLeft: 50,
-            paddingRight: 50,
+            paddingLeft: this.props.mobile ? 15 : 50,
+            paddingRight: this.props.mobile ? 15 : 50,
             marginBottom: 60,
           }}
         >
@@ -459,7 +476,7 @@ class PurchaseCreditModal extends Component {
                 display: "block",
               }}
             >
-              Router address for burning HNT is not available
+              Router address for burning HNT unavailable
             </Text>
             <Text
               style={{
@@ -522,7 +539,7 @@ class PurchaseCreditModal extends Component {
     if (this.state.showPage == "qrCode")
       return [
         <Button key="back" onClick={this.handleBack}>
-          Cancel
+          Back
         </Button>,
         <Button key="submit" type="primary" onClick={this.handleClose}>
           Close
@@ -534,8 +551,22 @@ class PurchaseCreditModal extends Component {
           key="back"
           onClick={this.handleClose}
           disabled={this.state.loading}
+          style={{ marginTop: this.props.mobile ? 6 : 0 }}
         >
           Cancel
+        </Button>,
+        <Button
+          key="submit2"
+          type="primary"
+          onClick={this.showQRCode}
+          disabled={
+            !this.state.countUSD ||
+            this.state.countUSD == 0 ||
+            this.state.gettingPrice
+          }
+          style={{ marginTop: this.props.mobile ? 6 : 0 }}
+        >
+          Burn HNT to DC
         </Button>,
         <Button
           key="submit"
@@ -548,20 +579,9 @@ class PurchaseCreditModal extends Component {
             this.state.gettingPrice ||
             this.state.countUSD < 10
           }
+          style={{ marginTop: this.props.mobile ? 6 : 0 }}
         >
           Purchase with Credit Card
-        </Button>,
-        <Button
-          key="submit2"
-          type="primary"
-          onClick={this.showQRCode}
-          disabled={
-            !this.state.countUSD ||
-            this.state.countUSD == 0 ||
-            this.state.gettingPrice
-          }
-        >
-          Burn HNT to DC
         </Button>,
       ];
     } else {
@@ -620,7 +640,7 @@ class PurchaseCreditModal extends Component {
         onCancel={loading ? () => {} : this.handleClose}
         centered
         footer={this.renderModalFooter()}
-        bodyStyle={{ padding: this.state.showPage == "default" && 0 }}
+        bodyStyle={{ padding: (this.state.showPage == "default" || this.props.mobile) && 0 }}
         width={560}
       >
         {this.state.showPage == "default" && this.renderCountSelection()}

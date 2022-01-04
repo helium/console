@@ -275,6 +275,7 @@ defmodule ConsoleWeb.LabelController do
           ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
           Enum.each(devices, fn device ->
             ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device}:device_update", %{})
+            ConsoleWeb.Endpoint.broadcast("graphql:mobile_device_labels", "graphql:mobile_device_labels:#{device}:labels_update", %{})
           end)
 
           broadcast_router_update_devices(devices)
@@ -314,6 +315,7 @@ defmodule ConsoleWeb.LabelController do
         assoc_devices = devices_labels |> Enum.map(fn dl -> dl.device_id end)
         Enum.each(assoc_devices, fn device ->
           ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device}:device_update", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:mobile_device_labels", "graphql:mobile_device_labels:#{device}:labels_update", %{})
         end)
         broadcast_router_update_devices(assoc_devices)
 

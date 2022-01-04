@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Row, Col, Typography } from "antd";
+import { Button, Row, Col } from "antd";
 import { useQuery } from "@apollo/client";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
 import ConfigProfileIcon from "../../../img/config_profile/profile_icon_blue.svg";
-const { Text } = Typography;
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserCan from "../common/UserCan";
@@ -18,10 +17,10 @@ import {
   updateConfigProfile,
 } from "../../actions/configProfile";
 import ConfigProfileSettings from "./ConfigProfileSettings";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default ({ show, id, openDeleteConfigProfileModal }) => {
   const history = useHistory();
-  const currentRole = useSelector((state) => state.organization.currentRole);
   const dispatch = useDispatch();
 
   const { loading, error, data, refetch } = useQuery(CONFIG_PROFILE_SHOW, {
@@ -99,11 +98,7 @@ export default ({ show, id, openDeleteConfigProfileModal }) => {
           </div>
         </Col>
         <Col span={12} style={{ padding: "40px 20px" }}>
-          {error && (
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          )}
+          {error && <ErrorMessage />}
           {loading && <SkeletonLayout />}
           {!error && !loading && (
             <ConfigProfileSettings

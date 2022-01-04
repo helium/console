@@ -1,40 +1,44 @@
-import React, { Component } from 'react';
-import { Typography, Input } from 'antd';
-const { Text } = Typography
+import React, { Component } from "react";
+import { Typography, Input } from "antd";
+const { Text } = Typography;
 
 class TagoForm extends Component {
   state = {
-    token: ""
-  }
+    token: "",
+  };
 
-  handleTokenUpdate = e => {
-    this.setState({ token: e.target.value }, this.validateInput)
-  }
+  handleTokenUpdate = (e) => {
+    this.setState({ token: e.target.value }, this.validateInput);
+  };
 
   validateInput = () => {
-    const { token } = this.state
+    const { token } = this.state;
     if (token.length > 0) {
       this.props.onValidInput({
         method: "post",
-        endpoint: 'https://helium.middleware.tago.io/uplink',
+        endpoint: "https://helium.middleware.tago.io/uplink",
         headers: {
-          "Authorization": token
+          Authorization: token,
         },
-      })
+      });
     }
-  }
+  };
 
   render() {
-    return(
+    return (
       <div>
         <div>
-          <Text style={{ display: 'block' }}>Enter TagoIO Authorization Token:</Text>
+          <Text style={{ display: "block" }}>
+            Enter TagoIO Authorization Token:
+          </Text>
         </div>
         <div>
           <Input
             value={this.state.token}
             onChange={this.handleTokenUpdate}
-            style={{ width: '50%'}}
+            style={{
+              ...(this.props.mobile ? { width: "100%" } : { width: "50%" }),
+            }}
           />
         </div>
       </div>

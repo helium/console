@@ -26,6 +26,7 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";
+import ErrorMessage from "../common/ErrorMessage";
 
 class OrganizationsTable extends Component {
   state = {
@@ -191,10 +192,7 @@ class OrganizationsTable extends Component {
       this.props.paginatedOrganizationsQuery;
 
     if (loading) return <SkeletonLayout />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div>

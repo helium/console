@@ -5,12 +5,16 @@ import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
+import MobileLayout from "../mobile/MobileLayout";
+import MobileDataCreditsIndex from "../mobile/data_credits/MobileDataCreditsIndex";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import analyticsLogger from "../../util/analyticsLogger";
 import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
 import AutomaticRenewalModal from "./AutomaticRenewalModal";
 import OrganizationTransferDCModal from "./OrganizationTransferDCModal";
 import DataCreditPurchasesTable from "./DataCreditPurchasesTable";
+import IndexBlankSlate from "./IndexBlankSlate";
 import PaymentCard from "./PaymentCard";
 import { ORGANIZATION_SHOW_DC } from "../../graphql/organizations";
 import { getPaymentMethods } from "../../actions/dataCredits";
@@ -24,7 +28,8 @@ import BytesIMg from "../../../img/datacredits-bytes-logo.svg";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import UserCan from "../common/UserCan";
-import _JSXStyle from "styled-jsx/style";
+import ErrorMessage from "../common/ErrorMessage";
+import { isMobile } from "../../util/constants";
 
 const styles = {
   tipText: {
@@ -34,6 +39,8 @@ const styles = {
   image: {
     width: 33,
     marginRight: 8,
+    top: -4,
+    position: "relative",
   },
   numberCount: {
     fontSize: 40,
@@ -52,7 +59,9 @@ class DataCreditsIndex extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_DATA_CREDITS");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_DATA_CREDITS_MOBILE" : "ACTION_NAV_DATA_CREDITS"
+    );
 
     const { socket, currentOrganizationId } = this.props;
 
@@ -90,7 +99,9 @@ class DataCreditsIndex extends Component {
   fetchPaymentMethods = (callback, attempt = 0) => {
     if (attempt == 3) {
       return analyticsLogger.logEvent(
-        "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT",
+        isMobile
+          ? "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT_MOBILE"
+          : "FAILED_TO_CREATE_DC_PURCHASE_AFTER_CC_PAYMENT",
         {
           organization_id: this.props.currentOrganizationId,
           step: "cannot get payment method info",
@@ -122,107 +133,10 @@ class DataCreditsIndex extends Component {
   renderBlankState = () => {
     const { organization } = this.props.orgShowDCQuery;
     return (
-      <div className="blankstateWrapper" style={{ paddingTop: "80px" }}>
-        <div className="message">
-          <img style={{ width: 100, marginBottom: 20 }} src={DCIMg} />
-          <h1>Data Credits</h1>
-          {organization.dc_balance !== null && (
-            <p style={{ fontWeight: 400 }}>
-              For signing up with Console you've received an initial balance of
-              10000 Data Credits. You have {organization.dc_balance} remaining.
-            </p>
-          )}
-          {
-            window.disable_user_burn !== "true" && (
-              <React.Fragment>
-                <UserCan noManager>
-                  <p style={{ fontSize: 16 }}>
-                    Click here to purchase more Data Credits, set up an automatic
-                    renewal, and monitor balances.
-                  </p>
-                </UserCan>
-                <UserCan noManager>
-                  <Button
-                    size="large"
-                    type="primary"
-                    icon={<WalletOutlined />}
-                    onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{ borderRadius: 4 }}
-                  >
-                    Purchase Data Credits
-                  </Button>
-                </UserCan>
-              </React.Fragment>
-            )
-          }
-
-          <div className="explainer">
-            <h2>What are Data Credits?</h2>
-            <p>
-              Data Credits are used by devices to send data via the Helium
-              Network. The cost per fragment is $0.00001 USD (fragments are 24
-              bytes) which is equivalent to 1 Data Credit (DC).
-            </p>
-            <p>
-              <a
-                className="help-link"
-                href="https://docs.helium.com/use-the-network/console/data-credits"
-                target="_blank"
-              >
-                Learn more about Data Credits
-              </a>
-            </p>
-          </div>
-        </div>
-        <style jsx>{`
-          .message {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-          }
-          .explainer {
-            padding: 20px 60px;
-            border-radius: 20px;
-            text-align: center;
-            margin-top: 50px;
-            box-sizing: border-box;
-            border: none;
-            background: #f6f8fa;
-          }
-
-          .explainer h2 {
-            color: #242424;
-            font-size: 20px;
-          }
-          .explainer p {
-            color: #565656;
-            font-size: 15px;
-          }
-
-          .explainer p a {
-            color: #096dd9;
-          }
-
-          h1,
-          p {
-            color: #242425;
-          }
-          h1 {
-            font-size: 46px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            margin-bottom: 10px;
-          }
-          p {
-            font-size: 20px;
-            font-weight: 300;
-            margin: 0 auto;
-            max-width: 500px;
-            margin-bottom: 20px;
-          }
-        `}</style>
-      </div>
+      <IndexBlankSlate
+        organization={organization}
+        onClick={() => this.openModal("showPurchaseCreditModal")}
+      />
     );
   };
 
@@ -242,13 +156,19 @@ class DataCreditsIndex extends Component {
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={DCIMg} />
-                <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                  {numeral(dc_balance).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <img style={styles.image} src={DCIMg} />
+                  <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                    {numeral(dc_balance).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -268,13 +188,21 @@ class DataCreditsIndex extends Component {
               }
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={BytesIMg} />
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                  {numeral(dc_balance * 24).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <img style={styles.image} src={BytesIMg} />
+                  <Text
+                    style={{ ...styles.numberCount, color: tertiaryPurple }}
+                  >
+                    {numeral(dc_balance * 24).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -297,46 +225,52 @@ class DataCreditsIndex extends Component {
                   }
                   bodyStyle={{ height: 90, padding: 0 }}
                 >
-                  <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-                  {this.state.paymentMethods.length > 0 && defaultPayment && (
-                    <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
-                      <Col span={16}>
-                        <PaymentCard
-                          key={defaultPayment.id}
-                          card={defaultPayment.card}
-                        />
-                      </Col>
-                      <Col
-                        span={8}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          marginTop: -2,
-                        }}
+                  <div
+                    style={{ overflowX: "scroll", padding: 24 }}
+                    className="no-scroll-bar"
+                  >
+                    {this.state.paymentMethods.length > 0 && defaultPayment && (
+                      <Row
+                        type="flex"
+                        style={{ alignItems: "center", minWidth: 200 }}
                       >
-                        <p
+                        <Col span={16}>
+                          <PaymentCard
+                            key={defaultPayment.id}
+                            card={defaultPayment.card}
+                          />
+                        </Col>
+                        <Col
+                          span={8}
                           style={{
-                            fontFamily: "monospace",
-                            color: "#777777",
-                            display: "inline",
-                            position: "relative",
-                            top: 6,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            marginTop: -2,
                           }}
                         >
-                          {defaultPayment.card.exp_month > 9
-                            ? defaultPayment.card.exp_month
-                            : "0" + defaultPayment.card.exp_month}
-                          /{defaultPayment.card.exp_year.toString().slice(2)}
-                        </p>
-                      </Col>
-                    </Row>
-                  )}
-                  {!defaultPayment && this.state.triedFetchingPayments && (
-                    <Row type="flex" style={{ alignItems: "center" }}>
-                      <Text style={styles.numberCount}>N/A</Text>
-                    </Row>
-                  )}
+                          <p
+                            style={{
+                              fontFamily: "monospace",
+                              color: "#777777",
+                              display: "inline",
+                              position: "relative",
+                              top: 6,
+                            }}
+                          >
+                            {defaultPayment.card.exp_month > 9
+                              ? defaultPayment.card.exp_month
+                              : "0" + defaultPayment.card.exp_month}
+                            /{defaultPayment.card.exp_year.toString().slice(2)}
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                    {!defaultPayment && this.state.triedFetchingPayments && (
+                      <Row type="flex" style={{ alignItems: "center" }}>
+                        <Text style={styles.numberCount}>N/A</Text>
+                      </Row>
+                    )}
                   </div>
                 </Card>
               </UserCan>
@@ -357,7 +291,7 @@ class DataCreditsIndex extends Component {
       showAutomaticRenewalModal,
       showOrganizationTransferDCModal,
     } = this.state;
-    const { organization, error } = this.props.orgShowDCQuery;
+    const { organization, error, loading } = this.props.orgShowDCQuery;
 
     const defaultPayment = find(
       this.state.paymentMethods,
@@ -365,114 +299,141 @@ class DataCreditsIndex extends Component {
     );
 
     return (
-      <DashboardLayout title="Data Credits" user={this.props.user} noAddButton>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              padding: "0px 0px 20px 0px",
-              overflowX: 'scroll'
-            }}
-            className="no-scroll-bar"
+      <>
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileDataCreditsIndex
+              organization={organization}
+              paymentMethods={this.state.paymentMethods}
+              fetchPaymentMethods={this.fetchPaymentMethods}
+              defaultPayment={defaultPayment}
+              triedFetchingPayments={this.state.triedFetchingPayments}
+              styles={styles}
+              user={this.props.user}
+              loading={loading}
+              error={error}
+            />
+          </MobileLayout>
+        </MobileDisplay>
+
+        <DesktopDisplay>
+          <DashboardLayout
+            title="Data Credits"
+            user={this.props.user}
+            noAddButton
           >
-            <UserCan noManager>
-              {organization && organization.dc_balance_nonce != 0 ? (
-                <React.Fragment>
-                  {(!organization.received_free_dc ||
-                    organization.dc_balance > 10000) && (
-                    <Button
-                      style={{ borderRadius: 4, marginRight: 20 }}
-                      icon={<RightCircleOutlined />}
-                      onClick={() =>
-                        this.openModal("showOrganizationTransferDCModal")
-                      }
-                    >
-                      Transfer DC to Org
-                    </Button>
+            <div
+              style={{
+                padding: "30px 30px 10px 30px",
+                height: "100%",
+                width: "100%",
+                backgroundColor: "#ffffff",
+                borderRadius: 6,
+                overflow: "hidden",
+                boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  padding: "0px 0px 20px 0px",
+                  overflowX: "scroll",
+                }}
+                className="no-scroll-bar"
+              >
+                <UserCan noManager>
+                  {organization && organization.dc_balance_nonce != 0 ? (
+                    <React.Fragment>
+                      {(!organization.received_free_dc ||
+                        organization.dc_balance > 10000) && (
+                        <Button
+                          style={{ borderRadius: 4, marginRight: 20 }}
+                          icon={<RightCircleOutlined />}
+                          onClick={() =>
+                            this.openModal("showOrganizationTransferDCModal")
+                          }
+                        >
+                          Transfer DC to Org
+                        </Button>
+                      )}
+                      <Button
+                        icon={<SyncOutlined />}
+                        onClick={() =>
+                          this.openModal("showAutomaticRenewalModal")
+                        }
+                        style={{
+                          borderRadius: 4,
+                          marginRight: 20,
+                          display: !process.env.SELF_HOSTED ? "inline" : "none",
+                        }}
+                      >
+                        Automatic Renewals{" "}
+                        {organization.automatic_charge_amount ? "On" : "Off"}
+                      </Button>
+                      <Button
+                        type="primary"
+                        icon={<WalletOutlined />}
+                        onClick={() =>
+                          this.openModal("showPurchaseCreditModal")
+                        }
+                        style={{
+                          borderRadius: 4,
+                          display:
+                            window.disable_user_burn !== "true"
+                              ? "inline"
+                              : "none",
+                        }}
+                      >
+                        Purchase Data Credits
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    <div />
                   )}
-                  <Button
-                    icon={<SyncOutlined />}
-                    onClick={() => this.openModal("showAutomaticRenewalModal")}
-                    style={{
-                      borderRadius: 4,
-                      marginRight: 20,
-                      display: !process.env.SELF_HOSTED ? "inline" : "none",
-                    }}
-                  >
-                    Automatic Renewals{" "}
-                    {organization.automatic_charge_amount ? "On" : "Off"}
-                  </Button>
-                  <Button
-                    type="primary"
-                    icon={<WalletOutlined />}
-                    onClick={() => this.openModal("showPurchaseCreditModal")}
-                    style={{
-                      borderRadius: 4,
-                      display: window.disable_user_burn !== "true" ? "inline" : "none"
-                    }}
-                  >
-                    Purchase Data Credits
-                  </Button>
-                </React.Fragment>
-              ) : (
-                <div />
-              )}
-            </UserCan>
-          </div>
-          {error && (
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          )}
-          {organization &&
-            organization.dc_balance_nonce == 0 &&
-            this.renderBlankState()}
-          {organization &&
-            organization.dc_balance_nonce != 0 &&
-            this.renderContent()}
-        </div>
+                </UserCan>
+              </div>
+              {error && <ErrorMessage />}
+              {organization &&
+                organization.dc_balance_nonce == 0 &&
+                this.renderBlankState()}
+              {organization &&
+                organization.dc_balance_nonce != 0 &&
+                this.renderContent()}
+            </div>
 
-        <DefaultPaymentModal
-          open={showDefaultPaymentModal}
-          onClose={() => this.closeModal("showDefaultPaymentModal")}
-          organization={organization}
-          paymentMethods={this.state.paymentMethods}
-          fetchPaymentMethods={this.fetchPaymentMethods}
-        />
+            <DefaultPaymentModal
+              open={showDefaultPaymentModal}
+              onClose={() => this.closeModal("showDefaultPaymentModal")}
+              organization={organization}
+              paymentMethods={this.state.paymentMethods}
+              fetchPaymentMethods={this.fetchPaymentMethods}
+            />
 
-        <PurchaseCreditModal
-          open={showPurchaseCreditModal}
-          onClose={() => this.closeModal("showPurchaseCreditModal")}
-          organization={organization}
-          fetchPaymentMethods={this.fetchPaymentMethods}
-          paymentMethods={this.state.paymentMethods}
-        />
+            <PurchaseCreditModal
+              open={showPurchaseCreditModal}
+              onClose={() => this.closeModal("showPurchaseCreditModal")}
+              organization={organization}
+              fetchPaymentMethods={this.fetchPaymentMethods}
+              paymentMethods={this.state.paymentMethods}
+            />
 
-        <AutomaticRenewalModal
-          open={showAutomaticRenewalModal}
-          onClose={() => this.closeModal("showAutomaticRenewalModal")}
-          paymentMethods={this.state.paymentMethods}
-          organization={organization}
-        />
+            <AutomaticRenewalModal
+              open={showAutomaticRenewalModal}
+              onClose={() => this.closeModal("showAutomaticRenewalModal")}
+              paymentMethods={this.state.paymentMethods}
+              organization={organization}
+            />
 
-        <OrganizationTransferDCModal
-          open={showOrganizationTransferDCModal}
-          onClose={() => this.closeModal("showOrganizationTransferDCModal")}
-          organization={organization}
-        />
-      </DashboardLayout>
+            <OrganizationTransferDCModal
+              open={showOrganizationTransferDCModal}
+              onClose={() => this.closeModal("showOrganizationTransferDCModal")}
+              organization={organization}
+            />
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

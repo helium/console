@@ -152,7 +152,7 @@ class DebugEntry extends Component {
           paddingBottom: 10,
           marginBottom: 10,
           marginLeft: 25,
-          width: this.props.width,
+          width: this.props.mobile ? "calc(100% - 50px)" : this.props.width,
           backgroundColor: "#353535",
           borderRadius: 10,
         }}

@@ -5,6 +5,8 @@ import { Typography, Card, Col, Spin, Row } from "antd";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import withGql from "../../graphql/withGql";
 const { Text } = Typography;
+import ErrorMessage from "../common/ErrorMessage";
+
 const antLoader = (
   <LoadingOutlined style={{ fontSize: 50, color: "#38A2FF" }} spin />
 );
@@ -20,6 +22,28 @@ class DeviceShowStats extends Component {
       this.props.deviceDcStatsQuery.refetch();
     }
   }
+
+  renderContainer = (children) => {
+    if (this.props.mobile) {
+      return (
+        <div style={{ paddingTop: 24, paddingBottom: 24 }}>
+          <div style={{ paddingLeft: 24, marginBottom: 24 }}>
+            {this.renderTitle()}
+          </div>
+          {children}
+        </div>
+      );
+    } else {
+      return (
+        <Card
+          title={this.renderTitle()}
+          bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
+        >
+          {children}
+        </Card>
+      );
+    }
+  };
 
   renderTitle = () => (
     <span>
@@ -67,68 +91,8 @@ class DeviceShowStats extends Component {
     const { showDC } = this.state;
 
     if (!showDC) {
-      if (this.props.deviceStatsQuery.loading)
-        return (
-          <Card
-            title={this.renderTitle()}
-            bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-          >
-            <div
-              style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
-              className="no-scroll-bar"
-            >
-              <Row style={{ minWidth: 300 }}>
-                <Col span={12}>
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    All Time
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                  <div style={{ marginBottom: 30 }} />
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 30 Days
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                </Col>
-                <Col span={12}>
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 7 Days
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                  <div style={{ marginBottom: 30 }} />
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 24 Hours
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                </Col>
-              </Row>
-            </div>
-          </Card>
-        );
-      if (this.props.deviceStatsQuery.error)
-        return (
-          <Card
-            title={this.renderTitle()}
-            bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-          >
-            <div
-              style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
-              className="no-scroll-bar"
-            >
-              <Text>
-                Data failed to load, please reload the page and try again
-              </Text>
-            </div>
-          </Card>
-        );
-      return (
-        <Card
-          title={this.renderTitle()}
-          bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-        >
+      if (this.props.deviceStatsQuery.loading) {
+        return this.renderContainer(
           <div
             style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
             className="no-scroll-bar"
@@ -139,130 +103,112 @@ class DeviceShowStats extends Component {
                   All Time
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device.total_packets}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 30 Days
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_stats.packets_last_30d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
               </Col>
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 7 Days
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_stats.packets_last_7d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 24 Hours
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_stats.packets_last_1d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
               </Col>
             </Row>
           </div>
-        </Card>
+        );
+      }
+      if (this.props.deviceStatsQuery.error)
+        return this.renderContainer(
+          <div
+            style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
+            className="no-scroll-bar"
+          >
+            <ErrorMessage />
+          </div>
+        );
+      return this.renderContainer(
+        <div
+          style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
+          className="no-scroll-bar"
+        >
+          <Row style={{ minWidth: 300 }}>
+            <Col span={12}>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>All Time</Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device.total_packets}
+              </Text>
+              <br />
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 30 Days
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_stats.packets_last_30d}
+              </Text>
+              <br />
+            </Col>
+            <Col span={12}>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 7 Days
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_stats.packets_last_7d}
+              </Text>
+              <br />
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 24 Hours
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_stats.packets_last_1d}
+              </Text>
+              <br />
+            </Col>
+          </Row>
+        </div>
       );
     } else {
       if (this.props.deviceDcStatsQuery.loading)
-        return (
-          <Card
-            title={this.renderTitle()}
-            bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-          >
-            <div
-              style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
-              className="no-scroll-bar"
-            >
-              <Row style={{ minWidth: 300 }}>
-                <Col span={12}>
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    All Time
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                  <div style={{ marginBottom: 30 }} />
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 30 Days
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                </Col>
-                <Col span={12}>
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 7 Days
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                  <div style={{ marginBottom: 30 }} />
-                  <Text style={{ fontSize: 16, fontWeight: "300" }}>
-                    Last 24 Hours
-                  </Text>
-                  <br />
-                  <Spin indicator={antLoader} style={{ marginTop: 10 }} />
-                </Col>
-              </Row>
-            </div>
-          </Card>
-        );
-      if (this.props.deviceDcStatsQuery.error)
-        return (
-          <Card
-            title={this.renderTitle()}
-            bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-          >
-            <div
-              style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
-              className="no-scroll-bar"
-            >
-              <Text>
-                Data failed to load, please reload the page and try again
-              </Text>
-            </div>
-          </Card>
-        );
-      return (
-        <Card
-          title={this.renderTitle()}
-          bodyStyle={{ height: 300, paddingLeft: 0, paddingRight: 0 }}
-        >
+        return this.renderContainer(
           <div
             style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
             className="no-scroll-bar"
@@ -273,66 +219,107 @@ class DeviceShowStats extends Component {
                   All Time
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device.dc_usage}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 30 Days
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_dc_stats.dc_last_30d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
               </Col>
               <Col span={12}>
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 7 Days
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_dc_stats.dc_last_7d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
                 <div style={{ marginBottom: 30 }} />
                 <Text style={{ fontSize: 16, fontWeight: "300" }}>
                   Last 24 Hours
                 </Text>
                 <br />
-                <Text
-                  style={{
-                    fontSize: smallerText ? 32 : 46,
-                    color: blueForDeviceStatsLarge,
-                    position: "relative",
-                  }}
-                >
-                  {device_dc_stats.dc_last_1d}
-                </Text>
-                <br />
+                <Spin indicator={antLoader} style={{ marginTop: 10 }} />
               </Col>
             </Row>
           </div>
-        </Card>
+        );
+      if (this.props.deviceDcStatsQuery.error)
+        return this.renderContainer(
+          <div
+            style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
+            className="no-scroll-bar"
+          >
+            <ErrorMessage />
+          </div>
+        );
+      return this.renderContainer(
+        <div
+          style={{ overflowX: "scroll", paddingLeft: 24, paddingRight: 24 }}
+          className="no-scroll-bar"
+        >
+          <Row style={{ minWidth: 300 }}>
+            <Col span={12}>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>All Time</Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device.dc_usage}
+              </Text>
+              <br />
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 30 Days
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_dc_stats.dc_last_30d}
+              </Text>
+              <br />
+            </Col>
+            <Col span={12}>
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 7 Days
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_dc_stats.dc_last_7d}
+              </Text>
+              <br />
+              <div style={{ marginBottom: 30 }} />
+              <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                Last 24 Hours
+              </Text>
+              <br />
+              <Text
+                style={{
+                  fontSize: smallerText ? 32 : 46,
+                  color: blueForDeviceStatsLarge,
+                  position: "relative",
+                }}
+              >
+                {device_dc_stats.dc_last_1d}
+              </Text>
+              <br />
+            </Col>
+          </Row>
+        </div>
       );
     }
   }

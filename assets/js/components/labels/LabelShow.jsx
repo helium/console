@@ -2,11 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import analyticsLogger from "../../util/analyticsLogger";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import UpdateLabelModal from "./UpdateLabelModal";
 import LabelAddDeviceModal from "./LabelAddDeviceModal";
 import DeleteDeviceModal from "../devices/DeleteDeviceModal";
 import DeviceDashboardLayout from "../devices/DeviceDashboardLayout";
 import RemoveDevicesFromLabelModal from "./RemoveDevicesFromLabelModal";
+import MobileLayout from "../mobile/MobileLayout";
+import MobileLabelShow from "../mobile/labels/MobileLabelShow";
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import LabelShowTable from "./LabelShowTable";
 import UserCan from "../common/UserCan";
@@ -26,6 +29,7 @@ import withGql from "../../graphql/withGql";
 import { Typography } from "antd";
 const { Text } = Typography;
 import BugOutlined from "@ant-design/icons/BugOutlined";
+import ErrorMessage from "../common/ErrorMessage";
 
 class LabelShow extends Component {
   state = {
@@ -131,21 +135,38 @@ class LabelShow extends Component {
 
     if (loading)
       return (
-        <DeviceDashboardLayout {...this.props}>
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        </DeviceDashboardLayout>
+        <>
+          <MobileDisplay>
+            <MobileLayout>
+              <div style={{ padding: 15 }}>
+                <Text style={{ fontSize: 32, fontWeight: 600 }}>...</Text>
+              </div>
+              <SkeletonLayout />
+            </MobileLayout>
+          </MobileDisplay>
+          <DesktopDisplay>
+            <DeviceDashboardLayout {...this.props}>
+              <div style={{ padding: 40 }}>
+                <SkeletonLayout />
+              </div>
+            </DeviceDashboardLayout>
+          </DesktopDisplay>
+        </>
       );
     if (error)
       return (
-        <DeviceDashboardLayout {...this.props}>
-          <div style={{ padding: 40 }}>
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          </div>
-        </DeviceDashboardLayout>
+        <>
+          <MobileDisplay>
+            <MobileLayout>
+              <ErrorMessage />
+            </MobileLayout>
+          </MobileDisplay>
+          <DesktopDisplay>
+            <DeviceDashboardLayout {...this.props}>
+              <ErrorMessage />
+            </DeviceDashboardLayout>
+          </DesktopDisplay>
+        </>
       );
 
     const normalizedDevices = label.devices.reduce((map, device) => {
@@ -154,107 +175,116 @@ class LabelShow extends Component {
     }, {});
 
     return (
-      <DeviceDashboardLayout {...this.props}>
-        <div>
-          <LabelShowTable
-            labelId={this.props.match.params.id}
-            label={label}
-            openRemoveDevicesFromLabelModal={
-              this.openRemoveDevicesFromLabelModal
-            }
-            userEmail={this.props.user.email}
-            history={this.props.history}
-            devicesSelected={this.setDevicesSelected}
-            openDeleteDeviceModal={this.openDeleteDeviceModal}
-            openLabelAddDeviceModal={this.openLabelAddDeviceModal}
-            openUpdateLabelModal={this.openUpdateLabelModal}
-          />
-
-          <UpdateLabelModal
-            handleUpdateLabel={this.handleUpdateLabel}
-            open={this.state.showUpdateLabelModal}
-            onClose={this.closeUpdateLabelModal}
-            label={label}
-          />
-
-          <LabelAddDeviceModal
-            label={label}
-            labelNormalizedDevices={normalizedDevices}
-            addDevicesToLabels={this.props.addDevicesToLabels}
-            open={this.state.showLabelAddDeviceModal}
-            onClose={this.closeLabelAddDeviceModal}
-          />
-
-          <RemoveDevicesFromLabelModal
-            label={label}
-            open={this.state.showRemoveDevicesFromLabelModal}
-            onClose={this.closeRemoveDevicesFromLabelModal}
-            devicesToRemove={selectedDevices}
-          />
-
-          <DeleteDeviceModal
-            label={label}
-            open={showDeleteDeviceModal}
-            onClose={this.closeDeleteDeviceModal}
-            allDevicesSelected={false}
-            devicesToDelete={selectedDevices}
-            totalDevices={selectedDevices.length}
-          />
-        </div>
-
-        <Sidebar
-          show={this.state.showDebugSidebar}
-          toggle={this.handleToggleDebug}
-          sidebarIcon={<BugOutlined />}
-          iconBackground={debugSidebarBackgroundColor}
-          iconPosition="top"
-          message="Access Debug mode to view device packet transfer"
-        >
-          <Debug labelId={this.props.match.params.id} entryWidth={600} />
-        </Sidebar>
-
-        <UserCan>
-          {
-            <Sidebar
-              show={this.state.showDownlinkSidebar}
-              toggle={this.handleToggleDownlink}
-              sidebarIcon={<img src={DownlinkImage} />}
-              iconBackground="#40A9FF"
-              iconPosition="middle"
-              message="Send a manual downlink to all devices on this label"
-            >
-              <Downlink
-                src="LabelShow"
-                id={label.id}
-                devices={label.devices}
-                socket={this.props.socket}
-                onSend={(payload, confirm, port, position) => {
-                  analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
-                    label: label.id,
-                  });
-                  this.props.sendDownlinkMessage(
-                    payload,
-                    port,
-                    confirm,
-                    position,
-                    "label",
-                    label.id
-                  );
-                }}
-                onClear={() => {
-                  analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", {
-                    devices: label.devices.map((device) => device.id),
-                  });
-                  this.props.sendClearDownlinkQueue({ label_id: label.id });
-                }}
-                fetchDownlinkQueue={() =>
-                  this.props.fetchDownlinkQueue(label.id, "label")
+      <>
+        <MobileDisplay>
+          <MobileLayout>
+            <MobileLabelShow label={label} />
+          </MobileLayout>
+        </MobileDisplay>
+        <DesktopDisplay>
+          <DeviceDashboardLayout {...this.props}>
+            <div>
+              <LabelShowTable
+                labelId={this.props.match.params.id}
+                label={label}
+                openRemoveDevicesFromLabelModal={
+                  this.openRemoveDevicesFromLabelModal
                 }
+                userEmail={this.props.user.email}
+                history={this.props.history}
+                devicesSelected={this.setDevicesSelected}
+                openDeleteDeviceModal={this.openDeleteDeviceModal}
+                openLabelAddDeviceModal={this.openLabelAddDeviceModal}
+                openUpdateLabelModal={this.openUpdateLabelModal}
               />
+
+              <UpdateLabelModal
+                handleUpdateLabel={this.handleUpdateLabel}
+                open={this.state.showUpdateLabelModal}
+                onClose={this.closeUpdateLabelModal}
+                label={label}
+              />
+
+              <LabelAddDeviceModal
+                label={label}
+                labelNormalizedDevices={normalizedDevices}
+                addDevicesToLabels={this.props.addDevicesToLabels}
+                open={this.state.showLabelAddDeviceModal}
+                onClose={this.closeLabelAddDeviceModal}
+              />
+
+              <RemoveDevicesFromLabelModal
+                label={label}
+                open={this.state.showRemoveDevicesFromLabelModal}
+                onClose={this.closeRemoveDevicesFromLabelModal}
+                devicesToRemove={selectedDevices}
+              />
+
+              <DeleteDeviceModal
+                label={label}
+                open={showDeleteDeviceModal}
+                onClose={this.closeDeleteDeviceModal}
+                allDevicesSelected={false}
+                devicesToDelete={selectedDevices}
+                totalDevices={selectedDevices.length}
+              />
+            </div>
+
+            <Sidebar
+              show={this.state.showDebugSidebar}
+              toggle={this.handleToggleDebug}
+              sidebarIcon={<BugOutlined />}
+              iconBackground={debugSidebarBackgroundColor}
+              iconPosition="top"
+              message="Access Debug mode to view device packet transfer"
+            >
+              <Debug labelId={this.props.match.params.id} entryWidth={600} />
             </Sidebar>
-          }
-        </UserCan>
-      </DeviceDashboardLayout>
+
+            <UserCan>
+              {
+                <Sidebar
+                  show={this.state.showDownlinkSidebar}
+                  toggle={this.handleToggleDownlink}
+                  sidebarIcon={<img src={DownlinkImage} />}
+                  iconBackground="#40A9FF"
+                  iconPosition="middle"
+                  message="Send a manual downlink to all devices on this label"
+                >
+                  <Downlink
+                    src="LabelShow"
+                    id={label.id}
+                    devices={label.devices}
+                    socket={this.props.socket}
+                    onSend={(payload, confirm, port, position) => {
+                      analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
+                        label: label.id,
+                      });
+                      this.props.sendDownlinkMessage(
+                        payload,
+                        port,
+                        confirm,
+                        position,
+                        "label",
+                        label.id
+                      );
+                    }}
+                    onClear={() => {
+                      analyticsLogger.logEvent("ACTION_CLEAR_DOWNLINK_QUEUE", {
+                        devices: label.devices.map((device) => device.id),
+                      });
+                      this.props.sendClearDownlinkQueue({ label_id: label.id });
+                    }}
+                    fetchDownlinkQueue={() =>
+                      this.props.fetchDownlinkQueue(label.id, "label")
+                    }
+                  />
+                </Sidebar>
+              }
+            </UserCan>
+          </DeviceDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

@@ -32,7 +32,7 @@ class AkenzaForm extends Component {
           <Input
             value={this.state.secret}
             onChange={this.handleSecretUpdate}
-            style={{ width: "50%" }}
+            style={{ ...(!this.props.mobile && { width: "50%" }) }}
           />
         </div>
       </div>

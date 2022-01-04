@@ -372,6 +372,17 @@ tr.ant-table-expanded-row:hover {
   height: 0;
 }
 
+.menu-link-mobile {
+  color: #000000;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.menu-link-mobile:hover,
+.menu-link-mobile.is-active {
+  color: #236ad4;
+}
+
 .menu-link {
   color: #242528;
   font-size: 18px;
@@ -710,4 +721,31 @@ a.version-link {
 .group-actions:hover {
   background-color: #f5f7f9;
   cursor: pointer;
+}
+
+#payment-history-panel .ant-collapse-content-box {
+  padding: 0px;
+}
+
+#device-stats-panel .ant-collapse-content-box {
+  padding: 0px;
+}
+
+#device-flows-panel .ant-collapse-content-box {
+  overflow-x: scroll;
+}
+
+#event-dashboard-panel .ant-collapse-content-box {
+  padding: 0px;
+  padding-bottom: 10px;
+  overflow-x: scroll;
+}
+
+.desktop-form {
+  width: 125px;
+  text-align: left;
+}
+
+.channel-new-panels-mobile > div > div > div.ant-collapse-content-box {
+  padding: 0px;
 }

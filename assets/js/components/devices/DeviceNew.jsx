@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChooseImportType from "./import/ChooseImportType";
 import { createDevice } from "../../actions/device";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
+import MobileLayout from "../mobile/MobileLayout";
 import { displayInfo, displayError } from "../../util/messages";
 import withGql from "../../graphql/withGql";
 import { ALL_IMPORTS } from "../../graphql/devices";
@@ -16,10 +18,12 @@ import { Card, Button, Typography, Input, Row, Col } from "antd";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
+import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import LabelAppliedNew from "../common/LabelAppliedNew";
 const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
+import { isMobile } from "../../util/constants";
 
 class DeviceNew extends Component {
   nameInputRef = React.createRef();
@@ -109,13 +113,16 @@ class DeviceNew extends Component {
     const { name, devEUI, appEUI, appKey, labelName, configProfileId } =
       this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32) {
-      analyticsLogger.logEvent("ACTION_CREATE_DEVICE", {
-        name: name,
-        devEUI: devEUI,
-        appEUI: appEUI,
-        appKey: appKey,
-        configProfileId: configProfileId,
-      });
+      analyticsLogger.logEvent(
+        isMobile ? "ACTION_CREATE_DEVICE_MOBILE" : "ACTION_CREATE_DEVICE",
+        {
+          name: name,
+          devEUI: devEUI,
+          appEUI: appEUI,
+          appKey: appKey,
+          configProfileId: configProfileId,
+        }
+      );
       let foundLabel = find(this.props.allLabelsQuery.allLabels, {
         name: labelName,
       });
@@ -155,199 +162,268 @@ class DeviceNew extends Component {
     });
   };
 
+  renderHelpText = (mobile) => (
+    <p style={{ fontSize: 16 }}>
+      <b>Important:</b> The first time a device joins the Network could take up
+      to 20 mins.{" "}
+      <a
+        className="help-link"
+        href="https://docs.helium.com/use-the-network/console/adding-devices/#important-information-when-adding-devices"
+        target="_blank"
+        style={{ display: mobile ? "block" : "inline" }}
+      >
+        Learn more about adding devices
+      </a>
+    </p>
+  );
+
+  renderDeviceDetails = () => {
+    const { allLabels } = this.props.allLabelsQuery;
+
+    return (
+      <React.Fragment>
+        <Input
+          placeholder="Device Name"
+          name="name"
+          value={this.state.name}
+          onChange={this.handleInputUpdate}
+          addonBefore="Name"
+          ref={this.nameInputRef}
+          autoFocus
+          suffix={`${this.state.name.length}/50`}
+          maxLength={50}
+        />
+
+        <Input
+          placeholder="Device EUI"
+          name="devEUI"
+          value={this.state.devEUI}
+          onChange={this.handleInputUpdate}
+          style={{ marginTop: 10 }}
+          maxLength={16}
+          addonBefore="Dev EUI"
+          suffix={
+            <Text type={this.state.devEUI.length !== 16 ? "danger" : ""}>
+              {Math.floor(this.state.devEUI.length / 2)} / 8 Bytes
+            </Text>
+          }
+        />
+
+        <Input
+          placeholder="App EUI"
+          name="appEUI"
+          value={this.state.appEUI}
+          onChange={this.handleInputUpdate}
+          style={{ marginTop: 10 }}
+          maxLength={16}
+          addonBefore="App EUI"
+          suffix={
+            <Text type={this.state.appEUI.length !== 16 ? "danger" : ""}>
+              {Math.floor(this.state.appEUI.length / 2)} / 8 Bytes
+            </Text>
+          }
+        />
+
+        <Input
+          placeholder="App Key"
+          name="appKey"
+          value={this.state.showAppKey ? this.state.appKey : "✱".repeat(28)}
+          disabled={!this.state.showAppKey}
+          onChange={this.handleInputUpdate}
+          style={{ marginTop: 10 }}
+          maxLength={56}
+          addonBefore={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              App Key
+              {this.state.showAppKey ? (
+                <EyeOutlined
+                  onClick={() =>
+                    this.setState({
+                      showAppKey: !this.state.showAppKey,
+                    })
+                  }
+                  style={{ marginLeft: 5 }}
+                />
+              ) : (
+                <EyeInvisibleOutlined
+                  onClick={() =>
+                    this.setState({
+                      showAppKey: !this.state.showAppKey,
+                    })
+                  }
+                  style={{ marginLeft: 5 }}
+                />
+              )}
+            </div>
+          }
+          suffix={
+            <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>
+              {Math.floor(this.state.appKey.length / 2)} / 16 Bytes
+            </Text>
+          }
+        />
+        <Text style={{ marginTop: 25, display: "block" }} strong>
+          Profile (Optional)
+        </Text>
+        <ProfileDropdown
+          selectProfile={(id) => {
+            this.setState({ configProfileId: id });
+          }}
+        />
+
+        <Text style={{ marginTop: 25, display: "block" }} strong>
+          Attach a Label (Optional)
+        </Text>
+        <LabelAppliedNew
+          allLabels={allLabels}
+          value={this.state.labelName}
+          select={(value) => this.setState({ labelName: value })}
+        />
+      </React.Fragment>
+    );
+  };
+
   render() {
-    const { allLabels, error } = this.props.allLabelsQuery;
     const { showImportDevicesModal, importComplete, importType } = this.state;
     const { device_imports } = this.props.importsQuery;
 
     return (
-      <DeviceDashboardLayout {...this.props}>
-        <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-          <div style={{ padding: "30px 30px 20px 30px", minWidth }}>
-            <Text style={{ fontSize: 22, fontWeight: 600 }}>
-              Add New Device
-            </Text>
-            <div>
-              <p>
-                Console is designed for adding and monitoring sensor devices,
-                not Hotspots.
-                <br />
-                Refer to the Hotspot manufacturer instructions for guidance on
-                registering Hotspots.
-              </p>
-              <p style={{ fontSize: 16 }}>
-                <b>Important:</b> The first time a device joins the Network
-                could take up to 20 mins.{" "}
-                <a
-                  className="help-link"
-                  href="https://docs.helium.com/use-the-network/console/adding-devices/#when-adding-devices-for-the-first-time"
-                  target="_blank"
-                >
-                  Learn more about adding devices
-                </a>
-              </p>
+      <>
+        <MobileDisplay>
+          <MobileLayout>
+            <div
+              style={{
+                padding: "10px 15px",
+                boxShadow: "0px 3px 7px 0px #ccc",
+                backgroundColor: "#F5F7F9",
+                height: 100,
+                position: "relative",
+                zIndex: 10,
+              }}
+            >
+              <Button
+                icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
+                style={{
+                  border: "none",
+                  padding: 0,
+                  fontSize: 14,
+                  color: "#2C79EE",
+                  height: 24,
+                  boxShadow: "none",
+                  background: "none",
+                  fontWeight: 600,
+                }}
+                onClick={() => {
+                  this.props.history.push("/devices");
+                }}
+              >
+                Back to Devices
+              </Button>
+              <div>
+                <Text style={{ fontSize: 27, fontWeight: 600 }}>
+                  Create New Device
+                </Text>
+              </div>
             </div>
-            <Row gutter={30} style={{ marginTop: 10 }}>
-              <Col span={14}>
-                <Card title="Enter Device Details">
-                  <Input
-                    placeholder="Device Name"
-                    name="name"
-                    value={this.state.name}
-                    onChange={this.handleInputUpdate}
-                    addonBefore="Name"
-                    ref={this.nameInputRef}
-                    autoFocus
-                    suffix={`${this.state.name.length}/50`}
-                    maxLength={50}
-                  />
-
-                  <Input
-                    placeholder="Device EUI"
-                    name="devEUI"
-                    value={this.state.devEUI}
-                    onChange={this.handleInputUpdate}
-                    style={{ marginTop: 10 }}
-                    maxLength={16}
-                    addonBefore="Dev EUI"
-                    suffix={
-                      <Text
-                        type={this.state.devEUI.length !== 16 ? "danger" : ""}
-                      >
-                        {Math.floor(this.state.devEUI.length / 2)} / 8 Bytes
-                      </Text>
-                    }
-                  />
-
-                  <Input
-                    placeholder="App EUI"
-                    name="appEUI"
-                    value={this.state.appEUI}
-                    onChange={this.handleInputUpdate}
-                    style={{ marginTop: 10 }}
-                    maxLength={16}
-                    addonBefore="App EUI"
-                    suffix={
-                      <Text
-                        type={this.state.appEUI.length !== 16 ? "danger" : ""}
-                      >
-                        {Math.floor(this.state.appEUI.length / 2)} / 8 Bytes
-                      </Text>
-                    }
-                  />
-
-                  <Input
-                    placeholder="App Key"
-                    name="appKey"
-                    value={
-                      this.state.showAppKey ? this.state.appKey : "✱".repeat(28)
-                    }
-                    disabled={!this.state.showAppKey}
-                    onChange={this.handleInputUpdate}
-                    style={{ marginTop: 10 }}
-                    maxLength={56}
-                    addonBefore={
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        App Key
-                        {this.state.showAppKey ? (
-                          <EyeOutlined
-                            onClick={() =>
-                              this.setState({
-                                showAppKey: !this.state.showAppKey,
-                              })
-                            }
-                            style={{ marginLeft: 5 }}
-                          />
-                        ) : (
-                          <EyeInvisibleOutlined
-                            onClick={() =>
-                              this.setState({
-                                showAppKey: !this.state.showAppKey,
-                              })
-                            }
-                            style={{ marginLeft: 5 }}
-                          />
-                        )}
-                      </div>
-                    }
-                    suffix={
-                      <Text
-                        type={this.state.appKey.length !== 32 ? "danger" : ""}
-                      >
-                        {Math.floor(this.state.appKey.length / 2)} / 16 Bytes
-                      </Text>
-                    }
-                  />
-                  <Text style={{ marginTop: 25, display: "block" }} strong>
-                    Profile (Optional)
-                  </Text>
-                  <ProfileDropdown
-                    selectProfile={(id) => {
-                      this.setState({ configProfileId: id });
-                    }}
-                  />
-
-                  <Text style={{ marginTop: 25, display: "block" }} strong>
-                    Attach a Label (Optional)
-                  </Text>
-                  <LabelAppliedNew
-                    allLabels={allLabels}
-                    value={this.state.labelName}
-                    select={(value) => this.setState({ labelName: value })}
-                  />
-                </Card>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <UserCan>
-                    <Button
-                      key="submit"
-                      icon={<SaveOutlined />}
-                      onClick={this.handleSubmit}
-                      style={{ margin: 0 }}
+            <div
+              style={{
+                padding: "25px 15px",
+                backgroundColor: "#ffffff",
+                height: "calc(100% - 100px)",
+                overflowY: "scroll",
+              }}
+            >
+              {this.renderHelpText(true)}
+              {this.renderDeviceDetails()}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <UserCan>
+                  <Button
+                    key="submit"
+                    type="primary"
+                    icon={<SaveOutlined />}
+                    onClick={this.handleSubmit}
+                    style={{ marginTop: 15, borderRadius: 4 }}
+                  >
+                    Save Device
+                  </Button>
+                </UserCan>
+              </div>
+            </div>
+          </MobileLayout>
+        </MobileDisplay>
+        <DesktopDisplay>
+          <DeviceDashboardLayout {...this.props}>
+            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+              <div style={{ padding: "30px 30px 20px 30px", minWidth }}>
+                <Text style={{ fontSize: 22, fontWeight: 600 }}>
+                  Add New Device
+                </Text>
+                <div>{this.renderHelpText()}</div>
+                <Row gutter={30} style={{ marginTop: 10 }}>
+                  <Col span={14}>
+                    <Card title="Enter Device Details">
+                      {this.renderDeviceDetails()}
+                    </Card>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
                     >
-                      Save Device
-                    </Button>
-                  </UserCan>
-                </div>
-              </Col>
-              <Col span={10}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <ChooseImportType
-                    onImportSelect={this.setImportType}
-                    deviceImports={device_imports}
-                  />
-                </div>
-              </Col>
-            </Row>
-          </div>
-        </div>
+                      <UserCan>
+                        <Button
+                          key="submit"
+                          icon={<SaveOutlined />}
+                          onClick={this.handleSubmit}
+                          style={{ margin: 0 }}
+                        >
+                          Save Device
+                        </Button>
+                      </UserCan>
+                    </div>
+                  </Col>
+                  <Col span={10}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ChooseImportType
+                        onImportSelect={this.setImportType}
+                        deviceImports={device_imports}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </div>
 
-        <ImportDevicesModal
-          open={showImportDevicesModal}
-          onClose={this.closeImportDevicesModal}
-          importComplete={importComplete}
-          importType={importType}
-          import_status={this.state.import_status}
-        />
-      </DeviceDashboardLayout>
+            <ImportDevicesModal
+              open={showImportDevicesModal}
+              onClose={this.closeImportDevicesModal}
+              importComplete={importComplete}
+              importType={importType}
+              import_status={this.state.import_status}
+            />
+          </DeviceDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

@@ -32,6 +32,7 @@ const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import { bindActionCreators } from "redux";
 import { getAllEvents } from "../../actions/device";
+import ErrorMessage from "../common/ErrorMessage";
 
 const styles = {
   tag: {
@@ -731,10 +732,7 @@ class EventsDashboard extends Component {
     const { loading, error } = this.props.deviceEventsQuery;
 
     if (loading) return <SkeletonLayout />;
-    if (error)
-      return (
-        <Text>Data failed to load, please reload the page and try again</Text>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div style={{ minWidth: 800 }}>
@@ -803,11 +801,17 @@ class EventsDashboard extends Component {
             >
               Expand All
             </Checkbox>
-
+            <Checkbox
+              onChange={() => this.toggleShowMacEventsOnly()}
+              checked={showMacEventsOnly}
+              style={{ marginLeft: 20 }}
+            >
+              Filter Events w/ Commands
+            </Checkbox>
             <Text
               strong
               style={{
-                marginLeft: 40,
+                marginLeft: 20,
                 fontSize: 13,
                 color: "rgba(0, 0, 0, 0.85)",
               }}
@@ -817,47 +821,41 @@ class EventsDashboard extends Component {
             <Checkbox
               onChange={() => this.toggleShowLate()}
               checked={showLate}
-              style={{ marginLeft: 20 }}
+              style={{ marginLeft: 10 }}
             >
               Late
             </Checkbox>
             <Checkbox
               onChange={() => this.toggleShowInactive()}
               checked={showInactive}
-              style={{ marginLeft: 20 }}
+              style={{ marginLeft: 4 }}
             >
               Inactive Device
             </Checkbox>
-
-            <Checkbox
-              onChange={() => this.toggleShowMacEventsOnly()}
-              checked={showMacEventsOnly}
-              style={{ marginLeft: 40 }}
-            >
-              Filter Events w/ Commands
-            </Checkbox>
           </span>
-          <Button
-            onClick={() => {
-              analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", {
-                device_id: this.props.device_id,
-              });
-              this.props.getAllEvents(this.props.device_id).then((events) => {
-                const json = JSON.stringify(events, null, 2);
-                const blob = new Blob([json], { type: "application/json" });
-                const href = URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = href;
-                link.download = "event-debug.json";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              });
-            }}
-            size="small"
-          >
-            Export JSON
-          </Button>
+          {!this.props.mobile && (
+            <Button
+              onClick={() => {
+                analyticsLogger.logEvent("ACTION_EXPORT_DEVICE_EVENTS_LOG", {
+                  device_id: this.props.device_id,
+                });
+                this.props.getAllEvents(this.props.device_id).then((events) => {
+                  const json = JSON.stringify(events, null, 2);
+                  const blob = new Blob([json], { type: "application/json" });
+                  const href = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = href;
+                  link.download = "event-debug.json";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                });
+              }}
+              size="small"
+            >
+              Export JSON
+            </Button>
+          )}
         </div>
         <div id="event-log" ref={this.listRef}>
           <Table

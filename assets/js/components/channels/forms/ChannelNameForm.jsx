@@ -11,7 +11,7 @@ const ChannelNameForm = (props) => (
             name="channelName"
             value={props.channelName}
             onChange={props.onInputUpdate}
-            style={{ width: 300 }}
+            style={{ ...(props.mobile ? { width: "100%" } : { width: 300 }) }}
             suffix={`${props.channelName.length}/50`}
             maxLength={50}
           />

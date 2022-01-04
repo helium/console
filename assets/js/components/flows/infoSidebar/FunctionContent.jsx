@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { functionTypes, functionFormats } from "../../functions/constants";
+import ErrorMessage from "../../common/ErrorMessage";
 
 class FunctionContent extends Component {
   componentDidMount() {
@@ -51,12 +52,7 @@ class FunctionContent extends Component {
           <SkeletonLayout />
         </div>
       );
-    if (error)
-      return (
-        <div style={{ padding: 40 }}>
-          <Text>Data failed to load, please reload the page and try again</Text>
-        </div>
-      );
+    if (error) return <ErrorMessage />;
 
     return (
       <div>

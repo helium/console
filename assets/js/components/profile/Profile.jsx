@@ -7,6 +7,7 @@ import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/aut
 import { magic } from "../../actions/magic";
 import { generateKey } from "../../actions/apiKeys";
 import { config } from '../../config/magic'
+import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
 import DashboardLayout from "../common/DashboardLayout";
 import UserCan from "../common/UserCan";
 import ProfileNewKeyModal from "./ProfileNewKeyModal";
@@ -177,149 +178,154 @@ class Profile extends Component {
     ];
 
     return (
-      <DashboardLayout title="Profile" user={this.props.user} noAddButton>
-        <div
-          style={{
-            padding: "30px 30px 10px 30px",
-            height: "100%",
-            width: "100%",
-            backgroundColor: "#ffffff",
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-          }}
-        >
-          <Card title="Profile Details" bodyStyle={{ padding: 0 }}>
-            <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
-              <div style={{ padding: 24, minWidth: 400 }}>
-                <Descriptions bordered column={4}>
-                  <Descriptions.Item span={4} label="Your Email is">
-                    {email}
-                  </Descriptions.Item>
-                </Descriptions>
+      <>
+        <MobileDisplay />
+        <DesktopDisplay>
+          <DashboardLayout title="Profile" user={this.props.user} noAddButton>
+            <div
+              style={{
+                padding: "30px 30px 10px 30px",
+                height: "100%",
+                width: "100%",
+                backgroundColor: "#ffffff",
+                borderRadius: 6,
+                overflow: "hidden",
+                boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+              }}
+            >
+              <Card title="Profile Details" bodyStyle={{ padding: 0 }}>
+                <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
+                  <div style={{ padding: 24, minWidth: 400 }}>
+                    <Descriptions bordered column={4}>
+                      <Descriptions.Item span={4} label="Your Email is">
+                        {email}
+                      </Descriptions.Item>
+                    </Descriptions>
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    marginTop: 10,
-                  }}
-                >
-                  {config.useMagicAuth && !this.state.fromOAuth && (
-                    <UserCan>
-                      <Button
-                        type="primary"
-                        onClick={() => magic.user.showSettings()}
-                        style={{ marginRight: 10 }}
-                      >
-                        MFA Settings
-                      </Button>
-                    </UserCan>
-                  )}
-                  {this.state.enrolledIn2FA === false && (
-                    <UserCan noManager>
-                      <Button
-                        type="primary"
-                        onClick={this.handleEnrollInMfa}
-                        style={{ marginRight: 10 }}
-                      >
-                        Enroll In 2FA
-                      </Button>
-                    </UserCan>
-                  )}
-                  {this.state.enrolledIn2FA === true && (
-                    <Button type="primary" style={{ marginRight: 10 }} disabled>
-                      Enrolled In 2FA
-                    </Button>
-                  )}
-                  {this.state.enrolledIn2FA === true && (
-                    <Button
-                      type="danger"
-                      style={{ marginRight: 10 }}
-                      onClick={() => {
-                        this.setState({ showDisableMFAModal: true })
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        marginTop: 10,
                       }}
                     >
-                      Disable 2FA
-                    </Button>
-                  )}
-                  <Button
-                    type="danger"
-                    onClick={() => {
-                      analyticsLogger.logEvent("ACTION_LOGOUT", {
-                        email: email,
-                      });
-                      logOut();
-                    }}
-                    style={{ marginRight: 0 }}
-                  >
-                    Log Out
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <UserCan noManager>
-            <Card title="Your API Keys" bodyStyle={{ padding: 0 }}>
-              <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
-                <div style={{ padding: 24, minWidth: 580 }}>
-                  <Input
-                    placeholder="Enter key name"
-                    onChange={this.handleInputUpdate}
-                    style={{ width: 180 }}
-                    value={this.state.name}
-                  />
-                  <Select
-                    placeholder="Select key role"
-                    style={{ width: 180, marginLeft: 10 }}
-                    onChange={this.handleSelectOption}
-                    value={this.state.role}
-                  >
-                    <Option value={role}>
-                      <RoleName role={role} />
-                    </Option>
-                  </Select>
-                  <Button
-                    type="primary"
-                    onClick={this.handleSubmit}
-                    style={{ marginLeft: 10 }}
-                  >
-                    Generate Key
-                  </Button>
-
-                  {apiKeys && (
-                    <div style={{ marginTop: 20, overflowX: "scroll" }}>
-                      <Table
-                        columns={columns}
-                        dataSource={apiKeys}
-                        rowKey={(record) => record.id}
-                        pagination={false}
-                        style={{ minWidth: 580 }}
-                        className="no-scroll-bar"
-                      />
+                      {config.useMagicAuth && !this.state.fromOAuth && (
+                        <UserCan>
+                          <Button
+                            type="primary"
+                            onClick={() => magic.user.showSettings()}
+                            style={{ marginRight: 10 }}
+                          >
+                            MFA Settings
+                          </Button>
+                        </UserCan>
+                      )}
+                      {this.state.enrolledIn2FA === false && (
+                        <UserCan noManager>
+                          <Button
+                            type="primary"
+                            onClick={this.handleEnrollInMfa}
+                            style={{ marginRight: 10 }}
+                          >
+                            Enroll In 2FA
+                          </Button>
+                        </UserCan>
+                      )}
+                      {this.state.enrolledIn2FA === true && (
+                        <Button type="primary" style={{ marginRight: 10 }} disabled>
+                          Enrolled In 2FA
+                        </Button>
+                      )}
+                      {this.state.enrolledIn2FA === true && (
+                        <Button
+                          type="danger"
+                          style={{ marginRight: 10 }}
+                          onClick={() => {
+                            this.setState({ showDisableMFAModal: true })
+                          }}
+                        >
+                          Disable 2FA
+                        </Button>
+                      )}
+                      <Button
+                        type="danger"
+                        onClick={() => {
+                          analyticsLogger.logEvent("ACTION_LOGOUT", {
+                            email: email,
+                          });
+                          logOut();
+                        }}
+                        style={{ marginRight: 0 }}
+                      >
+                        Log Out
+                      </Button>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </Card>
-          </UserCan>
-        </div>
+              </Card>
 
-        <ProfileNewKeyModal newKey={newKey} onClose={this.handleCloseModal} />
-        <DeleteApiKeyModal
-          apiKey={selectedKey}
-          open={showDeleteApiKeyModal}
-          close={this.closeDeleteApiKeyModal}
-        />
+              <UserCan noManager>
+                <Card title="Your API Keys" bodyStyle={{ padding: 0 }}>
+                  <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
+                    <div style={{ padding: 24, minWidth: 580 }}>
+                      <Input
+                        placeholder="Enter key name"
+                        onChange={this.handleInputUpdate}
+                        style={{ width: 180 }}
+                        value={this.state.name}
+                      />
+                      <Select
+                        placeholder="Select key role"
+                        style={{ width: 180, marginLeft: 10 }}
+                        onChange={this.handleSelectOption}
+                        value={this.state.role}
+                      >
+                        <Option value={role}>
+                          <RoleName role={role} />
+                        </Option>
+                      </Select>
+                      <Button
+                        type="primary"
+                        onClick={this.handleSubmit}
+                        style={{ marginLeft: 10 }}
+                      >
+                        Generate Key
+                      </Button>
 
-        <DisableMFAModal
-          open={showDisableMFAModal}
-          close={this.closeDisableMFAModal}
-          handleSubmit={this.handleDisableMfa}
-        />
-      </DashboardLayout>
+                      {apiKeys && (
+                        <div style={{ marginTop: 20, overflowX: "scroll" }}>
+                          <Table
+                            columns={columns}
+                            dataSource={apiKeys}
+                            rowKey={(record) => record.id}
+                            pagination={false}
+                            style={{ minWidth: 580 }}
+                            className="no-scroll-bar"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </UserCan>
+            </div>
+
+            <ProfileNewKeyModal newKey={newKey} onClose={this.handleCloseModal} />
+            <DeleteApiKeyModal
+              apiKey={selectedKey}
+              open={showDeleteApiKeyModal}
+              close={this.closeDeleteApiKeyModal}
+            />
+
+            <DisableMFAModal
+              open={showDisableMFAModal}
+              close={this.closeDisableMFAModal}
+              handleSubmit={this.handleDisableMfa}
+            />
+          </DashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

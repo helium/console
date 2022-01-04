@@ -24,13 +24,14 @@ class DeleteChannelModal extends Component {
     else
       return (
         <Text>
-          Do you want to delete the Integration, <b>{channel.name}</b>?
+          Are you sure you want to delete the Integration, <b>{channel.name}</b>
+          ?
         </Text>
       );
   };
 
   render() {
-    const { open, onClose } = this.props;
+    const { open, onClose, mobile } = this.props;
 
     return (
       <Modal
@@ -39,6 +40,10 @@ class DeleteChannelModal extends Component {
         onCancel={onClose}
         centered
         onOk={this.handleSubmit}
+        bodyStyle={{
+          padding: mobile ? "0px 15px" : "20px 50px",
+          textAlign: mobile ? "center" : "start",
+        }}
         footer={[
           <Button key="back" onClick={onClose}>
             Cancel

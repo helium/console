@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import TableHeader from "../common/TableHeader";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import MultiBuyForm from "./MultiBuyForm";
 import MultiBuyBar from "./MultiBuyBar";
 import MultiBuyIndexTable from "./MultiBuyIndexTable";
@@ -14,6 +15,7 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 import { useHistory } from "react-router-dom";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
+import ErrorMessage from "../common/ErrorMessage";
 
 export default (props) => {
   const history = useHistory();
@@ -75,80 +77,81 @@ export default (props) => {
   }, [props.match.params.id]);
 
   return (
-    <DashboardLayout title="Multiple Packets" user={props.user}>
-      <TableHeader
-        backgroundColor="#D3E0EE"
-        otherColor="#ACC6DD"
-        homeIcon={null}
-        goToAll={() => {
-          history.push("/multi_buys");
-          setShowPage("allMultiBuy");
-        }}
-        allIcon={AllIcon}
-        textColor="#3C6B95"
-        allText="All Multiple Packets"
-        allButtonStyles={{ width: 160 }}
-        onAllPage={showPage === "allMultiBuy"}
-        onNewPage={showPage === "new"}
-        addIcon={PlusIcon}
-        goToNew={() => {
-          history.push("/multi_buys/new");
-          setShowPage("new");
-        }}
-        noHome
-        borderRadius="25px"
-        extraContent={
-          <MultiBuyBar
-            shownMultiBuyId={props.match.params.id}
-            multiBuys={multiBuyData}
-          />
-        }
-        newText="Add New Multiple Packet Config"
-      >
-        {showPage === "allMultiBuy" && error && (
-          <div style={{ padding: 40 }}>
-            <Text>
-              Data failed to load, please reload the page and try again
-            </Text>
-          </div>
-        )}
-        {showPage === "allMultiBuy" && loading && (
-          <div style={{ padding: 40 }}>
-            <SkeletonLayout />
-          </div>
-        )}
-        {showPage === "allMultiBuy" && !loading && (
-          <MultiBuyIndexTable
-            data={multiBuyData}
-            openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
-            history={history}
-          />
-        )}
-        {showPage === "new" && (
-          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-            <div style={{ minWidth }}>
-              <MultiBuyForm />
-            </div>
-          </div>
-        )}
-        {props.match.params.id && showPage === "showMultiBuy" && (
-          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
-            <div style={{ minWidth }}>
-              <MultiBuyForm
-                id={props.match.params.id}
-                show
-                openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
+    <>
+      <MobileDisplay />
+      <DesktopDisplay>
+        <DashboardLayout title="Multiple Packets" user={props.user}>
+          <TableHeader
+            backgroundColor="#D3E0EE"
+            otherColor="#ACC6DD"
+            homeIcon={null}
+            goToAll={() => {
+              history.push("/multi_buys");
+              setShowPage("allMultiBuy");
+            }}
+            allIcon={AllIcon}
+            textColor="#3C6B95"
+            allText="All Multiple Packets"
+            allButtonStyles={{ width: 160 }}
+            onAllPage={showPage === "allMultiBuy"}
+            onNewPage={showPage === "new"}
+            addIcon={PlusIcon}
+            goToNew={() => {
+              history.push("/multi_buys/new");
+              setShowPage("new");
+            }}
+            noHome
+            borderRadius="25px"
+            extraContent={
+              <MultiBuyBar
+                shownMultiBuyId={props.match.params.id}
+                multiBuys={multiBuyData}
               />
-            </div>
-          </div>
-        )}
-      </TableHeader>
+            }
+            newText="Add New Multiple Packet Config"
+          >
+            {showPage === "allMultiBuy" && error && <ErrorMessage />}
+            {showPage === "allMultiBuy" && loading && (
+              <div style={{ padding: 40 }}>
+                <SkeletonLayout />
+              </div>
+            )}
+            {showPage === "allMultiBuy" && !loading && !error && (
+              <MultiBuyIndexTable
+                data={multiBuyData}
+                openDeleteMultiplePacketModal={openDeleteMultiplePacketModal}
+                history={history}
+              />
+            )}
+            {showPage === "new" && (
+              <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+                <div style={{ minWidth }}>
+                  <MultiBuyForm />
+                </div>
+              </div>
+            )}
+            {props.match.params.id && showPage === "showMultiBuy" && (
+              <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+                <div style={{ minWidth }}>
+                  <MultiBuyForm
+                    id={props.match.params.id}
+                    show
+                    openDeleteMultiplePacketModal={
+                      openDeleteMultiplePacketModal
+                    }
+                  />
+                </div>
+              </div>
+            )}
+          </TableHeader>
 
-      <DeleteMultiplePacketModal
-        open={showDeleteMultiplePacketModal}
-        selected={selectedMultiplePacket}
-        close={closeDeleteMultiplePacketModal}
-      />
-    </DashboardLayout>
+          <DeleteMultiplePacketModal
+            open={showDeleteMultiplePacketModal}
+            selected={selectedMultiplePacket}
+            close={closeDeleteMultiplePacketModal}
+          />
+        </DashboardLayout>
+      </DesktopDisplay>
+    </>
   );
 };

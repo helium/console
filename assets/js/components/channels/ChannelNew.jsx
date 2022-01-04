@@ -25,14 +25,20 @@ import ChannelPremadeRow from "./ChannelPremadeRow";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import AdafruitFunctionForm from "./AdafruitFunctionForm";
 import AkenzaForm from "./forms/AkenzaForm";
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { createChannel } from "../../actions/channel";
 import analyticsLogger from "../../util/analyticsLogger";
 import kebabCase from "lodash/kebabCase";
 import range from "lodash/range";
-import { Card, Button } from "antd";
+import { Card, Button, Collapse, Typography } from "antd";
+const { Panel } = Collapse;
+const { Text } = Typography;
 import { IntegrationTypeTileSimple } from "./IntegrationTypeTileSimple";
 import _JSXStyle from "styled-jsx/style";
 import { adafruitTemplate } from "../../util/integrationTemplates";
+import MobileLayout from "../mobile/MobileLayout";
+import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import { isMobile } from "../../util/constants";
 
 const slugify = (text) => kebabCase(text.replace(/&/g, "-and-"));
 const makeTemplate = (definition) => {
@@ -93,7 +99,9 @@ class ChannelNew extends Component {
   };
 
   componentDidMount() {
-    analyticsLogger.logEvent("ACTION_NAV_CHANNELS_NEW");
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_NAV_CHANNELS_NEW_MOBILE" : "ACTION_NAV_CHANNELS_NEW"
+    );
   }
 
   handleStep2Input = (credentials, validInput = true) => {
@@ -135,10 +143,13 @@ class ChannelNew extends Component {
       googleFunctionBody,
     } = this.state;
 
-    analyticsLogger.logEvent("ACTION_CREATE_CHANNEL", {
-      name: channelName,
-      type: type,
-    });
+    analyticsLogger.logEvent(
+      isMobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
+      {
+        name: channelName,
+        type: type,
+      }
+    );
     let payload = {
       channel: {
         name: channelName,
@@ -194,16 +205,20 @@ class ChannelNew extends Component {
     editor.focus();
   };
 
-  renderForm = () => {
+  renderForm = (mobile) => {
     switch (this.state.type) {
       case "aws":
-        return <AWSForm onValidInput={this.handleStep2Input} />;
+        return <AWSForm onValidInput={this.handleStep2Input} mobile={mobile} />;
       case "google":
         return <GoogleForm onValidInput={this.handleStep2Input} />;
       case "mqtt":
-        return <MQTTForm onValidInput={this.handleStep2Input} />;
+        return (
+          <MQTTForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "http":
-        return <HTTPForm onValidInput={this.handleStep2Input} />;
+        return (
+          <HTTPForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "azure":
         return <AzureForm onValidInput={this.handleStep2Input} />;
       case "mydevices":
@@ -211,23 +226,37 @@ class ChannelNew extends Component {
       case "adafruit":
         return <AdafruitForm onValidInput={this.handleStep2Input} />;
       case "ubidots":
-        return <UbidotsForm onValidInput={this.handleStep2Input} />;
+        return (
+          <UbidotsForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "datacake":
-        return <DatacakeForm onValidInput={this.handleStep2Input} />;
+        return (
+          <DatacakeForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "tago":
-        return <TagoForm onValidInput={this.handleStep2Input} />;
+        return (
+          <TagoForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "akenza":
-        return <AkenzaForm onValidInput={this.handleStep2Input} />;
+        return (
+          <AkenzaForm onValidInput={this.handleStep2Input} mobile={mobile} />
+        );
       case "googlesheet":
         return (
           <GoogleSheetForm
             onValidInput={this.handleStep2Input}
             updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate}
             from="ChannelNew"
+            mobile={mobile}
           />
         );
       case "microshare":
-        return <MicroshareForm onValidInput={this.handleStep2Input} />;
+        return (
+          <MicroshareForm
+            onValidInput={this.handleStep2Input}
+            mobile={mobile}
+          />
+        );
       default:
         return <CargoForm onValidInput={this.handleStep2Input} />;
     }
@@ -247,180 +276,391 @@ class ChannelNew extends Component {
     const { showNextSteps, type } = this.state;
 
     return (
-      <ChannelDashboardLayout {...this.props}>
-        <div style={{ padding: "30px 30px 20px 30px" }}>
-          {!type && (
-            <div style={{ display: "block" }}>
-              <Card
-                size="small"
-                title="Add a Prebuilt Integration"
-                className="integrationcard"
-                bodyStyle={{ padding: 1 }}
-              >
-                <div
-                  style={{
-                    padding: 10,
-                    height: "100%",
-                    width: "100%",
-                    overflowX: "scroll",
-                  }}
-                >
-                  <ChannelPremadeRow selectType={this.handleSelectType} />
-                </div>
-              </Card>
-              <Card
-                size="small"
-                title="Add a Custom Integration"
-                className="integrationcard"
-                bodyStyle={{ padding: 1 }}
-              >
-                <div
-                  style={{
-                    padding: 10,
-                    height: "100%",
-                    width: "100%",
-                    overflowX: "scroll",
-                  }}
-                >
-                  <ChannelCreateRow selectType={this.handleSelectType} />
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {type && (
-            <Card title="Step 1 – Choose an Integration Type">
-              <div
-                className="flexwrapper"
+      <>
+        <MobileDisplay>
+          <MobileLayout>
+            <div
+              style={{
+                padding: "10px 15px",
+                boxShadow: "0px 3px 7px 0px #ccc",
+                backgroundColor: "#F5F7F9",
+                height: 100,
+                position: "relative",
+                zIndex: 10,
+              }}
+            >
+              <Button
+                icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
                 style={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  border: "none",
+                  padding: 0,
+                  fontSize: 14,
+                  color: "#2C79EE",
+                  height: 24,
+                  boxShadow: "none",
+                  background: "none",
+                  fontWeight: 600,
+                }}
+                onClick={() => {
+                  this.props.history.push("/integrations");
                 }}
               >
-                <IntegrationTypeTileSimple type={type} />
-                <Link
-                  to="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    this.setState({ type: null, showNextSteps: false });
-                  }}
-                >
-                  <Button size="small">Change</Button>
-                </Link>
+                Back to Integrations
+              </Button>
+              <div>
+                <Text style={{ fontSize: 27, fontWeight: 600 }}>
+                  Add New Integration
+                </Text>
               </div>
-            </Card>
-          )}
-
-          {type && (
-            <Card title="Step 2 - Endpoint Details">{this.renderForm()}</Card>
-          )}
-          {showNextSteps && (
-            <ChannelNameForm
-              channelName={this.state.channelName}
-              onInputUpdate={this.handleStep3Input}
-              validInput={this.state.validInput}
-              submit={this.handleStep3Submit}
-              noName={type === "adafruit" || type === "googlesheet"}
-            />
-          )}
-          {showNextSteps && type === "adafruit" && (
-            <AdafruitFunctionForm
-              handleFunctionUpdate={this.handleAdafruitFunctionSelect}
+            </div>
+            <div
+              style={{
+                padding: "25px 15px",
+                backgroundColor: "#ffffff",
+                height: "calc(100% - 100px)",
+                overflowY: "scroll",
+              }}
             >
-              <div style={{ marginTop: 20 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={this.handleStep3Submit}
-                  disabled={!this.state.validInput}
-                >
-                  Add Integration
-                </Button>
-              </div>
-            </AdafruitFunctionForm>
-          )}
-          {showNextSteps && type === "googlesheet" && (
-            <Card
-              title={"Step 4 - Update Function Body"}
-              bodyStyle={{ padding: 0 }}
-              extra={
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  onClick={this.handleStep3Submit}
-                >
-                  Add Integration
-                </Button>
-              }
-            >
-              <div style={{ height: 303, overflowY: "scroll" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    cursor: "text",
-                  }}
-                  onClick={this.onClickEditor}
-                >
-                  <div
-                    style={{
-                      backgroundColor: codeEditorBgColor,
-                      paddingTop: 9,
-                      marginTop: 1,
-                      paddingBottom: 9,
-                    }}
+              {!type && (
+                <div style={{ display: "block" }}>
+                  <Collapse
+                    expandIconPosition="right"
+                    defaultActiveKey={["1"]}
+                    className="channel-new-panels-mobile"
                   >
-                    {range(301).map((i) => (
-                      <p
-                        key={i}
+                    <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
+                      <ChannelPremadeRow
+                        selectType={this.handleSelectType}
+                        mobile
+                      />
+                    </Panel>
+                  </Collapse>
+                  <Collapse
+                    expandIconPosition="right"
+                    style={{ marginTop: 20 }}
+                  >
+                    <Panel
+                      header={<b>ADD A CUSTOM INTEGRATION</b>}
+                      key="1"
+                      style={{ padding: 0 }}
+                    >
+                      <ChannelCreateRow
+                        selectType={this.handleSelectType}
+                        mobile
+                      />
+                    </Panel>
+                  </Collapse>
+                </div>
+              )}
+
+              {type && (
+                <Card title="Step 1 – Choose an Integration Type">
+                  <div>
+                    <IntegrationTypeTileSimple type={type} />
+                    <Link
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.setState({ type: null, showNextSteps: false });
+                      }}
+                    >
+                      <Button style={{ marginTop: 15 }}>Change</Button>
+                    </Link>
+                  </div>
+                </Card>
+              )}
+
+              {type && (
+                <Card title="Step 2 - Endpoint Details">
+                  {this.renderForm(true)}
+                </Card>
+              )}
+              {showNextSteps && (
+                <ChannelNameForm
+                  channelName={this.state.channelName}
+                  onInputUpdate={this.handleStep3Input}
+                  validInput={this.state.validInput}
+                  submit={this.handleStep3Submit}
+                  noName={type === "adafruit" || type === "googlesheet"}
+                  mobile
+                />
+              )}
+              {showNextSteps && type === "adafruit" && (
+                <AdafruitFunctionForm
+                  handleFunctionUpdate={this.handleAdafruitFunctionSelect}
+                >
+                  <div style={{ marginTop: 20 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={this.handleStep3Submit}
+                      disabled={!this.state.validInput}
+                    >
+                      Add Integration
+                    </Button>
+                  </div>
+                </AdafruitFunctionForm>
+              )}
+              {showNextSteps && type === "googlesheet" && (
+                <Card
+                  title={"Step 4 - Update Function Body"}
+                  bodyStyle={{ padding: 0 }}
+                >
+                  <div style={{ height: 303, overflowY: "scroll" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        cursor: "text",
+                      }}
+                      onClick={this.onClickEditor}
+                    >
+                      <div
                         style={{
-                          textAlign: "right",
-                          fontFamily: "monospace",
-                          color: codeEditorLineColor,
-                          fontSize: 14,
-                          marginBottom: 0,
-                          paddingLeft: 10,
-                          paddingRight: 10,
                           backgroundColor: codeEditorBgColor,
+                          paddingTop: 9,
+                          marginTop: 1,
+                          paddingBottom: 9,
                         }}
                       >
-                        {i}
-                      </p>
-                    ))}
-                  </div>
+                        {range(301).map((i) => (
+                          <p
+                            key={i}
+                            style={{
+                              textAlign: "right",
+                              fontFamily: "monospace",
+                              color: codeEditorLineColor,
+                              fontSize: 14,
+                              marginBottom: 0,
+                              paddingLeft: 10,
+                              paddingRight: 10,
+                              backgroundColor: codeEditorBgColor,
+                            }}
+                          >
+                            {i}
+                          </p>
+                        ))}
+                      </div>
 
-                  <Editor
-                    value={this.state.googleFunctionBody}
-                    onValueChange={this.handleGoogleFunctionBodyUpdate}
-                    highlight={(code) => highlight(code, languages.js)}
-                    padding={10}
-                    style={{
-                      fontFamily: "monospace",
-                      fontSize: 14,
-                    }}
-                  />
+                      <Editor
+                        value={this.state.googleFunctionBody}
+                        onValueChange={this.handleGoogleFunctionBodyUpdate}
+                        highlight={(code) => highlight(code, languages.js)}
+                        padding={10}
+                        style={{
+                          fontFamily: "monospace",
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={this.handleStep3Submit}
+                  >
+                    Add Integration
+                  </Button>
+                </Card>
+              )}
+              {showNextSteps && (type === "http" || type === "mqtt") && (
+                <ChannelPayloadTemplate
+                  templateBody={this.state.templateBody}
+                  handleTemplateUpdate={this.handleTemplateUpdate}
+                  from="channelNew"
+                />
+              )}
+              <style jsx>{`
+                .flexwrapper {
+                  display: flex;
+                  flex-wrap: wrap;
+                }
+                .integrationcard {
+                  flex-grow: 1;
+                }
+              `}</style>
+            </div>
+          </MobileLayout>
+        </MobileDisplay>
+        <DesktopDisplay>
+          <ChannelDashboardLayout {...this.props}>
+            <div style={{ padding: "30px 30px 20px 30px" }}>
+              {!type && (
+                <div style={{ display: "block" }}>
+                  <Card
+                    size="small"
+                    title="Add a Prebuilt Integration"
+                    className="integrationcard"
+                    bodyStyle={{ padding: 1 }}
+                  >
+                    <div
+                      style={{
+                        padding: 10,
+                        height: "100%",
+                        width: "100%",
+                        overflowX: "scroll",
+                      }}
+                    >
+                      <ChannelPremadeRow selectType={this.handleSelectType} />
+                    </div>
+                  </Card>
+                  <Card
+                    size="small"
+                    title="Add a Custom Integration"
+                    className="integrationcard"
+                    bodyStyle={{ padding: 1 }}
+                  >
+                    <div
+                      style={{
+                        padding: 10,
+                        height: "100%",
+                        width: "100%",
+                        overflowX: "scroll",
+                      }}
+                    >
+                      <ChannelCreateRow selectType={this.handleSelectType} />
+                    </div>
+                  </Card>
                 </div>
-              </div>
-            </Card>
-          )}
-          {showNextSteps && (type === "http" || type === "mqtt") && (
-            <ChannelPayloadTemplate
-              templateBody={this.state.templateBody}
-              handleTemplateUpdate={this.handleTemplateUpdate}
-              from="channelNew"
-            />
-          )}
-          <style jsx>{`
-            .flexwrapper {
-              display: flex;
-              flex-wrap: wrap;
-            }
-            .integrationcard {
-              flex-grow: 1;
-            }
-          `}</style>
-        </div>
-      </ChannelDashboardLayout>
+              )}
+
+              {type && (
+                <Card title="Step 1 – Choose an Integration Type">
+                  <div
+                    className="flexwrapper"
+                    style={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <IntegrationTypeTileSimple type={type} />
+                    <Link
+                      to="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.setState({ type: null, showNextSteps: false });
+                      }}
+                    >
+                      <Button size="small">Change</Button>
+                    </Link>
+                  </div>
+                </Card>
+              )}
+
+              {type && (
+                <Card title="Step 2 - Endpoint Details">
+                  {this.renderForm()}
+                </Card>
+              )}
+              {showNextSteps && (
+                <ChannelNameForm
+                  channelName={this.state.channelName}
+                  onInputUpdate={this.handleStep3Input}
+                  validInput={this.state.validInput}
+                  submit={this.handleStep3Submit}
+                  noName={type === "adafruit" || type === "googlesheet"}
+                />
+              )}
+              {showNextSteps && type === "adafruit" && (
+                <AdafruitFunctionForm
+                  handleFunctionUpdate={this.handleAdafruitFunctionSelect}
+                >
+                  <div style={{ marginTop: 20 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={this.handleStep3Submit}
+                      disabled={!this.state.validInput}
+                    >
+                      Add Integration
+                    </Button>
+                  </div>
+                </AdafruitFunctionForm>
+              )}
+              {showNextSteps && type === "googlesheet" && (
+                <Card
+                  title={"Step 4 - Update Function Body"}
+                  bodyStyle={{ padding: 0 }}
+                  extra={
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={this.handleStep3Submit}
+                    >
+                      Add Integration
+                    </Button>
+                  }
+                >
+                  <div style={{ height: 303, overflowY: "scroll" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        cursor: "text",
+                      }}
+                      onClick={this.onClickEditor}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: codeEditorBgColor,
+                          paddingTop: 9,
+                          marginTop: 1,
+                          paddingBottom: 9,
+                        }}
+                      >
+                        {range(301).map((i) => (
+                          <p
+                            key={i}
+                            style={{
+                              textAlign: "right",
+                              fontFamily: "monospace",
+                              color: codeEditorLineColor,
+                              fontSize: 14,
+                              marginBottom: 0,
+                              paddingLeft: 10,
+                              paddingRight: 10,
+                              backgroundColor: codeEditorBgColor,
+                            }}
+                          >
+                            {i}
+                          </p>
+                        ))}
+                      </div>
+
+                      <Editor
+                        value={this.state.googleFunctionBody}
+                        onValueChange={this.handleGoogleFunctionBodyUpdate}
+                        highlight={(code) => highlight(code, languages.js)}
+                        padding={10}
+                        style={{
+                          fontFamily: "monospace",
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              )}
+              {showNextSteps && (type === "http" || type === "mqtt") && (
+                <ChannelPayloadTemplate
+                  templateBody={this.state.templateBody}
+                  handleTemplateUpdate={this.handleTemplateUpdate}
+                  from="channelNew"
+                />
+              )}
+              <style jsx>{`
+                .flexwrapper {
+                  display: flex;
+                  flex-wrap: wrap;
+                }
+                .integrationcard {
+                  flex-grow: 1;
+                }
+              `}</style>
+            </div>
+          </ChannelDashboardLayout>
+        </DesktopDisplay>
+      </>
     );
   }
 }

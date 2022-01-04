@@ -6,11 +6,12 @@ import { SkeletonLayout } from "../common/SkeletonLayout";
 const { Text } = Typography;
 import { FLOWS_BY_DEVICE, GET_RESOURCES_NAMES } from "../../graphql/flows";
 import FlowsLayout from "../common/FlowsLayout";
+import ErrorMessage from "../common/ErrorMessage";
 import { useQuery } from "@apollo/client";
 
 const FETCH_POLICY = "cache-and-network";
 
-export default ({ deviceId }) => {
+export default ({ deviceId, mobile }) => {
   const {
     loading: flowsByDeviceLoading,
     error: flowsByDeviceError,
@@ -110,10 +111,7 @@ export default ({ deviceId }) => {
 
   if (flowsByDeviceLoading || getResourcesNamesLoading)
     return <SkeletonLayout />;
-  if (flowsByDeviceError || getResourcesNamesError)
-    return (
-      <Text>Data failed to load, please reload the page and try again</Text>
-    );
+  if (flowsByDeviceError || getResourcesNamesError) return <ErrorMessage />;
 
   const addCopyIfNodeExisting = (nodeId, existingElements) => {
     if (nodeId in existingElements) {
@@ -247,11 +245,23 @@ export default ({ deviceId }) => {
 
   const elements = generateElements(deviceId, flowsByDevice);
 
-  return (
-    <Card
-      bodyStyle={{ padding: 0, paddingTop: 1, overflowX: "scroll" }}
-      title="Flows"
-    >
+  const renderContainer = (children) => {
+    if (mobile) {
+      return children;
+    } else {
+      return (
+        <Card
+          bodyStyle={{ padding: 0, paddingTop: 1, overflowX: "scroll" }}
+          title="Flows"
+        >
+          {children}
+        </Card>
+      );
+    }
+  };
+
+  return renderContainer(
+    <React.Fragment>
       {elements.length > 0 ? (
         <div
           style={{
@@ -270,6 +280,6 @@ export default ({ deviceId }) => {
           No flows exist for this device
         </div>
       )}
-    </Card>
+    </React.Fragment>
   );
 };
