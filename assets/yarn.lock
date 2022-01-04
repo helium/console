@@ -2,10 +2,23 @@
 # yarn lockfile v1
 
 
-"@amplitude/ua-parser-js@0.7.20":
-  version "0.7.20"
-  resolved "https://registry.yarnpkg.com/@amplitude/ua-parser-js/-/ua-parser-js-0.7.20.tgz#15652f8cc4fee72d962a5f2101cfde6f3c8e87b8"
-  integrity sha512-bmW++BLt1Hg+4HCExLXP+0Jhgy2eTsEevqkVc5o4yYbgwdP/gV3gEQXzyVrMVlWWNLgph/tFIkf5PVlSpCELEg==
+"@amplitude/types@^1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@amplitude/types/-/types-1.9.1.tgz#df614ac6d278c60c39bb49e05014cdcc7e7714e9"
+  integrity sha512-s10ewnlFjHjNWrUMVTPJ2YRj0eD5UoeL+d0HB01x2Ltae/jFgtHQBS/HGKYV5I+NyiaezjrrZImhAQ72Ww/+8g==
+
+"@amplitude/ua-parser-js@0.7.26":
+  version "0.7.26"
+  resolved "https://registry.yarnpkg.com/@amplitude/ua-parser-js/-/ua-parser-js-0.7.26.tgz#18d889d84d2ba90c248ab6fcd7e3dd07f1c9c86e"
+  integrity sha512-62/Rid6YQ7F2KT/5vTre41Y26ivrEoFC8lbrsJZqBKaiXMJWG0YpNv9RgxNSaZS2jPLVQgoB/FFeWxihOLfIcg==
+
+"@amplitude/utils@^1.0.5":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@amplitude/utils/-/utils-1.9.1.tgz#6d127b1a6f0b62c49a932ef00ecd471e554e192f"
+  integrity sha512-OO2w0gfs5b/dMRKh+PHhtqvb43Uf05MMUWrT3xa62P89mBtmusLvWnWycGdBu750YsnYwX8dfeZpYZ/zLH5ttQ==
+  dependencies:
+    "@amplitude/types" "^1.9.1"
+    tslib "^1.9.3"
 
 "@ant-design/colors@^6.0.0":
   version "6.0.0"
@@ -986,7 +999,7 @@
     "@babel/plugin-transform-react-jsx-development" "^7.16.7"
     "@babel/plugin-transform-react-pure-annotations" "^7.16.7"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.7", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.16.7", "@babel/runtime@^7.3.4", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.7.tgz#03ff99f64106588c9c403c6ecb8c3bafbbdff1fa"
   integrity sha512-9E9FJowqAsytyOY6LG+1KuueckRL+aQW+mKvXRXnuFGyRAyepJPmEo9vgMfXUA6O9u3IeEdv9MAkppFcaQwogQ==
@@ -1973,12 +1986,14 @@ ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-amplitude-js@^5.7.0:
-  version "5.11.0"
-  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-5.11.0.tgz#578b1dbb9e2d6793a9dbd97a215bdd77ee10c9ae"
-  integrity sha512-rH5CqWvnKK9E6uVI7h1t/ikkQK4vhiS7iy2fncE4K56MY0ty/XVF9cNFBq2NAujMo1VXvu8oG80MdIETPG1zsA==
+amplitude-js@^8.14.1:
+  version "8.14.1"
+  resolved "https://registry.yarnpkg.com/amplitude-js/-/amplitude-js-8.14.1.tgz#18b9fa8ad9338fe28375c92c3eb186c8ac74eba8"
+  integrity sha512-OvGQQ8+xBQmR9OcDvo8ATeCwepx0GGKfB2MB9Wm2D+q0kuHR1a+1maIpewbOlGwdhySojltE6HwWlbPeovvHjg==
   dependencies:
-    "@amplitude/ua-parser-js" "0.7.20"
+    "@amplitude/ua-parser-js" "0.7.26"
+    "@amplitude/utils" "^1.0.5"
+    "@babel/runtime" "^7.3.4"
     blueimp-md5 "^2.10.0"
     query-string "5"
 
@@ -3175,10 +3190,10 @@ domutils@^2.5.2, domutils@^2.7.0, domutils@^2.8.0:
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
 
-dotenv@^8.2.0:
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
-  integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
+dotenv@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
+  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
 
 duplexer@^0.1.2:
   version "0.1.2"
@@ -6988,6 +7003,11 @@ ts-invariant@^0.9.4:
   integrity sha512-63jtX/ZSwnUNi/WhXjnK8kz4cHHpYS60AnmA6ixz17l7E12a5puCWFlNpkne5Rl0J8TBPVHpGjsj4fxs8ObVLQ==
   dependencies:
     tslib "^2.1.0"
+
+tslib@^1.9.3:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
+  integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
 tslib@^2.1.0, tslib@^2.2.0, tslib@^2.3.0:
   version "2.3.1"
