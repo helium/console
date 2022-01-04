@@ -1,6 +1,5 @@
 defmodule ConsoleWeb.SessionController do
   use ConsoleWeb, :controller
-  import ConsoleWeb.AuthErrorHandler
   alias Console.Organizations
   alias Console.Auth
 

@@ -10,8 +10,7 @@ defmodule Console.Channels.Channel do
   @foreign_key_type :binary_id
   schema "channels" do
     field :active, :boolean, default: true
-    field :credentials, Cloak.EncryptedMapField
-    field :encryption_version, :binary
+    field :credentials, Console.Encrypted.Map
     field :name, :string
     field :type, :string
     field :type_name, :string
@@ -35,7 +34,6 @@ defmodule Console.Channels.Channel do
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
     |> validate_inclusion(:type, ~w(http mqtt aws azure google))
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
-    |> put_change(:encryption_version, Cloak.version)
     |> check_credentials()
     |> put_type_name()
     |> put_downlink_token()

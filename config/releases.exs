@@ -32,13 +32,6 @@ config :console, ConsoleWeb.Guardian,
   issuer: "console",
   secret_key: System.get_env("GUARDIAN_SECRET_KEY")
 
-config :cloak, Cloak.AES.CTR,
-  tag: "AES",
-  default: true,
-  keys: [
-    %{tag: <<1>>, key: :base64.decode(System.get_env("CLOAK_SECRET_KEY")), default: true}
-  ]
-
 config :console,
   router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ","),
   blockchain_api_retry: String.to_integer(System.get_env("BLOCKCHAIN_API_RETRY") || "1"),
