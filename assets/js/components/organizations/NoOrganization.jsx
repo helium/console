@@ -52,18 +52,19 @@ class NoOrganization extends Component {
           <Form onSubmit={this.handleSubmit}>
             <Row gutter={16} style={{marginTop: 20, display: 'flex', justifyContent: 'center' }}>
               <Col sm={12}>
-                <Button onClick={() => this.props.logOut()} style={{width: '100%'}}>
+                <Button type="primary" onClick={this.handleSubmit} style={{width: '100%', marginBottom: 4 }}>
+                  Add Organization
+                </Button>
+              </Col>
+              
+              <Col sm={12}>
+                <Button onClick={() => this.props.logOut()} style={{width: '100%', marginBottom: 4 }}>
                   Logout
                 </Button>
               </Col>
-              <Col sm={12}>
-              <Button type="primary" onClick={this.handleSubmit} style={{width: '100%'}}>
-                Add Organization
-              </Button>
-              </Col>
             </Row>
           </Form>
-          
+
         </Card>
       </AuthLayout>
     )
