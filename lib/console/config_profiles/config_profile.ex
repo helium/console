@@ -31,6 +31,8 @@ defmodule Console.ConfigProfiles.ConfigProfile do
     |> validate_required([:organization_id, :name, :adr_allowed, :cf_list_enabled, :rx_delay])
     |> validate_length(:name, min: 3, message: "Name must be at least 3 characters")
     |> validate_length(:name, max: 25, message: "Name cannot be longer than 25 characters")
+    |> validate_number(:rx_delay, less_than_or_equal_to: 15)
+    |> validate_number(:rx_delay, greater_than_or_equal_to: 1)
     |> unique_constraint(:name, name: :config_profiles_name_organization_id_index, message: "This name has already been used in this organization")
   end
 end
