@@ -143,11 +143,11 @@ export default ({ show, data, save, saveIcon, back, cancel }) => {
           Set Delay Before Rx1 Window (Default: 1)
         </Text>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ width: 150, marginRight: 12 }}>
+          <div style={{ width: 300, marginRight: 12 }}>
             <Slider
               value={rxDelay}
               min={1}
-              max={5}
+              max={15}
               tooltipVisible={false}
               onChange={(value) => setRxDelay(value)}
               disabled={!userCan({ role: currentRole })}
