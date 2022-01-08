@@ -163,6 +163,17 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
+    if true do
+      with :ok <- ConsoleWeb.MessageQueue.publish("1") do
+        conn
+        |> send_resp(200, "")
+      end
+    else
+      add_device_event_direct(conn, event, device_id)
+    end
+  end
+
+  defp add_device_event_direct(conn, event, device_id) do
     event = event
       |> Map.put("reported_at_epoch", event["reported_at"])
       |> Map.put("router_uuid", event["id"])
