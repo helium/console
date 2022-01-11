@@ -14,36 +14,38 @@ defmodule ConsoleWeb.MessageQueue do
     # Limit unacknowledged messages to 10
     # :ok = Basic.qos(channel, prefetch_count: 10)
     {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
-    {:ok, %{ channel: channel, connection: conn, events: [] }}
+
+    Agent.start_link(fn -> [] end, name: :events_state)
+    {:ok, channel}
   end
 
   def publish(message) do
     GenServer.cast(__MODULE__, {:publish, message})
   end
 
-  def handle_cast({:publish, message}, state) do
-    AMQP.Basic.publish(state.channel, "", "events_queue", message)
-    {:noreply, state}
+  def handle_cast({:publish, message}, channel) do
+    AMQP.Basic.publish(channel, "", "events_queue", message)
+    {:noreply, channel}
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
-  def handle_info({:basic_consume_ok, %{consumer_tag: _consumer_tag}}, state) do
-    {:noreply, state}
+  def handle_info({:basic_consume_ok, %{consumer_tag: _consumer_tag}}, channel) do
+    {:noreply, channel}
   end
 
   # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
-  def handle_info({:basic_cancel, %{consumer_tag: _consumer_tag}}, state) do
-    {:stop, :normal, state}
+  def handle_info({:basic_cancel, %{consumer_tag: _consumer_tag}}, channel) do
+    {:stop, :normal, channel}
   end
 
   # Confirmation sent by the broker to the consumer process after a Basic.cancel
-  def handle_info({:basic_cancel_ok, %{consumer_tag: _consumer_tag}}, state) do
-    {:noreply, state}
+  def handle_info({:basic_cancel_ok, %{consumer_tag: _consumer_tag}}, channel) do
+    {:noreply, channel}
   end
 
-  def handle_info({:basic_deliver, payload, %{delivery_tag: _tag, redelivered: _redelivered}}, state) do
-    IO.inspect Map.put(state, :events, state.events ++ [payload])
-    {:noreply, Map.put(state, :events, state.events ++ [payload])}
+  def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}}, channel) do
+    Agent.update(:events_state, fn events -> events ++ [{tag, payload}] end)
+    {:noreply, channel}
   end
 
   # defp consume(channel, tag, redelivered, payload) do

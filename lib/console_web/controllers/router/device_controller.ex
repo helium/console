@@ -164,9 +164,87 @@ defmodule ConsoleWeb.Router.DeviceController do
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
     if true do
-      with :ok <- ConsoleWeb.MessageQueue.publish("1") do
-        conn
-        |> send_resp(200, "")
+      event_device = Devices.get_device(device_id)
+
+      case event_device do
+        nil ->
+          conn
+          |> send_resp(404, "")
+        %Device{} = device ->
+          event = event
+            |> Map.put("reported_at_epoch", event["reported_at"])
+            |> Map.put("router_uuid", event["id"])
+            |> Map.delete("id")
+
+          event = case event["category"] do
+            category when category in ["uplink", "join_request", "join_accept", "uplink_dropped"] ->
+              cond do
+                is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
+                event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])
+                true -> event |> Map.put("frame_up", nil)
+              end
+            category when category in ["downlink", "downlink_dropped"] ->
+              cond do
+                is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_down", event["data"]["fcnt"])
+                event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_down", event["data"]["fcnt"])
+                true -> event |> Map.put("frame_down", nil)
+              end
+            _ -> event
+          end
+
+          event = case event["data"]["res"]["body"] do
+            nil -> event
+            _ ->
+              cond do
+                String.length(event["data"]["res"]["body"]) > 2500 ->
+                  Kernel.put_in(event["data"]["res"]["body"], "Response body is too long and cannot be displayed properly.")
+                String.contains?(event["data"]["res"]["body"], <<0>>) or String.contains?(event["data"]["res"]["body"], <<1>>) or String.contains?(event["data"]["res"]["body"], "\\u0000") ->
+                  Kernel.put_in(event["data"]["res"]["body"], "Response body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                true ->
+                  event
+              end
+          end
+
+          event = case event["data"]["req"]["body"] do
+            nil -> event
+            _ ->
+              cond do
+                String.length(event["data"]["req"]["body"]) > 2500 ->
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body is too long and cannot be displayed properly.")
+                String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") ->
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                true ->
+                  event
+              end
+          end
+
+          event = case event["data"]["req"]["body"] do
+            nil -> event
+            _ ->
+              case Poison.decode(event["data"]["req"]["body"]) do
+                {:ok, decoded_body} -> Kernel.put_in(event["data"]["req"]["body"], decoded_body)
+                _ -> event
+              end
+          end
+
+          event = case event["data"]["payload"] do
+            nil -> event
+            _ ->
+              if String.contains?(event["data"]["payload"], <<0>>) or String.contains?(event["data"]["payload"], <<1>>) do
+                b64_payload = event["data"]["payload"] |> :base64.encode
+                Kernel.put_in(event["data"]["payload"], "Payload contains unprintable Unicode characters, (#{b64_payload} in Base64)")
+              else
+                event
+              end
+          end
+
+          with {:ok, created_event} <- Events.create_event(Map.put(event, "organization_id", device.organization_id)) do
+            ConsoleWeb.MessageQueue.publish(Jason.encode!(event))
+            publish_created_event(created_event, device)
+
+            conn
+            |> send_resp(200, "")
+          end
       end
     else
       add_device_event_direct(conn, event, device_id)
