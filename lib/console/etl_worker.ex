@@ -42,54 +42,62 @@ defmodule Console.EtlWorker do
 
           device_and_hotspot_stats = generate_device_and_hotspot_stats(events_to_run_stats, devices_to_update)
 
-          Ecto.Multi.new()
-          |> Ecto.Multi.run(:device_updates, fn _repo, _ ->
-            Enum.each(devices_to_update, fn device ->
-              new_total_packets = device.total_packets + device_updates_map[device.id]["total_packets"]
-              new_dc_usage = device.dc_usage + device_updates_map[device.id]["dc_usage"]
+          result =
+            Ecto.Multi.new()
+            |> Ecto.Multi.run(:device_updates, fn _repo, _ ->
+              Enum.each(devices_to_update, fn device ->
+                new_total_packets = device.total_packets + device_updates_map[device.id]["total_packets"]
+                new_dc_usage = device.dc_usage + device_updates_map[device.id]["dc_usage"]
 
-              device_attrs = Map.merge(device_updates_map[device.id], %{
-                "total_packets" => new_total_packets,
-                "dc_usage" => new_dc_usage
-              })
+                device_attrs = Map.merge(device_updates_map[device.id], %{
+                  "total_packets" => new_total_packets,
+                  "dc_usage" => new_dc_usage
+                })
 
-              Devices.update_device!(device, device_attrs, "router")
+                Devices.update_device!(device, device_attrs, "router")
+              end)
+              {:ok, "success"}
             end)
-            {:ok, "success"}
-          end)
-          |> Ecto.Multi.run(:organization_updates, fn _repo, _ ->
-            Enum.each(organizations_to_update, fn org ->
-              org_attrs = %{
-                "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
-              }
+            |> Ecto.Multi.run(:organization_updates, fn _repo, _ ->
+              Enum.each(organizations_to_update, fn org ->
+                org_attrs = %{
+                  "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
+                }
 
-              Organizations.update_organization!(org, org_attrs)
+                Organizations.update_organization!(org, org_attrs)
 
-              if (org.dc_balance_nonce != organization_updates_map[org.id]["nonce"]) do
-                ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
-                  Map.put(org, :dc_balance, org_attrs["dc_balance"])
-                )
+                if (org.dc_balance_nonce != organization_updates_map[org.id]["nonce"]) do
+                  ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
+                    Map.put(org, :dc_balance, org_attrs["dc_balance"])
+                  )
+                end
+              end)
+              {:ok, "success"}
+            end)
+            |> Ecto.Multi.run(:device_stats, fn _repo, _ ->
+              device_stats =
+                device_and_hotspot_stats
+                |> Enum.map(fn tuple -> elem(tuple, 0) end)
+              with { _count , nil} <- Repo.insert_all("device_stats", device_stats) do
+                {:ok, "success"}
               end
             end)
-            {:ok, "success"}
-          end)
-          |> Ecto.Multi.run(:device_stats, fn _repo, _ ->
-            device_stats =
-              device_and_hotspot_stats
-              |> Enum.map(fn tuple -> elem(tuple, 0) end)
-            with { _count , nil} <- Repo.insert_all("device_stats", device_stats) do
-              {:ok, "success"}
-            end
-          end)
-          |> Ecto.Multi.run(:hotspot_stats, fn _repo, _ ->
-            hotspot_stats =
-              device_and_hotspot_stats
-              |> Enum.map(fn tuple -> elem(tuple, 1) end)
-            with { _count , nil} <- Repo.insert_all("hotspot_stats", hotspot_stats) do
-              {:ok, "success"}
-            end
-          end)
-          |> Repo.transaction()
+            |> Ecto.Multi.run(:hotspot_stats, fn _repo, _ ->
+              hotspot_stats =
+                device_and_hotspot_stats
+                |> Enum.map(fn tuple -> elem(tuple, 1) end)
+              with { _count , nil} <- Repo.insert_all("hotspot_stats", hotspot_stats) do
+                {:ok, "success"}
+              end
+            end)
+            |> Repo.transaction()
+
+          with {:ok, _} <- result do
+            delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
+            ConsoleWeb.MessageQueue.ack(delivery_tags)
+
+            Agent.update(:events_state, fn events -> Enum.drop(events, length(delivery_tags)) end)
+          end
         end
       rescue
         error -> IO.inspect error
@@ -97,7 +105,7 @@ defmodule Console.EtlWorker do
     end)
     |> Task.await(:infinity)
 
-    # schedule_events_etl(1)
+    schedule_events_etl(1)
     {:noreply, state}
   end
 

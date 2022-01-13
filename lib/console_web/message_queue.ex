@@ -23,8 +23,19 @@ defmodule ConsoleWeb.MessageQueue do
     GenServer.cast(__MODULE__, {:publish, message})
   end
 
+  def ack(tags) do
+    GenServer.cast(__MODULE__, {:ack, tags})
+  end
+
   def handle_cast({:publish, message}, channel) do
-    AMQP.Basic.publish(channel, "", "events_queue", message)
+    Basic.publish(channel, "", "events_queue", message)
+    {:noreply, channel}
+  end
+
+  def handle_cast({:ack, tags}, channel) do
+    Enum.each(tags, fn tag ->
+      Basic.ack(channel, tag)
+    end)
     {:noreply, channel}
   end
 
