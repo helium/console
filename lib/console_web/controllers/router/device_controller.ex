@@ -524,7 +524,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  defp check_org_dc_balance(organization, prev_dc_balance) do
+  def check_org_dc_balance(organization, prev_dc_balance) do
     if organization.automatic_charge_amount == nil do
       cond do
         prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->

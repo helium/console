@@ -92,12 +92,12 @@ defmodule Console.EtlWorker do
             end)
             |> Repo.transaction()
 
-          with {:ok, _} <- result do
-            delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
-            ConsoleWeb.MessageQueue.ack(delivery_tags)
-
-            Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
-          end
+          # with {:ok, _} <- result do
+          #   delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
+          #   ConsoleWeb.MessageQueue.ack(delivery_tags)
+          #   check_updated_orgs_dc_balance(organizations_to_update)
+          #   Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
+          # end
         end
       rescue
         error -> IO.inspect error
@@ -105,7 +105,7 @@ defmodule Console.EtlWorker do
     end)
     |> Task.await(:infinity)
 
-    schedule_events_etl(1)
+    # schedule_events_etl(1)
     {:noreply, state}
   end
 
@@ -228,6 +228,18 @@ defmodule Console.EtlWorker do
         end
 
       Map.merge(acc, %{ event["device_id"] => update_attrs })
+    end)
+  end
+
+  defp check_updated_orgs_dc_balance(organizations_to_update) do
+    zipped_orgs_before_after =
+      organizations_to_update
+      |> Enum.map(fn org -> org.id end)
+      |> Organizations.get_organizations_in_list()
+      |> Enum.zip(organizations_to_update)
+
+    Enum.each(zipped_orgs_before_after, fn tuple ->
+      ConsoleWeb.Router.DeviceController.check_org_dc_balance(elem(tuple, 0), elem(tuple, 1).dc_balance)
     end)
   end
 end
