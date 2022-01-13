@@ -3,7 +3,6 @@ defmodule Console.EtlWorker do
   alias Console.Repo
   alias Console.Devices
   alias Console.Organizations
-  alias Console.DeviceStats.DeviceStat
 
   def start_link(initial_state) do
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
@@ -28,16 +27,12 @@ defmodule Console.EtlWorker do
             |> Map.keys()
             |> Devices.get_devices_in_list()
 
-          # organization_updates_map = generate_organization_updates_map(device_updates_map, devices_to_update)
-          # IO.inspect organization_updates_map
-          #
-          # organizations_to_update =
-          #   devices_to_update
-          #   |> Enum.map(fn d -> d.organization_id end)
-          #   |> Enum.uniq()
-          #   |> Organizations.get_organizations_in_list()
-          #
-          # IO.inspect organizations_to_update
+          organization_updates_map = generate_organization_updates_map(device_updates_map, devices_to_update)
+
+          organizations_to_update =
+            organization_updates_map
+            |> Map.keys()
+            |> Organizations.get_organizations_in_list()
 
           events_to_run_stats =
             parsed_events
@@ -59,6 +54,22 @@ defmodule Console.EtlWorker do
               })
 
               Devices.update_device!(device, device_attrs, "router")
+            end)
+            {:ok, "success"}
+          end)
+          |> Ecto.Multi.run(:organization_updates, fn _repo, _ ->
+            Enum.each(organizations_to_update, fn org ->
+              org_attrs = %{
+                "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
+              }
+
+              Organizations.update_organization!(org, org_attrs)
+
+              if (org.dc_balance_nonce != organization_updates_map[org.id]["nonce"]) do
+                ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
+                  Map.put(org, :dc_balance, org_attrs["dc_balance"])
+                )
+              end
             end)
             {:ok, "success"}
           end)
@@ -138,6 +149,31 @@ defmodule Console.EtlWorker do
     |> Enum.filter(fn tuple -> elem(tuple, 2) != nil end)
   end
 
+  defp generate_organization_updates_map(device_updates_map, devices_to_update) do
+    devices_to_update
+    |> Enum.reduce(%{}, fn device, acc ->
+      if device_updates_map[device.id]["dc_usage"] > 0 do
+        update_attrs =
+          case acc[device.organization_id] do
+            nil ->
+              %{
+                "dc_used" => device_updates_map[device.id]["dc_usage"],
+                "nonce" => device_updates_map[device.id]["nonce"]
+              }
+            _ ->
+              %{
+                "dc_used" => device_updates_map[device.id]["dc_usage"] + acc[device.organization_id]["dc_used"],
+                "nonce" => Enum.max([device_updates_map[device.id]["nonce"], acc[device.organization_id]["nonce"]])
+              }
+          end
+
+        Map.merge(acc, %{ device.organization_id => update_attrs })
+      else
+        acc
+      end
+    end)
+  end
+
   defp generate_device_updates_map(parsed_events) do
     parsed_events
     |> Enum.reduce(%{}, fn event, acc ->
@@ -147,6 +183,11 @@ defmodule Console.EtlWorker do
           false -> 0
         end
       packet_count = if dc_used == 0, do: 0, else: 1
+      nonce =
+        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
+          true -> event["data"]["dc"]["nonce"]
+          false -> 0
+        end
       reported_at_naive = event["reported_at"] |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive()
 
       update_attrs =
@@ -156,14 +197,16 @@ defmodule Console.EtlWorker do
               "last_connected" => reported_at_naive,
               "total_packets" => packet_count,
               "dc_usage" => dc_used,
-              "in_xor_filter" => true
+              "in_xor_filter" => true,
+              "nonce" => nonce
             }
           _ ->
             %{
               "last_connected" => reported_at_naive,
               "total_packets" => packet_count + acc[event["device_id"]]["total_packets"],
               "dc_usage" => dc_used + acc[event["device_id"]]["dc_usage"],
-              "in_xor_filter" => true
+              "in_xor_filter" => true,
+              "nonce" => Enum.max([nonce, acc[event["device_id"]]["nonce"]])
             }
         end
 
