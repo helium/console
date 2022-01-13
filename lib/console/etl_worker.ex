@@ -96,7 +96,7 @@ defmodule Console.EtlWorker do
             delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
             ConsoleWeb.MessageQueue.ack(delivery_tags)
 
-            Agent.update(:events_state, fn events -> Enum.drop(events, length(delivery_tags)) end)
+            Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
           end
         end
       rescue

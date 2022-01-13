@@ -55,7 +55,7 @@ defmodule ConsoleWeb.MessageQueue do
   end
 
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}}, channel) do
-    Agent.update(:events_state, fn events -> events ++ [{tag, payload}] end)
+    Agent.update(:events_state, fn events -> [{tag, payload} | events] end)
     {:noreply, channel}
   end
 
