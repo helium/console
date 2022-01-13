@@ -1,30 +1,182 @@
 defmodule Console.EtlWorker do
   use GenServer
+  alias Console.Repo
+  alias Console.Devices
+  alias Console.Organizations
+  alias Console.DeviceStats.DeviceStat
 
   def start_link(initial_state) do
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
   end
 
   def init(_opts) do
-    # schedule_events_etl(100)
+    schedule_events_etl(100)
     {:ok, %{}}
   end
 
   def handle_info(:run_events_etl, state) do
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-      events = Agent.get(:events_state, fn list -> list end)
-      parsed_events = Enum.map(events, fn e -> elem(e, 1) |> Jason.decode!() end)
-      IO.inspect parsed_events
+      try do
+        events = Agent.get(:events_state, fn list -> list end)
+        parsed_events = Enum.map(events, fn e -> elem(e, 1) |> Jason.decode!() end)
 
-      Process.sleep(5000)
+        if length(parsed_events) > 0 do
+          device_updates_map = generate_device_updates_map(parsed_events)
+
+          devices_to_update =
+            device_updates_map
+            |> Map.keys()
+            |> Devices.get_devices_in_list()
+
+          # organization_updates_map = generate_organization_updates_map(device_updates_map, devices_to_update)
+          # IO.inspect organization_updates_map
+          #
+          # organizations_to_update =
+          #   devices_to_update
+          #   |> Enum.map(fn d -> d.organization_id end)
+          #   |> Enum.uniq()
+          #   |> Organizations.get_organizations_in_list()
+          #
+          # IO.inspect organizations_to_update
+
+          events_to_run_stats =
+            parsed_events
+            |> Enum.filter(fn event ->
+              event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request"
+            end)
+
+          device_and_hotspot_stats = generate_device_and_hotspot_stats(events_to_run_stats, devices_to_update)
+
+          Ecto.Multi.new()
+          |> Ecto.Multi.run(:device_updates, fn _repo, _ ->
+            Enum.each(devices_to_update, fn device ->
+              new_total_packets = device.total_packets + device_updates_map[device.id]["total_packets"]
+              new_dc_usage = device.dc_usage + device_updates_map[device.id]["dc_usage"]
+
+              device_attrs = Map.merge(device_updates_map[device.id], %{
+                "total_packets" => new_total_packets,
+                "dc_usage" => new_dc_usage
+              })
+
+              Devices.update_device!(device, device_attrs, "router")
+            end)
+            {:ok, "success"}
+          end)
+          |> Ecto.Multi.run(:device_stats, fn _repo, _ ->
+            device_stats =
+              device_and_hotspot_stats
+              |> Enum.map(fn tuple -> elem(tuple, 0) end)
+            with { _count , nil} <- Repo.insert_all("device_stats", device_stats) do
+              {:ok, "success"}
+            end
+          end)
+          |> Ecto.Multi.run(:hotspot_stats, fn _repo, _ ->
+            hotspot_stats =
+              device_and_hotspot_stats
+              |> Enum.map(fn tuple -> elem(tuple, 1) end)
+            with { _count , nil} <- Repo.insert_all("hotspot_stats", hotspot_stats) do
+              {:ok, "success"}
+            end
+          end)
+          |> Repo.transaction()
+        end
+      rescue
+        error -> IO.inspect error
+      end
     end)
     |> Task.await(:infinity)
 
-    schedule_events_etl(1)
+    # schedule_events_etl(1)
     {:noreply, state}
   end
 
   defp schedule_events_etl(wait_time) do
     Process.send_after(self(), :run_events_etl, wait_time)
+  end
+
+  defp generate_device_and_hotspot_stats(events_to_run_stats, devices_to_update) do
+    events_to_run_stats
+    |> Enum.map(fn event ->
+      organization_id =
+        case Enum.find(devices_to_update, fn d -> d.id == event["device_id"] end) do
+          nil -> nil
+          device -> Ecto.UUID.dump!(device.organization_id)
+        end
+      device_id = Ecto.UUID.dump!(event["device_id"])
+
+      {
+        %{
+          "id" => Ecto.UUID.bingenerate(),
+          "router_uuid" => event["router_uuid"],
+          "payload_size" => event["data"]["payload_size"],
+          "dc_used" => event["data"]["dc"]["used"],
+          "reported_at_epoch" => event["reported_at_epoch"],
+          "device_id" => device_id,
+          "organization_id" => organization_id,
+          "updated_at" => NaiveDateTime.utc_now(),
+          "inserted_at" => NaiveDateTime.utc_now()
+        },
+        %{
+          "id" => Ecto.UUID.bingenerate(),
+          "router_uuid" => event["router_uuid"],
+          "hotspot_address" => event["data"]["hotspot"]["id"],
+          "rssi" => event["data"]["hotspot"]["rssi"],
+          "snr" => event["data"]["hotspot"]["snr"],
+          "channel" => event["data"]["hotspot"]["channel"],
+          "spreading" => event["data"]["hotspot"]["spreading"],
+          "category" => event["category"],
+          "sub_category" => event["sub_category"],
+          "reported_at_epoch" => event["reported_at_epoch"],
+          "device_id" => device_id,
+          "organization_id" => organization_id,
+          "updated_at" => NaiveDateTime.utc_now(),
+          "inserted_at" => NaiveDateTime.utc_now()
+        },
+        organization_id
+      }
+    end)
+    |> Enum.filter(fn tuple -> elem(tuple, 2) != nil end)
+  end
+
+  defp generate_device_updates_map(parsed_events) do
+    parsed_events
+    |> Enum.reduce(%{}, fn event, acc ->
+      dc_used =
+        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
+          true -> event["data"]["dc"]["used"]
+          false -> 0
+        end
+      packet_count = if dc_used == 0, do: 0, else: 1
+      reported_at_naive = event["reported_at"] |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive()
+
+      update_attrs =
+        case acc[event["device_id"]] do
+          nil ->
+            %{
+              "last_connected" => reported_at_naive,
+              "total_packets" => packet_count,
+              "dc_usage" => dc_used,
+              "in_xor_filter" => true
+            }
+          _ ->
+            %{
+              "last_connected" => reported_at_naive,
+              "total_packets" => packet_count + acc[event["device_id"]]["total_packets"],
+              "dc_usage" => dc_used + acc[event["device_id"]]["dc_usage"],
+              "in_xor_filter" => true
+            }
+        end
+
+      update_attrs =
+        cond do
+          is_integer(event["frame_up"]) and (update_attrs["frame_up"] == nil or event["frame_up"] > update_attrs["frame_up"]) ->
+            update_attrs |> Map.put("frame_up", event["frame_up"])
+          is_integer(event["frame_down"]) and (update_attrs["frame_down"] == nil or event["frame_down"] > update_attrs["frame_down"]) ->
+            update_attrs |> Map.put("frame_down", event["frame_down"])
+          true -> update_attrs
+        end
+
+      Map.merge(acc, %{ event["device_id"] => update_attrs })
+    end)
   end
 end
