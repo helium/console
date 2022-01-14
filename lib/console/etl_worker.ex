@@ -2,6 +2,7 @@ defmodule Console.EtlWorker do
   use GenServer
   alias Console.Repo
   alias Console.Devices
+  alias Console.Channels
   alias Console.Organizations
   alias Console.AlertEvents
 
@@ -93,13 +94,16 @@ defmodule Console.EtlWorker do
             end)
             |> Repo.transaction()
 
-          # with {:ok, _} <- result do
-          #   delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
-          #   ConsoleWeb.MessageQueue.ack(delivery_tags)
-          #   check_updated_orgs_dc_balance(organizations_to_update)
-          #   alert_newly_connected_devices(devices_to_update)
-          #   Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
-          # end
+          with {:ok, _} <- result do
+            delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
+            ConsoleWeb.MessageQueue.ack(delivery_tags)
+
+            check_updated_orgs_dc_balance(organizations_to_update)
+            alert_newly_connected_devices(devices_to_update, parsed_events)
+            run_other_event_alerts(parsed_events)
+
+            Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
+          end
         end
       rescue
         error -> IO.inspect error
@@ -107,7 +111,7 @@ defmodule Console.EtlWorker do
     end)
     |> Task.await(:infinity)
 
-    # schedule_events_etl(1)
+    schedule_events_etl(1)
     {:noreply, state}
   end
 
@@ -245,7 +249,7 @@ defmodule Console.EtlWorker do
     end)
   end
 
-  defp alert_newly_connected_devices(devices_to_update) do
+  defp alert_newly_connected_devices(devices_to_update, parsed_events) do
     newly_connected_devices =
       devices_to_update
       |> Enum.filter(fn d -> d.last_connected == nil end)
@@ -270,6 +274,32 @@ defmodule Console.EtlWorker do
       }
       device_labels = Enum.map(d.labels, fn l -> l.id end)
       AlertEvents.notify_alert_event(d.id, "device", "device_join_otaa_first_time", details, device_labels)
+    end)
+  end
+
+  defp run_other_event_alerts(parsed_events) do
+    parsed_events
+    |> Enum.map(fn e ->
+      Map.new(e, fn {k, v} -> {String.to_atom(k), v} end)
+    end)
+    |> Enum.each(fn event ->
+      case event.category do
+        "uplink" ->
+          ConsoleWeb.Router.DeviceController.check_event_integration_alerts(event)
+        "downlink" ->
+          if event.sub_category == "downlink_dropped" do
+            event_device =
+              Devices.get_device(event.device_id) |> Repo.preload([:labels])
+
+            details = %{ device_id: event_device.id, device_name: event_device.name }
+            device_labels = Enum.map(event_device.labels, fn l -> l.id end)
+            limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+            AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
+          end
+        "misc" ->
+          ConsoleWeb.Router.DeviceController.check_misc_integration_error_alert(event)
+        _ -> nil
+      end
     end)
   end
 end
