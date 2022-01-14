@@ -3,6 +3,7 @@ defmodule Console.EtlWorker do
   alias Console.Repo
   alias Console.Devices
   alias Console.Organizations
+  alias Console.AlertEvents
 
   def start_link(initial_state) do
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
@@ -96,6 +97,7 @@ defmodule Console.EtlWorker do
           #   delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
           #   ConsoleWeb.MessageQueue.ack(delivery_tags)
           #   check_updated_orgs_dc_balance(organizations_to_update)
+          #   alert_newly_connected_devices(devices_to_update)
           #   Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
           # end
         end
@@ -240,6 +242,34 @@ defmodule Console.EtlWorker do
 
     Enum.each(zipped_orgs_before_after, fn tuple ->
       ConsoleWeb.Router.DeviceController.check_org_dc_balance(elem(tuple, 0), elem(tuple, 1).dc_balance)
+    end)
+  end
+
+  defp alert_newly_connected_devices(devices_to_update) do
+    newly_connected_devices =
+      devices_to_update
+      |> Enum.filter(fn d -> d.last_connected == nil end)
+      |> Repo.preload([:labels])
+
+    Enum.each(newly_connected_devices, fn d ->
+      event_to_alert =
+        parsed_events
+        |> Enum.reverse()
+        |> Enum.find(fn e ->
+          e["device_id"] == d.id
+        end)
+
+      { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+      details = %{
+        device_name: d.name,
+        time: time,
+        hotspot: case event_to_alert["data"]["hotspot"] != nil do
+          false -> nil
+          true -> event_to_alert["data"]["hotspot"]
+        end
+      }
+      device_labels = Enum.map(d.labels, fn l -> l.id end)
+      AlertEvents.notify_alert_event(d.id, "device", "device_join_otaa_first_time", details, device_labels)
     end)
   end
 end
