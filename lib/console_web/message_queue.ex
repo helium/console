@@ -28,7 +28,7 @@ defmodule ConsoleWeb.MessageQueue do
   end
 
   def handle_cast({:publish, message}, channel) do
-    Basic.publish(channel, "", "events_queue", message)
+    Basic.publish(channel, "", "events_queue", message, persistent: true)
     {:noreply, channel}
   end
 
