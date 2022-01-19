@@ -10,7 +10,9 @@ defmodule Console.EtlWorker do
   end
 
   def init(_opts) do
-    schedule_events_etl(100)
+    if Application.get_env(:console, :use_amqp_events) do
+      schedule_events_etl(100)
+    end
     {:ok, %{}}
   end
 

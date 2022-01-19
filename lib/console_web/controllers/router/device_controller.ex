@@ -163,7 +163,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
-    if true do
+    if Application.get_env(:console, :use_amqp_events) do
       event_device = Devices.get_device(device_id)
 
       case event_device do
