@@ -15,7 +15,6 @@ defmodule ConsoleWeb.MessageQueue do
     # :ok = Basic.qos(channel, prefetch_count: 10)
     {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
-    Agent.start_link(fn -> [] end, name: :events_state)
     {:ok, channel}
   end
 
@@ -55,7 +54,7 @@ defmodule ConsoleWeb.MessageQueue do
   end
 
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}}, channel) do
-    Agent.update(:events_state, fn events -> [{tag, payload} | events] end)
+    ConsoleWeb.Monitor.add_to_events_state(tag, payload)
     {:noreply, channel}
   end
 

@@ -9,7 +9,7 @@ defmodule Console.Application do
       {Console.Repo, []},
       {ConsoleWeb.Endpoint, []},
       {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
-      {ConsoleWeb.Monitor, %{}},
+      {ConsoleWeb.Monitor, %{ address: "", events_state: [] }},
       {ConsoleWeb.MessageQueue, %{}},
       {Console.EtlWorker, %{}},
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},

@@ -2,7 +2,6 @@ defmodule Console.EtlWorker do
   use GenServer
   alias Console.Repo
   alias Console.Devices
-  alias Console.Channels
   alias Console.Organizations
   alias Console.AlertEvents
 
@@ -18,7 +17,7 @@ defmodule Console.EtlWorker do
   def handle_info(:run_events_etl, state) do
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
-        events = Agent.get(:events_state, fn list -> list end)
+        events = ConsoleWeb.Monitor.get_events_state()
         parsed_events = Enum.map(events, fn e -> elem(e, 1) |> Jason.decode!() end)
 
         if length(parsed_events) > 0 do
@@ -102,11 +101,11 @@ defmodule Console.EtlWorker do
             alert_newly_connected_devices(devices_to_update, parsed_events)
             run_other_event_alerts(parsed_events)
 
-            Agent.update(:events_state, fn events -> Enum.drop(events, -1 * length(delivery_tags)) end)
+            ConsoleWeb.Monitor.remove_from_events_state(length(delivery_tags))
           end
         end
       rescue
-        error -> IO.inspect error
+        error -> IO.inspect error # maybe clear events state here?
       end
     end)
     |> Task.await(:infinity)
