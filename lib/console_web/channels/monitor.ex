@@ -6,7 +6,7 @@ defmodule ConsoleWeb.Monitor do
   end
 
   def get_router_address do
-    Agent.get(__MODULE__, fn state -> Map.get(state, :address, "") end)
+    Agent.get(__MODULE__, fn state -> Map.get(state, :address) end)
   end
 
   def update_router_address(address) do
@@ -14,7 +14,7 @@ defmodule ConsoleWeb.Monitor do
   end
 
   def get_events_state do
-    Agent.get(__MODULE__, fn state -> Map.get(state, :events_state, []) end)
+    Agent.get(__MODULE__, fn state -> Map.get(state, :events_state) end)
   end
 
   def add_to_events_state(tag, payload) do
@@ -23,5 +23,13 @@ defmodule ConsoleWeb.Monitor do
 
   def remove_from_events_state(count) do
     Agent.update(__MODULE__, fn state -> Map.put(state, :events_state, Enum.drop(state.events_state, -1 * count)) end)
+  end
+
+  def get_amqp_conn do
+    Agent.get(__MODULE__, fn state -> Map.get(state, :amqp_conn) end)
+  end
+
+  def update_amqp_conn(tag) do
+    Agent.update(__MODULE__, fn state -> Map.put(state, :amqp_conn, tag) end)
   end
 end

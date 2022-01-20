@@ -8,12 +8,15 @@ defmodule ConsoleWeb.MessageQueue do
 
   def init(_opts) do
     if Application.get_env(:console, :use_amqp_events) do
+      case ConsoleWeb.Monitor.get_amqp_conn() do
+        nil -> nil
+        old_conn -> Connection.close(old_conn)
+      end
+
       {:ok, conn} = Connection.open("amqp://guest:guest@localhost")
+      ConsoleWeb.Monitor.update_amqp_conn(conn)
       {:ok, channel} = Channel.open(conn)
       {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
-
-      # Limit unacknowledged messages to 10
-      # :ok = Basic.qos(channel, prefetch_count: 10)
       {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
       {:ok, channel}
