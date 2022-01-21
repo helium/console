@@ -13,11 +13,7 @@ defmodule ConsoleWeb.MessageQueue do
         old_conn -> Connection.close(old_conn)
       end
 
-      {:ok, conn} = Connection.open("amqp://guest:guest@localhost")
-      ConsoleWeb.Monitor.update_amqp_conn(conn)
-      {:ok, channel} = Channel.open(conn)
-      {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
-      {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
+      channel = establish_conn()
 
       {:ok, channel}
     else
@@ -63,6 +59,20 @@ defmodule ConsoleWeb.MessageQueue do
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}}, channel) do
     ConsoleWeb.Monitor.add_to_events_state(tag, payload)
     {:noreply, channel}
+  end
+
+  defp establish_conn() do
+    case Connection.open("amqp://guest:guest@localhost") do
+      {:ok, conn} ->
+        ConsoleWeb.Monitor.update_amqp_conn(conn)
+        {:ok, channel} = Channel.open(conn)
+        {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
+        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
+        channel
+      {:error, reason} ->
+        :timer.sleep(5000)
+        establish_conn()
+    end
   end
 
   # defp consume(channel, tag, redelivered, payload) do
