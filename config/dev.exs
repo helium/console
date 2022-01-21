@@ -81,7 +81,7 @@ config :console,
   use_magic_auth: true
 
 config :console,
-  use_amqp_events: false
+  use_amqp_events: true
 
 config :console,
   allowed_ip_range: ["127.0.0.1"]

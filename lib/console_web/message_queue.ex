@@ -8,21 +8,14 @@ defmodule ConsoleWeb.MessageQueue do
 
   def init(_opts) do
     if Application.get_env(:console, :use_amqp_events) do
-      case ConsoleWeb.Monitor.get_amqp_conn() do
-        nil -> nil
-        old_conn ->
-          if Process.alive?(old_conn.pid) do
-            # If this genserver process gets restarted without amqp restarting, close out existing connection
-            Connection.close(old_conn)
-          end
-      end
-
-      channel = establish_conn()
-
-      {:ok, channel}
-    else
-      {:ok, nil}
+      connect()
     end
+
+    {:ok, nil}
+  end
+
+  def connect() do
+    GenServer.cast(__MODULE__, {:connect, nil})
   end
 
   def publish(message) do
@@ -33,19 +26,41 @@ defmodule ConsoleWeb.MessageQueue do
     GenServer.cast(__MODULE__, {:ack, tags})
   end
 
-  def handle_cast({:publish, message}, channel) do
-    if Process.alive?(channel.pid) do
-      Basic.publish(channel, "", "events_queue", message, persistent: true)
-      {:noreply, channel}
-    else
-      # Might be a better solution to kill this genserver gracefully and restart
-      channel = establish_conn()
-      {:noreply, channel}
+  def handle_cast({:connect, _}, _) do
+    old_conn = ConsoleWeb.Monitor.get_amqp_conn()
+    if old_conn != nil && Process.alive?(old_conn.pid) do
+      # If this genserver process gets restarted without amqp restarting, close out existing connection to clear conn on amqp side
+      Connection.close(old_conn)
+    end
+
+    case Connection.open("amqp://guest:guest@localhost", heartbeat: 5) do
+      {:ok, conn} ->
+        Process.monitor(conn.pid)
+        ConsoleWeb.Monitor.update_amqp_conn(conn)
+
+        {:ok, channel} = Channel.open(conn)
+        {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
+        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
+
+        {:noreply, channel}
+      {:error, _reason} ->
+        :timer.sleep(5000)
+        connect()
+
+        {:noreply, nil}
     end
   end
 
+  def handle_cast({:publish, message}, channel) do
+    if channel != nil && Process.alive?(channel.pid) do
+      Basic.publish(channel, "", "events_queue", message, persistent: true)
+    end
+
+    {:noreply, channel}
+  end
+
   def handle_cast({:ack, tags}, channel) do
-    if Process.alive?(channel.pid) do
+    if channel != nil && Process.alive?(channel.pid) do
       # Look into multiple acking later
       Enum.each(tags, fn tag ->
         Basic.ack(channel, tag)
@@ -75,18 +90,9 @@ defmodule ConsoleWeb.MessageQueue do
     {:noreply, channel}
   end
 
-  defp establish_conn() do
-    case Connection.open("amqp://guest:guest@localhost", heartbeat: 5) do
-      {:ok, conn} ->
-        ConsoleWeb.Monitor.update_amqp_conn(conn)
-        {:ok, channel} = Channel.open(conn)
-        {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
-        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
-        channel
-      {:error, _reason} ->
-        :timer.sleep(5000)
-        establish_conn()
-    end
+  def handle_info({:DOWN, _, :process, _, _}, _channel) do
+    connect()
+    {:noreply, nil}
   end
 
   # defp consume(channel, tag, redelivered, payload) do
