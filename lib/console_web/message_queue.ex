@@ -26,6 +26,10 @@ defmodule ConsoleWeb.MessageQueue do
     GenServer.cast(__MODULE__, {:ack, tags})
   end
 
+  def reject(tags) do
+    GenServer.cast(__MODULE__, {:reject, tags})
+  end
+
   def handle_cast({:connect, _}, _) do
     old_conn = ConsoleWeb.Monitor.get_amqp_conn()
     if old_conn != nil && Process.alive?(old_conn.pid) do
@@ -39,6 +43,7 @@ defmodule ConsoleWeb.MessageQueue do
         ConsoleWeb.Monitor.update_amqp_conn(conn)
 
         {:ok, channel} = Channel.open(conn)
+        # Basic.qos(channel, prefetch_count: 100) # For back pressure on too large of a queue
         {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
         {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
@@ -61,10 +66,15 @@ defmodule ConsoleWeb.MessageQueue do
 
   def handle_cast({:ack, tags}, channel) do
     if channel != nil && Process.alive?(channel.pid) do
-      # Look into multiple acking later
-      Enum.each(tags, fn tag ->
-        Basic.ack(channel, tag)
-      end)
+      Basic.ack(channel, List.first(tags), multiple: true)
+    end
+
+    {:noreply, channel}
+  end
+
+  def handle_cast({:reject, tags}, channel) do
+    if channel != nil && Process.alive?(channel.pid) do
+      Basic.nack(channel, List.first(tags), [requeue: false, multiple: true])
     end
 
     {:noreply, channel}
@@ -94,23 +104,4 @@ defmodule ConsoleWeb.MessageQueue do
     connect()
     {:noreply, nil}
   end
-
-  # defp consume(channel, tag, redelivered, payload) do
-  #   number = String.to_integer(payload)
-  #   :ok = Basic.ack channel, tag
-  #   # DO NOT ACK ABOVE UNTIL THE EVENTS ARE transformed and stored
-  #   IO.puts "Consumed a #{number}."
-  #
-  # rescue
-  #   # Requeue unless it's a redelivered message.
-  #   # This means we will retry consuming a message once in case of exception
-  #   # before we give up and have it moved to the error queue
-  #   #
-  #   # You might also want to catch :exit signal in production code.
-  #   # Make sure you call ack, nack or reject otherwise consumer will stop
-  #   # receiving messages.
-  #   exception ->
-  #     :ok = Basic.reject channel, tag, requeue: not redelivered
-  #     IO.puts "Error converting #{payload} to integer"
-  # end
 end

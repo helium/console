@@ -17,9 +17,11 @@ defmodule Console.EtlWorker do
   end
 
   def handle_info(:run_events_etl, state) do
+    events = ConsoleWeb.Monitor.get_events_state()
+    delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
+
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
-        events = ConsoleWeb.Monitor.get_events_state()
         parsed_events = Enum.map(events, fn e -> elem(e, 1) |> Jason.decode!() end)
 
         if length(parsed_events) > 0 do
@@ -95,19 +97,24 @@ defmodule Console.EtlWorker do
             end)
             |> Repo.transaction()
 
-          with {:ok, _} <- result do
-            delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
-            ConsoleWeb.MessageQueue.ack(delivery_tags)
+          case result do
+            {:ok, _} ->
+              ConsoleWeb.MessageQueue.ack(delivery_tags)
+              ConsoleWeb.Monitor.remove_from_events_state(length(events))
 
-            check_updated_orgs_dc_balance(organizations_to_update)
-            alert_newly_connected_devices(devices_to_update, parsed_events)
-            run_other_event_alerts(parsed_events)
-
-            ConsoleWeb.Monitor.remove_from_events_state(length(delivery_tags))
+              check_updated_orgs_dc_balance(organizations_to_update)
+              alert_newly_connected_devices(devices_to_update, parsed_events)
+              run_other_event_alerts(parsed_events)
+            _ ->
+              ConsoleWeb.MessageQueue.reject(delivery_tags)
+              ConsoleWeb.Monitor.remove_from_events_state(length(events))
           end
         end
       rescue
-        error -> IO.inspect error # maybe clear events state here?
+        error ->
+          IO.inspect error
+          ConsoleWeb.MessageQueue.reject(delivery_tags)
+          ConsoleWeb.Monitor.remove_from_events_state(length(events))
       end
     end)
     |> Task.await(:infinity)
