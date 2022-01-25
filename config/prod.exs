@@ -59,7 +59,7 @@ config :console,
   intercom_id_secret: System.get_env("INTERCOM_ID_SECRET")
 
 config :console,
-  use_amqp_events: System.get_env("USE_AMQP_EVENTS")
+  use_amqp_events: if System.get_env("USE_AMQP_EVENTS") == "true", do: true, else: false
 
 config :console,
   amqp_url: System.get_env("AMQP_URL")
