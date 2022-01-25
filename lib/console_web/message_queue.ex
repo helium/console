@@ -44,7 +44,15 @@ defmodule ConsoleWeb.MessageQueue do
 
         {:ok, channel} = Channel.open(conn)
         # Basic.qos(channel, prefetch_count: 100) # For back pressure on too large of a queue
-        {:ok, _} = Queue.declare(channel, "events_queue", durable: true)
+        {:ok, _} = Queue.declare(channel, "events_queue_error", durable: true)
+        {:ok, _} = Queue.declare(channel, "events_queue",
+           durable: true,
+           arguments: [
+             {"x-dead-letter-exchange", :longstr, ""},
+             {"x-dead-letter-routing-key", :longstr, "events_queue_error"}
+           ]
+         )
+        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue_error", nil, no_ack: true)
         {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
         {:noreply, channel}
@@ -95,8 +103,11 @@ defmodule ConsoleWeb.MessageQueue do
     {:noreply, channel}
   end
 
-  def handle_info({:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}}, channel) do
-    ConsoleWeb.Monitor.add_to_events_state(tag, payload)
+  def handle_info({:basic_deliver, payload, %{routing_key: routing_key, delivery_tag: tag, redelivered: _redelivered}}, channel) do
+    case routing_key do
+      "events_queue" -> ConsoleWeb.Monitor.add_to_events_state(tag, payload)
+      "events_queue_error" -> ConsoleWeb.Monitor.add_to_events_error_state(payload)
+    end
     {:noreply, channel}
   end
 
