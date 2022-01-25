@@ -12,10 +12,6 @@ defmodule Console.Jobs do
   alias Console.Repo
   alias Console.BlockchainApi
   alias Console.Hotspots
-  alias Console.DeviceStats
-  alias Console.HotspotStats
-  alias Console.EventsStatRuns
-  alias Console.EventsStatRuns.EventsStatRun
 
   def send_alerts do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
@@ -172,119 +168,6 @@ defmodule Console.Jobs do
 
       {:error, _} = error ->
         error
-    end
-  end
-
-  def run_events_stat_job do
-    last_stat_run = %EventsStatRun{} = EventsStatRuns.get_latest()
-    events_after_last_run = Events.get_events_since_last_stat_run(last_stat_run.last_event_id)
-
-    if length(events_after_last_run) > 0 and !ConsoleWeb.Monitor.get_event_stat_running?() do
-      ConsoleWeb.Monitor.set_event_stat_running(true)
-
-      device_updates_map =
-        events_after_last_run
-        |> Enum.reduce(%{}, fn event, acc ->
-          dc_used =
-            case event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
-              true -> event.data["dc"]["used"]
-              false -> 0
-            end
-          packet_count = if dc_used == 0, do: 0, else: 1
-
-          if acc[event.device_id] != nil do
-            update_attrs = %{
-              "last_connected" => event.reported_at_naive,
-              "total_packets" => packet_count + acc[event.device_id]["total_packets"],
-              "dc_usage" => dc_used + acc[event.device_id]["dc_usage"],
-              "in_xor_filter" => true
-            }
-
-            update_attrs = cond do
-              is_integer(event.frame_up) -> update_attrs |> Map.put("frame_up", event.frame_up)
-              is_integer(event.frame_down) -> update_attrs |> Map.put("frame_down", event.frame_down)
-              true -> update_attrs
-            end
-
-            Map.merge(acc, %{ event.device_id => update_attrs })
-          else
-            update_attrs = %{
-              "last_connected" => event.reported_at_naive,
-              "total_packets" => packet_count,
-              "dc_usage" => dc_used,
-              "in_xor_filter" => true
-            }
-
-            update_attrs = cond do
-              is_integer(event.frame_up) -> update_attrs |> Map.put("frame_up", event.frame_up)
-              is_integer(event.frame_down) -> update_attrs |> Map.put("frame_down", event.frame_down)
-              true -> update_attrs
-            end
-
-            Map.merge(acc, %{ event.device_id => update_attrs })
-          end
-        end)
-
-      devices_to_update =
-        device_updates_map
-        |> Map.keys()
-        |> Devices.get_devices_in_list()
-
-      events_to_run_stats =
-        events_after_last_run
-        |> Enum.filter(fn event ->
-          event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request"
-        end)
-
-      try do
-        Repo.transaction(fn ->
-          Enum.each(devices_to_update, fn device ->
-            new_total_packets = device.total_packets + device_updates_map[device.id]["total_packets"]
-            new_dc_usage = device.dc_usage + device_updates_map[device.id]["dc_usage"]
-
-            device_attrs = Map.merge(device_updates_map[device.id], %{
-              "total_packets" => new_total_packets,
-              "dc_usage" => new_dc_usage
-            })
-
-            Devices.update_device!(device, device_attrs, "router")
-          end)
-
-          Enum.each(events_to_run_stats, fn event ->
-            DeviceStats.create_stat!(%{
-              "router_uuid" => event.router_uuid,
-              "payload_size" => event.data["payload_size"],
-              "dc_used" => event.data["dc"]["used"],
-              "reported_at_epoch" => event.reported_at_epoch,
-              "device_id" => event.device_id,
-              "organization_id" => event.organization_id
-            })
-
-            HotspotStats.create_stat!(%{
-              "router_uuid" => event.router_uuid,
-              "hotspot_address" => event.data["hotspot"]["id"],
-              "rssi" => event.data["hotspot"]["rssi"],
-              "snr" => event.data["hotspot"]["snr"],
-              "channel" => event.data["hotspot"]["channel"],
-              "spreading" => event.data["hotspot"]["spreading"],
-              "category" => event.category,
-              "sub_category" => event.sub_category,
-              "reported_at_epoch" => event.reported_at_epoch,
-              "device_id" => event.device_id,
-              "organization_id" => event.organization_id
-            })
-          end)
-
-          latest_event = events_after_last_run |> List.first()
-          EventsStatRuns.create_events_stat_run!(%{ last_event_id: latest_event.id, reported_at_epoch: latest_event.reported_at_epoch })
-        end)
-
-        ConsoleWeb.Monitor.set_event_stat_running(false)
-      rescue
-        _ ->
-          ConsoleWeb.Monitor.set_event_stat_running(false)
-          Appsignal.send_error(%RuntimeError{ message: "Failed to run job after" }, last_stat_run.last_event_id, ["jobs.ex/run_events_stat_job"])
-      end
     end
   end
 

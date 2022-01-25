@@ -5,13 +5,16 @@ defmodule Console.Application do
   # for more information on OTP Applications
   def start(_type, _args) do
     children = [
-      {Phoenix.PubSub, name: Console.PubSub},
-      {Console.Repo, []},
-      {ConsoleWeb.Endpoint, []},
-      {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
-      {ConsoleWeb.Monitor, %{}},
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
       Console.Vault,
+      {Console.Repo, []},
+      {ConsoleWeb.Endpoint, []},
+      {Phoenix.PubSub, name: Console.PubSub},
+      {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
+      {ConsoleWeb.Monitor, %{ address: "", events_state: [], events_error_state: [], amqp_conn: nil }},
+      {ConsoleWeb.MessageQueue, %{}},
+      {Console.EtlWorker, %{}},
+      {Console.EtlErrorWorker, %{}},
       Console.Scheduler
     ]
 

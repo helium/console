@@ -97,7 +97,7 @@ defmodule ConsoleWeb.ChannelController do
       _ -> %{ channel_id: id, channel_name: channel.name }
     end
 
-    with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, current_organization, channel_params) do
+    with {:ok, %Channel{} = channel} <- Channels.update_channel(channel, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_show", "graphql:channel_show:#{channel.id}:channel_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})

@@ -73,6 +73,7 @@ defmodule Console.Mixfile do
       {:prometheus_phoenix, "~> 1.0"},
       {:prometheus_plugs, "~> 1.0"},
       {:prometheus_process_collector, "~> 1.0"},
+      {:amqp, "~> 3.0"},
     ]
   end
 
