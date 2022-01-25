@@ -37,7 +37,7 @@ defmodule ConsoleWeb.MessageQueue do
       Connection.close(old_conn)
     end
 
-    case Connection.open("amqp://guest:guest@localhost", heartbeat: 5) do
+    case Connection.open(Application.get_env(:console, :amqp_url), heartbeat: 5) do
       {:ok, conn} ->
         Process.monitor(conn.pid)
         ConsoleWeb.Monitor.update_amqp_conn(conn)

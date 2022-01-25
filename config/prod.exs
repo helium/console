@@ -62,6 +62,9 @@ config :console,
   use_amqp_events: System.get_env("USE_AMQP_EVENTS")
 
 config :console,
+  amqp_url: System.get_env("AMQP_URL")
+
+config :console,
   allowed_ip_range: [
     "173.245.48.0",
     "103.21.244.0",
