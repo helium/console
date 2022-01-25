@@ -56,7 +56,9 @@ defmodule ConsoleWeb.MessageQueue do
         {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
         {:noreply, channel}
-      {:error, _reason} ->
+      {:error, reason} ->
+        IO.inspect "FAILED TO CONNECT TO AMQP"
+        IO.inspect reason
         :timer.sleep(5000)
         connect()
 
