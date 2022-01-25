@@ -43,7 +43,7 @@ defmodule ConsoleWeb.MessageQueue do
         ConsoleWeb.Monitor.update_amqp_conn(conn)
 
         {:ok, channel} = Channel.open(conn)
-        # Basic.qos(channel, prefetch_count: 100) # For back pressure on too large of a queue
+        # Basic.qos(channel, prefetch_count: 100) # For back pressure on too many events being processed by etl worker
         {:ok, _} = Queue.declare(channel, "events_queue_error", durable: true)
         {:ok, _} = Queue.declare(channel, "events_queue",
            durable: true,
@@ -56,7 +56,9 @@ defmodule ConsoleWeb.MessageQueue do
         {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
 
         {:noreply, channel}
-      {:error, _reason} ->
+      {:error, reason} ->
+        IO.inspect "FAILED TO CONNECT TO AMQP"
+        IO.inspect reason
         :timer.sleep(5000)
         connect()
 
@@ -65,15 +67,15 @@ defmodule ConsoleWeb.MessageQueue do
   end
 
   def handle_cast({:publish, message}, channel) do
-    if channel != nil && Process.alive?(channel.pid) do
-      Basic.publish(channel, "", "events_queue", message, persistent: true)
+    if channel != nil do
+      Basic.publish(channel, "", "events_queue", message, [persistent: true, expiration: 60000])
     end
 
     {:noreply, channel}
   end
 
   def handle_cast({:ack, tags}, channel) do
-    if channel != nil && Process.alive?(channel.pid) do
+    if channel != nil do
       Basic.ack(channel, List.first(tags), multiple: true)
     end
 
@@ -81,7 +83,7 @@ defmodule ConsoleWeb.MessageQueue do
   end
 
   def handle_cast({:reject, tags}, channel) do
-    if channel != nil && Process.alive?(channel.pid) do
+    if channel != nil do
       Basic.nack(channel, List.first(tags), [requeue: false, multiple: true])
     end
 
