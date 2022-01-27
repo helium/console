@@ -32,6 +32,6 @@ export const getInvitations = async (email) => {
 };
 
 export const resendInvitations = async (email) => {
-  const result = await rest.get(`/resend_invitation/${email}`);
+  const result = await rest.post(`api/resend_invitation/${email}`);
   return result;
 };

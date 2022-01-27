@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Router do
     post "/subscribe_new_user", Auth0Controller, :subscribe_new_user
     post "/sessions", SessionController, :create
     post "/sessions/check_user", SessionController, :check_user
+    post "/resend_invitation/:email", InvitationController, :resend_invitation
   end
 
   scope "/api", ConsoleWeb do
@@ -155,7 +156,6 @@ defmodule ConsoleWeb.Router do
 
     get "/invitations/accept/:token", InvitationController, :redirect_to_register, as: "accept_invitation"
     get "/invitations/:email", InvitationController, :get_by_email
-    get "/resend_invitation/:email", InvitationController, :resend_invitation
     get "/api_keys/accept/:token", ApiKeyController, :accept, as: "accept_api_key"
     get "/google14b344de8ed0f4f1.html", PageController, :google_verify
 
