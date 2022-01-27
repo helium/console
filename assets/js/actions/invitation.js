@@ -32,8 +32,6 @@ export const getInvitations = async (email) => {
 };
 
 export const resendInvitations = async (email) => {
-  // TO DO send it and then return response so we can disable the resend invitation email
-  // RESEND LATEST INVITE ONLY
   const result = await rest.get(`/resend_invitation/${email}`);
   return result;
 };
