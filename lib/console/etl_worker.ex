@@ -97,24 +97,20 @@ defmodule Console.EtlWorker do
             end)
             |> Repo.transaction()
 
-          case result do
-            {:ok, _} ->
-              ConsoleWeb.MessageQueue.ack(delivery_tags)
-              ConsoleWeb.Monitor.remove_from_events_state(length(events))
+          with {:ok, _} <- result do
+            ConsoleWeb.MessageQueue.ack(delivery_tags)
+            ConsoleWeb.Monitor.remove_from_events_state(length(events))
 
-              check_updated_orgs_dc_balance(organizations_to_update)
-              alert_newly_connected_devices(devices_to_update, parsed_events)
-              run_other_event_alerts(parsed_events)
-            _ ->
-              ConsoleWeb.MessageQueue.reject(delivery_tags)
-              ConsoleWeb.Monitor.remove_from_events_state(length(events))
+            check_updated_orgs_dc_balance(organizations_to_update)
+            alert_newly_connected_devices(devices_to_update, parsed_events)
+            run_other_event_alerts(parsed_events)
           end
         end
       rescue
         error ->
-          IO.inspect error
           ConsoleWeb.MessageQueue.reject(delivery_tags)
           ConsoleWeb.Monitor.remove_from_events_state(length(events))
+          Appsignal.send_error(error, "Failed to process in ETL Worker", ["etl_worker"])
       end
     end)
     |> Task.await(:infinity)

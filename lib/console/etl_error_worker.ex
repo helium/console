@@ -107,49 +107,47 @@ defmodule Console.EtlErrorWorker do
             end)
             |> Repo.transaction()
 
-          case result do
-            {:ok, %{ organization: updated_org }} ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
-                ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
-              end
+          with {:ok, %{ organization: updated_org }} <- result do
+            ConsoleWeb.Monitor.remove_from_events_error_state()
 
-              if device.last_connected == nil do
-                { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-                details = %{
-                  device_name: device.name,
-                  time: time,
-                  hotspot: case parsed_event.data["hotspot"] != nil do
-                    false -> nil
-                    true -> parsed_event.data["hotspot"]
-                  end
-                }
-                device_labels = Enum.map(device.labels, fn l -> l.id end)
-                AlertEvents.notify_alert_event(device.id, "device", "device_join_otaa_first_time", details, device_labels)
-              end
+            if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+              ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
+            end
 
-              case parsed_event.category do
-                "uplink" ->
-                  ConsoleWeb.Router.DeviceController.check_event_integration_alerts(parsed_event)
-                "downlink" ->
-                  if parsed_event.sub_category == "downlink_dropped" do
-                    details = %{ device_id: device.id, device_name: device.name }
-                    device_labels = Enum.map(device.labels, fn l -> l.id end)
-                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    AlertEvents.notify_alert_event(device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
-                  end
-                "misc" ->
-                  ConsoleWeb.Router.DeviceController.check_misc_integration_error_alert(parsed_event)
-                _ -> nil
-              end
-            _ -> nil
+            if device.last_connected == nil do
+              { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+              details = %{
+                device_name: device.name,
+                time: time,
+                hotspot: case parsed_event.data["hotspot"] != nil do
+                  false -> nil
+                  true -> parsed_event.data["hotspot"]
+                end
+              }
+              device_labels = Enum.map(device.labels, fn l -> l.id end)
+              AlertEvents.notify_alert_event(device.id, "device", "device_join_otaa_first_time", details, device_labels)
+            end
+
+            case parsed_event.category do
+              "uplink" ->
+                ConsoleWeb.Router.DeviceController.check_event_integration_alerts(parsed_event)
+              "downlink" ->
+                if parsed_event.sub_category == "downlink_dropped" do
+                  details = %{ device_id: device.id, device_name: device.name }
+                  device_labels = Enum.map(device.labels, fn l -> l.id end)
+                  limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                  AlertEvents.notify_alert_event(device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
+                end
+              "misc" ->
+                ConsoleWeb.Router.DeviceController.check_misc_integration_error_alert(parsed_event)
+              _ -> nil
+            end
           end
-
-          ConsoleWeb.Monitor.remove_from_events_error_state()
         end
       rescue
         error ->
-          IO.inspect error
           ConsoleWeb.Monitor.remove_from_events_error_state()
+          Appsignal.send_error(error, "Failed to process in ETL Error Worker", ["etl_error_worker"])
       end
     end)
     |> Task.await(:infinity)
