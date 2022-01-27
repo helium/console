@@ -26,6 +26,7 @@ defmodule Console.EtlErrorWorker do
         event = List.last(events)
         if event != nil do
           parsed_event = event |> Jason.decode!() |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+
           device = Devices.get_device!(parsed_event.device_id) |> Repo.preload([:labels])
           organization = Organizations.get_organization!(device.organization_id)
           reported_at_naive = parsed_event.reported_at |> DateTime.from_unix!(:millisecond) |> DateTime.to_naive()
@@ -110,38 +111,40 @@ defmodule Console.EtlErrorWorker do
           with {:ok, %{ organization: updated_org }} <- result do
             ConsoleWeb.Monitor.remove_from_events_error_state()
 
-            if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
-              ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
-            end
+            Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+                ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
+              end
 
-            if device.last_connected == nil do
-              { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-              details = %{
-                device_name: device.name,
-                time: time,
-                hotspot: case parsed_event.data["hotspot"] != nil do
-                  false -> nil
-                  true -> parsed_event.data["hotspot"]
-                end
-              }
-              device_labels = Enum.map(device.labels, fn l -> l.id end)
-              AlertEvents.notify_alert_event(device.id, "device", "device_join_otaa_first_time", details, device_labels)
-            end
+              if device.last_connected == nil do
+                { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+                details = %{
+                  device_name: device.name,
+                  time: time,
+                  hotspot: case parsed_event.data["hotspot"] != nil do
+                    false -> nil
+                    true -> parsed_event.data["hotspot"]
+                  end
+                }
+                device_labels = Enum.map(device.labels, fn l -> l.id end)
+                AlertEvents.notify_alert_event(device.id, "device", "device_join_otaa_first_time", details, device_labels)
+              end
 
-            case parsed_event.category do
-              "uplink" ->
-                ConsoleWeb.Router.DeviceController.check_event_integration_alerts(parsed_event)
-              "downlink" ->
-                if parsed_event.sub_category == "downlink_dropped" do
-                  details = %{ device_id: device.id, device_name: device.name }
-                  device_labels = Enum.map(device.labels, fn l -> l.id end)
-                  limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                  AlertEvents.notify_alert_event(device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
-                end
-              "misc" ->
-                ConsoleWeb.Router.DeviceController.check_misc_integration_error_alert(parsed_event)
-              _ -> nil
-            end
+              case parsed_event.category do
+                "uplink" ->
+                  ConsoleWeb.Router.DeviceController.check_event_integration_alerts(parsed_event)
+                "downlink" ->
+                  if parsed_event.sub_category == "downlink_dropped" do
+                    details = %{ device_id: device.id, device_name: device.name }
+                    device_labels = Enum.map(device.labels, fn l -> l.id end)
+                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+                    AlertEvents.notify_alert_event(device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
+                  end
+                "misc" ->
+                  ConsoleWeb.Router.DeviceController.check_misc_integration_error_alert(parsed_event)
+                _ -> nil
+              end
+            end) # run in separate task so that failures here do not get caught and sent to rescue block
           end
         end
       rescue

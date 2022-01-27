@@ -101,9 +101,11 @@ defmodule Console.EtlWorker do
             ConsoleWeb.MessageQueue.ack(delivery_tags)
             ConsoleWeb.Monitor.remove_from_events_state(length(events))
 
-            check_updated_orgs_dc_balance(organizations_to_update)
-            alert_newly_connected_devices(devices_to_update, parsed_events)
-            run_other_event_alerts(parsed_events)
+            Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+              check_updated_orgs_dc_balance(organizations_to_update)
+              alert_newly_connected_devices(devices_to_update, parsed_events)
+              run_other_event_alerts(parsed_events)
+            end) # run in separate task so that failures here do not get caught and sent to rescue block, which will double ack messages
           end
         end
       rescue

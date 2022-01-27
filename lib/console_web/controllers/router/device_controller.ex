@@ -570,7 +570,6 @@ defmodule ConsoleWeb.Router.DeviceController do
     removed_devices = Devices.get_devices_in_list(removed_device_ids)
     if length(removed_devices) > 0 do
       ids_to_report = removed_devices |> Enum.map(fn d -> d.id end)
-      Appsignal.send_error(%RuntimeError{ message: Enum.join(ids_to_report, ", ") }, "Removed devices in XOR filter that exist", ["router/device_controller.ex/update_devices_in_xor_filter"])
     end
 
     if length(added_device_ids) > 0 do
@@ -597,7 +596,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
       if event_integration != nil do
         reported_at_naive =
-          case event.reported_at_naive do
+          case Map.get(event, :reported_at_naive, nil) do
             nil ->
               event.reported_at
               |> DateTime.from_unix!(:millisecond)
@@ -606,7 +605,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           end
 
         if event_integration.time_first_uplink == nil do
-          Channels.update_channel(event_integration, %{ time_first_uplink: event.reported_at_naive })
+          Channels.update_channel(event_integration, %{ time_first_uplink: reported_at_naive })
           { _, time } = Timex.format(reported_at_naive, "%H:%M:%S UTC", :strftime)
           details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
           AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
@@ -638,7 +637,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         nil -> nil
         _ ->
           reported_at_naive =
-            case event.reported_at_naive do
+            case Map.get(event, :reported_at_naive, nil) do
               nil ->
                 event.reported_at
                 |> DateTime.from_unix!(:millisecond)

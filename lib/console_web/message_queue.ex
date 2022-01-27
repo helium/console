@@ -39,10 +39,12 @@ defmodule ConsoleWeb.MessageQueue do
 
     case Connection.open(Application.get_env(:console, :amqp_url), heartbeat: 5) do
       {:ok, conn} ->
-        Process.monitor(conn.pid)
+        IO.inspect "SUCCESSFUL CONNECT TO AMQP"
         ConsoleWeb.Monitor.update_amqp_conn(conn)
 
         {:ok, channel} = Channel.open(conn)
+        Process.monitor(channel.pid)
+
         # Basic.qos(channel, prefetch_count: 100) # For back pressure on too many events being processed by etl worker
         {:ok, _} = Queue.declare(channel, "events_queue_error", durable: true)
         {:ok, _} = Queue.declare(channel, "events_queue",
@@ -113,7 +115,11 @@ defmodule ConsoleWeb.MessageQueue do
     {:noreply, channel}
   end
 
-  def handle_info({:DOWN, _, :process, _, _}, _channel) do
+  def handle_info({:DOWN, _, :process, _, reason}, _channel) do
+    IO.inspect reason
+    { _,{ _, _, message}} = reason
+    Appsignal.send_error(%RuntimeError{ message: message }, "AMQP channel closed", ["message_queue.ex"])
+    
     connect()
     {:noreply, nil}
   end
