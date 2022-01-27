@@ -2,13 +2,12 @@ defmodule ConsoleWeb.InvitationController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
-  alias Console.Organizations
   alias Console.Organizations.Invitation
   alias Console.Email
   alias Console.Mailer
   alias Console.Repo
 
-  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :redirect_to_register, :get_by_token]
+  plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :redirect_to_register, :get_by_token, :get_by_email, :resend_invitation]
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -107,5 +106,25 @@ defmodule ConsoleWeb.InvitationController do
     else
       {:error, :forbidden, "Cannot remove an invitation that has already been used"}
     end
+  end
+
+  def get_by_email(conn, %{"email" => email}) do
+     invitations = Organizations.get_invitations(email)
+
+    conn
+    |> put_status(:ok)
+    |> render("index.json", invitations: invitations)
+  end
+
+  def resend_invitation(conn, %{"email" => email}) do 
+    invitation = Organizations.get_latest_invitation(email)
+    organization = Organizations.get_organization!(invitation.organization_id)
+    inviter_email = Organizations.get_inviter_email(invitation.inviter_id)
+    Email.resend_invitation_email(invitation, inviter_email, organization) |> Mailer.deliver_later()
+
+    conn
+      |> put_status(:ok)
+      |> put_resp_header("message", "Invitation resent")
+      |> render("show.json", invitation: invitation)
   end
 end
