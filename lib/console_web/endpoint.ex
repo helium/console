@@ -43,9 +43,6 @@ defmodule ConsoleWeb.Endpoint do
     key: "_console_key",
     signing_salt: "ECVJikn/"
   
-  # plug App.PrometheusExporter     # makes the /metrics URL happen
-  # plug App.PipelineInstrumenter   # measures pipeline exec times
-
   plug ConsoleWeb.Router
 
   plug ConsoleWeb.Plug.AppsignalAbsinthePlug
