@@ -41,7 +41,14 @@ export const loginGoogleUser = async () => {
 
 export const getRedirectResult = async () => {
   await magic.oauth.getRedirectResult();
-  window.location.replace("/")
+
+  const redirectPath = localStorage.getItem('post-google-auth-redirect')
+  if (redirectPath) {
+    localStorage.removeItem('post-google-auth-redirect')
+    window.location.replace(redirectPath)
+  } else {
+    window.location.replace("/")
+  }
 }
 
 export const logoutUser = async () => {

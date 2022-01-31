@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from "react-router-dom";
 import { Button, Card, Typography, Input, Form } from 'antd';
 import GoogleOutlined from "@ant-design/icons/GoogleOutlined";
 import { loginUser, loginGoogleUser } from '../../actions/magic';
@@ -7,6 +8,7 @@ import Logo from '../../../img/symbol.svg'
 const { Text, Title } = Typography
 
 const MagicAuthenticate = () => {
+  const history = useHistory()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState(null);
@@ -29,6 +31,11 @@ const MagicAuthenticate = () => {
 
   const handleGoogleSubmit = async (event) => {
     event.preventDefault();
+    const { pathname, search } = history.location
+
+    if (pathname === '/join_organization' && search.substring(0, 12) === '?invitation=') {
+      localStorage.setItem('post-google-auth-redirect', pathname + search);
+    }
     loginGoogleUser()
   };
 
