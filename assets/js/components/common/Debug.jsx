@@ -161,7 +161,6 @@ class Debug extends Component {
           width: "100%",
           overflow: "scroll",
         }}
-        className="no-scroll-bar"
         ref={this.listRef}
       >
         <div

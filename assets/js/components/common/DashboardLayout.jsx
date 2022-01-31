@@ -71,7 +71,7 @@ class DashboardLayout extends Component {
             </Sider>
           )}
           <Layout>
-            <Content>
+            <Content style={{ height: "calc(100vh - 55px)", overflowY: 'scroll' }}>
               {fullHeightWidth ? (
                 <div
                   style={{
