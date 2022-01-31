@@ -260,7 +260,7 @@
                                       Hi there,
                                       <br />
                                       <br />
-                                      <b><%= @inviter_email %></b> at <b><%= @organization_name %></b> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> to the Helium Console.
+                                      <b><%= @inviter_email %></b> at <b><%= @organization_name %></b> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> user to the Helium Console.
                                       <br />
                                       <br />
                                       Click the button below to complete registration of your account.

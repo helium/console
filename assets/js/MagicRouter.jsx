@@ -97,7 +97,9 @@ const MagicRouter = (props) => {
           )}
         />
         <Route>
-          {loadedOrganization && !currentOrganizationId && <NoOrganization />}
+          {loadedOrganization && !currentOrganizationId && (
+            <NoOrganization user={user} />
+          )}
           {currentOrganizationId && apolloClient && (
             <ApolloProvider client={apolloClient}>
               <Switch>

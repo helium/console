@@ -86,6 +86,19 @@ defmodule Console.Email do
     |> render(:invitation_email)
   end
 
+  def resend_invitation_email(%Invitation{email: email, token: token, role: role}, inviter_email, %Organization{name: organization_name}) do
+    role_hash = %{ "admin" => "Administrator", "read" => "Read-Only", "manager" => "Manager" }
+
+    base_email()
+    |> to(email)
+    |> subject("You've been invited to join Helium")
+    |> assign(:token, token)
+    |> assign(:inviter_email, inviter_email)
+    |> assign(:role, Map.fetch!(role_hash, role))
+    |> assign(:organization_name, organization_name)
+    |> render(:invitation_email)
+  end
+
   def api_key_email(%User{email: email}, %ApiKey{token: token, name: name}) do
     base_email()
     |> to(email)

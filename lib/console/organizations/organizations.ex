@@ -363,4 +363,27 @@ defmodule Console.Organizations do
     from(m in Membership, where: m.user_id in ^user_ids)
     |> Repo.update_all(set: [user_id: user_id])
   end
+
+  def get_invitations(email) do
+    from(i in Invitation, where: i.email == ^email)
+    |> Repo.all()
+  end
+
+  def get_inviter_email(user_id) do
+    memberships = from(m in Membership, where: m.user_id == ^user_id, limit: 1)
+    |> Repo.all()
+
+    List.first(memberships).email
+  end
+
+  def get_latest_invitation(email) do
+    invitations = from(
+      i in Invitation,
+      where: i.email == ^email,
+      order_by: [desc: :inserted_at],
+      limit: 1)
+      |> Repo.all()
+    
+    List.first(invitations)
+  end
 end

@@ -1,6 +1,6 @@
 Hi there,
 
-<%= @inviter_email %> at <%= @organization_name %> organization has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> to the Helium Console.
+<%= @inviter_email %> at <%= @organization_name %> organization has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> user to the Helium Console.
 
 Visit the link below to complete registration of your account.
 
