@@ -163,6 +163,95 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def add_device_event(conn, %{"device_id" => device_id} = event) do
+    if Application.get_env(:console, :use_amqp_events) do
+      event_device = Devices.get_device(device_id)
+
+      case event_device do
+        nil ->
+          conn
+          |> send_resp(404, "")
+        %Device{} = device ->
+          event = event
+            |> Map.put("reported_at_epoch", event["reported_at"])
+            |> Map.put("router_uuid", event["id"])
+            |> Map.delete("id")
+
+          event = case event["category"] do
+            category when category in ["uplink", "join_request", "join_accept", "uplink_dropped"] ->
+              cond do
+                is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_up", event["data"]["fcnt"])
+                event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_up", event["data"]["fcnt"])
+                true -> event |> Map.put("frame_up", nil)
+              end
+            category when category in ["downlink", "downlink_dropped"] ->
+              cond do
+                is_integer(event["data"]["fcnt"]) -> event |> Map.put("frame_down", event["data"]["fcnt"])
+                event["data"]["fcnt"] != nil and Integer.parse(event["data"]["fcnt"]) != :error -> event |> Map.put("frame_down", event["data"]["fcnt"])
+                true -> event |> Map.put("frame_down", nil)
+              end
+            _ -> event
+          end
+
+          event = case event["data"]["res"]["body"] do
+            nil -> event
+            _ ->
+              cond do
+                String.length(event["data"]["res"]["body"]) > 2500 ->
+                  Kernel.put_in(event["data"]["res"]["body"], "Response body is too long and cannot be displayed properly.")
+                String.contains?(event["data"]["res"]["body"], <<0>>) or String.contains?(event["data"]["res"]["body"], <<1>>) or String.contains?(event["data"]["res"]["body"], "\\u0000") ->
+                  Kernel.put_in(event["data"]["res"]["body"], "Response body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                true ->
+                  event
+              end
+          end
+
+          event = case event["data"]["req"]["body"] do
+            nil -> event
+            _ ->
+              cond do
+                String.length(event["data"]["req"]["body"]) > 2500 ->
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body is too long and cannot be displayed properly.")
+                String.contains?(event["data"]["req"]["body"], <<0>>) or String.contains?(event["data"]["req"]["body"], <<1>>) or String.contains?(event["data"]["req"]["body"], "\\u0000") ->
+                  Kernel.put_in(event["data"]["req"]["body"], "Request body contains unprintable characters when encoding to Unicode and cannot be displayed properly.")
+                true ->
+                  event
+              end
+          end
+
+          event = case event["data"]["req"]["body"] do
+            nil -> event
+            _ ->
+              case Poison.decode(event["data"]["req"]["body"]) do
+                {:ok, decoded_body} -> Kernel.put_in(event["data"]["req"]["body"], decoded_body)
+                _ -> event
+              end
+          end
+
+          event = case event["data"]["payload"] do
+            nil -> event
+            _ ->
+              if String.contains?(event["data"]["payload"], <<0>>) or String.contains?(event["data"]["payload"], <<1>>) do
+                b64_payload = event["data"]["payload"] |> :base64.encode
+                Kernel.put_in(event["data"]["payload"], "Payload contains unprintable Unicode characters, (#{b64_payload} in Base64)")
+              else
+                event
+              end
+          end
+
+          with {:ok, created_event} <- Events.create_event(Map.put(event, "organization_id", device.organization_id)) do
+            ConsoleWeb.MessageQueue.publish(Jason.encode!(event))
+            publish_created_event(created_event, device)
+
+            conn
+            |> send_resp(200, "")
+          end
+      end
+    else
+      add_device_event_direct(conn, event, device_id)
+    end
+  end
+
+  defp add_device_event_direct(conn, event, device_id) do
     event = event
       |> Map.put("reported_at_epoch", event["reported_at"])
       |> Map.put("router_uuid", event["id"])
@@ -344,34 +433,7 @@ defmodule ConsoleWeb.Router.DeviceController do
 
           case event.category do
             "uplink" ->
-              if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
-                event_integration = Channels.get_channel(event.data["integration"]["id"])
-
-                if event_integration != nil do
-                  if event_integration.time_first_uplink == nil do
-                    Channels.update_channel(event_integration, organization, %{ time_first_uplink: event.reported_at_naive })
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
-                  end
-
-                  if event.data["integration"]["status"] != "success" do
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{
-                      channel_name: event_integration.name,
-                      channel_id: event_integration.id,
-                      time: time
-                    }
-                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
-                  else
-                    if event_integration.last_errored do
-                      Channels.update_channel(event_integration, organization, %{ last_errored: false })
-                    end
-                  end
-                end
-              end
+              check_event_integration_alerts(event)
             "downlink" ->
               if event.sub_category == "downlink_dropped" do
                 details = %{ device_id: event_device.id, device_name: event_device.name }
@@ -380,22 +442,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                 AlertEvents.notify_alert_event(event_device.id, "device", "downlink_unsuccessful", details, device_labels, limit)
               end
             "misc" ->
-              if event.sub_category == "misc_integration_error" do
-                event_integration = Channels.get_channel(event.data["integration"]["id"])
-                case event_integration do
-                  nil -> nil
-                  _ ->
-                    { _, time } = Timex.format(event.reported_at_naive, "%H:%M:%S UTC", :strftime)
-                    details = %{
-                      channel_name: event_integration.name,
-                      channel_id: event_integration.id,
-                      time: time
-                    }
-                    limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
-                    AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
-                    Channels.update_channel(event_integration, organization, %{ last_errored: true })
-                end
-              end
+              check_misc_integration_error_alert(event)
             _ -> nil
           end
 
@@ -435,7 +482,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  defp check_org_dc_balance(organization, prev_dc_balance) do
+  def check_org_dc_balance(organization, prev_dc_balance) do
     if organization.automatic_charge_amount == nil do
       cond do
         prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->
@@ -523,7 +570,6 @@ defmodule ConsoleWeb.Router.DeviceController do
     removed_devices = Devices.get_devices_in_list(removed_device_ids)
     if length(removed_devices) > 0 do
       ids_to_report = removed_devices |> Enum.map(fn d -> d.id end)
-      Appsignal.send_error(%RuntimeError{ message: Enum.join(ids_to_report, ", ") }, "Removed devices in XOR filter that exist", ["router/device_controller.ex/update_devices_in_xor_filter"])
     end
 
     if length(added_device_ids) > 0 do
@@ -541,6 +587,74 @@ defmodule ConsoleWeb.Router.DeviceController do
       end
     else
       conn |> send_resp(200, "")
+    end
+  end
+
+  def check_event_integration_alerts(event) do
+    if event.data["integration"] != nil and event.data["integration"]["id"] != "no_channel" do
+      event_integration = Channels.get_channel(event.data["integration"]["id"])
+
+      if event_integration != nil do
+        reported_at_naive =
+          case Map.get(event, :reported_at_naive, nil) do
+            nil ->
+              event.reported_at
+              |> DateTime.from_unix!(:millisecond)
+              |> DateTime.to_naive()
+            time -> time
+          end
+
+        if event_integration.time_first_uplink == nil do
+          Channels.update_channel(event_integration, %{ time_first_uplink: reported_at_naive })
+          { _, time } = Timex.format(reported_at_naive, "%H:%M:%S UTC", :strftime)
+          details = %{ time: time, channel_name: event_integration.name, channel_id: event_integration.id }
+          AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_receives_first_event", details)
+        end
+
+        if event.data["integration"]["status"] != "success" do
+          { _, time } = Timex.format(reported_at_naive, "%H:%M:%S UTC", :strftime)
+          details = %{
+            channel_name: event_integration.name,
+            channel_id: event_integration.id,
+            time: time
+          }
+          limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+          AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+          Channels.update_channel(event_integration, %{ last_errored: true })
+        else
+          if event_integration.last_errored do
+            Channels.update_channel(event_integration, %{ last_errored: false })
+          end
+        end
+      end
+    end
+  end
+
+  def check_misc_integration_error_alert(event) do
+    if event.sub_category == "misc_integration_error" do
+      event_integration = Channels.get_channel(event.data["integration"]["id"])
+      case event_integration do
+        nil -> nil
+        _ ->
+          reported_at_naive =
+            case Map.get(event, :reported_at_naive, nil) do
+              nil ->
+                event.reported_at
+                |> DateTime.from_unix!(:millisecond)
+                |> DateTime.to_naive()
+              time -> time
+            end
+
+          { _, time } = Timex.format(reported_at_naive, "%H:%M:%S UTC", :strftime)
+          details = %{
+            channel_name: event_integration.name,
+            channel_id: event_integration.id,
+            time: time
+          }
+          limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
+          AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
+          Channels.update_channel(event_integration, %{ last_errored: true })
+      end
     end
   end
 end

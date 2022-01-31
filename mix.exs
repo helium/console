@@ -66,7 +66,8 @@ defmodule Console.Mixfile do
       {:inet_cidr, "~> 1.0.4"},
       {:quantum, "~> 3.4.0"},
       {:timex, "~> 3.7.6"},
-      {:magic_admin, "~> 0.5.0"}
+      {:magic_admin, "~> 0.5.0"},
+      {:amqp, "~> 3.0"},
     ]
   end
 

@@ -37,7 +37,7 @@ defmodule Console.Channels do
     end
   end
 
-  def update_channel(%Channel{} = channel, %Organization{} = _organization, attrs) do
+  def update_channel(%Channel{} = channel, attrs) do
     channel
     |> Channel.update_changeset(attrs)
     |> Repo.update()
