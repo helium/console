@@ -1,36 +1,41 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { inviteUser } from '../../actions/invitation'
-import RoleControl from './RoleControl'
-import analyticsLogger from '../../util/analyticsLogger'
-import { Modal, Button, Typography, Input, Card } from 'antd';
-const { Text } = Typography
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { inviteUser } from "../../actions/invitation";
+import RoleControl from "./RoleControl";
+import analyticsLogger from "../../util/analyticsLogger";
+import { Modal, Button, Typography, Input, Card } from "antd";
+const { Text } = Typography;
 
 @connect(mapStateToProps, mapDispatchToProps)
 class NewUserModal extends Component {
   state = {
     email: "",
-    role: "read"
-  }
+    role: "read",
+  };
 
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value})
-  }
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
     const { email, role } = this.state;
-    const { organization } = this.props
+    const { organization } = this.props;
 
-    analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP", { "organization": organization.id, "email": email, "role": role })
+    analyticsLogger.logEvent("ACTION_CREATE_NEW_MEMBERSHIP", {
+      organization: organization.id,
+      email: email,
+      role: role,
+    });
     this.props.inviteUser(email, role, organization.id);
 
-    this.props.onClose()
-  }
+    this.setState({ email: "" });
+    this.props.onClose();
+  };
 
   render() {
-    const { open, onClose, organization } = this.props
+    const { open, onClose, organization } = this.props;
 
     return (
       <Modal
@@ -48,27 +53,27 @@ class NewUserModal extends Component {
           </Button>,
         ]}
       >
-      <Card size="small" title="Enter Email" >
-        <Text>
-          Enter the email address of the user you'd like to invite, and choose the role they should have.
-        </Text>
-        <Input
-          placeholder="Email"
-          name="email"
-          value={this.state.email}
-          onChange={this.handleInputUpdate}
-          style={{ marginTop: 20 }}
-        />
+        <Card size="small" title="Enter Email">
+          <Text>
+            Enter the email address of the user you'd like to invite, and choose
+            the role they should have.
+          </Text>
+          <Input
+            placeholder="Email"
+            name="email"
+            value={this.state.email}
+            onChange={this.handleInputUpdate}
+            style={{ marginTop: 20 }}
+          />
         </Card>
-              <Card size="small" title="Choose Role">
-
-        <RoleControl
-          value={this.state.role}
-          onChange={this.handleInputUpdate}
-        />
+        <Card size="small" title="Choose Role">
+          <RoleControl
+            value={this.state.role}
+            onChange={this.handleInputUpdate}
+          />
         </Card>
       </Modal>
-    )
+    );
   }
 }
 
@@ -77,12 +82,12 @@ function mapStateToProps(state) {
     organization: {
       id: state.organization.currentOrganizationId,
       name: state.organization.currentOrganizationName,
-    }
-  }
+    },
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ inviteUser }, dispatch)
+  return bindActionCreators({ inviteUser }, dispatch);
 }
 
-export default NewUserModal
+export default NewUserModal;
