@@ -470,7 +470,7 @@ export default connect(
   mapDispatchToProps
 )(
   withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: { id: props.match.params.id },
     name: "channelShowQuery",
   }))
