@@ -18,14 +18,15 @@ class OrganizationMenu extends Component {
           </Menu.Item>
         </Menu.ItemGroup>
         {orgs.length > 0 && <Menu.Divider /> && (
-          <Menu.ItemGroup title="Switch Organization">
-            <div style={{ maxHeight: 175, overflowY: "scroll" }}>
-              {orgs.map((org) => (
-                <Menu.Item draggable="false" key={org.id}>
-                  {org.name}
-                </Menu.Item>
-              ))}
-            </div>
+          <Menu.ItemGroup
+            title="Switch Organization"
+            style={{ maxHeight: 175, overflowY: "scroll" }}
+          >
+            {orgs.map((org) => (
+              <Menu.Item draggable="false" key={org.id}>
+                {org.name}
+              </Menu.Item>
+            ))}
           </Menu.ItemGroup>
         )}
         {role === "admin" && <Menu.Divider />}
