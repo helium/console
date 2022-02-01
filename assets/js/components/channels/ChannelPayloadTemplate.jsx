@@ -32,21 +32,24 @@ const templatesMap = {
 
 class ChannelPayloadTemplate extends Component {
   state = {
-    typeSelected: null,
+    typeSelected: 'default',
     output: null,
     show: false,
   }
 
   componentDidMount = () => {
-    const { from, channel } = this.props
-    const fromChannelNew = from === 'channelNew'
+    const { channel } = this.props
 
-    this.setState({ typeSelected: 'default' })
+    this.setState({ show: channel && !!channel.payload_template })
   }
 
   componentDidUpdate = (prevProps, prevState) => {
     if (!prevState.show && this.state.show) {
       this.setState({ typeSelected: 'default', output: null })
+    }
+
+    if (prevProps.channel !== this.props.channel || ((prevProps.channel && prevProps.channel.id) !== (this.props.channel && this.props.channel.id))) {
+      this.setState({ typeSelected: 'default', show: this.props.channel && !!this.props.channel.payload_template, output: null })
     }
   }
 

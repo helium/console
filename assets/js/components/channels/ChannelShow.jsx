@@ -98,8 +98,8 @@ class ChannelShow extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      !prevProps.channelShowQuery.channel &&
-      this.props.channelShowQuery.channel
+      (!prevProps.channelShowQuery.channel && this.props.channelShowQuery.channel) ||
+      (this.props.channelShowQuery.channel && prevProps.channelShowQuery.channel !== this.props.channelShowQuery.channel)
     ) {
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
@@ -470,7 +470,7 @@ export default connect(
   mapDispatchToProps
 )(
   withGql(ChannelShow, CHANNEL_SHOW, (props) => ({
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
     variables: { id: props.match.params.id },
     name: "channelShowQuery",
   }))
