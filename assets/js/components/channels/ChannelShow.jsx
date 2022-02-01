@@ -98,8 +98,8 @@ class ChannelShow extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      !prevProps.channelShowQuery.channel &&
-      this.props.channelShowQuery.channel
+      (!prevProps.channelShowQuery.channel && this.props.channelShowQuery.channel) ||
+      (this.props.channelShowQuery.channel && prevProps.channelShowQuery.channel !== this.props.channelShowQuery.channel)
     ) {
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
