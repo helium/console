@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Menu } from 'antd';
-import PlusOutlined from '@ant-design/icons/PlusOutlined';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { Menu } from "antd";
+import PlusOutlined from "@ant-design/icons/PlusOutlined";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 @connect(mapStateToProps, null)
 class OrganizationMenu extends Component {
@@ -11,16 +11,29 @@ class OrganizationMenu extends Component {
     return (
       <Menu {...rest} onClick={handleClick} className="noselect">
         <Menu.ItemGroup title="Current Organization">
-          <Menu.Item key='current'><Link draggable="false" to="/organizations">{current}</Link></Menu.Item>
+          <Menu.Item key="current">
+            <Link draggable="false" to="/organizations">
+              {current}
+            </Link>
+          </Menu.Item>
         </Menu.ItemGroup>
-        {orgs.length > 0 && <Menu.Divider /> &&
-        <Menu.ItemGroup title="Switch Organization">
-          {orgs.map(org => (
-            <Menu.Item draggable="false" key={org.id}>{org.name}</Menu.Item>
-          ))}
-        </Menu.ItemGroup>}
-        {role === 'admin' && <Menu.Divider />}
-        {role === 'admin' && <Menu.Item key='new'><PlusOutlined /> New Organization</Menu.Item>}
+        {orgs.length > 0 && <Menu.Divider /> && (
+          <Menu.ItemGroup title="Switch Organization">
+            <div style={{ maxHeight: 175, overflowY: "scroll" }}>
+              {orgs.map((org) => (
+                <Menu.Item draggable="false" key={org.id}>
+                  {org.name}
+                </Menu.Item>
+              ))}
+            </div>
+          </Menu.ItemGroup>
+        )}
+        {role === "admin" && <Menu.Divider />}
+        {role === "admin" && (
+          <Menu.Item key="new">
+            <PlusOutlined /> New Organization
+          </Menu.Item>
+        )}
       </Menu>
     );
   }
@@ -28,8 +41,8 @@ class OrganizationMenu extends Component {
 
 function mapStateToProps(state) {
   return {
-    role: state.organization.currentRole
-  }
+    role: state.organization.currentRole,
+  };
 }
 
-export default OrganizationMenu
+export default OrganizationMenu;
