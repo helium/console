@@ -306,6 +306,9 @@ defmodule ConsoleWeb.DataCreditController do
 
   def get_router_address(conn, _) do
     address = ConsoleWeb.Monitor.get_router_address()
+    if address == "" do
+      ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:refetch:router_address", %{})
+    end
     conn |> send_resp(:ok, Poison.encode!(%{ address: address }))
   end
 
