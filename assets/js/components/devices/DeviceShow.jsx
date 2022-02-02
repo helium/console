@@ -568,7 +568,7 @@ export default (props) => {
                                     value={appKey}
                                     onChange={(e) => setAppKey(e.target.value)}
                                     maxLength={32}
-                                    style={{ width: 300, marginRight: 5 }}
+                                    style={{ width: 370, marginRight: 5 }}
                                   />
                                   <Button
                                     type="primary"
