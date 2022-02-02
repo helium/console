@@ -225,6 +225,14 @@ class PurchaseCreditModal extends Component {
 
   showQRCode = () => {
     analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE");
+    if (this.state.routerAddress === '') {
+      this.props.getRouterAddress().then(({ data }) => {
+        if (typeof data.address === "string") {
+          this.setState({ routerAddress: data.address });
+        }
+      });
+    }
+
     this.props.generateMemo().then(({ data }) => {
       const qr = {
         type: "dc_burn",
