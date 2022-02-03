@@ -328,11 +328,12 @@ class DeviceContent extends Component {
                       value={this.state.newAppKey}
                       onChange={this.handleInputUpdate}
                       maxLength={32}
-                      style={{ width: 300, marginRight: 5 }}
+                      style={{ width: 350, marginRight: 5, padding: "0px 4px" }}
                     />
                     <Button
                       type="primary"
                       name="newAppKey"
+                      style={{ padding: "0px 5px", marginRight: 0 }}
                       onClick={() => this.handleAppKeyUpdate(device.id)}
                     >
                       Update
