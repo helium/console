@@ -82,13 +82,7 @@ defmodule ConsoleWeb.LabelController do
     if length(devices) == 0 and length(labels) == 0 do
       {:error, :bad_request, "Please select a device or label"}
     else
-      with {:ok, count, _devices_labels} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
-        msg =
-          case count do
-            0 -> "All selected devices are already in label"
-            _ -> "#{count} Devices added to label successfully"
-          end
-
+      with {:ok, _devices_labels} <- Labels.add_devices_to_label(devices, labels, destination_label.id, current_organization) do
         ConsoleWeb.Endpoint.broadcast("graphql:label_show", "graphql:label_show:#{destination_label.id}:label_update", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
@@ -100,8 +94,8 @@ defmodule ConsoleWeb.LabelController do
         broadcast_router_update_devices(devices)
 
         conn
-        |> put_resp_header("message", msg)
-        |> send_resp(:ok, Poison.encode!(%{ devicesAdded: count }))
+        |> put_resp_header("message", "Devices added to label successfully")
+        |> send_resp(:ok, "")
       end
     end
   end
@@ -259,13 +253,11 @@ defmodule ConsoleWeb.LabelController do
           Ecto.Multi.new()
           |> Ecto.Multi.insert(:label, label_changeset)
           |> Ecto.Multi.run(:devices_labels, fn _repo, %{label: label} ->
-            with {:ok, count, _} <- Labels.add_devices_to_label(devices, label.id, organization) do
-              {:ok, {label, count}}
-            end
+            Labels.add_devices_to_label(devices, label.id, organization) 
           end)
           |> Repo.transaction()
 
-        with {:ok, %{devices_labels: {_, count}, label: _label }} <- result do
+        with {:ok, %{devices_labels: _, label: _label }} <- result do
           ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
           device = Devices.get_device!(List.first(devices))
           ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
@@ -281,7 +273,7 @@ defmodule ConsoleWeb.LabelController do
           broadcast_router_update_devices(devices)
 
           conn
-          |> put_resp_header("message", "#{count} Devices added to label successfully")
+          |> put_resp_header("message", "Devices added to label successfully")
           |> send_resp(:no_content, "")
         end
     end
@@ -294,13 +286,7 @@ defmodule ConsoleWeb.LabelController do
     if length(devices) == 0 do
       {:error, :bad_request, "Please select a device"}
     else
-      with {:ok, count, devices_labels} <- Labels.add_devices_to_label(devices, destination_label.id, organization) do
-        msg =
-          case count do
-            0 -> "All selected devices are already in label"
-            _ -> "#{count} Devices added to label successfully"
-          end
-
+      with {:ok, devices_labels} <- Labels.add_devices_to_label(devices, destination_label.id, organization) do
         device = Devices.get_device!(List.first(devices))
 
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{destination_label.id}:update_label_devices", %{})
@@ -320,7 +306,7 @@ defmodule ConsoleWeb.LabelController do
         broadcast_router_update_devices(assoc_devices)
 
         conn
-        |> put_resp_header("message", msg)
+        |> put_resp_header("message", "Devices added to label successfully")
         |> send_resp(:no_content, "")
       end
     end
