@@ -134,7 +134,7 @@ defmodule Console.Labels do
         end)
       end)
     do
-      {:ok, length(devices_labels), devices_labels}
+      {:ok, devices_labels}
     end
   end
 
@@ -180,7 +180,7 @@ defmodule Console.Labels do
         end)
       end)
     do
-      {:ok, length(devices_labels), devices_labels}
+      {:ok, devices_labels}
     end
   end
 

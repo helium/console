@@ -14,9 +14,8 @@ defmodule ConsoleWeb.InvitationControllerTest do
       current_organization_id = conn |> get_req_header("organization") |> List.first()
       another_org = insert(:organization)
 
-      assert_error_sent 404, fn ->
-        post conn, invitation_path(conn, :create), %{ "invitation" => %{}}
-      end
+      result = post conn, invitation_path(conn, :create), %{ "invitation" => %{}}
+      assert result.status == 404
 
       assert_error_sent 404, fn ->
         post conn, invitation_path(conn, :create), %{ "invitation" => %{ "organization" => another_org.id }}

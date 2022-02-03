@@ -95,11 +95,6 @@ defmodule ConsoleWeb.V1LabelControllerTest do
         |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
       assert response(resp_conn, 200) == "Device added to label successfully"
 
-      resp_conn = build_conn()
-        |> put_req_header("key", key)
-        |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
-      assert response(resp_conn, 200) == "Device has already been added to label"
-
       label = Labels.get_label!(label.id)
       label = Labels.fetch_assoc(label, [:devices])
       assert label.devices |> length() == 1

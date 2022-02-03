@@ -1,0 +1,22 @@
+name: BUILD_AND_PUSH_IMG
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  BUILD_AND_PUSH_IMG:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+          repository: team-helium/console
+          tag_with_ref: true
+          push: true

@@ -76,6 +76,12 @@ config :console,
 config :console,
   user_invite_only: System.get_env("USER_INVITE_ONLY")
 
+config :console,
+  use_amqp_events: if System.get_env("USE_AMQP_EVENTS") == "true", do: true, else: false
+
+config :console,
+  amqp_url: System.get_env("AMQP_URL")
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),
