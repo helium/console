@@ -7,10 +7,10 @@ defmodule ConsoleWeb.ConfigProfileControllerTest do
     setup [:authenticate_user]
 
     test "creates config profiles properly", %{conn: conn} do
-      resp_conn = post conn, config_profile_path(conn, :create), %{ "config_profile" => %{ "adr_allowed" => true, "cf_list_enabled" => false }}
+      resp_conn = post conn, config_profile_path(conn, :create), %{ "config_profile" => %{ "adr_allowed" => true, "cf_list_enabled" => false, "rx_delay" => 2 }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
 
-      resp_conn = post conn, config_profile_path(conn, :create), %{ "config_profile" => %{ "name" => "My Profile", "adr_allowed" => true, "cf_list_enabled" => false }}
+      resp_conn = post conn, config_profile_path(conn, :create), %{ "config_profile" => %{ "name" => "My Profile", "adr_allowed" => true, "cf_list_enabled" => false, rx_delay: 2 }}
       config_profile = json_response(resp_conn, 201)
       assert config_profile["name"] == "My Profile"
       assert config_profile["cf_list_enabled"] == false
@@ -19,7 +19,7 @@ defmodule ConsoleWeb.ConfigProfileControllerTest do
 
     test "updates config profiles properly", %{conn: conn} do
       organization_id = conn |> get_req_header("organization") |> List.first()
-      config_profile_1 = insert(:config_profile, %{ organization_id: organization_id, name: "config profile name", adr_allowed: true, cf_list_enabled: false})
+      config_profile_1 = insert(:config_profile, %{ organization_id: organization_id, name: "config profile name", adr_allowed: true, cf_list_enabled: false, rx_delay: 2 })
 
       resp_conn = put conn, config_profile_path(conn, :update, config_profile_1.id), %{ "config_profile" => %{ "name" => "", "adr_allowed" => false}}
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
