@@ -1,0 +1,32 @@
+version: '3'
+services:
+  console:
+    image: quay.io/team-helium/console:latest
+    container_name: helium_console
+    restart: always
+    env_file: .env
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:13.4
+    container_name: helium_postgres
+    restart: always
+    volumes:
+      - "./data/postgres/:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_DB=console
+      - POSTGRES_PASSWORD=postgres
+  router:
+    image: quay.io/team-helium/router:latest
+    container_name: helium_router
+    restart: always
+    env_file: .env-router
+    ports:
+      - 2154:2154
+      - 8080:8080 # gateway grpc
+    volumes:
+      - "./data/router:/var/data"
+    depends_on:
+      - console
