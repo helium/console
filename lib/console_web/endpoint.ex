@@ -4,7 +4,7 @@ defmodule ConsoleWeb.Endpoint do
   use Appsignal.Phoenix
 
   socket "/socket", ConsoleWeb.UserSocket,
-    websocket: [timeout: 45_000, check_origin: [System.get_env("SOCKET_CHECK_ORIGIN") || "//localhost"]]
+    websocket: [timeout: 45_000, check_origin: {ConsoleWeb.CheckSocketOrigin, :validate_request_origin, []}]
 
   socket "/socket/router", ConsoleWeb.RouterSocket,
     websocket: [timeout: 45_000]
@@ -42,7 +42,7 @@ defmodule ConsoleWeb.Endpoint do
     store: :cookie,
     key: "_console_key",
     signing_salt: "ECVJikn/"
-  
+
   plug ConsoleWeb.Router
 
   plug ConsoleWeb.Plug.AppsignalAbsinthePlug

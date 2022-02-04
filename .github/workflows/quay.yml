@@ -2,7 +2,7 @@ name: BUILD_AND_PUSH_IMG
 
 on:
   push:
-    branches: [dev]
+    tags: '*'
 
 jobs:
   BUILD_AND_PUSH_IMG:

@@ -82,6 +82,9 @@ config :console,
 config :console,
   amqp_url: System.get_env("AMQP_URL")
 
+config :console,
+  socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN") || "//localhost"
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

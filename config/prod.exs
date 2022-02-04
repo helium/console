@@ -82,6 +82,9 @@ config :console,
     "131.0.72.0"
   ]
 
+config :console,
+  socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN")
+
 # config :prometheus, App.PrometheusExporter,
 #   path: "/metrics",
 #   format: :auto,

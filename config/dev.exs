@@ -89,6 +89,9 @@ config :console,
 config :console,
   allowed_ip_range: ["127.0.0.1"]
 
+config :console,
+  socket_check_origin: "//localhost"
+
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,

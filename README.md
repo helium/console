@@ -10,7 +10,77 @@ Any and all contributions from the community are encouraged.
 - Discussion about the development and usage of the Helium Console takes place in the [official Helium Discord Server](https://discord.gg/helium), specifically in the `#console` channel. Join us!
 - To post feature requests or see a list of current issues please go [here](https://github.com/helium/console/issues).
 
-## Running Console Development Environment
+## Common setup steps for Docker
+
+- Clone the repo and `cd console`
+- Sign up with Magic Link (https://magic.link/) or Auth0 (https://auth0.com/) for user authentication
+- Sign up with Mapbox (https://mapbox.com/)
+- In root directory, copy environment templates
+
+```
+cp templates/.env .env
+cp templates/.env-router .env-router
+```
+
+- Populate your newly copied .env file and .env-router file
+
+## Option 1: Running Console+Router with prebuilt Console image
+
+```
+cp templates/docker-compose-quay.yaml docker-compose.yaml
+cp templates/nginx-default.conf nginx.conf
+```
+
+- Get a certificate (https://certbot.eff.org/instructions)
+- Update `nginx.conf` with cert and key information
+- In `.env`, set `SOCKET_CHECK_ORIGIN` to your host domain
+- Run with `docker-compose up`
+
+## Option 2: Running Console+Router and build your own Console image
+
+```
+cp templates/docker-compose-server.yaml docker-compose.yaml
+cp templates/nginx-default.conf nginx.conf
+```
+
+- Get a certificate (https://certbot.eff.org/instructions)
+- Update `nginx.conf` with cert and key information
+- In `.env`, set `SOCKET_CHECK_ORIGIN` to your host domain
+- Build with `docker-compose build`
+- Run with `docker-compose up`
+
+## Option 3: Running Console+Router with Docker locally
+
+```
+cp templates/docker-compose-local.yaml docker-compose.yaml
+```
+
+- Build with `docker-compose build`
+- Run with `docker-compose up`
+
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+## Upgrading your open source Console+Router (Applies to Option 1 only)
+
+- Bring down your server with `docker-compose down`
+- Pull down and run the latest released Quay images with `docker-compose up`
+- If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
+- If needed, you can manually migrate the db with `docker exec -it helium_console /bin/bash`, then `_build/prod/rel/console/bin/console eval "Console.Release.migrate"`
+
+## Upgrading your open source Console+Router (Applies to Option 2 and 3 only)
+
+- Pull down the latest master branch with git
+- Build with `docker-compose build`, you do not have to bring down your server until this completes
+- Bring down your server with `docker-compose down`, then run your new build with `docker-compose up`
+- If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
+- If needed, you can manually migrate the db with `docker exec -it helium_console /bin/bash`, then `_build/prod/rel/console/bin/console eval "Console.Release.migrate"`
+
+## Keep your Console invite only
+
+- Set `USER_INVTE_ONLY` to true in your .env file
+- Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
+
+## Running Console Development Environment without Router
 
 - Install homebrew (https://brew.sh/)
 - Install postgres (postgres.app on mac)
@@ -27,54 +97,6 @@ To start your Phoenix server:
 - Start Phoenix with `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-## Running Console+Router with Docker locally
-
-- Clone the repo and `cd console`
-- Sign up with Auth0 (https://auth0.com/) or Magic Link (https://magic.link/) for auth
-- Sign up with Mapbox (https://mapbox.com/)
-- In root directory, copy environment templates
-
-```
-cp templates/.env .env
-cp templates/.env-router .env-router
-cp templates/docker-compose-local.yaml docker-compose.yaml
-```
-
-- Populate your newly copied .env file and .env-router file
-- Build with `docker-compose build`
-- Run with `docker-compose up`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-## Running Console+Router with Docker on a Server
-
-- Follow steps in the [previous section](#running-console+router-with-docker)
-- In root directory, copy server environment templates
-
-```
-cp templates/docker-compose-server.yaml docker-compose.yaml
-cp templates/nginx-default.conf nginx.conf
-```
-
-- Get a certificate (https://certbot.eff.org/instructions)
-- Update `nginx.conf` with cert and key information
-- In `.env`, set `SOCKET_CHECK_ORIGIN` to your host domain
-- Build with `docker-compose build`
-- Run with `docker-compose up`
-
-## Upgrading your open source Console+Router
-
-- Pull down the latest master branch with git
-- Build with `docker-compose build`, you do not have to bring down your server until this completes
-- Bring down your server with `docker-compose down`, then run your new build with `docker-compose up`
-- If there are db migrations in the upgrade commits, `docker-compose up` will run these migrations (Keep an eye on the logs for migration errors to file a GH issue, you should not have to manually migrate the db)
-- If needed, you can manually migrate the db with `docker exec -it helium_console /bin/bash`, then `_build/prod/rel/console/bin/console eval "Console.Release.migrate"`
-
-## Keep your Console invite only
-
-- Set `USER_INVTE_ONLY` to true in your .env file
-- Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
 
 ## Questions
 
