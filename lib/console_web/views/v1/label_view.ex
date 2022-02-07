@@ -14,10 +14,13 @@ defmodule ConsoleWeb.V1.LabelView do
     %{
       id: label.id,
       name: label.name,
-      adr_allowed: label.adr_allowed,
-      cf_list_enabled: label.cf_list_enabled,
-      rx_delay: label.rx_delay,
-      config_profile_id: label.config_profile_id
+    }
+  end
+
+  def render("label-short.json", %{label: label}) do
+    %{
+      id: label.id,
+      name: label.name,
     }
   end
 
