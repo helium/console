@@ -44,7 +44,8 @@ config :appsignal, :config,
   active: true,
   name: System.get_env("APPSIGNAL_APP_NAME"),
   push_api_key: System.get_env("APPSIGNAL_API_KEY"),
-  env: Mix.env
+  env: Mix.env,
+  ignore_actions: ["ConsoleWeb.Router.DeviceController#get_by_other_creds"]
 
 config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")

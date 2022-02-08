@@ -46,7 +46,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     |> send_resp(:ok, Poison.encode!(response))
   end
 
-  def show(conn, %{"id" => _, "dev_eui" => dev_eui, "app_eui" => app_eui}) do
+  def get_by_other_creds(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
     devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
 
     render(conn, "devices.json", devices: devices)

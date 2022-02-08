@@ -40,3 +40,4 @@ data/
 /.env
 /.env-router
 docker-compose.yaml
+nginx.conf
