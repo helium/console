@@ -14,12 +14,12 @@ defmodule ConsoleWeb.RouterDeviceControllerTest do
       organization = insert(:organization)
       device_0 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
 
-      resp_conn = build_conn() |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
+      resp_conn = build_conn() |> get("/api/router/devices/unknown?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       assert response(resp_conn, 401) # unauthenticated
 
       resp_conn = build_conn()
         |> put_req_header("authorization", "Bearer " <> jwt)
-        |> get("/api/router/devices/yolo?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
+        |> get("/api/router/devices/unknown?app_eui=#{device_0.app_eui}&dev_eui=#{device_0.dev_eui}")
       devices_json = json_response(resp_conn, 200)
       assert devices_json |> length() == 1
       assert devices_json |> List.first() |> Map.get("id") == device_0.id

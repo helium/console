@@ -116,7 +116,9 @@ defmodule ConsoleWeb.Router do
   scope "/api/router", ConsoleWeb.Router do
     pipe_through ConsoleWeb.RouterApiPipeline
 
-    resources "/devices", DeviceController, only: [:index, :show] do
+    get "/devices/unknown", DeviceController, :get_by_other_creds
+    get "/devices/:id", DeviceController, :show
+    resources "/devices", DeviceController, only: [:index] do
       post "/event", DeviceController, :add_device_event
     end
     post "/devices/update_in_xor_filter", DeviceController, :update_devices_in_xor_filter
