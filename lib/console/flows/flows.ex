@@ -11,6 +11,11 @@ defmodule Console.Flows do
      |> Repo.all()
   end
 
+  def get_flow(organization_id, id) do
+     from(f in Flow, where: f.organization_id == ^organization_id and f.id == ^id)
+     |> Repo.one()
+  end
+
   def get_flows_with_device_id(organization_id, device_id) do
      from(f in Flow, where: f.organization_id == ^organization_id and f.device_id == ^device_id)
      |> Repo.all()

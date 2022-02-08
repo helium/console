@@ -39,7 +39,7 @@ defmodule ConsoleWeb.V1.DeviceView do
   end
 
   def render("device-short.json", %{device: device}) do
-    device_attrs = %{
+    %{
       id: device.id,
       name: device.name,
     }
