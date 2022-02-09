@@ -84,7 +84,9 @@ defmodule ConsoleWeb.V1.LabelController do
         {:ok, %{ label: label }} ->
           label = label |> Repo.preload([:config_profile])
 
-          render(conn, "show.json", label: put_config_settings_on_label(label))
+          conn
+          |> put_status(:created)
+          |> render("show.json", label: put_config_settings_on_label(label))
         {:error, _, error = %Ecto.Changeset{}, _} ->
           {:error, error}
         {:error, _, error, _} ->
@@ -115,7 +117,7 @@ defmodule ConsoleWeb.V1.LabelController do
               with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: config_profile.id }) do
                 label = label |> Repo.preload([:config_profile])
                 broadcast_router_update_devices(label)
-                
+
                 render(conn, "show.json", label: put_config_settings_on_label(label))
               end
           end
