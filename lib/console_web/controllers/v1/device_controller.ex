@@ -7,6 +7,7 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Labels
   alias Console.Devices
   alias Console.Devices.Device
+  alias Console.ConfigProfiles
   alias Console.Events
   alias Console.Repo
   alias Console.AlertEvents
@@ -83,6 +84,33 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
+  def update(conn, %{ "id" => id, "config_profile_id" => profile_id }) do
+    current_organization = conn.assigns.current_organization
+
+    case Devices.get_device(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Device not found"}
+      %Device{} = device ->
+        if profile_id == nil do
+          with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
+            device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+            render(conn, "show.json", device: put_config_settings_on_device(device))
+          end
+        else
+          config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+          case config_profile do
+            nil ->
+              {:error, :not_found, "Config Profile not found"}
+            _ ->
+              with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
+                device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+                render(conn, "show.json", device: put_config_settings_on_device(device))
+              end
+          end
+        end
+    end
+  end
+
   def delete(conn, %{ "id" => id }) do
     current_organization = conn.assigns.current_organization
 
@@ -122,13 +150,77 @@ defmodule ConsoleWeb.V1.DeviceController do
       })
       |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
 
-    with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
-      broadcast_router_update_devices(device)
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:labels, fn _repo, _ ->
+        label_ids = Map.get(device_params, "label_ids", nil)
+        if label_ids != nil do
+          labels = Labels.get_labels(current_organization, label_ids)
 
-      device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-      conn
-      |> put_status(:created)
-      |> render("show.json", device: put_config_settings_on_device(device))
+          if length(labels) == length(label_ids) do
+            {:ok, labels}
+          else
+            {:error, "Could not find all attached label ids in organization"}
+          end
+        else
+          {:ok, nil}
+        end
+      end)
+      |> Ecto.Multi.run(:config_profile, fn _repo, _ ->
+        profile_id = Map.get(device_params, "config_profile_id", nil)
+        if profile_id != nil do
+          config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+          if config_profile != nil do
+            {:ok, config_profile}
+          else
+            {:error, "Could not find config_profile in organization"}
+          end
+        else
+          {:ok, nil}
+        end
+      end)
+      |> Ecto.Multi.run(:device, fn _repo, %{ config_profile: config_profile } ->
+        device_attrs =
+          if config_profile != nil do
+            device_params
+          else
+            device_params |> Map.drop(["config_profile_id"])
+          end
+        Devices.create_device(device_attrs, current_organization)
+      end)
+      |> Ecto.Multi.run(:add_labels, fn _repo, %{ device: device, labels: labels } ->
+        if labels == nil do
+          {:ok, "No labels to attach"}
+        else
+          add_labels_result =
+            labels
+            |> Enum.map(fn l -> l.id end)
+            |> Labels.add_labels_to_device(device, current_organization)
+          case add_labels_result do
+            {:ok, _, _} -> {:ok, "Successfully added to labels"}
+            _ -> {:error, "Could not add all labels to device, please try creating device again"}
+          end
+        end
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, %{ device: device }} ->
+        broadcast_router_update_devices(device)
+
+        device =
+          device
+          |> Repo.preload([[labels: :config_profile], :config_profile])
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", device: put_config_settings_on_device(device))
+      {:error, _, error = %Ecto.Changeset{}, _} ->
+        {:error, error}
+      {:error, _, error, _} ->
+        {:error, :bad_request, error}
+      {:error, error} ->
+        {:error, :bad_request, error}
     end
   end
 

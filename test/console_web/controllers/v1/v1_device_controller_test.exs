@@ -92,6 +92,79 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
         })
       device = json_response(resp_conn, 201)
       assert device["hotspot_address"] == nil # device not created through discover endpoint should not have hotspot_address
+
+      config_profile = insert(:config_profile, %{ name: "new pf", organization_id: organization.id})
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          dev_eui: "a222222222222222",
+          app_eui: "a222222222222222",
+          app_key: "a2222222222222222222222222222222",
+          config_profile_id: config_profile.id,
+          name: "test device"
+        })
+      device = json_response(resp_conn, 201) # device created with config_profile
+      assert device["config_profile_id"] == config_profile.id
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/#{device["id"]}")
+      assert response(resp_conn, 200)
+
+      label1 = insert(:label, %{ name: "l1", organization_id: organization.id})
+      label2 = insert(:label, %{ name: "l2", organization_id: organization.id})
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          dev_eui: "a222222222222222",
+          app_eui: "a222222222222222",
+          app_key: "a2222222222222222222222222222222",
+          config_profile_id: config_profile.id,
+          labels: [label1.id, label2.id],
+          name: "test device"
+        })
+      json_response(resp_conn, 201) # device created with config_profile
+    end
+
+    test "setting config profile works", %{conn: _conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization)
+      insert(:api_key, %{
+        organization_id: organization.id,
+        key: :crypto.hash(:sha256, key),
+        active: true
+      })
+      config_profile = insert(:config_profile, %{ name: "new pf", organization_id: organization.id})
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111"
+        })
+      device = json_response(resp_conn, 201) # device created
+      assert device["config_profile_id"] == nil
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/devices/#{device["id"]}", %{
+          "config_profile_id" => config_profile.id,
+        })
+      assert response(resp_conn, 200) # set config profile
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/devices/#{device["id"]}")
+      assert json_response(resp_conn, 200) |> Map.get("config_profile_id") == config_profile.id
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/devices/#{device["id"]}", %{
+          "config_profile_id" => nil,
+        })
+      assert response(resp_conn, 200) # set config profile nil
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/devices/#{device["id"]}")
+      assert json_response(resp_conn, 200) |> Map.get("config_profile_id") == nil
     end
 
     test "discovery mode endpoint works properly", %{conn: _conn} do

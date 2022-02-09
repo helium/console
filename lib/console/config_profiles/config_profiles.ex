@@ -12,6 +12,10 @@ defmodule Console.ConfigProfiles do
     Repo.get_by!(ConfigProfile, [id: id, organization_id: organization.id])
   end
 
+  def get_config_profile(organization, id) do
+    Repo.get_by(ConfigProfile, [id: id, organization_id: organization.id])
+  end
+
   def create_config_profile(attrs \\ %{}) do
     %ConfigProfile{}
     |> ConfigProfile.changeset(attrs)
