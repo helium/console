@@ -4,6 +4,7 @@ defmodule ConsoleWeb.V1.LabelController do
 
   alias Console.Organizations
   alias Console.Devices
+  alias Console.ConfigProfiles
   alias Console.Labels
   alias Console.Labels.Label
   action_fallback(ConsoleWeb.FallbackController)
@@ -53,10 +54,74 @@ defmodule ConsoleWeb.V1.LabelController do
         "creator" => conn.assigns.user_id
       })
 
-    with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", label: Map.merge(label, %{ cf_list_enabled: false, adr_allowed: false, rx_delay: nil }))
+      result =
+        Ecto.Multi.new()
+        |> Ecto.Multi.run(:config_profile, fn _repo, _ ->
+          profile_id = Map.get(label_params, "config_profile_id", nil)
+          if profile_id != nil do
+            config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+            if config_profile != nil do
+              {:ok, config_profile}
+            else
+              {:error, "Could not find Config Profile in organization"}
+            end
+          else
+            {:ok, nil}
+          end
+        end)
+        |> Ecto.Multi.run(:label, fn _repo, %{ config_profile: config_profile } ->
+          label_attrs =
+            if config_profile != nil do
+              label_params
+            else
+              label_params |> Map.drop(["config_profile_id"])
+            end
+          Labels.create_label(current_organization, label_attrs)
+        end)
+        |> Repo.transaction()
+
+      case result do
+        {:ok, %{ label: label }} ->
+          label = label |> Repo.preload([:config_profile])
+
+          conn
+          |> put_status(:created)
+          |> render("show.json", label: put_config_settings_on_label(label))
+        {:error, _, error = %Ecto.Changeset{}, _} ->
+          {:error, error}
+        {:error, _, error, _} ->
+          {:error, :bad_request, error}
+      end
+  end
+
+  def update(conn, %{ "id" => id, "config_profile_id" => profile_id }) do
+    current_organization = conn.assigns.current_organization
+
+    case Labels.get_label(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        if profile_id == nil do
+          with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: nil }) do
+            label = label |> Repo.preload([:config_profile])
+            broadcast_router_update_devices(label)
+
+            render(conn, "show.json", label: put_config_settings_on_label(label))
+          end
+        else
+          config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+          case config_profile do
+            nil ->
+              {:error, :not_found, "Config Profile not found"}
+            _ ->
+              with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: config_profile.id }) do
+                label = label |> Repo.preload([:config_profile])
+                broadcast_router_update_devices(label)
+
+                render(conn, "show.json", label: put_config_settings_on_label(label))
+              end
+          end
+        end
     end
   end
 

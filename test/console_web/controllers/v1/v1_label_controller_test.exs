@@ -109,5 +109,44 @@ defmodule ConsoleWeb.V1LabelControllerTest do
       resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/#{device["id"]}/labels/#{label.id}")
       assert response(resp_conn, 200) == "Device was not in label"
     end
+
+    test "setting config profile works", %{conn: _conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization)
+      insert(:api_key, %{
+        organization_id: organization.id,
+        key: :crypto.hash(:sha256, key),
+        active: true
+      })
+      config_profile = insert(:config_profile, %{ name: "new pf", organization_id: organization.id})
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/labels", %{
+          "name" => "label",
+        })
+      label = json_response(resp_conn, 201) # label created
+      assert label["config_profile_id"] == nil
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/labels/#{label["id"]}", %{
+          "config_profile_id" => config_profile.id,
+        })
+      assert response(resp_conn, 200) # set config profile
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/labels/#{label["id"]}")
+      assert json_response(resp_conn, 200) |> Map.get("config_profile_id") == config_profile.id
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/labels/#{label["id"]}", %{
+          "config_profile_id" => nil,
+        })
+      assert response(resp_conn, 200) # set config profile nil
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/labels/#{label["id"]}")
+      assert json_response(resp_conn, 200) |> Map.get("config_profile_id") == nil
+    end
   end
 end
