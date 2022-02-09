@@ -38,6 +38,13 @@ defmodule ConsoleWeb.V1.DeviceView do
     end
   end
 
+  def render("device-short.json", %{device: device}) do
+    %{
+      id: device.id,
+      name: device.name,
+    }
+  end
+
   def render("show_events.json", %{device: device}) do
     EventView.show_events(device.events)
   end

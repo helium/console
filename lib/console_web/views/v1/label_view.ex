@@ -21,6 +21,13 @@ defmodule ConsoleWeb.V1.LabelView do
     }
   end
 
+  def render("label-short.json", %{label: label}) do
+    %{
+      id: label.id,
+      name: label.name,
+    }
+  end
+
   def append_labels(json, labels) do
     labels = Enum.map(labels, fn l -> put_config_settings_on_label(l) end)
     labels_json = render_many(labels, LabelView, "label.json")
