@@ -102,6 +102,8 @@ defmodule ConsoleWeb.V1.LabelController do
         if profile_id == nil do
           with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: nil }) do
             label = label |> Repo.preload([:config_profile])
+            broadcast_router_update_devices(label)
+
             render(conn, "show.json", label: put_config_settings_on_label(label))
           end
         else
@@ -112,6 +114,8 @@ defmodule ConsoleWeb.V1.LabelController do
             _ ->
               with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: config_profile.id }) do
                 label = label |> Repo.preload([:config_profile])
+                broadcast_router_update_devices(label)
+                
                 render(conn, "show.json", label: put_config_settings_on_label(label))
               end
           end

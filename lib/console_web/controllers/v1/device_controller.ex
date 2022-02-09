@@ -94,6 +94,8 @@ defmodule ConsoleWeb.V1.DeviceController do
         if profile_id == nil do
           with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
             device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+            broadcast_router_update_devices(device)
+
             render(conn, "show.json", device: put_config_settings_on_device(device))
           end
         else
@@ -104,6 +106,8 @@ defmodule ConsoleWeb.V1.DeviceController do
             _ ->
               with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
                 device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+                broadcast_router_update_devices(device)
+                
                 render(conn, "show.json", device: put_config_settings_on_device(device))
               end
           end
