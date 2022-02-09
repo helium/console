@@ -75,6 +75,21 @@ class OrganizationsTable extends Component {
       {
         title: "Name",
         dataIndex: "name",
+        render: (data, record) => (
+          <>
+            <Text style={{ marginRight: 5 }}>{data}</Text>
+            <UserCan>
+              <Button
+                size="small"
+                onClick={() => {
+                  this.props.openEditOrganizationModal(record);
+                }}
+              >
+                <EditOutlined />
+              </Button>
+            </UserCan>
+          </>
+        ),
       },
       {
         title: "Added",
@@ -160,18 +175,6 @@ class OrganizationsTable extends Component {
               </Button>
 
               <UserCan noManager>
-                <Tooltip title="Edit Organization">
-                  <Button
-                    style={{ marginRight: 5 }}
-                    type="primary"
-                    icon={<EditOutlined />}
-                    shape="circle"
-                    size="small"
-                    onClick={() => {
-                      this.props.openEditOrganizationModal(record);
-                    }}
-                  />
-                </Tooltip>
                 <Tooltip title="Delete Organization">
                   <Button
                     type="danger"
@@ -193,23 +196,7 @@ class OrganizationsTable extends Component {
                 justifyContent: "flex-end",
               }}
             >
-              <>
-                <UserCan noManager>
-                  <Tooltip title="Edit Organization">
-                    <Button
-                      style={{ marginRight: 15 }}
-                      type="primary"
-                      icon={<EditOutlined />}
-                      shape="circle"
-                      size="small"
-                      onClick={() => {
-                        this.props.openEditOrganizationModal(record);
-                      }}
-                    />
-                  </Tooltip>
-                </UserCan>
-                <Text>Current</Text>
-              </>
+              <Text>Current</Text>
             </div>
           ),
       },
