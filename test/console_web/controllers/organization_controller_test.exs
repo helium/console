@@ -38,5 +38,19 @@ defmodule ConsoleWeb.OrganizationControllerTest do
       resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "Discovery Mode (Helium)" }}
       assert response(resp_conn, 422)
     end
+
+    test "rename organization properly", %{conn: conn} do
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yay" }}
+      organization = json_response(resp_conn, 201)
+
+      resp_conn = put conn, organization_path(conn, :update, organization["id"], %{ "name" => "nay" })
+      assert response(resp_conn, 200) # rename successful
+
+      resp_conn = put conn, organization_path(conn, :update, organization["id"], %{ "name" => "na" })
+      assert response(resp_conn, 400) # name must be at least 3 characters
+
+      resp_conn = put conn, organization_path(conn, :update, organization["id"], %{ "name" => "" })
+      assert response(resp_conn, 400) # name must be at least 3 characters
+    end
   end
 end

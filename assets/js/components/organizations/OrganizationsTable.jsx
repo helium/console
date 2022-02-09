@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";
@@ -159,6 +160,18 @@ class OrganizationsTable extends Component {
               </Button>
 
               <UserCan noManager>
+                <Tooltip title="Edit Organization">
+                  <Button
+                    style={{ marginRight: 5 }}
+                    type="primary"
+                    icon={<EditOutlined />}
+                    shape="circle"
+                    size="small"
+                    onClick={() => {
+                      this.props.openEditOrganizationModal(record);
+                    }}
+                  />
+                </Tooltip>
                 <Tooltip title="Delete Organization">
                   <Button
                     type="danger"
@@ -166,7 +179,7 @@ class OrganizationsTable extends Component {
                     shape="circle"
                     size="small"
                     onClick={() => {
-                      this.props.openDeleteOrganizationModal(record.id);
+                      this.props.openDeleteOrganizationModal(record);
                     }}
                   />
                 </Tooltip>
@@ -180,7 +193,23 @@ class OrganizationsTable extends Component {
                 justifyContent: "flex-end",
               }}
             >
-              <Text>Current</Text>
+              <>
+                <UserCan noManager>
+                  <Tooltip title="Edit Organization">
+                    <Button
+                      style={{ marginRight: 15 }}
+                      type="primary"
+                      icon={<EditOutlined />}
+                      shape="circle"
+                      size="small"
+                      onClick={() => {
+                        this.props.openEditOrganizationModal(record);
+                      }}
+                    />
+                  </Tooltip>
+                </UserCan>
+                <Text>Current</Text>
+              </>
             </div>
           ),
       },

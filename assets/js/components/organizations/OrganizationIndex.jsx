@@ -6,6 +6,7 @@ import MobileOrganizationIndex from "../mobile/organizations/MobileOrganizationI
 import OrganizationsTable from "../organizations/OrganizationsTable";
 import NewOrganizationModal from "../organizations/NewOrganizationModal";
 import DeleteOrganizationModal from "../organizations/DeleteOrganizationModal";
+import EditOrganizationModal from "../organizations/EditOrganizationModal";
 import UserCan from "../common/UserCan";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
@@ -18,7 +19,8 @@ class OrganizationIndex extends Component {
   state = {
     showOrganizationModal: false,
     showDeleteOrganizationModal: false,
-    selectedOrgForDelete: null,
+    selectedOrg: null,
+    showEditOrganizationModal: false,
   };
 
   componentDidMount() {
@@ -35,14 +37,25 @@ class OrganizationIndex extends Component {
     this.setState({ showOrganizationModal: false });
   };
 
-  openDeleteOrganizationModal = (selectedOrgForDelete) => {
-    this.setState({ showDeleteOrganizationModal: true, selectedOrgForDelete });
+  openDeleteOrganizationModal = (selectedOrg) => {
+    this.setState({ showDeleteOrganizationModal: true, selectedOrg });
   };
 
   closeDeleteOrganizationModal = () => {
     this.setState({
       showDeleteOrganizationModal: false,
-      selectedOrgForDelete: null,
+      selectedOrg: null,
+    });
+  };
+
+  openEditOrganizationModal = (selectedOrg) => {
+    this.setState({ showEditOrganizationModal: true, selectedOrg });
+  };
+
+  closeEditOrganizationModal = () => {
+    this.setState({
+      showEditOrganizationModal: false,
+      selectedOrg: null,
     });
   };
 
@@ -50,7 +63,8 @@ class OrganizationIndex extends Component {
     const {
       showOrganizationModal,
       showDeleteOrganizationModal,
-      selectedOrgForDelete,
+      selectedOrg,
+      showEditOrganizationModal,
     } = this.state;
     return (
       <>
@@ -105,6 +119,7 @@ class OrganizationIndex extends Component {
                 </div>
                 <OrganizationsTable
                   openDeleteOrganizationModal={this.openDeleteOrganizationModal}
+                  openEditOrganizationModal={this.openEditOrganizationModal}
                   user={this.props.user}
                 />
               </div>
@@ -118,7 +133,12 @@ class OrganizationIndex extends Component {
             <DeleteOrganizationModal
               open={showDeleteOrganizationModal}
               onClose={this.closeDeleteOrganizationModal}
-              selectedOrgId={selectedOrgForDelete}
+              selectedOrgId={selectedOrg && selectedOrg.id}
+            />
+            <EditOrganizationModal
+              open={showEditOrganizationModal}
+              onClose={this.closeEditOrganizationModal}
+              selectedOrg={selectedOrg}
             />
           </DashboardLayout>
         </DesktopDisplay>

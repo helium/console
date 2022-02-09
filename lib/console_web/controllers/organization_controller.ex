@@ -101,6 +101,32 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
+  def update(conn, %{"id" => id, "name" => name}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, id)
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+
+    cond do
+      membership.role != "admin" ->
+        {:error, :forbidden, "You don't have access to do this"}
+      organization.name == name ->
+        {:error, :bad_request, "The new organization's name must be different than the current name"}
+      name == "" or String.length(name) < 3 ->
+        {:error, :bad_request, "The organization name must be at least 3 characters"}
+      true ->
+        with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, %{ "name" => name }) do
+            ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+            ConsoleWeb.Endpoint.broadcast("graphql:topbar_org", "graphql:topbar_org:#{organization.id}:current_organization_renamed", %{})
+            ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+
+            membership_info = %{id: organization.id, name: organization.name, role: membership.role}
+            conn
+            |> put_status(:ok)
+            |> put_resp_header("message",  "Organization renamed successfully")
+            |> render("show.json", organization: membership_info)
+        end
+    end
+  end
+
   def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
