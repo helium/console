@@ -118,7 +118,6 @@ class TopBar extends Component {
 
     const allOrganizations = orgsQuery.allOrganizations || null;
     const organization = orgShowQuery.organization || null;
-    console.log({ allOrganizations, organization });
     const otherOrgs = (allOrganizations || []).filter(
       (org) => organization && org.id !== organization.id
     );

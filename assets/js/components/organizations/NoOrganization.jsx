@@ -26,7 +26,6 @@ export default ({ user }) => {
 
   const resend = async () => {
     resendInvitations(user.email).then((result) => {
-      console.log({ result });
       if (result.status === 200) setInvitationResent(true);
     });
   };
