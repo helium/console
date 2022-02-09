@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";
@@ -74,6 +75,21 @@ class OrganizationsTable extends Component {
       {
         title: "Name",
         dataIndex: "name",
+        render: (data, record) => (
+          <>
+            <Text style={{ marginRight: 5 }}>{data}</Text>
+            <UserCan>
+              <Button
+                size="small"
+                onClick={() => {
+                  this.props.openEditOrganizationModal(record);
+                }}
+              >
+                <EditOutlined />
+              </Button>
+            </UserCan>
+          </>
+        ),
       },
       {
         title: "Added",
@@ -166,7 +182,7 @@ class OrganizationsTable extends Component {
                     shape="circle"
                     size="small"
                     onClick={() => {
-                      this.props.openDeleteOrganizationModal(record.id);
+                      this.props.openDeleteOrganizationModal(record);
                     }}
                   />
                 </Tooltip>

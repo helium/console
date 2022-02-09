@@ -67,7 +67,8 @@ defmodule Console.Organizations.Organization do
       :pending_automatic_purchase,
       :active,
       :received_free_dc,
-      :flow
+      :flow,
+      :name
     ])
   end
 
