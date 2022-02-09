@@ -11,7 +11,9 @@ export default ({ open, selectedOrg, onClose }) => {
   const handleSubmit = () => {
     dispatch(renameOrganization(selectedOrg.id, { name: orgName }));
     onClose();
+    setOrgName("");
   };
+
   const handleInputUpdate = (e) => {
     analyticsLogger.logEvent("ACTION_RENAME_ORGANIZATION", {
       id: selectedOrg.id,
@@ -19,6 +21,7 @@ export default ({ open, selectedOrg, onClose }) => {
     });
     setOrgName(e.target.value);
   };
+
   return (
     <Modal
       title="Edit Organization"
