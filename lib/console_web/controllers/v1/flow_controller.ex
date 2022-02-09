@@ -36,23 +36,21 @@ defmodule ConsoleWeb.V1.FlowController do
               if Map.has_key?(params, "function_id") do
                 Functions.get_function!(current_organization, Map.get(params, "function_id"))
               else
-                nil
+                %{ id: nil }
               end
 
-            if function != nil do
-              with {:ok, _} <- Flows.create_flow(%{ device_id: device.id, channel_id: channel.id, function_id: function.id, organization_id: current_organization.id }) do
-                broadcast_router_update_devices([device.id])
+            flow_attrs = %{
+              device_id: device.id,
+              channel_id: channel.id,
+              function_id: function.id,
+              organization_id: current_organization.id
+            }
 
-                conn
-                |> send_resp(:ok, "Flow with integration created successfully")
-              end
-            else
-              with {:ok, _} <- Flows.create_flow(%{ device_id: device.id, channel_id: channel.id, organization_id: current_organization.id }) do
-                broadcast_router_update_devices([device.id])
+            with {:ok, _} <- Flows.create_flow(flow_attrs) do
+              broadcast_router_update_devices([device.id])
 
-                conn
-                |> send_resp(:ok, "Flow with integration created successfully")
-              end
+              conn
+              |> send_resp(:ok, "Flow with integration created successfully")
             end
           Map.has_key?(params, "label_id") ->
             label = Labels.get_label!(current_organization, Map.get(params, "label_id"))
@@ -60,31 +58,25 @@ defmodule ConsoleWeb.V1.FlowController do
               if Map.has_key?(params, "function_id") do
                 Functions.get_function!(current_organization, Map.get(params, "function_id"))
               else
-                nil
+                %{ id: nil }
               end
 
-            if function != nil do
-              with {:ok, _} <- Flows.create_flow(%{ label_id: label.id, channel_id: channel.id, function_id: function.id, organization_id: current_organization.id }) do
-                device_ids =
-                  Devices.get_devices_for_label(label.id)
-                  |> Enum.map(fn d -> d.id end)
+            flow_attrs = %{
+              label_id: label.id,
+              channel_id: channel.id,
+              function_id: function.id,
+              organization_id: current_organization.id
+            }
 
-                broadcast_router_update_devices(device_ids)
+            with {:ok, _} <- Flows.create_flow(flow_attrs) do
+              device_ids =
+                Devices.get_devices_for_label(label.id)
+                |> Enum.map(fn d -> d.id end)
 
-                conn
-                |> send_resp(:ok, "Flow with integration created successfully")
-              end
-            else
-              with {:ok, _} <- Flows.create_flow(%{ label_id: label.id, channel_id: channel.id, organization_id: current_organization.id }) do
-                device_ids =
-                  Devices.get_devices_for_label(label.id)
-                  |> Enum.map(fn d -> d.id end)
+              broadcast_router_update_devices(device_ids)
 
-                broadcast_router_update_devices(device_ids)
-
-                conn
-                |> send_resp(:ok, "Flow with integration created successfully")
-              end
+              conn
+              |> send_resp(:ok, "Flow with integration created successfully")
             end
           true ->
             {:error, :bad_request, "Flow must contain either device_id or label_id"}
