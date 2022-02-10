@@ -37,11 +37,19 @@ defmodule ConsoleWeb.Monitor do
     Agent.update(__MODULE__, fn state -> Map.put(state, :events_error_state, Enum.drop(state.events_error_state, -1)) end)
   end
 
-  def get_amqp_conn do
-    Agent.get(__MODULE__, fn state -> Map.get(state, :amqp_conn) end)
+  def get_amqp_publish_conn do
+    Agent.get(__MODULE__, fn state -> Map.get(state, :amqp_publish_conn) end)
   end
 
-  def update_amqp_conn(tag) do
-    Agent.update(__MODULE__, fn state -> Map.put(state, :amqp_conn, tag) end)
+  def update_amqp_publish_conn(tag) do
+    Agent.update(__MODULE__, fn state -> Map.put(state, :amqp_publish_conn, tag) end)
+  end
+
+  def get_amqp_consume_conn do
+    Agent.get(__MODULE__, fn state -> Map.get(state, :amqp_consume_conn) end)
+  end
+
+  def update_amqp_consume_conn(tag) do
+    Agent.update(__MODULE__, fn state -> Map.put(state, :amqp_consume_conn, tag) end)
   end
 end

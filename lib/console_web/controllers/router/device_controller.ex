@@ -239,7 +239,7 @@ defmodule ConsoleWeb.Router.DeviceController do
           end
 
           with {:ok, created_event} <- Events.create_event(Map.put(event, "organization_id", device.organization_id)) do
-            ConsoleWeb.MessageQueue.publish(Jason.encode!(event))
+            ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(event))
             publish_created_event(created_event, device)
 
             conn

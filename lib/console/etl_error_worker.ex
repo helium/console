@@ -25,6 +25,7 @@ defmodule Console.EtlErrorWorker do
       try do
         event = List.last(events)
         if event != nil do
+          IO.inspect "PROCESSING EVENT FROM ETL ERROR WORKER..."
           parsed_event = event |> Jason.decode!() |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
 
           device = Devices.get_device!(parsed_event.device_id) |> Repo.preload([:labels])
@@ -155,7 +156,7 @@ defmodule Console.EtlErrorWorker do
     end)
     |> Task.await(:infinity)
 
-    schedule_events_error_etl(10)
+    schedule_events_error_etl(1)
     {:noreply, state}
   end
 

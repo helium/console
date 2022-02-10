@@ -98,8 +98,9 @@ defmodule Console.EtlWorker do
             |> Repo.transaction()
 
           with {:ok, _} <- result do
-            ConsoleWeb.MessageQueue.ack(delivery_tags)
+            ConsoleWeb.MessageQueueConsumer.ack(delivery_tags)
             ConsoleWeb.Monitor.remove_from_events_state(length(events))
+            IO.inspect "PROCESSED #{length(events)} EVENTS FROM ETL WORKER SUCCESSFULLY!"
 
             Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
               check_updated_orgs_dc_balance(organizations_to_update)
@@ -110,7 +111,7 @@ defmodule Console.EtlWorker do
         end
       rescue
         error ->
-          ConsoleWeb.MessageQueue.reject(delivery_tags)
+          ConsoleWeb.MessageQueueConsumer.reject(delivery_tags)
           ConsoleWeb.Monitor.remove_from_events_state(length(events))
           Appsignal.send_error(error, "Failed to process in ETL Worker", ["etl_worker"])
       end
