@@ -170,7 +170,7 @@ defmodule ConsoleWeb.LabelController do
       Enum.each(labels, fn label ->
         ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{label}:update_label_devices", %{})
       end)
-      broadcast_router_update_devices(device_id)
+      broadcast_router_update_devices([device_id])
 
       conn
       |> put_resp_header("message", "Label(s) successfully removed from device")
@@ -253,7 +253,7 @@ defmodule ConsoleWeb.LabelController do
           Ecto.Multi.new()
           |> Ecto.Multi.insert(:label, label_changeset)
           |> Ecto.Multi.run(:devices_labels, fn _repo, %{label: label} ->
-            Labels.add_devices_to_label(devices, label.id, organization) 
+            Labels.add_devices_to_label(devices, label.id, organization)
           end)
           |> Repo.transaction()
 
