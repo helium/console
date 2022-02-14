@@ -246,6 +246,68 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
+  def set_devices_active(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui, "active" => active}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_device_attrs(dev_eui, app_eui, app_key, current_organization.id)
+
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Device not found"}
+      _ ->
+        device = List.first(devices)
+        with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
+          device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+          broadcast_router_update_devices(device)
+
+          render(conn, "show.json", device: put_config_settings_on_device(device))
+        end
+    end
+  end
+
+  def set_devices_active(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui, "active" => active}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui_app_eui(current_organization, dev_eui, app_eui)
+
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Devices not found"}
+      _ ->
+        device_ids = Enum.map(devices, fn d -> d.id end)
+        with {_, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
+          parsed_devices =
+            Devices.get_devices(current_organization, device_ids)
+            |> Repo.preload([[labels: :config_profile], :config_profile])
+            |> Enum.map(fn d -> put_config_settings_on_device(d) end)
+
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+
+          render(conn, "index.json", devices: parsed_devices)
+        end
+    end
+  end
+
+  def set_devices_active(conn, %{"dev_eui" => dev_eui, "active" => active}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui(current_organization, dev_eui)
+
+    case length(devices) do
+      0 ->
+        {:error, :not_found, "Devices not found"}
+      _ ->
+        device_ids = Enum.map(devices, fn d -> d.id end)
+        with {_, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
+          parsed_devices =
+            Devices.get_devices(current_organization, device_ids)
+            |> Repo.preload([[labels: :config_profile], :config_profile])
+            |> Enum.map(fn d -> put_config_settings_on_device(d) end)
+
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+
+          render(conn, "index.json", devices: parsed_devices)
+        end
+    end
+  end
+
   def get_events(conn, params = %{ "device_id" => device_id }) do
     current_organization = conn.assigns.current_organization
 

@@ -139,6 +139,7 @@ defmodule ConsoleWeb.Router do
 
     get "/organization", OrganizationController, :show
     resources "/devices", DeviceController, only: [:index, :show, :create, :delete, :update]
+    post "/devices/active", DeviceController, :set_devices_active
     get "/devices/:device_id/events", DeviceController, :get_events
     resources "/labels", LabelController, only: [:index, :show, :create, :delete, :update]
     post "/labels/:label_id/active", LabelController, :set_devices_active

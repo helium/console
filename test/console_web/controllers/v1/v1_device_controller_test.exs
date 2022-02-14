@@ -207,6 +207,71 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       assert json_response(resp_conn, 200) |> Map.get("active") == true
     end
 
+    test "setting active/inactive works for device creds", %{conn: _conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization)
+      insert(:api_key, %{
+        organization_id: organization.id,
+        key: :crypto.hash(:sha256, key),
+        active: true
+      })
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111"
+        })
+      device = json_response(resp_conn, 201) # device created
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111111111111", %{
+          "active" => false,
+        })
+      assert response(resp_conn, 200) # set inactive
+      assert Devices.get_device!(device["id"]).active == false
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111", %{
+          "active" => true,
+        })
+      assert response(resp_conn, 200) # set active
+      assert Devices.get_device!(device["id"]).active == true
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
+          "active" => false,
+        })
+      assert response(resp_conn, 200) # set inactive
+      assert Devices.get_device!(device["id"]).active == false
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111111111110", %{
+          "active" => false,
+        })
+      assert response(resp_conn, 404)
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111111111121&app_eui=1111111111111111", %{
+          "active" => true,
+        })
+      assert response(resp_conn, 404)
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/active?dev_eui=1111111511111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
+          "active" => false,
+        })
+      assert response(resp_conn, 404)
+    end
+
     test "discovery mode endpoint works properly", %{conn: _conn} do
       key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
       organization = insert(:organization, %{
