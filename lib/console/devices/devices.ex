@@ -68,13 +68,18 @@ defmodule Console.Devices do
      |> Repo.all()
   end
 
+  def get_by_dev_eui_app_eui(organization, dev_eui, app_eui) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui and d.organization_id == ^organization.id)
+     |> Repo.all()
+  end
+
   def get_by_dev_eui_app_eui(dev_eui, app_eui) do
      from(d in Device, where: d.dev_eui == ^dev_eui and d.app_eui == ^app_eui)
      |> Repo.all()
   end
 
-  def get_by_dev_eui(dev_eui) do
-     from(d in Device, where: d.dev_eui == ^dev_eui)
+  def get_by_dev_eui(organization, dev_eui) do
+     from(d in Device, where: d.dev_eui == ^dev_eui and d.organization_id == ^organization.id)
      |> Repo.all()
   end
 

@@ -29,8 +29,9 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def index(conn, %{"dev_eui" => dev_eui}) do
-    devices = Devices.get_by_dev_eui(dev_eui)
+  def index(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui_app_eui(current_organization, dev_eui, app_eui)
 
     case length(devices) do
       0 ->
@@ -44,8 +45,9 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def index(conn, %{"dev_eui" => dev_eui, "app_eui" => app_eui}) do
-    devices = Devices.get_by_dev_eui_app_eui(dev_eui, app_eui)
+  def index(conn, %{"dev_eui" => dev_eui}) do
+    current_organization = conn.assigns.current_organization
+    devices = Devices.get_by_dev_eui(current_organization, dev_eui)
 
     case length(devices) do
       0 ->
@@ -107,10 +109,26 @@ defmodule ConsoleWeb.V1.DeviceController do
               with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
                 device = device |> Repo.preload([[labels: :config_profile], :config_profile])
                 broadcast_router_update_devices(device)
-                
+
                 render(conn, "show.json", device: put_config_settings_on_device(device))
               end
           end
+        end
+    end
+  end
+
+  def update(conn, %{ "id" => id, "active" => active }) do
+    current_organization = conn.assigns.current_organization
+
+    case Devices.get_device(current_organization, id) do
+      nil ->
+        {:error, :not_found, "Device not found"}
+      %Device{} = device ->
+        with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
+          device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+          broadcast_router_update_devices(device)
+
+          render(conn, "show.json", device: put_config_settings_on_device(device))
         end
     end
   end
