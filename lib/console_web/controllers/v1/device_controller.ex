@@ -231,7 +231,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         broadcast_router_update_devices(device)
 
         device =
-          device
+          Devices.get_device!(current_organization, device.id)
           |> Repo.preload([[labels: :config_profile], :config_profile])
 
         conn
