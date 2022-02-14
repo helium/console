@@ -190,14 +190,14 @@ defmodule ConsoleWeb.V1LabelControllerTest do
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/labels/#{label.id}/active", %{ "active" => false })
+        |> put("/api/v1/labels/#{label.id}/active", %{ "active" => false })
       assert response(resp_conn, 200)
 
       assert Devices.get_device!(device.id).active == false
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/labels/#{label.id}/active", %{ "active" => true })
+        |> put("/api/v1/labels/#{label.id}/active", %{ "active" => true })
       assert response(resp_conn, 200)
 
       assert Devices.get_device!(device.id).active == true

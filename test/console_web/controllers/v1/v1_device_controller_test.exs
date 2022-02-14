@@ -228,7 +228,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111111111111", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111111111111", %{
           "active" => false,
         })
       assert response(resp_conn, 200) # set inactive
@@ -236,7 +236,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111", %{
           "active" => true,
         })
       assert response(resp_conn, 200) # set active
@@ -244,7 +244,7 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111111111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
           "active" => false,
         })
       assert response(resp_conn, 200) # set inactive
@@ -252,21 +252,21 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111111111110", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111111111110", %{
           "active" => false,
         })
       assert response(resp_conn, 404)
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111111111121&app_eui=1111111111111111", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111111111121&app_eui=1111111111111111", %{
           "active" => true,
         })
       assert response(resp_conn, 404)
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/devices/active?dev_eui=1111111511111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
+        |> put("/api/v1/devices/active?dev_eui=1111111511111111&app_eui=1111111111111111&app_key=11111111111111111111111111111111", %{
           "active" => false,
         })
       assert response(resp_conn, 404)
