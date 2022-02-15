@@ -171,6 +171,28 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
+  def set_devices_active(conn, %{ "label_id" => label_id, "active" => active }) do
+    current_organization = conn.assigns.current_organization
+
+    case Labels.get_label(current_organization, label_id) do
+      nil ->
+        {:error, :not_found, "Label not found"}
+      %Label{} = label ->
+        device_ids = Labels.fetch_assoc(label, [:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
+
+        case length(device_ids) do
+          0 ->
+            conn |> send_resp(:bad_request, "No devices attached to label")
+          _ ->
+            with {_, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
+              broadcast_router_update_devices(label)
+
+              conn |> send_resp(:ok, "Updated devices attached to label successfully")
+            end
+        end
+    end
+  end
+
   defp broadcast_router_update_devices(%Label{} = label) do
     assoc_device_ids = label |> Labels.fetch_assoc([:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
     if length(assoc_device_ids) > 0 do

@@ -4,6 +4,7 @@ defmodule ConsoleWeb.V1LabelControllerTest do
   import Console.Factory
 
   alias Console.Labels
+  alias Console.Devices
 
   describe "labels" do
     test "inactive api keys do not work", %{conn: _conn} do
@@ -147,6 +148,59 @@ defmodule ConsoleWeb.V1LabelControllerTest do
 
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/labels/#{label["id"]}")
       assert json_response(resp_conn, 200) |> Map.get("config_profile_id") == nil
+    end
+
+    test "updating label devices active status works properly", %{conn: _conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization)
+      insert(:api_key, %{
+        organization_id: organization.id,
+        key: :crypto.hash(:sha256, key),
+        active: true
+      })
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> post("/api/v1/labels", %{ "name" => "label" })
+      label = json_response(resp_conn, 201) # create a label in org
+      label = Labels.get_label!(label["id"])
+      assert label.organization_id == organization.id
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{
+          "name" => "device",
+          "dev_eui" => "1111111111111111",
+          "app_eui" => "1111111111111111",
+          "app_key" => "11111111111111111111111111111111"
+        })
+      device = json_response(resp_conn, 201) # create a device in org
+      assert device["organization_id"] == organization.id
+
+      label = Labels.fetch_assoc(label, [:devices])
+      assert label.devices |> length() == 0
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => label.id })
+      assert response(resp_conn, 200) == "Device added to label successfully"
+
+      label = Labels.get_label!(label.id)
+      label = Labels.fetch_assoc(label, [:devices])
+      assert label.devices |> length() == 1
+      device = label.devices |> List.first()
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/labels/#{label.id}/active", %{ "active" => false })
+      assert response(resp_conn, 200)
+
+      assert Devices.get_device!(device.id).active == false
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> put("/api/v1/labels/#{label.id}/active", %{ "active" => true })
+      assert response(resp_conn, 200)
+
+      assert Devices.get_device!(device.id).active == true
     end
   end
 end
