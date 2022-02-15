@@ -243,13 +243,13 @@
                     <h1 style="margin: 0 0 30px; font-size: 30px; line-height: 30px; font-weight: normal; ">Alert: <%= @alert_name %></h1>
                     <div style="margin: 0">
                       <%= if @num_channels == 1 do %>
-                        The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> has stopped working at <b><%= List.first(@details)["time"] %></b>.
+                        The Integration <b><%= List.first(@details)["channel_name"] %></b> that belongs to the Organization <b><%= @organization_name %></b> has stopped working at <b><%= List.first(@details)["time"] %></b> on your Device, <b><a target="_blank" href="<%= @url <> "/devices/" <> List.first(@details)["device_id"] %>"><%= List.first(@details)["device_name"] %></a></b>.
                       <% end %>
                       <%= if @num_channels > 1 && @num_channels <= 5 do %>
                         The following Integrations that belong to the Organization <b><%= @organization_name %></b> have stopped working:
                         <ul>
                           <%= Enum.map(@details, fn(d) -> %>
-                            <li><b><%= d["channel_name"] %></b>, at <b><%= d["time"] %></b>
+                            <li><b><%= d["channel_name"] %></b>, at <b><%= d["time"] %></b> on Device <b><a target="_blank" href="<%= @url <> "/devices/" <> d["device_id"] %>"><%= d["device_name"] %></a></b>
                           <% end) %>
                         </ul>
                       <% end %>
