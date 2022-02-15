@@ -1,12 +1,12 @@
 Alert: <%= @alert_name %>
 
 <%= if @num_channels == 1 do %>
-  The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> has stopped working at <%= List.first(@details)["time"] %>.
+  The Integration <%= List.first(@details)["channel_name"] %> that belongs to the Organization <%= @organization_name %> has stopped working at <%= List.first(@details)["time"] %> on your Device, <%= List.first(@details)["device_name"] %>.
 <% end %>
 <%= if @num_channels > 1 && @num_channels <= 5 do %>
   The following Organization <%= @organization_name %> Integrations have stopped working:
   <%= Enum.map(@details, fn(d) -> %>
-    <%= d["channel_name"] %>, at <%= d["time"] %>
+    <%= d["channel_name"] %>, at <%= d["time"] %> on Device <%= d["device_name"] %>
   <% end) %>
 <% end %>
 <%= if @num_channels > 5 do %>
