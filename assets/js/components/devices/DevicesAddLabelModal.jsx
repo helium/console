@@ -3,12 +3,14 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import withGql from "../../graphql/withGql";
 import flatten from "lodash/flatten"
+import find from "lodash/find"
 import analyticsLogger from "../../util/analyticsLogger";
 import { ALL_LABELS } from "../../graphql/labels";
 import { grayForModalCaptions } from "../../util/colors";
 import { addDevicesToLabel, addDevicesToNewLabel } from "../../actions/label";
 import { removeDevicesConfigProfiles } from "../../actions/device";
 import LabelTag from "../common/LabelTag";
+import LabelAppliedNew from "../common/LabelAppliedNew";
 import { Modal, Button, Typography, Input, Select, Checkbox } from "antd";
 const { Text } = Typography;
 const { Option } = Select;
@@ -21,10 +23,6 @@ class DevicesAddLabelModal extends Component {
     applyToAll: false,
     showLabelConfigProfileConflicts: false,
     showDeviceProfileConflictModal: false,
-  };
-
-  handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value, labelId: undefined });
   };
 
   handleSubmit = (e) => {
@@ -84,7 +82,7 @@ class DevicesAddLabelModal extends Component {
 
   handleConflictConfirm = (e) => {
     e.preventDefault();
-    const { labelName, labelId, applyToAll } = this.state;
+    const { labelId, applyToAll } = this.state;
     const deviceIds = applyToAll
       ? []
       : this.props.devicesToUpdate.map((d) => d.id);
@@ -112,10 +110,6 @@ class DevicesAddLabelModal extends Component {
     this.setState({ applyToAll: false });
     this.props.onClose();
   }
-
-  handleSelectOption = (labelId) => {
-    this.setState({ labelId, labelName: null });
-  };
 
   render() {
     const { open, onClose, devicesToUpdate, allDevicesSelected, totalDevices, mobile } =
@@ -190,40 +184,20 @@ class DevicesAddLabelModal extends Component {
                   Add Label
                 </Button>,
               ]}
-              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px" }}
+              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px", display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
             >
-              <div>
-                <Select
-                  placeholder={error ? "No Labels found..." : "Choose Label"}
-                  style={{ width: 270, marginRight: 10 }}
-                  onSelect={this.handleSelectOption}
-                  value={labelId}
-                >
-                  {allLabels &&
-                    allLabels.map((l) => (
-                      <Option value={l.id} key={l.id}>
-                        <LabelTag text={l.name} />
-                      </Option>
-                    ))}
-                </Select>
-              </div>
-
-              <div style={{ marginTop: 15, marginBottom: 15 }}>
-                <Text style={{ color: grayForModalCaptions }}>or</Text>
-              </div>
-
-              <div>
-                <Text>Add Label</Text>
-                <Input
-                  placeholder="Enter Label Name"
-                  name="labelName"
-                  value={this.state.labelName}
-                  onChange={this.handleInputUpdate}
-                />
-                <Text style={{ marginBottom: 20, color: grayForModalCaptions }}>
-                  Label names must be unique
-                </Text>
-              </div>
+              <LabelAppliedNew
+                allLabels={allLabels}
+                value={this.state.labelName}
+                select={(value) => {
+                  const existingLabel = find(allLabels, { name: value })
+                  if (existingLabel) {
+                    this.setState({ labelId: existingLabel.id, labelName: value })
+                  } else {
+                    this.setState({ labelId: undefined, labelName: value })
+                  }
+                }}
+              />
               {allDevicesSelected && (
                 <Checkbox
                   style={{ marginTop: 20 }}

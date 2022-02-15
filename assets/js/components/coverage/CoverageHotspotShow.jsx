@@ -217,8 +217,8 @@ export default (props) => {
                     padding: "4px 8px 4px 8px",
                   }}
                 >
-                  <Text style={{ fontSize: 16, color: "#2C79EE" }}>
-                    {hotspotClaimed ? "Claimed!" : "Unclaimed"}
+                  <Text style={{ fontSize: 16, color: "#2C79EE", whiteSpace: 'nowrap' }}>
+                    {hotspotClaimed ? "Followed!" : "Not Followed"}
                   </Text>
                 </div>
               </div>
