@@ -3875,6 +3875,11 @@ hosted-git-info@^4.0.2:
   dependencies:
     lru-cache "^6.0.0"
 
+html5-qrcode@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/html5-qrcode/-/html5-qrcode-2.1.6.tgz#6433696a87a327082b146af5fed127e29ea794db"
+  integrity sha512-KyOamaxKOZmNp/3y7DAz8uuigNhTeQfyCPTlcuyNEQuKYPZPP3ghm6HFr/f7gmcDBwewcGTvv3jRvsCODEDt7w==
+
 htmlparser2@^6.0.0, htmlparser2@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/htmlparser2/-/htmlparser2-6.1.0.tgz#c4d762b6c3371a05dbe65e94ae43a9f845fb8fb7"
