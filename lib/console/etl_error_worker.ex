@@ -113,7 +113,7 @@ defmodule Console.EtlErrorWorker do
             ConsoleWeb.Monitor.remove_from_events_error_state()
 
             Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
                 ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
               end
 
