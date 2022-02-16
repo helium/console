@@ -168,6 +168,10 @@ class DeviceNew extends Component {
     this.setState({ showScanDeviceModal: false });
   };
 
+  updateEuiPair = (devEUI, appEUI) => {
+    this.setState({ devEUI: devEUI, appEUI: appEUI })
+  }
+
   renderHelpText = (mobile) => (
     <p style={{ fontSize: 16 }}>
       <b>Important:</b> The first time a device joins the Network could take up
@@ -377,6 +381,7 @@ class DeviceNew extends Component {
             <ScanDeviceModal
               open={this.state.showScanDeviceModal}
               onClose={this.closeScanDeviceModal}
+              updateEuiPair={this.updateEuiPair}
             />
           </MobileLayout>
         </MobileDisplay>
@@ -441,6 +446,7 @@ class DeviceNew extends Component {
             <ScanDeviceModal
               open={this.state.showScanDeviceModal}
               onClose={this.closeScanDeviceModal}
+              updateEuiPair={this.updateEuiPair}
             />
           </DeviceDashboardLayout>
         </DesktopDisplay>

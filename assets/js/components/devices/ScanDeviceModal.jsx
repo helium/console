@@ -3,7 +3,7 @@ import { Html5QrcodeScanner } from "html5-qrcode"
 import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 
-export default ({ open, onClose }) => {
+export default ({ open, onClose, updateEuiPair }) => {
   const html5QrcodeScanner = useRef();
 
   useEffect(() => {
@@ -29,13 +29,14 @@ export default ({ open, onClose }) => {
     }
   }, [])
 
-  const onScanSuccess = (decodedText, decodedResult) => {
-    console.log(`Code matched = ${decodedText}`, decodedResult);
+  const onScanSuccess = (decodedText) => {
+    const euiString = decodedText.slice(6, 39)
+    const euiPair = euiString.split(":")
+    updateEuiPair(euiPair[1], euiPair[0])
+    onClose()
   }
 
-  const onScanFailure = (error) => {
-    console.warn(`Code scan error = ${error}`);
-  }
+  const onScanFailure = (error) => {}
 
   return (
     <Modal
