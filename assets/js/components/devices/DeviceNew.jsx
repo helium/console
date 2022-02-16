@@ -12,6 +12,7 @@ import { ALL_LABELS } from "../../graphql/labels";
 import UserCan from "../common/UserCan";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import ImportDevicesModal from "./import/ImportDevicesModal";
+import ScanDeviceModal from "./ScanDeviceModal";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
 import { Card, Button, Typography, Input, Row, Col } from "antd";
@@ -48,6 +49,7 @@ class DeviceNew extends Component {
     selectedLabel: {},
     configProfileId: null,
     newDeviceId: null,
+    showScanDeviceModal: false,
   };
 
   componentDidMount() {
@@ -162,6 +164,10 @@ class DeviceNew extends Component {
     });
   };
 
+  closeScanDeviceModal = () => {
+    this.setState({ showScanDeviceModal: false });
+  };
+
   renderHelpText = (mobile) => (
     <p style={{ fontSize: 16 }}>
       <b>Important:</b> The first time a device joins the Network could take up
@@ -268,6 +274,13 @@ class DeviceNew extends Component {
             </Text>
           }
         />
+        <Button
+          key="submit"
+          onClick={() => { this.setState({ showScanDeviceModal: true })}}
+          style={{ marginTop: 10 }}
+        >
+          Scan Device QR Code
+        </Button>
         <Text style={{ marginTop: 25, display: "block" }} strong>
           Profile (Optional)
         </Text>
@@ -361,6 +374,10 @@ class DeviceNew extends Component {
                 </UserCan>
               </div>
             </div>
+            <ScanDeviceModal
+              open={this.state.showScanDeviceModal}
+              onClose={this.closeScanDeviceModal}
+            />
           </MobileLayout>
         </MobileDisplay>
         <DesktopDisplay>
@@ -420,6 +437,10 @@ class DeviceNew extends Component {
               importComplete={importComplete}
               importType={importType}
               import_status={this.state.import_status}
+            />
+            <ScanDeviceModal
+              open={this.state.showScanDeviceModal}
+              onClose={this.closeScanDeviceModal}
             />
           </DeviceDashboardLayout>
         </DesktopDisplay>

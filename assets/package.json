@@ -22,6 +22,7 @@
     "fuse.js": "^3.4.3",
     "graphql": "^15.8.0",
     "history": "^4.10.1",
+    "html5-qrcode": "^2.1.6",
     "lodash": "^4.17.21",
     "magic-sdk": "^8.0.1",
     "mapbox-gl": "^2.6.1",
